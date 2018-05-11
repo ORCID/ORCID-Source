@@ -11,7 +11,44 @@
         </div>
             
         <div class="row bottomBuffer">                          
-            <div ng-include="'bulk-edit'"></div>                    
+            <div class="row bulk-edit-modal">
+                <div class="pull-right bio-edit-modal">             
+                    <span class="right">Edit all privacy settings</span>
+                    <div class="bulk-privacy-bar">
+                        <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
+                            <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
+                                <li class="publicActive publicInActive" [ngClass]="{publicInActive: bioModel != 'PUBLIC'}"><a (click)="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" name="privacy-toggle-3-public" id=""></a></li>
+                                <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: bioModel != 'LIMITED'}"><a (click)="setBulkGroupPrivacy('LIMITED', $event, bioModel)" name="privacy-toggle-3-limited" id=""></a></li>
+                                <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE', $event, bioModel)" name="privacy-toggle-3-private" id=""></a></li>
+                            </ul>
+                        </div>
+                        <div class="popover-help-container" style="top: -75px; left: 512px;">
+                            <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <strong>Who can see this? </strong>
+                                    <ul class="privacyHelp">
+                                        <li class="public" style="color: #009900;">everyone</li>
+                                        <li class="limited" style="color: #ffb027;">trusted parties</li>
+                                        <li class="private" style="color: #990000;">only me</li>
+                                    </ul>
+                                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">More information on privacy settings</a>
+                                </div>                
+                            </div>                              
+                        </div>
+
+                    </div>
+                    <div class="bulk-help popover-help-container">
+                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <div id="bulk-help" class="popover bottom">
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <p>Use Edit all privacy settings to change the visibility level of all items, or Edit individual privacy settings to select different visibility levels for each item.</p>
+                            </div>
+                       </div>
+                    </div>
+                </div>          
+            </div>                    
         </div>              
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
@@ -26,7 +63,7 @@
                        <div class="row aka-row" *ngFor="let otherName of formData.otherNames; let index = index; let first = first; let last = last;" >                                                            
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <div class="aka" *ngIf="otherName">   
-                                    <input type="text" [(ngModel)]="otherName.content" *ngIf="otherName.source == orcidId" focus-me="newInput" />  
+                                    <input type="text" [(ngModel)]="otherName.content" *ngIf="otherName.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !otherName.content}" />  
                                     <span *ngIf="otherName.source != orcidId && otherName.source != null">{{otherName.content}}</span>                                       
                                 </div>                                      
                                 <div class="source" *ngIf="otherName.sourceName || otherName.sourceName == null">
@@ -44,7 +81,7 @@
                                         <@orcid.tooltipNg2 elementId="'tooltip-aka-move-down-'+index" message="common.modals.move_down" />                                            
                                     </li>
                                     <li>
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteOtherName(otherName)" (mouseenter)="commonSrvc.showTooltip('tooltip-aka-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-aka-delete-'+index)"></div>
+                                        <div class="glyphicon glyphicon-trash" (click)="deleteOtherName(otherName, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-aka-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-aka-delete-'+index)"></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-aka-delete-'+index" message="common.modals.delete" />
                                     </li>
                                     <li>

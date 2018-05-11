@@ -2,7 +2,7 @@ package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,16 +17,20 @@ public class Services extends Affiliations<ServiceSummary> implements Serializab
 
     }
 
-    public Services(List<ServiceSummary> summaries) {
+    public Services(Collection<AffiliationGroup<ServiceSummary>> groups) {
         super();
-        this.summaries = summaries;
+        this.groups = groups;
+    }
+
+    public Collection<AffiliationGroup<ServiceSummary>> getServiceGroups() {
+        if (this.groups == null) {
+            this.groups = new ArrayList<AffiliationGroup<ServiceSummary>>();
+        }
+        return (Collection<AffiliationGroup<ServiceSummary>>) this.groups;
     }
 
     @Override
-    public List<ServiceSummary> getSummaries() {
-        if (this.summaries == null) {
-            this.summaries = new ArrayList<ServiceSummary>();
-        }
-        return this.summaries;
+    public Collection<AffiliationGroup<ServiceSummary>> retrieveGroups() {
+        return getServiceGroups();
     }
 }

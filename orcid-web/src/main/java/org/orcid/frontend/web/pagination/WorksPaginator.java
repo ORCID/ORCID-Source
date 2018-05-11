@@ -3,11 +3,13 @@ package org.orcid.frontend.web.pagination;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.WorksCacheManager;
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
@@ -22,13 +24,17 @@ public class WorksPaginator {
     static final String DATE_SORT_KEY = "date";
 
     static final String TYPE_SORT_KEY = "type";
+    
+    @Resource(name = "workManagerReadOnlyV3")
+    private WorkManagerReadOnly workManagerReadOnly;
 
     @Resource
     private WorksCacheManager worksCacheManager;
     
     public int getPublicWorksCount(String orcid) {
-        Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> groups = filter(works, true);
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
+        Works publicWorks = workManagerReadOnly.groupWorks(works, true);
+        List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> groups = filter(publicWorks, true);
         return groups.size();
     }
 
@@ -104,9 +110,18 @@ public class WorksPaginator {
     private List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> filter(Works works, boolean justPublic) {
         List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> filteredGroups = new ArrayList<>();
         for (org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup workGroup : works.getWorkGroup()) {
-            if (!justPublic || Visibility.PUBLIC.equals(workGroup.getWorkSummary().get(0).getVisibility())) {
-                filteredGroups.add(workGroup);
+            
+            Iterator<WorkSummary> summariesIt = workGroup.getWorkSummary().iterator();
+            while(summariesIt.hasNext()) {
+                WorkSummary w = summariesIt.next();
+                if(justPublic && !Visibility.PUBLIC.equals(w.getVisibility())) {
+                    summariesIt.remove();
+                }
             }
+            
+            if(!workGroup.getWorkSummary().isEmpty()) {
+                filteredGroups.add(workGroup);            
+            }            
         }
         return filteredGroups;
     }

@@ -116,7 +116,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.membershipsAndServices = [];
         this.sectionOneElements = [];
         this.displayNewAffiliationTypesFeatureEnabled = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
-        this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
+        this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('AFFILIATIONS_ORG_ID ');
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 

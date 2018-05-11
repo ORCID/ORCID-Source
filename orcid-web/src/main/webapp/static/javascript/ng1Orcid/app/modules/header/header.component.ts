@@ -14,7 +14,11 @@ import { Observable }
 import { Subject } 
     from 'rxjs/Subject';
 
-import { Subscription }    from 'rxjs/Subscription';
+import { Subscription }
+    from 'rxjs/Subscription';
+
+import { NotificationsService } 
+    from '../../shared/notifications.service.ts'; 
 
 
 @Component({
@@ -26,6 +30,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     
     conditionsActive: boolean;
     filterActive: boolean;
+    getUnreadCount: any;
     menuVisible: boolean;
     searchFilterChanged: boolean;
     searchVisible: boolean;
@@ -34,9 +39,11 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     tertiaryMenuVisible: any;
 
     constructor(
+        private notificationsSrvc: NotificationsService
     ) {
         this.conditionsActive = false;
         this.filterActive = false;
+        this.getUnreadCount = 0;
         this.menuVisible = false;
         this.searchFilterChanged = false;
         this.searchVisible = false;
@@ -72,6 +79,10 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    isCurrentPage(path): any {
+        return window.location.href.startsWith(orcidVar.baseUri + '/' + path);
+    };
+
     onResize(event?): void {
         //console.log("resize", event);
         let windowWidth = getWindowWidth();
@@ -85,6 +96,21 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
             this.settingsVisible = false;
         }
     };
+
+    retrieveUnreadCount(): any {
+        if( this.notificationsSrvc.retrieveCountCalled == false ) {
+            this.notificationsSrvc.retrieveUnreadCount()
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    this.getUnreadCount = data;
+                },
+                error => {
+                    //console.log('verifyEmail', error);
+                } 
+            );
+        }
+    }
 
     searchBlur(): void {     
         this.hideSearchFilter();
@@ -133,6 +159,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.onResize();
+        this.onResize();   
     }; 
 }

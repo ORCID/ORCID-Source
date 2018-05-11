@@ -11,11 +11,11 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.converter.VisibilityConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV2;
-import org.orcid.core.adapter.converter.VisibilityConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -34,12 +34,14 @@ import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceName;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationAdministrative;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationServiceAnnouncement;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationTip;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -79,10 +81,13 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
+import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -169,6 +174,24 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerSourceConverters(mapperFactory, notificationCustomClassMap);
         mapCommonFields(notificationCustomClassMap).register();
 
+        // Service Announcement notification
+        ClassMapBuilder<NotificationServiceAnnouncement, NotificationServiceAnnouncementEntity> notificationServiceAnnouncementClassMap = mapperFactory.classMap(NotificationServiceAnnouncement.class,
+                NotificationServiceAnnouncementEntity.class);
+        registerSourceConverters(mapperFactory, notificationServiceAnnouncementClassMap);
+        mapCommonFields(notificationServiceAnnouncementClassMap).register();
+        
+        // Tip notification
+        ClassMapBuilder<NotificationTip, NotificationTipEntity> notificationTipClassMap = mapperFactory.classMap(NotificationTip.class,
+                NotificationTipEntity.class);
+        registerSourceConverters(mapperFactory, notificationTipClassMap);
+        mapCommonFields(notificationTipClassMap).register();
+        
+        // Administrative notification
+        ClassMapBuilder<NotificationAdministrative, NotificationAdministrativeEntity> notificationAdministrativeClassMap = mapperFactory.classMap(NotificationAdministrative.class,
+                NotificationAdministrativeEntity.class);
+        registerSourceConverters(mapperFactory, notificationAdministrativeClassMap);
+        mapCommonFields(notificationAdministrativeClassMap).register();
+        
         // Permission notification
         ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class,
                 NotificationAddItemsEntity.class);
@@ -282,7 +305,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             @Override
             public void mapBtoA(NotificationAmendedEntity b, NotificationAmended a, MappingContext context) {
                 if (b.getAmendedSection() != null) {
-                    if (AmendedSection.SERVICE.name().equals(b.getAmendedSection())) {
+                    if (AmendedSection.AFFILIATION.name().equals(b.getAmendedSection()) 
+                            || AmendedSection.DISTINCTION.name().equals(b.getAmendedSection())
+                            || AmendedSection.INVITED_POSITION.name().equals(b.getAmendedSection()) 
+                            || AmendedSection.MEMBERSHIP.name().equals(b.getAmendedSection())
+                            || AmendedSection.QUALIFICATION.name().equals(b.getAmendedSection()) 
+                            || AmendedSection.SERVICE.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.AFFILIATION);
                     } else if (AmendedSection.BIO.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.BIO);
@@ -302,7 +330,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.UNKNOWN);
                     } else if (AmendedSection.WORK.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.WORK);
-                    } 
+                    } else {
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.UNKNOWN);
+                    }
                 }
             }
         })).register();

@@ -4,8 +4,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -22,10 +22,10 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
     @Resource
     private TransactionTemplate transactionTemplate;
     
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
     @Override

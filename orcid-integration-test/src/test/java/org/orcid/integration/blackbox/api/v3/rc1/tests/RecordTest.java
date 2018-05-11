@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
@@ -88,15 +89,17 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
             // Distinctions
             if (record.getActivitiesSummary().getDistinctions() != null) {
                 Distinctions e = record.getActivitiesSummary().getDistinctions();
-                if (e.getSummaries() != null) {
-                    for (DistinctionSummary s : e.getSummaries()) {
-                        assertNotNull(s.getSource());
-                        assertNotNull(s.getVisibility());
-                        Visibility v = s.getVisibility();
-                        // If the visibility is PRIVATE the client should be the
-                        // owner
-                        if (Visibility.PRIVATE.equals(v)) {
-                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                for (AffiliationGroup<DistinctionSummary> group : e.retrieveGroups()) {
+                    if (group.getActivities() != null) {
+                        for (DistinctionSummary s : group.getActivities()) {
+                            assertNotNull(s.getSource());
+                            assertNotNull(s.getVisibility());
+                            Visibility v = s.getVisibility();
+                            // If the visibility is PRIVATE the client should be the
+                            // owner
+                            if (Visibility.PRIVATE.equals(v)) {
+                                assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                            }
                         }
                     }
                 }
@@ -105,15 +108,17 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
             // Educations
             if (record.getActivitiesSummary().getEducations() != null) {
                 Educations e = record.getActivitiesSummary().getEducations();
-                if (e.getSummaries() != null) {
-                    for (EducationSummary s : e.getSummaries()) {
-                        assertNotNull(s.getSource());
-                        assertNotNull(s.getVisibility());
-                        Visibility v = s.getVisibility();
-                        // If the visibility is PRIVATE the client should be the
-                        // owner
-                        if (Visibility.PRIVATE.equals(v)) {
-                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                for (AffiliationGroup<EducationSummary> group : e.retrieveGroups()) {
+                    if (group.getActivities() != null) {
+                        for (EducationSummary s : group.getActivities()) {
+                            assertNotNull(s.getSource());
+                            assertNotNull(s.getVisibility());
+                            Visibility v = s.getVisibility();
+                            // If the visibility is PRIVATE the client should be the
+                            // owner
+                            if (Visibility.PRIVATE.equals(v)) {
+                                assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                            }
                         }
                     }
                 }
@@ -121,15 +126,17 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
             // Employments
             if (record.getActivitiesSummary().getEmployments() != null) {
                 Employments e = record.getActivitiesSummary().getEmployments();
-                if (e.getSummaries() != null) {
-                    for (EmploymentSummary s : e.getSummaries()) {
-                        assertNotNull(s.getSource());
-                        assertNotNull(s.getVisibility());
-                        Visibility v = s.getVisibility();
-                        // If the visibility is PRIVATE the client should be the
-                        // owner
-                        if (Visibility.PRIVATE.equals(v)) {
-                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                for (AffiliationGroup<EmploymentSummary> group : e.retrieveGroups()) {
+                    if (group.getActivities() != null) {
+                        for (EmploymentSummary s : group.getActivities()) {
+                            assertNotNull(s.getSource());
+                            assertNotNull(s.getVisibility());
+                            Visibility v = s.getVisibility();
+                            // If the visibility is PRIVATE the client should be the
+                            // owner
+                            if (Visibility.PRIVATE.equals(v)) {
+                                assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                            }
                         }
                     }
                 }
@@ -137,15 +144,17 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
             // InvitedPositions
             if (record.getActivitiesSummary().getInvitedPositions() != null) {
                 InvitedPositions e = record.getActivitiesSummary().getInvitedPositions();
-                if (e.getSummaries() != null) {
-                    for (InvitedPositionSummary s : e.getSummaries()) {
-                        assertNotNull(s.getSource());
-                        assertNotNull(s.getVisibility());
-                        Visibility v = s.getVisibility();
-                        // If the visibility is PRIVATE the client should be the
-                        // owner
-                        if (Visibility.PRIVATE.equals(v)) {
-                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                for (AffiliationGroup<InvitedPositionSummary> group : e.retrieveGroups()) {
+                    if (group.getActivities() != null) {
+                        for (InvitedPositionSummary s : group.getActivities()) {
+                            assertNotNull(s.getSource());
+                            assertNotNull(s.getVisibility());
+                            Visibility v = s.getVisibility();
+                            // If the visibility is PRIVATE the client should be the
+                            // owner
+                            if (Visibility.PRIVATE.equals(v)) {
+                                assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                            }
                         }
                     }
                 }
@@ -153,15 +162,17 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
             // Memberships
             if (record.getActivitiesSummary().getMemberships() != null) {
                 Memberships e = record.getActivitiesSummary().getMemberships();
-                if (e.getSummaries() != null) {
-                    for (MembershipSummary s : e.getSummaries()) {
-                        assertNotNull(s.getSource());
-                        assertNotNull(s.getVisibility());
-                        Visibility v = s.getVisibility();
-                        // If the visibility is PRIVATE the client should be the
-                        // owner
-                        if (Visibility.PRIVATE.equals(v)) {
-                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                for (AffiliationGroup<MembershipSummary> group : e.retrieveGroups()) {
+                    if (group.getActivities() != null) {
+                        for (MembershipSummary s : group.getActivities()) {
+                            assertNotNull(s.getSource());
+                            assertNotNull(s.getVisibility());
+                            Visibility v = s.getVisibility();
+                            // If the visibility is PRIVATE the client should be the
+                            // owner
+                            if (Visibility.PRIVATE.equals(v)) {
+                                assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                            }
                         }
                     }
                 }
@@ -169,15 +180,17 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
             // Qualifications
             if (record.getActivitiesSummary().getQualifications() != null) {
                 Qualifications e = record.getActivitiesSummary().getQualifications();
-                if (e.getSummaries() != null) {
-                    for (QualificationSummary s : e.getSummaries()) {
-                        assertNotNull(s.getSource());
-                        assertNotNull(s.getVisibility());
-                        Visibility v = s.getVisibility();
-                        // If the visibility is PRIVATE the client should be the
-                        // owner
-                        if (Visibility.PRIVATE.equals(v)) {
-                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                for (AffiliationGroup<QualificationSummary> group : e.retrieveGroups()) {
+                    if (group.getActivities() != null) {
+                        for (QualificationSummary s : group.getActivities()) {
+                            assertNotNull(s.getSource());
+                            assertNotNull(s.getVisibility());
+                            Visibility v = s.getVisibility();
+                            // If the visibility is PRIVATE the client should be the
+                            // owner
+                            if (Visibility.PRIVATE.equals(v)) {
+                                assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                            }
                         }
                     }
                 }
@@ -185,15 +198,17 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
             // Services
             if (record.getActivitiesSummary().getServices() != null) {
                 Services e = record.getActivitiesSummary().getServices();
-                if (e.getSummaries() != null) {
-                    for (ServiceSummary s : e.getSummaries()) {
-                        assertNotNull(s.getSource());
-                        assertNotNull(s.getVisibility());
-                        Visibility v = s.getVisibility();
-                        // If the visibility is PRIVATE the client should be the
-                        // owner
-                        if (Visibility.PRIVATE.equals(v)) {
-                            assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                for (AffiliationGroup<ServiceSummary> group : e.retrieveGroups()) {
+                    if (group.getActivities() != null) {
+                        for (ServiceSummary s : group.getActivities()) {
+                            assertNotNull(s.getSource());
+                            assertNotNull(s.getVisibility());
+                            Visibility v = s.getVisibility();
+                            // If the visibility is PRIVATE the client should be the
+                            // owner
+                            if (Visibility.PRIVATE.equals(v)) {
+                                assertEquals(getClient1ClientId(), s.getSource().retrieveSourcePath());
+                            }
                         }
                     }
                 }
@@ -381,10 +396,12 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
                 //Distinctions
             	if(record.getActivitiesSummary().getDistinctions() != null) {
                     Distinctions d = record.getActivitiesSummary().getDistinctions();
-                    if(d.getSummaries() != null) {
-                        for(DistinctionSummary s : d.getSummaries()) {
-                            assertNotNull(s.getSource());                            
-                            assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                    for (AffiliationGroup<DistinctionSummary> group : d.retrieveGroups()) {
+                        if(group.getActivities() != null) {
+                            for(DistinctionSummary s : group.getActivities()) {
+                                assertNotNull(s.getSource());                            
+                                assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                            }
                         }
                     }
                 }
@@ -392,20 +409,24 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
                 //Educations
                 if(record.getActivitiesSummary().getEducations() != null) {
                     Educations e = record.getActivitiesSummary().getEducations();
-                    if(e.getSummaries() != null) {
-                        for(EducationSummary s : e.getSummaries()) {
-                            assertNotNull(s.getSource());                            
-                            assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                    for (AffiliationGroup<EducationSummary> group : e.retrieveGroups()) {
+                        if(group.getActivities() != null) {
+                            for(EducationSummary s : group.getActivities()) {
+                                assertNotNull(s.getSource());                            
+                                assertEquals(Visibility.PUBLIC, s.getVisibility());                            
+                            }
                         }
                     }
                 }
                 //Employments
                 if(record.getActivitiesSummary().getEmployments() != null) {
                     Employments e = record.getActivitiesSummary().getEmployments();
-                    if(e.getSummaries() != null) {
-                        for(EmploymentSummary s : e.getSummaries()) {
-                            assertNotNull(s.getSource());
-                            assertEquals(Visibility.PUBLIC, s.getVisibility());
+                    for (AffiliationGroup<EmploymentSummary> group : e.retrieveGroups()) {
+                        if(group.getActivities() != null) {
+                            for(EmploymentSummary s : group.getActivities()) {
+                                assertNotNull(s.getSource());
+                                assertEquals(Visibility.PUBLIC, s.getVisibility());
+                            }
                         }
                     }
                 }
@@ -413,41 +434,49 @@ public class RecordTest extends BlackBoxBaseV3_0_rc1 {
                 //InvitedPositions
                 if(record.getActivitiesSummary().getInvitedPositions() != null) {
                     InvitedPositions i = record.getActivitiesSummary().getInvitedPositions();
-                    if(i.getSummaries() != null) {
-                        for(InvitedPositionSummary s : i.getSummaries()) {
+                    for (AffiliationGroup<InvitedPositionSummary> group : i.retrieveGroups()) {
+                    if(group.getActivities() != null) {
+                        for(InvitedPositionSummary s : group.getActivities()) {
                             assertNotNull(s.getSource());                            
                             assertEquals(Visibility.PUBLIC, s.getVisibility());                            
                         }
+                    }
                     }
                 }
                 //Memberships
                 if(record.getActivitiesSummary().getMemberships() != null) {
                     Memberships m = record.getActivitiesSummary().getMemberships();
-                    if(m.getSummaries() != null) {
-                        for(MembershipSummary s : m.getSummaries()) {
+                    for (AffiliationGroup<MembershipSummary> group : m.retrieveGroups()) {
+                    if(group.getActivities() != null) {
+                        for(MembershipSummary s : group.getActivities()) {
                             assertNotNull(s.getSource());                            
                             assertEquals(Visibility.PUBLIC, s.getVisibility());                            
                         }
+                    }
                     }
                 }
                 //Qualifications
                 if(record.getActivitiesSummary().getQualifications() != null) {
-                	Qualifications q = record.getActivitiesSummary().getQualifications();
-                    if(q.getSummaries() != null) {
-                        for(QualificationSummary s : q.getSummaries()) {
+                    Qualifications q = record.getActivitiesSummary().getQualifications();
+                    for (AffiliationGroup<QualificationSummary> group : q.retrieveGroups()) {
+                    if(group.getActivities() != null) {
+                        for(QualificationSummary s : group.getActivities()) {
                             assertNotNull(s.getSource());                            
                             assertEquals(Visibility.PUBLIC, s.getVisibility());                            
                         }
                     }
+                    }
                 }
                 //Services
                 if(record.getActivitiesSummary().getServices() != null) {
-                	Services sv = record.getActivitiesSummary().getServices();
-                    if(sv.getSummaries() != null) {
-                        for(ServiceSummary s : sv.getSummaries()) {
+                    Services sv = record.getActivitiesSummary().getServices();
+                    for (AffiliationGroup<ServiceSummary> group : sv.retrieveGroups()) {
+                    if(group.getActivities() != null) {
+                        for(ServiceSummary s : group.getActivities()) {
                             assertNotNull(s.getSource());                            
                             assertEquals(Visibility.PUBLIC, s.getVisibility());                            
                         }
+                    }
                     }
                 }
                 

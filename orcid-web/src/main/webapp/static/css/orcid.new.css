@@ -290,9 +290,12 @@ privacy-toggle-ng2 .privacy-bar-impr {
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container{
     bottom: 40px;
     display: block;
+    left: auto!important;
     left: initial!important;
+    margin:0 !important;
     margin: initial !important;
     right: calc(50% - 121px);
+    top: auto!important;
     top: initial!important;
     width: 270px;
 }
@@ -303,16 +306,23 @@ privacy-toggle-ng2 .privacy-bar-impr .privacyToggle {
 
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container .popover.privacy-myorcid3, 
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container .popover.privacy-myorcid3:hover {
+    bottom: auto;
     bottom: initial;
+    left: auto;
     left: initial;
+    margin: auto;
     margin: initial;
     position: relative;
+    right: auto;
     right: initial;
+    top: auto;
     top: initial;
 }
 
 privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.arrow {
+    left: auto;
     left: initial;
+    margin: 0;
     margin: initial;
     right: calc(50% - 11px);
 }
@@ -2255,6 +2265,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     margin-right: 0
 }
 
+.settings-table h2 {
+    font-size: 18px;
+}
+
 .settings-table,.settings-table td,.settings-table th {
     border-left: 0 none!important;
     border-right: 0 none!important;
@@ -2304,6 +2318,20 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .settings-table .popover {
     min-width: 270px
+}
+
+.settings-table #emailFrequency label{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.settings-table #emailFrequency input[type=checkbox], 
+#register input[type=checkbox]{
+    margin: 0 4px 0 0;
+}
+
+.settings-table small.italic {
+    line-height: 12px;
 }
 
 .oauth-login #login-authorize-button,.settings-table .table-responsive {
@@ -2367,18 +2395,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .privacyToggle+.popover-help-container {
     bottom: 45px;
+    left: auto;
     left: initial;
     position: absolute;
     right: -70px;
+    top: auto;
     top: initial
 }
-/*
-.privacyToggle+.popover-help-container .popover {
-    left: initial;
-    position: relative;
-    right: initial
-}
-*/
 
 .workspace-top .privacyToggle+.popover-help-container .popover.privacy-myorcid3, 
 .workspace-top .privacyToggle+.popover-help-container .popover.privacy-myorcid3:hover {
@@ -5202,7 +5225,6 @@ multiselect .dropdown-menu .dropdown-menu-list {
 
 .close-account-container h4 {
     margin-top: 20px;
-    margin-bottom: 0
 }
 
 .admin-edit-client {
@@ -5956,7 +5978,6 @@ a#reset-password-toggle-text:hover:active {
 .edit-record-emails {
     width: 600px;
     padding: 15px 0 15px 15px;
-    min-height: 678px
 }
 
 .fixed-area .scroll-area input[type=text],.fixed-area .scroll-area input[type=textbox],.fixed-area .scroll-area select {
@@ -6366,6 +6387,12 @@ a#reset-password-toggle-text:hover:active {
 
 #register p{
     font-size: 12px;
+    line-height: normal;
+}
+
+#register #notificationSettings label {
+    font-weight: bold;
+    display: inline;
 }
 
 .peer-review-delete {
@@ -8252,7 +8279,9 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .url-popover .popover-help-container .popover {
+    left: auto;
     left: initial;
+    top: auto;
     top: initial;
     position: relative
 }
@@ -8295,6 +8324,7 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .workspace-section-title .edit-option .popover-tooltip {
+    left: auto;
     left: initial;
     right: -25px;
 }
@@ -8319,6 +8349,7 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .popover-registry .popover-help-container .popover {
+    left: auto;
     left: initial;
     right: -127px;
 }

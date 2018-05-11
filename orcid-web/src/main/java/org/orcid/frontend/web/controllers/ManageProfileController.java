@@ -33,18 +33,17 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.v3.rc1.record.Addresses;
 import org.orcid.jaxb.model.v3.rc1.record.Biography;
 import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -361,7 +360,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid visibility provided: " + defaultVisibility);
         }
-        return defaultVisibility;
+        
+        return "{\"status\": \"" + defaultVisibility + "\"}";
     }
     
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
@@ -691,18 +691,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         // Set the default visibility
         if (profile.getActivitiesVisibilityDefault() != null) {
             form.setVisibility(v);
-        }
-
-        // Return an empty country in case we dont have any
-        if (form.getAddresses() == null) {
-            form.setAddresses(new ArrayList<AddressForm>());
-        }
-
-        if (form.getAddresses().isEmpty()) {
-            AddressForm address = new AddressForm();
-            address.setDisplayIndex(1L);
-            address.setVisibility(v);
-            form.getAddresses().add(address);
         }
 
         return form;

@@ -1,32 +1,46 @@
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
 import { Injectable } 
     from '@angular/core';
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
 
 import { Observable } 
     from 'rxjs/Observable';
 
+import { Subject }
+    from 'rxjs/Subject';
+
 import 'rxjs/Rx';
+
 
 @Injectable()
 export class AdminDelegatesService {
-    private headers: Headers;
+    private headers: HttpHeaders;
+    private notify = new Subject<any>();
     private url: string;
     private urlConfirmDelegate: string;
     private urlDeactivateProfile: string;
     private urlVerifyEmail: string;
 
-    constructor( private http: Http ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+    notifyObservable$ = this.notify.asObservable();
+
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.url = getBaseUri() + '/admin-actions/admin-delegates/check-claimed-status.json?orcidOrEmail=';
         this.urlConfirmDelegate = getBaseUri()+'/admin-actions/admin-delegates';
         this.urlDeactivateProfile = getBaseUri()+'/admin-actions/deactivate-profiles.json';
         this.urlVerifyEmail = getBaseUri()+'/admin-actions/admin-verify-email.json';
+    }
+
+    notifyOther(): void {
+        this.notify.next();
+        console.log('notify');
     }
 
     deactivateOrcids( obj ): Observable<any> {
@@ -37,7 +51,7 @@ export class AdminDelegatesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     findIds( obj ): Observable<any> {
@@ -48,7 +62,14 @@ export class AdminDelegatesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
+    }
+
+    getFormData( id ): Observable<any> {
+        return this.http.get(
+            this.url + id
+        )
+        
     }
 
     lookupIdOrEmails( obj ): Observable<any> {
@@ -59,14 +80,7 @@ export class AdminDelegatesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
-    }
-
-    getFormData( id ): Observable<any> {
-        return this.http.get(
-            this.url + id
-        )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     setFormData( obj ): Observable<any> {
@@ -77,7 +91,7 @@ export class AdminDelegatesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     verifyEmail( obj ): Observable<any> {
@@ -88,6 +102,6 @@ export class AdminDelegatesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }

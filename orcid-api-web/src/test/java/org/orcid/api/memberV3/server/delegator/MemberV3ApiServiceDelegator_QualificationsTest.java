@@ -54,6 +54,8 @@ import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
 import org.orcid.test.DBUnitTest;
@@ -121,7 +123,12 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         Qualifications element = (Qualifications) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/qualifications", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        
+        for (AffiliationGroup<QualificationSummary> group : element.getQualificationGroups()) {
+            for (QualificationSummary summary : group.getActivities()) {
+                Utils.assertIsPublicOrSource(summary, "APP-5555555555555555");
+            }
+        }
     }
 
     @Test
@@ -200,25 +207,28 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertNotNull(qualifications);
         assertEquals("/0000-0000-0000-0003/qualifications", qualifications.getPath());
         Utils.verifyLastModified(qualifications.getLastModifiedDate());
-        assertNotNull(qualifications.getSummaries());
-        assertEquals(4, qualifications.getSummaries().size());
+        assertNotNull(qualifications.retrieveGroups());
+        assertEquals(4, qualifications.retrieveGroups().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
-        for (QualificationSummary summary : qualifications.getSummaries()) {
-            Utils.verifyLastModified(summary.getLastModifiedDate());
-            if (Long.valueOf(42).equals(summary.getPutCode())) {
-                assertEquals("PUBLIC Department", summary.getDepartmentName());
-                found1 = true;
-            } else if (Long.valueOf(43).equals(summary.getPutCode())) {
-                assertEquals("LIMITED Department", summary.getDepartmentName());
-                found2 = true;
-            } else if (Long.valueOf(44).equals(summary.getPutCode())) {
-                assertEquals("PRIVATE Department", summary.getDepartmentName());
-                found3 = true;
-            } else if (Long.valueOf(45).equals(summary.getPutCode())) {
-                assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                found4 = true;
-            } else {
-                fail("Invalid qualification found: " + summary.getPutCode());
+        
+        for (AffiliationGroup<QualificationSummary> group : qualifications.retrieveGroups()) {
+            for (QualificationSummary summary : group.getActivities() ) {
+                Utils.verifyLastModified(summary.getLastModifiedDate());
+                if (Long.valueOf(42).equals(summary.getPutCode())) {
+                    assertEquals("PUBLIC Department", summary.getDepartmentName());
+                    found1 = true;
+                } else if (Long.valueOf(43).equals(summary.getPutCode())) {
+                    assertEquals("LIMITED Department", summary.getDepartmentName());
+                    found2 = true;
+                } else if (Long.valueOf(44).equals(summary.getPutCode())) {
+                    assertEquals("PRIVATE Department", summary.getDepartmentName());
+                    found3 = true;
+                } else if (Long.valueOf(45).equals(summary.getPutCode())) {
+                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
+                    found4 = true;
+                } else {
+                    fail("Invalid qualification found: " + summary.getPutCode());
+                }
             }
         }
         assertTrue(found1);
@@ -296,10 +306,12 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         Utils.verifyLastModified(originalSummary.getLastModifiedDate());
         assertNotNull(originalSummary.getQualifications());
         Utils.verifyLastModified(originalSummary.getQualifications().getLastModifiedDate());
-        assertNotNull(originalSummary.getQualifications().getSummaries());
-        assertNotNull(originalSummary.getQualifications().getSummaries().get(0));
-        Utils.verifyLastModified(originalSummary.getQualifications().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(4, originalSummary.getQualifications().getSummaries().size());
+        assertNotNull(originalSummary.getQualifications().retrieveGroups());
+        assertEquals(4, originalSummary.getQualifications().retrieveGroups().size());
+        
+        QualificationSummary qualificationSummary = originalSummary.getQualifications().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(qualificationSummary);
+        Utils.verifyLastModified(qualificationSummary.getLastModifiedDate());
 
         response = serviceDelegator.createQualification(ORCID, (Qualification) Utils.getAffiliation(AffiliationType.QUALIFICATION));
         assertNotNull(response);
@@ -317,19 +329,27 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getQualifications());
         Utils.verifyLastModified(summaryWithNewElement.getQualifications().getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getQualifications().getSummaries());
-        assertEquals(5, summaryWithNewElement.getQualifications().getSummaries().size());
+        assertNotNull(summaryWithNewElement.getQualifications().retrieveGroups());
+        assertEquals(5, summaryWithNewElement.getQualifications().retrieveGroups().size());
         
         boolean haveNew = false;
 
-        for (QualificationSummary qualificationSummary : summaryWithNewElement.getQualifications().getSummaries()) {
-            assertNotNull(qualificationSummary.getPutCode());
-            Utils.verifyLastModified(qualificationSummary.getLastModifiedDate());
-            if (qualificationSummary.getPutCode().equals(putCode)) {
-                assertEquals("My department name", qualificationSummary.getDepartmentName());
-                haveNew = true;
-            } else {
-                assertTrue(originalSummary.getQualifications().getSummaries().contains(qualificationSummary));
+        for (AffiliationGroup<QualificationSummary> group : summaryWithNewElement.getQualifications().retrieveGroups()) {
+            for (QualificationSummary qs : group.getActivities()) {
+                assertNotNull(qs.getPutCode());
+                Utils.verifyLastModified(qs.getLastModifiedDate());
+                if (qs.getPutCode().equals(putCode)) {
+                    assertEquals("My department name", qs.getDepartmentName());
+                    haveNew = true;
+                } else {
+                    boolean found = false;
+                    for (AffiliationGroup<QualificationSummary> g : originalSummary.getQualifications().retrieveGroups()) {
+                        if (g.getActivities().contains(qs)) {
+                            found = true;
+                        }
+                    }
+                    assertTrue(found);
+                }
             }
         }
         

@@ -9,6 +9,7 @@ package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,8 @@ import org.orcid.jaxb.model.v3.rc1.record.Activity;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "researchResources","distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews", "qualifications", "services", "works" })
+@XmlType(propOrder = { "lastModifiedDate", "researchResources", "distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews",
+        "qualifications", "services", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
@@ -154,7 +156,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     public void setFundings(Fundings fundings) {
         this.fundings = fundings;
     }
-    
+
     public ResearchResources getResearchResources() {
         if (researchResources == null)
             researchResources = new ResearchResources();
@@ -296,7 +298,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                 }
             }
         }
-        
+
         // Set researchResource
         if (researchResources != null) {
             List<ResearchResourceGroup> groups = researchResources.getResearchResourceGroup();
@@ -309,49 +311,84 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                 }
             }
         }
-        
+
         // Set education
         if (educations != null) {
-            for (EducationSummary education : educations.getSummaries()) {
-                activities.put(education.getPutCode(), education);
+            Collection<AffiliationGroup<EducationSummary>> groups = educations.getEducationGroups();
+            for (AffiliationGroup<EducationSummary> group : groups) {
+                if (group != null) {
+                    for (EducationSummary education : group.getActivities()) {
+                        activities.put(education.getPutCode(), education);
+                    }
+                }
             }
         }
         // Set employment
         if (employments != null) {
-            for (EmploymentSummary employment : employments.getSummaries()) {
-                activities.put(employment.getPutCode(), employment);
+            Collection<AffiliationGroup<EmploymentSummary>> groups = employments.getEmploymentGroups();
+            for (AffiliationGroup<EmploymentSummary> group : groups) {
+                if (group != null) {
+                    for (EmploymentSummary employment : group.getActivities()) {
+                        activities.put(employment.getPutCode(), employment);
+                    }
+                }
             }
         }
 
         // Set distinctions
         if (distinctions != null) {
-            for (DistinctionSummary distinction : distinctions.getSummaries()) {
-                activities.put(distinction.getPutCode(), distinction);
+            Collection<AffiliationGroup<DistinctionSummary>> groups = distinctions.getDistinctionGroups();
+            for (AffiliationGroup<DistinctionSummary> group : groups) {
+                if (group != null) {
+                    for (DistinctionSummary distinction : group.getActivities()) {
+                        activities.put(distinction.getPutCode(), distinction);
+                    }
+                }
             }
         }
 
         // Set invited positions
         if (invitedPositions != null) {
-            for (InvitedPositionSummary invitedPosition : invitedPositions.getSummaries()) {
-                activities.put(invitedPosition.getPutCode(), invitedPosition);
+            Collection<AffiliationGroup<InvitedPositionSummary>> groups = invitedPositions.getInvitedPositionGroups();
+            for (AffiliationGroup<InvitedPositionSummary> group : groups) {
+                if (group != null) {
+                    for (InvitedPositionSummary invitedPosition : group.getActivities()) {
+                        activities.put(invitedPosition.getPutCode(), invitedPosition);
+                    }
+                }
             }
         }
         // Set memberships
         if (memberships != null) {
-            for (MembershipSummary membership : memberships.getSummaries()) {
-                activities.put(membership.getPutCode(), membership);
+            Collection<AffiliationGroup<MembershipSummary>> groups = memberships.getMembershipGroups();
+            for (AffiliationGroup<MembershipSummary> group : groups) {
+                if (group != null) {
+                    for (MembershipSummary membership : group.getActivities()) {
+                        activities.put(membership.getPutCode(), membership);
+                    }
+                }
             }
         }
         // Set qualifications
         if (qualifications != null) {
-            for (QualificationSummary qualification : qualifications.getSummaries()) {
-                activities.put(qualification.getPutCode(), qualification);
+            Collection<AffiliationGroup<QualificationSummary>> groups = qualifications.getQualificationGroups();
+            for (AffiliationGroup<QualificationSummary> group : groups) {
+                if (group != null) {
+                    for (QualificationSummary qualification : group.getActivities()) {
+                        activities.put(qualification.getPutCode(), qualification);
+                    }
+                }
             }
         }
         // Set services
         if (services != null) {
-            for (ServiceSummary service : services.getSummaries()) {
-                activities.put(service.getPutCode(), service);
+            Collection<AffiliationGroup<ServiceSummary>> groups = services.getServiceGroups();
+            for (AffiliationGroup<ServiceSummary> group : groups) {
+                if (group != null) {
+                    for (ServiceSummary service : group.getActivities()) {
+                        activities.put(service.getPutCode(), service);
+                    }
+                }
             }
         }
 

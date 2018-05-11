@@ -2,7 +2,7 @@ package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,17 +17,21 @@ public class InvitedPositions extends Affiliations<InvitedPositionSummary> imple
     public InvitedPositions() {
 
     }
-
-    public InvitedPositions(List<InvitedPositionSummary> summaries) {
+    
+    public InvitedPositions(Collection<AffiliationGroup<InvitedPositionSummary>> groups) {
         super();
-        this.summaries = summaries;
+        this.groups = groups;
+    }
+
+    public Collection<AffiliationGroup<InvitedPositionSummary>> getInvitedPositionGroups() {
+        if (this.groups == null) {
+            this.groups = new ArrayList<AffiliationGroup<InvitedPositionSummary>>();
+        }
+        return (Collection<AffiliationGroup<InvitedPositionSummary>>) this.groups;
     }
 
     @Override
-    public List<InvitedPositionSummary> getSummaries() {
-        if (this.summaries == null) {
-            this.summaries = new ArrayList<InvitedPositionSummary>();
-        }
-        return this.summaries;
+    public Collection<AffiliationGroup<InvitedPositionSummary>> retrieveGroups() {
+        return getInvitedPositionGroups();
     }
 }

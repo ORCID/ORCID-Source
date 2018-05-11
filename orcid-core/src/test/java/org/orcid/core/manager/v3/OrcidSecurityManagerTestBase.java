@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
@@ -309,7 +310,9 @@ public class OrcidSecurityManagerTestBase {
     protected Distinctions createDistinctions(DistinctionSummary... elements) {
         Distinctions e = new Distinctions();
         for (DistinctionSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<DistinctionSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -324,7 +327,9 @@ public class OrcidSecurityManagerTestBase {
     protected Educations createEducations(EducationSummary... elements) {
         Educations e = new Educations();
         for (EducationSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<EducationSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -339,7 +344,9 @@ public class OrcidSecurityManagerTestBase {
     protected Employments createEmployments(EmploymentSummary... elements) {
         Employments e = new Employments();
         for (EmploymentSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<EmploymentSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -354,7 +361,9 @@ public class OrcidSecurityManagerTestBase {
     protected InvitedPositions createInvitedPositions(InvitedPositionSummary... elements) {
         InvitedPositions e = new InvitedPositions();
         for (InvitedPositionSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<InvitedPositionSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -369,7 +378,9 @@ public class OrcidSecurityManagerTestBase {
     protected Memberships createMemberships(MembershipSummary... elements) {
         Memberships e = new Memberships();
         for (MembershipSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<MembershipSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -384,7 +395,9 @@ public class OrcidSecurityManagerTestBase {
     protected Qualifications createQualifications(QualificationSummary... elements) {
         Qualifications e = new Qualifications();
         for (QualificationSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<QualificationSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -399,7 +412,9 @@ public class OrcidSecurityManagerTestBase {
     protected Services createServices(ServiceSummary... elements) {
         Services e = new Services();
         for (ServiceSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<ServiceSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }

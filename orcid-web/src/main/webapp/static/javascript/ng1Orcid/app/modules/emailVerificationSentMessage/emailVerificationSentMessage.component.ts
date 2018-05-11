@@ -26,6 +26,7 @@ import { ModalService }
 export class EmailVerificationSentMesssageComponent implements AfterViewInit, OnDestroy, OnInit {
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
 
     emailPrimary: string;
 
@@ -64,6 +65,20 @@ export class EmailVerificationSentMesssageComponent implements AfterViewInit, On
     };
 
     ngOnInit() {
-        this.getEmails();
+
+        this.subscription = this.modalService.notifyObservable$.subscribe(
+            (res: any) => {
+                console.log('res.value',res);
+                if ( res.moduleId == "emailSentConfirmation" ) {
+                    if ( res.data != undefined) {
+                        this.emailPrimary = res.data.email;
+                    }
+                    else {
+                        this.getEmails();
+                    }
+
+                }
+            }
+        );
     };
 }

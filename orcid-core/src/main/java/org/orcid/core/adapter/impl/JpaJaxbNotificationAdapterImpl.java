@@ -7,15 +7,21 @@ import java.util.Map;
 
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationAdministrative;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationServiceAnnouncement;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationTip;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
+import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 
 import ma.glasnost.orika.MapperFacade;
 
@@ -34,6 +40,9 @@ public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapte
         JAXB2JPA_CLASS_MAP.put(NotificationCustom.class, NotificationCustomEntity.class);
         JAXB2JPA_CLASS_MAP.put(NotificationAmended.class, NotificationAmendedEntity.class);
         JAXB2JPA_CLASS_MAP.put(NotificationInstitutionalConnection.class, NotificationInstitutionalConnectionEntity.class);
+        JAXB2JPA_CLASS_MAP.put(NotificationAdministrative.class, NotificationAdministrativeEntity.class);
+        JAXB2JPA_CLASS_MAP.put(NotificationServiceAnnouncement.class, NotificationServiceAnnouncementEntity.class);
+        JAXB2JPA_CLASS_MAP.put(NotificationTip.class, NotificationTipEntity.class);        
     }
 
     public void setMapperFacade(MapperFacade mapperFacade) {

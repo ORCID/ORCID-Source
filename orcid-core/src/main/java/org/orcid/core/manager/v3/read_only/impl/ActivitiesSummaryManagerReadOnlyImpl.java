@@ -7,7 +7,6 @@ import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
@@ -70,101 +69,37 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
 
         // Set distinctions
         List<DistinctionSummary> distinctionsList = affiliationsManager.getDistinctionSummaryList(orcid);
-        Distinctions distinctions = new Distinctions();
-        for (DistinctionSummary summary : distinctionsList) {
-            if (justPublic) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                    distinctions.getSummaries().add(summary);
-                }
-            } else {
-                distinctions.getSummaries().add(summary);
-            }
-        }
+        Distinctions distinctions =  new Distinctions(affiliationsManager.groupAffiliations(distinctionsList, justPublic));
         activities.setDistinctions(distinctions);
         
         // Set educations
         List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid);
-        Educations educations = new Educations();
-        for (EducationSummary summary : educationsList) {
-            if (justPublic) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                    educations.getSummaries().add(summary);
-                }
-            } else {
-                educations.getSummaries().add(summary);
-            }
-        }
+        Educations educations = new Educations(affiliationsManager.groupAffiliations(educationsList, justPublic));
         activities.setEducations(educations);
 
         // Set employments
         List<EmploymentSummary> employmentList = affiliationsManager.getEmploymentSummaryList(orcid);
-
-        Employments employments = new Employments();
-        for (EmploymentSummary summary : employmentList) {
-            if (justPublic) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                    employments.getSummaries().add(summary);
-                }
-            } else {
-                employments.getSummaries().add(summary);
-            }
-        }
+        Employments employments = new Employments(affiliationsManager.groupAffiliations(employmentList, justPublic));
         activities.setEmployments(employments);
 
         // Set invited positions
         List<InvitedPositionSummary> invitedPositionsList = affiliationsManager.getInvitedPositionSummaryList(orcid);
-        InvitedPositions invitedPositions = new InvitedPositions();
-        for (InvitedPositionSummary summary : invitedPositionsList) {
-            if (justPublic) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                    invitedPositions.getSummaries().add(summary);
-                }
-            } else {
-                invitedPositions.getSummaries().add(summary);
-            }
-        }
+        InvitedPositions invitedPositions = new InvitedPositions(affiliationsManager.groupAffiliations(invitedPositionsList, justPublic));
         activities.setInvitedPositions(invitedPositions);
         
         // Set memberships
         List<MembershipSummary> membershipsList = affiliationsManager.getMembershipSummaryList(orcid);
-        Memberships memberships = new Memberships();
-        for (MembershipSummary summary : membershipsList) {
-            if (justPublic) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                    memberships.getSummaries().add(summary);
-                }
-            } else {
-                memberships.getSummaries().add(summary);
-            }
-        }
+        Memberships memberships = new Memberships(affiliationsManager.groupAffiliations(membershipsList, justPublic));
         activities.setMemberships(memberships);
         
         // Set qualifications
         List<QualificationSummary> qualificationsList = affiliationsManager.getQualificationSummaryList(orcid);
-        Qualifications qualifications = new Qualifications();
-        for (QualificationSummary summary : qualificationsList) {
-            if (justPublic) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                    qualifications.getSummaries().add(summary);
-                }
-            } else {
-                qualifications.getSummaries().add(summary);
-            }
-        }
+        Qualifications qualifications = new Qualifications(affiliationsManager.groupAffiliations(qualificationsList, justPublic));
         activities.setQualifications(qualifications);
         
         // Set services
         List<ServiceSummary> servicesList = affiliationsManager.getServiceSummaryList(orcid);
-        Services services = new Services();
-        for (ServiceSummary summary : servicesList) {
-            if (justPublic) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                    services.getSummaries().add(summary);
-                }
-            } else {
-                services.getSummaries().add(summary);
-            }
-        }
+        Services services = new Services(affiliationsManager.groupAffiliations(servicesList, justPublic));
         activities.setServices(services);
         
         // Set fundings

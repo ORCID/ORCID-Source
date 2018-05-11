@@ -10,7 +10,7 @@
             <div class="control-group">
                 <label for="passwordField" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.pleaseenternewpassword")}</label>
                 <div class="controls">
-                    <input id="passwordField" type="password" name="password" class="input-xlarge" [ngModel]="resetPasswordForm.password" (onChange)="serverValidate()"/>
+                    <input id="passwordField" type="password" name="password" class="input-xlarge" [(ngModel)]="resetPasswordForm.password" (onChange)="serverValidate()"/>
                     <span class="required">*</span>
                     <@orcid.passwordHelpPopup /> 
                 </div>
@@ -18,7 +18,7 @@
             <div class="control-group">
                 <label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.confirmyournewpassword")}</label>
                 <div class="controls">
-                    <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [ngModel]="resetPasswordForm.retypedPassword" (onChange)="serverValidate()" />
+                    <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [(ngModel)]="resetPasswordForm.retypedPassword" (onChange)="serverValidate()" />
                     <span class="required">*</span>
                 </div>        
             </div>
@@ -26,7 +26,7 @@
             <div class="control-group">
                 <label for="securityQuestionId" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengequestion")}</label>                 
                 <div class="controls">                          
-                    <select id="securityQuestionId" ng-model="resetPasswordForm.securityQuestionId" name="securityQuestionId" class="input-xlarge">
+                    <select id="securityQuestionId" [(ngModel)]="resetPasswordForm.securityQuestionId" name="securityQuestionId" class="input-xlarge">
                         <#list securityQuestions?keys as key>
                            <option value="${key}">${securityQuestions[key]}</option>
                         </#list>
@@ -34,7 +34,7 @@
                 </div>
                 <label for="securityQuestionAnswer" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengeanswer")}</label>
                 <div class="controls">                                          
-                    <input [ngModel]="oneTimeResetPasswordForm.securityQuestionAnswer" class="input-xlarge" />
+                    <input [(ngModel)]="resetPasswordForm.securityQuestionAnswer" name="securityQuestionAnswer" class="input-xlarge" />
                 </div>
             </div>
             <div class="controls">

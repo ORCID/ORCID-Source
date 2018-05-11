@@ -13,6 +13,10 @@ import { FormsModule }
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
 
+//User generated attribute directives
+import { FocusMe }
+    from '../../directives/focusMe.directive.ts'; 
+
 //User generated filters
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
@@ -58,10 +62,6 @@ import { HeaderNg2Module }
 
 import { LanguageNg2Module }
     from './../language/language.ts';
-
-
-import { NotificationsCountNg2Module }
-    from './../notificationsCount/notificationsCount.ts';
 
 import { NotificationPreferenceNg2Module }
     from './../notificationPreferences/notificationPreference.ts';
@@ -209,6 +209,9 @@ import { WorkspaceService }
 
 import { WorksService } 
     from '../../shared/works.service.ts';
+    
+import { EmailFrequencyService }
+    from '../../shared/emailFrequency.service.ts';
 
 // This is the Angular 2 part of the module
 @NgModule(
@@ -228,6 +231,7 @@ import { WorksService }
             SwitchUserNg2Module
         ],
         declarations: [ 
+            FocusMe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
@@ -243,6 +247,8 @@ import { WorksService }
             //Angular Libraries
             CommonModule,
             FormsModule,
+            //User directives
+            FocusMe,
             //User Pipes
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
@@ -278,6 +284,7 @@ import { WorksService }
             DelegatorsService,
             DeprecateProfileService,
             DiscoService,
+            EmailFrequencyService,
             EmailService,
             ExternalIdentifiersService,
             FeaturesService,
