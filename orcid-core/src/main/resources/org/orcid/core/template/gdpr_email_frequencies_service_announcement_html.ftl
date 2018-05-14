@@ -46,7 +46,7 @@
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">Registration</span>
             <ul style="list-style:disc">
                 <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><u>Visibility settings.</u> The default visibility setting for new items added to your record is no longer preselected in the registration form. You can view and update your current setting by going to your <a href="https://orcid.org/account" target="_blank">Account Settings</a> and clicking on the "visibility preferences" tab.</li>
-                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><u>Email frequency.</u> The frequency setting for receiving emails from ORCID is no longer preselected in the registration form. You can view your current setting by going to your <a href="https://orcid.org/account" target="_blank">Account Settings</a> and clicking on the "Email and contact preferences" and "ORCID inbox notifications" tabs.</li>
+                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><u>Email frequency.</u> The frequency setting for receiving emails from ORCID is no longer preselected in the registration form. You can view your current setting by going to your <a href="https://orcid.org/account" target="_blank">Account Settings</a> and clicking on the "Email and notification preferences" tab.</li>
             </ul>
         </p>
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
