@@ -106,6 +106,9 @@ import { NotificationsModule }
 import { OauthAuthorizationModule } 
     from './oauthAuthorization/oauthAuthorization.ts';
 
+import { OrgIdentifierPopoverModule } 
+    from './orgIdentifierPopover/orgIdentifierPopover.ts';
+
 import { PasswordEditModule } 
     from './passwordEdit/passwordEdit.ts';
 
@@ -228,6 +231,7 @@ export const orcidApp = angular.module(
         ModalModule.name,
         NameModule.name,
         OauthAuthorizationModule.name,
+        OrgIdentifierPopoverModule.name,
         PasswordEditModule.name,
         PersonalInfoModule.name,
         PublicEduAffiliationModule.name,

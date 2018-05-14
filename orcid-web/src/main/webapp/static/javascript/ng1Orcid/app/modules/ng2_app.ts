@@ -131,6 +131,9 @@ import { PublicEduAffiliationNg2Module }
 import { OauthAuthorizationNg2Module } 
     from './oauthAuthorization/oauthAuthorization.ts';
 
+import { OrgIdentifierPopoverNg2Module } 
+    from './orgIdentifierPopover/orgIdentifierPopover.ts';
+
 import { ReactivationNg2Module } 
     from './reactivation/reactivation.ts';
 
@@ -333,6 +336,7 @@ export class RootCmp {
         PersonalInfoNg2Module,
         PublicEduAffiliationNg2Module,
         OauthAuthorizationNg2Module,
+        OrgIdentifierPopoverNg2Module,
         ReactivationNg2Module,
         RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,

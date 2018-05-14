@@ -33,7 +33,7 @@ import { FilterImportWizardsPipe }
 import { LatexPipe }
     from '../../pipes/latexNg2.ts';
 
-    import { OrgIdentifierHtmlPipe }
+import { OrgIdentifierHtmlPipe }
     from '../../pipes/orgIdentifierHtmlNg2.ts';    
     
 import { OrderByPipe }
@@ -49,6 +49,8 @@ import { WorkExternalIdentifierHtmlPipe }
     from '../../pipes/workExternalIdentifierHtmlNg2.ts';
 
 //User generated modules
+import { ActivitiesExternalIdentifierNg2Module }
+    from './../activitiesExternalIdentifier/activitiesExternalIdentifier.ts';
 /*
 import { DelegatesNg2Module }
     from './../delegates/delegates.ts';
@@ -68,6 +70,9 @@ import { LanguageNg2Module }
 
 import { NotificationPreferenceNg2Module }
     from './../notificationPreferences/notificationPreference.ts';
+
+import { OrgIdentifierPopoverNg2Module } 
+    from './../orgIdentifierPopover/orgIdentifierPopover.ts';
 
 import { PasswordEditNg2Module }
     from './../passwordEdit/passwordEdit.ts';
@@ -224,10 +229,12 @@ import { EmailFrequencyService }
             CommonModule,
             FormsModule,
             //User Modules
+            ActivitiesExternalIdentifierNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
+            OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
@@ -265,10 +272,12 @@ import { EmailFrequencyService }
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
+            ActivitiesExternalIdentifierNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
+            OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
