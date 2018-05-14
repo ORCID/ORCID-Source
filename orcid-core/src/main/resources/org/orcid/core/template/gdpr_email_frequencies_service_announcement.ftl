@@ -14,14 +14,14 @@ Privacy Policy
 -   Clear language. We updated our privacy policy (https://orcid.org/blog/2017/03/21/valuing-privacy-and-transparency) to make it more clear and concise. 
 
 Your rights as a user under GDPR
--   We created a new Knowledge Base article explaining the rights you have under the GDPR and how you can adjust your account settings in the Registry interface. 
+-   We created a new Knowledge Base article (https://support.orcid.org/knowledgebase/articles/907155) explaining the rights you have under the GDPR and how you can adjust your account settings in the Registry interface. 
 
 Security documentation
--   We have updated our security documentation to reflect our current practices.
+-   We have updated our security documentation (https://support.orcid.org/knowledgebase/articles/136222) to reflect our current practices.
 
 Registration
 -   Visibility settings. The default visibility setting for new items added to your record is no longer preselected in the registration form. You can view and update your current setting by going to your Account Settings (https://orcid.org/account) and clicking on the "visibility preferences" tab.
--   Email frequency. The frequency setting for receiving emails from ORCID is no longer is preselected in the registration form. You can view your current setting by going to your Account Settings (https://orcid.org/account) and clicking on the "Email and contact preferences" and "ORCID inbox notifications" tabs.
+-   Email frequency. The frequency setting for receiving emails from ORCID is no longer preselected in the registration form. You can view your current setting by going to your Account Settings (https://orcid.org/account) and clicking on the "Email and contact preferences" and "ORCID inbox notifications" tabs.
 
 As always, please contact (https://orcid.org/help/contact-us) us if you have questions about ORCID and your data privacy.
 
