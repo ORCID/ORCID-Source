@@ -157,7 +157,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
         this.externalIdentifiersJson = externalIdentifiersJson;
     }
     
-    @OneToMany(mappedBy="researchResourceEntity")
+    @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.EAGER )
     public Set<ResearchResourceItemEntity> getResourceItems() {
         return resourceItems;
     }

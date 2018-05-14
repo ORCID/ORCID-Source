@@ -2,7 +2,6 @@ package org.orcid.persistence.jpa.entities;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,17 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "research_resource_item")
-public class ResearchResourceItemEntity extends BaseEntity<Long> {
+public class ResearchResourceItemEntity {
 
-    /*
-                                <xs:element name="hosts" type="research-resource:hosts" minOccurs="1" maxOccurs="1" />
-     */
     private static final long serialVersionUID = 1L;
     private Long id;
     private Long researchResourceId;
@@ -32,11 +27,18 @@ public class ResearchResourceItemEntity extends BaseEntity<Long> {
     private String externalIdentifiersJson;
     private String url;
     
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="research_resource_id", nullable=false)
     private ResearchResourceEntity researchResourceEntity;
 
-    @Override
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="research_resource_id", nullable=false)
+    public ResearchResourceEntity getResearchResourceEntity() {
+        return researchResourceEntity;
+    }
+
+    public void setResearchResourceEntity(ResearchResourceEntity researchResourceEntity) {
+        this.researchResourceEntity = researchResourceEntity;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "research_resource_item_seq")
     @SequenceGenerator(name = "research_resource_item_seq", sequenceName = "research_resource_item_seq")
@@ -84,12 +86,4 @@ public class ResearchResourceItemEntity extends BaseEntity<Long> {
         this.url = url;
     }
 
-    @Column(name = "reserach_resource_id")
-    public Long getResearchResourceId() {
-        return researchResourceId;
-    }
-
-    public void setResearchResourceId(Long research_resource_id) {
-        this.researchResourceId = research_resource_id;
-    }
 }

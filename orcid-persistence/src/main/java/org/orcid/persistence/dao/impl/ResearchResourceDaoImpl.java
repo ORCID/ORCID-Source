@@ -10,9 +10,9 @@ import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ResearchResourceDoImpl extends GenericDaoImpl<ResearchResourceEntity, Long> implements ResearchResourceDao{
+public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEntity, Long> implements ResearchResourceDao{
 
-    public ResearchResourceDoImpl() {
+    public ResearchResourceDaoImpl() {
         super(ResearchResourceEntity.class);
     }
     

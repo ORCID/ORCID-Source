@@ -41,7 +41,8 @@ public class DBUnitTest {
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
             "org_disambiguated", "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address",
             "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
-            "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "invalid_record_data_changes" };
+            "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "invalid_record_data_changes",
+            "research_resource","research_resource_item"};
 
     private static ApplicationContext context;
 
@@ -101,6 +102,10 @@ public class DBUnitTest {
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
+        QueryDataSet childTableSet = new QueryDataSet(connection);
+        childTableSet.addTable("research_resource_item");
+        DatabaseOperation.DELETE.execute(connection, childTableSet);
+
         QueryDataSet dataSet = new QueryDataSet(connection);
         dataSet.addTable("profile",
                 "SELECT p1.* FROM profile p1 LEFT JOIN client_details c ON c.group_orcid = p1.orcid LEFT JOIN profile p2 ON p1.source_id = p2.source_id WHERE p2.source_id IS NULL AND (c.client_details_id IS NULL OR p1.client_source_id IS NOT NULL)");
@@ -131,6 +136,7 @@ public class DBUnitTest {
         dataSet.addTable("address");
         dataSet.addTable("invalid_record_data_changes");
         dataSet.addTable("email_frequency");
+        dataSet.addTable("research_resource");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);
