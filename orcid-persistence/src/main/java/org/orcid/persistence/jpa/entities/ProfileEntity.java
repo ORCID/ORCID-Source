@@ -147,7 +147,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     @Deprecated
     private Boolean enableNotifications = Boolean.TRUE;
     @Deprecated
-    private float sendEmailFrequencyDays;
+    private Float sendEmailFrequencyDays;
     @Deprecated
     private Boolean sendChangeNotifications;
     @Deprecated
@@ -785,7 +785,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     }
 
     @Column(name = "send_email_frequency_days")
-    public float getSendEmailFrequencyDays() {
+    public Float getSendEmailFrequencyDays() {
         return sendEmailFrequencyDays;
     }
 
