@@ -31,10 +31,7 @@ import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
 import { LatexPipe }
-    from '../../pipes/latexNg2.ts';
-
-import { OrgIdentifierHtmlPipe }
-    from '../../pipes/orgIdentifierHtmlNg2.ts';    
+    from '../../pipes/latexNg2.ts';  
     
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
@@ -247,7 +244,6 @@ import { EmailFrequencyService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
-            OrgIdentifierHtmlPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
@@ -266,7 +262,6 @@ import { EmailFrequencyService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
-            OrgIdentifierHtmlPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
