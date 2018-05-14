@@ -60,9 +60,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     addingAffiliation: boolean;
     deleAff: any;
     disambiguatedAffiliation: any;
-    displayAffiliationExtIdPopOver: any;
     displayNewAffiliationTypesFeatureEnabled: boolean;
-    displayURLPopOver: any;
     distinctionsAndInvitedPositions: any;
     editAffiliation: any;
     educations: any;
@@ -97,8 +95,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.addingAffiliation = false;
         this.deleAff = null;
         this.disambiguatedAffiliation = null;
-        this.displayAffiliationExtIdPopOver = {};
-        this.displayURLPopOver = {};
         this.editAffiliation = {};
         this.educations = [];
         this.emails = {};
@@ -249,14 +245,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = false;
     };
 
-    hideURLPopOver(id): void{
-        this.displayURLPopOver[id] = false;
-    };
-
-    hideAffiliationExtIdPopOver(id): void{
-        this.displayAffiliationExtIdPopOver[id] = false;
-    };
-
     moreInfoMouseEnter(key, $event): void {
         $event.stopPropagation();
         if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
@@ -354,10 +342,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             .subscribe(data => {});
     };
 
-    showAffiliationExtIdPopOver(id): void{
-        console.log("show popover " + id);
-        this.displayAffiliationExtIdPopOver[id] = true;
-    };
 
     showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
@@ -366,11 +350,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     showTooltip(element): void{        
         this.showElement[element] = true;
-    };
-
-    
-    showURLPopOver(id): void {
-        this.displayURLPopOver[id] = true;
     };
 
     sort(key, reverse?): void {

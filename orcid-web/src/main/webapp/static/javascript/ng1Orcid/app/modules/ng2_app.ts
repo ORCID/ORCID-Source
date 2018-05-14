@@ -29,8 +29,8 @@ import { UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated modules imports
-import { ActivitiesExternalIdentifierNg2Module } 
-    from './activitiesExternalIdentifier/activitiesExternalIdentifier.ts';
+import { AffiliationExtIdPopoverNg2Module } 
+    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
 
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
@@ -302,7 +302,7 @@ export class RootCmp {
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
-        ActivitiesExternalIdentifierNg2Module,
+        AffiliationExtIdPopoverNg2Module,
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved

@@ -13,8 +13,8 @@ import 'angular-route'
 
 //User generated imports
 
-import { ActivitiesExternalIdentifierModule } 
-    from './activitiesExternalIdentifier/activitiesExternalIdentifier.ts';
+import { AffiliationExtIdPopoverModule } 
+    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
 
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
@@ -201,7 +201,7 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
-        ActivitiesExternalIdentifierModule.name,
+        AffiliationExtIdPopoverModule.name,
         AffiliationModule.name,
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
