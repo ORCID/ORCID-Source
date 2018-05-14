@@ -495,20 +495,18 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         
         // Create email frequency entity
         boolean sendQuarterlyTips = (claim.getSendOrcidNews() == null) ? false : claim.getSendOrcidNews().getValue();
-        if(profile.getSendEmailFrequencyDays() == null) {
-            if(emailFrequencyManager.emailFrequencyExists(orcid)) {
-                emailFrequencyManager.update(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);
-            } else {
-                emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);
-            }            
-        } else {
-            SendEmailFrequency f = SendEmailFrequency.fromValue(profile.getSendEmailFrequencyDays());
-            if(emailFrequencyManager.emailFrequencyExists(orcid)) {
-                emailFrequencyManager.update(orcid, f, f, f, sendQuarterlyTips);
-            } else {
-                emailFrequencyManager.createOnRegister(orcid, f, f, f, sendQuarterlyTips);
-            }            
+        SendEmailFrequency f = SendEmailFrequency.NEVER;
+        
+        try {
+            f = SendEmailFrequency.fromValue(profile.getSendEmailFrequencyDays());
+        } catch(Exception e) {
+            
         }
+        if(emailFrequencyManager.emailFrequencyExists(orcid)) {
+            emailFrequencyManager.update(orcid, f, f, f, sendQuarterlyTips);
+        } else {
+            emailFrequencyManager.createOnRegister(orcid, f, f, f, sendQuarterlyTips);
+        }        
         
         return true;
     }
