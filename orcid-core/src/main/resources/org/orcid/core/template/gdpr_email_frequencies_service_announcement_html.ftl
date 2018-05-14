@@ -26,25 +26,25 @@
         </p>
         <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">Privacy Policy</span>
-            <ul>
+            <ul style="list-style:disc">
                 <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><u>Clear language.</u> We <a href="https://orcid.org/blog/2017/03/21/valuing-privacy-and-transparency" target="_blank">updated our privacy policy</a> to make it more clear and concise.</li>
             </ul>
         </p>        
         <p>
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">Your rights as a user under GDPR</span>
-            <ul>
-                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">We created a new Knowledge Base article explaining the rights you have under the GDPR and how you can adjust your account settings in the Registry interface.</li>
+            <ul style="list-style:disc">
+                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">We created a <a href="https://support.orcid.org/knowledgebase/articles/907155" target="_blank">new Knowledge Base article</a> explaining the rights you have under the GDPR and how you can adjust your account settings in the Registry interface.</li>
             </ul>
         </p>
         <p>
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">Security documentation</span>
-            <ul>
-                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">We have updated our security documentation to reflect our current practices.</li>
+            <ul style="list-style:disc">
+                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">We have updated our <a href="https://support.orcid.org/knowledgebase/articles/136222" target="_blank">security documentation</a> to reflect our current practices.</li>
             </ul>
         </p>
         <p>
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">Registration</span>
-            <ul>
+            <ul style="list-style:disc">
                 <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><u>Visibility settings.</u> The default visibility setting for new items added to your record is no longer preselected in the registration form. You can view and update your current setting by going to your <a href="https://orcid.org/account" target="_blank">Account Settings</a> and clicking on the "visibility preferences" tab.</li>
                 <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><u>Email frequency.</u> The frequency setting for receiving emails from ORCID is no longer is preselected in the registration form. You can view your current setting by going to your <a href="https://orcid.org/account" target="_blank">Account Settings</a> and clicking on the "Email and contact preferences" and "ORCID inbox notifications" tabs.</li>
             </ul>
