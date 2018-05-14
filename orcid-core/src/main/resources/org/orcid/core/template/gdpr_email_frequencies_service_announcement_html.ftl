@@ -39,7 +39,7 @@
         <p>
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">Security documentation</span>
             <ul style="list-style:disc">
-                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">We have updated our <a href="https://support.orcid.org/knowledgebase/articles/136222" target="_blank">security documentation</a> to reflect our current practices.</li>
+                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">We updated our <a href="https://support.orcid.org/knowledgebase/articles/136222" target="_blank">security documentation</a> to reflect our current practices.</li>
             </ul>
         </p>
         <p>
