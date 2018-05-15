@@ -1,6 +1,6 @@
 <#import "email_macros.ftl" as emailMacros />
 
-<@emailMacros.msg "email.common.dear" /> ${emailName},
+Dear ${emailName},
 
 You may have heard about the General Data Protection Regulation (GDPR)(https://www.eugdpr.org/), which is taking effect in Europe later this month. The GDPR improves transparency and data privacy rights of individuals. We’re writing to explain how our practices align with GDPR. 
 
@@ -17,7 +17,7 @@ Your rights as a user under GDPR
 -   We created a new Knowledge Base article (https://support.orcid.org/knowledgebase/articles/907155) explaining the rights you have under the GDPR and how you can adjust your account settings in the Registry interface. 
 
 Security documentation
--   We have updated our security documentation (https://support.orcid.org/knowledgebase/articles/136222) to reflect our current practices.
+-   We updated our security documentation (https://support.orcid.org/knowledgebase/articles/136222) to reflect our current practices.
 
 Registration
 -   Visibility settings. The default visibility setting for new items added to your record is no longer preselected in the registration form. You can view and update your current setting by going to your Account Settings (https://orcid.org/account) and clicking on the "visibility preferences" tab.
@@ -32,5 +32,12 @@ Cheers,
 Laurel L. Haak
 Executive Director, ORCID
 
-<@emailMacros.msg "email.common.you_have_received_this_email" />
-<#include "email_footer.ftl"/>
+You have received this email as a service announcement related to your ORCID Account.
+
+email preferences (${baseUri}/account)
+privacy policy (${baseUri}/privacy-policy)
+ORCID, Inc.
+
+10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA
+
+${baseUri}
