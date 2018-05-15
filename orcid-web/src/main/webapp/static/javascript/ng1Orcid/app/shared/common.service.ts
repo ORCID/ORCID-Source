@@ -19,6 +19,20 @@ export class CommonService {
         return str;
     };
 
+    addUrlProtocol(url: string): string {
+        if (url == null) {
+            return url;
+        }
+        if(!url.startsWith('http')) {               
+            if (url.startsWith('//')){              
+                url = ('https:' == document.location.protocol ? 'https:' : 'http:') + url;
+            } else {
+                url = 'http://' + url;    
+            }
+        }
+        return url;
+    };
+
     contains(arr, obj): boolean {
         let index = arr.length;
         while (index--) {

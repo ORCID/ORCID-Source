@@ -18,6 +18,9 @@ import { FocusMe }
     from '../../directives/focusMe.directive.ts'; 
 
 //User generated filters
+import { AffiliationExternalIdentifierHtmlPipe }
+    from '../../pipes/affiliationExternalIdentifierHtmlNg2.ts';
+
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
 
@@ -231,6 +234,7 @@ import { EmailFrequencyService }
             SwitchUserNg2Module
         ],
         declarations: [ 
+            AffiliationExternalIdentifierHtmlPipe,
             FocusMe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
@@ -250,6 +254,7 @@ import { EmailFrequencyService }
             //User directives
             FocusMe,
             //User Pipes
+            AffiliationExternalIdentifierHtmlPipe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,

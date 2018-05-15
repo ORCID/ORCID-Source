@@ -12,6 +12,10 @@ import * as vcRecaptcha from 'angular-recaptcha'
 import 'angular-route'
 
 //User generated imports
+
+import { ActivitiesExternalIdentifierModule } 
+    from './activitiesExternalIdentifier/activitiesExternalIdentifier.ts';
+
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
 
@@ -194,6 +198,7 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
+        ActivitiesExternalIdentifierModule.name,
         AffiliationModule.name,
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
