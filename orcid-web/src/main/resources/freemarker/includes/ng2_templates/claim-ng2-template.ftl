@@ -1,4 +1,4 @@
-<script type="text/ng-template" id="claim-ng2-template">
+<script type="text/ng-template" id="claim-ng2-template"> 
     <div>
         <div>
             <h4>${springMacroRequestContext.getMessage("claim.almostthere")}</h4>
