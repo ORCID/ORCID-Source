@@ -13,21 +13,13 @@
 
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="MES %-5.5p [%-11.11t] %d{HH:mm:ss,SSS} (%F:%L) | %m %n" />
+			<param name="ConversionPattern" value="AMQ %-5.5p [%-11.11t] %d{HH:mm:ss,SSS} (%F:%L) | %m %n" />
 		</layout>
 	</appender>
 
-	<!-- 3rd party Loggers -->
-	<logger name="org.springframework">
-		<level value="WARN" />
-	</logger>
-	<logger name="org.apache">
-		<level value="INFO" />
-	</logger>
-
 	<!-- Root Logger -->
 	<root>
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="FILE_APPENDER" />
 	</root>
