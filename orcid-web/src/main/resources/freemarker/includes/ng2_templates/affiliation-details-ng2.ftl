@@ -62,18 +62,7 @@
                 <ul class="id-details">
                     <li *ngFor='let extID of group?.activities[group?.activePutCode]?.affiliationExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
                         <span *ngIf="group?.activities[group?.activePutCode]?.affiliationExternalIdentifiers[0]?.value?.value?.length > 0">
-                                <span *ngIf="extID.relationship && extID.relationship.value == 'part-of'" class='italic'><@orcid.msg 'common.part_of'/> </span><span>{{extID.type.value | uppercase}}:</span>
-                                <a *ngIf="extID.value" href="{{extID.url.value | urlProtocol}}" class='truncate-anchor inline' target='orcid.blank' (mouseenter)='showAffiliationExtIdPopOver(group?.activities[group?.activePutCode]?.putCode.value+i)' (mouseleave)='hideAffiliationExtIdPopOver(group?.activities[group?.activePutCode]?.putCode.value+i)'>{{extID.value.value}}</a> 
-                                <div *ngIf="extID.url" class="popover-pos">
-                                    <div class="popover-help-container">
-                                        <div class="popover bottom" [ngClass]="{'block' : displayAffiliationExtIdPopOver[group?.activities[group?.activePutCode]?.putCode.value+i] == true}">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <a href="{{extID.url.value | urlProtocol}}" target="orcid.blank" class="ng-binding">{{extID.url.value | urlProtocol}}</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> 
+                            <affiliation-ext-id-popover-ng2 [extID]="extID" [putCode]="group?.activities[group?.activePutCode]?.putCode.value+i"></affiliation-ext-id-popover-ng2>
                         </span>
                     </li>
                 </ul>                                   
@@ -91,8 +80,7 @@
             <div class="org-ids" *ngIf="group?.activities[group?.activePutCode]?.orgDisambiguatedId?.value">
                 <div class="col-md-12">   
                     <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
-                    <span [innerHTML]='group?.activities[group?.activePutCode]?.disambiguatedAffiliationSourceId.value | orgIdentifierHtml:group?.activities[group?.activePutCode]?.disambiguationSource.value:group?.activities[group?.activePutCode]?.putCode.value:group?.activities[group?.activePutCode]?.disambiguationSource' class="url-popover"> 
-                    </span>
+                    <org-identifier-popover-ng2 [value]="group?.activities[group?.activePutCode]?.disambiguatedAffiliationSourceId.value" [putCode]="group?.activities[group?.activePutCode]?.putCode.value" [type]="group?.activities[group?.activePutCode]?.disambiguationSource.value"></org-identifier-popover-ng2>
                 </div>
                 <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
                     <span *ngIf="group?.activities[group?.activePutCode]?.orgDisambiguatedName">{{group?.activities[group?.activePutCode]?.orgDisambiguatedName}}</span><span *ngIf="group?.activities[group?.activePutCode]?.orgDisambiguatedCity || group?.activities[group?.activePutCode]?.orgDisambiguatedRegion || group?.activities[group?.activePutCode]?.orgDisambiguatedCountry">: </span><span *ngIf="group?.activities[group?.activePutCode]?.orgDisambiguatedCity">{{group?.activities[group?.activePutCode]?.orgDisambiguatedCity}}</span><span *ngIf="group?.activities[group?.activePutCode]?.orgDisambiguatedCity && group?.activities[group?.activePutCode]?.orgDisambiguatedRegion">, </span><span *ngIf="group?.activities[group?.activePutCode]?.orgDisambiguatedRegion">{{group?.activities[group?.activePutCode]?.orgDisambiguatedRegion}}</span><span *ngIf="group?.activities[group?.activePutCode]?.orgDisambiguatedCountry && (group?.activities[group?.activePutCode]?.orgDisambiguatedCity || group?.activities[group?.activePutCode]?.orgDisambiguatedRegion)">, </span><span *ngIf="group?.activities[group?.activePutCode]?.orgDisambiguatedCountry">{{group?.activities[group?.activePutCode]?.orgDisambiguatedCountry}}</span>
