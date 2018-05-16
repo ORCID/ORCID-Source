@@ -78,6 +78,10 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     sortHideOption: boolean;
     sortState: any;
+    sortStateDistinctionsAndInvitedPositions: any;
+    sortStateEducations: any;
+    sortStateEmployments: any;
+    sortStateMembershipsAndServices: any;
     
     constructor(
         private affiliationService: AffiliationService,
@@ -106,7 +110,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.sortHideOption = false;
-        this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);   
+        this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);
+        this.sortStateDistinctionsAndInvitedPositions = new ActSortState('distinction_invited_position');    
+        this.sortStateEducations = new ActSortState('education'); 
+        this.sortStateEmployments = new ActSortState('employment');
+        this.sortStateMembershipsAndServices = new ActSortState('membership_service');  
         this.educationsAndQualifications = [];
         this.distinctionsAndInvitedPositions = [];
         this.membershipsAndServices = [];
@@ -290,8 +298,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         } else {
             this.sectionOneElements = this.educations;
         } 
-        
-        this.sort('endDate', true);
     };
        
     removeFromArray(affArray, putCode): void {
@@ -352,11 +358,33 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
 
-    sort(key, reverse?): void {
-        if( reverse ) {
-            this.sortState.reverse = reverse;
-        }
-        this.sortState.sortBy(key);
+    sort(type, key, reverse?): void {
+        switch (type) {
+            case 'distinction_invited_position':
+                if( reverse ) {
+                    this.sortStateDistinctionsAndInvitedPositions.reverse = reverse;
+                }
+                this.sortStateDistinctionsAndInvitedPositions.sortBy(key);
+                break;
+            case 'education':
+                if( reverse ) {
+                    this.sortStateEducations.reverse = reverse;
+                }
+                this.sortStateEducations.sortBy(key);
+                break;
+            case 'employment':
+                if( reverse ) {
+                    this.sortStateEmployments.reverse = reverse;
+                }
+                this.sortStateEmployments.sortBy(key);
+                break;
+            case 'membership_service':
+                if( reverse ) {
+                    this.sortStateMembershipsAndServices.reverse = reverse;
+                }
+                this.sortStateMembershipsAndServices.sortBy(key);
+                break;
+        }  
     };
 
     // remove once grouping is live
@@ -441,5 +469,5 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getAffiliationsId();
-    }; 
+;    }; 
 }
