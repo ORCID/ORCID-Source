@@ -15,6 +15,7 @@ import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.common.writer.citeproc.V3WorkToCiteprocTranslator;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
@@ -212,6 +213,7 @@ public class PublicV3ApiServiceDelegatorImpl
      */
     @Override
     public Response viewActivities(String orcid) {
+        checkProfileStatus(orcid);
         ActivitiesSummary as = activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid);
         publicAPISecurityManagerV3.filter(as);
         ActivityUtils.cleanEmptyFields(as);
@@ -223,6 +225,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(w);
         contributorUtilsReadOnly.filterContributorPrivateData(w);        
@@ -234,6 +237,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorks(String orcid) {
+        checkProfileStatus(orcid);
         List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicAPISecurityManagerV3.filter(publicWorks);
@@ -246,6 +250,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorkCitation(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
         ProfileEntity entity = profileEntityManagerReadOnly.findByOrcid(orcid);
         String creditName = null;
@@ -270,6 +275,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode);
         ActivityUtils.cleanEmptyFields(ws);
         publicAPISecurityManagerV3.checkIsPublic(ws);
@@ -280,6 +286,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewFunding(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
@@ -291,6 +298,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewFundings(String orcid) {
+        checkProfileStatus(orcid);
         List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
         publicAPISecurityManagerV3.filter(publicFundings);
@@ -302,6 +310,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
@@ -311,6 +320,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEducation(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -320,6 +330,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEducations(String orcid) {
+        checkProfileStatus(orcid);
         List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid);
         Educations publicEducations = new Educations();
         for (EducationSummary summary : educations) {
@@ -336,6 +347,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         EducationSummary es = affiliationsManagerReadOnly.getEducationSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -345,6 +357,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -354,6 +367,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmployments(String orcid) {
+        checkProfileStatus(orcid);
         List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
         Employments publicEmployments = new Employments();
         for (EmploymentSummary summary : employments) {
@@ -370,6 +384,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         EmploymentSummary es = affiliationsManagerReadOnly.getEmploymentSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -379,6 +394,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
@@ -388,6 +404,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewPeerReviews(String orcid) {
+        checkProfileStatus(orcid);
         List<PeerReviewSummary> peerReviews = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
         publicAPISecurityManagerV3.filter(publicPeerReviews);
@@ -399,6 +416,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         PeerReviewSummary summary = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
@@ -421,6 +439,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewResearcherUrls(String orcid) {
+        checkProfileStatus(orcid);
         ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         Api3_0_Dev1LastModifiedDatesHelper.calculateLastModified(researcherUrls);
@@ -430,6 +449,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewResearcherUrl(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         ResearcherUrl researcherUrl = researcherUrlManagerReadOnly.getResearcherUrl(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
@@ -439,6 +459,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmails(String orcid) {
+        checkProfileStatus(orcid);
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
         publicAPISecurityManagerV3.filter(emails);
         ElementUtils.setPathToEmail(emails, orcid);
@@ -449,6 +470,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewPersonalDetails(String orcid) {
+        checkProfileStatus(orcid);
         PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
         publicAPISecurityManagerV3.filter(personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
@@ -459,6 +481,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewOtherNames(String orcid) {
+        checkProfileStatus(orcid);
         OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid);
         publicAPISecurityManagerV3.filter(otherNames);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
@@ -469,6 +492,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         OtherName otherName = otherNameManagerReadOnly.getOtherName(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
@@ -478,6 +502,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewExternalIdentifiers(String orcid) {
+        checkProfileStatus(orcid);
         PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
         publicAPISecurityManagerV3.filter(extIds);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
@@ -488,6 +513,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         PersonExternalIdentifier extId = externalIdentifierManagerReadOnly.getExternalIdentifier(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
@@ -497,6 +523,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewBiography(String orcid) {
+        checkProfileStatus(orcid);
         Biography bio = biographyManagerReadOnly.getBiography(orcid);
         publicAPISecurityManagerV3.checkIsPublic(bio);
         ElementUtils.setPathToBiography(bio, orcid);
@@ -505,6 +532,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewKeywords(String orcid) {
+        checkProfileStatus(orcid);
         Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid);
         publicAPISecurityManagerV3.filter(keywords);
         ElementUtils.setPathToKeywords(keywords, orcid);
@@ -515,6 +543,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         Keyword keyword = profileKeywordManagerReadOnly.getKeyword(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
@@ -524,6 +553,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewAddresses(String orcid) {
+        checkProfileStatus(orcid);
         Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid);
         publicAPISecurityManagerV3.filter(addresses);
         ElementUtils.setPathToAddresses(addresses, orcid);
@@ -535,6 +565,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewAddress(String orcid, Long putCode) {
+        checkProfileStatus(orcid);
         Address address = addressManagerReadOnly.getAddress(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(address);
         ElementUtils.setPathToAddress(address, orcid);
@@ -544,6 +575,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewPerson(String orcid) {
+        checkProfileStatus(orcid);
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV3.filter(person);
         ElementUtils.setPathToPerson(person, orcid);
@@ -554,6 +586,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewRecord(String orcid) {
+        checkProfileStatus(orcid);
         Record record = recordManagerReadOnly.getPublicRecord(orcid);
         publicAPISecurityManagerV3.filter(record);
         if (record.getPerson() != null) {
@@ -809,6 +842,14 @@ public class PublicV3ApiServiceDelegatorImpl
         ActivityUtils.setPathToActivity(s, orcid);
         sourceUtilsReadOnly.setSourceName(s);
         return Response.ok(s).build();
+    }
+    
+    private void checkProfileStatus(String orcid) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch(DeactivatedException e) {
+            // Ignore the DeactivatedException since we should be able to return the empty element
+        }
     }
 
 }

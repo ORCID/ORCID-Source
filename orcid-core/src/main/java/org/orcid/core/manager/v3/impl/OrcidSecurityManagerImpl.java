@@ -18,6 +18,7 @@ import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
@@ -161,7 +162,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
         } catch (IllegalArgumentException e) {
-            throw new NoResultException();
+            throw new OrcidNoResultException();
         }
 
         // Check if the user record is deprecated

@@ -22,6 +22,9 @@ import { ClaimService }
 
 import { CommonService } 
     from '../../shared/common.service.ts'; 
+    
+import { FeaturesService }
+    from '../../shared/features.service.ts';
 
 @Component({
     selector: 'claim-ng2',
@@ -29,12 +32,14 @@ import { CommonService }
 })
 export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
 
     postingClaim: boolean;
     register: any;
 
     constructor(
         private claimService: ClaimService,
+        private featuresService: FeaturesService,
         private commonService: CommonService
     ) {
         this.postingClaim = false;

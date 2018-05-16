@@ -30,10 +30,12 @@ public class S3MessagingService {
 
     private final AmazonS3 s3;
 
-    private final String bucketName;
+    private final String summariesBucketName;
+    
+    private final String activitiesBucketName;
 
-    public String getBucketName() {
-        return this.bucketName;
+    public String getActivitiesBucketName() {
+        return activitiesBucketName;
     }
 
     /**
@@ -46,12 +48,15 @@ public class S3MessagingService {
      */
     @Autowired
     public S3MessagingService(@Value("${org.orcid.message-listener.s3.secretKey}") String secretKey,
-            @Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, @Value("${org.orcid.message-listener.index.bucket_name}") String bucketName)
+            @Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, 
+            @Value("${org.orcid.message-listener.index.summaries.bucket_name}") String summariesBucketName, 
+            @Value("${org.orcid.message-listener.index.activities.bucket_name}") String activitiesBucketName)
             throws JAXBException {
         try {
             AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
             this.s3 = new AmazonS3Client(credentials);
-            this.bucketName = bucketName;
+            this.summariesBucketName = summariesBucketName;
+            this.activitiesBucketName = activitiesBucketName;
         } catch (Exception e) {
             LOG.error("Unable to connect to the Amazon S3 service", e);
             throw e;
@@ -80,13 +85,17 @@ public class S3MessagingService {
         return true;
     }
 
-    public boolean send(String elementName, byte[] elementContent, String contentType, Date lastModified) throws AmazonClientException, AmazonServiceException {
+    public boolean send(String elementName, byte[] elementContent, String contentType, Date lastModified, boolean isActivity) throws AmazonClientException, AmazonServiceException {
         InputStream is = new ByteArrayInputStream(elementContent);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(contentType);
         metadata.setContentLength(elementContent.length);
         metadata.setLastModified(lastModified);
-        s3.putObject(new PutObjectRequest(this.bucketName, elementName, is, metadata));
+        if(isActivity) {
+            s3.putObject(new PutObjectRequest(this.activitiesBucketName, elementName, is, metadata));            
+        } else {
+            s3.putObject(new PutObjectRequest(this.summariesBucketName, elementName, is, metadata));
+        }
         return true;
     }
 
@@ -94,7 +103,7 @@ public class S3MessagingService {
         return s3.listObjectsV2(request);
     }
 
-    public void removeElement(String elementName) throws AmazonClientException, AmazonServiceException {
-        s3.deleteObject(this.bucketName, elementName);
+    public void removeActivity(String elementName) throws AmazonClientException, AmazonServiceException {
+        s3.deleteObject(this.activitiesBucketName, elementName);        
     }
 }
