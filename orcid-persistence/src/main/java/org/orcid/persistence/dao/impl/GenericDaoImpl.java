@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.OrcidEntity;
 import org.springframework.transaction.annotation.Propagation;
@@ -89,6 +90,13 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
         entityManager.persist(e);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    @ExcludeFromProfileLastModifiedUpdate
+    public void persistIgnoringProfileLastModifiedUpdate(E e) {
+        entityManager.persist(e);
+    }
+    
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public E merge(E e) {
