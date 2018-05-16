@@ -4,11 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet id="RESET_2_0_INDEXING_STATUS" author="Angel Montenegro">
+	<changeSet id="RESET_STATUS_TABLES" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
-            <not>
-                <columnExists tableName="record_status" columnName="api_1_2_dump_status"/>
-            </not>            
+            <columnExists tableName="record_status" columnName="api_2_0_activities_dump_status"/>            
 		</preConditions>
 		<!-- Indicates the number of times it have failed to be sent to S3 -->
 		<sql>UPDATE record_status SET api_2_0_dump_last_indexed = NULL;</sql>

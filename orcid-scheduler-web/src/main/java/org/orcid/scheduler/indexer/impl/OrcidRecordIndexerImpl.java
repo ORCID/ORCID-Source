@@ -1,6 +1,7 @@
 package org.orcid.scheduler.indexer.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -10,6 +11,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.scheduler.indexer.OrcidRecordIndexer;
 import org.orcid.scheduler.messaging.JmsMessageSender;
+import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,10 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(OrcidRecordIndexerImpl.class);
-    
+
     @Value("${org.orcid.persistence.messaging.indexing.batch.size:100}")
     private int INDEXING_BATCH_SIZE;
-    
+
     @Value("${org.orcid.persistence.messaging.updated.solr}")
     private String updateSolrQueueName;
     @Value("${org.orcid.persistence.messaging.updated.summary}")
@@ -32,19 +34,19 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Value("${org.orcid.persistence.messaging.reindex.summary}")
     private String reindexSummaryQueueName;
     @Value("${org.orcid.persistence.messaging.reindex.activity}")
-    private String reindexActivitiesQueueName;  
+    private String reindexActivitiesQueueName;
     @Value("${org.orcid.persistence.indexing.delay:5}")
     private Integer indexingDelay;
-    
+
     @Resource
     private ProfileDao profileDao;
 
     @Resource
     private ProfileDao profileDaoReadOnly;
-    
+
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
-    
+
     @Override
     public void processProfilesWithPendingFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
@@ -65,19 +67,40 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
         boolean connectionIssue = false;
         do {
-            if(IndexingStatus.REINDEX.equals(status)) {
-                orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);                
+            if (IndexingStatus.REINDEX.equals(status)) {
+                orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
             } else {
-                orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);                
+                orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);
             }
             LOG.info("processing batch of " + orcidsForIndexing.size());
-            
+
             for (Pair<String, IndexingStatus> p : orcidsForIndexing) {
                 String orcid = p.getLeft();
-                
-                profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
 
+                Date last = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
+                LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
+                // Send message to solr queue
+                if (!messaging.send(mess, solrQueue)) {
+                    connectionIssue = true;
+                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + solrQueue);
+                    continue;
+                }
+
+                // Send message to summary queue
+                if (!messaging.send(mess, summaryQueue)) {
+                    connectionIssue = true;
+                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + summaryQueue);
+                    continue;
+                }
+                // Send message to activities queue
+                if (!messaging.send(mess, activitiesQueue)) {
+                    connectionIssue = true;
+                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + activitiesQueue);
+                    continue;
+                }
+
+                profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
             }
-        } while (!connectionIssue && !orcidsForIndexing.isEmpty());        
+        } while (!connectionIssue && !orcidsForIndexing.isEmpty());
     }
 }
