@@ -1,4 +1,4 @@
-package org.orcid.persistence.messaging;
+package org.orcid.scheduler.messaging;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
  *
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
 public class JmsMessagingSendReceiveReplyTest {
 
     @Resource

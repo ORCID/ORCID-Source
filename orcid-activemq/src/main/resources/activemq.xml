@@ -28,8 +28,8 @@
         </transportConnectors>
         
         <destinations>
-            <topic physicalName="${org.orcid.persistence.messaging.topic.reindex}" name="${org.orcid.persistence.messaging.topic.reindex}" />
-            <topic physicalName="${org.orcid.persistence.messaging.topic.updateOrcids}" name="${org.orcid.persistence.messaging.topic.updateOrcids}" />
+            <queue physicalName="${org.orcid.persistence.messaging.reindex.solr}" name="${org.orcid.persistence.messaging.reindex.solr}" />
+            <queue physicalName="${org.orcid.persistence.messaging.updated.solr}" name="${org.orcid.persistence.messaging.updated.solr}" />
         </destinations>
     </broker>
     

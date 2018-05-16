@@ -323,16 +323,16 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
-        List<Pair<String, IndexingStatus>> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10);
+        List<Pair<String, IndexingStatus>> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
         assertNotNull(results);
         assertEquals(2, results.size());
         assertEquals("4444-4444-4444-4445", results.get(0).getLeft());
         assertEquals("4444-4444-4444-4446", results.get(1).getLeft());
 
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0);
         assertEquals(20, results.size());
 
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3);
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3, 0);
         assertEquals(3, results.size());
     }
 
@@ -377,7 +377,7 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     public void testUpdateIndexingStatus() {
         Date now = new Date();
-        int startCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE).size();
+        int startCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
         String orcid = "4444-4444-4444-4446";
         ProfileEntity profileEntity = profileDao.find(orcid);
         assertEquals(IndexingStatus.PENDING, profileEntity.getIndexingStatus());
@@ -386,7 +386,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(IndexingStatus.DONE, result.getIndexingStatus());
         assertNotNull(result.getLastIndexedDate());
         assertFalse(now.after(new Date(result.getLastIndexedDate().getTime())));
-        int endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE).size();
+        int endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
         assertEquals(startCount + 1, endCount);
         profileDao.updateIndexingStatus(orcid, IndexingStatus.PENDING);
     }

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 
@@ -41,7 +42,7 @@ import com.sun.jersey.api.client.WebResource.Builder;
 public class v2ClientPerMessageCacheTest {
 
     @Resource
-    private Orcid20APIClient orcid20ApiClient;
+    private Orcid20Manager orcid20ApiClient;
     
     @Mock
     private Client mock_jerseyClient;
@@ -84,7 +85,7 @@ public class v2ClientPerMessageCacheTest {
     }
     
     @Test
-    public void testRecordCache() throws LockedRecordException, DeprecatedRecordException{
+    public void testRecordCache() throws ExecutionException, LockedRecordException, DeprecatedRecordException{
         Date date = new Date();
         date.setYear(1900);
         BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
@@ -103,8 +104,8 @@ public class v2ClientPerMessageCacheTest {
             r = orcid20ApiClient.fetchPublicRecord(message2);
             fail("returned cached when it should get fresh");
         }catch(RuntimeException e){
-            if (e.getMessage()!="called twice!")
-                fail("something weird");
+            if (e.getCause().getMessage()!="called twice!")
+                fail("something weird"+e.getLocalizedMessage());
         }
 
     }           

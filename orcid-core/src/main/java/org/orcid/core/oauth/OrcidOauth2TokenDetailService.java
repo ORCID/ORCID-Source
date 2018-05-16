@@ -69,7 +69,7 @@ public interface OrcidOauth2TokenDetailService {
 
     void createNew(OrcidOauth2TokenDetail detail);
     
-    int findCountByUserName(String userName, long lastModified);
+    boolean hasToken(String userName, long lastModified);
 
     int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID, RevokeReason reason);
     

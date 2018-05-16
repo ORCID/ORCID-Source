@@ -111,8 +111,8 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Override
     @Cacheable(value = "count-tokens", key = "#userName.concat('-').concat(#lastModified)")
-    public int findCountByUserName(String userName, long lastModified) {
-        return orcidOauth2TokenDetailDao.findCountByUserName(userName);
+    public boolean hasToken(String userName, long lastModified) {
+        return orcidOauth2TokenDetailDao.hasToken(userName);
     }
 
     @Override

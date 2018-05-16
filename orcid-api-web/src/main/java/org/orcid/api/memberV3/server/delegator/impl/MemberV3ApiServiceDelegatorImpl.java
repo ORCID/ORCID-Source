@@ -19,6 +19,7 @@ import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -246,6 +247,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewRecord(String orcid) {
+        checkProfileStatus(orcid, true);
         Record record = recordManagerReadOnly.getRecord(orcid);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
@@ -262,6 +264,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewActivities(String orcid) {
+        checkProfileStatus(orcid, true);
         ActivitiesSummary as = activitiesSummaryManagerReadOnly.getActivitiesSummary(orcid);
         orcidSecurityManager.checkAndFilter(orcid, as);
         ActivityUtils.cleanEmptyFields(as);
@@ -273,6 +276,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, w, ScopePathType.ORCID_WORKS_READ_LIMITED);
         contributorUtils.filterContributorPrivateData(w);
@@ -284,6 +288,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWorks(String orcid) {
+        checkProfileStatus(orcid, true);
         List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -304,6 +309,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, ws, ScopePathType.ORCID_WORKS_READ_LIMITED);
         ActivityUtils.cleanEmptyFields(ws);
@@ -314,6 +320,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createWork(String orcid, Work work) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
         clearSource(work);
         Work w = workManager.createWork(orcid, work, true);
@@ -327,6 +334,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateWork(String orcid, Long putCode, Work work) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_UPDATE);
         if (!putCode.equals(work.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -342,6 +350,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createWorks(String orcid, WorkBulk works) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_UPDATE);
         if (works != null) {
             for (int i = 0; i < works.getBulk().size(); i++) {
@@ -366,6 +375,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deleteWork(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_UPDATE);
         workManager.checkSourceAndRemoveWork(orcid, putCode);
         return Response.noContent().build();
@@ -373,6 +383,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewFunding(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, f, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(f, orcid);
@@ -384,6 +395,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewFundings(String orcid) {
+        checkProfileStatus(orcid, true);
         List<FundingSummary> fundingSummaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -403,6 +415,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, fs, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(fs, orcid);
@@ -412,6 +425,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createFunding(String orcid, Funding funding) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         clearSource(funding);
         Funding f = profileFundingManager.createFunding(orcid, funding, true);
@@ -425,6 +439,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateFunding(String orcid, Long putCode, Funding funding) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_UPDATE);
         if (!putCode.equals(funding.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -440,6 +455,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deleteFunding(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_UPDATE);
         profileFundingManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
@@ -447,6 +463,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEducation(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -456,6 +473,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEducations(String orcid) {
+        checkProfileStatus(orcid, true);
         List<EducationSummary> educationsList = affiliationsManagerReadOnly.getEducationSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -475,6 +493,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         EducationSummary es = affiliationsManagerReadOnly.getEducationSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -484,6 +503,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createEducation(String orcid, Education education) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(education);
         Education e = affiliationsManager.createEducationAffiliation(orcid, education, true);
@@ -497,6 +517,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateEducation(String orcid, Long putCode, Education education) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
         if (!putCode.equals(education.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -512,6 +533,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -521,6 +543,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEmployments(String orcid) {
+        checkProfileStatus(orcid, true);
         List<EmploymentSummary> employmentsList = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -540,6 +563,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         EmploymentSummary es = affiliationsManagerReadOnly.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -549,6 +573,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createEmployment(String orcid, Employment employment) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(employment);
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true);
@@ -562,6 +587,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateEmployment(String orcid, Long putCode, Employment employment) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
         if (!putCode.equals(employment.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -577,6 +603,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deleteAffiliation(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
         affiliationsManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
@@ -584,6 +611,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         PeerReview p = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, p, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(p, orcid);
@@ -593,6 +621,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPeerReviews(String orcid) {
+        checkProfileStatus(orcid, true);
         List<PeerReviewSummary> peerReviewList = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -612,6 +641,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         PeerReviewSummary ps = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, ps, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(ps, orcid);
@@ -621,6 +651,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createPeerReview(String orcid, PeerReview peerReview) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_UPDATE);
         clearSource(peerReview);
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
@@ -634,6 +665,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updatePeerReview(String orcid, Long putCode, PeerReview peerReview) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.PEER_REVIEW_UPDATE);
         if (!putCode.equals(peerReview.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -649,6 +681,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deletePeerReview(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.PEER_REVIEW_UPDATE);
         peerReviewManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
@@ -714,6 +747,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
      */
     @Override
     public Response viewResearcherUrls(String orcid) {
+        checkProfileStatus(orcid, true);
         ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getResearcherUrls(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -731,6 +765,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
 
     public Response viewResearcherUrl(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         ResearcherUrl researcherUrl = researcherUrlManagerReadOnly.getResearcherUrl(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, researcherUrl, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
@@ -740,6 +775,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateResearcherUrl(String orcid, Long putCode, ResearcherUrl researcherUrl) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         if (!putCode.equals(researcherUrl.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -756,6 +792,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         clearSource(researcherUrl);
         researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl, true);
@@ -769,6 +806,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deleteResearcherUrl(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         researcherUrlManager.deleteResearcherUrl(orcid, putCode, true);
         return Response.noContent().build();
@@ -776,6 +814,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEmails(String orcid) {
+        checkProfileStatus(orcid, true);
         Emails emails = null;
 
         try {
@@ -806,6 +845,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewOtherNames(String orcid) {
+        checkProfileStatus(orcid, true);
         OtherNames otherNames = otherNameManagerReadOnly.getOtherNames(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -824,6 +864,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         OtherName otherName = otherNameManagerReadOnly.getOtherName(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToOtherName(otherName, orcid);
@@ -833,6 +874,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createOtherName(String orcid, OtherName otherName) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         clearSource(otherName);
         otherName = otherNameManager.createOtherName(orcid, otherName, true);
@@ -846,6 +888,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateOtherName(String orcid, Long putCode, OtherName otherName) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         if (!putCode.equals(otherName.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -862,6 +905,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deleteOtherName(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         otherNameManager.deleteOtherName(orcid, putCode, true);
         return Response.noContent().build();
@@ -869,6 +913,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewExternalIdentifiers(String orcid) {
+        checkProfileStatus(orcid, true);
         PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getExternalIdentifiers(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -887,6 +932,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         PersonExternalIdentifier extId = externalIdentifierManagerReadOnly.getExternalIdentifier(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, extId, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
@@ -896,6 +942,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateExternalIdentifier(String orcid, Long putCode, PersonExternalIdentifier externalIdentifier) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
         if (!putCode.equals(externalIdentifier.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -912,6 +959,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
         clearSource(externalIdentifier);
         externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier, true);
@@ -924,6 +972,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deleteExternalIdentifier(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         externalIdentifierManager.deleteExternalIdentifier(orcid, putCode, true);
         return Response.noContent().build();
@@ -931,6 +980,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewKeywords(String orcid) {
+        checkProfileStatus(orcid, true);
         Keywords keywords = profileKeywordManagerReadOnly.getKeywords(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -949,6 +999,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Keyword keyword = profileKeywordManagerReadOnly.getKeyword(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, keyword, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToKeyword(keyword, orcid);
@@ -958,6 +1009,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createKeyword(String orcid, Keyword keyword) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         clearSource(keyword);
         keyword = profileKeywordManager.createKeyword(orcid, keyword, true);
@@ -971,6 +1023,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateKeyword(String orcid, Long putCode, Keyword keyword) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         if (!putCode.equals(keyword.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -987,6 +1040,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deleteKeyword(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         profileKeywordManager.deleteKeyword(orcid, putCode, true);
         return Response.noContent().build();
@@ -994,6 +1048,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewAddresses(String orcid) {
+        checkProfileStatus(orcid, true);
         Addresses addresses = addressManagerReadOnly.getAddresses(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -1013,6 +1068,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewAddress(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Address address = addressManagerReadOnly.getAddress(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, address, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToAddress(address, orcid);
@@ -1022,6 +1078,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createAddress(String orcid, Address address) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         clearSource(address);
         address = addressManager.createAddress(orcid, address, true);
@@ -1035,6 +1092,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateAddress(String orcid, Long putCode, Address address) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         if (!putCode.equals(address.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -1051,6 +1109,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response deleteAddress(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
         addressManager.deleteAddress(orcid, putCode);
         return Response.noContent().build();
@@ -1058,6 +1117,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewBiography(String orcid) {
+        checkProfileStatus(orcid, true);
         Biography bio = biographyManagerReadOnly.getBiography(orcid);
         if (bio == null) {
             throw new OrcidNoBioException();
@@ -1069,6 +1129,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPersonalDetails(String orcid) {
+        checkProfileStatus(orcid, true);
         PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPersonalDetails(orcid);
         orcidSecurityManager.checkAndFilter(orcid, personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
@@ -1079,6 +1140,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPerson(String orcid) {
+        checkProfileStatus(orcid, true);
         Person person = personDetailsManagerReadOnly.getPersonDetails(orcid);
         orcidSecurityManager.checkAndFilter(orcid, person);
         ElementUtils.setPathToPerson(person, orcid);
@@ -1097,6 +1159,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewBulkWorks(String orcid, String putCodes) {
+        checkProfileStatus(orcid, true);
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
         if (profileEntity == null) {
             throw new OrcidNoResultException("No such profile: " + orcid);
@@ -1138,6 +1201,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     
     @Override
     public Response viewDistinction(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Distinction e = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -1147,6 +1211,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewDistinctions(String orcid) {
+        checkProfileStatus(orcid, true);
         List<DistinctionSummary> distinctionsList = affiliationsManagerReadOnly.getDistinctionSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -1166,6 +1231,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewDistinctionSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         DistinctionSummary es = affiliationsManagerReadOnly.getDistinctionSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -1175,6 +1241,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createDistinction(String orcid, Distinction distinction) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(distinction);
         Distinction e = affiliationsManager.createDistinctionAffiliation(orcid, distinction, true);
@@ -1188,6 +1255,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateDistinction(String orcid, Long putCode, Distinction distinction) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
         if (!putCode.equals(distinction.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -1203,6 +1271,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewInvitedPosition(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         InvitedPosition e = affiliationsManagerReadOnly.getInvitedPositionAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -1212,6 +1281,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewInvitedPositions(String orcid) {
+        checkProfileStatus(orcid, true);
         List<InvitedPositionSummary> inivitedPositionsList = affiliationsManagerReadOnly.getInvitedPositionSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -1231,6 +1301,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewInvitedPositionSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         InvitedPositionSummary es = affiliationsManagerReadOnly.getInvitedPositionSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -1240,6 +1311,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createInvitedPosition(String orcid, InvitedPosition invitedPosition) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(invitedPosition);
         InvitedPosition e = affiliationsManager.createInvitedPositionAffiliation(orcid, invitedPosition, true);
@@ -1253,6 +1325,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateInvitedPosition(String orcid, Long putCode, InvitedPosition invitedPosition) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
         if (!putCode.equals(invitedPosition.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -1268,6 +1341,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewMembership(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Membership e = affiliationsManagerReadOnly.getMembershipAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -1277,6 +1351,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewMemberships(String orcid) {
+        checkProfileStatus(orcid, true);
         List<MembershipSummary> membershipsList = affiliationsManagerReadOnly.getMembershipSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -1296,6 +1371,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewMembershipSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         MembershipSummary es = affiliationsManagerReadOnly.getMembershipSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -1305,6 +1381,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createMembership(String orcid, Membership membership) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(membership);
         Membership e = affiliationsManager.createMembershipAffiliation(orcid, membership, true);
@@ -1318,6 +1395,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateMembership(String orcid, Long putCode, Membership membership) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
         if (!putCode.equals(membership.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -1333,6 +1411,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewQualification(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Qualification e = affiliationsManagerReadOnly.getQualificationAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -1342,6 +1421,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewQualifications(String orcid) {
+        checkProfileStatus(orcid, true);
         List<QualificationSummary> qualificationsList = affiliationsManagerReadOnly.getQualificationSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -1361,6 +1441,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewQualificationSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         QualificationSummary es = affiliationsManagerReadOnly.getQualificationSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -1370,6 +1451,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createQualification(String orcid, Qualification qualification) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(qualification);
         Qualification e = affiliationsManager.createQualificationAffiliation(orcid, qualification, true);
@@ -1383,6 +1465,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateQualification(String orcid, Long putCode, Qualification qualification) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
         if (!putCode.equals(qualification.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -1398,6 +1481,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewService(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         Service e = affiliationsManagerReadOnly.getServiceAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -1407,6 +1491,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewServices(String orcid) {
+        checkProfileStatus(orcid, true);
         List<ServiceSummary> servicesList = affiliationsManagerReadOnly.getServiceSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
@@ -1426,6 +1511,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewServiceSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
         ServiceSummary es = affiliationsManagerReadOnly.getServiceSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -1435,6 +1521,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response createService(String orcid, Service service) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
         clearSource(service);
         Service e = affiliationsManager.createServiceAffiliation(orcid, service, true);
@@ -1448,6 +1535,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response updateService(String orcid, Long putCode, Service service) {
+        checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
         if (!putCode.equals(service.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -1463,5 +1551,17 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     private void clearSource(SourceAware element) {
         element.setSource(null);
+    }
+    
+    private void checkProfileStatus(String orcid, boolean readOperation) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (DeactivatedException e) {
+            // If it is a read operation, ignore the deactivated status since we
+            // are going to return the empty element with the deactivation date
+            if (!readOperation) {
+                throw e;
+            }
+        }
     }
 }
