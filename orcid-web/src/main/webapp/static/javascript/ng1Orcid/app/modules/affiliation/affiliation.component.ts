@@ -77,6 +77,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     sectionOneElements: any;
     showElement: any;
     sortHideOption: boolean;
+    sortKeyEmployments: any;
+    sortReverseEmployments: boolean;
     sortState: any;
     sortStateDistinctionsAndInvitedPositions: any;
     sortStateEducations: any;
@@ -110,6 +112,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.sortHideOption = false;
+        this.sortKeyEmployments = 'dateSortString';
+        this.sortReverseEmployments = true;
         this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);
         this.sortStateDistinctionsAndInvitedPositions = new ActSortState('distinction_invited_position');    
         this.sortStateEducations = new ActSortState('education'); 
@@ -358,7 +362,22 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
 
-    sort(type, key, reverse?): void {
+    sort(type, initialKey, reverse?): void {
+
+        var key = initialKey;
+        
+        switch(initialKey) {
+            case 'endDate':
+                key = 'dateSortString';
+                break;
+            case 'startDate':
+                key = 'dateSortString';
+                break;
+            case 'title':
+                key = 'title';
+                break;
+        }
+        
         switch (type) {
             case 'distinction_invited_position':
                 if( reverse ) {
@@ -373,10 +392,13 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.sortStateEducations.sortBy(key);
                 break;
             case 'employment':
-                if( reverse ) {
-                    this.sortStateEmployments.reverse = reverse;
+                if (this.sortKeyEmployments == key) {
+                    this.sortReverseEmployments = !this.sortReverseEmployments
                 }
-                this.sortStateEmployments.sortBy(key);
+                if(reverse) {
+                    this.sortReverseEmployments = reverse;
+                }
+                this.sortKeyEmployments = key
                 break;
             case 'membership_service':
                 if( reverse ) {

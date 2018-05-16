@@ -30,25 +30,25 @@
                                     <span class="glyphicon glyphicon-sort"></span>                          
                                     <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                     <ul class="menu-options sort">
-                                        <li [ngClass]="{'checked':sortStateEmployments.predicateKey=='startDate'}">                                         
+                                        <li [ngClass]="{'checked':sortKeyEmployments=='startDate'}">                                         
                                             <a (click)="sort('employment', 'startDate');" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
-                                                <span *ngIf="sortStateEmployments.reverseKey['startDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortStateEmployments.predicateKey=='startDate'}"></span>
-                                                <span *ngIf="sortStateEmployments.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortStateEmployments.predicateKey=='startDate'}"></span>
+                                                <span *ngIf="sortKeyEmployments=='startDate' && sortReverseEmployments==true" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortKeyEmployments=='startDate'}"></span>
+                                                <span *ngIf="sortKeyEmployments=='startDate' && sortReverseEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortKeyEmployments=='startDate'}"></span>
                                             </a>                                                                                    
                                         </li>
-                                        <li [ngClass]="{'checked':sortStateEmployments.predicateKey=='endDate'}">
+                                        <li [ngClass]="{'checked':sortKeyEmployments=='dateSortString'}">
                                             <a (click)="sort('employment', 'endDate');" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
-                                                <span *ngIf="sortStateEmployments.reverseKey['endDate']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortStateEmployments.predicateKey=='endDate'}" ></span>
-                                                <span *ngIf="sortStateEmployments.reverseKey['endDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortStateEmployments.predicateKey=='endDate'}" ></span>
+                                                <span *ngIf="sortKeyEmployments=='dateSortString' && sortReverseEmployments==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortKeyEmployments=='dateSortString'}" ></span>
+                                                <span *ngIf="sortKeyEmployments=='dateSortString' && sortReverseEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortKeyEmployments=='dateSortString'}" ></span>
                                             </a>                                            
                                         </li>
-                                        <li [ngClass]="{'checked':sortStateEmployments.predicateKey=='title'}">                                            
+                                        <li [ngClass]="{'checked':sortKeyEmployments=='title'}">                                            
                                             <a (click)="sort('employment', 'title');" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                <span *ngIf="sortStateEmployments.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortStateEmployments.predicateKey=='title'}" ></span>
-                                                <span *ngIf="sortStateEmployments.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortStateEmployments.predicateKey=='title'}" ></span>
+                                                <span *ngIf="sortKeyEmployments=='title' && sortReverseEmployments==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortKeyEmployments=='title'}" ></span>
+                                                <span *ngIf="sortKeyEmployments=='title' && sortReverseEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortKeyEmployments=='title'}" ></span>
                                             </a>                                            
                                         </li>                                            
                                     </ul>                                        
@@ -102,7 +102,7 @@
                     </strong>
                 </div>
                 <ul id="employments-list" *ngIf="employments?.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                    <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of (employments | orderBy: sortStateEmployments.predicate:sortStateEmployments.reverseKey['endDate'])" [attr.employment-put-code]="group.activities[group?.activePutCode].putCode.value">
+                    <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of (employments | orderBy: sortKeyEmployments:sortReverseEmployments)" [attr.employment-put-code]="group.activities[group?.activePutCode].putCode.value">
                         <#include "affiliation-details-ng2.ftl"/>                      
                     </li>
                 </ul>
