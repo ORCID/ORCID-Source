@@ -13,13 +13,9 @@ public class RecordStatusEntity {
     private Date dateCreated;
     private Date lastModified;
     private String orcid;
-    private Integer dumpStatus12Api = 0;
     private Integer dumpStatus20Api = 0;
-    private Integer dumpStatus20ActivitiesApi = 0;
     private Integer solrStatus20Api = 0;
-    private Date lastIndexedDump12Api;
     private Date lastIndexedDump20Api;
-    private Date lastIndexedDump20ActivitiesApi;
     private Date lastIndexedSolr20Api;
     
     @Id
@@ -50,15 +46,6 @@ public class RecordStatusEntity {
         this.lastModified = lastModified;
     }
 
-    @Column(name = "api_1_2_dump_status")
-    public Integer getDumpStatus12Api() {
-        return dumpStatus12Api;
-    }
-
-    public void setDumpStatus12Api(Integer dumpStatus12Api) {
-        this.dumpStatus12Api = dumpStatus12Api;
-    }
-
     @Column(name = "api_2_0_dump_status")
     public Integer getDumpStatus20Api() {
         return dumpStatus20Api;
@@ -77,24 +64,6 @@ public class RecordStatusEntity {
         this.solrStatus20Api = solrStatus20Api;
     }
 
-    @Column(name = "api_2_0_activities_dump_status")
-    public Integer getDumpStatus20ActivitiesApi() {
-        return dumpStatus20ActivitiesApi;
-    }
-
-    public void setDumpStatus20ActivitiesApi(Integer dumpStatus20ActivitiesApi) {
-        this.dumpStatus20ActivitiesApi = dumpStatus20ActivitiesApi;
-    }
-
-    @Column(name = "api_1_2_dump_last_indexed")
-    public Date getLastIndexedDump12Api() {
-        return lastIndexedDump12Api;
-    }
-
-    public void setLastIndexedDump12Api(Date lastIndexedDump12Api) {
-        this.lastIndexedDump12Api = lastIndexedDump12Api;
-    }
-
     @Column(name = "api_2_0_dump_last_indexed")
     public Date getLastIndexedDump20Api() {
         return lastIndexedDump20Api;
@@ -102,15 +71,6 @@ public class RecordStatusEntity {
 
     public void setLastIndexedDump20Api(Date lastIndexedDump20Api) {
         this.lastIndexedDump20Api = lastIndexedDump20Api;
-    }
-
-    @Column(name = "api_2_0_activities_dump_last_indexed")
-    public Date getLastIndexedDump20ActivitiesApi() {
-        return lastIndexedDump20ActivitiesApi;
-    }
-
-    public void setLastIndexedDump20ActivitiesApi(Date lastIndexedDump20ActivitiesApi) {
-        this.lastIndexedDump20ActivitiesApi = lastIndexedDump20ActivitiesApi;
     }
 
     @Column(name = "api_2_0_solr_last_indexed")

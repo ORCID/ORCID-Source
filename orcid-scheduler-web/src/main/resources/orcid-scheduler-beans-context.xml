@@ -2,11 +2,48 @@
 <!--suppress SpringSecurityFiltersConfiguredInspection -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+       xmlns:jms="http://www.springframework.org/schema/jms"   
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
 
     <import resource="classpath*:orcid-core-context.xml"/>
     <import resource="classpath*:statistics-core-context.xml"/>
 
     <bean id="authorizationCodeCleaner" class="org.orcid.core.cron.impl.AuthorizationCodeCleanerCronJobImpl" />
+
+	<!-- JMS Messaging -->
+	<!-- enable the configuration of jms on annotations -->
+	<jms:annotation-driven/>
+	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<!-- lets use an embedded broker for now (easier to test!) -->
+    	<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
+	</bean>
+	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+    	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
+	</bean>
+	
+	<!-- so we can listen to queues -->
+	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
+	    <property name="connectionFactory" ref="jmsConnectionFactory" />
+	    <property name="concurrency" value="1-10"/>
+	</bean>
+	
+	<!-- Default Destination Queue Definition -->
+	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
+	  <!-- name of the queue -->
+	  <constructor-arg index="0" value="test" />
+	</bean>
+	 
+	<!-- JmsTemplate Definition so we can send to queues -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+	  <property name="connectionFactory" ref="jmsConnectionFactory" />
+	  <property name="defaultDestination" ref="defaultJmsDestination" />
+	</bean>
+	
+	<bean id="jmsMessageSender" class="org.orcid.scheduler.messaging.JmsMessageSender">
+		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
+	</bean>
+	
+	<bean id="orcidRecordIndexer" class="org.orcid.scheduler.indexer.impl.OrcidRecordIndexerImpl" />	
 
 </beans>

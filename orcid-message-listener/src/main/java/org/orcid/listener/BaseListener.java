@@ -18,15 +18,34 @@ package org.orcid.listener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
+import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.fusesource.hawtbuf.UTF8Buffer;
+import org.orcid.utils.listener.LastModifiedMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class BaseListener {
-
+public class BaseListener <T extends Consumer<LastModifiedMessage>> implements MessageListener {
+    
+    Logger LOG = LoggerFactory.getLogger(BaseListener.class);
+    
+    private T processor;
+    
+    /** Note the processor param is used by spring to create the correct beans.
+     * 
+     * @param processor
+     * @param queueName
+     */
+    public BaseListener(T processor){
+        this.processor = processor;
+    }
+    
     protected Map<String, String> getMapFromMessage(Message message) {
         try {
             ActiveMQMapMessage mapMessage = (ActiveMQMapMessage) message;
@@ -39,6 +58,23 @@ public abstract class BaseListener {
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    @Override
+    public void onMessage(Message message) {
+        Map<String, String> map = getMapFromMessage(message);
+        LastModifiedMessage lastModifiedMessage = new LastModifiedMessage(map);
+        String orcid = lastModifiedMessage.getOrcid();
+        try {
+            LOG.info("Recieved " + message.getJMSDestination() + " message for orcid " + orcid + " " + lastModifiedMessage.getLastUpdated());
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+        getProcessor().accept(lastModifiedMessage);
+    }
+    
+    public T getProcessor() {
+        return processor;
     }
     
 }

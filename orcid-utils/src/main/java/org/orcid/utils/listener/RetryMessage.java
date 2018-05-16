@@ -14,6 +14,8 @@ public class RetryMessage extends BaseMessage {
     
     public static final String BROKER_NAME = "bn";
     
+    public Map<?, ?> retryTypes;
+    
     /**
      * Create a map from the component parts
      * 
@@ -33,4 +35,12 @@ public class RetryMessage extends BaseMessage {
     public RetryMessage(Map<String, String> m) {
         super(ImmutableMap.copyOf(m));
     }
+
+    public Map<?, ?> getRetryTypes() {
+        return retryTypes;
+    }
+
+    public void setRetryTypes(Map<?, ?> retryTypes) {
+        this.retryTypes = retryTypes;
+    }   
 }
