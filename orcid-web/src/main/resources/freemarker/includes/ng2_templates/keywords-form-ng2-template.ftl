@@ -14,7 +14,7 @@
         <div class="row bottomBuffer">
             <div class="row bulk-edit-modal">
                 <div class="pull-right bio-edit-modal">             
-                    <span class="right">Edit all privacy settings</span>
+                    <span class="right"><@orcid.msg 'groups.common.bulk_edit_privacy'/></span>
                     <div class="bulk-privacy-bar">
                         <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
                             <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
@@ -33,7 +33,7 @@
                                         <li class="limited" style="color: #ffb027;">trusted parties</li>
                                         <li class="private" style="color: #990000;">only me</li>
                                     </ul>
-                                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">More information on privacy settings</a>
+                                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information' /></a>
                                 </div>                
                             </div>                              
                         </div>
