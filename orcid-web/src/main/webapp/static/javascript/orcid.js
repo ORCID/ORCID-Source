@@ -314,7 +314,7 @@ var ActSortState = function(groupType) {
         _self.predicateKey = 'endDate';
         _self.reverseKey['date']  = false;
         _self.reverseKey['endDate']  = true;        
-    }  else if (['ng2_affiliation', 'distinction_invited_position', 'education', 'employment', 'membership_service'].indexOf(_self.type) != -1) {
+    }  else if (_self.type == 'ng2_affiliation') {
         _self.predicateKey = 'endDate';
         _self.reverseKey['endDate']  = false;
     }  
@@ -345,26 +345,6 @@ sortPredicateMap[GroupedActivities.NG2_AFFILIATION] = {};
 sortPredicateMap[GroupedActivities.NG2_AFFILIATION]['endDate'] = ['dateSortString', 'affiliationName.value'];
 sortPredicateMap[GroupedActivities.NG2_AFFILIATION]['startDate'] = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
 sortPredicateMap[GroupedActivities.NG2_AFFILIATION]['title'] = ['affiliationName.value', 'dateSortString'];
-
-sortPredicateMap['employment'] = {};
-sortPredicateMap['employment']['endDate'] = ['dateSortString', 'title'];
-sortPredicateMap['employment']['startDate'] = ['-getDefault().startDate.year', '-getDefault().startDate.month', '-getDefault().startDate.day', 'title'];
-sortPredicateMap['employment']['title'] = ['title', 'dateSortString'];
-
-sortPredicateMap['education'] = {};
-sortPredicateMap['education']['endDate'] = ['dateSortString', 'title'];
-sortPredicateMap['education']['startDate'] = ['-getDefault().startDate.year', '-getDefault().startDate.month', '-getDefault().startDate.day', 'title'];
-sortPredicateMap['education']['title'] = ['title', 'dateSortString'];
-
-sortPredicateMap['distinction_invited_position'] = {};
-sortPredicateMap['distinction_invited_position']['endDate'] = ['dateSortString', 'title'];
-sortPredicateMap['distinction_invited_position']['startDate'] = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
-sortPredicateMap['distinction_invited_position']['title'] = ['title', 'dateSortString'];
-
-sortPredicateMap['membership_service'] = {};
-sortPredicateMap['membership_service']['endDate'] = ['dateSortString', 'title'];
-sortPredicateMap['membership_service']['startDate'] = ['startDate.year', 'startDate.month', 'startDate.day', 'affiliationName.value'];
-sortPredicateMap['membership_service']['title'] = ['title', 'dateSortString'];
 
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
