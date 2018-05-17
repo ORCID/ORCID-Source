@@ -200,10 +200,14 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.checkAvailableDays = function(day, month, year){
-                if( day > new Date(year, month, 0).getDate() ){
-                    return true
+                console.log('checkAvailableDays', day, month, year);
+                if( month > 0  || year  > 0 ){
+                    if( day > new Date(year, month, 0).getDate() ){
+                        return true
+                    }
+                    return false;
                 }
-                return false;
+                return true;
             };
 
             $scope.deleteAff = function(delAff) {
