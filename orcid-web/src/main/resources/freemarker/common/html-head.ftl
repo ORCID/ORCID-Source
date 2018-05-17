@@ -151,13 +151,9 @@
     <!-- NG2: QA -->
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
         
-        
+        <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
         <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
         <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
-
-        <#if springMacroRequestContext.requestUri?contains("/reset-password") >
-            <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
-        </#if>
         
         <#if springMacroRequestContext.requestUri?contains("/social") ||  springMacroRequestContext.requestUri?contains("/shibboleth/signin") || (RequestParameters['linkRequest'])??>
             <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
@@ -186,7 +182,6 @@
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
     <#include "/includes/ng2_templates/modal-ng2-template.ftl">
-    <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
 
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
@@ -224,6 +219,10 @@
         <#include "/includes/ng2_templates/name-ng2-template.ftl">
         <#include "/includes/ng2_templates/privacy-toggle-ng2-template.ftl">
         <#include "/includes/ng2_templates/widget-ng2-template.ftl">
+    </#if>
+
+    <#if springMacroRequestContext.requestUri?contains("/reset-password") >
+        <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
     </#if>
 
     <!-- Ng2 Templates - END -->
