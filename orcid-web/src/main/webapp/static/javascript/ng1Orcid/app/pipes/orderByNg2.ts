@@ -9,8 +9,6 @@ import { Injectable, Pipe, PipeTransform }
 export class OrderByPipe implements PipeTransform {
 
     transform(array: Array<string>, args: any, ascending: boolean): Array<string> {
-        //console.log(array[0].activities[array[0].activePutCode].startDate.year);
-        console.log(args);
 
         let logicalOperation: any = '';
 
@@ -27,14 +25,15 @@ export class OrderByPipe implements PipeTransform {
             let temp = args[i].split('.');
             
             for ( let j = 0; j < temp.length; j++ ){
+                //Handle affiliations sort by startDate and endDate
                 if(temp=='startDate' || temp=='endDate'){
                     argsStringArray += '["dateSortString"]';  
                 } else {
                     argsStringArray += '["' + temp[j] + '"]';
                 }
                 if( j == temp.length - 1 ){ //all sublevels added, lets concat with A and B
-                    console.log(temp);
                     if( ascending ) {
+                        //Handle affiliations sort by startDate
                         if(temp=='startDate'){
                             logicalOperation += 'String(a' + argsStringArray + ').substring(2,11).localeCompare(String(b' + argsStringArray + ').substring(2,11))';
 
@@ -42,6 +41,7 @@ export class OrderByPipe implements PipeTransform {
                             logicalOperation += 'String(a' + argsStringArray + ').localeCompare(String(b' + argsStringArray + '))';
                         }
                     } else {
+                        //Handle affiliations sort by startDate
                         if(temp=='startDate'){
                             logicalOperation += 'String(b' + argsStringArray + ').substring(2,11).localeCompare(String(a' + argsStringArray + ').substring(2,11))';
 
@@ -61,6 +61,8 @@ export class OrderByPipe implements PipeTransform {
         array.sort((a: any, b: any): any => {
             
             if ( typeof(args) == 'string' ) {
+
+                //Handle affiliations sort by startDate
                 if(args=='startDate'){
                     if( ascending ){
                         if ( a['dateSortString'].substring(2,11) < b['dateSortString'].substring(2,11) ){
@@ -79,7 +81,7 @@ export class OrderByPipe implements PipeTransform {
                             return 0;    
                         }
                     } 
-
+                //Handle affiliations sort by endDate
                 } else if(args=='endDate'){
                     if( ascending ){
                         if ( a['dateSortString'] < b['dateSortString'] ){
@@ -119,12 +121,10 @@ export class OrderByPipe implements PipeTransform {
                     } 
                 }               
             } else if ( typeof(args) == 'object' ) {
-                console.log(logicalOperation);
                 let result = eval(logicalOperation);
                 return result;
             }
         });
-        
         
         return array;
     }

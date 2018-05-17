@@ -1,8 +1,6 @@
 declare var $: any;
-declare var ActSortState: any;
 declare var GroupedActivities: any;
 declare var groupedActivitiesUtil: any;
-declare var sortState: any;
 declare var scriptTmpl: any;
 declare var typeahead: any;
 
@@ -76,15 +74,20 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyHelpCurKey: any;
     sectionOneElements: any;
     showElement: any;
+    sortAscDistinctions: boolean;
+    sortAscEducations: boolean;
+    sortAscEmployments: boolean;
+    sortAscMemberships: boolean;
+    sortDisplayKeyDistinctions: any;
+    sortDisplayKeyEducations: any;
+    sortDisplayKeyEmployments: any;
+    sortDisplayKeyMemberships: any;
     sortHideOption: boolean;
+    sortKeyDistinctions: any;
+    sortKeyEducations: any;
     sortKeyEmployments: any;
-    sortReverseEmployments: boolean;
-    sortState: any;
-    sortStateDistinctionsAndInvitedPositions: any;
-    sortStateEducations: any;
-    sortStateEmployments: any;
-    sortStateMembershipsAndServices: any;
-    
+    sortKeyMemberships: any;
+
     constructor(
         private affiliationService: AffiliationService,
         private emailService: EmailService,
@@ -112,13 +115,18 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.sortHideOption = false;
-        this.sortKeyEmployments = 'endDate'
-        this.sortReverseEmployments = true;
-        this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);
-        this.sortStateDistinctionsAndInvitedPositions = new ActSortState('distinction_invited_position');    
-        this.sortStateEducations = new ActSortState('education'); 
-        this.sortStateEmployments = new ActSortState('employment');
-        this.sortStateMembershipsAndServices = new ActSortState('membership_service');  
+        this.sortAscDistinctions = false;
+        this.sortDisplayKeyDistinctions = 'endDate';
+        this.sortKeyDistinctions = ['endDate', 'title'];
+        this.sortAscEducations = false;
+        this.sortDisplayKeyEducations = 'endDate';
+        this.sortKeyEducations = ['endDate', 'title'];
+        this.sortAscEmployments = false;
+        this.sortDisplayKeyEmployments = 'endDate';
+        this.sortKeyEmployments = ['endDate', 'title'];
+        this.sortAscMemberships = false;
+        this.sortDisplayKeyMemberships = 'endDate';
+        this.sortKeyMemberships = ['endDate', 'title'];
         this.educationsAndQualifications = [];
         this.distinctionsAndInvitedPositions = [];
         this.membershipsAndServices = [];
@@ -362,49 +370,59 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
 
-    sort(type, key, reverse?): void {
-
-        /*var key;
+    sort(type, displayKey, reverse): void {
         
-        switch(initialKey) {
+        var sortKey;
+
+        switch(displayKey) {
             case 'endDate':
-                key = ['endDate', 'title'];
+                sortKey = ['endDate', 'title'];
                 break;
             case 'startDate':
-                key = ['startDate', 'title'];
+                sortKey = ['startDate', 'title'];
                 break;
             case 'title':
-                key = ['title', 'endDate'];
+                sortKey = ['title', 'endDate'];
                 break;
-        }*/
+        }
         
         switch (type) {
             case 'distinction_invited_position':
-                if( reverse ) {
-                    this.sortStateDistinctionsAndInvitedPositions.reverse = reverse;
+                if (this.sortDisplayKeyDistinctions == displayKey) {
+                    this.sortAscDistinctions = !this.sortAscDistinctions;
+                } else {
+                    this.sortAscDistinctions = reverse;
                 }
-                this.sortStateDistinctionsAndInvitedPositions.sortBy(key);
+                this.sortKeyDistinctions = sortKey;
+                this.sortDisplayKeyDistinctions = displayKey;
                 break;
             case 'education':
-                if( reverse ) {
-                    this.sortStateEducations.reverse = reverse;
+                if (this.sortDisplayKeyEducations == displayKey) {
+                    this.sortAscEducations = !this.sortAscEducations;
+                } else {
+                    this.sortAscEducations = reverse;
                 }
-                this.sortStateEducations.sortBy(key);
+                this.sortKeyEducations = sortKey;
+                this.sortDisplayKeyEducations = displayKey;
                 break;
             case 'employment':
-                if (this.sortKeyEmployments == key) {
-                    this.sortReverseEmployments = !this.sortReverseEmployments
+                if (this.sortDisplayKeyEmployments == displayKey) {
+                    this.sortAscEmployments = !this.sortAscEmployments;
+                } else {
+                    this.sortAscEmployments = reverse;
                 }
-                if(reverse) {
-                    this.sortReverseEmployments = reverse;
-                }
-                this.sortKeyEmployments = key
+                console.log("sort asc: " + this.sortAscEmployments);
+                this.sortKeyEmployments = sortKey;
+                this.sortDisplayKeyEmployments = displayKey;
                 break;
             case 'membership_service':
-                if( reverse ) {
-                    this.sortStateMembershipsAndServices.reverse = reverse;
+                if (this.sortDisplayKeyMemberships == displayKey) {
+                    this.sortAscMemberships = !this.sortAscMemberships;
+                } else {
+                    this.sortAscMemberships = reverse;
                 }
-                this.sortStateMembershipsAndServices.sortBy(key);
+                this.sortKeyMemberships = sortKey;
+                this.sortDisplayKeyMemberships = displayKey;
                 break;
         }  
     };
