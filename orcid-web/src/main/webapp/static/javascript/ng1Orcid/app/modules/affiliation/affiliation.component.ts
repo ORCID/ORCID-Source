@@ -112,7 +112,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.sortHideOption = false;
-        this.sortKeyEmployments = 'dateSortString';
+        this.sortKeyEmployments = 'endDate'
         this.sortReverseEmployments = true;
         this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);
         this.sortStateDistinctionsAndInvitedPositions = new ActSortState('distinction_invited_position');    
@@ -362,21 +362,21 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
 
-    sort(type, initialKey, reverse?): void {
+    sort(type, key, reverse?): void {
 
-        var key = initialKey;
+        /*var key;
         
         switch(initialKey) {
             case 'endDate':
-                key = 'dateSortString';
+                key = ['endDate', 'title'];
                 break;
             case 'startDate':
-                key = 'dateSortString';
+                key = ['startDate', 'title'];
                 break;
             case 'title':
-                key = 'title';
+                key = ['title', 'endDate'];
                 break;
-        }
+        }*/
         
         switch (type) {
             case 'distinction_invited_position':

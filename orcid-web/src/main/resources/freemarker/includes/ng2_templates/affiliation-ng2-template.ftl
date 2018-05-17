@@ -37,11 +37,11 @@
                                                 <span *ngIf="sortKeyEmployments=='startDate' && sortReverseEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortKeyEmployments=='startDate'}"></span>
                                             </a>                                                                                    
                                         </li>
-                                        <li [ngClass]="{'checked':sortKeyEmployments=='dateSortString'}">
+                                        <li [ngClass]="{'checked':sortKeyEmployments=='endDate'}">
                                             <a (click)="sort('employment', 'endDate');" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
-                                                <span *ngIf="sortKeyEmployments=='dateSortString' && sortReverseEmployments==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortKeyEmployments=='dateSortString'}" ></span>
-                                                <span *ngIf="sortKeyEmployments=='dateSortString' && sortReverseEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortKeyEmployments=='dateSortString'}" ></span>
+                                                <span *ngIf="sortKeyEmployments=='endDate' && sortReverseEmployments==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortKeyEmployments=='endDate'}" ></span>
+                                                <span *ngIf="sortKeyEmployments=='endDate' && sortReverseEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortKeyEmployments=='endDate'}" ></span>
                                             </a>                                            
                                         </li>
                                         <li [ngClass]="{'checked':sortKeyEmployments=='title'}">                                            
