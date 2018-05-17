@@ -296,7 +296,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
        
     removeFromArray(affArray, putCode): void {
         for(let idx in affArray) {
-            if(affArray[idx].putCode.value == putCode) {
+            if(affArray[idx].activePutCode == putCode) {
                 affArray.splice(idx, 1);
                 break;
             }
