@@ -191,7 +191,7 @@
                         </select>
                         <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
                             <#list days?keys as key>
-                                <option disabled="checkAvailableDays(
+                                <option ng-disabled="checkAvailableDays(
                                 '${days[key]}', editAffiliation.endDate.month, editAffiliation.endDate.year)" value="${key}">${days[key]}</option>
                             </#list>
                         </select>
