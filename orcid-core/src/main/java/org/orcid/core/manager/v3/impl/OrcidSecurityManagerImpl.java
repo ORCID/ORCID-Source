@@ -174,6 +174,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(profile.getDeprecatedDate());
                 params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
             }
+            StringBuffer deprecated = new StringBuffer(baseUrl).append("/").append(profile.getId());
+            params.put(OrcidDeprecatedException.DEPRECATED_ORCID, deprecated.toString());
             throw new OrcidDeprecatedException(params);
         }
 
