@@ -1,6 +1,6 @@
 # Write, update and delete affiliation items
 
-This tutorial goes over editing information in the affiliations section of an ORCID record. Versions of the ORCID API before 3.0 include the Education and Employment affiliation sections. Versions 3.0 and great include the following sections. Education, Employment, Distinction, Invited position, Membership, Qualification and Service.
+This tutorial goes over editing information in the affiliations section of an ORCID record. Versions of the ORCID API before 3.0 include the Education and Employment affiliation sections. Versions 3.0 and greater include the following sections: Education, Employment, Distinction, Invited position, Membership, Qualification and Service.
 
 **To Do: copy in description of each section from support documentation**
 
@@ -32,7 +32,7 @@ These calls can be used with Member API credentials on sandbox or the production
   * [Examples writing affiliation sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_samples)
  
 ## Permission to edit the record
-Editing the affiliations sections of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading funding items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
+Editing the affiliations sections of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
 ## Affiliations fields
 
@@ -44,7 +44,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **end-date** _(optional)_ The date the affiliation ended or will end
 
-- **organization** _(required)_ Information about the organization the affiliation was with
+- **organization** _(required)_ Information about the organization the affiliation was with, a Ringgold, Grid or Fundref organization identifier is requires in 3.0+
 
 - **url** _(optional in 3.0+ only)_ A URL to a resource about the affiliation 
 
