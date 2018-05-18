@@ -132,14 +132,14 @@ public class EmailFrequencyServiceAnnouncement2018 {
             LOG.info("DoneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
         } while (!orcids.isEmpty());
     }
-
+    
     private void processNotification(String orcid, Date now) {
         LOG.info("Processing {}", orcid);
         try {
             ProfileEntity profileEntity = profileDaoReadOnly.find(orcid);
             if (!profileEntity.isAccountNonLocked() || profileEntity.getPrimaryRecord() != null || profileEntity.getDeactivationDate() != null
                     || (profileEntity.getClaimed() != null && !profileEntity.getClaimed())) {
-                profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_SKIPPED));
+                profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_SKIPPED));
                 return;
             }
             Locale locale = getUserLocale(profileEntity.getLocale());
@@ -165,12 +165,12 @@ public class EmailFrequencyServiceAnnouncement2018 {
             entity.setNotificationFamily(NOTIFICATION_FAMILY);
             entity.setProfile(new ProfileEntity(orcid));
             entity.setSendable(true);
-            notificationDao.persist(entity);
-            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_NOTIFICATION_CREATED));
+            notificationDao.persistIgnoringProfileLastModifiedUpdate(entity);
+            profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_NOTIFICATION_CREATED));
         } catch (Exception e) {
             LOG.error("Exception for: {}", orcid);
             LOG.error("Error", e);
-            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_FAIL));
+            profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_FAIL));
         }
     }
     
