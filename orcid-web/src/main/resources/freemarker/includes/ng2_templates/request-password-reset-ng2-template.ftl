@@ -56,7 +56,7 @@
     <#else>
         <div id="RequestPasswordResetCtr" class="reset-password">
         <a name="resetPassword"></a>
-        <a href="javascript:void(0);" id="reset-password-toggle-text" (click)="toggleResetPassword()" [innerHTML]="resetPasswordToggleText"></a>
+        <a id="reset-password-toggle-text" (click)="toggleResetPassword()" [innerHTML]="resetPasswordToggleText"></a>
         <div *ngIf="showResetPassword">
             <p>
                  <small>
@@ -78,7 +78,7 @@
                         <input id="email" name="email" type="text" class="form-control" [(ngModel)]="requestResetPassword.email" />
                     </div>
                     <span class="orcid-error" *ngIf="showDeactivatedError && !showReactivationSent">
-                        ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="javascript:void(0);" (click)="sendReactivation(requestResetPassword.email)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                        ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a (click)="sendReactivation(requestResetPassword.email)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                     </span>
                     <span class="orcid-error" *ngIf="showReactivationSent">
                         ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}

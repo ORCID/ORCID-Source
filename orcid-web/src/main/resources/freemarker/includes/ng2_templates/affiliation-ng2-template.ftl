@@ -12,7 +12,7 @@
                         </a>
                         <#if !(isPublicProfile??)> 
                         <div class="popover-help-container">
-                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                            <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="employment-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
@@ -121,7 +121,7 @@
                             </a>    
                             <#if !(isPublicProfile??)> 
                                 <div class="popover-help-container">
-                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <i class="glyphicon glyphicon-question-sign"></i>
                                     <div id="education-qualification-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
@@ -230,7 +230,7 @@
                             </a>    
                             <#if !(isPublicProfile??)> 
                                 <div class="popover-help-container">
-                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <i class="glyphicon glyphicon-question-sign"></i>
                                     <div id="education-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
@@ -342,7 +342,7 @@
                             </a>
                             <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
-                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="distinction-invited-position-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
@@ -480,7 +480,7 @@
                             </a>
                             <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
-                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="membership-service-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">

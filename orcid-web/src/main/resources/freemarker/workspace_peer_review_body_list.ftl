@@ -12,7 +12,7 @@
                                 <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.peerReviewCount()"></span>)
                             </a>  
                             <div class="popover-help-container">
-                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="peer-review-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">

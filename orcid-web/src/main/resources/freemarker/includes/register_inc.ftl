@@ -21,8 +21,8 @@
                 <div ng-repeat='error in registrationForm.givenNames.errors' ng-bind-html="error"></div>
             </span>
         </div>
-    </div>				
-	<!-- Last name -->
+    </div>              
+    <!-- Last name -->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
         <div class="bottomBuffer">
@@ -299,14 +299,14 @@
     <!--Registration error-->
     <div style="margin-bottom: 15px;" ng-show="generalRegistrationError = null">
         <span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
-    </div>	 
+    </div>   
     <!-- Buttons  -->
     <div class="bottomBuffer col-xs-12 col-sm-3">
-    	<#if (RequestParameters['linkRequest'])??>
-			<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
-		<#else>
-			<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
-		</#if>
+        <#if (RequestParameters['linkRequest'])??>
+            <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
+        <#else>
+            <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
+        </#if>
     </div>  
 </div>
 <#include "/includes/duplicates_modal_inc.ftl" />        

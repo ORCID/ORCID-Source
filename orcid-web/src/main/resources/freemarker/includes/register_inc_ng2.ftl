@@ -296,7 +296,7 @@
                 <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
             </span>
         </div>
-    </div><!--GDPR UI feature disabled-->  	
+    </div><!--GDPR UI feature disabled-->   
     <!--Registration error-->
     <div style="margin-bottom: 15px;" *ngIf="showGeneralRegistrationError">
         <span class="orcid-error" [innerHtml]="generalRegistrationError"></span>

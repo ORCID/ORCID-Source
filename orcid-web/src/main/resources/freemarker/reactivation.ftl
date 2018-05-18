@@ -7,11 +7,11 @@
 </@orcid.checkFeatureStatus>
 <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
     <div class="row">
-    	<div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
-    	    <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.thank_you")}</p>
-    	    <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.please_complete")}</p>
-    		<div ng-controller="ReactivationCtrl" ng-init="getReactivation('${resetParams}', '')">
-    			<fn-form update-fn="postRegister()">
+        <div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
+            <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.thank_you")}</p>
+            <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.please_complete")}</p>
+            <div ng-controller="ReactivationCtrl" ng-init="getReactivation('${resetParams}', '')">
+                <fn-form update-fn="postRegister()">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <div>
                         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelfirstname")}
@@ -20,7 +20,7 @@
                             <input name="givenNames234" type="text" tabindex="1" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>
                             <span class="required" ng-class="isValidClass(register.givenNames)">*</span>
                             <div class="popover-help-container">
-                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="name-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
@@ -45,7 +45,7 @@
                             </span>
                         </div>
                     </div>
-    	    		<div class="control-group">
+                    <div class="control-group">
                         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelpassword")}</label>
                         <div class="relative">
                             <input type="password" name="password" tabindex="5" class="input-xlarge" ng-model="register.password.value" ng-change="serverValidate('Password')"/>
@@ -86,7 +86,7 @@
                             <div class="visibilityHelp">
                                 <span class="required" ng-class="isValidClass(register.activitiesDefaultVisibility)">*</span>
                                 <div class="popover-help-container">
-                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <i class="glyphicon glyphicon-question-sign"></i>
                                     <div id="name-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
@@ -144,12 +144,12 @@
                         </span>
                     </div>
                     </@orcid.checkFeatureStatus>
-    				<div class="relative">
+                    <div class="relative">
                         <button type="submit" tabindex="10" class="btn btn-primary" ng-click="postReactivationConfirm(null)">${springMacroRequestContext.getMessage("orcid.frontend.reactivate")}</button>
                     </div>
-    			</fn-form>
-    		</div>
-    	</div>
+                </fn-form>
+            </div>
+        </div>
     </div>
 </@orcid.checkFeatureStatus>
 </@public>

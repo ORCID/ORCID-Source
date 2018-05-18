@@ -18,9 +18,9 @@
 -->
 <script type="text/ng-template" id="reactivation-ng2-template">
     
-    	<div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 oauth-registration">
-    	    <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.thank_you")}</p>
-    	    <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.please_complete")}</p>
+        <div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 oauth-registration">
+            <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.thank_you")}</p>
+            <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.please_complete")}</p>
             <div>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <!-- First name -->
@@ -31,7 +31,7 @@
                         <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>
                         <span class="required" [ngClass]="isValidClass(registrationForm.givenNames)">*</span> 
                         <div class="popover-help-container">
-                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                            <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="name-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
@@ -100,7 +100,7 @@
                         <div class="visibilityHelp">
                             <span class="required" [ngClass]="isValidClass(registrationForm.activitiesDefaultVisibility)">*</span>
                             <div class="popover-help-container">
-                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="name-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
@@ -166,5 +166,5 @@
                     <button tabindex="10" class="btn btn-primary" (click)="postReactivationConfirm(null)">${springMacroRequestContext.getMessage("orcid.frontend.reactivate")}</button>
                 </div>
             </div>
-    	</div>
+        </div>
 </script>
