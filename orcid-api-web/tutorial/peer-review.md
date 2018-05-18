@@ -17,11 +17,12 @@ This workflow can be used with Member API credentials on sandbox or the producti
 **Endpoints:** ```/peer-reviews``` and ```/peer-review``` for peer-review items, ```/group-id-record/update``` for peer-review groups
 
 **Sample XML:**
-  * [reading the peer-review section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/peer-reviews-3.0_dev1.xml)
-  * [reading a basic peer-review item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/peer-review-3.0_dev1.xml)
-  * [reading a detailed peer-review item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/peer-review-full-3.0_dev1.xml)
-  * [writing a peer-reivew item with the mininal information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_samples/peer-review-simple-3.0_dev1.xml)
-  * [writing a peer-reivew item with the detailed information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_samples/peer-review-full-3.0_dev1.xml)
+  * [reading the peer-review section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-reviews-2.1.xml)
+  * [reading a basic peer-review item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-2.1.xml)
+  * [reading a detailed peer-review item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-full-2.1.xml)
+  * [writing a peer-reivew item with the mininal information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_samples/peer-review-simple-2.1.xml)
+  * [writing a peer-reivew item with the detailed information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_samples/peer-review-full-2.1.xml)
+  * [peer-review group id](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
 
 ## Permission to edit the record
 Editing the peer-review section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading peer-review activities. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
@@ -56,7 +57,7 @@ Example response:
 
 ### Peer-review group fields
 
-See sample [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-3.0_dev1/samples/group-id-3.0_dev1.xml)
+See sample [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
 
 - **group-id:name** _(required)_ The name of the group. This will display on the user's ORCID record.
 - **group-id:group-id** _(required)_ An identifier for the group formated as identifier type:identifier. Identifier type options are fundref, issn, orcid-generated, publons, ringgold.  
@@ -87,12 +88,9 @@ HTTP/1.1 201 Created
 ...
 Location: http://api.sandbox.orcid.org/v3.0_dev1/group-id-record/1348
 ```
+For more information on working with peer-review groups see [Group id record API](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/README.md)
 
-## Add, update, read and delete peer-review items
-
-### Peer-review fields
-
-See the peer-review items in the [sample files](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_dev1/samples) for the latest schema version.
+## Peer-review fields
 
 **Describing the reviewer**
 
@@ -106,9 +104,9 @@ See the peer-review items in the [sample files](https://github.com/ORCID/ORCID-S
 
 - **review-type** _(required)_ The kind of review applied to the subject type reviewed. This field is selected from a list containing the following values: _evaluation, review_
 
-- **review-completion-date** _(required)_ The date on which the review was completed (formatted to ISO 8601). Allowable values: yyyy; yyyy-mm; yyyy-mm-dd, formatted using the ORCID fuzzy date format. 
+- **review-completion-date** _(required)_ The date on which the review was completed (formatted to ISO 8601). Allowable values: yyyy; yyyy-mm; yyyy-mm-dd. 
 
-- **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID must be pre-registered before use. (see [Group ID Registration]() below for more information.) 
+- **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID must be pre-registered before use. (see [Create a peer-review group]() above for more information.) 
 
 **Describing the subject of the reivew**
 
@@ -124,54 +122,85 @@ See the peer-review items in the [sample files](https://github.com/ORCID/ORCID-S
 
 **Describing the organization the review was done for**
 
-- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc.). Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
+- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc.). The organization must be identified by a Ringgold, GRID, or FundRef ID.
 
 
-## Read, write, update and delete peer-review items
+## Read a summary of all peer-review items on a record
 
-### Peer Review Calls
-
-| Action             | HTTP method | Scope                    | URL                                                                      |
-|--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
-| Read all peer-review items   | GET         | /read-limited or /read-public| https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-reviews |
-| Read one peer-review item   | GET         | /read-limited or /read-public| https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-review/[PUT-CODE] |
-| Add peer-review item    | POST        | /activities/update       | https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-review            |
-| Update peer-review item | PUT         | /activities/update       | https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-review/[PUT-CODE] |
-| Delete peer-review item | DELETE      | /activities/update       | https://api.sandbox.orcid.org/v3.0_dev1/[ORCID-iD]/peer-review/[PUT-CODE] |
+| Parameter | Value        |
+|--------------------|--------------------------|
+| URL 				| https://api.[host]/[version]/[ORCID iD]/peer-reviews |
+| Method    | GET |
+| Header      | Authorication: Bearer [Your authorization code] |
+| Header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
-- **[ORCID-iD]** is the ORCID iD for the record, formatted as XXXX-XXXX-XXXX-XXXX
-- **[PUT-CODE]** is the ```put-code``` attribute for the specific ```peer-review``` activity that you wish to read or modify.
-
-### cURL Examples
-**Read all peer-reviwe items**
+**Example request in curl**
 
 ```
-curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-reviews'
+curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-reviews'
 ```
 
-**Read single peer-review item**
+## Read a single peer-review item
+
+| Parameter | Value        |
+|--------------------|--------------------------|
+| URL 				| https://api.[host]/[version]/[ORCID iD]/peer-review/[put-code] |
+| Method    | GET |
+| header      | Authorication: Bearer [Your authorization code] |
+| header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
+
+
+**Example request in curl**
 
 ```
-curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review/1374'
+curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-review/1374'
 ```
 
-**Add a peer-review item**
+## Post a new peer-review item
 
-```
-curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@peer-review-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review'
-```
+| Parameter | Value        |
+|--------------------|--------------------------|
+| URL 				| https://api.[host]/[version]/[ORCID iD]/peer-review |
+| Method    | POST |
+| header      | Authorication: Bearer [Your authorization code] |
+| header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
+| data        | the work you are posting in json or xml format | 
 
-**Update a peer-review item**
-
+**Example request in curl**
 ```
-curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@peer-review-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review/1374'
-```
-
-**Delete a peer-review item**
-
-```
-curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review/1374'
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-review'
 ```
 
+## Update a funding item
+
+| Parameter | Value        |
+|--------------------|--------------------------|
+| URL 				| https://api.[host]/[version]/[ORCID iD]/peer-review/[put-code] |
+| Method    | PUT |
+| header      | Authorication: Bearer [Your authorization code] |
+| header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
+| data        | the updated work in json or xml format | 
+
+**Example request in curl**
+```
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-review/1374'
+```
+
+## Delete a peer-review item
+
+| Parameter | Value        |
+|--------------------|--------------------------|
+| URL 				| https://api.[host]/[version]/[ORCID iD]/funding/[put-code] |
+| Method    | DELETE |
+| header      | Authorication: Bearer [Your authorization code] |
+| header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
+
+**Example request in curl**
+```
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review/1374'
+```
+
+Example response
+```HTTP/1.1 204 No Content```
 
