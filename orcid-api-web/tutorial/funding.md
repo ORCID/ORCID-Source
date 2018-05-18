@@ -24,13 +24,13 @@ Editing the funding section of a record requires a 3 step OAuth token with the `
 
 **Describing the work**
 - **type** _(required)_ The type of funding awarded, This field is selected from a list containing the following values: Award, Contract, Grant, Salary-award
-    - Award: Peer-reviewed funding providing direct research costs through competitions. Discussion
+    - Award: Peer-reviewed funding providing direct research costs through competitions
 
-    - Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria. Discussion
+    - Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria
 
-    - Grant: Peer-reviewed funding providing direct research costs through competitions. Discussion
+    - Grant: Peer-reviewed funding providing direct research costs through competitions
 
-    - Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member.
+    - Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
 
 
 - **organization-defined-type** _(optional)_ The subtype or locally defined type for the award 
@@ -43,7 +43,7 @@ Editing the funding section of a record requires a 3 step OAuth token with the `
 
 - **amount** _(optional)_ The value of the award, the currency-code is given as an attribute
 
-- **url** _(optional)_ A url linking to the funding
+- **url** _(optional)_ A url linking to the funding award
 
 - **start-date** _(optional)_ The date the funding began
 
