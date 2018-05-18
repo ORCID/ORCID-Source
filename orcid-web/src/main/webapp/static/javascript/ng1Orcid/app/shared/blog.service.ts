@@ -43,12 +43,7 @@ export class BlogService {
     }
 
     getBlogFeed(url): Observable<any> {
-        /*var options = new RequestOptions({
-          headers: new Headers({
-            'Accept': 'application/json'
-          })
-        });*/
-        return this.http.get(url).catch(this.handleError);
+        return this.http.get(url, { responseType: 'text'}).catch(this.handleError);
 
     }
 

@@ -18,5 +18,10 @@ public interface EmailFrequencyManager {
     boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency);
 
     boolean updateSendQuarterlyTips(String orcid, Boolean enabled);
+    
+    boolean emailFrequencyExists(String orcid);
+    
+    boolean update(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
+            SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips);
 
 }

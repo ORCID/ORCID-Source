@@ -65,7 +65,7 @@
             <#include "includes/print_record.ftl"/>
 
             <div class="qrcode-container">
-                <a href="<@orcid.rootPath "/my-orcid-qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
+                <a href="<@orcid.rootPath "/qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
                     <div class="popover-help-container">
                         <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
                         <div id="qrcode-help" class="popover bottom">

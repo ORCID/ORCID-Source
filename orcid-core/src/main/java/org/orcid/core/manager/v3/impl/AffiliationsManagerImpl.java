@@ -380,7 +380,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             break;
         }
         
-        entity.setVisibility(originalVisibility);
+        if (isApiRequest) {
+            entity.setVisibility(originalVisibility);
+        }
+        
 
         // Be sure it doesn't overwrite the source
         entity.setSourceId(existingSourceId);

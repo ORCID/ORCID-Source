@@ -144,8 +144,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         Date lastModified = profileEntity.getLastModified() == null? new Date() : profileEntity.getLastModified();
         
-        int countTokens = orcidOauth2TokenService.findCountByUserName(profileEntity.getId(), lastModified.getTime());
-        profile.setCountTokens(countTokens);
         return profile;
     }
 

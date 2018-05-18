@@ -12,6 +12,10 @@ import * as vcRecaptcha from 'angular-recaptcha'
 import 'angular-route'
 
 //User generated imports
+
+import { AffiliationExtIdPopoverModule } 
+    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
+
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
 
@@ -101,6 +105,9 @@ import { NotificationsModule }
 
 import { OauthAuthorizationModule } 
     from './oauthAuthorization/oauthAuthorization.ts';
+
+import { OrgIdentifierPopoverModule } 
+    from './orgIdentifierPopover/orgIdentifierPopover.ts';
 
 import { PasswordEditModule } 
     from './passwordEdit/passwordEdit.ts';
@@ -194,6 +201,7 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
+        AffiliationExtIdPopoverModule.name,
         AffiliationModule.name,
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
@@ -223,6 +231,7 @@ export const orcidApp = angular.module(
         ModalModule.name,
         NameModule.name,
         OauthAuthorizationModule.name,
+        OrgIdentifierPopoverModule.name,
         PasswordEditModule.name,
         PersonalInfoModule.name,
         PublicEduAffiliationModule.name,

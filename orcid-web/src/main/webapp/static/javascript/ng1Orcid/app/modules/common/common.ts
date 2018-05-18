@@ -18,6 +18,7 @@ import { FocusMe }
     from '../../directives/focusMe.directive.ts'; 
 
 //User generated filters
+
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
 
@@ -28,10 +29,7 @@ import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
 import { LatexPipe }
-    from '../../pipes/latexNg2.ts';
-
-    import { OrgIdentifierHtmlPipe }
-    from '../../pipes/orgIdentifierHtmlNg2.ts';    
+    from '../../pipes/latexNg2.ts';  
     
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
@@ -46,6 +44,8 @@ import { WorkExternalIdentifierHtmlPipe }
     from '../../pipes/workExternalIdentifierHtmlNg2.ts';
 
 //User generated modules
+import { AffiliationExtIdPopoverNg2Module }
+    from './../affiliationExtIdPopover/affiliationExtIdPopover.ts';
 /*
 import { DelegatesNg2Module }
     from './../delegates/delegates.ts';
@@ -65,6 +65,9 @@ import { LanguageNg2Module }
 
 import { NotificationPreferenceNg2Module }
     from './../notificationPreferences/notificationPreference.ts';
+
+import { OrgIdentifierPopoverNg2Module } 
+    from './../orgIdentifierPopover/orgIdentifierPopover.ts';
 
 import { PasswordEditNg2Module }
     from './../passwordEdit/passwordEdit.ts';
@@ -221,10 +224,12 @@ import { EmailFrequencyService }
             CommonModule,
             FormsModule,
             //User Modules
+            AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
+            OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
@@ -236,7 +241,6 @@ import { EmailFrequencyService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
-            OrgIdentifierHtmlPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
@@ -254,16 +258,17 @@ import { EmailFrequencyService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
-            OrgIdentifierHtmlPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
+            AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
             EmailFrecuencyNg2Module,
             LanguageNg2Module,
+            OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
