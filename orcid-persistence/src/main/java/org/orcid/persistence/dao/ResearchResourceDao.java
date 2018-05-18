@@ -9,5 +9,7 @@ public interface ResearchResourceDao extends GenericDao<ResearchResourceEntity, 
     boolean removeResearchResource(String userOrcid, Long researchResourceId);
 
     List<ResearchResourceEntity> getByUser(String userOrcid, long lastModified);
+    
+    public ResearchResourceEntity getResearchResource(String userOrcid, Long researchResourceId);
 
 }

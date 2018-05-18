@@ -1,5 +1,6 @@
 package org.orcid.persistence.jpa.entities;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -9,7 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -19,17 +23,16 @@ public class ResearchResourceItemEntity {
 
     private static final long serialVersionUID = 1L;
     private Long id;
-    private Long researchResourceId;
 
     private String resourceName;
     private String resourceType;
-    private Set<OrgEntity> hosts;
+    private List<OrgEntity> hosts;
     private String externalIdentifiersJson;
     private String url;
     
     private ResearchResourceEntity researchResourceEntity;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="research_resource_id", nullable=false)
     public ResearchResourceEntity getResearchResourceEntity() {
         return researchResourceEntity;
@@ -84,6 +87,18 @@ public class ResearchResourceItemEntity {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "research_resource_item_org", 
+               joinColumns = { @JoinColumn(name = "research_resource_item_id") }, 
+               inverseJoinColumns = { @JoinColumn(name = "org_id") })
+    public List<OrgEntity> getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(List<OrgEntity> hosts) {
+        this.hosts = hosts;
     }
 
 }

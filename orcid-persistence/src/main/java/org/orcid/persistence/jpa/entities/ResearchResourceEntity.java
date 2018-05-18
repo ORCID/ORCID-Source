@@ -1,5 +1,6 @@
 package org.orcid.persistence.jpa.entities;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -22,10 +25,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "research_resource")
-public class ResearchResourceEntity extends SourceAwareEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, DisplayIndexInterface {
+public class ResearchResourceEntity extends SourceAwareEntity<Long> implements Comparable<ResearchResourceEntity>, ProfileAware, DisplayIndexInterface {
 
     /*
                         <xs:element name="hosts" type="research-resource:hosts" minOccurs="1" maxOccurs="1" />
+                        Make a RRHostEntity = many to many table {org <-> rr}
+                        Make a RRItemHostEntity = many to many table {org <-> rri}
      */
     
     private static final long serialVersionUID = 1L;
@@ -43,8 +48,8 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
     private String translatedTitleLanguageCode;
     private Long displayIndex; 
 
-    private Set<OrgEntity> hosts;
-    private Set<ResearchResourceItemEntity> resourceItems;
+    private List<OrgEntity> hosts;
+    private List<ResearchResourceItemEntity> resourceItems;
     
     @Override
     @Id
@@ -157,19 +162,31 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
         this.externalIdentifiersJson = externalIdentifiersJson;
     }
     
-    @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.EAGER )
-    public Set<ResearchResourceItemEntity> getResourceItems() {
+    @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.LAZY )
+    public List<ResearchResourceItemEntity> getResourceItems() {
         return resourceItems;
     }
 
-    public void setResourceItems(Set<ResearchResourceItemEntity> resourceItems) {
+    public void setResourceItems(List<ResearchResourceItemEntity> resourceItems) {
         this.resourceItems = resourceItems;
+    }
+    
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "research_resource_org", 
+               joinColumns = { @JoinColumn(name = "research_resource_id", referencedColumnName="id") }, 
+               inverseJoinColumns = { @JoinColumn(name = "org_id", referencedColumnName="id") })
+    public List<OrgEntity> getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(List<OrgEntity> hosts) {
+        this.hosts = hosts;
     }
     
     ////
 
     @Override
-    public int compareTo(ProfileFundingEntity o) {
+    public int compareTo(ResearchResourceEntity o) {
         // TODO Auto-generated method stub
         return 0;
     }

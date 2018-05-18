@@ -65,6 +65,33 @@
 		
 		<addForeignKeyConstraint constraintName="research_resource_orcid_fk" baseTableName="research_resource" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
 		<addForeignKeyConstraint constraintName="research_resource_item_fk" baseTableName="research_resource_item" baseColumnNames="research_resource_id" referencedTableName="research_resource" referencedColumnNames="id" />
+		
+		<createTable tableName="research_resource_org">
+			<column name="research_resource_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="org_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<addPrimaryKey constraintName="research_resource_org_pkey" tableName="research_resource_org" columnNames="research_resource_id,org_id"/>		
+		<addForeignKeyConstraint constraintName="research_resource_org_fk1" baseTableName="research_resource_org" baseColumnNames="research_resource_id" referencedTableName="research_resource" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="research_resource_org_fk2" baseTableName="research_resource_org" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
+
+		<createTable tableName="research_resource_item_org">
+			<column name="research_resource_item_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="org_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addPrimaryKey constraintName="research_resource_item_org_pkey" tableName="research_resource_item_org" columnNames="research_resource_item_id,org_id"/>		
+		<addForeignKeyConstraint constraintName="research_resource_item_org_fk1" baseTableName="research_resource_item_org" baseColumnNames="research_resource_item_id" referencedTableName="research_resource_item" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="research_resource_item_org_fk2" baseTableName="research_resource_item_org" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
+		
 	</changeSet>
 	
 	<changeSet id="CREATE-RESEARCH-RESOURCE-SEQUENCES" author="Tom Demeranville" dbms="postgresql">
@@ -107,6 +134,8 @@
 		</preConditions>
 		<sql>GRANT SELECT ON research_resource to orcidro;</sql>
 		<sql>GRANT SELECT ON research_resource_item to orcidro;</sql>
+		<sql>GRANT SELECT ON research_resource_org to orcidro;</sql>
+		<sql>GRANT SELECT ON research_resource_item_org to orcidro;</sql>
 	</changeSet>
 	
 </databaseChangeLog>

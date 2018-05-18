@@ -113,7 +113,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element ref="common:organization" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:element ref="common:organization" minOccurs="1" maxOccurs="10"/>
 		</xs:sequence>
 	</xs:complexType>
 

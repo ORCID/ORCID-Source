@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -21,6 +22,7 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -48,6 +50,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     }
 
     @Test
+    @Transactional
     public void testRead(){
         List<ResearchResourceEntity> e1 = dao.getByUser(OTHER_USER_ORCID, new Date().getTime());
         assertNotNull(e1);
@@ -70,14 +73,23 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(Date.parse("2010/07/02 15:31"),e1.get(0).getLastModified().getTime());
         assertEquals("4444-4444-4444-4446",e1.get(0).getProfile().getUsername());
         assertEquals("4444-4444-4444-4442",e1.get(0).getSourceId());
-        assertEquals(0,e1.get(0).getResourceItems().size());
+        assertEquals(2,e1.get(0).getHosts().size());
+        
+        assertEquals(2,e1.get(0).getResourceItems().size());
+        ResearchResourceItemEntity i1 = e1.get(0).getResourceItems().iterator().next();
+        assertEquals("the resource name1",i1.getResourceName());
+        assertEquals("the resource type1",i1.getResourceType());
+        assertEquals("the url1",i1.getUrl());
+        assertEquals(2,i1.getHosts().size());
+        assertEquals(e1.get(0).getTitle(), i1.getResearchResourceEntity().getTitle());
+        
         //other two
         assertEquals(2l,e1.get(1).getDisplayIndex().longValue());
         assertEquals(3l,e1.get(2).getDisplayIndex().longValue());
     }
     
     @Test
-    public void testWrite(){
+    public void testWriteRR(){
         ResearchResourceEntity e = new ResearchResourceEntity();
         e.setDisplayIndex(4l);
         e.setTitle("the title4");
@@ -108,7 +120,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         dao.flush();
         
         List<ResearchResourceEntity> e1 = dao.getByUser(USER_ORCID, new Date().getTime());
-        assertNotNull(e1);
+
         assertEquals(2,e1.size());
 
         assertEquals(4l,e1.get(1).getDisplayIndex().longValue());
@@ -130,19 +142,21 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals("4444-4444-4444-4442",e1.get(1).getClientSourceId());
         assertEquals("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}",e.getExternalIdentifiersJson());
         
+    }
+    
+    @Test
+    public void testWriteRI(){        
+        List<ResearchResourceEntity> e1 = dao.getByUser(USER_ORCID, new Date().getTime());
+        assertNotNull(e1);
         ResearchResourceItemEntity ei = new ResearchResourceItemEntity();
         ei.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}");
         ei.setResourceName("the resource name");
         ei.setResourceType("the resource type");
         ei.setUrl("the resource url");
-        //are these needed?  Will one do?  er...
-        ei.setResearchResourceEntity(e);
-        //ei.setResearchResourceId(e.getId());
-        
-        e1.get(1).setResourceItems( Sets.newHashSet(ei));
-        ResearchResourceEntity eiMerged = dao.merge(e1.get(1));
+        ei.setResearchResourceEntity(e1.get(0));        
+        e1.get(0).setResourceItems( Lists.newArrayList(ei));
+        ResearchResourceEntity eiMerged = dao.merge(e1.get(0));
         assertEquals("the resource name",eiMerged.getResourceItems().iterator().next().getResourceName());
-
     }
 
 

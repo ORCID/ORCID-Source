@@ -85,4 +85,43 @@ date_created="2010-07-02 15:31:00.00"
 last_modified="2010-07-02 15:31:00.00"
 source_id="4444-4444-4444-4442"
 />
+
+<!-- couple of items -->
+<research_resource_item 
+id="1"
+research_resource_id="1"
+resource_name="the resource name1"
+resource_type="the resource type1"
+url="the url1"
+external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}"
+/>
+<research_resource_item 
+id="2"
+research_resource_id="1"
+resource_name="the resource name2"
+resource_type="the resource type2"
+url="the url2"
+external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}"
+/>
+
+<!-- couple of hosts -->
+<research_resource_org 
+research_resource_id="1"
+org_id="1"
+/>
+<research_resource_org 
+research_resource_id="1"
+org_id="2"
+/>
+
+<!-- couple of hosts -->
+<research_resource_item_org 
+research_resource_item_id="1"
+org_id="1"
+/>
+<research_resource_item_org 
+research_resource_item_id="1"
+org_id="2"
+/>
+
 </dataset>

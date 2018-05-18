@@ -102,8 +102,13 @@ public class DBUnitTest {
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
+        QueryDataSet grandChildTableSet = new QueryDataSet(connection);
+        grandChildTableSet.addTable("research_resource_item_org");
+        DatabaseOperation.DELETE.execute(connection, grandChildTableSet);
+        
         QueryDataSet childTableSet = new QueryDataSet(connection);
         childTableSet.addTable("research_resource_item");
+        childTableSet.addTable("research_resource_org");
         DatabaseOperation.DELETE.execute(connection, childTableSet);
 
         QueryDataSet dataSet = new QueryDataSet(connection);
