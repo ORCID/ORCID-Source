@@ -15,8 +15,8 @@
 		<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
 			<div class="col-md-6 col-md-offset-3" ng-controller="OauthAuthorizationController">
 				<div class="login">			
-					<p class="title" ng-show="!showRegisterForm" ng-cloak>${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a href="javascript:void(0);" id="switch-to-register-form" ng-click="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
-					<p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="javascript:void(0);" id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
+					<p class="title" ng-show="!showRegisterForm" ng-cloak>${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a id="switch-to-register-form" ng-click="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
+					<p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
 					<div ng-show="!showRegisterForm">
 						<div class="personal-login" ng-cloak>
 							<#if shibbolethEnabled>
@@ -41,7 +41,7 @@
 										<div class="title">
 										 	${springMacroRequestContext.getMessage("login.signinwithasocialaccount")}
 											<div class="popover-help-container">
-												<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+												<i class="glyphicon glyphicon-question-sign"></i>
 												<div id="social-login-help" class="popover bottom">
 													<div class="arrow"></div>
 													<div class="popover-content">
@@ -91,7 +91,7 @@
 									<div class="title">
 									${springMacroRequestContext.getMessage('login.signinviayourinstitution')}
 										<div class="popover-help-container">
-											<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+											<i class="glyphicon glyphicon-question-sign"></i>
 											<div id="institution-login-help" class="popover bottom">
 												<div class="arrow"></div>
 												<div class="popover-content">
