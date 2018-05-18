@@ -2,7 +2,7 @@
     <div class="col-md-9 col-sm-9 col-xs-7">
         <h3 class="workspace-title">
             <span>{{group?.activities[group?.activePutCode]?.affiliationName.value}}</span>:
-            <span>{{group?.activities[group?.activePutCode]?.city.value}}</span><span *ngIf="group?.activities[group?.activePutCode]?.region.value">, </span><span>{{group?.activities[group?.activePutCode]?.value}}</span>, <span>{{group?.activities[group?.activePutCode]?.countryForDisplay}}</span>                                               
+            <span>{{group?.activities[group?.activePutCode]?.city.value}}</span><span *ngIf="group?.activities[group?.activePutCode]?.region.value">, </span><span>{{group?.activities[group?.activePutCode]?.region.value}}</span>, <span>{{group?.activities[group?.activePutCode]?.countryForDisplay}}</span>                                               
         </h3>
         <div class="info-detail">
             <div class="info-date">                     
