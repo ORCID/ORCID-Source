@@ -631,7 +631,7 @@ public class BlackBoxBase {
     public static void openEditAddressModal() {
         waitForElementVisibility(By.id("country-open-edit-modal"));
         ngAwareClick(findElementById("country-open-edit-modal"));
-        waitForCboxComplete();
+//        waitForCboxComplete();
     }
 
     public static void saveEditAddressModal() {
@@ -643,7 +643,7 @@ public class BlackBoxBase {
     public static void changeAddressVisibility(String visibility) {
         int index = getPrivacyIndex(visibility);
         
-        String countriesVisibilityXpath = "//div[@ng-repeat='country in countryForm.addresses']//descendant::div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        String countriesVisibilityXpath = "//div[@id='addresses']//descendant::div[@class='privacy-bar-impr']/ul/li[" + index + "]/a";
         BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath(countriesVisibilityXpath)), webDriver);
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(countriesVisibilityXpath));
@@ -653,12 +653,12 @@ public class BlackBoxBase {
     }                
     
     public static void createAddress(String countryCode) {
-        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        By addNew = By.xpath("//a[@id='add-new-country']/span");
         waitForElementVisibility(addNew);
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
-        By emptyInput = By.xpath("(//select[@ng-model='country.iso2Country.value'])[last()]//option[@value = " + Quotes.escape(countryCode) + "]");
+        By emptyInput = By.xpath("(//select[@name='country'])[last()]//option[@value = " + Quotes.escape(countryCode) + "]");
         waitForElementVisibility(emptyInput);
         WebElement countryElement = findElement(emptyInput);
         BBBUtil.ngAwareClick(countryElement, webDriver);        
@@ -666,11 +666,11 @@ public class BlackBoxBase {
     
     public static void deleteAddresses() {
         waitForAngular();
-        By rowBy = By.xpath("//div[@ng-repeat='country in countryForm.addresses']");
+        By rowBy = By.xpath("//div[@id='addresses']");
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteCountry(country)']")));            
+            ngAwareClick(webElement.findElement(By.xpath("//div[@id='delete-country']")));            
         }
     }        
     
