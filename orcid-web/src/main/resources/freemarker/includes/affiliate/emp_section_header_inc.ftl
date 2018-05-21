@@ -8,7 +8,7 @@
             </a>
             <#if !(isPublicProfile??)> 
                 <div class="popover-help-container">
-                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <i class="glyphicon glyphicon-question-sign"></i>
                     <div id="employment-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">
@@ -24,23 +24,23 @@
                 <ul class="workspace-bar-menu">                         
                     <!-- Link Manually -->
                     <li class="hidden-xs">                  
-                    	<div class="menu-container" id="add-employment-container">
-	                    	<ul class="toggle-menu">
-	                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
-			                    	<span class="glyphicon glyphicon-plus"></span>
-				                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
-				                    <ul class="menu-options employment">	                    	
-					                    <!-- Add Manually -->
-					                    <li>                            
-					                        <a id="add-employment" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
-					                            <span class="glyphicon glyphicon-plus"></span>
-					                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-					                        </a>                
-                   						 </li>
-					                </ul>
-					             </li>
-					      </ul>
-					    </div>         
+                        <div class="menu-container" id="add-employment-container">
+                            <ul class="toggle-menu">
+                                <li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
+                                    <ul class="menu-options employment">                            
+                                        <!-- Add Manually -->
+                                        <li>                            
+                                            <a id="add-employment" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            </a>                
+                                         </li>
+                                    </ul>
+                                 </li>
+                          </ul>
+                        </div>         
                     </li>
                     <!-- Mobile workaound -->
                     <li class="hidden-md hidden-sm visible-xs-inline">                            
@@ -48,7 +48,7 @@
                             <span class="glyphicon glyphicon-plus"></span>
                             <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                         </a>                
-              		</li>
+                    </li>
                     
                     
                     

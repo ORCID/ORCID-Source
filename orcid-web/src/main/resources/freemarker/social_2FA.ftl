@@ -10,10 +10,10 @@
                     <div class="orcid-error">
                         <p ng-bind="codes.errors[0]"></p>
                     </div>
-    	            <div class="form-group">
+                    <div class="form-group">
                         <div class="bold">${springMacroRequestContext.getMessage("2FA.orcid")} ${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}
                             <div class="popover-help-container">
-                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="social-login-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
@@ -36,12 +36,12 @@
                     </div>
                 </div>
                 <div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
-    	            <div class="control-group">                    
-    	                <ul class="inline-list">
-    	                	<li><button id='form-sign-in-button' class="btn btn-primary social-signin-btn" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button></li>
-    	                	<li><span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span></li>
-    	                </ul>                
-    	            </div>
+                    <div class="control-group">                    
+                        <ul class="inline-list">
+                            <li><button id='form-sign-in-button' class="btn btn-primary social-signin-btn" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button></li>
+                            <li><span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span></li>
+                        </ul>                
+                    </div>
                 </div>              
             </div>
         </form>
