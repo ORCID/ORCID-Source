@@ -11,7 +11,6 @@
     * Second email: 00_ma_test_[DD][month][YYYY]@mailinator.com
     * Password: test1234
     * Default privacy for new activities: Public
-    * Email frequency: Weekly summary
 3. Attempt to edit the biography of the record- check you get a warning message to verify your email address
 5. Visit https://qa.orcid.org/signout
 6. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
@@ -79,7 +78,6 @@
     * Leave additional email blank
     * Password: [DD][month][YYYY]
     * Default privacy for new activities: Private
-    * Email frequency: Never
     
 55. Check you are prompted with a window asking if the record you created earlier is you. Click Continue to registration
 
@@ -143,6 +141,7 @@
 69. Use the switch user option to change to the record created during the OAuth process
 
 70. Using IE 11 visit the follow pages and make sure everything loads
+	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
