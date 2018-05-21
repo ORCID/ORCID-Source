@@ -848,21 +848,6 @@ $(function() {
         href : baseUrl + "account/search-for-delegates #add-an-individual"
     });
 
-    // Search hack
-
-    $('#form-search')
-            .on(
-                    'submit',
-                    function(e) {
-                        if ($('[name="huh_radio"]:checked', this).val() === "registry") {
-                            e.preventDefault();
-                            window.location = baseUrl
-                                    + "orcid-search/quick-search/?searchQuery="
-                                    + encodeURIComponent($('[type="search"]',
-                                            this).val());
-                        }
-                    });
-
     // delgates
     $('#searchForDelegatesForm').on(
             'submit',
