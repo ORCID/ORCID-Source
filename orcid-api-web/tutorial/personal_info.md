@@ -17,7 +17,7 @@ These calls can be used with Member API credentials on sandbox or the production
 * For country: ```/address```
 * For keywords: ```/keywords```
 * For websites: ```/research-urls```
-* For personal identifiers: ```/external-identifiers```
+* For [personal identifiers](personal_identifiers.md): ```/external-identifiers```
 * For reading email addresses: ```/email```
 
 **Sample XML files:**
@@ -52,15 +52,15 @@ Editing the person section of a record requires a 3 step OAuth token with the ``
 
 - **researcher-url:url** _(optional)_ The URL to a website about the researcher
 
-- **external-identifiers** _(optional)_ Identifiers with links to a reference to the researcher in another sytem
+- **external-identifiers** _(optional)_ Identifiers with links to a reference to the researcher in another sytem. See the [Personal identifiers tutorial](personal_identifiers.md).
 
-- **emails** _(optional)_ Email addresses of the researcher. _Note that most researchers choose to have their email addresses set to private, which means that they cannot be read via the API_
+- **emails** _(user edit only)_ Email addresses of the researcher. _Note that most researchers choose to have their email addresses set to private, which means that they cannot be read via the API_
 
 ## Read all person information
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/person |
+| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/person |
 | Method    | GET |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
@@ -83,7 +83,7 @@ HTTP/1.1 200 OK
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/[person section] |
+| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[person section] |
 | Method    | GET |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
@@ -106,7 +106,7 @@ HTTP/1.1 200 OK
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section]/[put-code] |
+| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[person section]/[put-code] |
 | Method    | GET |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
@@ -122,7 +122,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section] |
+| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[person section] |
 | Method    | POST |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
@@ -143,7 +143,7 @@ Location: http://api.qa.orcid.org/2.1/0000-0002-9227-8514/researcher-urls/41387
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section]/[put-code] |
+| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[person section]/[put-code] |
 | Method    | PUT |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
@@ -154,11 +154,17 @@ Location: http://api.qa.orcid.org/2.1/0000-0002-9227-8514/researcher-urls/41387
 curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name_updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls/41387'
 ```
 
+Example response
+```
+HTTP/1.1 200 OK
+<researcher-url:researcher-url put-code="8802" ...</researcher-url:researcher-url>
+```
+
 ## Delete a personal information item
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section]/[put-code] |
+| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[affiliation section]/[put-code] |
 | Method    | DELETE |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
