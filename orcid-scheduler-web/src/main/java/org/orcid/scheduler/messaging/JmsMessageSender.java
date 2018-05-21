@@ -1,4 +1,4 @@
-package org.orcid.persistence.messaging;
+package org.orcid.scheduler.messaging;
 
 import java.util.Map;
 

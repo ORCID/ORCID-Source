@@ -16,6 +16,8 @@ import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManager {
 
@@ -90,18 +92,9 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
     }
 
     private void validateDuplicate(GroupIdRecord newGroupIdRecord) {
-        List<GroupIdRecordEntity> existingGroupIdRecords = groupIdRecordDao.getAll();
-        if (existingGroupIdRecords != null && !existingGroupIdRecords.isEmpty()) {
-            for (GroupIdRecordEntity existing : existingGroupIdRecords) {
-                // Compare if it is a new element or if the element to compare
-                // dont have the same put code than me
-                if (newGroupIdRecord.getPutCode() == null || !newGroupIdRecord.getPutCode().equals(existing.getId())) {
-                    if (newGroupIdRecord.getGroupId().equalsIgnoreCase(existing.getGroupId())) {
-                        throw new DuplicatedGroupIdRecordException();
-                    }
-                }
-            }
+        if (groupIdRecordDao.duplicateExists(newGroupIdRecord.getPutCode(), newGroupIdRecord.getGroupId())) {
+            throw new DuplicatedGroupIdRecordException();
         }
     }
-
+    
 }

@@ -86,6 +86,7 @@ GroupedActivities.PEER_REVIEW = 'peerReview';
 GroupedActivities.AFFILIATION = 'affiliation';
 GroupedActivities.NG2_AFFILIATION = 'ng2_affiliation';
 
+
 GroupedActivities.prototype.add = function(activity) {      
     // assumes works are added in the order of the display index desc
     // subsorted by the created date asc

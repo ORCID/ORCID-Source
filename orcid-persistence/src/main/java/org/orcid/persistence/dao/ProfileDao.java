@@ -23,9 +23,11 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          The list of desired indexing status
      * @param maxResults
      *          Max number of results
+     * @param delay
+     *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
 
     /**
      * Get a list of the ORCID ids with the given indexing status
@@ -35,22 +37,12 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          Max number of results
      * @param orcidsToExclude
      *          List of ORCID ids to exclude from the results
+     * @param delay
+     *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
-
-    /**
-     * Get a list of the ORCID ids with the given indexing status
-     * @param indexingStatuses
-     *          The list of desired indexing status
-     * @param maxResults
-     *          Max number of results
-     * @param orcidsToExclude
-     *          List of ORCID ids to exclude from the results
-     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
-     * */
-    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
-
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
+    
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findUnclaimedNeedingReminder(int reminderAfterDays, int maxResults, Collection<String> orcidsToExclude);

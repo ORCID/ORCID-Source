@@ -645,11 +645,4 @@ public class OrcidProfile implements Serializable {
         this.reviewed = reviewed;
     }
 
-    public int getCountTokens() {
-        return countTokens;
-    }
-
-    public void setCountTokens(int countTokens) {
-        this.countTokens = countTokens;
-    }
 }

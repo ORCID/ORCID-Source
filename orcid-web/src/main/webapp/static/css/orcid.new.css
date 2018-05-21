@@ -1792,14 +1792,37 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #fff
 }
 
-.work-title a.toggle-text,.workspace-accordion-header a.toggle-text,.workspace-title a.toggle-text {
+.work-title a.toggle-text,
+.workspace-accordion-header a.toggle-text,
+.workspace-accordion-header h2.toggle-text,
+.workspace-title a.toggle-text {
     color: #fff;
     //display: inline-block;
     font-size: 16px;
     font-weight: 700;
     height: 30px;
     line-height: 31px;
-    width: 100%
+    width: 100%;
+    cursor: pointer;
+}
+
+.workspace-accordion-header h2.toggle-text {
+    width: initial;
+    float: left;
+}
+
+.workspace-accordion-header .popover-help-container {
+    margin-left: 6px;
+    line-height: 31px;
+}
+
+.workspace-accordion-header i.glyphicon-question-sign {
+    color: #338caf;
+    cursor: pointer;
+}
+
+.workspace-accordion-header i.glyphicon-question-sign:hover {
+    color: #a6ce39;
 }
 
 .toggle-text:hover {
@@ -4377,8 +4400,10 @@ ul.sources-edit-list>li {
     margin-top: 15px
 }
 
+#workspace-distinction-invited-position .workspace-accordion-header .popover-help-container .popover,
 #workspace-education .workspace-accordion-header .popover-help-container .popover,
 #workspace-employment .workspace-accordion-header .popover-help-container .popover,
+#workspace-membership-service .workspace-accordion-header .popover-help-container .popover,
 #workspace-fundings .workspace-accordion-header .popover-help-container .popover,
 #workspace-publications .workspace-accordion-header .popover-help-container .popover,
 #workspace-peer-review .workspace-accordion-header .popover-help-container .popover,

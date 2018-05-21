@@ -7,7 +7,7 @@
         <p><@orcid.msg 'workspace.qrcode.detail_2'/></p>
         <div>
             <a href="<@orcid.rootPath "/ORCID.png"/>" download="ORCID.png" type="image/png">
-                <img class="qrcode-image" src="<@orcid.rootPath "/my-orcid-qr-code.png"/>"></img>
+                <img class="qrcode-image" src="<@orcid.rootPath "/qr-code.png"/>"></img>
             </a>
             <p>
                 <a href="<@orcid.rootPath "/ORCID.png"/>" download="ORCID.png" type="image/png"><@orcid.msg 'workspace.qrcode.download'/></a>

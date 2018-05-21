@@ -1,6 +1,8 @@
 package org.orcid.persistence.dao.impl;
 
 import java.util.List;
+
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -9,6 +11,7 @@ import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -142,12 +145,16 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
     
     @Override
-    public int findCountByUserName(String userName) {
+    public boolean hasToken(String userName) {
     	Query query = entityManager
-                .createNativeQuery("select count(*) from oauth2_token_detail where user_orcid=:userName");
+                .createNativeQuery("select true from oauth2_token_detail where user_orcid=:userName limit 1");
         query.setParameter("userName", userName);
-        int count = ((java.math.BigInteger)query.getSingleResult()).intValue();
-        return count;
+        try {
+            query.getSingleResult();
+        } catch (NoResultException e) {
+            return false;
+        }
+        return true;
     }
 
 
