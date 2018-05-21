@@ -96,7 +96,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             Collection<String> orcidsToExclude, Integer delay) {
         StringBuilder builder = new StringBuilder("SELECT p.orcid, p.indexing_status FROM profile p WHERE p.indexing_status IN :indexingStatus ");
         if(delay != null && delay > 0) {
-            builder.append(" AND p.last_indexed_date < now() - INTERVAL '" + delay + " min' ");
+            builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
         }
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
