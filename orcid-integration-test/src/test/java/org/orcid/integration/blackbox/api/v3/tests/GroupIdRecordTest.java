@@ -22,8 +22,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.integration.api.pub.PublicV3ApiClientImpl;
-import org.orcid.integration.blackbox.api.v3.dev1.BlackBoxBaseV3_0_dev1;
-import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
+import org.orcid.integration.blackbox.api.v3.rc1.BlackBoxBaseV3_0_rc1;
+import org.orcid.integration.blackbox.api.v3.rc1.MemberV3Rc1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,7 +33,7 @@ import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
-public class GroupIdRecordTest extends BlackBoxBaseV3_0_dev1 {
+public class GroupIdRecordTest extends BlackBoxBaseV3_0_rc1 {
 
     private static final List<String> VALID_GROUP_IDS = Arrays.asList( 
             "orcid-generated:bb_test:this.is.a.test.", 
@@ -65,10 +65,10 @@ public class GroupIdRecordTest extends BlackBoxBaseV3_0_dev1 {
 
     ArrayList<Long> putsToDelete = new ArrayList<Long>();
     
-    @Resource(name = "memberV3_0_dev1ApiClient")
-    private MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;
+    @Resource(name = "memberV3_0_rc1ApiClient")
+    private MemberV3Rc1ApiClientImpl memberV3Rc1ApiClient;
     
-    @Resource(name = "publicV3_0_dev1ApiClient")
+    @Resource(name = "publicV3_0_rc1ApiClient")
     private PublicV3ApiClientImpl publicV3ApiClientImpl;
     
     @Before
@@ -77,17 +77,17 @@ public class GroupIdRecordTest extends BlackBoxBaseV3_0_dev1 {
 
         // clean up group IDs before test
         int page = 1;
-        org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecords groupsContainer = memberV3Dev1ApiClient.getGroupIdRecords(100, page, token).getEntity(org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecords.class);
+        org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords groupsContainer = memberV3Rc1ApiClient.getGroupIdRecords(100, page, token).getEntity(org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords.class);
         
         while (groupsContainer.getTotal() > 0) {
-            for (org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord groupIdRecord : groupsContainer.getGroupIdRecord())
+            for (org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord groupIdRecord : groupsContainer.getGroupIdRecord())
                 if (groupIdRecord.getGroupId().startsWith("orcid-generated:bb_test:"))
                     putsToDelete.add(groupIdRecord.getPutCode());
             page++;
-            groupsContainer = memberV3Dev1ApiClient.getGroupIdRecords(100, page, token).getEntity(org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecords.class);
+            groupsContainer = memberV3Rc1ApiClient.getGroupIdRecords(100, page, token).getEntity(org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords.class);
         }
         for (Long putCode : putsToDelete) {
-            memberV3Dev1ApiClient.deleteGroupIdRecord(putCode, token);
+            memberV3Rc1ApiClient.deleteGroupIdRecord(putCode, token);
         }
         putsToDelete.clear();
     }
@@ -97,7 +97,7 @@ public class GroupIdRecordTest extends BlackBoxBaseV3_0_dev1 {
         String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
 
         for (Long putCode : putsToDelete) {
-            memberV3Dev1ApiClient.deleteGroupIdRecord(putCode, token);
+            memberV3Rc1ApiClient.deleteGroupIdRecord(putCode, token);
         }        
     }
 
@@ -106,20 +106,20 @@ public class GroupIdRecordTest extends BlackBoxBaseV3_0_dev1 {
         String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
         
         for(String groupId : VALID_GROUP_IDS) {            
-            org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord g1 = new org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord();
+            org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord g1 = new org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord();
             g1.setDescription("Description");
             g1.setGroupId(groupId);
             g1.setName("Group # " + System.currentTimeMillis());
             g1.setType("publisher");
-            ClientResponse r1 = memberV3Dev1ApiClient.createGroupIdRecord(g1, token);
-            String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v3.0_dev1/group-id-record/", "");
+            ClientResponse r1 = memberV3Rc1ApiClient.createGroupIdRecord(g1, token);
+            String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v3.0_rc1/group-id-record/", "");
             g1.setPutCode(Long.valueOf(r1LocationPutCode));
             
             webDriver.get(getWebBaseUrl() + "/public/group/" + g1.getPutCode());
             WebElement preElement = webDriver.findElement(By.tagName("pre"));
             String groupElementString = preElement.getText();
             assertFalse(PojoUtil.isEmpty(groupElementString));
-            org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord groupFromWebPage = JsonUtils.readObjectFromJsonString(groupElementString, org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord.class);
+            org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord groupFromWebPage = JsonUtils.readObjectFromJsonString(groupElementString, org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord.class);
             assertNotNull(groupFromWebPage);
             assertEquals("Missing " + groupId, groupId, groupFromWebPage.getGroupId());
             
@@ -127,12 +127,12 @@ public class GroupIdRecordTest extends BlackBoxBaseV3_0_dev1 {
         }
         
         for(String invdalidGroupId : INVALID_GROUP_IDS) {            
-            org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord g1 = new org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord();
+            org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord g1 = new org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord();
             g1.setDescription("Description");
             g1.setGroupId(invdalidGroupId);
             g1.setName("Group # " + System.currentTimeMillis());
             g1.setType("publisher");
-            ClientResponse r1 = memberV3Dev1ApiClient.createGroupIdRecord(g1, token);
+            ClientResponse r1 = memberV3Rc1ApiClient.createGroupIdRecord(g1, token);
             assertNotNull(r1);
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
         }        
@@ -142,27 +142,27 @@ public class GroupIdRecordTest extends BlackBoxBaseV3_0_dev1 {
     public void testCreateAndView() throws JSONException, InterruptedException, URISyntaxException, UnsupportedEncodingException {
         String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
         String groupId = "orcid-generated:test#" + System.currentTimeMillis();
-        org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord g1 = new org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord();        
+        org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord g1 = new org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord();        
         g1.setDescription("Description");
         g1.setGroupId(groupId);
         g1.setName(groupId);
         g1.setType("publisher");
 
-        ClientResponse r1 = memberV3Dev1ApiClient.createGroupIdRecord(g1, token);
+        ClientResponse r1 = memberV3Rc1ApiClient.createGroupIdRecord(g1, token);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), r1.getStatus());
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v3.0_dev1/group-id-record/", "");
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v3.0_rc1/group-id-record/", "");
         Long putCode = Long.valueOf(r1LocationPutCode);
         
         
-        ClientResponse result = memberV3Dev1ApiClient.getGroupIdRecord(putCode, token);
+        ClientResponse result = memberV3Rc1ApiClient.getGroupIdRecord(putCode, token);
         assertEquals(Response.Status.OK.getStatusCode(), result.getStatus());
-        org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord v3_0_dev1 = result.getEntity(org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord.class);
-        assertEquals(putCode, v3_0_dev1.getPutCode());
-        assertEquals("publisher", v3_0_dev1.getType());
-        assertEquals("Description", v3_0_dev1.getDescription());
-        assertEquals(groupId, v3_0_dev1.getGroupId());
-        assertEquals(groupId, v3_0_dev1.getName());
-        assertNotNull(v3_0_dev1.getSource());
-        assertEquals(this.getClient1ClientId(), v3_0_dev1.retrieveSourcePath());
+        org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord v3_0_rc1 = result.getEntity(org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord.class);
+        assertEquals(putCode, v3_0_rc1.getPutCode());
+        assertEquals("publisher", v3_0_rc1.getType());
+        assertEquals("Description", v3_0_rc1.getDescription());
+        assertEquals(groupId, v3_0_rc1.getGroupId());
+        assertEquals(groupId, v3_0_rc1.getName());
+        assertNotNull(v3_0_rc1.getSource());
+        assertEquals(this.getClient1ClientId(), v3_0_rc1.retrieveSourcePath());
     }   
 }

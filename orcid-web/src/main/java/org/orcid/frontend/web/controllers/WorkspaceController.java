@@ -30,15 +30,15 @@ import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.v3.dev1.record.CitationType;
-import org.orcid.jaxb.model.v3.dev1.record.Keywords;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.dev1.record.Role;
-import org.orcid.jaxb.model.v3.dev1.record.WorkCategory;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.record.CitationType;
+import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.Role;
+import org.orcid.jaxb.model.v3.rc1.record.WorkCategory;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
@@ -288,7 +288,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = Visibility.valueOf(defaultVis);
             form.setVisibility(v);
         }
@@ -337,7 +337,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = Visibility.valueOf(defaultVis);
             form.setVisibility(v);
         }
@@ -389,7 +389,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = Visibility.valueOf(defaultVis);
             form.setVisibility(v);
         }

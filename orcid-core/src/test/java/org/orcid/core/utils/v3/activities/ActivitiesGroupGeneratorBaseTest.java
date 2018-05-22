@@ -6,9 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Set;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIdentifiersContainer;
-import org.orcid.jaxb.model.v3.dev1.record.GroupAble;
-import org.orcid.jaxb.model.v3.dev1.record.GroupableActivity;
+
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIdentifiersContainer;
+import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 
 public class ActivitiesGroupGeneratorBaseTest {
     /**

@@ -11,8 +11,8 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -105,7 +105,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     private Emails toEmails(List<EmailEntity> entities) {
-        List<org.orcid.jaxb.model.v3.dev1.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+        List<org.orcid.jaxb.model.v3.rc1.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
         Emails emails = new Emails();
         emails.setEmails(emailList);        
         return emails;

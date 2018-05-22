@@ -252,5 +252,6 @@
 	<include file="/db/updates/identifier-types/update-rfc-url.xml" />
 	<include file="/db/updates/email_frequency_table.xml" />
 	<include file="/db/updates/notifications_retry_count_and_notification_family_to_notification_table.xml" />
+	<include file="/db/updates/add-display-index-to-org-affiliation-relation.xml" />
 	<include file="/db/updates/add_index_oauth2_token_detail_code.xml" />
 </databaseChangeLog>

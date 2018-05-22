@@ -29,7 +29,7 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;

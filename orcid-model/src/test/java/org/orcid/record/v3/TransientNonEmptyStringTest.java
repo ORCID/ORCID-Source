@@ -18,9 +18,9 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.xml.sax.SAXException;
 
 public class TransientNonEmptyStringTest {
@@ -53,14 +53,14 @@ public class TransientNonEmptyStringTest {
         assertTrue(sw.toString().contains("<common:external-id-normalized transient=\"true\">normalized-value</common:external-id-normalized>"));
         
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        Schema schema = factory.newSchema(getClass().getResource("/common_3.0_dev1/common-3.0_dev1.xsd"));
+        Schema schema = factory.newSchema(getClass().getResource("/common_3.0_rc1/common-3.0_rc1.xsd"));
         Validator validator = schema.newValidator();
         validator.validate(new JAXBSource( context, ids ));
     }
     
     @Test
     public void testUnmarshal(){
-        ExternalIDs ids = unmarshallFromPath("/common_3.0_dev1/samples/common-3.0_dev1_external-identifier.xml", ExternalIDs.class); 
+        ExternalIDs ids = unmarshallFromPath("/common_3.0_rc1/samples/common-3.0_rc1_external-identifier.xml", ExternalIDs.class); 
         assertEquals(ids.getExternalIdentifier().get(0).getNormalized().getValue(),"normalized-value");
     }
     

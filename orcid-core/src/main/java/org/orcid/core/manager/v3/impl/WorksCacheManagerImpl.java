@@ -7,7 +7,7 @@ import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

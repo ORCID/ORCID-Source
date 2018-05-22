@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<notification:notification put-code="1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-custom-3.0_rc1.xsd"
+    xmlns:notification="http://www.orcid.org/ns/notification"
+    xmlns:common="http://www.orcid.org/ns/common"
+    xml:lang="en-gb">
+    <notification:notification-type>custom</notification:notification-type>
+    <notification:subject>Important Notification from ORCID</notification:subject>
+    <notification:body-text>This is an email with important info.
+    </notification:body-text>
+    <notification:body-html><![CDATA[
+        <p>
+            This is an email with <em>important</em> info.
+        </p>]]>
+    </notification:body-html>
+	<common:created-date>2014-01-01T09:17:56</common:created-date>
+    <common:sent-date>2014-01-01T14:45:32</common:sent-date>
+    <common:source>
+        <common:source-orcid>
+            <common:uri>https://orcid.org/2111-1111-1111-1114</common:uri>
+            <common:path>2111-1111-1111-1114</common:path>
+            <common:host>orcid.org</common:host>
+        </common:source-orcid>
+        <common:source-name>Member 1</common:source-name>
+    </common:source>
+</notification:notification>

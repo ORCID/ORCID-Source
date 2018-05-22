@@ -13,7 +13,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -47,12 +47,12 @@ public class ActivitiesSummaryManagerTest extends DBUnitTest {
         ActivitiesSummary summary = activitiesSummaryManager.getActivitiesSummary(ORCID);
         assertNotNull(summary);
         assertNotNull(summary.getEducations());
-        assertNotNull(summary.getEducations().getSummaries());
-        assertEquals(5, summary.getEducations().getSummaries().size());        
+        assertNotNull(summary.getEducations().retrieveGroups());
+        assertEquals(5, summary.getEducations().retrieveGroups().size());        
         
         assertNotNull(summary.getEmployments());
-        assertNotNull(summary.getEmployments().getSummaries());
-        assertEquals(5, summary.getEmployments().getSummaries().size());
+        assertNotNull(summary.getEmployments().retrieveGroups());
+        assertEquals(5, summary.getEmployments().retrieveGroups().size());
         
         assertNotNull(summary.getFundings());
         assertNotNull(summary.getFundings().getFundingGroup());
@@ -72,14 +72,14 @@ public class ActivitiesSummaryManagerTest extends DBUnitTest {
         ActivitiesSummary summary = activitiesSummaryManager.getPublicActivitiesSummary(ORCID);
         assertNotNull(summary);
         assertNotNull(summary.getEducations());
-        assertNotNull(summary.getEducations().getSummaries());
-        assertEquals(1, summary.getEducations().getSummaries().size());
-        assertEquals(Long.valueOf(20), summary.getEducations().getSummaries().get(0).getPutCode());
+        assertNotNull(summary.getEducations().retrieveGroups());
+        assertEquals(1, summary.getEducations().retrieveGroups().size());
+        assertEquals(Long.valueOf(20), summary.getEducations().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
         
         assertNotNull(summary.getEmployments());
-        assertNotNull(summary.getEmployments().getSummaries());
-        assertEquals(1, summary.getEmployments().getSummaries().size());
-        assertEquals(Long.valueOf(17), summary.getEmployments().getSummaries().get(0).getPutCode());
+        assertNotNull(summary.getEmployments().retrieveGroups());
+        assertEquals(1, summary.getEmployments().retrieveGroups().size());
+        assertEquals(Long.valueOf(17), summary.getEmployments().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
         
         assertNotNull(summary.getFundings());
         assertNotNull(summary.getFundings().getFundingGroup());

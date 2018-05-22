@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<address:address xmlns:address="http://www.orcid.org/ns/address"
-	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/address ../address-3.0_dev1.xsd ">			
-		<address:country>US</address:country>
-</address:address>
