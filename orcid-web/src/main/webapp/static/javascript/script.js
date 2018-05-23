@@ -288,11 +288,12 @@ var OrcidCookie = new function() {
     };
 
     this.setCookie = function(c_name, value, exdays) {
+        var cookieDomain = getCookieDomain(window.location);
         var exdate = new Date();
         exdate.setDate(exdate.getDate() + exdays);
         var c_value = escape(value)
                 + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
-        document.cookie = c_name + "=" + c_value + ";path=/";
+        document.cookie = c_name + "=" + c_value + ";domain=" + cookieDomain + ";path=/";
     };
     
     this.checkIfCookiesEnabled = function() {
@@ -328,6 +329,18 @@ function logAjaxError(e){
 function getBaseUri() {
     return 'https:' == document.location.protocol ? orcidVar.baseUri
             : orcidVar.baseUriHttp;
+}
+
+function getCookieDomain(location){
+        host = location.host;
+        if(host.indexOf("qa.orcid.org") >= 0){
+            cookieDomain = "qa.orcid.org"
+        } else if(host.indexOf("localhost") >= 0){
+            cookieDomain = "localhost"
+        } else{
+            cookieDomain = "orcid.org"
+        }   
+        return cookieDomain;
 }
 
 function getStaticCdnPath() {
