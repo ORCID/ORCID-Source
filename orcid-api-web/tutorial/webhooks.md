@@ -1,19 +1,18 @@
 # Webhooks
 
-This tutorial shows how register and unregister webhooks. Webhook change notifications enable applications to be informed when data within an ORCID record changes. (Note: Actual data exchange is based on privacy levels set by the ORCID iD holder and permissions the individual has granted to the member organization.)
+This tutorial shows how register and unregister webhooks. Webhook change notifications enable applications to be informed when data within an ORCID record changes. (Note: Actual data exchange is based on privacy levels set by the ORCID iD holder and permissions the individual has granted to the client.)
 
 This feature is only available on the Member API and only for Premium ORCID Members, it can be used on sandbox or production.
 
 ## Generate a webhooks access token
 
-This process is completed using the [2 step token exchange](https://github.com/ORCID/ORCID-Source/tree/TechDocs/orcid-api-web#generate-a-two-step-read-public-access-token). A single token can be used to register webhooks multiple records.
+This process is completed using the [2 step token exchange](https://github.com/ORCID/ORCID-Source/tree/TechDocs/orcid-api-web#generate-a-two-step-read-public-access-token). A single token can be used to register webhooks for multiple records.
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| Base URL 				| https://sandbox.orcid.org/oauth/token|
+| Base URL 				| https<i></i>://sandbox.orcid.org/oauth/token|
 | Client\_id 		| *Your client ID* |
 | Client\_secret	| *Your client secret* |
-| Response       | code |
 | Grant\_type		| client\_credentials |
 | Scope				| /webhook |
 
@@ -46,11 +45,9 @@ Date: Fri, 05 Apr 2013 13:05:01 GMT
 
 ## Register a webhook
 
-The call to register a webhook takes the following values.
-
-| Option| Value        |
+| Parameter| Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[ORCID iD]/webhook/[encoded url to call] |
+| URL 				| https<i></i>://api.[host]/[ORCID iD]/webhook/[encoded url to call] |
 | Method    | PUT |
 | header      | Authorication: Bearer [Your authorization code] |
 
@@ -75,13 +72,19 @@ Location: https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%
   
 ## Unregister a webhook
 
-| Option| Value        |
+| Parameter| Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[ORCID iD]/webhook/[encoded url to call] |
+| URL 				| https<i></i>://api.[host]/[ORCID iD]/webhook/[encoded url] |
 | Method    | DELETE |
 | header      | Authorication: Bearer [Your authorization code] |
   
 The response should be 204 No Content.
+
+**Curl example:** 
+
+```curl -i -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee" 
+  -X DELETE "https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%2Fnowhere2.com%2F0000-0002-7465-2162%2Fupdated"
+  ```
 
 Example response:
 
@@ -93,10 +96,10 @@ Date: Mon, 29 Jul 2013 14:36:11 GMT
 
 ## Receiving the webhook call
 
-Once a webhook is created you will get a callback to the registered url when the ORCID record is updated. Hook notifications are sent every five minutes to avoid multiple calls for a single user session. The ORCID Registry will do the following HTTP call. The request uses the HTTP POST method, but the body of the request is empty.
+Once a webhook is created you will get a callback to the registered url when the ORCID record is updated. Hook notifications are sent every five minutes to avoid multiple calls for a single user session. The ORCID Registry will do the following HTTPS call. The request uses the HTTPS POST method, but the body of the request is empty.
 
 ```
 curl -v -X POST https://nowhere2.com/0000-0002-7253-3645/updated
 ```
 
-Your server should respond with standard HTTP response codes. So, if the call was successful you should return 204 No Content. Any 2xx response code means that the call was successful. If you return a code that is not a 2xx, then we will retry the call five minutes later.
+Your server should respond with standard HTTP response codes: if the call was successful you should return 204 No Content. Any 2xx response code means that the call was successful. If you return a code that is not a 2xx, then we will continue to retry the call, doubling the time between each attempt.
