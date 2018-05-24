@@ -186,6 +186,7 @@
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
         <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
+        <#include "/includes/ng2_templates/security-question-edit-ng2-template.ftl">
         <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
         <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
         <#include "/includes/ng2_templates/works-privacy-preferences-ng2-template.ftl">
