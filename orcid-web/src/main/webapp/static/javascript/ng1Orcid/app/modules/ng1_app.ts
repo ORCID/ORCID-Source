@@ -133,6 +133,9 @@ import { ResetPasswordModule }
 import { SearchModule } 
     from './search/search.ts';
 
+import { SecurityQuestionEditModule } 
+    from './securityQuestionEdit/securityQuestionEdit.ts';
+
 import { SelfServiceModule } 
     from './selfService/selfService.ts';
 
@@ -241,6 +244,7 @@ export const orcidApp = angular.module(
         RequestPasswordResetModule.name,
         ResetPasswordModule.name,
         SearchModule.name,
+        SecurityQuestionEditModule.name,
         SelfServiceModule.name,
         SelfServiceAddContactModule.name,
         SelfServiceExistingSubMemberModule.name,
