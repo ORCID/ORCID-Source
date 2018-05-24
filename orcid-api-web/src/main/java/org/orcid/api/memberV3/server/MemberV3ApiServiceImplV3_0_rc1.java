@@ -59,6 +59,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -139,6 +140,9 @@ public class MemberV3ApiServiceImplV3_0_rc1 extends MemberApiServiceImplHelper {
 
     @Context
     private UriInfo uriInfo;
+    
+    @Context
+    private HttpServletRequest httpRequest;
 
     @Value("${org.orcid.core.baseUri}")
     protected String baseUri;
@@ -199,8 +203,9 @@ public class MemberV3ApiServiceImplV3_0_rc1 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(API_STATUS_PATH)
-    @ApiOperation( nickname="viewStatusV3dev", value = "Check the server status", response = String.class)
+    @ApiOperation(nickname = "viewStatusV3dev", value = "Check the server status", response = String.class)
     public Response viewStatusJson() {
+        httpRequest.setAttribute("isMonitoring", true);
         return serviceDelegator.viewStatus();
     }
 
