@@ -1,8 +1,12 @@
 package org.orcid.frontend.web.controllers;
 
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.PersistenceException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.togglz.Features;
+import org.orcid.persistence.dao.MiscDao;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -29,6 +33,11 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
 public class HomeController extends BaseController {
+    
+    private static final String OVERALL_OK = "overallOk";
+    private static final String READ_ONLY_DB_CONNECTION_OK = "readOnlyDbConnectionOk";
+    private static final String DB_CONNECTION_OK = "dbConnectionOk";
+    private static final String TOMCAT_UP = "tomcatUp";
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
     @Resource
@@ -39,6 +48,12 @@ public class HomeController extends BaseController {
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource(name= "miscDao")
+    private MiscDao miscDao;
+    
+    @Resource(name= "miscDaoReadOnly")
+    private MiscDao miscDaoReadOnly;
     
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
@@ -59,6 +74,31 @@ public class HomeController extends BaseController {
     String tomcatUp(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         request.setAttribute("isMonitoring", true);
         return "{tomcatUp:true}";
+    }
+    
+    @RequestMapping(value = "/webStatus.json")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody Map<String, Boolean> webStatus(HttpServletRequest request) {
+        request.setAttribute("isMonitoring", true);
+        Map<String, Boolean> result = new LinkedHashMap<>();
+        result.put(TOMCAT_UP, true);
+        result.put(DB_CONNECTION_OK, isConnectionOk(miscDao));
+        result.put(READ_ONLY_DB_CONNECTION_OK, isConnectionOk(miscDaoReadOnly));
+        Boolean overall = result.values().stream().filter(v -> !v).findAny().orElse(true);
+        result.put(OVERALL_OK, overall);
+        return result;
+    }
+
+    private boolean isConnectionOk(MiscDao miscDao) {
+        try {
+            Date dbDate = miscDao.retrieveDatabaseDatetime();
+            if (dbDate != null) {
+                return true;
+            }
+        } catch (PersistenceException e) {
+            return false;
+        }
+        return false;
     }
 
     @RequestMapping(value = "/robots.txt")
