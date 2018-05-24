@@ -80,7 +80,7 @@
                                         <@orcid.tooltipNg2 elementId="'tooltip-keyword-move-down-'+index" message="common.modals.move_down" />                                            
                                     </li>
                                     <li>                                        
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteKeyword(keyword, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-delete-'+index)"></div>
+                                        <div class="delete-keyword glyphicon glyphicon-trash" (click)="deleteKeyword(keyword, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-delete-'+index)"></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-keyword-delete-'+index" message="common.modals.delete" />                                          
                                     </li>
                                     <li>

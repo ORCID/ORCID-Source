@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 
 public class WebsitesForm implements ErrorsInterface, Serializable {
 

@@ -4,21 +4,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Organization;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.dev1.common.Title;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.Role;
-import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Organization;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc1.common.Title;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.Role;
+import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 
 public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -292,7 +292,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         }
         // Visibility
         if (visibility != null && visibility.getVisibility() != null) {
-            peerReview.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.getVisibility().value()));
+            peerReview.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibility.getVisibility().value()));
         }
 
         // Completion date
@@ -392,7 +392,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
             }
             
             if(translatedSubjectName != null) {
-                org.orcid.jaxb.model.v3.dev1.common.TranslatedTitle tTitle = new org.orcid.jaxb.model.v3.dev1.common.TranslatedTitle();
+                org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle tTitle = new org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle();
                 if(!PojoUtil.isEmpty(translatedSubjectName.getContent())) {
                     tTitle.setContent(translatedSubjectName.getContent());
                 }

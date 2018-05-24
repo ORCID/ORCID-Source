@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -90,7 +90,7 @@ public class WorkGroup implements Serializable {
         this.workExternalIdentifiers = workExternalIdentifiers;
     }
 
-    public static WorkGroup valueOf(org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup workGroup, int id, String orcid) {
+    public static WorkGroup valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup workGroup, int id, String orcid) {
         WorkGroup group = new WorkGroup();
         group.setGroupId(id);
         group.setWorks(new ArrayList<>());

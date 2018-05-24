@@ -55,7 +55,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.v3.dev1.search.Search;
+import org.orcid.jaxb.model.v3.rc1.search.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.test.TargetProxyHelper;

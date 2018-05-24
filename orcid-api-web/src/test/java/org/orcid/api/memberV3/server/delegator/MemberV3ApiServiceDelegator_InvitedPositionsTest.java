@@ -29,33 +29,35 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Address;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Keyword;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Keyword;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositions;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
@@ -72,7 +74,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
     // Now on, for any new test, PLAESE USE THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
 
-    @Resource(name = "memberV3ApiServiceDelegatorV3_0_dev1")
+    @Resource(name = "memberV3ApiServiceDelegatorV3_0_rc1")
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
     @BeforeClass
@@ -121,7 +123,12 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         InvitedPositions element = (InvitedPositions) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/invited-positions", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+
+        for (AffiliationGroup<InvitedPositionSummary> group : element.getInvitedPositionGroups()) {
+            for (InvitedPositionSummary summary : group.getActivities()) {
+                Utils.assertIsPublicOrSource(summary, "APP-5555555555555555");
+            }
+        }
     }
 
     @Test
@@ -200,25 +207,28 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertNotNull(invitedPositions);
         assertEquals("/0000-0000-0000-0003/invited-positions", invitedPositions.getPath());
         Utils.verifyLastModified(invitedPositions.getLastModifiedDate());
-        assertNotNull(invitedPositions.getSummaries());
-        assertEquals(4, invitedPositions.getSummaries().size());
+        assertNotNull(invitedPositions.retrieveGroups());
+        assertEquals(4, invitedPositions.retrieveGroups().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
-        for (InvitedPositionSummary summary : invitedPositions.getSummaries()) {
-            Utils.verifyLastModified(summary.getLastModifiedDate());
-            if (Long.valueOf(32).equals(summary.getPutCode())) {
-                assertEquals("PUBLIC Department", summary.getDepartmentName());
-                found1 = true;
-            } else if (Long.valueOf(33).equals(summary.getPutCode())) {
-                assertEquals("LIMITED Department", summary.getDepartmentName());
-                found2 = true;
-            } else if (Long.valueOf(34).equals(summary.getPutCode())) {
-                assertEquals("PRIVATE Department", summary.getDepartmentName());
-                found3 = true;
-            } else if (Long.valueOf(35).equals(summary.getPutCode())) {
-                assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                found4 = true;
-            } else {
-                fail("Invalid invitedPosition found: " + summary.getPutCode());
+        
+        for (AffiliationGroup<InvitedPositionSummary> group : invitedPositions.retrieveGroups()) {
+            for (InvitedPositionSummary summary : group.getActivities()) {
+                Utils.verifyLastModified(summary.getLastModifiedDate());
+                if (Long.valueOf(32).equals(summary.getPutCode())) {
+                    assertEquals("PUBLIC Department", summary.getDepartmentName());
+                    found1 = true;
+                } else if (Long.valueOf(33).equals(summary.getPutCode())) {
+                    assertEquals("LIMITED Department", summary.getDepartmentName());
+                    found2 = true;
+                } else if (Long.valueOf(34).equals(summary.getPutCode())) {
+                    assertEquals("PRIVATE Department", summary.getDepartmentName());
+                    found3 = true;
+                } else if (Long.valueOf(35).equals(summary.getPutCode())) {
+                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
+                    found4 = true;
+                } else {
+                    fail("Invalid invitedPosition found: " + summary.getPutCode());
+                }
             }
         }
         assertTrue(found1);
@@ -241,12 +251,11 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         // Limited that am the source of should work
         serviceDelegator.viewInvitedPosition(ORCID, 33L);
         serviceDelegator.viewInvitedPositionSummary(ORCID, 33L);
-        
+
         // Private that am the source of should work
         serviceDelegator.viewInvitedPosition(ORCID, 34L);
         serviceDelegator.viewInvitedPositionSummary(ORCID, 34L);
-        
-        
+
         // Limited that am not the source of should fail
         try {
             serviceDelegator.viewInvitedPosition(ORCID, 35L);
@@ -296,10 +305,12 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         Utils.verifyLastModified(originalSummary.getLastModifiedDate());
         assertNotNull(originalSummary.getInvitedPositions());
         Utils.verifyLastModified(originalSummary.getInvitedPositions().getLastModifiedDate());
-        assertNotNull(originalSummary.getInvitedPositions().getSummaries());
-        assertNotNull(originalSummary.getInvitedPositions().getSummaries().get(0));
-        Utils.verifyLastModified(originalSummary.getInvitedPositions().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(4, originalSummary.getInvitedPositions().getSummaries().size());
+        assertNotNull(originalSummary.getInvitedPositions().retrieveGroups());
+        assertEquals(4, originalSummary.getInvitedPositions().retrieveGroups().size());
+        
+        InvitedPositionSummary invitedPositionSummary = originalSummary.getInvitedPositions().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(invitedPositionSummary);
+        Utils.verifyLastModified(invitedPositionSummary.getLastModifiedDate());
 
         response = serviceDelegator.createInvitedPosition(ORCID, (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION));
         assertNotNull(response);
@@ -317,28 +328,36 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getInvitedPositions());
         Utils.verifyLastModified(summaryWithNewElement.getInvitedPositions().getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getInvitedPositions().getSummaries());
-        assertEquals(5, summaryWithNewElement.getInvitedPositions().getSummaries().size());
-        
+        assertNotNull(summaryWithNewElement.getInvitedPositions().retrieveGroups());
+        assertEquals(5, summaryWithNewElement.getInvitedPositions().retrieveGroups().size());
+
         boolean haveNew = false;
 
-        for (InvitedPositionSummary invitedPositionSummary : summaryWithNewElement.getInvitedPositions().getSummaries()) {
-            assertNotNull(invitedPositionSummary.getPutCode());
-            Utils.verifyLastModified(invitedPositionSummary.getLastModifiedDate());
-            if (invitedPositionSummary.getPutCode().equals(putCode)) {
-                assertEquals("My department name", invitedPositionSummary.getDepartmentName());
-                haveNew = true;
-            } else {
-                assertTrue(originalSummary.getInvitedPositions().getSummaries().contains(invitedPositionSummary));
+        for (AffiliationGroup<InvitedPositionSummary> group : summaryWithNewElement.getInvitedPositions().retrieveGroups()) {
+            for (InvitedPositionSummary ips : group.getActivities()) {
+                assertNotNull(ips.getPutCode());
+                Utils.verifyLastModified(ips.getLastModifiedDate());
+                if (ips.getPutCode().equals(putCode)) {
+                    assertEquals("My department name", ips.getDepartmentName());
+                    haveNew = true;
+                } else {
+                    boolean found = false;
+                    for (AffiliationGroup<InvitedPositionSummary> g : originalSummary.getInvitedPositions().retrieveGroups()) {
+                        if (g.getActivities().contains(ips)) {
+                            found = true;
+                        }
+                    }
+                    assertTrue(found);
+                }
             }
         }
-        
+
         assertTrue(haveNew);
-        
-        //Remove new element
-        serviceDelegator.deleteAffiliation(ORCID, putCode);        
+
+        // Remove new element
+        serviceDelegator.deleteAffiliation(ORCID, putCode);
     }
-    
+
     @Test(expected = OrcidValidationException.class)
     public void testAddInvitedPositionNoStartDate() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -346,7 +365,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         invitedPosition.setStartDate(null);
         serviceDelegator.createInvitedPosition(ORCID, invitedPosition);
     }
-    
+
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddInvitedPositionsDuplicateExternalIDs() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -389,7 +408,6 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         }
     }
 
-
     @Test
     public void testUpdateInvitedPosition() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -405,7 +423,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
 
         invitedPosition.setDepartmentName("Updated department name");
         invitedPosition.setRoleTitle("The updated role title");
-        
+
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
@@ -470,7 +488,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         InvitedPosition invitedPosition = (InvitedPosition) response.getEntity();
         assertNotNull(invitedPosition);
         assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
-        
+
         invitedPosition.setVisibility(null);
 
         response = serviceDelegator.updateInvitedPosition(ORCID, 32L, invitedPosition);
@@ -480,7 +498,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertNotNull(invitedPosition);
         assertEquals(Visibility.PUBLIC, invitedPosition.getVisibility());
     }
-    
+
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testUpdateInvitedPositionDuplicateExternalIDs() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -507,7 +525,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         Response response = serviceDelegator.createInvitedPosition(ORCID, invitedPosition);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
-        
+
         Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
@@ -516,17 +534,17 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
 
         InvitedPosition another = (InvitedPosition) Utils.getAffiliation(AffiliationType.INVITED_POSITION);
         response = serviceDelegator.createInvitedPosition(ORCID, another);
-        
+
         map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
         resultWithPutCode = (List<?>) map.get("Location");
         Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
-        
+
         response = serviceDelegator.viewInvitedPosition(ORCID, putCode2);
         another = (InvitedPosition) response.getEntity();
         another.setExternalIDs(externalIDs);
-        
+
         try {
             serviceDelegator.updateInvitedPosition(ORCID, putCode2, another);
         } finally {
@@ -549,12 +567,12 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         try {
             serviceDelegator.viewInvitedPosition("0000-0000-0000-0002", 1003L);
             fail();
-        } catch(NoResultException nre) {
-            
-        } catch(Exception e) {
+        } catch (NoResultException nre) {
+
+        } catch (Exception e) {
             fail();
         }
-        
+
     }
 
     @Test(expected = WrongSourceException.class)

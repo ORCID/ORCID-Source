@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.v3.dev1.common.Title;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.FundingTitle;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.common.Title;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
 
 public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGroupGeneratorBaseTest {
 

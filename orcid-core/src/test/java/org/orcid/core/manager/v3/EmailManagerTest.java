@@ -19,8 +19,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 

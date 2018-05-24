@@ -10,11 +10,11 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 
 public class OrcidSecurityManager_WorkBulkTest extends OrcidSecurityManagerTestBase {
 

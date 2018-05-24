@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<group-id:group-id-record xmlns:common="http://www.orcid.org/ns/common" xmlns:group-id="http://www.orcid.org/ns/group-id" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/group-id ../group-id-3.0_dev1.xsd ">
-  <group-id:name>group-id:name</group-id:name>
-  <group-id:group-id>issn:xxxxxxxx</group-id:group-id>
-  <group-id:description>group-id:description</group-id:description>
-  <group-id:type>publisher</group-id:type>
-</group-id:group-id-record>

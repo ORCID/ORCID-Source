@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 
 public class OtherNameForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -74,7 +74,7 @@ public class OtherNameForm extends VisibilityForm implements ErrorsInterface, Se
         }
 
         if (this.visibility != null && this.visibility.getVisibility() != null) {
-            otherName.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
+            otherName.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
 
         if (!PojoUtil.isEmpty(this.getPutCode())) {

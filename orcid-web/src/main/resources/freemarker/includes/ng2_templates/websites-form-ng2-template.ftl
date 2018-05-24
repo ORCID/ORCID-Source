@@ -58,12 +58,12 @@
         <div class="row">
             <div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
                 <div class="fixed-area" scroll>             
-                    <div class="scroll-area">       
+                    <div class="scroll-area" id="websites">       
                         <div class="row aka-row websites" *ngFor="let website of formData.websites; let index = index; let first = first; let last = last;">
                             <div class="col-md-6">
                                 <div class="aka">                                       
                                     <input type="text" [(ngModel)]="website.urlName" *ngIf="website.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !website.urlName}"placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}" />
-                                    <input type="text" [(ngModel)]="website.url.value" *ngIf="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}" />
+                                    <input class="website-value" type="text" [(ngModel)]="website.url.value" *ngIf="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}" />
                                     <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow" *ngIf="website.source != orcidId" >{{website.urlName != null? website.urlName : website.url.value}}</a>
                                 </div>
                                 <div class="source" *ngIf="website.sourceName || website.sourceName == null">
@@ -82,7 +82,7 @@
                                         <@orcid.tooltipNg2 elementId="'tooltip-websites-move-down-'+index" message="common.modals.move_down" />
                                     </li>
                                     <li>                                        
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteEntry(website, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-websites-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-websites-delete-'+index)"></div>
+                                        <div id="delete-website" class="glyphicon glyphicon-trash" (click)="deleteEntry(website, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-websites-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-websites-delete-'+index)"></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-websites-delete-'+index" message="common.modals.delete" />
                                     </li>
                                     <li>
@@ -107,7 +107,7 @@
                 </div>
                 
                 <div class="record-buttons">                        
-                    <a (click)="addNew()"><span class="glyphicon glyphicon-plus pull-left">
+                    <a (click)="addNew()" id="add-website"><span class="glyphicon glyphicon-plus pull-left">
                         <div class="popover popover-tooltip-add top">
                             <div class="arrow"></div>
                             <div class="popover-content">

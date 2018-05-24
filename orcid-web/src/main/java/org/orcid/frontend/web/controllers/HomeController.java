@@ -117,7 +117,7 @@ public class HomeController extends BaseController {
         if (lang != null) {
             String orcid = getRealUserOrcid();
             if (orcid != null) {
-                profileEntityManager.updateLocale(orcid, org.orcid.jaxb.model.v3.dev1.common.Locale.fromValue(lang));
+                profileEntityManager.updateLocale(orcid, org.orcid.jaxb.model.v3.rc1.common.Locale.fromValue(lang));
             }
         }
 

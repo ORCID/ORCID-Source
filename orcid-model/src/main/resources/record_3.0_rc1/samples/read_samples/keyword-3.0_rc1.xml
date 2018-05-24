@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<keyword:keyword visibility="public" put-code="1"
+	xmlns:keyword="http://www.orcid.org/ns/keyword"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/keyword ../keyword-3.0_rc1.xsd ">		
+	<common:created-date>2001-12-31T12:00:00</common:created-date>
+	<common:last-modified-date>2001-12-31T12:00:00
+	</common:last-modified-date>
+	<common:source>
+		<common:source-orcid>
+			<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:source-orcid>
+		<common:source-name />
+	</common:source>
+	<keyword:content>keyword1</keyword:content>
+</keyword:keyword>

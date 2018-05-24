@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 
 public class FundingExternalIdentifierForm implements ErrorsInterface, Serializable {
 

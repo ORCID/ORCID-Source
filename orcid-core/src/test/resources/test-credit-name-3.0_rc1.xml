@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<personal-details:credit-name
+	xmlns:personal-details="http://www.orcid.org/ns/personal-details"	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-3.0_rc1.xsd">credit-name</personal-details:credit-name>

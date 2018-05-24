@@ -14,10 +14,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -87,7 +87,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         assertNotNull(distinction.getOrganization().getAddress());
         assertEquals("org:city", distinction.getOrganization().getAddress().getCity());
         assertEquals("org:region", distinction.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Iso3166Country.US, distinction.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, distinction.getOrganization().getAddress().getCountry());
         assertNotNull(distinction.getSource());        
         assertNotNull(distinction.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", distinction.getSource().retrieveSourcePath());
@@ -118,7 +118,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
     private Distinction getDistinction() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Distinction.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_dev1/samples/read_samples/distinction-3.0_dev1.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/distinction-3.0_rc1.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Distinction) unmarshaller.unmarshal(inputStream);
     }

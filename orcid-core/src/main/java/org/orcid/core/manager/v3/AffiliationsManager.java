@@ -1,14 +1,14 @@
 package org.orcid.core.manager.v3;
 
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
 
 public interface AffiliationsManager extends AffiliationsManagerReadOnly {
     /**

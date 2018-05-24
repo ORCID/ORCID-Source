@@ -18,9 +18,9 @@ import org.orcid.core.manager.v3.read_only.impl.ExternalIdentifierManagerReadOnl
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;

@@ -35,24 +35,27 @@ import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.dev1.common.Filterable;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.common.VisibilityType;
-import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Group;
-import org.orcid.jaxb.model.v3.dev1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.dev1.record.Person;
-import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.dev1.record.Record;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.common.Filterable;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
+import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Group;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Affiliations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -257,6 +260,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         checkAndFilter(orcid, elements, requiredScope, false);
     }
 
+    @SuppressWarnings("unchecked")
+    private void checkAndFilter(String orcid, Affiliations<? extends AffiliationSummary> affiliations, ScopePathType requiredScope, boolean tokenAlreadyChecked) {
+        Iterator<?> iterator = affiliations.retrieveGroups().iterator();
+        while (iterator.hasNext()) {
+            AffiliationGroup<? extends AffiliationSummary> group = (AffiliationGroup<? extends AffiliationSummary>) iterator.next();
+            checkAndFilter(orcid, group.getActivities(), requiredScope, tokenAlreadyChecked);
+            if (group.getActivities().isEmpty()) {
+                iterator.remove();
+            }
+        }
+    }
+    
     private void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope, boolean tokenAlreadyChecked) {
         if (elements == null) {
             return;
@@ -294,37 +309,37 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         // Distinctions
         if (activities.getDistinctions() != null) {
-            checkAndFilter(orcid, activities.getDistinctions().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getDistinctions(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Educations
         if (activities.getEducations() != null) {
-            checkAndFilter(orcid, activities.getEducations().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getEducations(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
 
         // Employments
         if (activities.getEmployments() != null) {
-            checkAndFilter(orcid, activities.getEmployments().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getEmployments(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Invited positions
         if (activities.getInvitedPositions() != null) {
-            checkAndFilter(orcid, activities.getInvitedPositions().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getInvitedPositions(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Memberships
         if (activities.getMemberships() != null) {
-            checkAndFilter(orcid, activities.getMemberships().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getMemberships(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Qualifications
         if (activities.getQualifications() != null) {
-            checkAndFilter(orcid, activities.getQualifications().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getQualifications(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Services
         if (activities.getServices() != null) {
-            checkAndFilter(orcid, activities.getServices().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getServices(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
 
         // Funding
