@@ -1,13 +1,13 @@
 # Search for public information on ORCID records
 
-This tutorial shows how to use the API to search for records in the ORCID Registry. The ORCID API supports searching using the Solr query syntax, search results only include the ORCID iD of each search hit. Information on retrieving data from a specific ORCID iD see our tutorial on [Reading Public information from an ORCID Record](/read_public.md).
+This tutorial shows how to use the API to search for records in the ORCID Registry using the Solr query syntax. Search results only include the ORCID iD of each search hit. For information on retrieving data from a specific ORCID iD see our tutorial on [Reading Public information from an ORCID Record](/read_public.md).
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 
-Depending on your user you may wish to consider these alternatives to the ORCID API search:
+Depending on your use you should consider these alternatives to the ORCID API search:
 
     * To get researchers' ORCID iDs, use OAuth to ensure there are no false matches. See the tutorial on [Getting Authenticate iDs](/get_id.md).
-    * If you are parsing data from a large section of the registry you may want to use [ORCID's public data file](https://orcid.org/content/download-file) -- a snapshot of all public data. Premium ORCID members may want to use the [ORCID sync](https://github.com/ORCID/public-data-sync/blob/master/README.md) process to access large amounts of data.
+    * If you are parsing data from a large section of the registry you may want to use [ORCID's public data file](https://orcid.org/content/download-file) -- a snapshot of all public data. Premium ORCID members may want to use the [ORCID sync](https://github.com/ORCID/public-data-sync/blob/master/README.md) process to access a regularly updated data file.
     * For specific instructions on finding your institution’s researchers, see [tips on finding ORCID record-holders at your institution](https://members.orcid.org/api/resources/find-myresearchers).
 
 ## Generate a two step (/read-public) access token
@@ -18,7 +18,7 @@ Send a request to the ORCID API for a two step token
 
 | Item              |Parameter               |
 |-------------------|--------------------------|
-| URL 				| https://sandbox.orcid.org/oauth/token|
+| URL 				| https<i></i>://sandbox.orcid.org/oauth/token|
 | client\_id 		| *Your client ID*|
 | client\_secret	| *Your client secret*|
 | grant\_type		| client\_credentials|
@@ -46,7 +46,7 @@ Query is the terms you are searching for.
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.sandbox.orcid.org/[version]/search/?=[query]|
 | method    | GET |
-| header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
+| header    | Content-Type: application/vnd.orcid+xml OR  Content-Type: application/vnd.orcid+json|
 | header    | Authorization: Bearer [Your access token]|
 
 **Curl example:**
@@ -96,7 +96,7 @@ Example response
  
  The number of matching records is returned in the num-found field in the results.
  
- 100 results are returned by default, up to 200 results can be returned with one query using paging (see examples).
+ 100 results are returned by default, up to 200 results can be returned with one query using paging -see examples.
  
  Like all API calls, search querys are restricted by the [API limits](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#api-limits).
  
@@ -138,7 +138,7 @@ Example response
 
 **Works**
 
-* work-titles
+* title
 
 * digital-object-ids
 
