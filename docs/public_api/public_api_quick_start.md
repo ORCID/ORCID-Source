@@ -93,7 +93,7 @@ pub.orcid.org/**v1.2_rc4**/0000-0002-0036-9460/orcid-profile
 To get a researcher's authenticated ORCID iDs 
 We are going to use 
 [OAuth2](https://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified) 
-to retrive a users ORCID iD. This can be used for auto filling a form or 
+to retrieve a users ORCID iD. This can be used for auto filling a form or 
 [SSO](http://en.wikipedia.org/wiki/Single_sign-on).  
 
 
