@@ -136,9 +136,9 @@ public class BBBUtil {
     public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
         waitForAngular(webDriver);
         Actions actions = new Actions(webDriver);
-        actions.moveToElement(webElement).perform();        
+//        actions.moveToElement(webElement).perform();        
         actions.click(webElement).perform();
-        waitForAngular(webDriver);
+//        waitForAngular(webDriver);
     }
     
     public static void ngAwareSendKeys(String keys, String id, WebDriver webDriver) {

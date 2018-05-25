@@ -3,8 +3,8 @@ package org.orcid.core.adapter.v3;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 /**

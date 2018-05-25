@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 
 public class ExternalIDNormalizedValueTest {
 

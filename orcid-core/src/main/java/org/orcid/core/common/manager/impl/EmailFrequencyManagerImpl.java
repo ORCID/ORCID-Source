@@ -18,6 +18,7 @@ import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
 
@@ -266,12 +267,27 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         return result;
     }
     
+    @Override
     public boolean emailFrequencyExists(String orcid) {
         try {
             emailFrequencyDao.findByOrcid(orcid);            
         } catch(NoResultException nre) {
             return false;
         }
+        return true;
+    }
+    
+    @Override
+    @Transactional
+    public boolean update(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
+            SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
+        EmailFrequencyEntity entity = emailFrequencyDao.findByOrcid(orcid);
+        entity.setLastModified(new Date());
+        entity.setSendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications.floatValue());
+        entity.setSendChangeNotifications(sendChangeNotifications.floatValue());
+        entity.setSendMemberUpdateRequests(sendMemberUpdateRequests.floatValue());
+        entity.setSendQuarterlyTips(sendQuarterlyTips);
+        emailFrequencyDao.merge(entity);
         return true;
     }
     

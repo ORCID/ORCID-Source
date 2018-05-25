@@ -20,10 +20,10 @@
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_4")}</p>
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
-                        <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a href="javascript:void(0);" id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
+                        <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
                         <img id="2FA-QR-code" *nfIf="showQRCode" />
                         <pre *nfIf="showTextCode">{{textCodeFor2FA}}</pre>
-                        <p *nfIf="showTextCode">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR")}<a href="javascript:void(0);" (click)="showQRCodeAgain()">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR.click_here")}</a></p>
+                        <p *nfIf="showTextCode">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR")}<a (click)="showQRCodeAgain()">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR.click_here")}</a></p>
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step3.details")}</p>
                     </ul>
@@ -32,7 +32,7 @@
                         <div id="invalidCodeError" class="orcid-error" *nfIf="showInvalidCodeError" ">${springMacroRequestContext.getMessage("2FA.setup.invalidCode")}</div>
                         <hr>
                         <button id="sendVerificationCode" (click)="sendVerificationCode()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.continue")}</button>
-                        <a class="leftBuffer" id="cancel2FASetup" (click)="cancel2FASetup()" href="javascript:void(0);">${springMacroRequestContext.getMessage("2FA.cancel")}</a>
+                        <a class="leftBuffer" id="cancel2FASetup" (click)="cancel2FASetup()" >${springMacroRequestContext.getMessage("2FA.cancel")}</a>
                     </form>
                  </div>
                  <div *nfIf="show2FARecoveryCodes" >

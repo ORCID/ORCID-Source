@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
 
 public class BiographyForm extends VisibilityForm implements ErrorsInterface, Serializable {
 

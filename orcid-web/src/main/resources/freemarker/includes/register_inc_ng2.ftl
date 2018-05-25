@@ -24,7 +24,7 @@
             <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>                         
             <span class="required" [ngClass]="isValidClass(registrationForm.givenNames)">*</span>            
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="name-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
@@ -61,11 +61,11 @@
                     <div *ngFor="let error of registrationForm.email.errors" [innerHTML]="error"></div>
                 </span>
                 <span class="orcid-error" *ngIf="showDuplicateEmailError">{{errorEmail}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a href="javascript:void(0);" (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" *ngIf="showDeactivatedError">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="javascript:void(0);" (click)="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a (click)="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" *ngIf="showReactivationSent">
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
@@ -78,7 +78,7 @@
             <div class="relative">
                 <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" [(ngModel)]="registrationForm.emailsAdditional[i].value" focus-last-input="i == focusIndex" (blur)="serverValidate('EmailsAdditional')"/>
                 <div *ngIf="i == 0" class="popover-help-container leftBuffer">
-                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <i class="glyphicon glyphicon-question-sign"></i>
                     <div id="email-additional-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">
@@ -94,10 +94,10 @@
                     <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex" [innerHTML]="error"></div>
                 </span>
                 <span class="orcid-error" *ngIf="showEmailsAdditionalDuplicateEmailError[i]">{{errorEmailsAdditional[i]}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a href="javascript:void(0);" (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[i]}} ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[i]}} ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" *ngIf="showEmailsAdditionalDeactivatedError[i]">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="javascript:void(0);" (click)="sendEmailsAdditionalReactivationEmail(i)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a (click)="sendEmailsAdditionalReactivationEmail(i)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" *ngIf="showEmailsAdditionalReactivationSent[i]">
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
@@ -117,7 +117,7 @@
                     <div *ngFor="let error of registrationForm.email.errors" [innerHTML]="error"></div>
                 </span>
                 <span class="orcid-error" *ngIf="showDuplicateEmailError">{{errorEmail}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a href="javascript:void(0);" (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" *ngIf="showDeactivatedError">
@@ -181,7 +181,7 @@
             <div class="visibilityHelp">
                 <span class="required" [ngClass]="isValidClass(registrationForm.activitiesDefaultVisibility)">*</span>
                 <div class="popover-help-container">
-                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <i class="glyphicon glyphicon-question-sign"></i>
                     <div id="name-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">
@@ -296,7 +296,7 @@
                 <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
             </span>
         </div>
-    </div><!--GDPR UI feature disabled-->  	
+    </div><!--GDPR UI feature disabled-->   
     <!--Registration error-->
     <div style="margin-bottom: 15px;" *ngIf="showGeneralRegistrationError">
         <span class="orcid-error" [innerHtml]="generalRegistrationError"></span>

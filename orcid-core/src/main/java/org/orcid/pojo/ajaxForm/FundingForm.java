@@ -5,21 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.v3.dev1.common.Amount;
-import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Organization;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributors;
-import org.orcid.jaxb.model.v3.dev1.record.FundingType;
+import org.orcid.jaxb.model.v3.rc1.common.Amount;
+import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Organization;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.FundingContributor;
+import org.orcid.jaxb.model.v3.rc1.record.FundingContributors;
+import org.orcid.jaxb.model.v3.rc1.record.FundingType;
 
 public class FundingForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -284,7 +284,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         else
             result.setUrl(new Url());
         if (visibility != null)
-            result.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.getVisibility().value()));
+            result.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibility.getVisibility().value()));
 
         // Set Organization
         Organization organization = new Organization();

@@ -27,7 +27,7 @@
     <div class="col-md-9 col-sm-12 col-xs-12" id="settings">
         <h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
         <div class="popover-help-container">
-            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+            <i class="glyphicon glyphicon-question-sign"></i>
             <div id="account-settings-help" class="popover bottom">
                 <div class="arrow"></div>
                 <div class="popover-content">
@@ -414,7 +414,7 @@
                 ${springMacroRequestContext.getMessage("manage.trusted_organisations")}
             </h1>
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="trusted-organizations-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
@@ -472,7 +472,7 @@
                 ${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
             </h1>
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="trusted-individuals-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
@@ -602,7 +602,7 @@
                 <@orcid.msg 'manage_signin_title' />
             </h1>
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="alternative-signin-accounts-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">

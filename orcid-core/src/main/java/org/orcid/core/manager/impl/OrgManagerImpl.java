@@ -161,7 +161,7 @@ public class OrgManagerImpl implements OrgManager {
             }
             orgEntity.setOrgDisambiguated(disambiguatedOrg);
         }
-        return createUpdate(orgEntity);        
+        return matchOrCreateOrg(orgEntity);        
     }
     
     @Override
@@ -177,5 +177,28 @@ public class OrgManagerImpl implements OrgManager {
                     
         }
         return orgDao.findByNameCityRegionAndCountry(name, city, region, country.value());        
+    }
+    
+    private OrgEntity matchOrCreateOrg(OrgEntity org) {
+        OrgEntity match = orgDao.findByAddressAndDisambiguatedOrg(org.getName(), org.getCity(), org.getRegion(), org.getCountry(), org.getOrgDisambiguated());
+        if (match != null) {
+            return match;
+        }
+        
+        SourceEntity entity = sourceManager.retrieveSourceEntity();
+        if (entity != null) {
+            SourceEntity newEntity = new SourceEntity();
+            if(entity.getSourceClient() != null) {
+                newEntity.setSourceClient(new ClientDetailsEntity(entity.getSourceClient().getId()));
+            }
+            if(entity.getSourceProfile() != null) {
+                newEntity.setSourceProfile(new ProfileEntity(entity.getSourceProfile().getId()));
+            }
+                
+            org.setSource(newEntity);
+        }
+        
+        orgDao.persist(org);
+        return org;
     }
 }

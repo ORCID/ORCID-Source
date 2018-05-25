@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="privacy-toggle-ng2-template">
     <div class="relative" class="privacy-bar-impr">
-        <ul *ngIf="privacyNodeName" class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
+        <ul id="privacy-toggle" *ngIf="privacyNodeName" class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
             <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj[privacyNodeName]?.visibility != 'PUBLIC'}">
                 <a (click)="setPrivacy('PUBLIC')"></a>
             </li>
@@ -11,7 +11,7 @@
                 <a (click)="setPrivacy('PRIVATE')"></a>
             </li>
         </ul>
-        <ul *ngIf="!privacyNodeName" class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
+        <ul id="privacy-toggle" *ngIf="!privacyNodeName" class="privacyToggle" (mouseenter)="showTooltip(name)" (mouseleave)="hideTooltip(name)" >
             <li class="publicActive" [ngClass]="{publicInActive: dataPrivacyObj.visibility != 'PUBLIC'}">
                 <a (click)="setPrivacy('PUBLIC')"></a>
             </li>

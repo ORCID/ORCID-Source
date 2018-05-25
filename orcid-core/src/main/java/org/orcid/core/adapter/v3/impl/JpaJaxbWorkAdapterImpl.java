@@ -6,8 +6,8 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 

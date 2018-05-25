@@ -2,46 +2,47 @@ package org.orcid.api.common.util.v3;
 
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.dev1.common.Contributor;
-import org.orcid.jaxb.model.v3.dev1.record.Activity;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Affiliations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
-import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.common.Contributor;
+import org.orcid.jaxb.model.v3.rc1.record.Activity;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.FundingContributor;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Affiliations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityUtils {
@@ -113,9 +114,11 @@ public class ActivityUtils {
                 affiliations.setPath(OrcidApiConstants.SERVICES.replace("{orcid}", orcid));
             }
             
-            for(AffiliationSummary summary : affiliations.getSummaries()) {
-                setPathToActivity(summary, orcid);
-            }            
+            for (AffiliationGroup<? extends AffiliationSummary> group : affiliations.retrieveGroups()) {
+                for(AffiliationSummary summary : group.getActivities()) {
+                    setPathToActivity(summary, orcid);
+                }            
+            }
         }
     }
     

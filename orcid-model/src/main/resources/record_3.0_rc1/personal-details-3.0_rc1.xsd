@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/personal-details"
+	xmlns:other-name="http://www.orcid.org/ns/other-name" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:personal-details="http://www.orcid.org/ns/personal-details">
+	<xs:annotation> 
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="personal-details" uri="http://www.orcid.org/ns/personal-details" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_3.0_rc1/common-3.0_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/other-name"
+		schemaLocation="../record_3.0_rc1/other-name-3.0_rc1.xsd" />
+
+	<xs:element name="personal-details">
+		<xs:annotation>
+			<xs:documentation>Container for the personal details of the
+				researcher or contributor.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" type="personal-details:name"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element ref="other-name:other-names" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element name="biography" type="personal-details:biography"
+					minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+			<xs:attribute name="path" type="common:element-path" use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="name">
+		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor name.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="personal-details:name" />
+			</xs:complexContent>			
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="credit-name">
+		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor credit name.
+			</xs:documentation>
+		</xs:annotation>		
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="personal-details:credit-name" />
+			</xs:simpleContent>			
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="biography">
+		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor biography.
+			</xs:documentation>
+		</xs:annotation>		
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="personal-details:biography" />
+			</xs:complexContent>					
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="name"> 
+		<xs:annotation>
+			<xs:documentation>Container for the names of the
+				researcher or
+				contributor.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="common:created-date" minOccurs="0" maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element name="given-names" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The given (first and middle) name(s) of the
+						researcher or contributor.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="common:string-150" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="family-name" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The family (last) name of the researcher or
+						contributor. This element is optional, because some cultures only
+						use given names.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="common:string-150" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="credit-name" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The full name of the researcher or contributor
+						as
+						it generally appears on their published works. (see element
+						for
+						more details.) The visibility attribute (private, limited or
+						public) can be set at record creation, and indicates who can see
+						this section of information.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="personal-details:credit-name" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="visibility" type="common:visibility"  use="optional"/>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="biography">
+		<xs:annotation>
+			<xs:documentation>Description of the researcher's professional
+				career. The visibility attribute (private, limited or public) can be
+				set at record creation, and indicates who can see this section of
+				information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="common:created-date" minOccurs="0" maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element minOccurs="1" name="content" type="common:non-empty-string">
+				<xs:annotation>
+					<xs:documentation>A short display name describing the URL.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>				
+		</xs:sequence>
+		<xs:attribute name="visibility" type="common:visibility" use="optional"/>
+		<xs:attribute name="path" type="common:element-path" use="optional" />		
+	</xs:complexType>
+
+	<xs:complexType name="credit-name">
+		<xs:simpleContent>
+			<xs:extension base="common:credit-name" />
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

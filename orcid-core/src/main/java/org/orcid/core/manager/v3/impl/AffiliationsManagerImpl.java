@@ -13,19 +13,19 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -350,7 +350,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orcidSecurityManager.checkSource(entity);
 
         activityValidator.validateAffiliation(affiliation, sourceEntity, false, isApiRequest,
-                org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(originalVisibility));
+                org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(originalVisibility));
 
         if (isApiRequest) {
             checkAffiliationExternalIDsForDuplicates(orcid, affiliation, sourceEntity);
@@ -380,7 +380,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             break;
         }
         
-        entity.setVisibility(originalVisibility);
+        if (isApiRequest) {
+            entity.setVisibility(originalVisibility);
+        }
+        
 
         // Be sure it doesn't overwrite the source
         entity.setSourceId(existingSourceId);

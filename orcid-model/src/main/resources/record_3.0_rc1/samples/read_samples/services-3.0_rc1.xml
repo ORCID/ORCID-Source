@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activities:services
+	path="http://orcid.org/v3.0_rc1/8888-8888-8888-8880/employments"
+	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:employment="http://www.orcid.org/ns/employment"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:service="http://www.orcid.org/ns/service"
+	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-3.0_rc1.xsd ">
+	<common:last-modified-date>2017-01-18T13:32:45.500-06:00</common:last-modified-date>
+	<activities:affiliation-group>
+        <common:last-modified-date>2001-12-31T12:00:00
+        </common:last-modified-date>
+        <common:external-ids>
+            <common:external-id>
+                <common:external-id-type>agr</common:external-id-type>
+                <common:external-id-value>external-id-value
+                </common:external-id-value>
+                <common:external-id-url>http://orcid.org</common:external-id-url>
+                <common:external-id-relationship>part-of</common:external-id-relationship>
+            </common:external-id>
+        </common:external-ids>
+		<service:service-summary put-code="1"
+			path="/8888-8888-8888-8888/employment/1" visibility="public">
+			<common:created-date>2017-01-18T13:32:45.500-06:00</common:created-date>
+			<common:last-modified-date>2017-01-18T13:32:45.500-06:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>https://orcid.org/8888-8888-8888-8888</common:uri>
+					<common:path>8888-8888-8888-8888</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name>User One Credit name</common:source-name>
+			</common:source>
+			<common:department-name>service</common:department-name>
+			<common:start-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:start-date>
+			<common:organization>
+				<common:name>service</common:name>
+				<common:address>
+					<common:city>x</common:city>
+					<common:country>AS</common:country>
+				</common:address>
+			</common:organization>
+		</service:service-summary>
+	</activities:affiliation-group>
+	<activities:affiliation-group>
+        <common:last-modified-date>2001-12-31T12:00:00
+        </common:last-modified-date>
+        <common:external-ids>
+            <common:external-id>
+                <common:external-id-type>agr</common:external-id-type>
+                <common:external-id-value>external-id-value
+                </common:external-id-value>
+                <common:external-id-url>http://orcid.org</common:external-id-url>
+                <common:external-id-relationship>part-of</common:external-id-relationship>
+            </common:external-id>
+        </common:external-ids>
+		<service:service-summary put-code="1"
+			path="/8888-8888-8888-8888/employment/1" visibility="public">
+			<common:created-date>2017-01-18T13:32:45.500-06:00</common:created-date>
+			<common:last-modified-date>2017-01-18T13:32:45.500-06:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>https://orcid.org/8888-8888-8888-8888</common:uri>
+					<common:path>8888-8888-8888-8888</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name>User One Credit name</common:source-name>
+			</common:source>
+			<common:department-name>service</common:department-name>
+			<common:start-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:start-date>
+			<common:organization>
+				<common:name>service</common:name>
+				<common:address>
+					<common:city>x</common:city>
+					<common:country>AS</common:country>
+				</common:address>
+			</common:organization>
+		</service:service-summary>
+	</activities:affiliation-group>
+</activities:services>

@@ -4,7 +4,7 @@
             <div class="col-md-9 col-sm-8 col-xs-4">
                 <h3 (click)="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h3>  
                 <div class="popover-help-container">
-                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <i class="glyphicon glyphicon-question-sign"></i>
                     <div id="bio-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">

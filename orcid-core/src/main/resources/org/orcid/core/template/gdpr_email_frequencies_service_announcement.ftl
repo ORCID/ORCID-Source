@@ -1,6 +1,6 @@
 <#import "email_macros.ftl" as emailMacros />
 
-<@emailMacros.msg "email.common.dear" /> ${emailName},
+Dear ${emailName},
 
 You may have heard about the General Data Protection Regulation (GDPR)(https://www.eugdpr.org/), which is taking effect in Europe later this month. The GDPR improves transparency and data privacy rights of individuals. We’re writing to explain how our practices align with GDPR. 
 
@@ -32,5 +32,12 @@ Cheers,
 Laurel L. Haak
 Executive Director, ORCID
 
-<@emailMacros.msg "email.common.you_have_received_this_email" />
-<#include "email_footer.ftl"/>
+You have received this email as a service announcement related to your ORCID Account.
+
+email preferences (${baseUri}/account)
+privacy policy (${baseUri}/privacy-policy)
+ORCID, Inc.
+
+10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA
+
+${baseUri}

@@ -7,13 +7,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
-import org.orcid.jaxb.model.v3.dev1.common.Year;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
 import org.orcid.utils.DateUtils;
 
 public class PojoUtilTest {

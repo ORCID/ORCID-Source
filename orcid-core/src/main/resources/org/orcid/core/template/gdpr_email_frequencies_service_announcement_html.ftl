@@ -10,7 +10,7 @@
             <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
             <hr />
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-            <@emailMacros.msg "email.common.dear" /> ${emailName},
+            Dear ${emailName},
         </span>
         <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
             You may have heard about the <a href="https://www.eugdpr.org/" target="_blank">General Data Protection Regulation</a> (GDPR), which is taking effect in Europe later this month. The GDPR improves transparency and data privacy rights of individuals. We're writing to explain how our practices align with GDPR.
@@ -61,10 +61,15 @@ Laurel L. Haak
 Executive Director, ORCID
         </p>
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-            <@emailMacros.msg "email.common.you_have_received_this_email" />
+            You have received this email as a service announcement related to your ORCID Account.
         </p>
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-           <#include "email_footer_html.ftl"/>
+            <small>
+            <a href="${baseUri}/account" style="color: #338caf;">email preferences</a> 
+            | <a href="${baseUri}/privacy-policy" style="color: #338caf;">privacy policy</a> 
+            | ORCID, Inc. | 10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA 
+            | <a href="${baseUri}" style="color: #338caf;">ORCID.org</a>
+            </small>            
         </p>                       
         </div>
     </body>

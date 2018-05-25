@@ -190,16 +190,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     void clearOrcidProfileCache();    
 
-    public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus);
-    
     public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList);
     
     public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);
-
-    void processProfilesWithReindexFlagAndAddToMessageQueue();
-
-    void processProfilesWithFailedFlagAndAddToMessageQueue();
-
-    void processProfilesWithPendingFlagAndAddToMessageQueue();
-
 }

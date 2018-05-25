@@ -4,12 +4,12 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.dev1.common.Contributor;
-import org.orcid.jaxb.model.v3.dev1.common.CreditName;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.common.Contributor;
+import org.orcid.jaxb.model.v3.rc1.common.CreditName;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.FundingContributor;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 

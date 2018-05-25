@@ -1,7 +1,7 @@
 package org.orcid.core.manager.v3.read_only;
 
-import org.orcid.jaxb.model.v3.dev1.record.Address;
-import org.orcid.jaxb.model.v3.dev1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.Addresses;
 
 /**
  * 

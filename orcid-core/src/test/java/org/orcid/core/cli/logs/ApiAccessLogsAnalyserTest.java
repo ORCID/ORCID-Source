@@ -80,7 +80,7 @@ public class ApiAccessLogsAnalyserTest {
                         "127.0.0.1 - - [17/Oct/2017:00:00:03 +0000] \"GET /orcid-api-web/v2.0/0000-0001-8120-7596/record HTTP/1.0\" 401 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
                                 + BAD_TOKEN + "\" \"-\" \"-\" \"-\"\n")
                 .thenReturn(
-                        "127.0.0.1 - - [17/Oct/2017:00:00:04 +0000] \"GET /orcid-api-web/v3.0_dev1/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
+                        "127.0.0.1 - - [17/Oct/2017:00:00:04 +0000] \"GET /orcid-api-web/v3.0_rc1/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
                                 + TOKEN_1 + "\" \"-\" \"-\" \"-\"\n")
                 .thenReturn(
                         "127.0.0.1 - - [17/Oct/2017:00:00:05 +0000] \"GET /orcid-api-web/v2.0/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "

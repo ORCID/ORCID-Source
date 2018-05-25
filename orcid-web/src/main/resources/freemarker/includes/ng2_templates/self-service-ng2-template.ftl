@@ -3,8 +3,8 @@
         <h1 id="self-service-lead" *ngIf="memberDetails?.consortiumLead"><@spring.message "manage_consortium.manage_consortium"/></h1>
         <h1 id="self-service-lead" *ngIf="!memberDetails?.consortiumLead"><@spring.message "manage_consortium.manage_member"/></h1>
         <p><@spring.message "manage_consortium.manage_consortium_text_1"/>
-        	<@spring.message "manage_consortium.manage_consortium_text_2"/>
-        	<a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
+            <@spring.message "manage_consortium.manage_consortium_text_2"/>
+            <a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
         <div *ngIf="memberDetails != null">
             <div class="topBuffer">
                 <h3 class="topBuffer" *ngIf="memberDetails?.consortiumLead"><@spring.message "manage_consortium.public_display"/></h3>
@@ -59,12 +59,12 @@
                     <div class="col-md-9 col-sm-12 col-xs-12">
                         <label><@orcid.msg 'manage_consortium.community'/></label>
                          <select id="communities" name="communities"
-							    	class="input-xlarge"
-							     	[(ngModel)]="memberDetails.community.value" (blur)="validateMemberDetailsField('community')">
-									<#list communityTypes?keys as key>
-										<option value="${key}">${communityTypes[key]}</option>
-									</#list>
-							    </select>            
+                                    class="input-xlarge"
+                                    [(ngModel)]="memberDetails.community.value" (blur)="validateMemberDetailsField('community')">
+                                    <#list communityTypes?keys as key>
+                                        <option value="${key}">${communityTypes[key]}</option>
+                                    </#list>
+                                </select>            
                         <span class="orcid-error" *ngIf="memberDetails?.community?.errors?.length > 0">
                             <div *ngFor='let error of memberDetails.community.errors' [innerHtml]="error"></div>
                         </span>
@@ -94,34 +94,34 @@
                             <td class="tooltip-container">
                                 <a
                                     *ngIf="memberDetails.allowedFullAccess"
-	                                (click)="removeOrgId(orgId)" 
-	                                class="glyphicon glyphicon-trash grey">
-	                                <div class="popover popover-tooltip top">
-	                                    <div class="arrow"></div>
-	                                    <div class="popover-content">
-	                                        <span><@spring.message "manage_consortium.remove_org_id"/></span>
-	                                    </div>
-	                                </div>
-	                            </a>
-	                        </td>
+                                    (click)="removeOrgId(orgId)" 
+                                    class="glyphicon glyphicon-trash grey">
+                                    <div class="popover popover-tooltip top">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <span><@spring.message "manage_consortium.remove_org_id"/></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </td>
                         </tr>
                     </table>
                 </div>
                 <div *ngIf="memberDetails.allowedFullAccess">
-	                <h3><@spring.message "manage_consortium.add_org_ids_heading"/></h3>
-	                <form (submit)="searchOrgIds()">
-	                     <input type="text" name="search" placeholder="Org ID / Org name" class="inline-input input-xlarge" [(ngModel)]="orgIdInput.text"/>
-	                     <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
-	                </form>
-	                <div *ngIf="orgIdSearchResults?.length > 0">
-	                    <table>
-	                        <tr><th><@spring.message "manage_consortium.org_name"/></th><th><@spring.message "manage_consortium.org_id_value"/></th><th><@spring.message "manage_consortium.org_id_type"/></th></tr>
-	                        <tr *ngFor="let org of orgIdSearchResults">
-	                            <td>{{org.value}}</td><td>{{org.sourceId}}</td><td>{{org.sourceType}}</td><td (click)="addOrgId(org)"><button class="btn btn-primary" value="Add"><@spring.message "manage_consortium.add_org_ids_add"/></button></td>
-	                        </tr>
-	                    </table>
-	                </div>
-	            </div>
+                    <h3><@spring.message "manage_consortium.add_org_ids_heading"/></h3>
+                    <form (submit)="searchOrgIds()">
+                         <input type="text" name="search" placeholder="Org ID / Org name" class="inline-input input-xlarge" [(ngModel)]="orgIdInput.text"/>
+                         <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
+                    </form>
+                    <div *ngIf="orgIdSearchResults?.length > 0">
+                        <table>
+                            <tr><th><@spring.message "manage_consortium.org_name"/></th><th><@spring.message "manage_consortium.org_id_value"/></th><th><@spring.message "manage_consortium.org_id_type"/></th></tr>
+                            <tr *ngFor="let org of orgIdSearchResults">
+                                <td>{{org.value}}</td><td>{{org.sourceId}}</td><td>{{org.sourceType}}</td><td (click)="addOrgId(org)"><button class="btn btn-primary" value="Add"><@spring.message "manage_consortium.add_org_ids_add"/></button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
             <!-- Contacts -->
             <div>
@@ -136,7 +136,7 @@
                             <th><@spring.message "manage_consortium.contacts_contact"/></th>
                             <th><@spring.message "manage_consortium.contacts_voting_contact"/>
                                 <div class="popover-help-container">
-                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <i class="glyphicon glyphicon-question-sign"></i>
                                     <div id="voting-contact-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
@@ -147,7 +147,7 @@
                             </th>
                             <th><@spring.message "manage_consortium.contacts_role"/>
                                 <div class="popover-help-container">
-                                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                    <i class="glyphicon glyphicon-question-sign"></i>
                                     <div id="contact-role-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
@@ -167,7 +167,7 @@
                                 <div *ngIf="!contact.orcid">
                                     <span><@spring.message "manage_consortium.no_orcid_id"/></span> 
                                     <div class="popover-help-container">
-                                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                        <i class="glyphicon glyphicon-question-sign"></i>
                                         <div id="voting-contact-help" class="popover bottom">
                                             <div class="arrow"></div>
                                             <div class="popover-content">
@@ -180,14 +180,14 @@
                             </td>
                             <td><input type="checkbox" [(ngModel)]="contact.role.votingContact" (ngModelChange)="validateContacts()" [disabled]="!memberDetails.allowedFullAccess || !contacts.permissionsByContactRoleId[contact.role.id].allowedEdit"/></td>
                             <td>
-							    <select class="input-md" id="contactRoles" name="contactRoles"
-							     	[(ngModel)]="contact.role.roleType"
-							     	(ngModelChange)="validateContacts()"
-							     	[disabled]="!memberDetails.allowedFullAccess || !contacts.permissionsByContactRoleId[contact.role.id].allowedEdit">
-									<#list contactRoleTypes?keys as key>
-										<option value="${key}">${contactRoleTypes[key]}</option>
-									</#list>
-							    </select>
+                                <select class="input-md" id="contactRoles" name="contactRoles"
+                                    [(ngModel)]="contact.role.roleType"
+                                    (ngModelChange)="validateContacts()"
+                                    [disabled]="!memberDetails.allowedFullAccess || !contacts.permissionsByContactRoleId[contact.role.id].allowedEdit">
+                                    <#list contactRoleTypes?keys as key>
+                                        <option value="${key}">${contactRoleTypes[key]}</option>
+                                    </#list>
+                                </select>
                             </td>
                             <td class="tooltip-container">
                                 <a 
@@ -214,7 +214,7 @@
                 <!-- Buttons -->
                 <div class="row" *ngIf="memberDetails.allowedFullAccess">
                     <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
-                    	    <span id="ajax-loader" *ngIf="updateContactsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+                            <span id="ajax-loader" *ngIf="updateContactsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
                         <button id="bottom-confirm-update-contacts" class="btn btn-primary" (click)="updateContacts()" [disabled]="updateContactsDisabled"><@orcid.msg 'manage_consortium.save_contacts'/></button>
                         <a href="" class="cancel-right" (click)="getContacts()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
                     </div>
@@ -222,9 +222,9 @@
                 <div class="bottomBuffer" *ngIf="memberDetails.allowedFullAccess">
                     <h3 *ngIf="memberDetails.consortiumLead"><@spring.message "manage_consortium.add_contacts_heading"/></h3>
                     <h3 *ngIf="!memberDetails.consortiumLead"><@spring.message "self_serve.add_contacts_heading"/></h3>
-                    	<p>
-                    		<@spring.message "manage_consortium.add_contacts_search_for"/>
-                    	</p>
+                        <p>
+                            <@spring.message "manage_consortium.add_contacts_search_for"/>
+                        </p>
                      <form (submit)="search()">
                          <input type="text" name="search" placeholder="Email address" class="inline-input input-xlarge" [(ngModel)]="input.text"/>
                          <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
@@ -243,7 +243,7 @@
                 <div *ngFor="let subMember of memberDetails.subMembers">
                     <span><a [ngClass]="{'disabled': isPendingAddition(subMember)}" [href]="subMember.opportunity.targetAccountId">{{subMember.opportunity.accountPublicDisplayName}}</a></span>
                     <!-- Pending addition -->
-					<span class="tooltip-container pull-right pending-addition" *ngIf="isPendingAddition(subMember)"><@orcid.msg 'manage_consortium.add_submember_pending_addition'/>
+                    <span class="tooltip-container pull-right pending-addition" *ngIf="isPendingAddition(subMember)"><@orcid.msg 'manage_consortium.add_submember_pending_addition'/>
                         <a id="cancelAddSubmember" name="{{subMember.opportunity.accountPublicDisplayName}}" (click)="cancelSubMemberAddition(subMember)" class="glyphicon glyphicon-remove-circle">
                             <div class="popover popover-tooltip top">
                                 <div class="arrow"></div>
@@ -264,17 +264,17 @@
                             </div>
                         </a>
                     </span>
-					<!-- Request removal -->
+                    <!-- Request removal -->
                     <span class="tooltip-container pull-right" *ngIf="canRemoveSubMember(subMember)">
-						<a id="revokeAppBtn" name="{{subMember.opportunity.accountPublicDisplayName}}" (click)="confirmRemoveSubMember(subMember)"
-	                        class="glyphicon glyphicon-trash grey">
-	                        <div class="popover popover-tooltip top">
-	                            <div class="arrow"></div>
-	                            <div class="popover-content">
-	                                <span><@spring.message "manage_consortium.remove_consortium_member"/></span>
-	                            </div>
-	                        </div>
-	                    </a>
+                        <a id="revokeAppBtn" name="{{subMember.opportunity.accountPublicDisplayName}}" (click)="confirmRemoveSubMember(subMember)"
+                            class="glyphicon glyphicon-trash grey">
+                            <div class="popover popover-tooltip top">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <span><@spring.message "manage_consortium.remove_consortium_member"/></span>
+                                </div>
+                            </div>
+                        </a>
                     </span>
                     <hr>
                 </div>
@@ -284,7 +284,7 @@
                 </div>
                 <!-- Add consortium member-->
                 <div *ngIf="memberDetails.allowedFullAccess">
-	                <h3><@spring.message "manage_consortium.add_submember_heading"/></h3>
+                    <h3><@spring.message "manage_consortium.add_submember_heading"/></h3>
                     <p><@orcid.msg "manage_consortium.add_submember_text"/></p>
                     <!-- Name -->
                     <div class="row">
@@ -331,10 +331,10 @@
                         </div>
                     </div>
                     <!-- Buttons -->
-	                <div class="row">
-	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
-	                    	<span id="ajax-loader" *ngIf="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" (click)="validateSubMember()" [disabled]="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
+                    <div class="row">
+                        <div class="controls col-md-12 col-sm-12 col-xs-12">
+                            <span id="ajax-loader" *ngIf="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+                            <button class="btn btn-primary" id="bottom-confirm-update-consortium" (click)="validateSubMember()" [disabled]="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
                             <a href="" class="cancel-right" (click)="addSubMemberClear()"><@orcid.msg 'manual_work_form_contents.btnclear' /></a>
                             <span class="orcid-error" *ngIf="errorSubMemberExists">
                                 <div><@orcid.msg 'manage_consortium.add_submember_member_exists'/></div>
@@ -342,10 +342,10 @@
                             <span class="orcid-error" *ngIf="errorAddingSubMember">
                                 <div><@orcid.msg 'manage_consortium.add_submember_error'/></div>
                             </span>
-	                    </div>
-	                </div> 
-	            </div>
-        	    </div>
+                        </div>
+                    </div> 
+                </div>
+                </div>
         </div>
     </div>
 </script>

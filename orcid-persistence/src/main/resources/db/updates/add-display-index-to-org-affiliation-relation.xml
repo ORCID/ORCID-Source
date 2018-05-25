@@ -1,0 +1,18 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet author="George Nash" id="ADD-DISPLAY-INDEX-TO-AFFILIATION">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="org_affiliation_relation" columnName="display_index"/>
+            </not>
+        </preConditions>
+        <sql>ALTER TABLE org_affiliation_relation ADD display_index bigint;</sql>     
+    </changeSet>
+    <changeSet author="George Nash" id="ADD-DEFAULT-TO-AFFILIATION-DISPLAY-INDEX">
+        <sql>ALTER TABLE org_affiliation_relation ALTER COLUMN display_index set default -1;</sql>     
+    </changeSet>
+    <changeSet author="George Nash" id="UPDATE-NULL-AFFILIATION-DISPLAY-INDEX">
+        <sql>UPDATE org_affiliation_relation SET display_index = -1 WHERE display_index IS NULL;</sql>     
+    </changeSet>    
+</databaseChangeLog>
