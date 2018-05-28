@@ -320,7 +320,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 source = createOrcidSource(sourceId);
             }
             a.setSource(source);
-            source.setSourceName(new SourceName(sourceNameCacheManager.retrieve(sourceId)));
+            
+            String sourceNameValue = sourceNameCacheManager.retrieve(sourceId);
+            if (sourceNameValue != null) {
+                source.setSourceName(new SourceName(sourceNameValue));
+            }
         }
 
         private boolean isClient(String sourceId) {
