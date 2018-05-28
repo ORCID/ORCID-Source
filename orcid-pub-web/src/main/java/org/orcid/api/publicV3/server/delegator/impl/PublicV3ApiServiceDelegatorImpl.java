@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +23,7 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.RecordManager;
@@ -109,6 +112,9 @@ import de.undercouch.citeproc.csl.CSLItemData;
 public class PublicV3ApiServiceDelegatorImpl
         implements PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> {
 
+    @Context
+    private HttpServletRequest httpRequest;
+    
     // Activities managers
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
@@ -193,6 +199,9 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Resource
     private OpenIDConnectKeyService openIDConnectKeyService;
+    
+    @Resource
+    private StatusManager statusManager;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -200,6 +209,12 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
+    }
+
+    @Override
+    public Response viewStatus() {
+        httpRequest.setAttribute("isMonitoring", true);
+        return Response.ok(statusManager.createStatusMap()).build();
     }
 
     /**

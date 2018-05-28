@@ -2,6 +2,7 @@ package org.orcid.api.memberV3.server;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
+import static org.orcid.core.api.OrcidApiConstants.API_STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
@@ -58,6 +59,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -138,6 +140,9 @@ public class MemberV3ApiServiceImplV3_0_rc1 extends MemberApiServiceImplHelper {
 
     @Context
     private UriInfo uriInfo;
+    
+    @Context
+    private HttpServletRequest httpRequest;
 
     @Value("${org.orcid.core.baseUri}")
     protected String baseUri;
@@ -193,6 +198,15 @@ public class MemberV3ApiServiceImplV3_0_rc1 extends MemberApiServiceImplHelper {
     @ApiOperation( nickname="viewStatusTextV3dev", value = "Check the server status", hidden = true)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(API_STATUS_PATH)
+    @ApiOperation(nickname = "viewStatusV3dev", value = "Check the server status", response = String.class)
+    public Response viewStatusJson() {
+        httpRequest.setAttribute("isMonitoring", true);
+        return serviceDelegator.viewStatus();
     }
 
     @GET

@@ -22,6 +22,7 @@ import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION;
 import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITIONS;
 import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
 import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP;
 import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIPS;
@@ -34,6 +35,7 @@ import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEWS;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
+import static org.orcid.core.api.OrcidApiConstants.PUB_STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATIONS;
@@ -49,7 +51,6 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 
 import java.util.List;
 import java.util.Map;
@@ -156,6 +157,14 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @ApiOperation( nickname="viewStatusTextV3dev", value = "Check the server status", response = String.class)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PUB_STATUS_PATH)
+    @ApiOperation( nickname="viewStatusV3dev", value = "Check the server status", response = String.class)
+    public Response viewStatusJson() {
+        return serviceDelegator.viewStatus();
     }
 
     @GET
