@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { AlsoKnownAsService } 
-    from '../../shared/alsoKnownAs.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -33,9 +33,10 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
     formData: any;
     emails: any;
     emailSrvc: any;
+    url_path: string;
 
     constructor( 
-        private alsoKnownAsService: AlsoKnownAsService,
+        private alsoKnownAsService: GenericService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
@@ -43,10 +44,11 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
             otherNames: null
         };
         this.emails = {};
+        this.url_path = '/my-orcid/otherNamesForms.json';
     }
 
     getformData(): void {
-        this.alsoKnownAsService.getData()
+        this.alsoKnownAsService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

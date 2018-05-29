@@ -7,12 +7,18 @@ import { Injectable }
 import { Observable } 
     from 'rxjs/Observable';
 
+import { Subject }
+    from 'rxjs/Subject';
+
 import 'rxjs/Rx';
 
 @Injectable()
-export class BiographyService {
+export class GenericService {
     private headers: HttpHeaders;
+    private notify = new Subject<any>();
     private url: string;
+    
+    notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -22,21 +28,25 @@ export class BiographyService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
-        this.url = getBaseUri() + '/account/biographyForm.json';
+        this.url = getBaseUri();
     }
 
-    getBiographyData(): Observable<any> {
+    notifyOther(): void {
+        this.notify.next();
+    }
+
+    getData( url_path ): Observable<any> {
         return this.http.get(
-            this.url
+            this.url + url_path
         )
         
     }
 
-    setBiographyData( obj ): Observable<any> {
+    setData( obj, url_path ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
-            this.url, 
+            this.url + url_path, 
             encoded_data, 
             { headers: this.headers }
         )

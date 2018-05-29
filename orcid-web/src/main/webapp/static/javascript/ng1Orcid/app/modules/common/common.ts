@@ -54,9 +54,6 @@ import { EditTableNg2Module }
     from './../editTable/editTable.ts';
 */
 
-import { EmailFrecuencyNg2Module }
-    from './../emailFrecuency/emailFrecuency.ts';
-
 import { HeaderNg2Module }
     from './../header/header.ts';
 
@@ -105,12 +102,6 @@ import { AffiliationService }
 import { AccountService }
     from '../../shared/account.service.ts';
 
-import { AlsoKnownAsService } 
-    from '../../shared/alsoKnownAs.service.ts';
-
-import { BiographyService } 
-    from '../../shared/biography.service.ts';
-
 import { BlogService }
     from '../../shared/blog.service.ts';
 
@@ -125,9 +116,6 @@ import { CommonService }
 
 import { ConsortiaService }
     from '../../shared/consortia.service.ts'
-
-import { CountryService } 
-    from '../../shared/country.service.ts';
 
 import { DelegatorsService }
     from '../../shared/delegators.service.ts';
@@ -149,6 +137,9 @@ import { FeaturesService }
 
 import { FundingService } 
     from '../../shared/funding.service.ts';
+
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 //import { GroupedActivitiesUtilService } 
 //    from '../shared/groupedActivities.service.ts';
@@ -227,7 +218,6 @@ import { EmailFrequencyService }
             AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
-            EmailFrecuencyNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
@@ -266,7 +256,6 @@ import { EmailFrequencyService }
             AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
-            EmailFrecuencyNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
@@ -278,14 +267,11 @@ import { EmailFrequencyService }
             AccountService,
             AdminDelegatesService,
             AffiliationService,
-            AlsoKnownAsService,
-            BiographyService,
             BlogService,
             ClaimService,
             ClientService,
             CommonService,
             ConsortiaService,
-            CountryService,
             DelegatorsService,
             DeprecateProfileService,
             DiscoService,
@@ -294,6 +280,7 @@ import { EmailFrequencyService }
             ExternalIdentifiersService,
             FeaturesService,
             FundingService,
+            GenericService,
             //GroupedActivitiesUtilService,
             KeywordsService,
             LanguageService,

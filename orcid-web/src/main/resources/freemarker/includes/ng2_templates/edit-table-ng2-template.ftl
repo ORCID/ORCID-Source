@@ -1,3 +1,12 @@
+<#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
+<#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
+<#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
+<#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
+<#include "/includes/ng2_templates/security-question-edit-ng2-template.ftl">
+<#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
+<#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
+<#include "/includes/ng2_templates/works-privacy-preferences-ng2-template.ftl">
+
 <script type="text/ng-template" id="edit-table-ng2-template">
     <table class="table table-bordered settings-table account-settings"
         style="margin:0; padding:0;">
