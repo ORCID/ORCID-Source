@@ -18,6 +18,9 @@
 	<sec:http pattern="/v2**/o2c.html" security="none"/>
 	<sec:http pattern="/v3**/" security="none"/>
 	<sec:http pattern="/v3**/o2c.html" security="none"/>
+	
+	<!--  Status check -->
+	<sec:http pattern="/v*/apiStatus" security="none"/>
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">

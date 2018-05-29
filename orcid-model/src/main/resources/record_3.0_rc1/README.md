@@ -1,64 +1,67 @@
 # ORCID API v3.0_rc1 Guide
 
-## Current State (Release unstable)
-v3.0_rc1 is the current development release of the ORCID API and is only for internal use.
+## Current State (Release Candidate Stable)
+v3.0_rc1 is the current development release of the ORCID API.
 
-## XSDs and current state (all unstable)
+## XSDs and current state (all stable)
 - [activities-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/activities-3.0_rc1.xsd) 
-**unstable**
+**stable**
 - [address-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/address-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [bulk-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/bulk-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [common-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_3.0_rc1/common-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [distinction-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/distinction-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [education-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/education-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [email-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/email-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [employment-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/employment-3.0_rc1.xsd)
-**not stable**
+**stable**
 - [error-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/error-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [external-identifier-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/external-identifier-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [funding-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/funding-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [invited-position-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/invited-position-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [keyword-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/keyword-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [membership-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/membership-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [other-names-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/other-name-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [peer-review-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/peer-review-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [person-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/person-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [personal-details-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/personal-details-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [qualification-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/qualification-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [researcher-url-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/researcher-url-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [search-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/search-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [service-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/service-3.0_rc1.xsd)
-**unstable**
+**stable**
 - [work-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/work-3.0_rc1.xsd)
-**unstable**
+**stable**
 
 ## Changes from Version 2.1:
 
 ### JSON
 - JSON enumerated types are now expressed in lowercase with dashes instead of underscores, matching the existing XML enums (ie *JOURNAL_ARTCILE* is now expressed as *journal-article*). This affects enums for visibility, locale, work types, contributor roles, citation types, external identifier relationship, funding types, peer review types, and peer review role
 
+### Activities external identifiers
+- Addition of *common:external-id-normalized* for work and peer-review identifiers. The common:external-id-normalized field is a transient, system generated field which expresses the identifier in a standard format that is used for grouping. In general, normalized identifiers trim extraneous text such as the identifier type or the expression of the identifier as a url. Additional normalization is done based on the rules of the identifier type and may include setting all alpha characters to lower case,  or transforming spaces, dashes, periods and other characters that can be treated as equivalent. [See the full normalization rules] (https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/java/org/orcid/core/utils/v3/identifiers). Identifiers which can not be normalzied will return a error message when reading them.
+
 ### Affiliations
 - Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections.
-- Summary information now available for each section including affiliation source, role-title, department-name, dates, and organization
+- Summary information now available for each section including affiliation source, role-title, department-name, dates, organization and external-ids
 - *common:start-date* is required when writing items
 - Addition of optional element *common:url* for recording links about the affiliation
 - Addition of optional element *common:external-ids* for recording identifiers for the affiliation
@@ -69,8 +72,14 @@ v3.0_rc1 is the current development release of the ORCID API and is only for int
 - Addition of *work:journal-title* field
 
 ### Works
-- Addition of *common:external-id-normalized* for work identifiers. The common:external-id-normalized field is a transient, system generated field which expresses the identifier in a standard format that is used for grouping. In general, normalized identifiers trim extraneous text such as the identifier type or the expression of the identifier as a url. Additional normalization is done based on the rules of the identifier type and may include setting all alpha characters to lower case,  or transforming spaces, dashes, periods and other characters that can be treated as equivalent. [See the full normalization rules] (https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/java/org/orcid/core/utils/v3/identifiers). Identifiers which can not be normalzied will return a error message when reading them.
+- Addition of *common:external-id-normalized* when reading works for normalized work identifiers
 
+### Fundings
+- Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
+
+### Peer-review
+- Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
+- Addition of *common:external-id-normalized* when reading peer-reviews for normalized peer-review identifiers
 
 ## Sample files:
 

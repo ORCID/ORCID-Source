@@ -27,6 +27,7 @@ import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
@@ -237,12 +238,20 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Resource
     private MessageSource messageSource;
+    
+    @Resource
+    private StatusManager statusManager;
 
     private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
 
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
+    }
+    
+    @Override
+    public Response viewStatus() {
+        return Response.ok(statusManager.createStatusMap()).build();
     }
 
     @Override
