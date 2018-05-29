@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -105,8 +87,8 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-    <bean id="memberV3_0_dev1ApiClient" class="org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl">
-        <constructor-arg value="${org.orcid.api.baseUri}/v3.0_dev1"/>
+    <bean id="memberV3_0_rc1ApiClient" class="org.orcid.integration.blackbox.api.v3.rc1.MemberV3Rc1ApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v3.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
@@ -146,8 +128,8 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-    <bean id="publicV3_0_dev1ApiClient" class="org.orcid.integration.api.pub.PublicV3ApiClientImpl">
-        <constructor-arg value="${org.orcid.pub.baseUri}/v3.0_dev1"/>
+    <bean id="publicV3_0_rc1ApiClient" class="org.orcid.integration.api.pub.PublicV3ApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}/v3.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
@@ -158,8 +140,8 @@
     </bean>   
     
     <!-- Notifications -->
-    <bean id="notificationsClient_v3_0_dev1" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
-        <constructor-arg value="${org.orcid.api.baseUri}/v3.0_dev1"/>
+    <bean id="notificationsClient_v3_0_rc1" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v3.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     

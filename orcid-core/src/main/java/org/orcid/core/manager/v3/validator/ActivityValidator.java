@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.validator;
 
 import java.util.Arrays;
@@ -35,34 +19,35 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
-import org.orcid.jaxb.model.v3.dev1.common.Amount;
-import org.orcid.jaxb.model.v3.dev1.common.Contributor;
-import org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
-import org.orcid.jaxb.model.v3.dev1.common.Organization;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
-import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.common.Year;
-import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.CitationType;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingTitle;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkContributors;
-import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.jaxb.model.v3.rc1.common.Amount;
+import org.orcid.jaxb.model.v3.rc1.common.Contributor;
+import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.Organization;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationHolder;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.CitationType;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
+import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -74,7 +59,7 @@ public class ActivityValidator {
     private ExternalIDValidator externalIDValidator;
     
     @Resource
-    private NormalizationService norm;
+    private PIDNormalizationService norm;
     
     public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
@@ -252,7 +237,7 @@ public class ActivityValidator {
         if (work.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
+                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             }
             throw new InvalidPutCodeException(params);
         }
@@ -304,7 +289,7 @@ public class ActivityValidator {
         if (funding.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
+                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             }
             throw new InvalidPutCodeException(params);
         }
@@ -342,7 +327,7 @@ public class ActivityValidator {
         if (affiliation.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
+                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             }
             throw new InvalidPutCodeException(params);
         }
@@ -369,7 +354,7 @@ public class ActivityValidator {
 
         if (peerReview.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("clientName", sourceEntity.getSourceName());
+            params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
             throw new InvalidPutCodeException(params);
         }
 
@@ -403,7 +388,7 @@ public class ActivityValidator {
             if (groupIdRecord.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
-                    params.put("clientName", sourceEntity.getSourceName());
+                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                 }
                 throw new InvalidPutCodeException(params);
             }
@@ -425,9 +410,9 @@ public class ActivityValidator {
                     if (existingId.getNormalized() == null)
                         existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
+                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", sourceEntity.getSourceName());
+                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
@@ -448,9 +433,9 @@ public class ActivityValidator {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
+                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", sourceEntity.getSourceName());
+                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -120,7 +104,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
@@ -164,7 +148,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
@@ -200,7 +184,7 @@ public class LoadGridDataTest {
         verify(orgDisambiguatedDao).merge(captor.capture());
 
         OrgDisambiguatedEntity orgToBeUpdated = captor.getValue();
-        assertEquals(Iso3166Country.CR, orgToBeUpdated.getCountry());
+        assertEquals(Iso3166Country.CR.name(), orgToBeUpdated.getCountry());
         assertEquals(Long.valueOf(1), orgToBeUpdated.getId());
         assertEquals("City One Updated", orgToBeUpdated.getCity());
         assertEquals(IndexingStatus.PENDING, orgToBeUpdated.getIndexingStatus());
@@ -224,7 +208,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
@@ -394,7 +378,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");
@@ -447,7 +431,7 @@ public class LoadGridDataTest {
                 entity.setName("org_1");
                 entity.setSourceId("grid.1");
                 entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US);
+                entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
                 entity.setSourceType("GRID");

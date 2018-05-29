@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -32,17 +16,17 @@ import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Name;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
-import org.orcid.jaxb.model.v3.dev1.record.Person;
-import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.dev1.record.Record;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Name;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 
 /**
  * 

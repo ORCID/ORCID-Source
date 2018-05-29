@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
@@ -32,9 +16,10 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.OtherNameManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
+import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -108,7 +93,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
-        Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility().value());        
+        Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility());        
         //Save the original source
         String existingSourceId = updatedOtherNameEntity.getSourceId();
         String existingClientSourceId = updatedOtherNameEntity.getClientSourceId();
@@ -169,7 +154,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                    for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
                        if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
                            existingOtherName.setLastModified(new Date());
-                           existingOtherName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(updatedOrNew.getVisibility().value()));
+                           existingOtherName.setVisibility(updatedOrNew.getVisibility().name());
                            existingOtherName.setDisplayName(updatedOrNew.getContent());
                            existingOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                            otherNameDao.merge(existingOtherName);
@@ -189,7 +174,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                     if(sourceEntity.getSourceClient() != null) {
                         newOtherName.setClientSourceId(sourceEntity.getSourceClient().getId());
                     } 
-                    newOtherName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(updatedOrNew.getVisibility().value()));
+                    newOtherName.setVisibility(updatedOrNew.getVisibility().name());
                     newOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     otherNameDao.persist(newOtherName);
                     
@@ -202,7 +187,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     private boolean isDuplicated(OtherNameEntity existing, OtherName otherName, SourceEntity source) {
         if (!existing.getId().equals(otherName.getPutCode())) {
             String existingSourceId = existing.getElementSourceId(); 
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
                 if (existing.getDisplayName() != null && existing.getDisplayName().equals(otherName.getContent())) {
                     return true;
                 }
@@ -212,12 +197,12 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
     
     private void setIncomingPrivacy(OtherNameEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingOtherNameVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultOtherNamesVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        String incomingOtherNameVisibility = entity.getVisibility();
+        String defaultOtherNamesVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name() : profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {            
             entity.setVisibility(defaultOtherNamesVisibility);            
         } else if (incomingOtherNameVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }
 

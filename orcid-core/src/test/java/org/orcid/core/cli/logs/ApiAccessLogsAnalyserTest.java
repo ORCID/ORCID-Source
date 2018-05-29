@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli.logs;
 
 import static org.junit.Assert.assertEquals;
@@ -23,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.persistence.NoResultException;
 
@@ -32,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -47,29 +33,41 @@ public class ApiAccessLogsAnalyserTest {
     private static final String CLIENT_DETAILS_1 = "client-details-1";
 
     private static final String CLIENT_DETAILS_2 = "client-details-2";
+    
+    private static final String CLIENT_DETAILS_NAME_1 = "client-details-name-1";
+    
+    private static final String CLIENT_DETAILS_NAME_2 = "client-details-name-2";
 
     private ApiAccessLogsAnalyser analyser = new ApiAccessLogsAnalyser();
 
     @Mock
     private OrcidOauth2TokenDetailDao tokenDao;
+    
+    @Mock
+    private ClientDetailsDao clientDetailsDao;
 
     @Mock
     private LogReader logReader;
 
     private ByteArrayOutputStream output;
+    
+    private ByteArrayOutputStream summary;
 
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         
         output = new ByteArrayOutputStream();
+        summary = new ByteArrayOutputStream();
         AnalysisResults results = new AnalysisResults();
         results.setOutputStream(output);
+        results.setSummaryOutputStream(summary);
+        results.setClientDetailsDao(clientDetailsDao);
 
         ReflectionTestUtils.setField(analyser, "tokenDao", tokenDao);
         ReflectionTestUtils.setField(analyser, "results", results);
         ReflectionTestUtils.setField(analyser, "logReader", logReader);
-        ReflectionTestUtils.setField(analyser, "logsDir", new File("Not a real file"));
+        ReflectionTestUtils.setField(analyser, "logDirs", Arrays.asList(new File("Not a real file")));
 
         Mockito.when(logReader.getNextLine())
                 .thenReturn(
@@ -82,7 +80,7 @@ public class ApiAccessLogsAnalyserTest {
                         "127.0.0.1 - - [17/Oct/2017:00:00:03 +0000] \"GET /orcid-api-web/v2.0/0000-0001-8120-7596/record HTTP/1.0\" 401 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
                                 + BAD_TOKEN + "\" \"-\" \"-\" \"-\"\n")
                 .thenReturn(
-                        "127.0.0.1 - - [17/Oct/2017:00:00:04 +0000] \"GET /orcid-api-web/v3.0_dev1/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
+                        "127.0.0.1 - - [17/Oct/2017:00:00:04 +0000] \"GET /orcid-api-web/v3.0_rc1/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
                                 + TOKEN_1 + "\" \"-\" \"-\" \"-\"\n")
                 .thenReturn(
                         "127.0.0.1 - - [17/Oct/2017:00:00:05 +0000] \"GET /orcid-api-web/v2.0/0000-0001-8120-7596/record HTTP/1.0\" 200 3695 0.046 \"-\" \"-\" \"-\" - \"application/vnd.orcid+xml;charset=UTF-8\" \"-\" \"10.183.248.6\" \"http-nio-8080-exec-85\" \"bearer "
@@ -103,6 +101,8 @@ public class ApiAccessLogsAnalyserTest {
         Mockito.when(tokenDao.findByTokenValue(Mockito.eq(TOKEN_1))).thenReturn(getOrcidOauth2TokenDetailClientA());
         Mockito.when(tokenDao.findByTokenValue(Mockito.eq(TOKEN_2))).thenReturn(getOrcidOauth2TokenDetailClientB());
         Mockito.when(tokenDao.findByTokenValue(Mockito.eq(BAD_TOKEN))).thenThrow(new NoResultException());
+        Mockito.when(clientDetailsDao.getMemberName(Mockito.eq(CLIENT_DETAILS_1))).thenReturn(CLIENT_DETAILS_NAME_1);
+        Mockito.when(clientDetailsDao.getMemberName(Mockito.eq(CLIENT_DETAILS_2))).thenReturn(CLIENT_DETAILS_NAME_2);
     }
 
     @Test
@@ -112,23 +112,28 @@ public class ApiAccessLogsAnalyserTest {
         assertNotNull(outputText);
         assertFalse(outputText.isEmpty());
         AnalysisResults output = JsonUtils.readObjectFromJsonString(outputText, AnalysisResults.class);
-        assertEquals(9, output.getHitsAnalysed());
-        assertEquals(3, output.getClientResults().size());
+        assertEquals(8, output.getHitsAnalysed());
+        assertEquals(2, output.getClientResults().size());
         
         for (ClientStats clientStats : output.getClientResults()) {
             if (CLIENT_DETAILS_1.equals(clientStats.getClientDetailsId())) {
                 assertEquals(3, clientStats.getVersionsHit().size());
                 assertEquals(4, clientStats.getTotalHits());
+                assertEquals(CLIENT_DETAILS_NAME_1, clientStats.getClientName());
             }
             if (CLIENT_DETAILS_2.equals(clientStats.getClientDetailsId())) {
                 assertEquals(1, clientStats.getVersionsHit().size());
                 assertEquals(4, clientStats.getTotalHits());
-            }
-            if (ApiAccessLogsAnalyser.UNKNOWN_CLIENT.equals(clientStats.getClientDetailsId())) {
-                assertEquals(1, clientStats.getVersionsHit().size());
-                assertEquals(1, clientStats.getTotalHits());
+                assertEquals(CLIENT_DETAILS_NAME_2, clientStats.getClientName());
             }
         }
+        
+        outputText = summary.toString();
+        AnalysisSummary summary = JsonUtils.readObjectFromJsonString(outputText, AnalysisSummary.class);
+        assertEquals(0, summary.getNumV1Clients());
+        assertEquals(2, summary.getNumV2Clients());
+        assertEquals(1, summary.getNumV3Clients());
+        assertEquals(1, summary.getNumClientsUsingMultipleVersions());
     }
 
     private OrcidOauth2TokenDetail getOrcidOauth2TokenDetailClientB() {

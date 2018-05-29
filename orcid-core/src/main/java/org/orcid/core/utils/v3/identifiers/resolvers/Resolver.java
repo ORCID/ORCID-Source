@@ -1,24 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils.v3.identifiers.resolvers;
 
 import java.util.List;
 
 import org.apache.jena.ext.com.google.common.collect.Lists;
+import org.orcid.pojo.PIDResolutionResult;
 
 public interface Resolver {
 
@@ -38,6 +23,6 @@ public interface Resolver {
      * @param providedURL
      * @return
      */
-    public boolean canResolve(String apiTypeName, String value, String providedURL);
+    public PIDResolutionResult resolve(String apiTypeName, String value);
 
 }

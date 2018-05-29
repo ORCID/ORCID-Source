@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.publicV3.server.security;
 
 import static org.junit.Assert.assertEquals;
@@ -30,53 +14,54 @@ import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidNonPublicElementException;
-import org.orcid.jaxb.model.v3.dev1.common.Filterable;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.common.VisibilityType;
-import org.orcid.jaxb.model.v3.dev1.record.ActivitiesContainer;
-import org.orcid.jaxb.model.v3.dev1.record.Address;
-import org.orcid.jaxb.model.v3.dev1.record.Addresses;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.Group;
-import org.orcid.jaxb.model.v3.dev1.record.GroupsContainer;
-import org.orcid.jaxb.model.v3.dev1.record.Keyword;
-import org.orcid.jaxb.model.v3.dev1.record.Keywords;
-import org.orcid.jaxb.model.v3.dev1.record.Name;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
-import org.orcid.jaxb.model.v3.dev1.record.Person;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.dev1.record.Record;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
-import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.common.Filterable;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
+import org.orcid.jaxb.model.v3.rc1.record.ActivitiesContainer;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.Group;
+import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
+import org.orcid.jaxb.model.v3.rc1.record.Keyword;
+import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc1.record.Name;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -331,53 +316,53 @@ public class PublicAPISecurityManagerV3Test {
     @Test
     public void filterEmploymentsTest() {
         Employments e = getEmployments(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC);
-        assertEquals(3, e.getSummaries().size());
+        assertEquals(3, e.retrieveGroups().size());
         publicAPISecurityManagerV3.filter(e);
-        assertEquals(3, e.getSummaries().size());
-        assertContainerContainsOnlyPublicElements(e);
+        assertEquals(3, e.retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(e);
 
         e = getEmployments(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.LIMITED);
-        assertEquals(3, e.getSummaries().size());
+        assertEquals(3, e.retrieveGroups().size());
         publicAPISecurityManagerV3.filter(e);
-        assertEquals(2, e.getSummaries().size());
-        assertContainerContainsOnlyPublicElements(e);
+        assertEquals(2, e.retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(e);
 
         e = getEmployments(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PRIVATE);
-        assertEquals(3, e.getSummaries().size());
+        assertEquals(3, e.retrieveGroups().size());
         publicAPISecurityManagerV3.filter(e);
-        assertEquals(1, e.getSummaries().size());
-        assertContainerContainsOnlyPublicElements(e);
+        assertEquals(1, e.retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(e);
 
         e = getEmployments(Visibility.PRIVATE, Visibility.LIMITED, Visibility.PRIVATE);
-        assertEquals(3, e.getSummaries().size());
+        assertEquals(3, e.retrieveGroups().size());
         publicAPISecurityManagerV3.filter(e);
-        assertTrue(e.getSummaries().isEmpty());
+        assertTrue(e.retrieveGroups().isEmpty());
     }
 
     @Test
     public void filterEducationsTest() {
         Educations e = getEducations(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC);
-        assertEquals(3, e.getSummaries().size());
+        assertEquals(3, e.retrieveGroups().size());
         publicAPISecurityManagerV3.filter(e);
-        assertEquals(3, e.getSummaries().size());
-        assertContainerContainsOnlyPublicElements(e);
+        assertEquals(3, e.retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(e);
 
         e = getEducations(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.LIMITED);
-        assertEquals(3, e.getSummaries().size());
+        assertEquals(3, e.retrieveGroups().size());
         publicAPISecurityManagerV3.filter(e);
-        assertEquals(2, e.getSummaries().size());
-        assertContainerContainsOnlyPublicElements(e);
+        assertEquals(2, e.retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(e);
 
         e = getEducations(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PRIVATE);
-        assertEquals(3, e.getSummaries().size());
+        assertEquals(3, e.retrieveGroups().size());
         publicAPISecurityManagerV3.filter(e);
-        assertEquals(1, e.getSummaries().size());
-        assertContainerContainsOnlyPublicElements(e);
+        assertEquals(1, e.retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(e);
 
         e = getEducations(Visibility.LIMITED, Visibility.LIMITED, Visibility.PRIVATE);
-        assertEquals(3, e.getSummaries().size());
+        assertEquals(3, e.retrieveGroups().size());
         publicAPISecurityManagerV3.filter(e);
-        assertTrue(e.getSummaries().isEmpty());
+        assertTrue(e.retrieveGroups().isEmpty());
     }
 
     @Test
@@ -462,131 +447,131 @@ public class PublicAPISecurityManagerV3Test {
     @Test
     public void filterDistinctionsTest() {
             Distinctions e = getDistinctions(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(3, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(3, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getDistinctions(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.LIMITED);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(2, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(2, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getDistinctions(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(1, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(1, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getDistinctions(Visibility.PRIVATE, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertTrue(e.getSummaries().isEmpty());
+            assertTrue(e.retrieveGroups().isEmpty());
     }
 
     @Test
     public void filterInvitedPositionsTest() {
             InvitedPositions e = getInvitedPositions(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(3, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(3, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getInvitedPositions(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.LIMITED);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(2, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(2, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getInvitedPositions(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(1, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(1, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getInvitedPositions(Visibility.PRIVATE, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertTrue(e.getSummaries().isEmpty());
+            assertTrue(e.retrieveGroups().isEmpty());
     }
 
     @Test
     public void filterMembershipsTest() {
             Memberships e = getMemberships(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(3, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(3, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getMemberships(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.LIMITED);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(2, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(2, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getMemberships(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(1, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(1, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getMemberships(Visibility.PRIVATE, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertTrue(e.getSummaries().isEmpty());
+            assertTrue(e.retrieveGroups().isEmpty());
     }
 
     @Test
     public void filterQualificationsTest() {
             Qualifications e = getQualifications(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(3, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(3, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getQualifications(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.LIMITED);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(2, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(2, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getQualifications(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(1, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(1, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getQualifications(Visibility.PRIVATE, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertTrue(e.getSummaries().isEmpty());
+            assertTrue(e.retrieveGroups().isEmpty());
     }
 
     @Test
     public void filterServicesTest() {
             Services e = getServices(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PUBLIC);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(3, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(3, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getServices(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.LIMITED);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(2, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(2, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getServices(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertEquals(1, e.getSummaries().size());
-            assertContainerContainsOnlyPublicElements(e);
+            assertEquals(1, e.retrieveGroups().size());
+            assertGroupContainsOnlyPublicElements(e);
 
             e = getServices(Visibility.PRIVATE, Visibility.LIMITED, Visibility.PRIVATE);
-            assertEquals(3, e.getSummaries().size());
+            assertEquals(3, e.retrieveGroups().size());
             publicAPISecurityManagerV3.filter(e);
-            assertTrue(e.getSummaries().isEmpty());
+            assertTrue(e.retrieveGroups().isEmpty());
     }
 
     
@@ -595,273 +580,273 @@ public class PublicAPISecurityManagerV3Test {
         ActivitiesSummary as = getActivitiesSummaryElement();
         publicAPISecurityManagerV3.filter(as);
         // Assert it have all activities
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Assert it filters educations
         as = getActivitiesSummaryElement();
-        setVisibility(as.getEducations().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
+        setVisibility(as.getEducations(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
 
         assertNotNull(as.getEducations());
-        assertTrue(as.getEducations().getSummaries().isEmpty());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertTrue(as.getEducations().retrieveGroups().isEmpty());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Assert it filters employments
         as = getActivitiesSummaryElement();
-        setVisibility(as.getEmployments().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
+        setVisibility(as.getEmployments(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
 
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
         assertNotNull(as.getEmployments());
-        assertTrue(as.getEmployments().getSummaries().isEmpty());
+        assertTrue(as.getEmployments().retrieveGroups().isEmpty());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Assert it filters distinctions
         as = getActivitiesSummaryElement();
-        setVisibility(as.getDistinctions().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
+        setVisibility(as.getDistinctions(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertTrue(as.getDistinctions().getSummaries().isEmpty());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertTrue(as.getDistinctions().retrieveGroups().isEmpty());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Assert it filters invited positions
         as = getActivitiesSummaryElement();
-        setVisibility(as.getInvitedPositions().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
+        setVisibility(as.getInvitedPositions(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertTrue(as.getInvitedPositions().getSummaries().isEmpty());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertTrue(as.getInvitedPositions().retrieveGroups().isEmpty());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
 
         // Assert it filters memberships
         as = getActivitiesSummaryElement();
-        setVisibility(as.getMemberships().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
+        setVisibility(as.getMemberships(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertTrue(as.getMemberships().getSummaries().isEmpty());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertTrue(as.getMemberships().retrieveGroups().isEmpty());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Assert it filters qualifications
         as = getActivitiesSummaryElement();
-        setVisibility(as.getQualifications().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
+        setVisibility(as.getQualifications(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertTrue(as.getQualifications().getSummaries().isEmpty());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertTrue(as.getQualifications().retrieveGroups().isEmpty());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Assert it filters services
         as = getActivitiesSummaryElement();
-        setVisibility(as.getServices().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
+        setVisibility(as.getServices(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertTrue(as.getServices().getSummaries().isEmpty());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertTrue(as.getServices().retrieveGroups().isEmpty());
         
         // Assert it filters funding
         as = getActivitiesSummaryElement();
         setVisibility(as.getFundings(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
 
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertTrue(as.getFundings().getFundingGroup().isEmpty());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Assert it filters peer reviews
         as = getActivitiesSummaryElement();
         setVisibility(as.getPeerReviews(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
 
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().isEmpty());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Assert it filters works
         as = getActivitiesSummaryElement();
         setVisibility(as.getWorks(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV3.filter(as);
 
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertTrue(as.getWorks().getWorkGroup().isEmpty());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());                
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());                
     }
 
     @Test
@@ -1107,26 +1092,26 @@ public class PublicAPISecurityManagerV3Test {
 
         // Verify activities - nothing filtered
         ActivitiesSummary as = r.getActivitiesSummary();
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertEquals(3, as.getEmployments().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getEmployments());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEducations());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertGroupContainsOnlyPublicElements(as.getPeerReviews());
         assertEquals(3, as.getWorks().getWorkGroup().size());
         assertGroupContainsOnlyPublicElements(as.getWorks());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
 
         // Verify bio sections - nothing filtered
         Person p = r.getPerson();
@@ -1149,7 +1134,7 @@ public class PublicAPISecurityManagerV3Test {
         r = getRecordElement();
         r.getPerson().getBiography().setVisibility(Visibility.LIMITED);
         r.getPerson().getName().setVisibility(Visibility.LIMITED);
-        setVisibility(r.getActivitiesSummary().getEducations().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
+        setVisibility(r.getActivitiesSummary().getEducations(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         setVisibility(r.getActivitiesSummary().getFundings(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
 
         publicAPISecurityManagerV3.filter(r);
@@ -1157,21 +1142,21 @@ public class PublicAPISecurityManagerV3Test {
         // Verify activities - educations and funding filtered
         as = r.getActivitiesSummary();
         assertNotNull(as.getEducations());
-        assertTrue(as.getEducations().getSummaries().isEmpty());
-        assertEquals(3, as.getEmployments().getSummaries().size());
+        assertTrue(as.getEducations().retrieveGroups().isEmpty());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
         assertTrue(as.getFundings().getFundingGroup().isEmpty());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertEquals(3, as.getWorks().getWorkGroup().size());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Verify bio sections - bio and name filtered
         p = r.getPerson();
@@ -1195,21 +1180,21 @@ public class PublicAPISecurityManagerV3Test {
 
         // Verify activities - peer reviews and works filtered
         as = r.getActivitiesSummary();
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertEquals(3, as.getEmployments().getSummaries().size());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().isEmpty());
         assertTrue(as.getWorks().getWorkGroup().isEmpty());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Verify bio sections - emails, external identifiers filtered
         p = r.getPerson();
@@ -1233,21 +1218,21 @@ public class PublicAPISecurityManagerV3Test {
 
         // Verify activities - nothing filtered
         as = r.getActivitiesSummary();
-        assertEquals(3, as.getEducations().getSummaries().size());
-        assertEquals(3, as.getEmployments().getSummaries().size());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
         assertEquals(3, as.getWorks().getWorkGroup().size());
-        assertEquals(3, as.getDistinctions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getDistinctions());
-        assertEquals(3, as.getInvitedPositions().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getInvitedPositions());
-        assertEquals(3, as.getMemberships().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getMemberships());
-        assertEquals(3, as.getQualifications().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getQualifications());
-        assertEquals(3, as.getServices().getSummaries().size());
-        assertContainerContainsOnlyPublicElements(as.getServices());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getDistinctions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getInvitedPositions());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getMemberships());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getQualifications());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        assertGroupContainsOnlyPublicElements(as.getServices());
         
         // Verify bio sections - keywords and other names filtered
         p = r.getPerson();
@@ -1281,9 +1266,11 @@ public class PublicAPISecurityManagerV3Test {
     private Employments getEmployments(Visibility... vs) {
         Employments e = new Employments();
         for (Visibility v : vs) {
+            AffiliationGroup<EmploymentSummary> g = new AffiliationGroup<EmploymentSummary>();
             EmploymentSummary s = new EmploymentSummary();
             s.setVisibility(v);
-            e.getSummaries().add(s);
+            g.getActivities().add(s);
+            e.getEmploymentGroups().add(g);
         }
         return e;
     }
@@ -1291,9 +1278,11 @@ public class PublicAPISecurityManagerV3Test {
     private Educations getEducations(Visibility... vs) {
         Educations e = new Educations();
         for (Visibility v : vs) {
+            AffiliationGroup<EducationSummary> g = new AffiliationGroup<EducationSummary>();
             EducationSummary s = new EducationSummary();
             s.setVisibility(v);
-            e.getSummaries().add(s);
+            g.getActivities().add(s);
+            e.getEducationGroups().add(g);
         }
         return e;
     }
@@ -1301,9 +1290,11 @@ public class PublicAPISecurityManagerV3Test {
     private Distinctions getDistinctions(Visibility... vs) {
         Distinctions e = new Distinctions();
         for (Visibility v : vs) {
+            AffiliationGroup<DistinctionSummary> g = new AffiliationGroup<DistinctionSummary>();
             DistinctionSummary s = new DistinctionSummary();
             s.setVisibility(v);
-            e.getSummaries().add(s);
+            g.getActivities().add(s);
+            e.getDistinctionGroups().add(g);
         }
         return e;
     }
@@ -1311,9 +1302,11 @@ public class PublicAPISecurityManagerV3Test {
     private InvitedPositions getInvitedPositions(Visibility... vs) {
         InvitedPositions e = new InvitedPositions();
         for (Visibility v : vs) {
+            AffiliationGroup<InvitedPositionSummary> g = new AffiliationGroup<InvitedPositionSummary>();
             InvitedPositionSummary s = new InvitedPositionSummary();
             s.setVisibility(v);
-            e.getSummaries().add(s);
+            g.getActivities().add(s);
+            e.getInvitedPositionGroups().add(g);
         }
         return e;
     }
@@ -1321,9 +1314,11 @@ public class PublicAPISecurityManagerV3Test {
     private Memberships getMemberships(Visibility... vs) {
         Memberships e = new Memberships();
         for (Visibility v : vs) {
+            AffiliationGroup<MembershipSummary> g = new AffiliationGroup<MembershipSummary>();
             MembershipSummary s = new MembershipSummary();
             s.setVisibility(v);
-            e.getSummaries().add(s);
+            g.getActivities().add(s);
+            e.getMembershipGroups().add(g);
         }
         return e;
     }
@@ -1331,9 +1326,11 @@ public class PublicAPISecurityManagerV3Test {
     private Qualifications getQualifications(Visibility... vs) {
         Qualifications e = new Qualifications();
         for (Visibility v : vs) {
+            AffiliationGroup<QualificationSummary> g = new AffiliationGroup<QualificationSummary>();
             QualificationSummary s = new QualificationSummary();
             s.setVisibility(v);
-            e.getSummaries().add(s);
+            g.getActivities().add(s);
+            e.getQualificationGroups().add(g);
         }
         return e;
     }
@@ -1341,9 +1338,11 @@ public class PublicAPISecurityManagerV3Test {
     private Services getServices(Visibility... vs) {
         Services e = new Services();
         for (Visibility v : vs) {
+            AffiliationGroup<ServiceSummary> g = new AffiliationGroup<ServiceSummary>();
             ServiceSummary s = new ServiceSummary();
             s.setVisibility(v);
-            e.getSummaries().add(s);
+            g.getActivities().add(s);
+            e.getServiceGroups().add(g);
         }
         return e;
     }

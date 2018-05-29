@@ -199,6 +199,16 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
                 $scope.moreInfo[key]=false;
             };
 
+            $scope.checkAvailableDays = function(day, month, year){
+                if( month > 0  || year  > 0 ){
+                    if( day > new Date(year, month, 0).getDate() ){
+                        return true
+                    }
+                    return false;
+                }
+                return true;
+            };
+
             $scope.deleteAff = function(delAff) {
                 affiliationsSrvc.deleteAffiliation(delAff);
                 $.colorbox.close();
@@ -350,6 +360,23 @@ export const AffiliationCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.serverValidate = function (relativePath) {
+                //console.log('serverValidate ng1', relativePath, $scope.editAffiliation);
+                if( relativePath == 'affiliations/affiliation/datesValidate.json' ){
+                    if( $scope.editAffiliation.startDate.month == "" 
+                        || $scope.editAffiliation.startDate.day == ""
+                        || $scope.editAffiliation.startDate.year == ""
+                        || $scope.editAffiliation.endDate.month == "" 
+                        || $scope.editAffiliation.endDate.day == ""
+                        || $scope.editAffiliation.endDate.year == ""
+                        || $scope.editAffiliation.startDate.month == null 
+                        || $scope.editAffiliation.startDate.day == null
+                        || $scope.editAffiliation.startDate.year == null
+                        || $scope.editAffiliation.endDate.month == null 
+                        || $scope.editAffiliation.endDate.day == null
+                        || $scope.editAffiliation.endDate.year == null  ){
+                        return;
+                    }
+                }
                 $.ajax({
                     url: getBaseUri() + '/' + relativePath,
                     type: 'POST',

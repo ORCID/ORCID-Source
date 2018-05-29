@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.analytics;
 
 import static org.junit.Assert.assertEquals;
@@ -81,9 +65,9 @@ public class APIEndpointParserTest {
     
     @Test
     public void testAPIEndpointParserNoCategoryV3() {
-        ContainerRequest request = getRequest("https://localhost:8443/orcid-api-web/v3.0_dev1/1234-4321-1234-4321");
+        ContainerRequest request = getRequest("https://localhost:8443/orcid-api-web/v3.0_rc1/1234-4321-1234-4321");
         APIEndpointParser parser = new APIEndpointParser(request);
-        assertEquals("v3.0_dev1", parser.getApiVersion());
+        assertEquals("v3.0_rc1", parser.getApiVersion());
         assertEquals("record", parser.getCategory());
         assertEquals("1234-4321-1234-4321", parser.getOrcidId());
     }

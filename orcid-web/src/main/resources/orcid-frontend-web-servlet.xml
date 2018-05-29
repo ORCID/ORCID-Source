@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -81,15 +63,14 @@
 
     <cache:annotation-driven cache-manager="springWebCacheManager"/>
 
-	<bean id="webCacheManager"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-		<property name="configLocation" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />
-		<property name="shared" value="true" />
-		<property name="cacheManagerName" value="webCacheManager" />
-	</bean>
+	<bean id="webCacheManager" class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean" />
 
-    <bean id="springWebCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="webCacheManager"/>
+    <bean id="springWebCacheManager" class="org.springframework.cache.jcache.JCacheCacheManager">
+	    <property name="cacheManager">
+	        <bean class="org.springframework.cache.jcache.JCacheManagerFactoryBean">
+	            <property name="cacheManagerUri" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />
+	        </bean>
+        </property>
     </bean>
 
 	<bean id="localeChangeInterceptor"

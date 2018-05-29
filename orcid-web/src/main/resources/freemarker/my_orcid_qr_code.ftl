@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected nav="record">
 <#escape x as x?html>
 <div class="row">
@@ -25,7 +7,7 @@
         <p><@orcid.msg 'workspace.qrcode.detail_2'/></p>
         <div>
             <a href="<@orcid.rootPath "/ORCID.png"/>" download="ORCID.png" type="image/png">
-                <img class="qrcode-image" src="<@orcid.rootPath "/my-orcid-qr-code.png"/>"></img>
+                <img class="qrcode-image" src="<@orcid.rootPath "/qr-code.png"/>"></img>
             </a>
             <p>
                 <a href="<@orcid.rootPath "/ORCID.png"/>" download="ORCID.png" type="image/png"><@orcid.msg 'workspace.qrcode.download'/></a>

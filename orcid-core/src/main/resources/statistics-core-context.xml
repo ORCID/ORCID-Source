@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
@@ -51,16 +33,10 @@
 	<bean id="statisticsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="statistics-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory"
-			value="${org.orcid.core.statisticsCache.maxElementsInMemory:100}" />
-		<property name="timeToLiveSeconds"
-			value="${org.orcid.core.statisticsCache.timeToLiveSeconds:7200}" />
-		<property name="timeToIdleSeconds"
-			value="${org.orcid.core.statisticsCache.timeToIdleSeconds:7200}" />
-		<property name="maxElementsOnDisk" value="1000" />
-		<property name="strategy" value="LOCALTEMPSWAP" />
-		<property name="copyOnRead" value="false" />
-		<property name="copyOnWrite" value="false" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.statisticsCache.maxElementsInMemory:100}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.statisticsCache.timeToIdleSeconds:7200}" />
+		<property name="maxMegaBytesOnDisk" value="8" />
+		<property name="copyValues" value="false" />
 	</bean>
 
 

@@ -1,4 +1,4 @@
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -67,7 +67,7 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openEditModal(): void{
-        //console.log('openEditModal emails'); 
+        console.log('openEditModal emails'); 
         this.emailService.getEmails()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(

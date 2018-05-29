@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
@@ -30,7 +14,6 @@ import org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -134,7 +117,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 Email newPrimaryEmail = null;
                 if (emails != null && !emails.getEmails().isEmpty()) {
                     for (Email email : emails.getEmails()) {
-                        emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), email.getVisibility());
+                        emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), email.getVisibility().name());
                         if (email.isPrimary()) {
                             if (primaryFound) {
                                 throw new IllegalArgumentException("More than one primary email specified");
@@ -168,7 +151,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         Email currentPrimaryEmail = findPrimaryEmail(orcid);
         
         // Create the new email
-        emailDao.addEmail(orcid, email.getEmail(), email.getVisibility(), sourceId, clientSourceId);
+        emailDao.addEmail(orcid, email.getEmail(), email.getVisibility().name(), sourceId, clientSourceId);
         
         // if primary email changed send notification.
         if (email.isPrimary() && !StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {

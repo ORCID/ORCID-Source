@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.jaxb.model.record_v2;
 
 import java.io.Serializable;
@@ -21,6 +5,8 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 @XmlType(name = "type")
 @XmlEnum
@@ -38,6 +24,11 @@ public enum PeerReviewType implements Serializable {
 
     public String value() {
         return value;
+    }
+
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
     }
     
     public static PeerReviewType fromValue(String v) {

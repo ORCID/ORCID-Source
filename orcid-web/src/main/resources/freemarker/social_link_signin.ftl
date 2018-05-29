@@ -1,23 +1,8 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@public classes=['home'] nav="signin">
-<#include "sandbox_warning.ftl"/>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+        <link-account-ng2></link-account-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="LinkAccountController" ng-init="setEntityId('${providerId}')">
         <#if unsupportedInstitution??>
             <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3">
@@ -41,7 +26,7 @@
                     <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                 <![endif]-->
             </div>
-            <form class="form-social-sign-in shibboleth ng-hide" id="loginForm" ng-enter-submit ng-show="loadedFeed" ng-submit="linkAccount('${providerId}', '${linkType}')" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">
+            <form class="form-social-sign-in shibboleth ng-hide" id="loginForm" ng-enter-submit ng-show="loadedFeed" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">
                 <div class="row">
                 	<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12 bottomBuffer">
         	            <div>
@@ -63,7 +48,6 @@
                 	</div>                	
                     <@spring.bind "loginForm" />             
                     <@spring.showErrors "<br/>" "error" />             
-                    <#include "/common/browser-checks.ftl" />
                     <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
         	            <#include "/includes/login_personal_fields_inc.ftl"/>
                     </div>
@@ -77,4 +61,5 @@
             </div> 
         </#if>
     </div>
+    </@orcid.checkFeatureStatus>
 </@public>

@@ -1,6 +1,6 @@
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -20,6 +20,9 @@ import { EmailService }
 
 import { PreferencesService } 
     from '../../shared/preferences.service.ts'; 
+    
+import { FeaturesService }
+    from '../../shared/features.service.ts';    
 
 
 @Component({
@@ -28,10 +31,12 @@ import { PreferencesService }
 })
 export class NotificationPreferenceComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-   
+    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
+    
     constructor(
         private emailSrvc: EmailService,
-        private prefsSrvc: PreferencesService
+        private prefsSrvc: PreferencesService,
+        private featuresService: FeaturesService        
     ) {
     }
 

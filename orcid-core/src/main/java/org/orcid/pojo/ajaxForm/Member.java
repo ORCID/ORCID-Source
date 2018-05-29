@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
@@ -22,6 +6,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.groupid.GroupType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class Member implements ErrorsInterface, Serializable {
@@ -54,7 +40,9 @@ public class Member implements ErrorsInterface, Serializable {
     	} 
     	
     	group.setGroupOrcid(Text.valueOf(profile.getId()));
-    	group.setType(Text.valueOf(profile.getGroupType().value()));
+    	MemberType memberType = MemberType.valueOf(profile.getGroupType());
+    	group.setType(Text.valueOf(memberType.value()));
+
     	group.setSalesforceId(Text.valueOf(profile.getSalesforeId()));
     	return group;
     }

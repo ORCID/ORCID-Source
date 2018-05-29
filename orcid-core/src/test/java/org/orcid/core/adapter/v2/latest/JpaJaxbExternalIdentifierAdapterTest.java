@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
@@ -104,7 +88,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         entity.setExternalIdUrl("http://myurl.com");
         entity.setId(123L);        
         entity.setClientSourceId("APP-0000000000000000");
-        entity.setVisibility(Visibility.LIMITED);
+        entity.setVisibility(Visibility.LIMITED.name());
         return entity;
     }
 }

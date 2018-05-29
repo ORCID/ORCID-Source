@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.test;
 
 import java.sql.Connection;
@@ -29,13 +13,14 @@ import org.dbunit.database.QueryDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
 import org.junit.Ignore;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-import net.sf.ehcache.CacheManager;
 
 /**
  * Base class for testing using DBUnit.
@@ -69,7 +54,7 @@ public class DBUnitTest {
     }
 
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {
-        clearCaches();
+        clearCacheManagers();
         IDatabaseConnection connection = getDBConnection();
         cleanClientSourcedProfiles(connection);
         cleanAll(connection);
@@ -86,15 +71,33 @@ public class DBUnitTest {
         connection.close();
     }
 
-    private static void clearCaches() {
+    private static void clearCacheManagers() {
         try {
-            CacheManager cacheManager = (CacheManager) context.getBean("coreCacheManager");
-            if (cacheManager != null) {
-                cacheManager.clearAll();
+            JCacheCacheManager springCoreCacheManager = (JCacheCacheManager) context.getBean("springCoreCacheManager");
+            if (springCoreCacheManager != null) {
+                clearCaches(springCoreCacheManager);
+            }
+            CacheManager coreCacheManager = (CacheManager) context.getBean("coreCacheManager");
+            if (coreCacheManager != null) {
+                clearCaches(coreCacheManager);
             }
         } catch (NoSuchBeanDefinitionException e) {
             // do nothing
         }
+    }
+
+    private static void clearCaches(JCacheCacheManager springCoreCacheManager) {
+        for(String cacheName: springCoreCacheManager.getCacheNames()) {
+            org.springframework.cache.Cache cache = springCoreCacheManager.getCache(cacheName);
+            cache.clear();
+        }
+    }
+
+    private static void clearCaches(CacheManager cacheManager) {
+        cacheManager.getRuntimeConfiguration().getCacheConfigurations().forEach((alias, config) -> {
+            Cache<?, ?> cache = cacheManager.getCache(alias, config.getKeyType(), config.getValueType());
+            cache.clear(); 
+        });
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
@@ -127,6 +130,7 @@ public class DBUnitTest {
         dataSet.addTable("group_id_record");
         dataSet.addTable("address");
         dataSet.addTable("invalid_record_data_changes");
+        dataSet.addTable("email_frequency");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);

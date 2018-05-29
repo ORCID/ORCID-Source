@@ -1,28 +1,14 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@public nav="developer">
 
 <div class="row developer-tools">
 	<div class="col-md-3 col-sm-12 col-xs-12">
 		<#include "includes/id_banner.ftl"/>
 	</div>
-	<div class="col-md-9 col-sm-12 col-xs-12 margin-top-box-mobile">		
+	<div class="col-md-9 col-sm-12 col-xs-12 margin-top-box-mobile">
+		<@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+	    <client-edit-ng2></client-edit-ng2>
+	    </@orcid.checkFeatureStatus>
+    	<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 	
 		<div ng-controller="ClientEditCtrl" id="member_developer_tools_header">	
 			<!-- Header -->			
 			<div class="row">
@@ -445,6 +431,7 @@
 				</div>		
 			</div>
 		</div>
+		</@orcid.checkFeatureStatus>
 	</div>
 </div>
 

@@ -1,60 +1,45 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils.v3;
 
 import java.util.List;
 
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.SourceName;
-import org.orcid.jaxb.model.v3.dev1.record.Address;
-import org.orcid.jaxb.model.v3.dev1.record.Addresses;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.Keyword;
-import org.orcid.jaxb.model.v3.dev1.record.Keywords;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
-import org.orcid.jaxb.model.v3.dev1.record.Person;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.dev1.record.SourceAware;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Affiliations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.SourceName;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.Keyword;
+import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Affiliations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class SourceUtils {
@@ -99,19 +84,23 @@ public class SourceUtils {
         }
         if (as.getEducations() != null) {
             Educations educations = as.getEducations();
-            List<EducationSummary> list = educations.getSummaries();
-            if (list != null) {
-                for (EducationSummary summary : list) {
-                    setSourceName(summary);
+            for (AffiliationGroup<EducationSummary> group : educations.retrieveGroups()) {
+                List<EducationSummary> list = group.getActivities();
+                if (list != null) {
+                    for (EducationSummary summary : list) {
+                        setSourceName(summary);
+                    }
                 }
             }
         }
         if (as.getEmployments() != null) {
             Employments employments = as.getEmployments();
-            List<EmploymentSummary> list = employments.getSummaries();
-            if (list != null) {
-                for (EmploymentSummary summary : list) {
-                    setSourceName(summary);
+            for (AffiliationGroup<EmploymentSummary> group : employments.retrieveGroups()) {
+                List<EmploymentSummary> list = group.getActivities();
+                if (list != null) {
+                    for (EmploymentSummary summary : list) {
+                        setSourceName(summary);
+                    }
                 }
             }
         }
@@ -259,11 +248,13 @@ public class SourceUtils {
             }
         }
     }
-    
+
     public void setSourceName(Affiliations<? extends AffiliationSummary> affiliations) {
         if (affiliations != null) {
-            for (AffiliationSummary summary : affiliations.getSummaries()) {
-                setSourceName(summary);
+            for (AffiliationGroup<? extends AffiliationSummary> group : affiliations.retrieveGroups()) {
+                for (AffiliationSummary summary : group.getActivities()) {
+                    setSourceName(summary);
+                }
             }
         }
     }

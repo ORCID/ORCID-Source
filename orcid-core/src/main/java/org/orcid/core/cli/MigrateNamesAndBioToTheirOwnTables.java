@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli;
 
 import java.util.Collections;
@@ -95,9 +79,9 @@ public class MigrateNamesAndBioToTheirOwnTables {
                             recordName.setFamilyName(familyName);
                             recordName.setGivenNames(givenNames);
                             if(PojoUtil.isEmpty(namesVisibility)) {
-                                recordName.setVisibility(Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                                recordName.setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().name());
                             } else {
-                                recordName.setVisibility(Visibility.fromValue(namesVisibility));
+                                recordName.setVisibility(namesVisibility);
                             }                            
                             recordNameDao.createRecordName(recordName);
                         }
@@ -111,7 +95,7 @@ public class MigrateNamesAndBioToTheirOwnTables {
                                 visibility = Visibility.fromValue(defaultVisibility);
                             }
                             
-                            biographyDao.persistBiography(orcid, biography, visibility);
+                            biographyDao.persistBiography(orcid, biography, visibility.name());
                         }
                     }
                 });

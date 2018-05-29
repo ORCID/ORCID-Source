@@ -1,22 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <dataset>
 
     <client_details client_type="PREMIUM_CREATOR" client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="S. Milligan" client_description="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor." client_website="www.4444-4444-4444-4441.com" group_orcid="4444-4444-4444-4441" persistent_tokens_enabled="false"/>

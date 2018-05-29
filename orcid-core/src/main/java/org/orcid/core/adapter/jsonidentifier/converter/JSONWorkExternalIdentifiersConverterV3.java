@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.jsonidentifier.converter;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
@@ -23,25 +7,25 @@ import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.dev1.common.TransientError;
-import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.common.TransientError;
+import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
 public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConverter<ExternalIDs, String> {
 
-    private NormalizationService norm;
+    private PIDNormalizationService norm;
     private LocaleManager localeManager;
     
-    public JSONWorkExternalIdentifiersConverterV3(NormalizationService norm, LocaleManager localeManager){
+    public JSONWorkExternalIdentifiersConverterV3(PIDNormalizationService norm, LocaleManager localeManager){
         this.norm=norm;
         this.localeManager=localeManager;
     }

@@ -4,6 +4,9 @@ import 'reflect-metadata';
 import { CommonModule } 
     from '@angular/common'; 
 
+import { HttpClientModule } 
+    from '@angular/common/http';
+
 import { Component, NgModule } 
     from '@angular/core';
 
@@ -26,6 +29,9 @@ import { UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated modules imports
+import { AffiliationExtIdPopoverNg2Module } 
+    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
+
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
 
@@ -38,11 +44,20 @@ import { AffiliationFormNg2Module }
 import { AlsoKnownAsNg2Module } 
     from './alsoKnownAs/alsoKnownAs.ts';
 
+import { AlertBannerNg2Module } 
+    from './alertBanner/alertBanner.ts';
+
 import { AlsoKnownAsFormNg2Module } 
     from './alsoKnownAsForm/alsoKnownAsForm.ts';
 
 import { BiographyNg2Module } 
     from './biography/biography.ts';
+
+import { ClaimThanksNg2Module } 
+    from './claimThanks/claimThanks.ts';
+
+import { ClientEditNg2Module } 
+    from './clientEdit/clientEdit.ts';
 
 import { CountryNg2Module } 
     from './country/country.ts';
@@ -52,6 +67,9 @@ import { CountryFormNg2Module }
 
 import { DeactivateAccountNg2Module }
     from './deactivateAccount/deactivateAccount.ts';
+
+import { DeactivateAccountMessageNg2Module }
+    from './deactivateAccount/deactivateAccountMessage.ts';
 
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
@@ -67,6 +85,9 @@ import { EmailUnverifiedWarningNg2Module }
 
 import { EmailVerificationSentMesssageNg2Module } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+
+import { ExternalIdentifiersNg2Module }
+    from './externalIdentifiers/externalIdentifiers.ts';
 
 import { FundingNg2Module } 
     from './funding/funding.ts';
@@ -86,17 +107,50 @@ import { HeaderNg2Module }
 import { LanguageNg2Module }
     from './language/language.ts';
 
+import { LinkAccountNg2Module } 
+    from './linkAccount/linkAccount.ts';
+
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 
 import { NameNg2Module } 
     from './name/name.ts';
 
+import { NotificationsNg2Module }
+    from './notifications/notifications.ts';
+
 import { PasswordEditNg2Module } 
     from './passwordEdit/passwordEdit.ts';
 
+import { PersonalInfoNg2Module } 
+    from './personalInfo/personalInfo.ts';
+
+import { PublicEduAffiliationNg2Module }
+    from './publicEduAffiliation/publicEduAffiliation.ts';
+
+import { OauthAuthorizationNg2Module } 
+    from './oauthAuthorization/oauthAuthorization.ts';
+
+import { OrgIdentifierPopoverNg2Module } 
+    from './orgIdentifierPopover/orgIdentifierPopover.ts';
+
+import { ReactivationNg2Module } 
+    from './reactivation/reactivation.ts';
+
+import { RegisterDuplicatesNg2Module } 
+    from './registerDuplicates/registerDuplicates.ts';
+
+import { RequestPasswordResetNg2Module } 
+    from './requestPasswordReset/requestPasswordReset.ts';
+
+import { ResetPasswordNg2Module }
+    from './resetPassword/resetPassword.ts';
+
 import { SearchNg2Module } 
     from './search/search.ts';
+
+import { SecurityQuestionEditNg2Module } 
+    from './securityQuestionEdit/securityQuestionEdit.ts';
 
 import { SelfServiceNg2Module } 
     from './selfService/selfService.ts';
@@ -113,8 +167,14 @@ import { SelfServiceRemoveContactNg2Module }
 import { SelfServiceRemoveSubMemberNg2Module } 
     from './selfServiceRemoveSubMember/selfServiceRemoveSubMember.ts';
 
+import { Social2FANg2Module }
+    from './social2FA/social2FA.ts';
+
 import { SocialNetworksNg2Module }
     from './socialNetworks/socialNetworks.ts';
+
+import { SwitchUserNg2Module }
+    from './switchUser/switchUser.ts';
 
 import { ThanksForRegisteringNg2Module } 
     from './thanksForRegistering/thanksForRegistering.ts';
@@ -128,6 +188,9 @@ import { TwoFASetupNg2Module }
 import { TwoFAStateNg2Module }
     from './2FAState/twoFAState.ts';
 
+import { VerifyEmailNg2Module }
+    from './verifyEmail/verifyEmail.ts';
+
 import { WebsitesNg2Module } 
     from './websites/websites.ts';
 
@@ -136,6 +199,9 @@ import { WebsitesFormNg2Module }
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
+
+import { WorksFormNg2Module } 
+    from './works/worksForm.ts';
 
 import { WorksNg2Module } 
     from './works/works.ts';
@@ -146,8 +212,12 @@ import { SearchService }
 import { WorkspaceService } 
     from '../shared/workspace.service.ts'; 
 
+import { WorkSpaceSummaryNg2Module } 
+    from './workspaceSummary/workspaceSummary.ts';
+
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
+
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -161,6 +231,53 @@ export class MetaXSRFStrategy implements XSRFStrategy {
         }
     }
 }
+///////////////////
+import {Injectable} from '@angular/core';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor
+} from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
+
+@Injectable()
+export class TokenInterceptor implements HttpInterceptor {
+  constructor() {}
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+      let token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+      let header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+    
+    /*request = request.clone({
+      setHeaders: {
+        header: token
+      }
+    });
+    return next.handle(request);*/
+    let _request = request.clone();
+    //_request.headers.append(header, token);
+    console.log('headers', header, 'token', token);
+    _request.headers.set(header, token);
+
+
+    let headers2 = new HttpHeaders();
+    console.log('headers2a', headers2);
+    headers2 = headers2.append(header, token);
+    console.log('headers2b', headers2);
+
+    console.log('interceptor', _request, _request.headers, _request.headers.get(header));
+    return next.handle(_request);
+  }
+}
+/*
+let token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+let header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+if (token && header) {
+    req.headers.set(header, token);
+}
+*/
+///////////////////////////////
 
 @Component(
     {
@@ -183,61 +300,90 @@ export class RootCmp {
         BrowserModule,
         CommonModule, 
         FormsModule,
-        HttpModule,
+        HttpClientModule, //angular5
+        HttpModule, //Angular2
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
+        AffiliationExtIdPopoverNg2Module,
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
+        AlertBannerNg2Module,
         AlsoKnownAsFormNg2Module,
         AlsoKnownAsNg2Module,
         BiographyNg2Module, //Approved
+        ClaimThanksNg2Module,
+        ClientEditNg2Module,
         CountryFormNg2Module,//Approved
         CountryNg2Module,//Approved
         DeactivateAccountNg2Module,
+        DeactivateAccountMessageNg2Module,
         DeprecateAccountNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved
         EmailVerificationSentMesssageNg2Module,//Aproved
+        ExternalIdentifiersNg2Module,
         HeaderNg2Module,
-        //FundingNg2Module,
+        FundingNg2Module,
         HomeNg2Module,
         KeywordsFormNg2Module,//Approved
         KeywordsNg2Module,//Approved
         LanguageNg2Module,
+        LinkAccountNg2Module,
         ModalNg2Module, //Approved
         NameNg2Module, //Approved
+        NotificationsNg2Module,
         PasswordEditNg2Module,
+        PersonalInfoNg2Module,
+        PublicEduAffiliationNg2Module,
+        SecurityQuestionEditNg2Module,
+        OauthAuthorizationNg2Module,
+        OrgIdentifierPopoverNg2Module,
+        ReactivationNg2Module,
+        RegisterDuplicatesNg2Module,
+        RequestPasswordResetNg2Module,
+        ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
         SelfServiceAddContactNg2Module, //Approved
         SelfServiceExistingSubMemberNg2Module, //Approved
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
+        Social2FANg2Module,
         SocialNetworksNg2Module,
+        SwitchUserNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
         TwoFAStateNg2Module,
         TwoFASetupNg2Module,
+        VerifyEmailNg2Module,
         WebsitesFormNg2Module, //Approved
         WebsitesNg2Module, //Approved
         WidgetNg2Module, //Approved
+        WorksFormNg2Module,
         WorksNg2Module,
+        WorkSpaceSummaryNg2Module,
         WorksPrivacyPreferencesNg2Module
     ],
     providers: [
         { 
             provide: XSRFStrategy, 
             useClass: MetaXSRFStrategy
-        }
+        },
+        /*{
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true
+        }*/
     ]
 
 })
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        //console.log('v0.102');
+        console.log('v0.9.20');
     }
 }
+

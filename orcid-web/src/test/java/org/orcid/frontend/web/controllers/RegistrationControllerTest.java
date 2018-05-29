@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
@@ -74,7 +58,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
@@ -460,7 +444,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
             assertNotNull(emailAdditionalListItem.getErrors());
             assertEquals(1, emailAdditionalListItem.getErrors().size());
-            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system."));
+            assertTrue(emailAdditionalListItem.getErrors().get(0).startsWith("orcid.frontend.verify.duplicate_email"));
         }     
     }
     
@@ -484,7 +468,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	assertNotNull(reg.getEmail());
     	assertNotNull(reg.getEmail().getErrors());
     	assertEquals(1, reg.getEmail().getErrors().size());
-    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system."));    	
+    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("orcid.frontend.verify.duplicate_email"));    	
     }             
     
     protected OrcidProfile createBasicProfile() {

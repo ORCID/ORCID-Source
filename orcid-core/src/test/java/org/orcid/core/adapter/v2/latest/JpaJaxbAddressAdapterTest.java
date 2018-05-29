@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
@@ -58,7 +42,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         assertNotNull(addressEntity);
         assertNotNull(addressEntity.getDateCreated());
         assertNotNull(addressEntity.getLastModified());
-        assertEquals(Iso3166Country.US, addressEntity.getIso2Country());  
+        assertEquals(Iso3166Country.US.name(), addressEntity.getIso2Country());  
         assertNull(addressEntity.getSourceId());
         assertNull(addressEntity.getClientSourceId());
         assertNull(addressEntity.getElementSourceId());
@@ -91,9 +75,9 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         result.setId(Long.valueOf(1));
         result.setDateCreated(new Date());
         result.setLastModified(new Date());
-        result.setIso2Country(Iso3166Country.US);
+        result.setIso2Country(Iso3166Country.US.name());
         result.setUser(new ProfileEntity("0000-0000-0000-0000"));
-        result.setVisibility(Visibility.PUBLIC);
+        result.setVisibility(Visibility.PUBLIC.name());
         result.setClientSourceId("APP-000000001");
         return result;
     }

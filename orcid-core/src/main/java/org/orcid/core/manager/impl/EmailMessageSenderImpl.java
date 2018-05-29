@@ -1,23 +1,8 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,11 +11,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
@@ -39,6 +28,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -47,11 +37,17 @@ import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitu
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
+import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.DigestEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.collect.Lists;
@@ -65,7 +61,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     private static final String DIGEST_FROM_ADDRESS = "update@notify.orcid.org";
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageSenderImpl.class);
-
+    
+    private final Integer MAX_RETRY_COUNT;
+    
+    ExecutorService pool;
+    
     @Resource
     private NotificationDao notificationDao;
 
@@ -90,7 +90,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
 
     @Resource
@@ -104,6 +104,20 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Value("${org.notifications.service_announcements.batchSize:60000}")
+    private Integer batchSize;
+    
+    public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
+            @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
+        if (maxThreads == null || maxThreads > 64 || maxThreads < 1) {
+            pool = Executors.newFixedThreadPool(8);
+        } else {
+            pool = Executors.newFixedThreadPool(maxThreads);
+        }
+
+        MAX_RETRY_COUNT = maxRetry;
+    }
     
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
@@ -167,9 +181,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     }
 
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        String locale = profile.getLocale();
         if (locale != null) {
-            return LocaleUtils.toLocale(locale.value());
+            org.orcid.jaxb.model.common_v2.Locale loc = org.orcid.jaxb.model.common_v2.Locale.valueOf(locale);
+            return LocaleUtils.toLocale(loc.value());
         }
         
         return LocaleUtils.toLocale("en");
@@ -187,23 +202,39 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         LOGGER.info("About to send email messages");
-        List<Object[]>orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+        
+        List<Object[]> orcidsWithUnsentNotifications = new ArrayList<Object[]>();
+        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+            orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+        } else {
+            orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotificationsLegacy();
+        }
+        
         for (final Object[] element : orcidsWithUnsentNotifications) {
             String orcid = (String) element[0];                        
             try {
-                Float emailFrequencyDays = Float.valueOf((float) element[1]);
-                Date recordActiveDate = (Date) element[2];
+                Float emailFrequencyDays = null;
+                Date recordActiveDate = null;
+                if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+                    recordActiveDate = (Date) element[1];
+                } else {
+                    emailFrequencyDays = Float.valueOf((float) element[1]);
+                    recordActiveDate = (Date) element[2];
+                }
+                    
                 LOGGER.info("Sending messages for orcid: {}", orcid);
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
+                                
+                EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+                if (primaryEmail == null) {
+                    LOGGER.info("No primary email for orcid: " + orcid);
+                    return;
+                }
+                
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
-                    EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
-                    if (primaryEmail == null) {
-                        LOGGER.info("No primary email for orcid: " + orcid);
-                        return;
-                    }
                     digestMessage.setTo(primaryEmail.getId());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
@@ -231,5 +262,125 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
         notificationDao.flush();
     }
+    
+    @Override
+    public void sendServiceAnnouncements(Integer customBatchSize) {
+        LOGGER.info("About to send Service Announcements messages");
+        List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
+        try {
+            long startTime = System.currentTimeMillis();
+            serviceAnnouncementsOrTips = notificationDaoReadOnly.findUnsentServiceAnnouncements(customBatchSize);
+            Set<Callable<Boolean>> callables = new HashSet<Callable<Boolean>>();
+            for (NotificationEntity n : serviceAnnouncementsOrTips) {
+                callables.add(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        processServiceAnnouncementOrNotification(n);
+                        return true;
+                    }
 
+                });
+            }
+
+            // Runthem all
+            pool.invokeAll(callables);
+            long endTime = System.currentTimeMillis();
+            String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
+            LOGGER.info("TimeTaken={} (H:m:s.S)", timeTaken);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void sendTips(Integer customBatchSize) {
+        LOGGER.info("About to send Tips messages");
+        
+        List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
+        try {
+            long startTime = System.currentTimeMillis();
+            serviceAnnouncementsOrTips = notificationDaoReadOnly.findUnsentTips(customBatchSize);
+            Set<Callable<Boolean>> callables = new HashSet<Callable<Boolean>>();
+            for (NotificationEntity n : serviceAnnouncementsOrTips) {
+                callables.add(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        processServiceAnnouncementOrNotification(n);
+                        return true;
+                    }
+
+                });
+            }
+
+            // Runthem all
+            pool.invokeAll(callables);
+            long endTime = System.currentTimeMillis();
+            String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
+            LOGGER.info("TimeTaken={} (H:m:s.S)", timeTaken);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    private void processServiceAnnouncementOrNotification(NotificationEntity n) {
+        String orcid = n.getProfile().getId();
+        EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+        if (primaryEmail == null) {
+            LOGGER.info("No primary email for orcid: " + orcid);
+            flagAsFailed(orcid, n);
+            return;
+        }
+        try {
+            boolean successfullySent = false;
+            if (n instanceof NotificationServiceAnnouncementEntity) {
+                NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
+                // They might be custom notifications to have the
+                // html/text ready to be sent
+                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                        nc.getBodyHtml());            
+            } else if (n instanceof NotificationTipEntity) {
+                NotificationTipEntity nc = (NotificationTipEntity) n;
+                // They might be custom notifications to have the
+                // html/text ready to be sent
+                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                        nc.getBodyHtml());            
+            }
+            
+            if (successfullySent) {
+                flagAsSent(n.getId());
+            } else {
+                flagAsFailed(orcid, n);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Problem sending service announcement message to user: " + orcid, e);
+        }
+    }
+    
+    private void flagAsSent(Long id) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                notificationDao.flagAsSent(Arrays.asList(id));
+            }
+        });        
+    }
+    
+    private void flagAsFailed(String orcid, NotificationEntity n) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                if(n.getRetryCount() == null || n.getRetryCount() >= MAX_RETRY_COUNT) {
+                    notificationDao.flagAsNonSendable(orcid, n.getId());
+                } else {
+                    if(n.getRetryCount() == null) {
+                        notificationDao.updateRetryCount(orcid, n.getId(), 1L);
+                    } else {
+                        notificationDao.updateRetryCount(orcid, n.getId(), (n.getRetryCount() + 1));
+                    }
+                }                
+            }
+        }); 
+    }
 }

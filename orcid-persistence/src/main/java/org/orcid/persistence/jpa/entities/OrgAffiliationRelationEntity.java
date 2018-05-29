@@ -1,27 +1,8 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,8 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
 import org.orcid.utils.NullUtils;
 
 /**
@@ -49,14 +28,15 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
     private Long id;
     private OrgEntity org;
     private ProfileEntity profile;
-    private AffiliationType affiliationType;
+    private String affiliationType;
     private String title;
     private String department;
     private StartDateEntity startDate;
     private EndDateEntity endDate;
-    private Visibility visibility;    
+    private String visibility;    
     private String url;
     private String externalIdentifiersJson;
+    protected Long displayIndex;
 
     @Override
     @Id
@@ -91,14 +71,12 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
         this.profile = profile;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "org_affiliation_relation_role", length = 200)
-    public AffiliationType getAffiliationType() {
+    public String getAffiliationType() {
         return affiliationType;
     }
 
-    public void setAffiliationType(AffiliationType affiliationType) {
+    public void setAffiliationType(String affiliationType) {
         this.affiliationType = affiliationType;
     }
 
@@ -135,13 +113,12 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
         this.endDate = endDate;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Visibility getVisibility() {
+    @Column
+    public String getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Visibility visibility) {
+    public void setVisibility(String visibility) {
         this.visibility = visibility;
     }
     
@@ -161,6 +138,15 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
 
     public void setExternalIdentifiersJson(String externalIdentifiersJson) {
         this.externalIdentifiersJson = externalIdentifiersJson;
+    }
+    
+    @Column(name = "display_index")
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override
@@ -205,7 +191,7 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
         return -startDate.compareTo(otherStartDate);
     }
 
-    private int compareTypes(AffiliationType affiliationType, AffiliationType otherAffiliationType) {
+    private int compareTypes(String affiliationType, String otherAffiliationType) {
         if (NullUtils.anyNull(affiliationType, otherAffiliationType)) {
             return NullUtils.compareNulls(affiliationType, otherAffiliationType);
         }

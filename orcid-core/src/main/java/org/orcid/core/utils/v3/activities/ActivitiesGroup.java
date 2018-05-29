@@ -1,30 +1,14 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils.v3.activities;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroupKey;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIdentifiersContainer;
-import org.orcid.jaxb.model.v3.dev1.record.GroupAble;
-import org.orcid.jaxb.model.v3.dev1.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIdentifiersContainer;
+import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroupKey;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 
 public class ActivitiesGroup {
     private Set<GroupAble> groupKeys;

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.ArrayList;
@@ -30,7 +14,7 @@ import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -146,7 +130,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
      * */
     @Override
     public List<EducationSummary> getEducationSummaryList(String userOrcid) {
-        List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EDUCATION);
+        List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EDUCATION.name());
         List<EducationSummary> elements = jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
         // UI sort it descending first, so,lets do the same for the API
         elements.sort((EducationSummary e1, EducationSummary e2) -> {

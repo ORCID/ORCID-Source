@@ -1,24 +1,13 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.oauth;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +24,8 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 public class OrcidImplicitTokenGranter extends ImplicitTokenGranter {
     @Resource
     private ProfileEntityManager profileEntityManager;
+    @Resource
+    private ProfileDao profileDao;
 
     protected OrcidImplicitTokenGranter(AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         super(tokenServices, clientDetailsService, requestFactory);
@@ -53,7 +44,11 @@ public class OrcidImplicitTokenGranter extends ImplicitTokenGranter {
             throw new InsufficientAuthenticationException("There is no currently logged in user");
         }
         OAuth2Request request = ((ImplicitTokenRequest) clientToken).getOAuth2Request();
-        OrcidOauth2UserAuthentication userAuth = new OrcidOauth2UserAuthentication(profileEntityManager.findByOrcid(userAuthSpring.getName()),
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid(userAuthSpring.getName());
+        List<OrcidGrantedAuthority> authorities = profileDao.getGrantedAuthoritiesForProfile(profileEntity.getId());
+        profileEntity.setAuthorities(authorities);
+        
+        OrcidOauth2UserAuthentication userAuth = new OrcidOauth2UserAuthentication(profileEntity,
                 userAuthSpring.isAuthenticated());
         OAuth2Authentication result = new OAuth2Authentication(request, userAuth);
         return result;

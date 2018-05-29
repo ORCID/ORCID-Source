@@ -1,23 +1,8 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -30,22 +15,30 @@ import org.orcid.core.adapter.v3.JpaJaxbQualificationAdapter;
 import org.orcid.core.adapter.v3.JpaJaxbServiceAdapter;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.core.utils.v3.activities.ActivitiesGroup;
+import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
+import org.orcid.core.utils.v3.activities.GroupableActivityComparator;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -199,28 +192,20 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                switch(affiliation.getAffiliationType()) {
-                case DISTINCTION:
+                if (AffiliationType.DISTINCTION.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbDistinctionAdapter.toDistinction(affiliation));
-                    break;
-                case EDUCATION:
+                } else if (AffiliationType.EDUCATION.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
-                    break;
-                case EMPLOYMENT:
+                } else if (AffiliationType.EMPLOYMENT.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));
-                    break;
-                case INVITED_POSITION:
+                } else if (AffiliationType.INVITED_POSITION.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbInvitedPositionAdapter.toInvitedPosition(affiliation));                    
-                    break;
-                case MEMBERSHIP:
+                } else if (AffiliationType.MEMBERSHIP.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbMembershipAdapter.toMembership(affiliation));
-                    break;
-                case QUALIFICATION:
+                } else if (AffiliationType.QUALIFICATION.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbQualificationAdapter.toQualification(affiliation));
-                    break;
-                case SERVICE:
+                } else if (AffiliationType.SERVICE.name().equals(affiliation.getAffiliationType())) {
                     result.add(jpaJaxbServiceAdapter.toService(affiliation));
-                    break;
                 }
             }
         }
@@ -364,8 +349,50 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     }
     
     private void checkType(OrgAffiliationRelationEntity entity, AffiliationType type) {
-        if(!entity.getAffiliationType().equals(type)) {
+        if(!entity.getAffiliationType().equals(type.name())) {
             throw new IllegalArgumentException("Given affiliation " + entity.getId() + " doesn't match the desired type " + type.value());
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends AffiliationSummary> List<AffiliationGroup<T>> groupAffiliations(List<T> summaries, boolean justPublic) {
+        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+        for (AffiliationSummary summary : summaries) {
+            if (!justPublic || summary.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
+                groupGenerator.group(summary);
+            }
+        }
+
+        List<ActivitiesGroup> groups = groupGenerator.getGroups();
+        List<AffiliationGroup<T>> affiliationGroups = new ArrayList<>();
+
+        for (ActivitiesGroup group : groups) {
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
+            Set<GroupableActivity> activities = group.getActivities();
+            AffiliationGroup<T> affiliationGroup = new AffiliationGroup<>();
+            
+            // Fill with the external identifiers
+            if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
+                // Initialize the ids as an empty list
+                affiliationGroup.getIdentifiers().getExternalIdentifier();
+            } else {
+                for (GroupAble extId : externalIdentifiers) {
+                    ExternalID workExtId = (ExternalID) extId;
+                    affiliationGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
+                }
+            }
+            
+            // Fill with the list of activities
+            for (GroupableActivity activity : activities) {
+                T affiliationSummary = (T) activity;
+                affiliationGroup.getActivities().add(affiliationSummary);
+            }
+
+            // Sort
+            affiliationGroup.getActivities().sort(new GroupableActivityComparator());
+            affiliationGroups.add(affiliationGroup);
+        }
+        return affiliationGroups;
     }
 }

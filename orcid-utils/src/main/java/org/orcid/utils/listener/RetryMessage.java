@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.utils.listener;
 
 import java.util.Map;
@@ -29,6 +13,8 @@ import com.google.common.collect.ImmutableMap;
 public class RetryMessage extends BaseMessage {
     
     public static final String BROKER_NAME = "bn";
+    
+    public Map<?, ?> retryTypes;
     
     /**
      * Create a map from the component parts
@@ -49,4 +35,12 @@ public class RetryMessage extends BaseMessage {
     public RetryMessage(Map<String, String> m) {
         super(ImmutableMap.copyOf(m));
     }
+
+    public Map<?, ?> getRetryTypes() {
+        return retryTypes;
+    }
+
+    public void setRetryTypes(Map<?, ?> retryTypes) {
+        this.retryTypes = retryTypes;
+    }   
 }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
@@ -32,27 +16,27 @@ public class Visibility implements ErrorsInterface, Required, Serializable {
 
     private String getRequiredMessage;
 
-    private org.orcid.jaxb.model.v3.dev1.common.Visibility visibility;
+    private org.orcid.jaxb.model.v3.rc1.common.Visibility visibility;
     
     public Visibility() {
-        visibility = org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC;
+        visibility = org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC;
     }
     
     public static Visibility valueOf(org.orcid.jaxb.model.message.Visibility visibility) {
         Visibility v = new Visibility();
-        v.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(visibility.name()));
+        v.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(visibility.name()));
         return v;
     }
     
     public static Visibility valueOf(org.orcid.jaxb.model.common_v2.Visibility visibility) {
         Visibility v = new Visibility();
-        v.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(visibility.name()));
+        v.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(visibility.name()));
         return v;
     }
     
-    public static Visibility valueOf(org.orcid.jaxb.model.v3.dev1.common.Visibility visibility) {
+    public static Visibility valueOf(org.orcid.jaxb.model.v3.rc1.common.Visibility visibility) {
         Visibility v = new Visibility();
-        v.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibility.value()));
+        v.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibility.value()));
         return v;
     }
     
@@ -64,11 +48,11 @@ public class Visibility implements ErrorsInterface, Required, Serializable {
         this.errors = errors;
     }
 
-    public org.orcid.jaxb.model.v3.dev1.common.Visibility getVisibility() {
+    public org.orcid.jaxb.model.v3.rc1.common.Visibility getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility visibility) {
+    public void setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility visibility) {
         this.visibility = visibility;
     }
 

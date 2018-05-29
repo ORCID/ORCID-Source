@@ -1,25 +1,8 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import java.math.BigInteger;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -43,7 +26,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility);
+    boolean updateVisibilities(String orcid, List<Long> workIds, String visibility);
     
     /**
      * Removes a work.

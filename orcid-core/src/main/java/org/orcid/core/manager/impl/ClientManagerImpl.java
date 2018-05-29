@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
@@ -132,9 +116,9 @@ public class ClientManagerImpl implements ClientManager {
         
         // Set ClientType
         if(!publicClient) {
-            newEntity.setClientType(getClientType(memberEntity.getGroupType()));
+            newEntity.setClientType(getClientType(MemberType.valueOf(memberEntity.getGroupType())).name());
         } else {
-            newEntity.setClientType(ClientType.PUBLIC_CLIENT);
+            newEntity.setClientType(ClientType.PUBLIC_CLIENT.name());
         }
         
         // Set ClientResourceIdEntity
@@ -169,7 +153,7 @@ public class ClientManagerImpl implements ClientManager {
 
         // Set ClientScopeEntity
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>();
-        for (String clientScope : ClientType.getScopes(newEntity.getClientType())) {
+        for (String clientScope : ClientType.getScopes(ClientType.valueOf(newEntity.getClientType()))) {
             ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
             clientScopeEntity.setClientDetailsEntity(newEntity);
             clientScopeEntity.setScopeType(clientScope);
@@ -242,17 +226,11 @@ public class ClientManagerImpl implements ClientManager {
         if (member == null || member.getGroupType() == null) {
             throw new IllegalArgumentException("Illegal member id: " + memberId);
         }
-        switch (member.getGroupType()) {
-        case BASIC:
-        case BASIC_INSTITUTION:
+        if (MemberType.BASIC_INSTITUTION.name().equals(member.getGroupType())) {
             Set<Client> clients = clientManagerReadOnly.getClients(memberId);
             if (clients != null && !clients.isEmpty()) {
                 throw new IllegalArgumentException("Your membership doesn't allow you to have more clients");
             }
-            break;
-        case PREMIUM:
-        case PREMIUM_INSTITUTION:
-            break;
         }
     }
 

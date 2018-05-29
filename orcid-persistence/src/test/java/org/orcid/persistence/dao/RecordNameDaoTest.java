@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +13,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -65,7 +48,7 @@ public class RecordNameDaoTest extends DBUnitTest {
         assertEquals("Credit Name", recordName.getCreditName());
         assertEquals("Given Names", recordName.getGivenNames());
         assertEquals("Family Name", recordName.getFamilyName());
-        assertEquals(Visibility.PUBLIC, recordName.getVisibility());        
+        assertEquals("PUBLIC", recordName.getVisibility());        
     }
     
     @Test
@@ -75,7 +58,7 @@ public class RecordNameDaoTest extends DBUnitTest {
         assertEquals("P. Sellers III", recordName.getCreditName());
         assertEquals("Peter", recordName.getGivenNames());
         assertEquals("Sellers", recordName.getFamilyName());
-        assertEquals(Visibility.LIMITED, recordName.getVisibility());        
+        assertEquals("LIMITED", recordName.getVisibility());        
     }
     
     @Test
@@ -85,19 +68,19 @@ public class RecordNameDaoTest extends DBUnitTest {
         assertEquals("Credit Name", recordName.getCreditName());
         assertEquals("Given Names", recordName.getGivenNames());
         assertEquals("Family Name", recordName.getFamilyName());
-        assertEquals(Visibility.LIMITED, recordName.getVisibility()); 
+        assertEquals("LIMITED", recordName.getVisibility()); 
         
         recordName.setCreditName("Updated Credit Name");
         recordName.setGivenNames("Updated Given Names");
         recordName.setFamilyName("Updated Family Name");
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility("PUBLIC");
         assertTrue(recordNameDao.updateRecordName(recordName));
         
         RecordNameEntity updatedRecordName = recordNameDao.getRecordName("4444-4444-4444-4447", System.currentTimeMillis());
         assertEquals("Updated Credit Name", updatedRecordName.getCreditName());
         assertEquals("Updated Given Names", updatedRecordName.getGivenNames());
         assertEquals("Updated Family Name", updatedRecordName.getFamilyName());
-        assertEquals(Visibility.PUBLIC, updatedRecordName.getVisibility());         
+        assertEquals("PUBLIC", updatedRecordName.getVisibility());         
     }
     
     @Test

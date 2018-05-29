@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
@@ -118,7 +102,7 @@ public class ClientManagerTest extends BaseTest {
         assertTrue(newEntity.isAllowAutoDeprecate());        
         assertEquals("description " + seed, newEntity.getClientDescription());        
         assertEquals("client-name " + seed, newEntity.getClientName());
-        assertEquals(ClientType.PREMIUM_CREATOR, newEntity.getClientType());
+        assertEquals(ClientType.PREMIUM_CREATOR.name(), newEntity.getClientType());
         assertEquals("client-website " + seed, newEntity.getClientWebsite());        
         
         assertNotNull(newEntity.getClientRegisteredRedirectUris());   
@@ -320,7 +304,7 @@ public class ClientManagerTest extends BaseTest {
         assertEquals("my-authentication-provider-id", updatedEntity.getAuthenticationProviderId());
         assertEquals("my-email-access-reason", updatedEntity.getEmailAccessReason());
         assertTrue(updatedEntity.isPersistentTokensEnabled());
-        assertEquals(ClientType.PREMIUM_CREATOR, updatedEntity.getClientType());
+        assertEquals(ClientType.PREMIUM_CREATOR.name(), updatedEntity.getClientType());
         // Check updated fields where persisted
         assertEquals("Updated name", updatedEntity.getClientName());
         assertEquals("Updated description", updatedEntity.getClientDescription());
@@ -410,7 +394,7 @@ public class ClientManagerTest extends BaseTest {
             assertEquals("orcid", cri.getResourceId());
         }
         
-        Set<String> scopes = ClientType.getScopes(entity.getClientType());
+        Set<String> scopes = ClientType.getScopes(ClientType.valueOf(entity.getClientType()));
         assertFalse(scopes.isEmpty());
         assertNotNull(entity.getClientScopes());
         for(ClientScopeEntity cs : entity.getClientScopes()) {

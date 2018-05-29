@@ -1,6 +1,4 @@
-# Manual Test
-
-Run ORCID-Independent-Tests-1 first, to check for basic API errors.
+# Manual Tests
 
 ## Register/Verify
 
@@ -9,14 +7,13 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 2. Create new account:
     * First name: ma_test
     * Last name: [DD][month][YYYY]
-    * Primary email: ma_test_[DD][month][YYYY]@mailinator.com (ex: ma_test_24feb2016@mailinator.com)
-    * Secondary email: 00_ma_test_[DD][month][YYYY]@mailinator.com
+    * Email: ma_test_[DD][month][YYYY]@mailinator.com (ex: ma_test_24feb2016@mailinator.com)
+    * Second email: 00_ma_test_[DD][month][YYYY]@mailinator.com
     * Password: test1234
     * Default privacy for new activities: Public
-    * Email frequency: Weekly summary
 3. Attempt to edit the biography of the record- check you get a warning message to verify your email address
 5. Visit https://qa.orcid.org/signout
-6. Visit https://www.mailinator.com/inbox2.jsp?public_to=ma_test_[DD][month][YYYY]#/#public_maildirdiv
+6. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
 7. Open message from support@verify.orcid.org with subject [ORCID] Thanks for creating an ORCID iD 
 8. Click (or copy/paste) email verification link
 9. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
@@ -28,7 +25,7 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 12. Visit https://qa.orcid.org/signout
 13. Click the Forgotten Your Password link
 14. Enter ma_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
-15. Visit https://www.mailinator.com/inbox2.jsp?public_to=ma_test_[DD][month][YYYY]#/#public_maildirdiv
+15. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
 16. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request 
 17. Click (or copy/paste) password reset link
 18. Reset password with [DD][month][YYYY]
@@ -39,102 +36,112 @@ Run ORCID-Independent-Tests-1 first, to check for basic API errors.
 
 23. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
 24. Visit https://qa.orcid.org/signin and sign in using a UnitedID account and complete steps to link it to the account created today.
-25. Check that the notification to link the account to State University displays on the record
+25. On the notification to link the account to State University click connect, you'll be taken to the OAuth page. Return to the record without granting access. 
 26. Visit https://qa.orcid.org/signout
 27. Visit https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
 28. Sign in using a Google account not linked to an existing ORCID record
 29. Complete steps to link the Google account to the account created today
 30. Check that after linking the account you are taken back to the authorize page not to my-orcid
 31. Click Deny on the authorization- check that you are taken to the Google OAuth Playground with a Deny error
-32. Visit https://qa.orcid.org/account and revoke Google and UnitedID account access
+32. Visit https://qa.orcid.org/account and follow the steps to enable two factor authentication
+33. Visit https://qa.orcid.org/signout
+34. Sign in, check that you are asked for a 2FA code
+35. Visit https://qa.orcid.org/account disable 2FA and revoke the Google and United ID access
 
 ## My-ORCID
 
-33. Visit https://qa.orcid.org/my-orcid
-34. Use the language selector to change the language to a different language- check that the page updates to that language
-35. Use the language selector to set the page back to English
-36. Add a published name: Pub Name (Published name can be edited using the pencil icon next to the record name)
-37. Add an also know as name: Other Name
-38. Add a country: Afghanistan
-39. Add a keyword: keyword
-40. Add a URL: website/https://qa.orcid.org
-41. Add a biography: Bio!
-42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
-43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'Wellcome Trust' (select from dropdown list)
-44. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “0000”
-45. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com and change the visibility to public
-46. Visit public page (https://qa.orcid.org/[orcid-id])
-    * Verify information added in the steps above is visible
-    * Verify email address ma_test_[DD][month][YYYY]@mailinator.com is not visible
-47. Visit https://qa.orcid.org/signout
+36. Visit https://qa.orcid.org/my-orcid
+37. Use the language selector to change the language to a different language- check that the page updates to that language
+38. Use the language selector to set the page back to English
+39. Add a published name: Pub Name (Published name can be edited using the pencil icon next to the record name)
+40. Add an also know as name: Other Name
+41. Add a country: Afghanistan
+42. Add a keyword: keyword
+43. Add a URL: website/https://qa.orcid.org
+44. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com and change the visibility to public
+45. Add a biography: Bio!
+46. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
+47. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
+48. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “0000” click through warning about the identifier validation.
+49. Set the work you just added to private
+50. Visit public page (https://qa.orcid.org/[orcid id])
+    * Verify information added in the steps above is visible, but not the private work or email addresses
+51. Visit https://qa.orcid.org/signout
 
 ## Public API & Revoke Access check
 
-48. Go to https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&email=pub_ma_test_[DD][month][YYYY]@mailinator.com&given_names=ma_pub_test&family_names=[DD][month][YYYY]
+52. Go to https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&email=pub_ma_test_[DD][month][YYYY]@mailinator.com&given_names=ma_test&family_names=[DD][month][YYYY]
 
-49. Check that the registration screen displays and first and last names and the email address are prepopulated
+53. Check that the registration screen displays and first and last names and the email address are prepopulated
 
-50. Complete the registration form
-    * Secondary email: Leave Blank
+54. Complete the registration form & authorize the connection
+    * Leave additional email blank
     * Password: [DD][month][YYYY]
     * Default privacy for new activities: Private
-    * Email frequency: Never
     
-51. Authorize the connection
+55. Check you are prompted with a window asking if the record you created earlier is you. Click Continue to registration
 
-52. Exchange the authorization code (the 6 digit code returned with the URI, you do not need to do anything on the Google Playground page): 
+56. In a terminal window use curl to exchange the authorization code (the 6 digit code returned with the URI, you do not need to do anything on the Google Playground page). If using Windows you will need to install curl and replace single quotes with double quotes in steps 52, 53 and 55: 
 
     ```
-    curl -i -L -H 'Accept: application/json' --data 'client_id=APP-6QJHHJ6OH7I9Z5XO&client_secret=[Client Secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
+    curl -i -L -H 'Accept: application/json' --data 'client_id=APP-6QJHHJ6OH7I9Z5XO&client_secret=[replace with client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
     ```
 
-53. Read the record with the public access token:
+57. Use curl to read the record with the public access token:
 
 	```
 	curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [token]' -X GET 'https://pub.qa.orcid.org/v2.0/[public orcid id]/record' -L -i -k
 	``` 
 
-54. Visit https://qa.orcid.org/account and revoke the public API permission
+58. Visit https://qa.orcid.org/account and revoke the public API permission
 
-55. Attempt the call in step 53 again- check that an error is returned
+59. Attempt the call in step 53 again- check that an error is returned
 
-56. On https://qa.orcid.org/account add [orcid id] as a trusted individual
+60. On https://qa.orcid.org/account add [orcid id] as a trusted individual
 
 
-## Post ORCID Independent Tests
+## Run the automated Independent Tests
 
-57. Run the ORCID Independent Tests 2
+61. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
+
+62. Build the ORCID Independent Tests 2 with the following parameters
 	* user_login: ma_test_[DD][month][YYYY]	
  	* user_pass: [DD][month][YYYY]
  	* orcid_id: [orcid id]
  	* search_value: [DD][month][YYYY]
+ 	
+## Post ORCID Independent Tests
 
-58. Visit https://qa.orcid.org/sign-in
+63. Visit https://qa.orcid.org/sign-in
 
-60. Sign into the account created earlier
+64. Sign into the account created earlier
 	* Email: ma_test_[DD][month][YYYY]@mailinator.com
 	* Password: [DD][month][YYYY]
 
-61. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
-	* 2 other names
-	* 2 counties
-	* 3 keywords
-	* 3 websites
-	* 2 external id
-	* 3 education items
-	* 3 funding items
-	* 2 works (one being a group of 2)
-	* 1 peer-review item
+65. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
+	* 3 other names
+	* 3 counties
+	* 4 keywords
+	* 4 websites
+	* 3 external id
+	* 4 education items
+	* 4 funding items
+	* 3 works (one being a group of 2)
+	* 1 peer-review item (with two reviews)
 	
-62. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
+66. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
+	* Check that the group of works with doi:0000 only displays the public version
 
-63. Go to http://qa.orcid.org/inbox check for:
+67. Go to http://qa.orcid.org/inbox check for:
 	* the request for access notification
 	* notifications of updates to the record
 
-64. Archive the first notification in the list
+68. Archive the first notification in the list
 
-65. Using IE 11 visit the follow pages and make sure everything loads
+69. Use the switch user option to change to the record created during the OAuth process
+
+70. Using IE 11 visit the follow pages and make sure everything loads
+	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in

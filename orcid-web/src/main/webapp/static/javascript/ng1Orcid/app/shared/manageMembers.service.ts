@@ -1,6 +1,11 @@
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+
+
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
@@ -14,16 +19,18 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class ManageMembersService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();       
 
 
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );     
 
@@ -37,13 +44,6 @@ export class ManageMembersService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                      
-            }
-        )
         .share();
     }
 
@@ -51,13 +51,6 @@ export class ManageMembersService {
         let encoded_data = JSON.stringify( obj );
         return this.http.get(
             getBaseUri()+'/manage-members/find-consortium.json?id=' + encoded_data
-        )
-        .map(
-            (res:Response) => res.json()
-        )
-        .do(
-            (data) => {                                              
-            }
         )
         .share();
     }

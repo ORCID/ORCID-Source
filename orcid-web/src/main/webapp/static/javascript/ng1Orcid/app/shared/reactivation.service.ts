@@ -1,0 +1,53 @@
+import { Injectable } 
+    from '@angular/core';
+
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+
+
+
+
+import { Observable } 
+    from 'rxjs/Observable';
+
+import 'rxjs/Rx';
+
+@Injectable()
+export class ReactivationService {
+    private headers: HttpHeaders;
+    private url: string;
+
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+            }
+        );
+        this.url = getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json';
+    }
+
+    postReactivationConfirm( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/reactivationConfirm.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+
+    serverValidate( obj, field ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/register' + field + 'Validate.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+}

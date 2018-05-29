@@ -1,27 +1,8 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,8 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.message.Iso3166Country;
 
 /**
  * 
@@ -49,7 +28,7 @@ public class OrgEntity extends BaseEntity<Long> implements Serializable {
     private String name;
     private String city;
     private String region;
-    private Iso3166Country country;
+    private String country;
     private String url;
     private SourceEntity source;
     private OrgDisambiguatedEntity orgDisambiguated;
@@ -111,20 +90,18 @@ public class OrgEntity extends BaseEntity<Long> implements Serializable {
         this.region = region;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Iso3166Country getCountry() {
+    public String getCountry() {
         return country;
     }
 
-    public Iso3166Country resolveCountry() {
+    public String resolveCountry() {
         if (orgDisambiguated == null) {
             return country;
         }
         return orgDisambiguated.getCountry();
     }
 
-    public void setCountry(Iso3166Country country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 

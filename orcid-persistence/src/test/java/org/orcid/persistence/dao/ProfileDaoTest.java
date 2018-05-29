@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -43,10 +27,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
@@ -121,7 +101,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("Given Names", profile.getRecordNameEntity().getGivenNames());
         assertEquals("Family Name", profile.getRecordNameEntity().getFamilyName());
         assertEquals("Credit Name", profile.getRecordNameEntity().getCreditName());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, profile.getRecordNameEntity().getVisibility());
+        assertEquals("PUBLIC", profile.getRecordNameEntity().getVisibility());
     }        
 
     @Test
@@ -258,8 +238,8 @@ public class ProfileDaoTest extends DBUnitTest {
         String groupOrcid = "4444-1111-6666-4444";
         ProfileEntity groupProfile = new ProfileEntity();
         groupProfile.setId(groupOrcid);
-        groupProfile.setOrcidType(OrcidType.GROUP);
-        groupProfile.setGroupType(MemberType.BASIC);
+        groupProfile.setOrcidType("GROUP");
+        groupProfile.setGroupType("BASIC");
 
         SortedSet<ClientDetailsEntity> clients = new TreeSet<>(new OrcidEntityIdComparator<String>());
         String clientOrcid1 = "4444-4444-4444-4442";
@@ -279,7 +259,7 @@ public class ProfileDaoTest extends DBUnitTest {
 
         assertNotNull(groupProfile);
         assertEquals(groupOrcid, groupProfile.getId());
-        assertEquals(MemberType.BASIC, groupProfile.getGroupType());
+        assertEquals("BASIC", groupProfile.getGroupType());
         assertNotNull(groupProfile.getClients());
         assertEquals(2, groupProfile.getClients().size());
         Map<String, ClientDetailsEntity> map = ProfileEntity.mapById(groupProfile.getClients());
@@ -343,16 +323,16 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
-        List<Pair<String, IndexingStatus>> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10);
+        List<Pair<String, IndexingStatus>> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
         assertNotNull(results);
         assertEquals(2, results.size());
         assertEquals("4444-4444-4444-4445", results.get(0).getLeft());
         assertEquals("4444-4444-4444-4446", results.get(1).getLeft());
 
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0);
         assertEquals(20, results.size());
 
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3);
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3, 0);
         assertEquals(3, results.size());
     }
 
@@ -397,7 +377,7 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     public void testUpdateIndexingStatus() {
         Date now = new Date();
-        int startCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE).size();
+        int startCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
         String orcid = "4444-4444-4444-4446";
         ProfileEntity profileEntity = profileDao.find(orcid);
         assertEquals(IndexingStatus.PENDING, profileEntity.getIndexingStatus());
@@ -406,7 +386,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(IndexingStatus.DONE, result.getIndexingStatus());
         assertNotNull(result.getLastIndexedDate());
         assertFalse(now.after(new Date(result.getLastIndexedDate().getTime())));
-        int endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE).size();
+        int endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
         assertEquals(startCount + 1, endCount);
         profileDao.updateIndexingStatus(orcid, IndexingStatus.PENDING);
     }
@@ -550,35 +530,35 @@ public class ProfileDaoTest extends DBUnitTest {
         ProfileEntity entity1 = profileDao.find("1000-0000-0000-0001");
         ProfileEntity entity6 = profileDao.find("0000-0000-0000-0006");
         
-        assertEquals(Visibility.PUBLIC, entity1.getActivitiesVisibilityDefault());
-        assertEquals(Visibility.PUBLIC, entity6.getActivitiesVisibilityDefault());
+        assertEquals("PUBLIC", entity1.getActivitiesVisibilityDefault());
+        assertEquals("PUBLIC", entity6.getActivitiesVisibilityDefault());
         
         // Set it private
-        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", Visibility.PRIVATE));
+        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", "PRIVATE"));
         
         entity1 = profileDao.find("1000-0000-0000-0001");
         entity6 = profileDao.find("0000-0000-0000-0006");
         
-        assertEquals(Visibility.PUBLIC, entity1.getActivitiesVisibilityDefault());
-        assertEquals(Visibility.PRIVATE, entity6.getActivitiesVisibilityDefault());
+        assertEquals("PUBLIC", entity1.getActivitiesVisibilityDefault());
+        assertEquals("PRIVATE", entity6.getActivitiesVisibilityDefault());
         
         // Set it limited
-        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", Visibility.LIMITED));
+        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", "LIMITED"));
         
         entity1 = profileDao.find("1000-0000-0000-0001");
         entity6 = profileDao.find("0000-0000-0000-0006");
         
-        assertEquals(Visibility.PUBLIC, entity1.getActivitiesVisibilityDefault());
-        assertEquals(Visibility.LIMITED, entity6.getActivitiesVisibilityDefault());
+        assertEquals("PUBLIC", entity1.getActivitiesVisibilityDefault());
+        assertEquals("LIMITED", entity6.getActivitiesVisibilityDefault());
         
         // Set it public again
-        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", Visibility.PUBLIC));
+        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", "PUBLIC"));
         
         entity1 = profileDao.find("1000-0000-0000-0001");
         entity6 = profileDao.find("0000-0000-0000-0006");
         
-        assertEquals(Visibility.PUBLIC, entity1.getActivitiesVisibilityDefault());
-        assertEquals(Visibility.PUBLIC, entity6.getActivitiesVisibilityDefault());
+        assertEquals("PUBLIC", entity1.getActivitiesVisibilityDefault());
+        assertEquals("PUBLIC", entity6.getActivitiesVisibilityDefault());
     }
     
     @Test
@@ -590,7 +570,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(Float.valueOf(0.0F), Float.valueOf(entity1.getSendEmailFrequencyDays()));
         assertEquals(Float.valueOf(0.0F), Float.valueOf(entity6.getSendEmailFrequencyDays()));
         
-        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", Float.valueOf(SendEmailFrequency.DAILY.value())));
+        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", 1.0f));
         
         entity1 = profileDao.find("1000-0000-0000-0001");
         entity6 = profileDao.find("0000-0000-0000-0006");
@@ -598,7 +578,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(Float.valueOf(0.0F), Float.valueOf(entity1.getSendEmailFrequencyDays()));
         assertEquals(Float.valueOf(1.0F), Float.valueOf(entity6.getSendEmailFrequencyDays()));
         
-        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", Float.valueOf(SendEmailFrequency.QUARTERLY.value())));
+        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", 91.3105f));
         
         entity1 = profileDao.find("1000-0000-0000-0001");
         entity6 = profileDao.find("0000-0000-0000-0006");
@@ -606,7 +586,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(Float.valueOf(0.0F), Float.valueOf(entity1.getSendEmailFrequencyDays()));
         assertEquals(Float.valueOf(91.3105F), Float.valueOf(entity6.getSendEmailFrequencyDays()));
         
-        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", Float.valueOf(SendEmailFrequency.IMMEDIATELY.value())));
+        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", 0.0f));
         
         entity1 = profileDao.find("1000-0000-0000-0001");
         entity6 = profileDao.find("0000-0000-0000-0006");
@@ -640,7 +620,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_1.setLastModified(new Date());
         unverified_1.setProfile(profile);
         unverified_1.setVerified(false);
-        unverified_1.setVisibility(Visibility.PUBLIC);
+        unverified_1.setVisibility("PUBLIC");
         unverified_1.setPrimary(false);
         unverified_1.setCurrent(true);
         unverified_1.setId("unverified_1@test.orcid.org");
@@ -651,7 +631,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_2.setLastModified(LocalDateTime.now().minusDays(7).toDate());
         unverified_2.setProfile(profile);
         unverified_2.setVerified(false);
-        unverified_2.setVisibility(Visibility.PUBLIC);
+        unverified_2.setVisibility("PUBLIC");
         unverified_2.setPrimary(false);
         unverified_2.setCurrent(true);
         unverified_2.setId("unverified_2@test.orcid.org");
@@ -662,7 +642,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_3.setLastModified(LocalDateTime.now().minusDays(15).toDate());
         unverified_3.setProfile(profile);
         unverified_3.setVerified(false);
-        unverified_3.setVisibility(Visibility.PUBLIC);
+        unverified_3.setVisibility("PUBLIC");
         unverified_3.setPrimary(false);
         unverified_3.setCurrent(true);
         unverified_3.setId("unverified_3@test.orcid.org");
@@ -673,7 +653,7 @@ public class ProfileDaoTest extends DBUnitTest {
         verified_1.setLastModified(LocalDateTime.now().minusDays(7).toDate());
         verified_1.setProfile(profile);
         verified_1.setVerified(true);
-        verified_1.setVisibility(Visibility.PUBLIC);
+        verified_1.setVisibility("PUBLIC");
         verified_1.setPrimary(false);
         verified_1.setCurrent(true);
         verified_1.setId("verified_1@test.orcid.org");
@@ -684,7 +664,7 @@ public class ProfileDaoTest extends DBUnitTest {
         verified_2.setLastModified(LocalDateTime.now().minusDays(15).toDate());
         verified_2.setProfile(profile);
         verified_2.setVerified(true);
-        verified_2.setVisibility(Visibility.PUBLIC);
+        verified_2.setVisibility("PUBLIC");
         verified_2.setPrimary(false);
         verified_2.setCurrent(true);
         verified_2.setId("verified_2@test.orcid.org");

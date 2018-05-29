@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="keywords-form-ng2-template">
     <div class="edit-record 
         <#if RequestParameters['bulkEdit']??>edit-record-bulk-edit</#if> 
@@ -31,9 +12,44 @@
             </div>          
         </div>
         <div class="row bottomBuffer">
-            <!--                      
-            <div ng-include="'bulk-edit'"></div>
-            -->             
+            <div class="row bulk-edit-modal">
+                <div class="pull-right bio-edit-modal">             
+                    <span class="right"><@orcid.msg 'groups.common.bulk_edit_privacy'/></span>
+                    <div class="bulk-privacy-bar">
+                        <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
+                            <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
+                                <li class="publicActive publicInActive" [ngClass]="{publicInActive: bioModel != 'PUBLIC'}"><a (click)="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" name="privacy-toggle-3-public" id=""></a></li>
+                                <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: bioModel != 'LIMITED'}"><a (click)="setBulkGroupPrivacy('LIMITED', $event, bioModel)" name="privacy-toggle-3-limited" id=""></a></li>
+                                <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE', $event, bioModel)" name="privacy-toggle-3-private" id=""></a></li>
+                            </ul>
+                        </div>
+                        <div class="popover-help-container" style="top: -75px; left: 512px;">
+                            <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <strong><@orcid.msg 'privacyToggle.help.who_can_see'/> </strong>
+                                    <ul class="privacyHelp">
+                                        <li class="public" style="color: #009900;"><@orcid.msg 'privacyToggle.help.everyone'/></li>
+                                        <li class="limited" style="color: #ffb027;"><@orcid.msg 'privacyToggle.help.trusted_parties'/></li>
+                                        <li class="private" style="color: #990000;"><@orcid.msg 'privacyToggle.help.only_me'/></li>
+                                    </ul>
+                                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information'/></a>
+                                </div>              
+                            </div>                              
+                        </div>
+
+                    </div>
+                    <div class="bulk-help popover-help-container">
+                        <i class="glyphicon glyphicon-question-sign"></i>
+                        <div id="bulk-help" class="popover bottom">
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <p><@orcid.msg 'groups.common.bulk_edit_privacy_help'/></p>
+                            </div>
+                       </div>
+                    </div>
+                </div>          
+            </div>       
         </div>              
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
@@ -47,7 +63,7 @@
                         <div class="row aka-row" *ngFor="let keyword of formData.keywords; let index = index; let first = first; let last = last;">      
                             <div class="col-md-6">
                                 <div class="aka" *ngIf="keyword">                                       
-                                    <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" focus-me="newInput" />
+                                    <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !keyword.content}" />
                                     <span *ngIf="keyword.source != orcidId">{{keyword.content}}</span>                                     
                                 </div>
                                 <div class="source" *ngIf="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="keyword.sourceName">{{keyword.sourceName}}</span><span *ngIf="keyword.sourceName == null">{{orcidId}}</span></div>      
@@ -64,7 +80,7 @@
                                         <@orcid.tooltipNg2 elementId="'tooltip-keyword-move-down-'+index" message="common.modals.move_down" />                                            
                                     </li>
                                     <li>                                        
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteKeyword(keyword)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-delete-'+index)"></div>
+                                        <div class="delete-keyword glyphicon glyphicon-trash" (click)="deleteKeyword(keyword, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-delete-'+index)"></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-keyword-delete-'+index" message="common.modals.delete" />                                          
                                     </li>
                                     <li>

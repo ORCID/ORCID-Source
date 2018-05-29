@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
@@ -28,8 +12,10 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -70,6 +56,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
     
+    @Resource(name = "profileHistoryEventManagerV3")
+    private ProfileHistoryEventManager profileHistoryEventManager;
+    
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
         ModelAndView mav = new ModelAndView("developer_tools");
@@ -107,7 +96,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/get-client.json", method = RequestMethod.GET)
     public @ResponseBody Client getClient() {
         String userOrcid = getEffectiveUserOrcid();
-        Set<org.orcid.jaxb.model.v3.dev1.client.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
+        Set<org.orcid.jaxb.model.v3.rc1.client.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
 
         if (existingClients.isEmpty()) {
             return null;
@@ -121,7 +110,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
-            org.orcid.jaxb.model.v3.dev1.client.Client clientToCreate = client.toModelObject();
+            org.orcid.jaxb.model.v3.rc1.client.Client clientToCreate = client.toModelObject();
             try {
                 clientToCreate = clientManager.createPublicClient(clientToCreate);
             } catch (Exception e) {
@@ -142,7 +131,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
-            org.orcid.jaxb.model.v3.dev1.client.Client clientToEdit = client.toModelObject();
+            org.orcid.jaxb.model.v3.rc1.client.Client clientToEdit = client.toModelObject();
             try {
                 clientToEdit = clientManager.edit(clientToEdit, false);
             } catch (Exception e) {
@@ -161,7 +150,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
     public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
         //Verify this client belongs to the member
-        org.orcid.jaxb.model.v3.dev1.client.Client client = clientManagerReadOnly.get(clientId);
+        org.orcid.jaxb.model.v3.rc1.client.Client client = clientManagerReadOnly.get(clientId);
         if(client == null) {
             return false;
         }
@@ -244,6 +233,10 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/enable-developer-tools.json", method = RequestMethod.POST)
     public @ResponseBody
     boolean enableDeveloperTools(HttpServletRequest request) {
-        return profileEntityManager.enableDeveloperTools(getCurrentUserOrcid());        
+        boolean enabled = profileEntityManager.enableDeveloperTools(getCurrentUserOrcid());     
+        if (enabled) {
+            profileHistoryEventManager.recordEvent(ProfileHistoryEventType.ACCEPTED_PUBLIC_CLIENT_TERMS_CONDITIONS, getCurrentUserOrcid());
+        }
+        return enabled;
     }
 }

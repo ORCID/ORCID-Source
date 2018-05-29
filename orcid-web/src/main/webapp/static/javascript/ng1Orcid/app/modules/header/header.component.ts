@@ -1,12 +1,16 @@
 declare var getWindowWidth: any;
+declare var orcidVar: any;
 
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
+
+import { FormsModule }
+    from '@angular/forms';
 
 import { Observable } 
     from 'rxjs/Rx';
@@ -14,7 +18,11 @@ import { Observable }
 import { Subject } 
     from 'rxjs/Subject';
 
-import { Subscription }    from 'rxjs/Subscription';
+import { Subscription }
+    from 'rxjs/Subscription';
+
+import { NotificationsService } 
+    from '../../shared/notifications.service.ts'; 
 
 
 @Component({
@@ -26,7 +34,9 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     
     conditionsActive: boolean;
     filterActive: boolean;
+    getUnreadCount: any;
     menuVisible: boolean;
+    headerSearch: any;
     searchFilterChanged: boolean;
     searchVisible: boolean;
     secondaryMenuVisible: any;
@@ -34,9 +44,12 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     tertiaryMenuVisible: any;
 
     constructor(
+        private notificationsSrvc: NotificationsService
     ) {
         this.conditionsActive = false;
         this.filterActive = false;
+        this.getUnreadCount = 0;
+        this.headerSearch = {};
         this.menuVisible = false;
         this.searchFilterChanged = false;
         this.searchVisible = false;
@@ -61,19 +74,21 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     hideSearchFilter(): void{
-        let inputValue = document.getElementById('input1') as HTMLInputElement;
-        let searchInputValue = inputValue.value;
-        if (searchInputValue === ""){
-            setTimeout(function() {
+        if (!this.headerSearch.searchInput){
+            var timeoutFunction = (function() { 
                 if ( this.searchFilterChanged === false ) {
                     this.filterActive = false;
-                }
-            }, 3000);
+                }           
+            }).bind(this);
+            setTimeout(timeoutFunction, 3000);
         }
     };
 
+    isCurrentPage(path): any {
+        return window.location.href.startsWith(orcidVar.baseUri + '/' + path);
+    };
+
     onResize(event?): void {
-        //console.log("resize", event);
         let windowWidth = getWindowWidth();
         if(windowWidth > 767){ /* Desktop view */
             this.menuVisible = true;
@@ -86,7 +101,22 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    searchBlur(): void {     
+    retrieveUnreadCount(): any {
+        if( this.notificationsSrvc.retrieveCountCalled == false ) {
+            this.notificationsSrvc.retrieveUnreadCount()
+            .takeUntil(this.ngUnsubscribe)
+            .subscribe(
+                data => {
+                    this.getUnreadCount = data;
+                },
+                error => {
+                    //console.log('verifyEmail', error);
+                } 
+            );
+        }
+    };
+
+    searchBlur(): void {    
         this.hideSearchFilter();
         this.conditionsActive = false;        
     };
@@ -95,7 +125,18 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         this.filterActive = true;
         this.conditionsActive = true;
     };
-    
+
+    searchSubmit(): void {
+        if (this.headerSearch.searchOption=='website'){
+            window.location.assign(orcidVar.baseUri + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
+        }
+        if(this.headerSearch.searchOption=='registry'){
+            window.location.assign(orcidVar.baseUri
+                    + "/orcid-search/quick-search/?searchQuery="
+                    + encodeURIComponent(this.headerSearch.searchInput));
+        }
+    }
+  
     toggleMenu(): void {
         this.menuVisible = !this.menuVisible;
         this.searchVisible = false;
@@ -133,6 +174,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.onResize();
+        this.onResize(); 
+        this.headerSearch.searchOption = 'registry'; 
     }; 
 }

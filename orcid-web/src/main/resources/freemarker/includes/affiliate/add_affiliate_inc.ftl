@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <script type="text/ng-template" id="add-affiliation-modal">
     <div id="edit-affiliation" class="edit-affiliation colorbox-content">
 		<fn-form update-fn="addAffiliation()">
@@ -178,9 +160,15 @@
                         	</#list>
                     	</select>					
                     	<select id="startDay" name="startDay" ng-model="editAffiliation.startDate.day" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
-	                        <#list days?keys as key>
+	                        <!--
+                            <#list days?keys as key>
                            		<option value="${key}">${days[key]}</option>
                       		</#list>
+                            -->
+                            <#list days?keys as key>
+                                <option ng-disabled="checkAvailableDays(
+                                '${days[key]}', editAffiliation.startDate.month, editAffiliation.startDate.year)" value="${key}">${days[key]}</option>
+                            </#list>
                     	</select>
 					</div>
 					<span class="orcid-error" ng-show="editAffiliation.startDate.errors.length > 0">
@@ -203,7 +191,8 @@
                         </select>
                         <select id="endDay" name="endDay" ng-model="editAffiliation.endDate.day" ng-change="serverValidate('affiliations/affiliation/datesValidate.json')">
                             <#list days?keys as key>
-                                <option value="${key}">${days[key]}</option>
+                                <option ng-disabled="checkAvailableDays(
+                                '${days[key]}', editAffiliation.endDate.month, editAffiliation.endDate.year)" value="${key}">${days[key]}</option>
                             </#list>
                         </select>
                     </div>

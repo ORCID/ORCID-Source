@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -32,8 +16,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -60,7 +44,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         assertNotNull(entity.getDateCreated());
         assertNotNull(entity.getLastModified());
         assertEquals("user1@email.com", entity.getId());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, entity.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), entity.getVisibility());
         
         // Source
         assertNull(entity.getSourceId());        
@@ -96,7 +80,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         result.setVerified(true);
         result.setDateCreated(new Date());
         result.setLastModified(new Date());       
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);   
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
         
         return result;

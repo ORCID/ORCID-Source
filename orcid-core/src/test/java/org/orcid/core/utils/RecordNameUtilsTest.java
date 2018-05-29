@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +13,7 @@ public class RecordNameUtilsTest {
     @Test
     public void testGetPublicNamePublicVisibilityCreditName() {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         recordName.setCreditName("credit name");
         
         String publicName = RecordNameUtils.getPublicName(recordName);
@@ -40,7 +24,7 @@ public class RecordNameUtilsTest {
     @Test
     public void testGetPublicNamePublicVisibilityNoCreditName() {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         recordName.setGivenNames("given name");
         recordName.setFamilyName("family name");
         
@@ -52,7 +36,7 @@ public class RecordNameUtilsTest {
     @Test
     public void testGetPublicNamePublicVisibilityNoFamilyName() {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         recordName.setGivenNames("given name");
         
         String publicName = RecordNameUtils.getPublicName(recordName);
@@ -63,7 +47,7 @@ public class RecordNameUtilsTest {
     @Test
     public void testGetPublicNamePrivateVisibility() {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(Visibility.PRIVATE);
+        recordName.setVisibility(Visibility.PRIVATE.name());
         recordName.setCreditName("credit name");
         recordName.setGivenNames("given name");
         recordName.setFamilyName("family name");

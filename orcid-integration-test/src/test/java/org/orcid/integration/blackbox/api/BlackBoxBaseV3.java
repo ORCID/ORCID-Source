@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.blackbox.api;
 
 import java.util.ArrayList;
@@ -23,15 +7,15 @@ import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.helper.APIRequestType;
-import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
+import org.orcid.integration.blackbox.api.v3.rc1.MemberV3Rc1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 
 import com.sun.jersey.api.client.ClientResponse;
 
 public class BlackBoxBaseV3 extends BlackBoxBase {
-    @Resource(name = "memberV3_0_dev1ApiClient")
-    protected MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;
+    @Resource(name = "memberV3_0_rc1ApiClient")
+    protected MemberV3Rc1ApiClientImpl memberV3Rc1ApiClient;
     
     protected static List<GroupIdRecord> groupRecords = null;
     
@@ -58,14 +42,14 @@ public class BlackBoxBaseV3 extends BlackBoxBase {
         g2.setName("Group # 2");
         g2.setType("publisher");                
         
-        ClientResponse r1 = memberV3Dev1ApiClient.createGroupIdRecord(g1, token); 
+        ClientResponse r1 = memberV3Rc1ApiClient.createGroupIdRecord(g1, token); 
         
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v3.0_dev1/group-id-record/", "");
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v3.0_rc1/group-id-record/", "");
         g1.setPutCode(Long.valueOf(r1LocationPutCode));
         groupRecords.add(g1);
         
-        ClientResponse r2 = memberV3Dev1ApiClient.createGroupIdRecord(g2, token);
-        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v3.0_dev1/group-id-record/", "");
+        ClientResponse r2 = memberV3Rc1ApiClient.createGroupIdRecord(g2, token);
+        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v3.0_rc1/group-id-record/", "");
         g2.setPutCode(Long.valueOf(r2LocationPutCode));
         groupRecords.add(g2);
         

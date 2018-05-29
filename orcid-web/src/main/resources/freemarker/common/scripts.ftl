@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <root-cmp></root-cmp>
 <script type="text/javascript" src="${staticCdn}/javascript/jquery/2.2.3/jquery.min.js"></script>
 <script type="text/javascript" src="${staticCdn}/javascript/jqueryui/1.10.0/jquery-ui.min.js"></script>
@@ -51,12 +33,17 @@
 
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=" + lang;
-    document.body.appendChild(script);
 </script>
 
+<@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
+    <script type="text/javascript">
+        var lang = OrcidCookie.getCookie('locale_v3');
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=" + lang;
+        document.body.appendChild(script);
+    </script>
+</@orcid.checkFeatureStatus>
 
 <script type="text/javascript">
    var script = document.createElement("script");

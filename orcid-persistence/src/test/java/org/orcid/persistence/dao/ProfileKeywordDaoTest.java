@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -65,7 +49,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
     @Test    
     public void testAddProfileKeyword() {
         assertEquals(4, dao.getProfileKeywords("4444-4444-4444-4443", 0L).size());
-        boolean result = dao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        boolean result = dao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null, "PUBLIC");
         assertTrue(result);    
         assertEquals(5, dao.getProfileKeywords("4444-4444-4444-4443", 0L).size());
         
@@ -73,7 +57,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         entity.setKeywordName("this is my keyword");
         entity.setProfile(new ProfileEntity("4444-4444-4444-4443"));
         entity.setSourceId("4444-4444-4444-4443");
-        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);        
+        entity.setVisibility("PUBLIC");        
         
         dao.persist(entity);        
         assertEquals(6, dao.getProfileKeywords("4444-4444-4444-4443", 0L).size());

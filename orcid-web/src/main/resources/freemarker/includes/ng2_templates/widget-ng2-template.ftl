@@ -1,28 +1,9 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="widget-ng2-template">
     <div class="widget-container">
         <div class="widget-header">
             <a (click)="toggleCopyWidget();"><span class="glyphicon glyphicon-phone"></span> <@orcid.msg 'orcid_widget.header'/></a>
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="widget-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">

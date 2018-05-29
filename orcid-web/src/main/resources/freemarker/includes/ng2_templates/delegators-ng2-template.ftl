@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="delegators-ng2-template">
     <div id="DelegatorsCtrl" data-search-query-url="${searchBaseUrl}">
         <p><@orcid.msg 'manage_delegators.search'/></p>
@@ -25,7 +6,7 @@
                 <input id="delegatorsSearch" type="text" placeholder="<@orcid.msg 'manage_delegators.search.placeholder' />" class="input-xlarge inline-input"></input>
             </form>
         </p>
-        <table class="table table-bordered settings-table normal-width" *ngIf="delegators.length > 0" >
+        <table class="table table-bordered settings-table normal-width" *ngIf="delegators?.length > 0" >
             <thead>
                 <tr>
                     <th width="35%" (click)="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>

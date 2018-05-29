@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.oauth.service;
 
 import static org.junit.Assert.assertNotNull;
@@ -33,8 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -70,6 +53,9 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     @Resource(name = "clientDetailsManager")
     private ClientDetailsService clientDetailsService;
     
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
+    
     private OAuth2RequestFactory oAuth2RequestFactory;
     
     @BeforeClass
@@ -93,7 +79,7 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     @Transactional
     public void testCreateAuthorizationCodeWithValidClient() {
         AuthorizationRequest request = getAuthorizationRequest("4444-4444-4444-4441");
-        OAuth2Authentication oauth2Authentication = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication());
+        OAuth2Authentication oauth2Authentication = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication("0000-0000-0000-0002"));
         String authorizationCode = authorizationCodeServices.createAuthorizationCode(oauth2Authentication);
         assertNotNull(authorizationCode);
         oauth2Authentication  = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
@@ -112,7 +98,7 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     @Transactional
     public void testCreateAuthorizationCodeWithInvalidClient() {
         AuthorizationRequest request = getAuthorizationRequest("6444-4444-4444-4441");        
-        OAuth2Authentication auth = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication());
+        OAuth2Authentication auth = new OAuth2Authentication(oAuth2RequestFactory.createOAuth2Request(request), getUserAuthentication("0000-0000-0000-0002"));
         authorizationCodeServices.createAuthorizationCode(auth);
     }
 
@@ -132,10 +118,8 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
         return authorizationRequest;
     }
     
-    private Authentication getUserAuthentication() {
-        OrcidProfile profile = new OrcidProfile();
-        profile.setOrcidIdentifier("4444-4444-4444-4445");
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails("4444-4444-4444-4445", "test123@semantico.com", "encrypted_password", OrcidType.USER);
+    private Authentication getUserAuthentication(String orcid) {
+        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcid);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details.getOrcid(), "password");
         auth.setDetails(details);
         return auth;

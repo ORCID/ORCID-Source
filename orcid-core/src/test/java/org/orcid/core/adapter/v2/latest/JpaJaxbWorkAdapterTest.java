@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
@@ -82,7 +66,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
-        assertEquals(Visibility.PRIVATE, workEntity.getVisibility());
+        assertEquals(Visibility.PRIVATE.name(), workEntity.getVisibility());
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
@@ -90,8 +74,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("common:translated-title", workEntity.getTranslatedTitle());
         assertEquals("en", workEntity.getTranslatedTitleLanguageCode());
         assertEquals("work:short-description", workEntity.getDescription());
-        assertEquals(CitationType.FORMATTED_UNSPECIFIED, workEntity.getCitationType());
-        assertEquals(WorkType.ARTISTIC_PERFORMANCE, workEntity.getWorkType());
+        assertEquals(CitationType.FORMATTED_UNSPECIFIED.name(), workEntity.getCitationType());
+        assertEquals(WorkType.ARTISTIC_PERFORMANCE.name(), workEntity.getWorkType());
         PublicationDateEntity publicationDateEntity = workEntity.getPublicationDate();
         assertNotNull(publicationDateEntity);
         assertEquals(1848, publicationDateEntity.getYear().intValue());
@@ -105,7 +89,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:credit-name\"},\"contributorEmail\":{\"value\":\"work@contributor.email\"},\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}}]}",
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
-        assertEquals(Iso3166Country.AF, workEntity.getIso2Country());
+        assertEquals(Iso3166Country.AF.name(), workEntity.getIso2Country());
         
         // Source
         assertNull(workEntity.getSourceId());        
@@ -189,15 +173,15 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setDateCreated(date);
         work.setLastModified(date);
         work.setOrcid("0000-0000-0000-0001");
-        work.setVisibility(Visibility.LIMITED);
+        work.setVisibility(Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId("APP-5555555555555555");        
         work.setCitation("work:citation");
-        work.setCitationType(CitationType.BIBTEX);
+        work.setCitationType(CitationType.BIBTEX.name());
         work.setDateCreated(date);
         work.setDescription("work:description");
         work.setId(12345L);
-        work.setIso2Country(Iso3166Country.CR);
+        work.setIso2Country(Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
         work.setLastModified(date);
@@ -206,7 +190,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setTitle("work:title");
         work.setTranslatedTitle("work:translatedTitle");
         work.setTranslatedTitleLanguageCode("ES");
-        work.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        work.setWorkType(WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");
         work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");

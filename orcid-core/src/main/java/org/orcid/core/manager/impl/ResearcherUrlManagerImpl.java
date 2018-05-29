@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
@@ -32,6 +16,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ResearcherUrlManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
@@ -112,7 +97,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                    for(ResearcherUrlEntity existingEntity : existingEntities) {
                        if(existingEntity.getId().equals(updatedOrNew.getPutCode())) {
                            existingEntity.setLastModified(new Date());
-                           existingEntity.setVisibility(updatedOrNew.getVisibility());                           
+                           existingEntity.setVisibility(updatedOrNew.getVisibility().name());                           
                            existingEntity.setUrl(updatedOrNew.getUrl().getValue());
                            existingEntity.setUrlName(updatedOrNew.getUrlName());
                            existingEntity.setDisplayIndex(updatedOrNew.getDisplayIndex());
@@ -135,7 +120,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                         newResearcherUrl.setClientSourceId(sourceEntity.getSourceClient().getId());
                     }
                     
-                    newResearcherUrl.setVisibility(updatedOrNew.getVisibility());
+                    newResearcherUrl.setVisibility(updatedOrNew.getVisibility().name());
                     newResearcherUrl.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     researcherUrlDao.persist(newResearcherUrl);                    
                 }
@@ -149,7 +134,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     @Transactional
     public ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) {
         ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
-        Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());
+        Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();                
         
         //Save the original source
@@ -223,7 +208,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
             //If they have the same source 
             String existingSourceId = existing.getElementSourceId(); 
             // If they have the same source
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
                 // If the url is the same
                 if (existing.getUrl() != null && existing.getUrl().equals(newResearcherUrl.getUrl().getValue())) {
                     return true;
@@ -234,12 +219,12 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     }
 
     private void setIncomingPrivacy(ResearcherUrlEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingWorkVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultResearcherUrlsVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        String incomingWorkVisibility = entity.getVisibility();
+        String defaultResearcherUrlsVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name() : profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultResearcherUrlsVisibility);
         } else if (incomingWorkVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }
 

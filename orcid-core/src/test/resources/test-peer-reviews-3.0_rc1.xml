@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activities:peer-reviews
+	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:work="http://www.orcid.org/ns/work"
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-3.0_rc1.xsd ">
+	<common:last-modified-date>2005-11-12T12:00:00</common:last-modified-date>
+	<activities:group>
+		<common:last-modified-date>2005-11-12T12:00:00</common:last-modified-date>
+		<common:external-ids>
+            <common:external-id>
+                <common:external-id-type>cit</common:external-id-type>
+                <common:external-id-value>cit</common:external-id-value>
+                <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
+        </common:external-ids>
+		<peer-review:peer-review-summary put-code="12345" visibility="private">
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name/>
+			</common:source>
+			<peer-review:external-identifiers>
+				<work:work-external-identifier>
+					<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
+					<common:relationship>self</common:relationship>
+					<work:external-identifier-type>agr</work:external-identifier-type>
+					<work:external-identifier-id>work:external-identifier-id
+					</work:external-identifier-id>
+				</work:work-external-identifier>
+			</peer-review:external-identifiers>
+			<peer-review:completion-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</peer-review:completion-date>
+			<peer-review:review-group-id>issn:1119191</peer-review:review-group-id>
+			<peer-review:convening-organization>
+				<common:name>common:name</common:name>
+				<common:address>
+					<common:city>common:city</common:city>
+					<common:region>common:region</common:region>
+					<common:country>AF</common:country>
+				</common:address>
+				<common:disambiguated-organization>
+					<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+				</common:disambiguated-organization>
+			</peer-review:convening-organization>
+		</peer-review:peer-review-summary>
+		<peer-review:peer-review-summary put-code="54321" visibility="private">
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2005-11-12T12:00:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name/>
+			</common:source>
+			<peer-review:external-identifiers>
+				<work:work-external-identifier>
+					<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
+					<common:relationship>self</common:relationship>
+					<work:external-identifier-type>agr</work:external-identifier-type>
+					<work:external-identifier-id>work:external-identifier-id
+					</work:external-identifier-id>
+				</work:work-external-identifier>
+			</peer-review:external-identifiers>
+			<peer-review:completion-date>
+				<common:year>1848</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</peer-review:completion-date>
+			<peer-review:review-group-id>issn:1119191</peer-review:review-group-id>
+			<peer-review:convening-organization>
+				<common:name>common:name</common:name>
+				<common:address>
+					<common:city>common:city</common:city>
+					<common:region>common:region</common:region>
+					<common:country>AF</common:country>
+				</common:address>
+				<common:disambiguated-organization>
+					<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+				</common:disambiguated-organization>
+			</peer-review:convening-organization>
+		</peer-review:peer-review-summary>
+	</activities:group>
+</activities:peer-reviews>

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.notificationsV3.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.MAX_NOTIFICATIONS_AVAILABLE;
@@ -44,9 +28,9 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermissions;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.dev1.notification.Notification;
+import org.orcid.jaxb.model.v3.rc1.notification.Notification;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;

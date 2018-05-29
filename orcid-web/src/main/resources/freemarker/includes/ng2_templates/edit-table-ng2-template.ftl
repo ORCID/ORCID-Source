@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="edit-table-ng2-template">
     <table class="table table-bordered settings-table account-settings"
         style="margin:0; padding:0;">
@@ -45,8 +26,8 @@
                 </td>
             </tr>
             
-            <!-- Notifications -->
-            <tr>
+            <tr *ngIf="!gdprEmailNotifications">
+                <!-- Notifications -->
                 <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.notification_preferences")}</th>
                 <td><a href="" (click)="toggleEmailPreferencesEdit()">{{emailPreferencesToggleText}}</a></td>
             </tr>
@@ -115,6 +96,30 @@
                 <tr *ngIf="showEdit2FA" >
                     <td colspan="2">
                         <two-fa-state-ng2></two-fa-state-ng2>
+                    </td>
+                </tr>
+            </@orcid.checkFeatureStatus>
+            <@orcid.checkFeatureStatus 'GET_MY_DATA'>
+                <tr>
+                    <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
+                    <td><a href="" (click)="toggleGetMyDataEdit()">{{twoFAToggleText}}</a></td>
+                </tr>
+                <tr *ngIf="showEditGetMyData" >
+                    <td colspan="2">
+                        <p>
+                            <@orcid.msg 'manage.get_my_data.details.p1' />
+                        </p>
+                        <p>
+                            <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="${knowledgeBaseUri}/articles/117225"><@orcid.msg 'common.learn_more' /></a>
+                        </p>
+                        <p>
+                            <form ngNoForm action="${baseUri}/get-my-data" method="POST">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                <button class="btn btn-primary">
+                                    <@orcid.msg 'manage.get_my_data.button' />
+                                </button>
+                            </form>
+                        </p>
                     </td>
                 </tr>
             </@orcid.checkFeatureStatus>

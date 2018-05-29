@@ -57,6 +57,7 @@ the software.
 		<module>orcid-internal-api</module>
 		<module>orcid-activemq</module>
 		<module>orcid-message-listener</module>
+		<module>orcid-activities-indexer</module>
     </modules>
 
 
@@ -170,10 +171,10 @@ the software.
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
-            <plugin>
+            <!-- plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
-            </plugin>
+            </plugin -->
         </plugins>
 
         <pluginManagement>
@@ -198,7 +199,7 @@ the software.
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>2.8</version>
                 </plugin>
-                <plugin>
+                <!-- plugin>
                     <inherited>true</inherited>
                     <groupId>com.mycila.maven-license-plugin</groupId>
                     <artifactId>maven-license-plugin</artifactId>
@@ -291,7 +292,7 @@ the software.
                             </goals>
                         </execution>
                     </executions>
-                </plugin>
+                </plugin -->
                 <plugin>
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
@@ -736,28 +737,28 @@ the software.
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
-				<version>2.5.1</version>
+				<version>2.9.3</version>
 			</dependency>
             <dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.5.1</version>
+				<version>2.9.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
-				<version>2.5.1</version>
+				<version>2.9.3</version>
 			</dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>2.5.1</version>
+                <version>2.9.3</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>2.5.1</version>
+                <version>2.9.3</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -841,9 +842,14 @@ the software.
                 <version>3.2.0</version>
             </dependency>
             <dependency>
-                <groupId>net.sf.ehcache</groupId>
+                <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>2.10.4</version>
+                <version>3.5.2</version>
+            </dependency>
+            <dependency>
+      	        <groupId>javax.cache</groupId>
+      	        <artifactId>cache-api</artifactId>
+	            <version>1.0.0</version>
             </dependency>
 
             <!-- SOLR -->

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Collection;
@@ -23,7 +7,8 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -79,7 +64,7 @@ public class SourceManagerImpl implements SourceManager {
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
             SourceEntity sourceEntity = new SourceEntity();
             sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));
-            sourceEntity.getSourceName();
+            SourceEntityUtils.getSourceName(sourceEntity);
             return sourceEntity;
         }
         String userOrcid = retrieveEffectiveOrcid(authentication);
@@ -176,8 +161,7 @@ public class SourceManagerImpl implements SourceManager {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
                         if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getDetails() instanceof OrcidProfileUserDetails) {
-                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getDetails()).getOrcidType(); 
-                            return OrcidType.ADMIN.equals(sourceUserType);
+                            return ((OrcidProfileUserDetails) sourceAuthentication.getDetails()).getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
                         }
                     }
                 }

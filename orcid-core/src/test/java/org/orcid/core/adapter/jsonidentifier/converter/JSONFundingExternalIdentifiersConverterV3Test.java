@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.jsonidentifier.converter;
 
 import static org.junit.Assert.assertEquals;
@@ -28,9 +12,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
@@ -80,15 +64,15 @@ public class JSONFundingExternalIdentifiersConverterV3Test {
         result.setTitle("funding:title");
         result.setTranslatedTitle("funding:translatedTitle");
         result.setTranslatedTitleLanguageCode("ES");
-        result.setType(org.orcid.jaxb.model.record_v2.FundingType.SALARY_AWARD);
-        result.setVisibility(Visibility.PRIVATE);
+        result.setType(org.orcid.jaxb.model.record_v2.FundingType.SALARY_AWARD.name());
+        result.setVisibility(Visibility.PRIVATE.name());
         return result;
     }
 
     private Funding getFunding() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_dev1/samples/read_samples/funding-full-3.0_dev1.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/funding-full-3.0_rc1.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Funding) unmarshaller.unmarshal(inputStream);
     }

@@ -5,6 +5,7 @@ Welcome to ORCID Source. Here are some resources to get you started.
 * [What is ORCID?](http://orcid.org/about/what-is-orcid)
 
 * [ORCID API introduction](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
+  * [Content negotiation](https://github.com/ORCID/ORCID-Source/blob/master/CONTENT_NEGOTIATION.md)
 
 * [ORCID's API XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)
   * [Current stable XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1)

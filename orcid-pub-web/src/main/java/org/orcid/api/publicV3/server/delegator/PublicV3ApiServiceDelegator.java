@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.publicV3.server.delegator;
 
 import java.util.List;
@@ -28,9 +12,11 @@ import javax.ws.rs.core.Response;
  */
 public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, INVITED_POSITION, FUNDING, GROUP_ID_RECORD, MEMBERSHIP, OTHER_NAME, PEER_REVIEW, QUALIFICATION, RESEARCHER_URL, SERVICE, WORK> {
 
-    static final String LATEST_V3_VERSION = "3.0_dev1";
+    static final String LATEST_V3_VERSION = "3.0_rc1";
 
     Response viewStatusText();
+    
+    Response viewStatus();
 
     Response viewActivities(String orcid);
 

@@ -1,26 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
 import javax.persistence.Query;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifierEntity, Long> implements ExternalIdentifierDao {
 
+    private static final String PUBLIC_VISIBILITY = "PUBLIC";
+    
     public ExternalIdentifierDaoImpl() {
         super(ExternalIdentifierEntity.class);
     }
@@ -63,12 +48,12 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Override
     @Cacheable(value = "public-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified) {
-        return getExternalIdentifiers(orcid, Visibility.PUBLIC);
+        return getExternalIdentifiers(orcid, PUBLIC_VISIBILITY);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, Visibility visibility) {
+    public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);

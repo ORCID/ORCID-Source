@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
@@ -60,8 +44,8 @@ public class JpaJaxbFundingAdapterTest {
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         // Enums
-        assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());
-        assertEquals(FundingType.GRANT.value(), pfe.getType().value());
+        assertEquals(Visibility.PRIVATE.name(), pfe.getVisibility());
+        assertEquals(FundingType.GRANT.name(), pfe.getType());
 
         // General info
         assertEquals(Long.valueOf(0), pfe.getId());
@@ -181,8 +165,8 @@ public class JpaJaxbFundingAdapterTest {
         result.setTitle("funding:title");
         result.setTranslatedTitle("funding:translatedTitle");
         result.setTranslatedTitleLanguageCode("ES");
-        result.setType(FundingType.SALARY_AWARD);
-        result.setVisibility(Visibility.PRIVATE);
+        result.setType(FundingType.SALARY_AWARD.name());
+        result.setVisibility(Visibility.PRIVATE.name());
         return result;
     }
 

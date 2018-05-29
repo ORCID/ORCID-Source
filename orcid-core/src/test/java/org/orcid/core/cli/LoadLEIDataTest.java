@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli;
 
 import static org.junit.Assert.assertEquals;
@@ -68,7 +52,7 @@ public class LoadLEIDataTest {
         assertEquals("213800GW5X3N23U2YM51", argument.getValue().getSourceId());
         assertEquals("UNIVERSITY OF BATH (THE)", argument.getValue().getName());
         assertEquals("BATH", argument.getValue().getCity());
-        assertEquals("GB", argument.getValue().getCountry().value());
+        assertEquals("GB", argument.getValue().getCountry());
         assertEquals("OTHER", argument.getValue().getOrgType());
         assertEquals(null, argument.getValue().getRegion());
         assertEquals("PENDING", argument.getValue().getIndexingStatus().toString());
@@ -89,7 +73,7 @@ public class LoadLEIDataTest {
         assertEquals("213800ZH4VUOQOUVYX93", argument.getValue().getSourceId());
         assertEquals("МОНБАТ АД", argument.getValue().getName());
         assertEquals("SOFIA", argument.getValue().getCity());
-        assertEquals("BG", argument.getValue().getCountry().value());
+        assertEquals("BG", argument.getValue().getCountry());
         assertEquals("AKTSIONERNO DRUZHESTVO", argument.getValue().getOrgType());
         assertEquals("BG-22", argument.getValue().getRegion());
         assertEquals("PENDING", argument.getValue().getIndexingStatus().toString());
@@ -97,7 +81,7 @@ public class LoadLEIDataTest {
         assertEquals("LEI", argument.getValue().getSourceType());        
         assertEquals("MONBAT PLC",orgArgument.getAllValues().get(0).getName());
         assertEquals("SOFIA", orgArgument.getAllValues().get(0).getCity());
-        assertEquals("BG", orgArgument.getAllValues().get(0).getCountry().value());
+        assertEquals("BG", orgArgument.getAllValues().get(0).getCountry());
         assertEquals("BG-22", orgArgument.getAllValues().get(0).getRegion());
         assertEquals("213800ZH4VUOQOUVYX93", orgArgument.getAllValues().get(0).getOrgDisambiguated().getSourceId());        
     }
@@ -125,7 +109,7 @@ public class LoadLEIDataTest {
         assertEquals("213800ZH4VUOQOUVYX93", argument.getValue().getSourceId());
         assertEquals("МОНБАТ АД", argument.getValue().getName());
         assertEquals("SOFIA", argument.getValue().getCity());
-        assertEquals("BG", argument.getValue().getCountry().value());
+        assertEquals("BG", argument.getValue().getCountry());
         assertEquals("AKTSIONERNO DRUZHESTVO", argument.getValue().getOrgType());
         assertEquals("BG-22", argument.getValue().getRegion());
         assertEquals("PENDING", argument.getValue().getIndexingStatus().toString());
@@ -156,7 +140,7 @@ public class LoadLEIDataTest {
         assertEquals("213800ZH4VUOQOUVYX93", argument.getValue().getSourceId());
         assertEquals("МОНБАТ АД", argument.getValue().getName());
         assertEquals("SOFIA", argument.getValue().getCity());
-        assertEquals("BG", argument.getValue().getCountry().value());
+        assertEquals("BG", argument.getValue().getCountry());
         assertEquals("AKTSIONERNO DRUZHESTVO", argument.getValue().getOrgType());
         assertEquals("BG-22", argument.getValue().getRegion());
         assertEquals("PENDING", argument.getValue().getIndexingStatus().toString());
@@ -164,7 +148,7 @@ public class LoadLEIDataTest {
         assertEquals("LEI", argument.getValue().getSourceType());
         assertEquals("MONBAT PLC",orgArgument.getAllValues().get(0).getName());
         assertEquals("SOFIA", orgArgument.getAllValues().get(0).getCity());
-        assertEquals("BG", orgArgument.getAllValues().get(0).getCountry().value());
+        assertEquals("BG", orgArgument.getAllValues().get(0).getCountry());
         assertEquals("BG-22", orgArgument.getAllValues().get(0).getRegion());
         assertEquals("213800ZH4VUOQOUVYX93", orgArgument.getAllValues().get(0).getOrgDisambiguated().getSourceId());        
     }

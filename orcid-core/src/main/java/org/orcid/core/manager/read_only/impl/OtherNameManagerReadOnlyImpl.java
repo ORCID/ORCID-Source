@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.List;
@@ -47,7 +31,7 @@ public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implem
     
     @Override
     public OtherNames getPublicOtherNames(String orcid) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC.name());
         return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
     }
   

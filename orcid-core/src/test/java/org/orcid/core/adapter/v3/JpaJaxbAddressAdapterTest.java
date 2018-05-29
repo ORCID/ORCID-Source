@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -32,9 +16,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.v3.JpaJaxbAddressAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -58,7 +42,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         assertNotNull(addressEntity);
         assertNotNull(addressEntity.getDateCreated());
         assertNotNull(addressEntity.getLastModified());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US, addressEntity.getIso2Country());  
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), addressEntity.getIso2Country());  
         assertNull(addressEntity.getSourceId());
         assertNull(addressEntity.getClientSourceId());
         assertNull(addressEntity.getElementSourceId());
@@ -81,7 +65,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     private Address getAddress() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Address.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_dev1/samples/read_samples/address-3.0_dev1.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/address-3.0_rc1.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Address) unmarshaller.unmarshal(inputStream);
     }
@@ -91,9 +75,9 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         result.setId(Long.valueOf(1));
         result.setDateCreated(new Date());
         result.setLastModified(new Date());
-        result.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.US);
+        result.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name());
         result.setUser(new ProfileEntity("0000-0000-0000-0000"));
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         result.setClientSourceId("APP-000000001");
         return result;
     }

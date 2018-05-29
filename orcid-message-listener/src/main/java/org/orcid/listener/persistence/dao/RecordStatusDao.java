@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.listener.persistence.dao;
 
 import java.math.BigInteger;
@@ -52,21 +36,15 @@ public class RecordStatusDao {
         entity.setId(orcid);
         Date now = new Date();
         switch (broker) {
-        case DUMP_STATUS_1_2_API:
-            entity.setDumpStatus12Api(status);
-            entity.setLastIndexedDump12Api(now);
-            break;
         case DUMP_STATUS_2_0_API:
             entity.setDumpStatus20Api(status);
             entity.setLastIndexedDump20Api(now);
             break;
-        case DUMP_STATUS_2_0_ACTIVITIES_API:
-            entity.setDumpStatus20ActivitiesApi(status);
-            entity.setLastIndexedDump20ActivitiesApi(now);
-            break;
         case SOLR:
             entity.setSolrStatus20Api(status);
             entity.setLastIndexedSolr20Api(now);
+            break;
+        default:
             break;
         }
         entity.setDateCreated(now);        
@@ -87,7 +65,7 @@ public class RecordStatusDao {
     }
     
     public List<RecordStatusEntity> getFailedElements(int batchSize) {
-        TypedQuery<RecordStatusEntity> query = entityManager.createQuery("FROM RecordStatusEntity WHERE dumpStatus12Api > 0 OR dumpStatus20Api > 0 OR dumpStatus20ActivitiesApi > 0 OR solrStatus20Api > 0 ORDER BY id", RecordStatusEntity.class);
+        TypedQuery<RecordStatusEntity> query = entityManager.createQuery("FROM RecordStatusEntity WHERE dumpStatus20Api > 0 OR solrStatus20Api > 0 ORDER BY id", RecordStatusEntity.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
     }        

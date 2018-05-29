@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.common.jaxb;
 
 import java.util.Map;
@@ -138,8 +122,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC4);
             case OrcidCoreExceptionMapper.V2_1:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_1);
-            case OrcidCoreExceptionMapper.V3_DEV1:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3_DEV1);
+            case OrcidCoreExceptionMapper.V3_RC1:
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3_RC1);
             }
         }
 
@@ -224,7 +208,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
         } else if (ExceedMaxNumberOfElementsException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity(
-                    "This version of the API does not support adding more than 10,000 works to a record. Please consider using the 2.0 API.", null);
+                    "The maximum number of works that can be connected to an ORCID record is 10,000 and you have now exceeded this limit. Please remove some works and try again. For more information, see https://support.orcid.org/knowledgebase/articles/462032-add-works-to-your-orcid-record", null);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else if(DeactivatedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account deactivated : ", t);
@@ -293,8 +277,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             statusCode = ((org.orcid.jaxb.model.error_rc4.OrcidError) orcidError).getResponseCode();
         } else if (org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
         	statusCode = ((org.orcid.jaxb.model.error_v2.OrcidError) orcidError).getResponseCode();
-        } else if (org.orcid.jaxb.model.v3.dev1.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.v3.dev1.error.OrcidError) orcidError).getResponseCode();
+        } else if (org.orcid.jaxb.model.v3.rc1.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+            statusCode = ((org.orcid.jaxb.model.v3.rc1.error.OrcidError) orcidError).getResponseCode();
         }
 
         if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {

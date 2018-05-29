@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?> 
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-permission-3.0_rc1.xsd" xmlns:common="http://www.orcid.org/ns/common" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <notification:notification-type>permission</notification:notification-type>
+    <notification:authorization-url>
+        <!-- API user can specify just the path if they want, and leave out the uri element. -->
+        <notification:uri>https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com</notification:uri>
+        <notification:path>/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com</notification:path>
+        <notification:host>orcid.org</notification:host>
+    </notification:authorization-url>
+    <notification:notification-subject>Subject</notification:notification-subject>
+    <notification:notification-intro>Intro</notification:notification-intro>
+    <notification:items>
+        <notification:item>
+            <notification:item-type>work</notification:item-type>
+            <notification:item-name>A Really Interesting Research Article</notification:item-name>
+            <common:external-id>
+                <common:external-id-type>doi</common:external-id-type>
+                <common:external-id-value>http://10.5555/12345ABCDE</common:external-id-value>
+                <common:external-id-relationship>self</common:external-id-relationship>
+            </common:external-id>
+        </notification:item>
+        <notification:item>
+            <notification:item-type>employment</notification:item-type>
+            <notification:item-name>Head of Research at NanoBiologica</notification:item-name>
+        </notification:item>
+    </notification:items>
+    <!--  Read only for API user -->
+    <common:created-date>2014-01-01T09:17:56</common:created-date>
+    <!--  Read only for API user -->
+    <common:sent-date>2014-01-01T14:45:32</common:sent-date>
+    <common:source>
+        <!--  Read only for API user - will only be able to see notifications for which they are the source -->
+        <common:source-client-id>
+            <common:uri>https://orcid.org/client/APP-U4UKCNSSIM1OCVQY</common:uri>
+            <common:path>APP-U4UKCNSSIM1OCVQY</common:path>
+            <common:host>orcid.org</common:host>
+        </common:source-client-id>
+        <common:source-name>Member 1</common:source-name>
+    </common:source>
+</notification:notification>

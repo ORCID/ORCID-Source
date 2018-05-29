@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 /**
@@ -57,14 +41,17 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -105,6 +92,9 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
+    
     @Mock
     private NotificationManager mockNotificationManager;
     
@@ -113,6 +103,9 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Mock
     private EmailManagerReadOnly mockEmailManagerReadOnly;
+    
+    @Mock
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -137,19 +130,10 @@ public class AdminControllerTest extends BaseControllerTest {
     @Override
     protected Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
-
-        OrcidProfileUserDetails details = null;
-        if (orcidProfile.getType() != null) {
-            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
-        } else {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
-        }
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4440", orcidProfile.getPassword(), getRole());
+        List<OrcidWebRole> roles = getRole();
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcidProfile.retrieveOrcidPath(),
+                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), null, roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcidProfile.retrieveOrcidPath(), orcidProfile.getPassword(), getRole());
         auth.setDetails(details);
         return auth;
     }
@@ -216,6 +200,11 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Test
     public void deactivateAndReactivateProfileTest() throws Exception {
+        ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
+        ProfileEntityManager profileEntityManager = (ProfileEntityManager) ReflectionTestUtils.getField(adminController, "profileEntityManager");
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
+        
         // Test deactivate
         Map<String, Set<String>> result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
         assertEquals(1, result.get("deactivateSuccessfulList").size());

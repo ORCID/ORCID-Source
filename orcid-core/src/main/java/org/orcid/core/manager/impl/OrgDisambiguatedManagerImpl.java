@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
@@ -111,7 +95,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         document.setOrgDisambiguatedCity(entity.getCity());
         document.setOrgDisambiguatedRegion(entity.getRegion());
         if (entity.getCountry() != null)
-            document.setOrgDisambiguatedCountry(entity.getCountry().value());
+            document.setOrgDisambiguatedCountry(entity.getCountry());
         document.setOrgDisambiguatedIdFromSource(entity.getSourceId());
         document.setOrgDisambiguatedIdSourceType(entity.getSourceType());
         document.setOrgDisambiguatedType(entity.getOrgType());
@@ -192,7 +176,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setValue(orgDisambiguatedEntity.getName());
         org.setCity(orgDisambiguatedEntity.getCity());
         org.setRegion(orgDisambiguatedEntity.getRegion());        
-        org.setCountry(orgDisambiguatedEntity.getCountry() != null ? orgDisambiguatedEntity.getCountry().value() : null);
+        org.setCountry(orgDisambiguatedEntity.getCountry() != null ? orgDisambiguatedEntity.getCountry() : null);
         org.setOrgType(orgDisambiguatedEntity.getOrgType());
         org.setSourceId(orgDisambiguatedEntity.getSourceId());
         org.setSourceType(orgDisambiguatedEntity.getSourceType()); 

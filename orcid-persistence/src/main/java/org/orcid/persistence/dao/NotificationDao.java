@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import java.util.Collection;
@@ -40,8 +24,12 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     int getUnreadCount(String orcid);
 
     List<Object[]> findRecordsWithUnsentNotifications();
+    
+    List<Object[]> findRecordsWithUnsentNotificationsLegacy();
 
-    List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate);
+    List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Date recordActiveDate);
+    
+    List<NotificationEntity> findNotificationsToSendLegacy(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate);
 
     NotificationEntity findByOricdAndId(String orcid, Long id);
 
@@ -50,7 +38,11 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     void flagAsRead(String orcid, Long id);
 
     void flagAsArchived(String orcid, Long id);
-
+    
+    void flagAsSendable(String orcid, Long id);
+    
+    void flagAsNonSendable(String orcid, Long id);
+    
     void deleteNotificationById(Long notificationId);
 
     void deleteNotificationItemByNotificationId(Long notificationId);
@@ -62,5 +54,11 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize);
     
     List<NotificationEntity> findNotificationsCreatedBefore(Date createdBefore, int batchSize);
+    
+    List<NotificationEntity> findUnsentServiceAnnouncements(int batchSize);
+    
+    List<NotificationEntity> findUnsentTips(int batchSize);
+    
+    void updateRetryCount(String orcid, Long id, Long retryCount);
 
 }

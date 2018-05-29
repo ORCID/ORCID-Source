@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.blackbox.api.v12;
 
 import static org.junit.Assert.assertEquals;
@@ -21,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import javax.annotation.Resource;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
@@ -37,6 +22,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
+@Ignore // 1.x public API disabled
 public class Api12PublicTest extends BlackBoxBaseV2Release {
     
     @Resource(name = "t1OAuthClient_1_2")

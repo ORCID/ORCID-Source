@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.common.swagger;
 
 import java.io.Serializable;
@@ -30,6 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record_v2.CitationType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JavaType;
 
 import io.swagger.converter.ModelConverter;
@@ -72,7 +57,7 @@ public class SwaggerModelConverter implements ModelConverter {
                     org.orcid.jaxb.model.common_rc3.Visibility.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.common_rc4.Visibility.class.isAssignableFrom(cls) || 
                     org.orcid.jaxb.model.common_v2.Visibility.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.v3.dev1.common.Visibility.class.isAssignableFrom(cls)) {
+                    org.orcid.jaxb.model.v3.rc1.common.Visibility.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Visibility.class, null);
             }
             if (    org.orcid.jaxb.model.record_rc1.Citation.class.isAssignableFrom(cls) ||
@@ -80,7 +65,7 @@ public class SwaggerModelConverter implements ModelConverter {
                     org.orcid.jaxb.model.record_rc3.Citation.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.record_rc4.Citation.class.isAssignableFrom(cls) || 
                     org.orcid.jaxb.model.record_v2.Citation.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.v3.dev1.record.Citation.class.isAssignableFrom(cls)) {
+                    org.orcid.jaxb.model.v3.rc1.record.Citation.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Citation.class, null);
             }
             if (_type.getRawClass() != null && _type.getRawClass().getCanonicalName().contains("model.v3")){
@@ -132,6 +117,11 @@ public class SwaggerModelConverter implements ModelConverter {
 
         public String value() {
             return value;
+        }
+        
+        @JsonValue
+        public String jsonValue() {
+            return this.name();
         }
 
     }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -32,8 +16,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.v3.JpaJaxbKeywordAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Keyword;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Keyword;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -59,7 +43,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         assertNotNull(entity.getLastModified());
         assertEquals(Long.valueOf(1), entity.getId());
         assertEquals("keyword1", entity.getKeywordName());        
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, entity.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), entity.getVisibility());
         
         // Source
         assertNull(entity.getSourceId());        
@@ -86,7 +70,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     private Keyword getKeyword() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Keyword.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_dev1/samples/read_samples/keyword-3.0_dev1.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/keyword-3.0_rc1.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Keyword) unmarshaller.unmarshal(inputStream); 
     }
@@ -99,7 +83,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         entity.setKeywordName("keyword-1");
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         entity.setClientSourceId("APP-000000000000");
-        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         return entity;
     }
 }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -27,18 +11,18 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.Items;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.dev1.notification.Notification;
-import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc1.notification.Notification;
+import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.Items;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
@@ -69,7 +53,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
         assertNotNull(notificationEntity);
-        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM, notificationEntity.getNotificationType());
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM.name(), notificationEntity.getNotificationType());
         assertEquals("Test subject", notification.getSubject());
     }
 
@@ -77,7 +61,7 @@ public class JpaJaxbNotificationAdapterTest {
     public void testCustomEntityToNotification() {
         NotificationCustomEntity notificationEntity = new NotificationCustomEntity();
         notificationEntity.setId(123L);
-        notificationEntity.setNotificationType(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM);
+        notificationEntity.setNotificationType(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM.name());
         notificationEntity.setSubject("Test subject");
         notificationEntity.setDateCreated(DateUtils.convertToDate("2014-01-01T09:17:56"));
         notificationEntity.setReadDate(DateUtils.convertToDate("2014-03-04T17:43:06"));
@@ -89,8 +73,8 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationCustom notificationCustom = (NotificationCustom) notification;
         assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Test subject", notificationCustom.getSubject());
-        assertEquals("2014-01-01T09:17:56.000Z", notification.getCreatedDate().toXMLFormat());
-        assertEquals("2014-03-04T17:43:06.000Z", notification.getReadDate().toXMLFormat());
+        assertTrue(notification.getCreatedDate().toXMLFormat().startsWith("2014-01-01T09:17:56.000"));
+        assertTrue(notification.getReadDate().toXMLFormat().startsWith("2014-03-04T17:43:06.000"));
     }
 
     @Test
@@ -125,7 +109,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAddItemsEntity addActivitiesEntity = (NotificationAddItemsEntity) notificationEntity;
         
         assertNotNull(notificationEntity);
-        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.PERMISSION, notificationEntity.getNotificationType());
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.PERMISSION.name(), notificationEntity.getNotificationType());
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
         assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
         assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());
@@ -138,7 +122,7 @@ public class JpaJaxbNotificationAdapterTest {
         assertNotNull(activityEntities);
         assertEquals(1, activityEntities.size());
         NotificationItemEntity activityEntity = activityEntities.iterator().next();
-        assertEquals(org.orcid.jaxb.model.notification.permission_v2.ItemType.WORK, activityEntity.getItemType());
+        assertEquals(org.orcid.jaxb.model.notification.permission_v2.ItemType.WORK.name(), activityEntity.getItemType());
         assertEquals("Latest Research Article", activityEntity.getItemName());
         assertEquals("DOI", activityEntity.getExternalIdType());
         assertEquals("1234/abc123", activityEntity.getExternalIdValue());        
@@ -170,7 +154,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAmendedEntity notificationAmendedEntity = (NotificationAmendedEntity) notificationEntity;
 
         assertNotNull(notificationEntity);
-        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED, notificationEntity.getNotificationType());   
+        assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED.name(), notificationEntity.getNotificationType());   
         
         // Source
         assertNull(notificationAmendedEntity.getSourceId());        

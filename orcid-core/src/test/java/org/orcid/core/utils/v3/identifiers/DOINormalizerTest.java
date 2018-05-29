@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils.v3.identifiers;
 
 import static org.junit.Assert.*;
@@ -30,6 +14,7 @@ public class DOINormalizerTest {
     DOINormalizer norm = new DOINormalizer();
     List<String> tests = Lists.newArrayList(
             "10.123/123",
+            "10.1175/1520-0469(2002)059&amp;lt;2951:ROSSRB&amp;gt;2.0.CO;2",
             "https://dx.doi.org/10.123/123",
             "http://doi.org/10.123/123",
             "S0022-2828(12)00261-1 [pii]\n10.1016/j.yjmcc.2012.07.013" ,
@@ -62,6 +47,7 @@ public class DOINormalizerTest {
     
     List<String> results = Lists.newArrayList(
             "10.123/123",
+            "10.1175/1520-0469(2002)059<2951:ROSSRB>2.0.CO;2",
             "10.123/123",
             "10.123/123",
             "10.1016/j.yjmcc.2012.07.013" ,

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.memberV3.server.delegator;
 
 import static org.junit.Assert.assertEquals;
@@ -45,33 +29,34 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Address;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Keyword;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Keyword;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
@@ -88,7 +73,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
     // Now on, for any new test, PLAESE USE THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
 
-    @Resource(name = "memberV3ApiServiceDelegatorV3_0_dev1")
+    @Resource(name = "memberV3ApiServiceDelegatorV3_0_rc1")
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
     @BeforeClass
@@ -137,7 +122,12 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Distinctions element = (Distinctions) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/distinctions", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        
+        for (AffiliationGroup<DistinctionSummary> group : element.getDistinctionGroups()) {
+            for (DistinctionSummary summary : group.getActivities()) {
+                Utils.assertIsPublicOrSource(summary, "APP-5555555555555555");
+            }
+        }
     }
 
     @Test
@@ -216,25 +206,28 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(distinctions);
         assertEquals("/0000-0000-0000-0003/distinctions", distinctions.getPath());
         Utils.verifyLastModified(distinctions.getLastModifiedDate());
-        assertNotNull(distinctions.getSummaries());
-        assertEquals(4, distinctions.getSummaries().size());
+        assertNotNull(distinctions.retrieveGroups());
+        assertEquals(4, distinctions.retrieveGroups().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
-        for (DistinctionSummary summary : distinctions.getSummaries()) {
-            Utils.verifyLastModified(summary.getLastModifiedDate());
-            if (Long.valueOf(27).equals(summary.getPutCode())) {
-                assertEquals("PUBLIC Department", summary.getDepartmentName());
-                found1 = true;
-            } else if (Long.valueOf(28).equals(summary.getPutCode())) {
-                assertEquals("LIMITED Department", summary.getDepartmentName());
-                found2 = true;
-            } else if (Long.valueOf(29).equals(summary.getPutCode())) {
-                assertEquals("PRIVATE Department", summary.getDepartmentName());
-                found3 = true;
-            } else if (Long.valueOf(30).equals(summary.getPutCode())) {
-                assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                found4 = true;
-            } else {
-                fail("Invalid distinction found: " + summary.getPutCode());
+        
+        for (AffiliationGroup<DistinctionSummary> group : distinctions.retrieveGroups()) {
+            for (DistinctionSummary summary : group.getActivities()) {
+                Utils.verifyLastModified(summary.getLastModifiedDate());
+                if (Long.valueOf(27).equals(summary.getPutCode())) {
+                    assertEquals("PUBLIC Department", summary.getDepartmentName());
+                    found1 = true;
+                } else if (Long.valueOf(28).equals(summary.getPutCode())) {
+                    assertEquals("LIMITED Department", summary.getDepartmentName());
+                    found2 = true;
+                } else if (Long.valueOf(29).equals(summary.getPutCode())) {
+                    assertEquals("PRIVATE Department", summary.getDepartmentName());
+                    found3 = true;
+                } else if (Long.valueOf(30).equals(summary.getPutCode())) {
+                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
+                    found4 = true;
+                } else {
+                    fail("Invalid distinction found: " + summary.getPutCode());
+                }
             }
         }
         assertTrue(found1);
@@ -309,10 +302,10 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Utils.verifyLastModified(originalSummary.getLastModifiedDate());
         assertNotNull(originalSummary.getDistinctions());
         Utils.verifyLastModified(originalSummary.getDistinctions().getLastModifiedDate());
-        assertNotNull(originalSummary.getDistinctions().getSummaries());
-        assertNotNull(originalSummary.getDistinctions().getSummaries().get(0));
-        Utils.verifyLastModified(originalSummary.getDistinctions().getSummaries().get(0).getLastModifiedDate());
-        assertEquals(4, originalSummary.getDistinctions().getSummaries().size());
+        assertNotNull(originalSummary.getDistinctions().retrieveGroups());
+        assertNotNull(originalSummary.getDistinctions().retrieveGroups().iterator().next());
+        Utils.verifyLastModified(originalSummary.getDistinctions().retrieveGroups().iterator().next().getLastModifiedDate());
+        assertEquals(4, originalSummary.getDistinctions().retrieveGroups().size());
 
         response = serviceDelegator.createDistinction(ORCID, (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION));
         assertNotNull(response);
@@ -330,19 +323,29 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getDistinctions());
         Utils.verifyLastModified(summaryWithNewElement.getDistinctions().getLastModifiedDate());
-        assertNotNull(summaryWithNewElement.getDistinctions().getSummaries());
-        assertEquals(5, summaryWithNewElement.getDistinctions().getSummaries().size());
+        assertNotNull(summaryWithNewElement.getDistinctions().retrieveGroups());
+        assertEquals(5, summaryWithNewElement.getDistinctions().retrieveGroups().size());
         
         boolean haveNew = false;
 
-        for (DistinctionSummary distinctionSummary : summaryWithNewElement.getDistinctions().getSummaries()) {
-            assertNotNull(distinctionSummary.getPutCode());
-            Utils.verifyLastModified(distinctionSummary.getLastModifiedDate());
-            if (distinctionSummary.getPutCode().equals(putCode)) {
-                assertEquals("My department name", distinctionSummary.getDepartmentName());
-                haveNew = true;
-            } else {
-                assertTrue(originalSummary.getDistinctions().getSummaries().contains(distinctionSummary));
+        for (AffiliationGroup<DistinctionSummary> group : summaryWithNewElement.getDistinctions().retrieveGroups()) {
+            for (DistinctionSummary distinctionSummary : group.getActivities()) {
+                assertNotNull(distinctionSummary.getPutCode());
+                Utils.verifyLastModified(distinctionSummary.getLastModifiedDate());
+                if (distinctionSummary.getPutCode().equals(putCode)) {
+                    assertEquals("My department name", distinctionSummary.getDepartmentName());
+                    haveNew = true;
+                } else {
+                    boolean originalContainsDistinctionSummary = false;
+                    for (AffiliationGroup<DistinctionSummary> originalGroup : originalSummary.getDistinctions().retrieveGroups()) {
+                        for (DistinctionSummary s : originalGroup.getActivities()) {
+                            if (s.equals(distinctionSummary)) {
+                                originalContainsDistinctionSummary = true;
+                            }
+                        }
+                    }
+                    assertTrue(originalContainsDistinctionSummary);
+                }
             }
         }
         

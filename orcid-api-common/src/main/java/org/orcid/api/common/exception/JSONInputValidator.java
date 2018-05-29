@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.common.exception;
 
 import java.net.URL;
@@ -39,30 +23,34 @@ public class JSONInputValidator {
     private static final Map<Class<?>, String> SCHEMA_LOCATIONS;
     private static final Map<Class<?>, Validator> VALIDATORS;
     private static final Map<Class<?>, JAXBContext> CONTEXTS;
+    
+    private static final Map<Class<?>, String> SCHEMA_LOCATIONS_2_1_API;
+    private static final Map<Class<?>, Validator> VALIDATORS_2_1_API;
+    private static final Map<Class<?>, JAXBContext> CONTEXTS_2_1_API;
     private static final Logger LOGGER = LoggerFactory.getLogger(JSONInputValidator.class);
     
     static {
         SCHEMA_LOCATIONS = new HashMap<>();
 
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Work.class, "/record_3.0_dev1/work-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Funding.class, "/record_3.0_dev1/funding-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Education.class, "/record_3.0_dev1/education-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Employment.class, "/record_3.0_dev1/employment-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.PeerReview.class, "/record_3.0_dev1/peer-review-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord.class, "/group-id-3.0_dev1/group-id-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission.class,
-                "/notification_3.0_dev1/notification-permission-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl.class, "/record_3.0_dev1/researcher-url-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.OtherName.class, "/record_3.0_dev1/other-name-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier.class, "/record_3.0_dev1/person-external-identifier-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Keyword.class, "/record_3.0_dev1/keyword-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Address.class, "/record_3.0_dev1/address-3.0_dev1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Work.class, "/record_3.0_rc1/work-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Funding.class, "/record_3.0_rc1/funding-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Education.class, "/record_3.0_rc1/education-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Employment.class, "/record_3.0_rc1/employment-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.PeerReview.class, "/record_3.0_rc1/peer-review-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord.class, "/group-id-3.0_rc1/group-id-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission.class,
+                "/notification_3.0_rc1/notification-permission-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl.class, "/record_3.0_rc1/researcher-url-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.OtherName.class, "/record_3.0_rc1/other-name-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier.class, "/record_3.0_rc1/person-external-identifier-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Keyword.class, "/record_3.0_rc1/keyword-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Address.class, "/record_3.0_rc1/address-3.0_rc1.xsd");
         
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Distinction.class, "/record_3.0_dev1/distinction-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.InvitedPosition.class, "/record_3.0_dev1/invited-position-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Membership.class, "/record_3.0_dev1/membership-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Qualification.class, "/record_3.0_dev1/qualification-3.0_dev1.xsd");
-        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.dev1.record.Service.class, "/record_3.0_dev1/service-3.0_dev1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Distinction.class, "/record_3.0_rc1/distinction-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.InvitedPosition.class, "/record_3.0_rc1/invited-position-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Membership.class, "/record_3.0_rc1/membership-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Qualification.class, "/record_3.0_rc1/qualification-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Service.class, "/record_3.0_rc1/service-3.0_rc1.xsd");
         
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Work.class, "/record_2.0/work-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Funding.class, "/record_2.0/funding-2.0.xsd");
@@ -139,9 +127,41 @@ public class JSONInputValidator {
             } catch (SAXException e) {
                 throw new ApplicationException(e);
             } 
+        }                
+
+        SCHEMA_LOCATIONS_2_1_API = new HashMap<>();
+        
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.Work.class, "/record_2.1/work-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.Funding.class, "/record_2.1/funding-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.Education.class, "/record_2.1/education-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.Employment.class, "/record_2.1/employment-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.PeerReview.class, "/record_2.1/peer-review-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.groupid_v2.GroupIdRecord.class, "/group-id-2.1/group-id-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.notification.permission_v2.NotificationPermission.class, "/notification_2.1/notification-permission-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.ResearcherUrl.class, "/record_2.1/researcher-url-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.OtherName.class, "/record_2.1/other-name-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.PersonExternalIdentifier.class, "/record_2.1/person-external-identifier-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.Keyword.class, "/record_2.1/keyword-2.1.xsd");
+        SCHEMA_LOCATIONS_2_1_API.put(org.orcid.jaxb.model.record_v2.Address.class, "/record_2.1/address-2.1.xsd");
+        
+        VALIDATORS_2_1_API = new HashMap<Class<?>, Validator>();
+        CONTEXTS_2_1_API = new HashMap<Class<?>, JAXBContext>();
+        
+        for(Class<?> c : SCHEMA_LOCATIONS_2_1_API.keySet()) {
+            try {
+                URL u = JSONInputValidator.class.getResource(SCHEMA_LOCATIONS_2_1_API.get(c));
+                Schema schema = sf.newSchema(u);
+                Validator validator = schema.newValidator();            
+                VALIDATORS_2_1_API.put(c, validator);
+                CONTEXTS_2_1_API.put(c, JAXBContext.newInstance(c));
+            } catch (JAXBException e) {
+                throw new ApplicationException(e);
+            } catch (SAXException e) {
+                throw new ApplicationException(e);
+            }
         }
     }
-
+    
     public void validateJSONInput(Object obj) {
         Class<?> clazz = obj.getClass();
         JAXBSource source = null;
@@ -154,6 +174,27 @@ public class JSONInputValidator {
         try {
             source = new JAXBSource(CONTEXTS.get(clazz), obj);
             VALIDATORS.get(clazz).validate(source);
+        } catch (SAXException e) {
+            Map<String, String> params = new HashMap<>();
+            params.put("error", e.getCause().getCause().getMessage());
+            throw new InvalidJSONException(params);
+        } catch (Exception e) {
+            throw new ApplicationException(e);
+        } 
+    }
+    
+    public void validate2_1APIJSONInput(Object obj) {
+        Class<?> clazz = obj.getClass();
+        JAXBSource source = null;
+
+        if (!SCHEMA_LOCATIONS_2_1_API.containsKey(clazz)){
+            LOGGER.error("Cannot validate "+clazz.getName());
+            return;
+        }
+        
+        try {
+            source = new JAXBSource(CONTEXTS_2_1_API.get(clazz), obj);
+            VALIDATORS_2_1_API.get(clazz).validate(source);
         } catch (SAXException e) {
             Map<String, String> params = new HashMap<>();
             params.put("error", e.getCause().getCause().getMessage());

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
@@ -52,10 +36,12 @@ import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationAdministrative;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -89,6 +75,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -124,8 +111,11 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
-    @Resource
+    @Resource(name = "messageSource")
     private MessageSource messages;
+    
+    @Resource(name = "messageSourceNoFallback")
+    private MessageSource messageSourceNoFallback;
 
     @Resource
     private MailGunManager mailGunManager;
@@ -238,8 +228,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         SourceEntity source = sourceManager.retrieveSourceEntity();
         if (source != null) {
-            String sourceId = source.getSourceId();
-            String sourceName = source.getSourceName();
+            String sourceId = SourceEntityUtils.getSourceId(source);
+            String sourceName = SourceEntityUtils.getSourceName(source);
             // If the source is not the user itself
             if (sourceId != null && !sourceId.equals(orcidId)) {
                 if (!PojoUtil.isEmpty(sourceName)) {
@@ -492,8 +482,8 @@ public class NotificationManagerImpl implements NotificationManager {
             LOGGER.debug("Not sending amend email, because option to send change notifications is disabled: {}", userOrcid);
             return;
         }
-        org.orcid.jaxb.model.common_v2.OrcidType amenderType = profileDao.retrieveOrcidType(amenderOrcid);
-        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.fromValue(amenderType.value()))) {
+        String amenderType = profileDao.retrieveOrcidType(amenderOrcid);
+        if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.valueOf(amenderType))) {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, userOrcid);
             return;
         }
@@ -570,8 +560,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
         if (notificationsEnabled) {
-            NotificationCustom notification = new NotificationCustom();
-            notification.setNotificationType(NotificationType.CUSTOM);
+            NotificationAdministrative notification = new NotificationAdministrative();
+            notification.setNotificationType(NotificationType.ADMINISTRATIVE);
             notification.setSubject(subject);
             notification.setBodyHtml(html);
             createNotification(userReceivingPermission, notification);
@@ -614,8 +604,8 @@ public class NotificationManagerImpl implements NotificationManager {
     @Transactional
     public void sendApiRecordCreationEmail(String toEmail, String orcid) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
-        String sourceId = record.getSource() == null ? null : record.getSource().getSourceId();
-        String creatorName = record.getSource() == null ? null : record.getSource().getSourceName();
+        String sourceId = record.getSource() == null ? null : SourceEntityUtils.getSourceId(record.getSource());
+        String creatorName = record.getSource() == null ? null : SourceEntityUtils.getSourceName(record.getSource());
         Locale userLocale = getUserLocaleFromProfileEntity(record);
         CustomEmailEntity customEmail = null;
         if (!PojoUtil.isEmpty(sourceId)) {
@@ -717,10 +707,10 @@ public class NotificationManagerImpl implements NotificationManager {
         SourceEntity source = record.getSource();
         String creatorName = "";
         if (source != null) {
-            if (!PojoUtil.isEmpty(source.getSourceName())) {
-                creatorName = source.getSourceName();
+            if (!PojoUtil.isEmpty(SourceEntityUtils.getSourceName(source))) {
+                creatorName = SourceEntityUtils.getSourceName(source);
             } else {
-                creatorName = source.getSourceId();
+                creatorName = SourceEntityUtils.getSourceId(source);
             }
         }
         templateParams.put("creatorName", creatorName);
@@ -737,9 +727,26 @@ public class NotificationManagerImpl implements NotificationManager {
         addMessageParams(templateParams, locale);
 
         // Generate body from template
-        String body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("claim_reminder_email_html.ftl", templateParams);
-
+        String body;
+        String htmlBody;
+        //https://trello.com/c/q2MpR3Ka/4727-update-claim-reminder-email-to-no-longer-text-saying-it-will-be-public-in-2-days
+        //TODO: cleanup after translations are done
+        boolean useV2Template = false;
+        try {
+            messageSourceNoFallback.getMessage("email.new_claim_reminder.this_is_a_reminder.1", null, locale);
+            useV2Template = true;
+        } catch(NoSuchMessageException e) {
+            
+        }
+        
+        if(useV2Template) {
+            body = templateManager.processTemplate("new_claim_reminder_email.ftl", templateParams);
+            htmlBody = templateManager.processTemplate("new_claim_reminder_email_html.ftl", templateParams);
+        } else {
+            body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
+            htmlBody = templateManager.processTemplate("claim_reminder_email_html.ftl", templateParams);
+        }
+        
         // Send message
         if (apiRecordCreationEmailEnabled) {
             mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.claim_reminder", locale), body, htmlBody);
@@ -823,7 +830,8 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = LocaleUtils.toLocale("en");
 
         if (managedEntity.getLocale() != null) {
-            userLocale = LocaleUtils.toLocale(managedEntity.getLocale().value());
+            org.orcid.jaxb.model.common_v2.Locale locale = org.orcid.jaxb.model.common_v2.Locale.valueOf(managedEntity.getLocale());
+            userLocale = LocaleUtils.toLocale(locale.value());
         }
 
         addMessageParams(templateParams, userLocale);
@@ -835,8 +843,8 @@ public class NotificationManagerImpl implements NotificationManager {
             String subject = messages.getMessage("email.subject.admin_as_delegate", new Object[] { trustedOrcidName }, userLocale);
             boolean notificationsEnabled = trustedEntity != null ? trustedEntity.getEnableNotifications() : false;
             if (notificationsEnabled) {
-                NotificationCustom notification = new NotificationCustom();
-                notification.setNotificationType(NotificationType.CUSTOM);
+                NotificationAdministrative notification = new NotificationAdministrative();
+                notification.setNotificationType(NotificationType.ADMINISTRATIVE);
                 notification.setSubject(subject);
                 notification.setBodyHtml(htmlBody);
                 createNotification(managedOrcid, notification);
@@ -995,8 +1003,8 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale().value() == null) ? Locale.ENGLISH
-                : LocaleUtils.toLocale(profileEntity.getLocale().value());
+        Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale() == null) ? Locale.ENGLISH
+                : LocaleUtils.toLocale(profileEntity.getLocale().toLowerCase());
         String subject = getSubject("email.subject.institutional_sign_in", userLocale);
         String authorizationUrl = buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
 
@@ -1079,9 +1087,9 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendAutoDeprecateNotification(String primaryOrcid, String deprecatedOrcid) {
         ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve(primaryOrcid);
         ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(deprecatedProfileEntity.getSource().getSourceId());
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(SourceEntityUtils.getSourceId(deprecatedProfileEntity.getSource()));
         Locale userLocale = LocaleUtils
-                .toLocale(primaryProfileEntity.getLocale() == null ? org.orcid.jaxb.model.message.Locale.EN.value() : primaryProfileEntity.getLocale().value());
+                .toLocale(primaryProfileEntity.getLocale() == null ? org.orcid.jaxb.model.common_v2.Locale.EN.value() : org.orcid.jaxb.model.common_v2.Locale.valueOf(primaryProfileEntity.getLocale()).value());
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -1103,8 +1111,8 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("auto_deprecated_account_html.ftl", templateParams);
 
-        NotificationCustom notification = new NotificationCustom();
-        notification.setNotificationType(NotificationType.CUSTOM);
+        NotificationAdministrative notification = new NotificationAdministrative();
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
         notification.setSubject(subject);
         notification.setBodyHtml(html);
         createNotification(primaryOrcid, notification);
@@ -1125,9 +1133,10 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        String locale = profile.getLocale();
         if (locale != null) {
-            return LocaleUtils.toLocale(locale.value());
+            org.orcid.jaxb.model.common_v2.Locale loc = org.orcid.jaxb.model.common_v2.Locale.valueOf(locale);
+            return LocaleUtils.toLocale(loc.value());
         }
 
         return LocaleUtils.toLocale("en");
@@ -1135,7 +1144,13 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
-        return notificationAdapter.toNotification(notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, emailFrequencyDays, recordActiveDate));
+        List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
+        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
+            notifications = notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, recordActiveDate);
+        } else {
+            notifications = notificationDaoReadOnly.findNotificationsToSendLegacy(new Date(), orcid, emailFrequencyDays, recordActiveDate);
+        }   
+        return notificationAdapter.toNotification(notifications);
     }
 
     @Override

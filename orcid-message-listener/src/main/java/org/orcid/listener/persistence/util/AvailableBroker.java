@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.listener.persistence.util;
 
 public enum AvailableBroker {
@@ -25,9 +9,7 @@ public enum AvailableBroker {
      * the column name to track the last indexed date in the record_status table
      */
     // @formatter:off
-    DUMP_STATUS_1_2_API("api_1_2_dump_status", "api_1_2_dump_last_indexed"), 
-    DUMP_STATUS_2_0_API("api_2_0_dump_status", "api_2_0_dump_last_indexed"), 
-    DUMP_STATUS_2_0_ACTIVITIES_API("api_2_0_activities_dump_status", "api_2_0_activities_dump_last_indexed"), 
+    DUMP_STATUS_2_0_API("api_2_0_dump_status", "api_2_0_dump_last_indexed"),     
     SOLR("api_2_0_solr_status", "api_2_0_solr_last_indexed"),
     MONGO("mongo_status","mongo_last_indexed");
     // @formatter:on

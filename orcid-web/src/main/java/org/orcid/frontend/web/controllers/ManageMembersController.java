@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.io.Serializable;
@@ -188,7 +172,7 @@ public class ManageMembersController extends BaseController {
         if(PojoUtil.isEmpty(clientId)) {
             result.getErrors().add(getMessage("manage_member.not_blank"));
         } else {
-            org.orcid.jaxb.model.v3.dev1.client.Client modelClient = clientManagerReadOnly.get(clientId);
+            org.orcid.jaxb.model.v3.rc1.client.Client modelClient = clientManagerReadOnly.get(clientId);
             result = Client.fromModelObject(modelClient);
         }
                 
@@ -218,7 +202,7 @@ public class ManageMembersController extends BaseController {
         }
 
         if (client.getErrors().isEmpty()) {           
-            org.orcid.jaxb.model.v3.dev1.client.Client modelObject = clientManager.edit(client.toModelObject(), true);
+            org.orcid.jaxb.model.v3.rc1.client.Client modelObject = clientManager.edit(client.toModelObject(), true);
             client = Client.fromModelObject(modelObject);
             membersManager.clearCache();
         }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.oauth.openid;
 
 import java.util.Date;
@@ -26,9 +10,11 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
@@ -48,6 +34,9 @@ import com.nimbusds.openid.connect.sdk.claims.AccessTokenHash;
  *
  */
 public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
+
+    @Value("${org.orcid.core.baseUri}")
+    private String path;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -82,9 +71,13 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             String orcid = authentication.getName();
             Builder claims = new JWTClaimsSet.Builder();
             claims.audience(params.get(OrcidOauth2Constants.CLIENT_ID_PARAM));
-            claims.issuer("https://orcid.org");
-            claims.subject("https://orcid.org"+"/"+orcid);
-            claims.claim("id_path", orcid);
+            if (Features.OPENID_SIMPLE_SUBJECT.isActive()){
+                claims.subject(orcid);   
+            }else{
+                claims.subject("https://orcid.org"+"/"+orcid);
+                claims.claim("id_path", orcid);
+            }
+            claims.issuer(path);
             claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
             Date now = new Date();
             claims.expirationTime(new Date(now.getTime() + 600000));

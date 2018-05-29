@@ -1,44 +1,25 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="notifications-ng2-template">
     <div class="col-md-9 col-sm-12 col-xs-12">        
         <div class="notification-top-bar">
             <ul class="inline-list pull-right">
-                <li *ngIf="notificationsSrvc.bulkArchiveMap.length > 0 && notificationsSrvc.selectionActive" >
+                <li *ngIf="notificationsSrvc?.bulkArchiveMap?.length > 0 && notificationsSrvc?.selectionActive" >
                     <button class="btn btn-primary" (click)="notificationsSrvc.bulkArchive()" ><i class="glyphicon glyphicon-download-alt"></i> ${springMacroRequestContext.getMessage("notifications.archive_selected")}</button>                   
                 </li>
                 <li>&nbsp;</li>
                 <li>
                     <button class="btn btn-primary" (click)="notificationsSrvc.toggleArchived()">
                         <span *ngIf="!notificationsSrvc.showArchived" >${springMacroRequestContext.getMessage("notifications.show_archived")}</span>
-                        <span *ngIf="notificationsSrvc.showArchived" >${springMacroRequestContext.getMessage("notifications.hide_archived")}
+                        <span *ngIf="notificationsSrvc.showArchived" >${springMacroRequestContext.getMessage("notifications.hide_archived")}</span>
                     </button>                   
                 </li>
             </ul>
             
         </div>
-        <div *ngIf="notificationsSrvc.loading == true" class="text-center" id="notificationsSpinner">
+        <div *ngIf="notificationsSrvc?.loading == true" class="text-center" id="notificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
         </div>
-        <div  *ngIf="notificationsSrvc.loading == false && notifications.length == 0  &&!areMore()">${springMacroRequestContext.getMessage("notifications.none")}</div>
-        <div  *ngIf="notificationsSrvc.loading == false && notifications.length &gt; 0">            
+        <div  *ngIf="notificationsSrvc?.loading == false && notifications?.length == 0  &&!areMore()">${springMacroRequestContext.getMessage("notifications.none")}</div>
+        <div  *ngIf="notificationsSrvc?.loading == false && notifications?.length &gt; 0">            
             <table class="table table-responsive table-condensed notifications">
                 <thead>                 
                     <tr>                        
@@ -76,13 +57,13 @@
 
             </table>
         </div>
-        <div  *ngIf="!(notificationsSrvc.loading == false && notifications.length > 0)">
+        <div  *ngIf="!(notificationsSrvc?.loading == false && notifications?.length > 0)">
             <br/><br/>
         </div>   
         <div >
-            <button *ngIf="areMore() && notificationsSrvc.loadingMore == false" (click)="showMore()" class="btn" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
+            <button *ngIf="areMore() && notificationsSrvc?.loadingMore == false" (click)="showMore()" class="btn" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
         </div>
-        <div  *ngIf="notificationsSrvc.loadingMore == true" id="moreNotificationsSpinner">
+        <div  *ngIf="notificationsSrvc?.loadingMore == true" id="moreNotificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
         </div>
     </div>

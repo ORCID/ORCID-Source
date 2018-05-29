@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.memberV3.server.delegator;
 
 import static org.junit.Assert.assertEquals;
@@ -38,49 +22,50 @@ import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Locale;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Address;
-import org.orcid.jaxb.model.v3.dev1.record.Addresses;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingType;
-import org.orcid.jaxb.model.v3.dev1.record.History;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Keyword;
-import org.orcid.jaxb.model.v3.dev1.record.Keywords;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.Person;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Record;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Locale;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.FundingType;
+import org.orcid.jaxb.model.v3.rc1.record.History;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Keyword;
+import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
@@ -97,7 +82,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
     // Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
 
-    @Resource(name = "memberV3ApiServiceDelegatorV3_0_dev1")
+    @Resource(name = "memberV3ApiServiceDelegatorV3_0_rc1")
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
     @BeforeClass
@@ -431,77 +416,83 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
 
         assertNotNull(activities.getEducations());
         Utils.verifyLastModified(activities.getEducations().getLastModifiedDate());
-        assertEquals(4, activities.getEducations().getSummaries().size());
-        for (EducationSummary education : activities.getEducations().getSummaries()) {
-            Utils.verifyLastModified(education.getLastModifiedDate());
-            assertNotNull(education.getStartDate());
-            assertEquals("2016", education.getStartDate().getYear().getValue());
-            assertEquals("04", education.getStartDate().getMonth().getValue());
-            assertEquals("01", education.getStartDate().getDay().getValue());
-            assertNotNull(education.getEndDate());
-            assertEquals("2030", education.getEndDate().getYear().getValue());
-            assertEquals("01", education.getEndDate().getMonth().getValue());
-            assertEquals("01", education.getEndDate().getDay().getValue());
-            if (education.getPutCode().equals(Long.valueOf(20))) {
-                assertEquals("PUBLIC Department", education.getDepartmentName());
-                assertEquals("/0000-0000-0000-0003/education/20", education.getPath());
-                assertEquals("PUBLIC", education.getRoleTitle());
-                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
-            } else if (education.getPutCode().equals(Long.valueOf(21))) {
-                assertEquals("LIMITED Department", education.getDepartmentName());
-                assertEquals("/0000-0000-0000-0003/education/21", education.getPath());
-                assertEquals("LIMITED", education.getRoleTitle());
-                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
-            } else if (education.getPutCode().equals(Long.valueOf(22))) {
-                assertEquals("PRIVATE Department", education.getDepartmentName());
-                assertEquals("/0000-0000-0000-0003/education/22", education.getPath());
-                assertEquals("PRIVATE", education.getRoleTitle());
-                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PRIVATE.value(), education.getVisibility().value());
-            } else if (education.getPutCode().equals(Long.valueOf(25))) {
-                assertEquals("SELF LIMITED Department", education.getDepartmentName());
-                assertEquals("/0000-0000-0000-0003/education/25", education.getPath());
-                assertEquals("SELF LIMITED", education.getRoleTitle());
-                assertEquals("0000-0000-0000-0003", education.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
-            } else {
-                fail("Invalid education found: " + education.getPutCode());
+        assertEquals(4, activities.getEducations().retrieveGroups().size());
+        
+        for (AffiliationGroup<EducationSummary> group : activities.getEducations().retrieveGroups()) {
+            for (EducationSummary education : group.getActivities()) {
+                Utils.verifyLastModified(education.getLastModifiedDate());
+                assertNotNull(education.getStartDate());
+                assertEquals("2016", education.getStartDate().getYear().getValue());
+                assertEquals("04", education.getStartDate().getMonth().getValue());
+                assertEquals("01", education.getStartDate().getDay().getValue());
+                assertNotNull(education.getEndDate());
+                assertEquals("2030", education.getEndDate().getYear().getValue());
+                assertEquals("01", education.getEndDate().getMonth().getValue());
+                assertEquals("01", education.getEndDate().getDay().getValue());
+                if (education.getPutCode().equals(Long.valueOf(20))) {
+                    assertEquals("PUBLIC Department", education.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/education/20", education.getPath());
+                    assertEquals("PUBLIC", education.getRoleTitle());
+                    assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
+                } else if (education.getPutCode().equals(Long.valueOf(21))) {
+                    assertEquals("LIMITED Department", education.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/education/21", education.getPath());
+                    assertEquals("LIMITED", education.getRoleTitle());
+                    assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
+                } else if (education.getPutCode().equals(Long.valueOf(22))) {
+                    assertEquals("PRIVATE Department", education.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/education/22", education.getPath());
+                    assertEquals("PRIVATE", education.getRoleTitle());
+                    assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PRIVATE.value(), education.getVisibility().value());
+                } else if (education.getPutCode().equals(Long.valueOf(25))) {
+                    assertEquals("SELF LIMITED Department", education.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/education/25", education.getPath());
+                    assertEquals("SELF LIMITED", education.getRoleTitle());
+                    assertEquals("0000-0000-0000-0003", education.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
+                } else {
+                    fail("Invalid education found: " + education.getPutCode());
+                }
             }
         }
 
         assertNotNull(activities.getEmployments());
         Utils.verifyLastModified(activities.getEmployments().getLastModifiedDate());
-        assertEquals(4, activities.getEmployments().getSummaries().size());
-        for (EmploymentSummary employment : activities.getEmployments().getSummaries()) {
-            Utils.verifyLastModified(employment.getLastModifiedDate());
-            if (employment.getPutCode().equals(Long.valueOf(17))) {
-                assertEquals("PUBLIC Department", employment.getDepartmentName());
-                assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
-                assertEquals("PUBLIC", employment.getRoleTitle());
-                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());
-            } else if (employment.getPutCode().equals(Long.valueOf(18))) {
-                assertEquals("LIMITED Department", employment.getDepartmentName());
-                assertEquals("/0000-0000-0000-0003/employment/18", employment.getPath());
-                assertEquals("LIMITED", employment.getRoleTitle());
-                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
-            } else if (employment.getPutCode().equals(Long.valueOf(19))) {
-                assertEquals("PRIVATE Department", employment.getDepartmentName());
-                assertEquals("/0000-0000-0000-0003/employment/19", employment.getPath());
-                assertEquals("PRIVATE", employment.getRoleTitle());
-                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
-            } else if (employment.getPutCode().equals(Long.valueOf(23))) {
-                assertEquals("SELF LIMITED Department", employment.getDepartmentName());
-                assertEquals("/0000-0000-0000-0003/employment/23", employment.getPath());
-                assertEquals("SELF LIMITED", employment.getRoleTitle());
-                assertEquals("0000-0000-0000-0003", employment.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
-            } else {
-                fail("Invalid employment found: " + employment.getPutCode());
+        assertEquals(4, activities.getEmployments().retrieveGroups().size());
+        
+        for (AffiliationGroup<EmploymentSummary> group : activities.getEmployments().retrieveGroups()) {
+            for (EmploymentSummary employment : group.getActivities()) {
+                Utils.verifyLastModified(employment.getLastModifiedDate());
+                if (employment.getPutCode().equals(Long.valueOf(17))) {
+                    assertEquals("PUBLIC Department", employment.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
+                    assertEquals("PUBLIC", employment.getRoleTitle());
+                    assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());
+                } else if (employment.getPutCode().equals(Long.valueOf(18))) {
+                    assertEquals("LIMITED Department", employment.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/employment/18", employment.getPath());
+                    assertEquals("LIMITED", employment.getRoleTitle());
+                    assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
+                } else if (employment.getPutCode().equals(Long.valueOf(19))) {
+                    assertEquals("PRIVATE Department", employment.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/employment/19", employment.getPath());
+                    assertEquals("PRIVATE", employment.getRoleTitle());
+                    assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
+                } else if (employment.getPutCode().equals(Long.valueOf(23))) {
+                    assertEquals("SELF LIMITED Department", employment.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/employment/23", employment.getPath());
+                    assertEquals("SELF LIMITED", employment.getRoleTitle());
+                    assertEquals("0000-0000-0000-0003", employment.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
+                } else {
+                    fail("Invalid employment found: " + employment.getPutCode());
+                }
             }
         }
 
@@ -697,17 +688,19 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/activities", as.getPath());
         Utils.verifyLastModified(as.getLastModifiedDate());
         assertNotNull(as.getEducations());
-        assertEquals(3, as.getEducations().getSummaries().size());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
 
-        for (EducationSummary element : as.getEducations().getSummaries()) {
-            if (element.getPutCode().equals(Long.valueOf(20))) {
-                found1 = true;
-            } else if (element.getPutCode().equals(Long.valueOf(21))) {
-                found2 = true;
-            } else if (element.getPutCode().equals(Long.valueOf(22))) {
-                found3 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
+        for (AffiliationGroup<EducationSummary> group : as.getEducations().retrieveGroups()) {
+            for (EducationSummary element : group.getActivities()) {
+                if (element.getPutCode().equals(Long.valueOf(20))) {
+                    found1 = true;
+                } else if (element.getPutCode().equals(Long.valueOf(21))) {
+                    found2 = true;
+                } else if (element.getPutCode().equals(Long.valueOf(22))) {
+                    found3 = true;
+                } else {
+                    fail("Invalid put code " + element.getPutCode());
+                }
             }
         }
 
@@ -717,17 +710,19 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         found1 = found2 = found3 = false;
 
         assertNotNull(as.getEmployments());
-        assertEquals(3, as.getEmployments().getSummaries().size());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
 
-        for (EmploymentSummary element : as.getEmployments().getSummaries()) {
-            if (element.getPutCode().equals(Long.valueOf(17))) {
-                found1 = true;
-            } else if (element.getPutCode().equals(Long.valueOf(18))) {
-                found2 = true;
-            } else if (element.getPutCode().equals(Long.valueOf(19))) {
-                found3 = true;
-            } else {
-                fail("Invalid put code " + element.getPutCode());
+        for (AffiliationGroup<EmploymentSummary> group : as.getEmployments().retrieveGroups()) {
+            for (EmploymentSummary element : group.getActivities()) {
+                if (element.getPutCode().equals(Long.valueOf(17))) {
+                    found1 = true;
+                } else if (element.getPutCode().equals(Long.valueOf(18))) {
+                    found2 = true;
+                } else if (element.getPutCode().equals(Long.valueOf(19))) {
+                    found3 = true;
+                } else {
+                    fail("Invalid put code " + element.getPutCode());
+                }
             }
         }
 

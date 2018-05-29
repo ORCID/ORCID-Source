@@ -1,22 +1,8 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@public classes=['home'] nav="register">
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+        <request-password-reset-ng2></request-password-reset-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
     <div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getResetPasswordForm()" class="row">
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
             <h2>${springMacroRequestContext.getMessage("reset_password.h2ForgottenPassword")}</h2>
@@ -52,4 +38,5 @@
         	</form>
         </div>       
     </div>
+    </@orcid.checkFeatureStatus>
 </@public>

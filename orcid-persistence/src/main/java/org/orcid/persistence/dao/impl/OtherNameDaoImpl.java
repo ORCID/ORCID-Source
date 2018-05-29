@@ -1,26 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
 import javax.persistence.Query;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> implements OtherNameDao {
+
+    private static final String PUBLIC_VISIBILITY = "PUBLIC";
 
     public OtherNameDaoImpl() {
         super(OtherNameEntity.class);
@@ -51,12 +36,12 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Override
     @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public List<OtherNameEntity> getPublicOtherNames(String orcid, long lastModified) {
-        return getOtherNames(orcid, Visibility.PUBLIC);
+        return getOtherNames(orcid, PUBLIC_VISIBILITY);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<OtherNameEntity> getOtherNames(String orcid, org.orcid.jaxb.model.common_v2.Visibility visibility) {
+    public List<OtherNameEntity> getOtherNames(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);

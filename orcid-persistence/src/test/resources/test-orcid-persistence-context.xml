@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:context="http://www.springframework.org/schema/context"
@@ -45,41 +27,4 @@
 	<alias name="solrServer" alias="solrServerReadOnly"/>
 	<alias name="solrServer" alias="solrServerForStreaming"/>
 	<alias name="orgDisambiguatedSolrServer" alias="orgDisambiguatedSolrServerReadOnly"/>
-
-	<!-- JMS Messaging -->
-	<!-- enable the configuration of jms on annotations -->
-	<jms:annotation-driven/>
-	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<!-- lets use an embedded broker for now (easier to test!) -->
-    	<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
-	</bean>
-	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-    	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-	</bean>
-	
-	<!-- so we can listen to queues -->
-	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
-	    <property name="connectionFactory" ref="jmsConnectionFactory" />
-	    <property name="concurrency" value="1-10"/>
-	</bean>
-	
-	<!-- Default Destination Queue Definition -->
-	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
-	  <!-- name of the queue -->
-	  <constructor-arg index="0" value="test" />
-	</bean>
-	 
-	<!-- JmsTemplate Definition so we can send to queues -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-	  <property name="connectionFactory" ref="jmsConnectionFactory" />
-	  <property name="defaultDestination" ref="defaultJmsDestination" />
-	</bean>
-	
-	<bean id="jmsMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">
-		<property name="enabled" value="true"/>
-	</bean>
-	
-	<bean id="echo2" class="org.orcid.persistence.messaging.EchoTestMessageListener2"/>
-	<bean id="echo3" class="org.orcid.persistence.messaging.EchoTestMessageListener3"/>
-
 </beans>

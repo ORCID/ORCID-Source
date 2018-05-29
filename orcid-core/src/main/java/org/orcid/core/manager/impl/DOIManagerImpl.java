@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.net.MalformedURLException;
@@ -21,14 +5,13 @@ import java.net.URL;
 
 import javax.annotation.Resource;
 
+import org.ehcache.Cache;
 import org.orcid.core.manager.DOIManager;
-
-import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 public class DOIManagerImpl implements DOIManager{
     
     @Resource(name = "doiBibtexCache")
-    private SelfPopulatingCache doiBibtexCache;
+    private Cache<URL, String> doiBibtexCache;
         
     @Override
     public String fetchDOIBibtex(String doi) {
@@ -40,7 +23,7 @@ public class DOIManagerImpl implements DOIManager{
                 doiURL = new URL("http://"+doi);
             else
                 doiURL = new URL("http://doi.org/"+doi);
-            return (String) doiBibtexCache.get(doiURL).getObjectValue();
+            return doiBibtexCache.get(doiURL);
         } catch (MalformedURLException e) {
             return null;
         }

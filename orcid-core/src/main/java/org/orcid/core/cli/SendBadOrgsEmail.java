@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli;
 
 import java.io.BufferedReader;
@@ -190,13 +174,13 @@ public class SendBadOrgsEmail {
     }
 
     private String createOrgDescription(OrgEntity org, Locale locale) {
-        String orgCountry = localeManager.resolveMessage(CountryIsoEntity.class.getName() + "." + org.getCountry().name(), locale);
+        String orgCountry = localeManager.resolveMessage(CountryIsoEntity.class.getName() + "." + org.getCountry(), locale);
         return Arrays.asList(new String[] { org.getName(), org.getCity(), org.getRegion(), orgCountry }).stream().filter(e -> e != null)
                 .collect(Collectors.joining(", "));
     }
 
     private Locale calculateLocale(ProfileEntity profile) {
-        Locale locale = (profile.getLocale() == null) ? null : Locale.fromValue(profile.getLocale().value());
+        Locale locale = (profile.getLocale() == null) ? null : Locale.valueOf(profile.getLocale());
         if (locale == null) {
             locale = Locale.EN;
         }

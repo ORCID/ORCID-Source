@@ -6,7 +6,7 @@ declare var sortState: any;
 declare var typeahead: any;
 
 //Import all the angular components
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -52,11 +52,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     private subscription: Subscription;
     private viewSubscription: Subscription;
 
-    /*
-    emailSrvc: any;
-    workspaceSrvc: any;
-    */
     addingAffiliation: boolean;
+    daysMonth: any;
     deleAff: any;
     disambiguatedAffiliation: any;
     displayAffiliationExtIdPopOver: any;
@@ -85,18 +82,15 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     constructor(
         private affiliationService: AffiliationService,
+        private commonSrvc: CommonService,
         private emailService: EmailService,
-        //private groupedActivitiesUtilService: GroupedActivitiesUtilService,
+        private featuresService: FeaturesService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
-        private featuresService: FeaturesService,
-        private commonSrvc: CommonService,
     ) {
-        /*
-        this.emailSrvc = emailSrvc;
-        this.workspaceSrvc = workspaceSrvc;
-        */
+ 
         this.addingAffiliation = false;
+        this.daysMonth = [];
         this.deleAff = null;
         this.disambiguatedAffiliation = null;
         this.displayAffiliationExtIdPopOver = {};
@@ -234,7 +228,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
             "typeahead:selected", 
             (
                 function(obj, datum) {
-                    console.log('typeahead', obj, datum, this);
+                    //console.log('typeahead', obj, datum, this);
                     this.selectAffiliation(datum);
                 }
             ).bind(this)
@@ -250,8 +244,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
     
     removeFromArray(affArray, putCode): void {
-        console.log("putCode: " + putCode);
-        console.log(affArray);
+        //console.log("putCode: " + putCode);
+        //console.log(affArray);
         for(let idx in affArray) {
             if(affArray[idx].putCode.value == putCode) {
                 affArray.splice(idx, 1);
@@ -353,6 +347,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {
             delete this.editAffiliation.orgDisambiguatedId;
         }
+
+        this.disambiguatedAffiliation = null;
     };
 
     selectAffiliation(datum): void {        
@@ -383,6 +379,23 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     serverValidate(relativePath): void {
+        //console.log('server validate', relativePath, this.editAffiliation);
+        if( relativePath == 'affiliations/affiliation/datesValidate.json' ){
+            if( this.editAffiliation.startDate.month == "" 
+                || this.editAffiliation.startDate.day == ""
+                || this.editAffiliation.startDate.year == ""
+                || this.editAffiliation.endDate.month == "" 
+                || this.editAffiliation.endDate.day == ""
+                || this.editAffiliation.endDate.year == ""
+                || this.editAffiliation.startDate.month == null 
+                || this.editAffiliation.startDate.day == null
+                || this.editAffiliation.startDate.year == null
+                || this.editAffiliation.endDate.month == null 
+                || this.editAffiliation.endDate.day == null
+                || this.editAffiliation.endDate.year == null  ){
+                return;
+            }
+        }
         this.affiliationService.serverValidate(this.editAffiliation, relativePath)
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -401,6 +414,13 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         $event.preventDefault();
         this.editAffiliation.visibility.visibility = priv;
     };
+
+    checkAvailableDays(day, month, year): boolean {
+        if( day > new Date(year, month, 0).getDate() ){
+            return true
+        }
+        return false;
+    }
 
     setPrivacy(aff, priv, $event): void {
         $event.preventDefault();
@@ -499,6 +519,9 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                 this.addAffType = res.type;
                 if( res.affiliation != undefined ) {
                     this.editAffiliation = res.affiliation;
+                    if(this.editAffiliation.orgDisambiguatedId != null){
+                        this.getDisambiguatedAffiliation(this.editAffiliation.orgDisambiguatedId.value);
+                    }
                 } else {
                     this.editAffiliation = this.getEmptyAffiliation();
                     this.editAffiliation.affiliationType.value = this.addAffType;
@@ -509,7 +532,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
                 (res) => {
                     console.log(JSON.stringify(res));
-                    if(res.moduleId = "modalAffiliationForm") {
+                    if(res.moduleId == "modalAffiliationForm") {
                         if(res.action == "open" && res.edit == false) {
                             this.editAffiliation = this.getEmptyAffiliation();
                             this.editAffiliation.affiliationType.value = this.addAffType;
@@ -525,9 +548,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     ngOnInit() {
-        if( this.affiliationService.affiliation ){
-        } else {
+        if( !this.affiliationService.affiliation ){
             this.addAffType = this.affiliationService.type;     
-        }
+        } 
     }; 
 }

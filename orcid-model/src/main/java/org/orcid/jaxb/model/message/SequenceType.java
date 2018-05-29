@@ -1,24 +1,11 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.Serializable;
 
 /**
@@ -43,6 +30,11 @@ public enum SequenceType implements Serializable {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public static SequenceType fromValue(String v) {
         for (SequenceType c : SequenceType.values()) {
             if (c.value.equals(v)) {

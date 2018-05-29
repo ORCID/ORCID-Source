@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.jsonidentifier.converter;
 
 import static org.junit.Assert.assertEquals;
@@ -32,11 +16,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
-import org.orcid.jaxb.model.v3.dev1.common.TransientError;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.jaxb.model.v3.rc1.common.TransientError;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -51,7 +35,7 @@ import static org.mockito.Mockito.when;
 public class JSONWorkExternalIdentifiersConverterV3Test {
 
     @Resource
-    NormalizationService norm;
+    PIDNormalizationService norm;
     @Resource
     LocaleManager localeManager;
     private JSONWorkExternalIdentifiersConverterV3 converter;
@@ -124,15 +108,15 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         work.setDateCreated(date);
         work.setLastModified(date);
         work.setOrcid("0000-0000-0000-0001");
-        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId("APP-5555555555555555");
         work.setCitation("work:citation");
-        work.setCitationType(org.orcid.jaxb.model.record_v2.CitationType.BIBTEX);
+        work.setCitationType(org.orcid.jaxb.model.record_v2.CitationType.BIBTEX.name());
         work.setDateCreated(date);
         work.setDescription("work:description");
         work.setId(12345L);
-        work.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.CR);
+        work.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
         work.setLastModified(date);
@@ -141,7 +125,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         work.setTitle("work:title");
         work.setTranslatedTitle("work:translatedTitle");
         work.setTranslatedTitleLanguageCode("ES");
-        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE);
+        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");
         work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");

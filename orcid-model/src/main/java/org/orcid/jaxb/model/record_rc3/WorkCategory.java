@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.jaxb.model.record_rc3;
 
 import java.util.ArrayList;
@@ -21,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlEnumValue;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum WorkCategory {
     @XmlEnumValue("publication")
@@ -47,6 +33,11 @@ public enum WorkCategory {
         return value;
     }
 
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
+    
     public List<WorkType> getSubTypes() {
         return Collections.unmodifiableList(types);
     }

@@ -1,7 +1,7 @@
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -31,6 +31,8 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
+    public newInput = new EventEmitter<boolean>();
+
     defaultVisibility: any;
     emails: any;
     formData: any;
@@ -43,9 +45,10 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
 
     constructor( 
-        private websitesService: WebsitesService,
+        private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
-        private modalService: ModalService
+        private modalService: ModalService,
+        private websitesService: WebsitesService
     ) {
         this.defaultVisibility = null;
         this.emails = {};
@@ -80,22 +83,34 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
             "displayIndex": 1
         };         
         this.formData.websites.push(tmpObj);        
-        this.updateDisplayIndex();    
+        this.cdr.detectChanges();       
+        this.updateDisplayIndex();
+        this.newInput.emit(true);     
     };
 
     closeEditModal(): void{
         this.formData = this.formDataBeforeChange;
+        this.cdr.detectChanges();
+        this.websitesService.notifyOther();
         this.modalService.notifyOther({action:'close', moduleId: 'modalWebsitesForm'});
     };
 
-    deleteEntry( website ): void{
+    deleteEntry( website, index ): void{
+        this.commonSrvc.hideTooltip('tooltip-websites-delete-'+index)
         let websites = this.formData.websites;
         let len = websites.length;
         while (len--) {
             if (websites[len] == website){
                 websites.splice(len,1);
+                this.cdr.detectChanges();
             }
         }     
+    };
+
+    setBulkGroupPrivacy(priv): void{
+        for (var idx in this.formData.websites){
+            this.formData.websites[idx].visibility.visibility = priv;        
+        }
     };
 
     getformData(): void {
@@ -145,8 +160,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     privacyChange( obj ): any {
-        this.formData.visibility.visibility = obj;
-        this.setFormData( false );   
+        this.formData.visibility.visibility = obj;  
     };
 
     setFormData( closeAfterAction ): void {
@@ -208,6 +222,11 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
+        this.subscription = this.websitesService.notifyObservable$.subscribe(
+            (res) => {
+                this.getformData();
+            }
+        );
     };
 
     ngOnDestroy() {

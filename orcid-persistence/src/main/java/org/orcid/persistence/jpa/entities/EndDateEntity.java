@@ -1,25 +1,7 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.orcid.jaxb.model.message.FuzzyDate;
 
 @Embeddable
 public class EndDateEntity extends FuzzyDateEntity {
@@ -28,10 +10,6 @@ public class EndDateEntity extends FuzzyDateEntity {
      * 
      */
     private static final long serialVersionUID = -3305842000377366372L;
-
-    public EndDateEntity(FuzzyDate fuzzyDate) {
-        super(fuzzyDate);
-    }
 
     public EndDateEntity() {
     }

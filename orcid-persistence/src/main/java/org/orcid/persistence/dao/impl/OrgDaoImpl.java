@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao.impl;
 
 import java.util.List;
@@ -21,7 +5,6 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -65,7 +48,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
-    public OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, Iso3166Country country) {
+    public OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, String country) {
         TypedQuery<OrgEntity> query = entityManager.createQuery(
                 "from OrgEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country",
                 OrgEntity.class);
@@ -90,7 +73,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     }
 
     @Override
-    public OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, Iso3166Country country, OrgDisambiguatedEntity orgDisambiguated) {
+    public OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, String country, OrgDisambiguatedEntity orgDisambiguated) {
         TypedQuery<OrgEntity> query = entityManager.createQuery(
                 "from OrgEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and (orgDisambiguated.id = :orgDisambiguatedId or (orgDisambiguated is null and :orgDisambiguatedId is null))",
                 OrgEntity.class);

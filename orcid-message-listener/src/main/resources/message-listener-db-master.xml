@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -37,5 +19,7 @@
     <include file="/db/add_column_for_2_0_activities_dump_status.xml"/>
     <include file="/db/add_last_indexed_date_column_for_every_broker.xml"/>
     <include file="/db/add_column_for_mongo_status.xml"/>
+    <include file="/db/create_activities_status_table.xml" />
+    <include file="/db/reset_record_status_tables.xml" />
         
 </databaseChangeLog>

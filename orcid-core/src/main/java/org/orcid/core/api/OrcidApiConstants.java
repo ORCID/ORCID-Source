@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.api;
 
 public class OrcidApiConstants {
@@ -29,6 +13,8 @@ public class OrcidApiConstants {
     public static final String WORKS_PATH = "/{orcid}/orcid-works";
     public static final String EXTERNAL_IDENTIFIER_PATH = "/{orcid}/orcid-bio/external-identifiers";
     public static final String STATUS_PATH = "/status";
+    public static final String PUB_STATUS_PATH = "/pubStatus";
+    public static final String API_STATUS_PATH = "/apiStatus";
     public static final String BIO_SEARCH_PATH = "/search/orcid-bio";
     public static final String SEARCH_PATH = "/search";
     public static final String WEBHOOKS_PATH = "/{orcid}/webhook/{webhook_uri}";

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Arrays;
@@ -27,6 +11,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
+import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -38,18 +24,21 @@ import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.utils.v3.identifiers.NormalizationService;
+import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -63,6 +52,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
 
+    @Value("${org.orcid.core.activities.max:10000}")
+    private long maxNumOfActivities;
+    
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
@@ -88,7 +80,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     private LocaleManager localeManager;
     
     @Resource
-    private NormalizationService norm;
+    private PIDNormalizationService norm;
     
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
@@ -103,7 +95,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
-        return workDao.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.value()));
+        return workDao.updateVisibilities(orcid, workIds, visibility.name());
     }
 
     /**
@@ -147,8 +139,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             activityValidator.validateWork(work, sourceEntity, true, isApiRequest, null);
             // If it is the user adding the peer review, allow him to add
             // duplicates
-            if (!sourceEntity.getSourceId().equals(orcid)) {
+            if (!SourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
                 List<Work> existingWorks = this.findWorks(orcid);       
+                if((existingWorks.size() + 1) > this.maxNumOfActivities) {
+                    throw new ExceedMaxNumberOfElementsException();
+                }
                 if (existingWorks != null) {
                     for (Work existing : existingWorks) {
                         activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
@@ -199,11 +194,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public WorkBulk createWorks(String orcid, WorkBulk workBulk) {        
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(orcid, sourceEntity.getSourceId());
+        List<Work> existingWorks = this.findWorks(orcid);
         
         if(workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
-            
+            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, SourceEntityUtils.getSourceId(sourceEntity));
+            if((existingWorks.size() + bulk.size()) > this.maxNumOfActivities) {
+                throw new ExceedMaxNumberOfElementsException();
+            }
             //Check bulk size
             if(bulk.size() > maxBulkSize) {
                 Locale locale = localeManager.getLocale();                
@@ -224,7 +222,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 // If the external id exists and is a SELF identifier, then mark it as duplicated                                
                                 if(existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();
-                                    params.put("clientName", sourceEntity.getSourceName());
+                                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                                     throw new OrcidDuplicatedActivityException(params);
                                 }
                             }
@@ -273,15 +271,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     /**
      * Return the list of existing external identifiers for the given user where the source matches the given sourceId
      * 
-     * @param orcid
-     *          The user we want to add the works to
+     * @param existingWorks
+     *          The list of existing works for the current user
      * @param sourceId
      *          The client id we are evaluating
      * @return A set of all the existing external identifiers that belongs to the given user and to the given source id                  
      * */
-    private Set<ExternalID> buildExistingExternalIdsSet(String orcid, String sourceId) {
-        Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
-        List<Work> existingWorks = this.findWorks(orcid);    
+    private Set<ExternalID> buildExistingExternalIdsSet(List<Work> existingWorks, String sourceId) {
+        Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();        
         for(Work work : existingWorks) {
             //If it is the same source
             if(work.retrieveSourcePath().equals(sourceId)) {
@@ -314,7 +311,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
-        Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
+        Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
         //Save the original source
@@ -322,7 +319,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         String existingClientSourceId = workEntity.getClientSourceId();
         
         if (isApiRequest) {
-            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, Visibility.fromValue(workEntity.getVisibility().value()));                        
+            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, originalVisibility);                        
             List<Work> existingWorks = this.findWorks(orcid);       
             
             for (Work existing : existingWorks) {
@@ -338,7 +335,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
         orcidSecurityManager.checkSource(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
-        workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(originalVisibility.value()));
+        workEntity.setVisibility(originalVisibility.name());
         
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
@@ -367,12 +364,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingWorkVisibility = workEntity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        String incomingWorkVisibility = workEntity.getVisibility();
+        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
             workEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }
 
@@ -382,5 +379,67 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
         return Arrays.asList(item);
+    }
+
+    @Override
+    public void createNewWorkGroup(List<Long> workIds, String orcid) {
+        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
+        JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);
+        ExternalIDs allExternalIDs = new ExternalIDs();
+        MinimizedWorkEntity userVersion = null;
+        MinimizedWorkEntity userPreferred = null;
+        
+        for (MinimizedWorkEntity work : works) {
+            if (orcid.equals(work.getSourceId())) {
+                userVersion = work;
+            }
+            if (userPreferred == null || userPreferred.getDisplayIndex() < work.getDisplayIndex()) {
+                userPreferred = work;
+            }
+            
+            ExternalIDs externalIDs = externalIdConverter.convertFrom(work.getExternalIdentifiersJson(), null);
+            for (ExternalID externalID : externalIDs.getExternalIdentifier()) {
+                if (!allExternalIDs.getExternalIdentifier().contains(externalID)) {
+                    allExternalIDs.getExternalIdentifier().add(externalID);
+                }
+            }
+        }
+        
+        String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);
+        if (userVersion != null) {
+            userVersion.setExternalIdentifiersJson(externalIDsJson);
+        } else {
+            WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
+            allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);
+            workDao.persist(allPreferredMetadata);
+        }
+    }
+    
+    private WorkEntity createCopyOfUserPreferredWork(MinimizedWorkEntity preferred) {
+        WorkEntity preferredFullData = workDao.find(preferred.getId());
+        
+        WorkEntity workEntity = new WorkEntity();
+        workEntity.setAddedToProfileDate(new Date());
+        workEntity.setCitation(preferredFullData.getCitation());
+        workEntity.setCitationType(preferredFullData.getCitationType());
+        workEntity.setContributorsJson(preferredFullData.getContributorsJson());
+        workEntity.setDateCreated(new Date());
+        workEntity.setDescription(preferredFullData.getDescription());
+        workEntity.setDisplayIndex(preferredFullData.getDisplayIndex() -1);
+        workEntity.setIso2Country(preferredFullData.getIso2Country());
+        workEntity.setJournalTitle(preferredFullData.getJournalTitle());
+        workEntity.setLanguageCode(preferredFullData.getLanguageCode());
+        workEntity.setLastModified(new Date());
+        workEntity.setOrcid(preferredFullData.getOrcid());
+        workEntity.setPublicationDate(preferredFullData.getPublicationDate());
+        workEntity.setSourceId(preferredFullData.getOrcid());
+        workEntity.setSubtitle(preferredFullData.getSubtitle());
+        workEntity.setTitle(preferredFullData.getTitle());
+        workEntity.setTranslatedTitle(preferredFullData.getTranslatedTitle());
+        workEntity.setTranslatedTitleLanguageCode(preferredFullData.getTranslatedTitleLanguageCode());
+        workEntity.setVisibility(preferredFullData.getVisibility());
+        workEntity.setWorkType(preferredFullData.getWorkType());
+        workEntity.setWorkUrl(preferredFullData.getWorkUrl());
+        return workEntity;
     }
 }

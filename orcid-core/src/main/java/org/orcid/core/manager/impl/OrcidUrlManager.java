@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.net.URI;
@@ -25,6 +9,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,10 +215,21 @@ public class OrcidUrlManager {
     }
 
     public String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        boolean isOauthRequest = request.getParameter("oauthRequest") == null ? false : Boolean.valueOf(request.getParameter("oauthRequest"));
+        
         String url = null;
-        if (savedRequest != null) {
-            url = savedRequest.getRedirectUrl();
+        if(isOauthRequest) {
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);            
+            if(queryString.startsWith("oauth&")) {
+                queryString = queryString.replaceFirst("oauth&", "");
+            }
+            url = getBaseUrl() + "/oauth/authorize?" + queryString;
+        } else {
+            SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+            if(savedRequest != null) {
+                url = savedRequest.getRedirectUrl();
+            }
+            
             if (url != null) {
                 String contextPath = request.getContextPath();
                 // Remove the context path if it looks like we are configured to
@@ -248,6 +244,7 @@ public class OrcidUrlManager {
                 }
             }
         }
+                
         return url;
     }
 }

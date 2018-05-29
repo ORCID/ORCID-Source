@@ -1,6 +1,6 @@
 declare var getBaseUri: any;
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -59,7 +59,6 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getWebsitesFormError', error);
             } 
         );
-        //$.colorbox.close();
     };
 
     getEmails(): void {
@@ -81,78 +80,12 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                     };
                 };
 
-                if ( primeVerified == false 
-                    && getBaseUri().indexOf("sandbox") == -1 
-                ) {
-                    /*
-                    colorboxHtml = $compile($('#verify-email-modal').html())($scope);
-                    $.colorbox({
-                        html : colorboxHtml,
-                        escKey:false,
-                        overlayClose:false,
-                        transition: 'fade',
-                        close: '',
-                        scrolling: false
-                    });
-                    $.colorbox.resize({width:"500px"});
-                    */
-                };
                 this.loading = false;
             },
             error => {
                 //console.log('getEmails', error);
             } 
         );
-        /*
-        $scope.getEmails = function() {
-                $.ajax({
-                    url: getBaseUri() + '/account/emails.json',
-                    // type: 'POST',
-                    // data: $scope.emailsPojo,
-                    dataType: 'json',
-                    success: function(data) {
-                        var configuration = initialConfigService.getInitialConfiguration();
-                        var colorboxHtml = null;
-                        var primeVerified = false;
-
-                        $scope.verifiedModalEnabled = configuration.showModalManualEditVerificationEnabled;
-                        $scope.emailsPojo = data;
-                        $scope.$apply();
-
-                        for (var i in $scope.emailsPojo.emails) {
-                            if ($scope.emailsPojo.emails[i].primary  == true) {
-                                $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
-                                if ($scope.emailsPojo.emails[i].verified) {
-                                    primeVerified = true;
-                                }
-                            };
-                        };
-
-                        if ( primeVerified == false 
-                            && getBaseUri().indexOf("sandbox") == -1 
-                        ) {
-                            colorboxHtml = $compile($('#verify-email-modal').html())($scope);
-                            $scope.$apply();
-                            $.colorbox({
-                                html : colorboxHtml,
-                                escKey:false,
-                                overlayClose:false,
-                                transition: 'fade',
-                                close: '',
-                                scrolling: false
-                            });
-                            $.colorbox.resize({width:"500px"});
-                        };
-                        $scope.loading = false;
-                        $scope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    //console.log("error with multi email");
-                });
-            };
-
-        */
     }
 
     verifyEmail(): void {
@@ -166,8 +99,22 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
-        this.modalService.notifyOther({action:'close', moduleId: 'modalemailunverified'});
-        this.modalService.notifyOther({action:'open', moduleId: 'emailSentConfirmation'});
+
+        this.modalService.notifyOther(
+            {
+                action:'close', 
+                moduleId: 'modalemailunverified'
+            }
+        );
+        this.modalService.notifyOther(
+            {
+                action:'open', 
+                moduleId: 'emailSentConfirmation', 
+                data: {
+                    email: this.primaryEmail
+                }
+            }
+        ); 
     }
 
 

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
@@ -53,13 +37,13 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.v3.dev1.record.Addresses;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.Name;
+import org.orcid.jaxb.model.v3.rc1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -376,7 +360,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid visibility provided: " + defaultVisibility);
         }
-        return defaultVisibility;
+        
+        return "{\"status\": \"" + defaultVisibility + "\"}";
     }
     
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
@@ -700,22 +685,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+        Visibility v = Visibility.valueOf(defaultVis);
         
         // Set the default visibility
         if (profile.getActivitiesVisibilityDefault() != null) {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
-        }
-
-        // Return an empty country in case we dont have any
-        if (form.getAddresses() == null) {
-            form.setAddresses(new ArrayList<AddressForm>());
-        }
-
-        if (form.getAddresses().isEmpty()) {
-            AddressForm address = new AddressForm();
-            address.setDisplayIndex(1L);
-            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
-            form.getAddresses().add(address);
+            form.setVisibility(v);
         }
 
         return form;
@@ -804,8 +779,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         Biography bio = biographyManager.getBiography(getCurrentUserOrcid());
         BiographyForm form = BiographyForm.valueOf(bio);
         if(form.getVisibility() == null) {
-            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());            
-            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid()); 
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);          
+            form.setVisibility(v);
         }
         return form;
     }
@@ -828,7 +805,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setContent(bf.getBiography().getValue());
             }
             if (bf.getVisibility() != null && bf.getVisibility().getVisibility() != null) {
-                org.orcid.jaxb.model.v3.dev1.common.Visibility v = org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(bf.getVisibility().getVisibility().value());
+                org.orcid.jaxb.model.v3.rc1.common.Visibility v = org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(bf.getVisibility().getVisibility().value());
                 bio.setVisibility(v);
             }
 

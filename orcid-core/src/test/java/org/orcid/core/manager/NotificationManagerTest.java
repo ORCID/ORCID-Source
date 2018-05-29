@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -260,7 +244,7 @@ public class NotificationManagerTest extends DBUnitTest {
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
             assertTrue(latestNotification.getId() > minNotificationId);
-            assertEquals(NotificationType.AMENDED, latestNotification.getNotificationType());
+            assertEquals(NotificationType.AMENDED.name(), latestNotification.getNotificationType());
         }
     }
 
@@ -278,7 +262,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity();
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         profile.setSendAdministrativeChangeNotifications(true);
         profile.setSendChangeNotifications(true);
@@ -325,7 +309,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(delegateOrcid)).thenReturn(delegateEmail);
         
         for(org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", delegateOrcid);
         }
     }
@@ -339,7 +323,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         
         Email email = new Email();
@@ -349,7 +333,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
         
         for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendOrcidDeactivateEmail(orcid);
         }        
     }
@@ -392,7 +376,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(Visibility.PUBLIC);
+        recordName.setVisibility(Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         
         Email email = new Email();
@@ -402,7 +386,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
         
         for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {            
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendEmailAddressChangedNotification(orcid, "new@email.com", "original@email.com");
         }
     }

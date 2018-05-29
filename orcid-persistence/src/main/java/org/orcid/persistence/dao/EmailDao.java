@@ -1,24 +1,7 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 /**
@@ -34,13 +17,13 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     String findOrcidIdByCaseInsenitiveEmail(String email);
 
-    void updateEmail(String orcid, String email, boolean isCurrent, Visibility visibility);
+    void updateEmail(String orcid, String email, boolean isCurrent, String visibility);
 
     void updatePrimary(String orcid, String primaryEmail);
 
-    void addEmail(String orcid, String email, Visibility visibility, String sourceId, String clientSourceId);
+    void addEmail(String orcid, String email, String visibility, String sourceId, String clientSourceId);
     
-    void addEmail(String orcid, String email, Visibility visibility, String sourceId, String clientSourceId, boolean isVerified, boolean isCurrent);
+    void addEmail(String orcid, String email, String visibility, String sourceId, String clientSourceId, boolean isVerified, boolean isCurrent);
 
     void removeEmail(String orcid, String email);
     
@@ -61,7 +44,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     List<EmailEntity> findByOrcid(String orcid, long lastModified);
     
-    List<EmailEntity> findByOrcid(String orcid, Visibility visibility);
+    List<EmailEntity> findByOrcid(String orcid, String visibility);
     
     boolean updateVerifySetCurrentAndPrimary(String orcid, String email);
     
@@ -88,5 +71,5 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
 
     List<EmailEntity> findPublicEmails(String orcid, long lastModified);
     
-    boolean updateVisibility(String orcid, String email, Visibility visibility);        
+    boolean updateVisibility(String orcid, String email, String visibility);        
 }

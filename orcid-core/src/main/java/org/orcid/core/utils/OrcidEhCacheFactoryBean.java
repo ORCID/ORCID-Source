@@ -1,29 +1,16 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.config.PersistenceConfiguration;
-import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
-import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
+import java.io.Serializable;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.MemoryUnit;
+import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -34,7 +21,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Will Simpson
  * 
  */
-public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, InitializingBean {
+public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidEhCacheFactoryBean.class);
 
@@ -42,25 +29,17 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
 
     private String cacheName;
 
-    private int maxElementsInMemory = 10000;
+    private int maxElementsInMemory = 100;
 
-    private int timeToLiveSeconds = 120;
+    private int timeToIdleSeconds = 60;
 
-    private int timeToIdleSeconds = 120;
+    private long maxMegaBytesOnDisk = 0;
 
-    private int maxElementsOnDisk = 0;
+    private boolean copyValues = true;
 
-    private String maxBytesLocalDisk = "5g";
+    private CacheLoaderWriter<Object, Serializable> cacheLoaderWriter;
 
-    private boolean copyOnRead = true;
-
-    private boolean copyOnWrite = true;
-
-    private String strategy = "NONE";
-
-    private CacheEntryFactory cacheEntryFactory;
-
-    private Ehcache cache;
+    private Cache<?, ?> cache;
 
     public CacheManager getCacheManager() {
         return cacheManager;
@@ -86,14 +65,6 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         this.maxElementsInMemory = maxElementsInMemory;
     }
 
-    public int getTimeToLiveSeconds() {
-        return timeToLiveSeconds;
-    }
-
-    public void setTimeToLiveSeconds(int timeToLiveSeconds) {
-        this.timeToLiveSeconds = timeToLiveSeconds;
-    }
-
     public int getTimeToIdleSeconds() {
         return timeToIdleSeconds;
     }
@@ -102,62 +73,34 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         this.timeToIdleSeconds = timeToIdleSeconds;
     }
 
-    public String getStrategy() {
-        return strategy;
+    public long getMaxMegaBytesOnDisk() {
+        return maxMegaBytesOnDisk;
     }
 
-    public void setStrategy(String strategy) {
-        this.strategy = strategy;
+    public void setMaxMegaBytesOnDisk(long maxMegaBytesOnDisk) {
+        this.maxMegaBytesOnDisk = maxMegaBytesOnDisk;
     }
 
-    public int getMaxElementsOnDisk() {
-        return maxElementsOnDisk;
+    public boolean isCopyValues() {
+        return copyValues;
     }
 
-    public void setMaxElementsOnDisk(int maxElementsOnDisk) {
-        this.maxElementsOnDisk = maxElementsOnDisk;
+    public void setCopyValues(boolean copyValues) {
+        this.copyValues = copyValues;
     }
 
-    public String getMaxBytesLocalDisk() {
-        return maxBytesLocalDisk;
-    }
-
-    public void setMaxBytesLocalDisk(String maxBytesLocalDisk) {
-        this.maxBytesLocalDisk = maxBytesLocalDisk;
-    }
-
-    public boolean isCopyOnRead() {
-        return copyOnRead;
-    }
-
-    public void setCopyOnRead(boolean copyOnRead) {
-        this.copyOnRead = copyOnRead;
-    }
-
-    public boolean isCopyOnWrite() {
-        return copyOnWrite;
-    }
-
-    public void setCopyOnWrite(boolean copyOnWrite) {
-        this.copyOnWrite = copyOnWrite;
-    }
-
-    public CacheEntryFactory getCacheEntryFactory() {
-        return cacheEntryFactory;
-    }
-
-    public void setCacheEntryFactory(CacheEntryFactory cacheEntryFactory) {
-        this.cacheEntryFactory = cacheEntryFactory;
+    public void setCacheLoaderWriter(CacheLoaderWriter<Object, Serializable> cacheLoaderWriter) {
+        this.cacheLoaderWriter = cacheLoaderWriter;
     }
 
     @Override
-    public Ehcache getObject() {
+    public Cache<?, ?> getObject() {
         return this.cache;
     }
 
     @Override
-    public Class<? extends Ehcache> getObjectType() {
-        return (this.cache != null ? this.cache.getClass() : Ehcache.class);
+    public Class<?> getObjectType() {
+        return (this.cache != null ? this.cache.getClass() : Cache.class);
     }
 
     @Override
@@ -167,34 +110,25 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Ehcache existingCache = cacheManager.getEhcache(cacheName);
-        String diskStorePath = cacheManager.getConfiguration().getDiskStoreConfiguration().getPath();
-        LOGGER.debug("Cache manager disk store path = " + diskStorePath);
+        Cache<?, ?> existingCache = cacheManager.getCache(cacheName, Object.class, Serializable.class);
         if (existingCache == null) {
-            CacheConfiguration config = createConfig();
-            if (cacheEntryFactory != null) {
-                this.cache = new SelfPopulatingCache(new Cache(config), cacheEntryFactory);
-            } else {
-                this.cache = new Cache(config);
+            ResourcePoolsBuilder resourcePoolsBuilder = ResourcePoolsBuilder.heap(this.maxElementsInMemory);
+            if (this.maxMegaBytesOnDisk > 0) {
+                resourcePoolsBuilder.disk(this.maxMegaBytesOnDisk, MemoryUnit.MB);
             }
-            cacheManager.addCache(this.cache);
+            CacheConfigurationBuilder<Object, Serializable> cacheConfigurationBuilder = CacheConfigurationBuilder
+                    .newCacheConfigurationBuilder(Object.class, Serializable.class, resourcePoolsBuilder)
+                    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(this.timeToIdleSeconds, ChronoUnit.SECONDS)));
+            if (this.copyValues) {
+                cacheConfigurationBuilder = cacheConfigurationBuilder.withValueSerializingCopier();
+            }
+            if (this.cacheLoaderWriter != null) {
+                cacheConfigurationBuilder = cacheConfigurationBuilder.withLoaderWriter(this.cacheLoaderWriter);
+            }
+            this.cache = cacheManager.createCache(cacheName, cacheConfigurationBuilder.build());
         } else {
             this.cache = existingCache;
         }
-    }
-
-    private CacheConfiguration createConfig() {
-        CacheConfiguration config = new CacheConfiguration();
-        config.setName(this.cacheName);
-        config.setMaxEntriesLocalHeap(this.maxElementsInMemory);
-        config.setMaxElementsOnDisk(this.maxElementsOnDisk);
-        config.setMaxBytesLocalDisk(this.maxBytesLocalDisk);
-        config.setTimeToLiveSeconds(this.timeToLiveSeconds);
-        config.setTimeToIdleSeconds(this.timeToIdleSeconds);
-        config.setCopyOnRead(this.copyOnRead);
-        config.setCopyOnWrite(this.copyOnWrite);
-        config.persistence(new PersistenceConfiguration().strategy(this.strategy));
-        return config;
     }
 
 }

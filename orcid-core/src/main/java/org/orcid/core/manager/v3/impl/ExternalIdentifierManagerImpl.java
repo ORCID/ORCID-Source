@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
@@ -33,9 +17,10 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ExternalIdentifierManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
+import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -102,7 +87,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         String existingSourceId = updatedExternalIdentifierEntity.getSourceId();
         String existingClientSourceId = updatedExternalIdentifierEntity.getClientSourceId();
         
-        Visibility originalVisibility = Visibility.fromValue(updatedExternalIdentifierEntity.getVisibility().value());
+        Visibility originalVisibility = Visibility.valueOf(updatedExternalIdentifierEntity.getVisibility());
         // Validate external identifier
         PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, false, isApiRequest, originalVisibility, requireRelationshipOnExternalIdentifier);
         // Validate it is not duplicated
@@ -131,7 +116,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
             // If they have the same source
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
                 // And they have the same reference
                 if ((PojoUtil.isEmpty(existing.getExternalIdReference()) && PojoUtil.isEmpty(newExternalIdentifier.getValue()))
                         || (!PojoUtil.isEmpty(existing.getExternalIdReference()) && existing.getExternalIdReference().equals(newExternalIdentifier.getValue()))) {
@@ -147,12 +132,12 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
     }
 
     private void setIncomingPrivacy(ExternalIdentifierEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultExternalIdentifierVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        String incomingExternalIdentifierVisibility = entity.getVisibility();
+        String defaultExternalIdentifierVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name() : profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultExternalIdentifierVisibility);            
         } else if (incomingExternalIdentifierVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }    
 
@@ -204,7 +189,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
                     for (ExternalIdentifierEntity existingExtId : existingExternalIdentifiersList) {
                         if (existingExtId.getId().equals(updatedOrNew.getPutCode())) {
                             existingExtId.setLastModified(new Date());
-                            existingExtId.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(updatedOrNew.getVisibility().value()));
+                            existingExtId.setVisibility(updatedOrNew.getVisibility().name());
                             existingExtId.setDisplayIndex(updatedOrNew.getDisplayIndex());
                             externalIdentifierDao.merge(existingExtId);
                         }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -30,9 +14,9 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -59,7 +43,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         //General info
         assertEquals(Long.valueOf(1248), entity.getId());
-        assertEquals(Visibility.PUBLIC.value(), entity.getVisibility().value());        
+        assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());        
         assertEquals("http://site1.com/", entity.getUrl());
         assertEquals("Site # 1", entity.getUrlName());                
         // Source
@@ -96,7 +80,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         entity.setClientSourceId("APP-0001");
         entity.setUrl("http://orcid.org");
         entity.setUrlName("Orcid URL");
-        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         return entity;
     }
 }

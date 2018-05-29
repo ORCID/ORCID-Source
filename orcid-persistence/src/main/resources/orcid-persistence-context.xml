@@ -1,35 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:jms="http://www.springframework.org/schema/jms"
+    xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
-         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd"
->
+         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd" >
 
     <tx:annotation-driven />
     
@@ -113,6 +96,12 @@
     
     <bean id="researcherUrlDaoReadOnly" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl">
     	<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	<bean id="emailFrequencyDao" class="org.orcid.persistence.dao.impl.EmailFrequencyDaoImpl" />
+	
+	<bean id="emailFrequencyDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailFrequencyDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
     
     <!-- Activities DAO's -->
@@ -275,6 +264,14 @@
     <bean id="identifierTypeDao" class="org.orcid.persistence.dao.impl.IdentifierTypeDaoImpl" />
     
     <bean id="backupCodeDao" class="org.orcid.persistence.dao.impl.BackupCodeDaoImpl" />
+    
+    <bean id="profileHistoryEventDao" class="org.orcid.persistence.dao.impl.ProfileHistoryEventDaoImpl" />
+    
+    <bean id="miscDao" class="org.orcid.persistence.dao.impl.MiscDaoImpl" />
+	
+	<bean id="miscDaoReadOnly" class="org.orcid.persistence.dao.impl.MiscDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />		
+	</bean>
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
@@ -510,41 +507,9 @@
         <property name="encryptor" ref="internalEncryptor" />
     </bean>
     
-    	<!-- JMS Messaging -->
-	<!-- enable the configuration of jms on annotations -->
-	<jms:annotation-driven/>
-	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<!-- lets use an embedded broker for now (easier to test!) -->
-    	<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
-	</bean>
-	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-    	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-	</bean>
-	
-	<!-- so we can listen to queues -->
-	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
-	    <property name="connectionFactory" ref="jmsConnectionFactory" />
-	    <property name="concurrency" value="1-10"/>
-	</bean>
-	
-	<!-- Default Destination Queue Definition -->
-	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
-	  <!-- name of the queue -->
-	  <constructor-arg index="0" value="test" />
-	</bean>
-	 
-	<!-- JmsTemplate Definition so we can send to queues -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-	  <property name="connectionFactory" ref="jmsConnectionFactory" />
-	  <property name="defaultDestination" ref="defaultJmsDestination" />
-	</bean>
-	
-	<bean id="jmsMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">
-		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
-	</bean>
-
-	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
+    <bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>	
-
+	
+	<util:properties id="notification_queries" location="classpath:queries/notifications.xml" />	
 </beans>

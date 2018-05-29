@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.security.AccessControlException;
@@ -34,6 +18,7 @@ import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
@@ -44,29 +29,33 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.dev1.common.Filterable;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.common.VisibilityType;
-import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Group;
-import org.orcid.jaxb.model.v3.dev1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.dev1.record.Person;
-import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.dev1.record.Record;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.common.Filterable;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
+import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Group;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Affiliations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -125,7 +114,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             Object details = authentication.getDetails();
             if (details instanceof OrcidProfileUserDetails) {
                 OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) details;
-                return OrcidType.ADMIN.equals(userDetails.getOrcidType());
+                return userDetails.getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
             }
         }
         return false;
@@ -176,7 +165,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
         } catch (IllegalArgumentException e) {
-            throw new NoResultException();
+            throw new OrcidNoResultException();
         }
 
         // Check if the user record is deprecated
@@ -188,6 +177,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(profile.getDeprecatedDate());
                 params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
             }
+            StringBuffer deprecated = new StringBuffer(baseUrl).append("/").append(profile.getId());
+            params.put(OrcidDeprecatedException.DEPRECATED_ORCID, deprecated.toString());
             throw new OrcidDeprecatedException(params);
         }
 
@@ -197,8 +188,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             // not old enough
             SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
 
-            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
-            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
+            String profileSource = profile.getSource() == null ? null : SourceEntityUtils.getSourceId(profile.getSource());
+            String currentSource = currentSourceEntity == null ? null : SourceEntityUtils.getSourceId(currentSourceEntity);
 
             // If the profile doesn't have source or the current source is not
             // the profile source, throw an exception
@@ -269,6 +260,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         checkAndFilter(orcid, elements, requiredScope, false);
     }
 
+    @SuppressWarnings("unchecked")
+    private void checkAndFilter(String orcid, Affiliations<? extends AffiliationSummary> affiliations, ScopePathType requiredScope, boolean tokenAlreadyChecked) {
+        Iterator<?> iterator = affiliations.retrieveGroups().iterator();
+        while (iterator.hasNext()) {
+            AffiliationGroup<? extends AffiliationSummary> group = (AffiliationGroup<? extends AffiliationSummary>) iterator.next();
+            checkAndFilter(orcid, group.getActivities(), requiredScope, tokenAlreadyChecked);
+            if (group.getActivities().isEmpty()) {
+                iterator.remove();
+            }
+        }
+    }
+    
     private void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope, boolean tokenAlreadyChecked) {
         if (elements == null) {
             return;
@@ -306,37 +309,37 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         // Distinctions
         if (activities.getDistinctions() != null) {
-            checkAndFilter(orcid, activities.getDistinctions().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getDistinctions(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Educations
         if (activities.getEducations() != null) {
-            checkAndFilter(orcid, activities.getEducations().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getEducations(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
 
         // Employments
         if (activities.getEmployments() != null) {
-            checkAndFilter(orcid, activities.getEmployments().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getEmployments(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Invited positions
         if (activities.getInvitedPositions() != null) {
-            checkAndFilter(orcid, activities.getInvitedPositions().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getInvitedPositions(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Memberships
         if (activities.getMemberships() != null) {
-            checkAndFilter(orcid, activities.getMemberships().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getMemberships(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Qualifications
         if (activities.getQualifications() != null) {
-            checkAndFilter(orcid, activities.getQualifications().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getQualifications(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
         
         // Services
         if (activities.getServices() != null) {
-            checkAndFilter(orcid, activities.getServices().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, activities.getServices(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
 
         // Funding
@@ -724,7 +727,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private boolean clientIsProfileSource(String clientId, ProfileEntity profile) {
         Boolean claimed = profile.getClaimed();
         SourceEntity source = profile.getSource();
-        return source != null && (claimed == null || !claimed) && clientId.equals(source.getSourceId());
+        return source != null && (claimed == null || !claimed) && clientId.equals(SourceEntityUtils.getSourceId(source));
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
@@ -782,7 +785,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         String clientId = sourceManager.retrieveSourceOrcid();
         
         ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
-        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
+        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.name().equals(client.getClientType())) {
             throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
         }
     }

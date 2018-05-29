@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.blackbox.api.v3.tests;
 
 import static org.junit.Assert.assertEquals;
@@ -33,8 +17,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV3ApiClientImpl;
-import org.orcid.integration.blackbox.api.v3.dev1.BlackBoxBaseV3_0_dev1;
-import org.orcid.integration.blackbox.api.v3.dev1.MemberV3Dev1ApiClientImpl;
+import org.orcid.integration.blackbox.api.v3.rc1.BlackBoxBaseV3_0_rc1;
+import org.orcid.integration.blackbox.api.v3.rc1.MemberV3Rc1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -48,19 +32,19 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
-public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
+public class OtherNamesTest extends BlackBoxBaseV3_0_rc1 {
     
-    @Resource(name = "memberV3_0_dev1ApiClient")
-    private MemberV3Dev1ApiClientImpl memberV3Dev1ApiClient;
+    @Resource(name = "memberV3_0_rc1ApiClient")
+    private MemberV3Rc1ApiClientImpl memberV3Rc1ApiClient;
     
-    @Resource(name = "publicV3_0_dev1ApiClient")
+    @Resource(name = "publicV3_0_rc1ApiClient")
     private PublicV3ApiClientImpl publicV3ApiClient;
     
     private static String otherName1 = "other-name-1-" + System.currentTimeMillis();
     private static String otherName2 = "other-name-2-" + System.currentTimeMillis();    
     
-    private static org.orcid.jaxb.model.v3.dev1.common.Visibility currentDefaultVisibility = null;
-    private static org.orcid.jaxb.model.v3.dev1.common.Visibility currentOtherNamesVisibility = null;
+    private static org.orcid.jaxb.model.v3.rc1.common.Visibility currentDefaultVisibility = null;
+    private static org.orcid.jaxb.model.v3.rc1.common.Visibility currentOtherNamesVisibility = null;
 
 
     @BeforeClass
@@ -70,7 +54,7 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         deleteOtherNames();
         createOtherName(otherName1);
         createOtherName(otherName2);
-        changeOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name());
+        changeOtherNamesVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.name());
         saveOtherNamesModal();
     }    
 
@@ -83,14 +67,14 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         signout();
     }
 
-    private void changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
+    private void changeDefaultUserVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility v) {
         if (!v.equals(currentDefaultVisibility)) {
             changeDefaultUserVisibility(webDriver, v.name(), false);
             currentDefaultVisibility = v;
         }
     }
 
-    private static void changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility v) {
+    private static void changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility v) {
         if(!v.equals(currentOtherNamesVisibility)) {
             showMyOrcidPage();
             openEditOtherNamesModal();
@@ -103,17 +87,17 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteOtherName() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
-        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC); 
+        changeDefaultUserVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED);
+        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC); 
 
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
-        org.orcid.jaxb.model.v3.dev1.record.OtherName newOtherName = new org.orcid.jaxb.model.v3.dev1.record.OtherName();
+        org.orcid.jaxb.model.v3.rc1.record.OtherName newOtherName = new org.orcid.jaxb.model.v3.rc1.record.OtherName();
         newOtherName.setContent("other-name-3" + System.currentTimeMillis());
-        newOtherName.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        newOtherName.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED);
 
         // Create
-        ClientResponse response = memberV3Dev1ApiClient.createOtherName(getUser1OrcidId(), newOtherName, accessToken);
+        ClientResponse response = memberV3Rc1ApiClient.createOtherName(getUser1OrcidId(), newOtherName, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         Map map = response.getMetadata();
@@ -124,9 +108,9 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
 
         // Get and verify
-        response = memberV3Dev1ApiClient.viewOtherNames(getUser1OrcidId(), accessToken);
+        response = memberV3Rc1ApiClient.viewOtherNames(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        org.orcid.jaxb.model.v3.dev1.record.OtherNames otherNames = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.OtherNames.class);
+        org.orcid.jaxb.model.v3.rc1.record.OtherNames otherNames = response.getEntity(org.orcid.jaxb.model.v3.rc1.record.OtherNames.class);
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
 
@@ -134,15 +118,15 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         boolean found2 = false;
         boolean foundNew = false;
 
-        for (org.orcid.jaxb.model.v3.dev1.record.OtherName existingOtherName : otherNames.getOtherNames()) {
+        for (org.orcid.jaxb.model.v3.rc1.record.OtherName existingOtherName : otherNames.getOtherNames()) {
             if (otherName1.equals(existingOtherName.getContent())) {
-                assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, existingOtherName.getVisibility());
+                assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, existingOtherName.getVisibility());
                 found1 = true;
             } else if (otherName2.equals(existingOtherName.getContent())) {
-                assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, existingOtherName.getVisibility());
+                assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, existingOtherName.getVisibility());
                 found2 = true;
             } else if (newOtherName.getContent().equals(existingOtherName.getContent())) {
-                assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED, existingOtherName.getVisibility());
+                assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED, existingOtherName.getVisibility());
                 foundNew = true;
             }
         }
@@ -152,25 +136,25 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         assertTrue(foundNew);
 
         // Get it
-        response = memberV3Dev1ApiClient.viewOtherName(this.getUser1OrcidId(), putCode, accessToken);
+        response = memberV3Rc1ApiClient.viewOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
-        org.orcid.jaxb.model.v3.dev1.record.OtherName otherName = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.OtherName.class);
+        org.orcid.jaxb.model.v3.rc1.record.OtherName otherName = response.getEntity(org.orcid.jaxb.model.v3.rc1.record.OtherName.class);
         assertNotNull(otherName);
         assertEquals(newOtherName.getContent(), otherName.getContent());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED, otherName.getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED, otherName.getVisibility());
         assertEquals(putCode, otherName.getPutCode());
         assertNotNull(otherName.getDisplayIndex());
         Long originalDisplayIndex = otherName.getDisplayIndex();
 
         // Save the original visibility
-        org.orcid.jaxb.model.v3.dev1.common.Visibility originalVisibility = otherName.getVisibility();
-        org.orcid.jaxb.model.v3.dev1.common.Visibility updatedVisibility = org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC;
+        org.orcid.jaxb.model.v3.rc1.common.Visibility originalVisibility = otherName.getVisibility();
+        org.orcid.jaxb.model.v3.rc1.common.Visibility updatedVisibility = org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC;
 
         // Verify you cant update the visibility
         otherName.setVisibility(updatedVisibility);
-        ClientResponse putResponse = memberV3Dev1ApiClient.updateOtherName(this.getUser1OrcidId(), otherName, accessToken);
+        ClientResponse putResponse = memberV3Rc1ApiClient.updateOtherName(this.getUser1OrcidId(), otherName, accessToken);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
-        org.orcid.jaxb.model.v3.dev1.error.OrcidError error = putResponse.getEntity(org.orcid.jaxb.model.v3.dev1.error.OrcidError.class);
+        org.orcid.jaxb.model.v3.rc1.error.OrcidError error = putResponse.getEntity(org.orcid.jaxb.model.v3.rc1.error.OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9035), error.getErrorCode());
 
@@ -179,20 +163,20 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
 
         // Update it
         otherName.setContent("Other Name #1 - Updated");
-        response = memberV3Dev1ApiClient.updateOtherName(this.getUser1OrcidId(), otherName, accessToken);
+        response = memberV3Rc1ApiClient.updateOtherName(this.getUser1OrcidId(), otherName, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
-        response = memberV3Dev1ApiClient.viewOtherName(this.getUser1OrcidId(), putCode, accessToken);
+        response = memberV3Rc1ApiClient.viewOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
-        otherName = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.OtherName.class);
+        otherName = response.getEntity(org.orcid.jaxb.model.v3.rc1.record.OtherName.class);
         assertNotNull(otherName);
         assertEquals("Other Name #1 - Updated", otherName.getContent());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED, otherName.getVisibility());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED, otherName.getVisibility());
         assertEquals(putCode, otherName.getPutCode());
         assertEquals(originalDisplayIndex, otherName.getDisplayIndex());
 
         // Delete
-        response = memberV3Dev1ApiClient.deleteOtherName(this.getUser1OrcidId(), putCode, accessToken);
+        response = memberV3Rc1ApiClient.deleteOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }    
@@ -202,12 +186,12 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
 
-        org.orcid.jaxb.model.v3.dev1.record.OtherName otherName = new org.orcid.jaxb.model.v3.dev1.record.OtherName();
+        org.orcid.jaxb.model.v3.rc1.record.OtherName otherName = new org.orcid.jaxb.model.v3.rc1.record.OtherName();
         otherName.setContent("Other Name #1 " + System.currentTimeMillis());
-        otherName.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        otherName.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED);
         otherName.setPutCode(1234567890L);
 
-        ClientResponse response = memberV3Dev1ApiClient.updateOtherName(getUser1OrcidId(), otherName, accessToken);
+        ClientResponse response = memberV3Rc1ApiClient.updateOtherName(getUser1OrcidId(), otherName, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
@@ -222,11 +206,11 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
      */
     @Test
     public void testGetOtherNamesWithPublicAPI() throws InterruptedException, JSONException {
-        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC);
         
         ClientResponse response = publicV3ApiClient.viewOtherNamesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        org.orcid.jaxb.model.v3.dev1.record.OtherNames otherNames = response.getEntity(org.orcid.jaxb.model.v3.dev1.record.OtherNames.class);
+        org.orcid.jaxb.model.v3.rc1.record.OtherNames otherNames = response.getEntity(org.orcid.jaxb.model.v3.rc1.record.OtherNames.class);
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
         assertFalse(otherNames.getOtherNames().isEmpty());
@@ -235,8 +219,8 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         boolean found1 = false;
         boolean found2 = false;
 
-        for (org.orcid.jaxb.model.v3.dev1.record.OtherName otherName : otherNames.getOtherNames()) {
-            assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC, otherName.getVisibility());
+        for (org.orcid.jaxb.model.v3.rc1.record.OtherName otherName : otherNames.getOtherNames()) {
+            assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC, otherName.getVisibility());
             if (otherName.getContent().equals(otherName1)) {
                 found1 = true;
 
@@ -255,14 +239,14 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
      */
     @Test
     public void testGetOtherNamesWithMembersAPI() throws InterruptedException, JSONException {
-        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
+        changeCurrentOtherNamesVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED);
                 
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         
-        ClientResponse getResponse = memberV3Dev1ApiClient.viewOtherNames(getUser1OrcidId(), accessToken);
+        ClientResponse getResponse = memberV3Rc1ApiClient.viewOtherNames(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-        org.orcid.jaxb.model.v3.dev1.record.OtherNames otherNames = getResponse.getEntity(org.orcid.jaxb.model.v3.dev1.record.OtherNames.class);
+        org.orcid.jaxb.model.v3.rc1.record.OtherNames otherNames = getResponse.getEntity(org.orcid.jaxb.model.v3.rc1.record.OtherNames.class);
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
 
@@ -270,8 +254,8 @@ public class OtherNamesTest extends BlackBoxBaseV3_0_dev1 {
         boolean found1 = false;
         boolean found2 = false;
 
-        for (org.orcid.jaxb.model.v3.dev1.record.OtherName otherName : otherNames.getOtherNames()) {
-            assertEquals(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED, otherName.getVisibility());
+        for (org.orcid.jaxb.model.v3.rc1.record.OtherName otherName : otherNames.getOtherNames()) {
+            assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED, otherName.getVisibility());
             if (otherName.getContent().equals(otherName1)) {
                 found1 = true;
 

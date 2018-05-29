@@ -1,29 +1,10 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,8 +17,6 @@ import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.notification_v2.NotificationType;
 
 /**
  * @author Will Simpson
@@ -57,6 +36,21 @@ import org.orcid.jaxb.model.notification_v2.NotificationType;
                 " AND p.profile_deactivation_date IS NULL " +
                 " AND p.primary_record IS NULL " +
                 " AND NOT p.record_locked ORDER BY n.orcid;"),
+    @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE, 
+    query = "SELECT DISTINCT(n.orcid), COALESCE(p.completed_date, p.date_created)" +
+            " FROM notification n, email_frequency f, profile p " +
+            " WHERE n.sent_date IS NULL " +
+            " AND n.orcid = p.orcid " +
+            " AND p.claimed = true " +
+            " AND p.profile_deactivation_date IS NULL " +  
+            " AND p.primary_record IS NULL " +  
+            " AND NOT p.record_locked " +
+            " AND p.orcid = f.orcid " +
+            " AND (" +
+            " (n.notification_type in ('ADMINISTRATIVE', 'CUSTOM') AND f.send_administrative_change_notifications < :never) " + 
+            " OR (n.notification_type = 'AMENDED' AND f.send_change_notifications < :never) " +
+            " OR (n.notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND f.send_member_update_requests < :never)" + 
+            " ) ORDER BY n.orcid;"),
     @NamedNativeQuery(name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
         query = "SELECT * FROM notification " + 
         " WHERE id IN " +
@@ -75,13 +69,15 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
 
     public static final String FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS = "findOrcidsWithUnsentNotifications";
     
+    public static final String FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE = "findOrcidsWithUnsentNotificationsOnEmailFrequenciesTable";
+    
     public static final String FIND_NOTIFICATIONS_TO_SEND_BY_ORCID = "findNotificationsToSendByOrcid";
     
     private static final long serialVersionUID = 1L;
 
     private Long id;
     private ProfileEntity profile;
-    private NotificationType notificationType;
+    private String notificationType;
     private String notificationSubject;
     private String notificationIntro;
     private Date sentDate;
@@ -89,6 +85,8 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
     private Date archivedDate;
     private Date actionedDate;    
     private boolean sendable;
+    private String notificationFamily;
+    private Long retryCount;
     
     @Override
     @Id
@@ -113,14 +111,12 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
         this.profile = profile;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "notification_type", insertable = false, updatable = false)
-    public NotificationType getNotificationType() {
+    public String getNotificationType() {
         return notificationType;
     }
 
-    public void setNotificationType(NotificationType notificationType) {
+    public void setNotificationType(String notificationType) {
         this.notificationType = notificationType;
     }
 
@@ -184,5 +180,23 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
 
     public void setNotificationIntro(String notificationIntro) {
         this.notificationIntro = notificationIntro;
-    }     
+    }
+
+    @Column(name = "notification_family")
+    public String getNotificationFamily() {
+        return notificationFamily;
+    }
+
+    public void setNotificationFamily(String notificationFamily) {
+        this.notificationFamily = notificationFamily;
+    }
+
+    @Column(name = "retry_count")
+    public Long getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(Long retryCount) {
+        this.retryCount = retryCount;
+    }           
 }

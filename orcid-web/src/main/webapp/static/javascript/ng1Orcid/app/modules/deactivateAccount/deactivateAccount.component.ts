@@ -1,8 +1,6 @@
-declare var orcidGA: any;
-
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -18,7 +16,10 @@ import { Subscription }
     from 'rxjs/Subscription';
 
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service.ts';
+
+import { ModalService } 
+    from '../../shared/modal.service.ts'; 
 
 
 @Component({
@@ -31,33 +32,28 @@ export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnI
     primaryEmail: string;
 
     constructor(
-        private accountService: AccountService
+        private accountService: AccountService,
+        private modalService: ModalService
     ) {
         this.primaryEmail = "";
     }
 
-    closeModal(): void {
-        //$.colorbox.close();
-    };
-
     sendDeactivateEmail(): void {
-        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
+
+        this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});
+
+        
         this.accountService.sendDeactivateEmail()
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.primaryEmail = data;
-                /*
-                $.colorbox({
-                    html : $compile($('#deactivate-account-modal').html())($scope)
-                });
-                $.colorbox.resize();
-                */
+                this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});
             },
             error => {
                 //console.log('setformDataError', error);
             } 
         );
+
     };
 
     //Default init functions provided by Angular Core
@@ -73,56 +69,3 @@ export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnI
     ngOnInit() {
     }; 
 }
-
-/*
-//Migrated
-
-declare var $: any;
-declare var colorbox: any;
-declare var getBaseUri: any;
-declare var orcidGA: any;
-
-import * as angular from 'angular';
-import {NgModule} from '@angular/core';
-
-// This is the Angular 1 part of the module
-
-export const DeactivateAccountCtrl = angular.module('orcidApp').controller(
-    'DeactivateAccountCtrl', 
-    [
-        '$compile', 
-        '$scope', 
-        function (
-            $compile,
-            $scope
-        ) {
-            $scope.closeModal = function() {
-                $.colorbox.close();
-            };
-
-            $scope.sendDeactivateEmail = function() {
-                orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
-                $.ajax({
-                    url: getBaseUri() + '/account/send-deactivate-account.json',
-                    dataType: 'text',
-                    success: function(data) {
-                        $scope.primaryEmail = data;
-                        $.colorbox({
-                            html : $compile($('#deactivate-account-modal').html())($scope)
-                        });
-                        $scope.$apply();
-                        $.colorbox.resize();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    //console.log("error with change DeactivateAccount");
-                });
-            };
-        }
-    ]
-);
-
-// This is the Angular 2 part of the module
-@NgModule({})
-export class DeactivateAccountCtrlNg2Module {}
-*/

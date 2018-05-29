@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.read_only.impl;
 
 import javax.annotation.Resource;
@@ -24,20 +8,21 @@ import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.dev1.common.Locale;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.record.CompletionDate;
-import org.orcid.jaxb.model.v3.dev1.record.DeactivationDate;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.History;
-import org.orcid.jaxb.model.v3.dev1.record.Preferences;
-import org.orcid.jaxb.model.v3.dev1.record.Record;
-import org.orcid.jaxb.model.v3.dev1.record.SubmissionDate;
+import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc1.common.Locale;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.record.CompletionDate;
+import org.orcid.jaxb.model.v3.rc1.record.DeactivationDate;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.History;
+import org.orcid.jaxb.model.v3.rc1.record.Preferences;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -111,15 +96,15 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
 
     private OrcidType getOrcidType(String orcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        return OrcidType.fromValue(profile.getOrcidType().value());
+        return OrcidType.valueOf(profile.getOrcidType());
     }
     
     private Preferences getPreferences(String orcid) {
         Preferences preferences = new Preferences();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        org.orcid.jaxb.model.common_v2.Locale profileEntityLocale = profile.getLocale();
+        String profileEntityLocale = profile.getLocale();
         if (profileEntityLocale != null) {
-            preferences.setLocale(Locale.fromValue(profileEntityLocale.value()));
+            preferences.setLocale(Locale.fromValue(profileEntityLocale));
         }
         return preferences;
     }
@@ -149,7 +134,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         }                
         
         if(profile.getSource() != null) {
-            history.setSource(new Source(profile.getSource().getSourceId()));                
+            history.setSource(new Source(SourceEntityUtils.getSourceId(profile.getSource())));                
         }
         
         boolean verfiedEmail = false;

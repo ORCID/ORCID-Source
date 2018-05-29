@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="personal-info-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/print_public_record.ftl -->
     <div class="workspace-right" >
@@ -40,24 +21,30 @@
                 </#if>
                 <#assign publicProfile = true />
                 <#if !(affiliationsEmpty)??>
-                    <!-- Education -->
+                    <!-- Education 
                     <public-edu-affiliation-ng2></public-edu-affiliation-ng2>
-                    <!-- Employment -->
+                    <!-- Employment 
                     <public-emp-affiliation-ng2></public-emp-affiliation-ng2>
+                    -->
                 </#if>
                   
                 <!-- Funding -->
-                <#if !(fundingEmpty)??>     
+                <#if !(fundingEmpty)??>
+                    <!-- 
                     <public-funding-ng2></public-funding-ng2>
+                -->
                 </#if>
 
                 <!-- Works -->
+                <!--
                 <public-works-ng2></public-works-ng2>
-
+                -->
                 <!-- Peer Review -->
 
                 <#if !(peerReviewsEmpty)??>
+                    <!--
                     <public-peer-reviews-ng2></public-peer-reviews-ng2>
+                -->
                 </#if>                          
             </#if>
         </div>                     
@@ -85,7 +72,10 @@
                     </div>
                 </#if>
                 <#assign publicProfile = true />
-                <#include "workspace_preview_activities_v3.ftl"/>                           
+                <!-- ***
+                include "workspace_preview_activities_v3.ftl"   
+                ***
+                -->                        
             </#if>
             <@orcid.checkFeatureStatus 'LAST_MOD'>
                 <div id="public-last-modified">
@@ -95,11 +85,9 @@
         </div>
     </div>
 
-    <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/workspace_v3.ftl -->
-
     <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" >              
         <div class="workspace-accordion-content" *ngIf="displayInfo">
-            <#include "workspace_personal_v3.ftl"/>
+            <biography-ng2></biography-ng2>
         </div>
     </div>
 </script>

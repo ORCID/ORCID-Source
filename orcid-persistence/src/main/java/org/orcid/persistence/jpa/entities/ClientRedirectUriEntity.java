@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 import java.util.HashMap;
@@ -31,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
-import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 
 /**
@@ -117,14 +99,6 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     }
 
     public static String getUriAndTypeKey(ClientRedirectUriEntity rUri) {
-        return rUri.getRedirectUri() + '-' + rUri.getRedirectUriType();
-    }
-    
-    public static String getUriAndTypeKey(RedirectUri rUri) {
-        return rUri.getValue() + '-' + rUri.getType().value();
-    }
-    
-    public static String getUriAndTypeKey(ClientRedirectUri rUri) {
         return rUri.getRedirectUri() + '-' + rUri.getRedirectUriType();
     }
     

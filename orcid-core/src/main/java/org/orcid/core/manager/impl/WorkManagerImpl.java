@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.Arrays;
@@ -27,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
@@ -38,6 +23,7 @@ import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
@@ -61,6 +47,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
 
+    @Value("${org.orcid.core.activities.max:10000}")
+    private long maxNumOfActivities;
+    
     @Resource
     private SourceManager sourceManager;
 
@@ -98,7 +87,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
-        return workDao.updateVisibilities(orcid, workIds, visibility);
+        return workDao.updateVisibilities(orcid, workIds, visibility.name());
     }
 
     /**
@@ -142,9 +131,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             activityValidator.validateWork(work, sourceEntity, true, isApiRequest, null);
             // If it is the user adding the peer review, allow him to add
             // duplicates
-            if (!sourceEntity.getSourceId().equals(orcid)) {
-                List<Work> existingWorks = this.findWorks(orcid);       
+            if (!SourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
+                List<Work> existingWorks = this.findWorks(orcid); 
                 if (existingWorks != null) {
+                    if((existingWorks.size() + 1) > this.maxNumOfActivities) {
+                        throw new ExceedMaxNumberOfElementsException();
+                    }
                     for (Work existing : existingWorks) {
                         activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                                 sourceEntity);
@@ -194,10 +186,13 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public WorkBulk createWorks(String orcid, WorkBulk workBulk) {        
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(orcid, sourceEntity.getSourceId());
-        
+        List<Work> existingWorks = this.findWorks(orcid);
         if(workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
+            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, SourceEntityUtils.getSourceId(sourceEntity));
+            if((existingWorks.size() + bulk.size()) > this.maxNumOfActivities) {
+                throw new ExceedMaxNumberOfElementsException();
+            }
             
             //Check bulk size
             if(bulk.size() > maxBulkSize) {
@@ -217,7 +212,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 // If the external id exists and is a SELF identifier, then mark it as duplicated
                                 if(existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();
-                                    params.put("clientName", sourceEntity.getSourceName());
+                                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
                                     throw new OrcidDuplicatedActivityException(params);
                                 }
                             }
@@ -266,15 +261,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     /**
      * Return the list of existing external identifiers for the given user where the source matches the given sourceId
      * 
-     * @param orcid
-     *          The user we want to add the works to
+     * @param existingWorks
+     *          The list of existing works for the current user
      * @param sourceId
      *          The client id we are evaluating
      * @return A set of all the existing external identifiers that belongs to the given user and to the given source id                  
      * */
-    private Set<ExternalID> buildExistingExternalIdsSet(String orcid, String sourceId) {
+    private Set<ExternalID> buildExistingExternalIdsSet(List<Work> existingWorks, String sourceId) {
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
-        List<Work> existingWorks = this.findWorks(orcid);    
         for(Work work : existingWorks) {
             //If it is the same source
             if(work.retrieveSourcePath().equals(sourceId)) {
@@ -307,7 +301,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
-        Visibility originalVisibility = workEntity.getVisibility();
+        String originalVisibility = workEntity.getVisibility();
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
         //Save the original source
@@ -315,7 +309,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         String existingClientSourceId = workEntity.getClientSourceId();
         
         if (isApiRequest) {
-            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, workEntity.getVisibility());                        
+            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, Visibility.valueOf(originalVisibility));                        
             List<Work> existingWorks = this.findWorks(orcid);       
             
             for (Work existing : existingWorks) {
@@ -360,12 +354,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-        Visibility incomingWorkVisibility = workEntity.getVisibility();
-        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        String incomingWorkVisibility = workEntity.getVisibility();
+        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
             workEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }
 

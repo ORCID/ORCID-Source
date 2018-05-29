@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli;
 
 import java.io.File;
@@ -403,7 +387,7 @@ public class LoadRinggoldData {
             entity.setDateCreated(now);
             entity.setLastIndexedDate(now);
             entity.setCity(city);
-            entity.setCountry(country);
+            entity.setCountry(country.name());
             entity.setName(name);
             entity.setOrgType(type);
             entity.setRegion(state);
@@ -419,7 +403,7 @@ public class LoadRinggoldData {
             // If the element have changed
             if (changed(entity, parentId, name, country, city, state, type)) {
                 entity.setCity(city);
-                entity.setCountry(country);
+                entity.setCountry(country.name());
                 entity.setLastModified(now);
                 entity.setName(name);
                 entity.setOrgType(type);
@@ -491,7 +475,7 @@ public class LoadRinggoldData {
             String city = altName.get("city").asText();
             Iso3166Country country = Iso3166Country.fromValue(altName.get("country").asText());
             //Not happy with line below.  Can steal from other ORG ID types.
-            OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, null, country);
+            OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, null, country.name());
             if (existingOrg != null) {
                 if (existingOrg.getOrgDisambiguated() == null) {
                     existingOrg.setOrgDisambiguated(disambiguatedEntity);
@@ -504,7 +488,7 @@ public class LoadRinggoldData {
                 newOrg.setDateCreated(now);
                 newOrg.setLastModified(now);
                 newOrg.setCity(city);
-                newOrg.setCountry(country);
+                newOrg.setCountry(country.name());
                 newOrg.setName(name);
                 newOrg.setOrgDisambiguated(disambiguatedEntity);
                 orgDao.persist(newOrg);
@@ -516,7 +500,7 @@ public class LoadRinggoldData {
     private void generateOrganizationFromInstitutionNode(OrgDisambiguatedEntity disambiguatedEntity, String name, Iso3166Country country, String city, String region) {
         Date now = new Date();
         //Not happy with line below.  Can steal from other ORG ID types.
-        OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, region, country);
+        OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(name, city, region, country.name());
         if (existingOrg != null) {
             if (existingOrg.getOrgDisambiguated() == null) {
                 existingOrg.setOrgDisambiguated(disambiguatedEntity);
@@ -530,7 +514,7 @@ public class LoadRinggoldData {
             newOrg.setLastModified(now);
             newOrg.setRegion(region);
             newOrg.setCity(city);
-            newOrg.setCountry(country);
+            newOrg.setCountry(country.name());
             newOrg.setName(name);
             newOrg.setOrgDisambiguated(disambiguatedEntity);
             orgDao.persist(newOrg);
@@ -539,7 +523,7 @@ public class LoadRinggoldData {
     }
 
     private boolean changed(OrgDisambiguatedEntity entity, Integer parentId, String name, Iso3166Country country, String city, String state, String type) {
-        if (!name.equals(entity.getName()) || !country.equals(entity.getCountry())
+        if (!name.equals(entity.getName()) || !country.name().equals(entity.getCountry())
                 || !city.equals(entity.getCity()) || !type.equals(entity.getOrgType())) {
             return true;
         }

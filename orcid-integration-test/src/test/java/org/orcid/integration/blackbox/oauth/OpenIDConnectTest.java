@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.blackbox.oauth;
 
 import static org.junit.Assert.assertEquals;
@@ -164,7 +148,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
 
     private SignedJWT checkJWT(String id) throws ParseException, JOSEException, InvalidHashException {
         SignedJWT signedJWT = SignedJWT.parse(id);  
-        Assert.assertEquals("https://orcid.org",signedJWT.getJWTClaimsSet().getIssuer());
+        Assert.assertEquals(baseUri,signedJWT.getJWTClaimsSet().getIssuer());
         Assert.assertEquals("https://orcid.org/9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getSubject());
         Assert.assertEquals("9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getClaim("id_path"));
         Assert.assertEquals("APP-9999999999999901",signedJWT.getJWTClaimsSet().getAudience().get(0));
@@ -246,7 +230,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         ClientResponse d = dWebResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         Assert.assertEquals(200,d.getStatus());
         JSONObject dObj = d.getEntity(JSONObject.class);
-        assertEquals(dObj.get("issuer").toString(),"https://orcid.org");
+        assertEquals(dObj.get("issuer").toString(),baseUri);
     }
     
     @Test

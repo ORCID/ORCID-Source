@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.analytics;
 
 public class AnalyticsData {
@@ -23,8 +7,6 @@ public class AnalyticsData {
     private String ipAddress;
 
     private String clientDetailsString;
-
-    private String url;
 
     private String category;
 
@@ -60,14 +42,6 @@ public class AnalyticsData {
 
     public void setClientDetailsString(String clientDetailsId) {
         this.clientDetailsString = clientDetailsId;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getCategory() {
@@ -126,7 +100,6 @@ public class AnalyticsData {
         builder.append("\n Client: ").append(clientDetailsString);
         builder.append("\n IP: ").append(ipAddress);
         builder.append("\n Method: ").append(method);
-        builder.append("\n URL: ").append(url);
         builder.append("\n Response: ").append(responseCode);
         builder.append("\n API version: ").append(apiVersion);
         builder.append("\n Category: ").append(category);

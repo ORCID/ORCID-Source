@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -33,7 +17,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -95,7 +78,7 @@ public class OtherNameDaoTest extends DBUnitTest {
         entity.setDisplayName("The other name");
         entity.setProfile(new ProfileEntity("4444-4444-4444-4441"));
         entity.setSourceId("4444-4444-4444-4441");
-        entity.setVisibility(Visibility.PUBLIC);
+        entity.setVisibility("PUBLIC");
         dao.persist(entity);
         assertEquals(4, dao.getOtherNames("4444-4444-4444-4441", 0L).size());
     }
@@ -120,7 +103,7 @@ public class OtherNameDaoTest extends DBUnitTest {
         OtherNameEntity otherName = dao.getOtherName("4444-4444-4444-4443", 2L);
         assertNotNull(otherName);
         assertEquals("Flibberdy Flabinah", otherName.getDisplayName());
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        assertEquals("PUBLIC", otherName.getVisibility());
     }
 
     @Test(expected = NoResultException.class)

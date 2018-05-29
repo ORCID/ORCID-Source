@@ -1,3 +1,6 @@
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
 import { Injectable } 
     from '@angular/core';
 
@@ -14,52 +17,52 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class AffiliationService {
-    private headers: Headers;
+    private headers: HttpHeaders;
+    private notify = new Subject<any>();
     private urlAffiliation: string;
     private urlAffiliationId: string;
     private urlAffiliationById: string;
     private urlAffiliationDisambiguated: string;
     private urlAffiliations: string;
 
-	public loading: boolean;
+    public loading: boolean;
     public affiliationsToAddIds: any;
-
     public affiliation: any;
     public type: string;
-
-    private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
 	
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
+        this.affiliation = null;
         this.affiliationsToAddIds = null,
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
+
         this.loading = true,
+        this.type = '';
         this.urlAffiliation = getBaseUri() + '/affiliations/affiliation.json';
         this.urlAffiliationId = getBaseUri() + '/affiliations/affiliationIds.json';
         this.urlAffiliationById = getBaseUri() + '/affiliations/affiliations.json?affiliationIds=';
         this.urlAffiliationDisambiguated = getBaseUri() + '/affiliations/disambiguated/id/';
         this.urlAffiliations = getBaseUri() + '/affiliations/affiliations.json';
-        this.affiliation = null;
-        this.type = '';
     }
 
-    deleteAffiliation( data ) {     
-        let options = new RequestOptions(
-            { headers: this.headers }
-        );
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
+    }
 
+    deleteAffiliation( data ): Observable<any> {     
         return this.http.delete( 
             this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
-        )
-        .map(
-            (res:Response) => res.json()
-        )
+        )      
         .do(
             (data) => {
                 this.getData();                       
@@ -67,51 +70,37 @@ export class AffiliationService {
         )
         .share();
     }
-
-    updateVisibility( affiliation ): Observable<any> {
-        let encoded_data = JSON.stringify( affiliation );         
-        return this.http.put(
-                this.urlAffiliation,
-                encoded_data,
-                { headers: this.headers }
-            )
-            .map((res:Response) => res.json()).share();
-    }
     
-    getAffiliationsId() {
+    getAffiliationsId(): Observable<any> {
         this.loading = true;
         this.affiliationsToAddIds = null;
         return this.http.get(
             this.urlAffiliationId
-        )
-        .map((res:Response) => res.json()).share();        
+        );       
     }
 
-    getAffiliationsById( idList ) {
+    getAffiliationsById( idList ): Observable<any> {
         return this.http.get(
             this.urlAffiliationById + idList
-        )
-        .map((res:Response) => res.json()).share();
+        );
     }
 
-    getPublicAffiliationsById( idList ) {
+    getPublicAffiliationsById( idList ): Observable<any> {
         return this.http.get(
                 getBaseUri() + '/' + orcidVar.orcidId + '/affiliations.json?affiliationIds=' + idList
-        ).map((res:Response) => res.json()).share();
+        );
     }
     
     getData(): Observable<any> {
         return this.http.get(
             this.urlAffiliation
-        )
-        .map((res:Response) => res.json()).share();
+        );
     }
 
     getDisambiguatedAffiliation( id ): Observable<any> {
         return this.http.get(
             this.urlAffiliationDisambiguated + id
-        )
-        .map((res:Response) => res.json()).share();
+        );
     }
 
     serverValidate( obj, relativePath ): Observable<any> {
@@ -120,8 +109,7 @@ export class AffiliationService {
             getBaseUri() + '/' + relativePath, 
             encoded_data, 
             { headers: this.headers }
-        )
-        .map((res:Response) => res.json()).share();
+        );
     }
 
     setData( obj ): Observable<any> {
@@ -131,13 +119,16 @@ export class AffiliationService {
             this.urlAffiliation, 
             encoded_data, 
             { headers: this.headers }
-        )
-        .map((res:Response) => res.json()).share();
+        );
     }
 
-    notifyOther(data: any): void {
-        if (data) {
-            this.notify.next(data);
-        }
+    updateVisibility( obj ): Observable<any> {
+        let encoded_data = JSON.stringify( obj );         
+        
+        return this.http.put(
+            this.urlAffiliation,
+            encoded_data,
+            { headers: this.headers }
+        );
     }
 }

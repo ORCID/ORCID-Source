@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.List;
@@ -106,17 +90,8 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
     }
 
     private void validateDuplicate(GroupIdRecord newGroupIdRecord) {
-        List<GroupIdRecordEntity> existingGroupIdRecords = groupIdRecordDao.getAll();
-        if (existingGroupIdRecords != null && !existingGroupIdRecords.isEmpty()) {
-            for (GroupIdRecordEntity existing : existingGroupIdRecords) {
-                // Compare if it is a new element or if the element to compare
-                // dont have the same put code than me
-                if (newGroupIdRecord.getPutCode() == null || !newGroupIdRecord.getPutCode().equals(existing.getId())) {
-                    if (newGroupIdRecord.getGroupId().equalsIgnoreCase(existing.getGroupId())) {
-                        throw new DuplicatedGroupIdRecordException();
-                    }
-                }
-            }
+        if (groupIdRecordDao.duplicateExists(newGroupIdRecord.getPutCode(), newGroupIdRecord.getGroupId())) {
+            throw new DuplicatedGroupIdRecordException();
         }
     }
 

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
@@ -59,7 +43,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         assertNotNull(entity.getLastModified());
         assertEquals(Long.valueOf(1), entity.getId());
         assertEquals("keyword1", entity.getKeywordName());        
-        assertEquals(Visibility.PUBLIC, entity.getVisibility());
+        assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());
         
         // Source
         assertNull(entity.getSourceId());        
@@ -99,7 +83,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         entity.setKeywordName("keyword-1");
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         entity.setClientSourceId("APP-000000000000");
-        entity.setVisibility(Visibility.LIMITED);
+        entity.setVisibility(Visibility.LIMITED.name());
         return entity;
     }
 }

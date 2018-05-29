@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:context="http://www.springframework.org/schema/context"
@@ -61,33 +43,49 @@
 
 	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
-	<jms:annotation-driven />
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
 		<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL}" />
 	</bean>
-	<bean id="cachingJmsConnectionFactory"
-		class="org.springframework.jms.connection.CachingConnectionFactory">
-		<property name="targetConnectionFactory" ref="jmsConnectionFactory" />
-	</bean>
+	
+	<!-- message processors -->
+	<bean id="solrMessageProcessor" class="org.orcid.listener.solr.SolrMessageProcessor"/>
+	<bean id="s3ActivitiesConsumer" class="org.orcid.listener.s3.S3ActivitiesConsumer"/>
+	<bean id="s3SummaryConsumer" class="org.orcid.listener.s3.S3SummaryConsumer"/>
+		
+	<!-- message listeners -->
+    <bean id="reindexSOLRListener" class="org.orcid.listener.BaseListener">
+        <constructor-arg ref="solrMessageProcessor" />
+    </bean>
+    
+    <bean id="updateSOLRListener" class="org.orcid.listener.BaseListener">
+		<constructor-arg ref="solrMessageProcessor" />
+    </bean>
 
-	<!-- so we can listen to queues -->
-	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="concurrency" value="1" />
-		<!-- property name="concurrency" value="1-10"/ -->
-	</bean>
+    <bean id="reindexSummaryListener" class="org.orcid.listener.BaseListener">
+        <constructor-arg ref="s3SummaryConsumer" />
+    </bean>
+    
+    <bean id="updateSummaryListener" class="org.orcid.listener.BaseListener">
+		<constructor-arg ref="s3SummaryConsumer" />
+    </bean>
+    
+    <bean id="reindexActivitiesListener" class="org.orcid.listener.BaseListener">
+        <constructor-arg ref="s3ActivitiesConsumer" />
+    </bean>
+    
+    <bean id="updateActivitiesListener" class="org.orcid.listener.BaseListener">
+		<constructor-arg ref="s3ActivitiesConsumer" />
+    </bean>
 
-	<!-- Default Destination Queue Definition -->
-	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
-		<!-- name of the queue -->
-		<constructor-arg index="0" value="test" />
-	</bean>
-
-	<!-- JmsTemplate Definition so we can send to queues -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="defaultDestination" ref="defaultJmsDestination" />
-	</bean>	
+	<!-- listener container (routing info) -->
+	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="queue">
+	       <jms:listener ref="reindexSOLRListener" destination="${org.orcid.persistence.messaging.reindex.solr}" concurrency="${org.orcid.persistence.messaging.reindex.solr.concurrency}" />
+	       <jms:listener ref="updateSOLRListener" destination="${org.orcid.persistence.messaging.updated.solr}" concurrency="${org.orcid.persistence.messaging.updated.solr.concurrency}" />
+	       <jms:listener ref="reindexSummaryListener" destination="${org.orcid.persistence.messaging.reindex.summary}" concurrency="${org.orcid.persistence.messaging.reindex.summary.concurrency}" />
+	       <jms:listener ref="updateSummaryListener" destination="${org.orcid.persistence.messaging.updated.summary}" concurrency="${org.orcid.persistence.messaging.updated.summary.concurrency}" />
+	       <jms:listener ref="reindexActivitiesListener" destination="${org.orcid.persistence.messaging.reindex.activity}" concurrency="${org.orcid.persistence.messaging.reindex.activity.concurrency}" />
+	       <jms:listener ref="updateActivitiesListener" destination="${org.orcid.persistence.messaging.updated.activity}" concurrency="${org.orcid.persistence.messaging.updated.activity.concurrency}" />
+	</jms:listener-container>
 	
 	<!-- Jersey client -->
     <bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">

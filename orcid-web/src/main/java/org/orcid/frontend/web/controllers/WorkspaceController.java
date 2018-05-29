@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
@@ -39,23 +23,22 @@ import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.frontend.web.util.NumberList;
-import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.v3.dev1.record.CitationType;
-import org.orcid.jaxb.model.v3.dev1.record.Keywords;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.dev1.record.Role;
-import org.orcid.jaxb.model.v3.dev1.record.WorkCategory;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.record.CitationType;
+import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.Role;
+import org.orcid.jaxb.model.v3.rc1.record.WorkCategory;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
@@ -192,50 +175,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         return FunctionsOverCollections.sortMapsByValues(citationTypes);
     }
 
-    @ModelAttribute("years")
-    public Map<String, String> retrieveYearsAsMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = YearsList.createList();
-        map.put("", getMessage("select.item.year"));
-        for (String year : list) {
-            map.put(year, year);
-        }
-        return map;
-    }
-
-    @ModelAttribute("fundingYears")
-    public Map<String, String> retrieveFundingYearsAsMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = YearsList.createList(10);
-        map.put("", getMessage("select.item.year"));
-        for (String year : list) {
-            map.put(year, year);
-        }
-        return map;
-    }
-
-    @ModelAttribute("months")
-    public Map<String, String> retrieveMonthsAsMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = NumberList.createList(12);
-        map.put("", getMessage("select.item.month"));
-        for (String month : list) {
-            map.put(month, month);
-        }
-        return map;
-    }
-
-    @ModelAttribute("days")
-    public Map<String, String> retrieveDaysAsMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = NumberList.createList(31);
-        map.put("", getMessage("select.item.day"));
-        for (String day : list) {
-            map.put(day, day);
-        }
-        return map;
-    }
-
     /**
      * Generate a map with ID types. The map is different from the rest, because
      * it will be ordered in the form: value -> key, to keep the map alpha
@@ -349,7 +288,9 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);
+            form.setVisibility(v);
         }
         
         return form;
@@ -396,7 +337,9 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);
+            form.setVisibility(v);
         }
         return form;
     }
@@ -446,7 +389,9 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);
+            form.setVisibility(v);
         }
         return form;
     }
@@ -550,10 +495,10 @@ public class WorkspaceController extends BaseWorkspaceController {
     ThirdPartyRedirect getSourceGrantReadWizard() {
         ThirdPartyRedirect tpr = new ThirdPartyRedirect();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());        
-        if(profile.getSource() == null || profile.getSource().getSourceId() == null) {
+        if(profile.getSource() == null || SourceEntityUtils.getSourceId(profile.getSource()) == null) {
             return tpr;
         }        
-        String sourcStr = profile.getSource().getSourceId();     
+        String sourcStr = SourceEntityUtils.getSourceId(profile.getSource());     
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients

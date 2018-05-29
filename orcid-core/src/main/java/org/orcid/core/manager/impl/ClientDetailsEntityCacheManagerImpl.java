@@ -1,28 +1,10 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
 
 import javax.annotation.Resource;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
+import org.ehcache.Cache;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -38,10 +20,10 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     private ClientDetailsManager clientDetailsManager;
     
     @Resource(name = "clientDetailsEntityCache")
-    private Cache clientDetailsCache;        
+    private Cache<Object, ClientDetailsEntity> clientDetailsCache;        
     
     @Resource(name = "clientDetailsEntityIdPCache")
-    private Cache clientDetailsIdPCache;        
+    private Cache<Object, ClientDetailsEntity> clientDetailsIdPCache;        
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
         
@@ -49,25 +31,14 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     public ClientDetailsEntity retrieve(String clientId) throws IllegalArgumentException {
         Object key = new ClientIdCacheKey(clientId, releaseName);
         Date dbDate = retrieveLastModifiedDate(clientId);;
-        ClientDetailsEntity clientDetails = null;
-        try {
-            clientDetailsCache.acquireReadLockOnKey(key);
-            clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
-        } finally {
-            clientDetailsCache.releaseReadLockOnKey(key);
-        }
+        ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
         if (needsFresh(dbDate, clientDetails)) {
-            try {
-                clientDetailsCache.acquireWriteLockOnKey(key);
-                clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
-                if (needsFresh(dbDate, clientDetails)) {
-                    clientDetails = clientDetailsManager.findByClientId(clientId);
-                    if (clientDetails == null)
-                        throw new IllegalArgumentException("Invalid client id " + clientId);
-                    clientDetailsCache.put(new Element(key, clientDetails));
-                }
-            } finally {
-                clientDetailsCache.releaseWriteLockOnKey(key);
+            clientDetails = clientDetailsCache.get(key);
+            if (needsFresh(dbDate, clientDetails)) {
+                clientDetails = clientDetailsManager.findByClientId(clientId);
+                if (clientDetails == null)
+                    throw new IllegalArgumentException("Invalid client id " + clientId);
+                clientDetailsCache.put(key, clientDetails);
             }
         }
         return clientDetails;
@@ -77,25 +48,14 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     public ClientDetailsEntity retrieveByIdP(String idp) throws IllegalArgumentException {
         Object key = new ClientIdCacheKey("IdP+" + idp, releaseName);
         Date dbDate = retrieveLastModifiedDateByIdP(idp);
-        ClientDetailsEntity clientDetails = null; 
-        try {
-            clientDetailsIdPCache.acquireReadLockOnKey(key);
-            clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
-        } finally {
-            clientDetailsIdPCache.releaseReadLockOnKey(key);
-        }
+        ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
         if (needsFresh(dbDate, clientDetails)) {
-            try {
-                clientDetailsIdPCache.acquireWriteLockOnKey(key);
-                clientDetails = toClientDetailsEntity(clientDetailsIdPCache.get(key));
-                if (needsFresh(dbDate, clientDetails)) {
-                    clientDetails = clientDetailsManager.findByIdP(idp);
-                    if (clientDetails == null)
-                        throw new IllegalArgumentException("Invalid idp " + idp);
-                    clientDetailsIdPCache.put(new Element(key, clientDetails));
-                }
-            } finally {
-                clientDetailsIdPCache.releaseWriteLockOnKey(key);
+            clientDetails = clientDetailsIdPCache.get(key);
+            if (needsFresh(dbDate, clientDetails)) {
+                clientDetails = clientDetailsManager.findByIdP(idp);
+                if (clientDetails == null)
+                    throw new IllegalArgumentException("Invalid idp " + idp);
+                clientDetailsIdPCache.put(key, clientDetails);
             }
         }
         return clientDetails;
@@ -109,19 +69,12 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
 
     public void put(String clientId, ClientDetailsEntity client) {
         Object key = new ClientIdCacheKey(clientId, releaseName);
-        try {
-            clientDetailsCache.acquireWriteLockOnKey(key);
-                clientDetailsCache.put(new Element(key, client));
-          
-        } finally {
-            clientDetailsCache.releaseWriteLockOnKey(key);
-        }
+        clientDetailsCache.put(key, client);
     }
     
     @Override
     public void removeAll() {
-        clientDetailsCache.removeAll();
-        
+        clientDetailsCache.clear();
     }
 
     @Override
@@ -147,10 +100,6 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
              LOG.debug("Missing lastModifiedDate idp:" + idp);   
         }
         return date;
-    }
-    
-    static public ClientDetailsEntity toClientDetailsEntity(Element element) {
-        return (ClientDetailsEntity) (element != null ? element.getObjectValue() : null);
     }
     
     static public boolean needsFresh(Date dbDate, ClientDetailsEntity clientDetailsEntity) {

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.CascadeType;
@@ -23,10 +7,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.common_v2.Visibility;
 
 /**
  * 
@@ -67,27 +47,6 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
 
     public void setRecordNameEntity(RecordNameEntity recordNameEntity) {
         this.recordNameEntity = recordNameEntity;
-    }
-
-    @Transient
-    public String getDisplayName() {
-        if(recordNameEntity == null) {
-            return null;
-        }
-        if (StringUtils.isNotBlank(recordNameEntity.getCreditName()) && Visibility.PUBLIC.equals(recordNameEntity.getVisibility())) {
-            return recordNameEntity.getCreditName();
-        }
-        StringBuilder builder = new StringBuilder();
-        if (StringUtils.isNotBlank(recordNameEntity.getGivenNames())) {
-            builder.append(recordNameEntity.getGivenNames());
-        }
-        if (StringUtils.isNotBlank(recordNameEntity.getFamilyName())) {
-            if (builder.length() > 0) {
-                builder.append(" ");
-            }
-            builder.append(recordNameEntity.getFamilyName());
-        }
-        return builder.length() > 0 ? builder.toString() : null;
     }
 
 }

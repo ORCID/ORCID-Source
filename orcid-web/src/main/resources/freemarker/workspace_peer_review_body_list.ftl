@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <#include "includes/peer_review/del_peer_review_inc.ftl"/>
 
 <#include "includes/peer_review/add_peer_review_inc.ftl"/>
@@ -30,7 +12,7 @@
                                 <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.peerReviewCount()"></span>)
                             </a>  
                             <div class="popover-help-container">
-                                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="peer-review-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">

@@ -1,31 +1,11 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <#include "includes/funding/del_funding_inc.ftl"/>
 
 <#include "includes/funding/add_funding_inc.ftl"/>
 
 <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
-<!--
 <funding-ng2></funding-ng2>
--->
-</@orcid.checkFeatureStatus>
 
+</@orcid.checkFeatureStatus> 
 <div ng-controller="FundingCtrl">
     <!-- Funding -->
     <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" >

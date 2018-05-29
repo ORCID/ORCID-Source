@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import javax.annotation.Resource;
@@ -21,7 +5,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.impl.BiographyManagerReadOnlyImpl;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
@@ -39,7 +23,7 @@ public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implement
         if (bio == null || bio.getVisibility() == null) {
             return false;
         }
-        return biographyDao.updateBiography(orcid, bio.getContent(), org.orcid.jaxb.model.common_v2.Visibility.fromValue(bio.getVisibility().value()));
+        return biographyDao.updateBiography(orcid, bio.getContent(), bio.getVisibility().name());
     }
 
     @Override
@@ -52,6 +36,6 @@ public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implement
             throw new IllegalArgumentException("The biography for " + orcid + " already exists");
         }
         
-        biographyDao.persistBiography(orcid, bio.getContent(), org.orcid.jaxb.model.common_v2.Visibility.fromValue(bio.getVisibility().value()));
+        biographyDao.persistBiography(orcid, bio.getContent(), bio.getVisibility().name());
     }
 }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
@@ -44,10 +28,11 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_v2.Filterable;
-import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -125,7 +110,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             Object details = authentication.getDetails();
             if (details instanceof OrcidProfileUserDetails) {
                 OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) details;
-                return OrcidType.ADMIN.equals(userDetails.getOrcidType());
+                return userDetails.getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
             }
         }
         return false;
@@ -196,8 +181,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             // not old enough
             SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
 
-            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
-            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
+            String profileSource = profile.getSource() == null ? null : SourceEntityUtils.getSourceId(profile.getSource());
+            String currentSource = currentSourceEntity == null ? null : SourceEntityUtils.getSourceId(currentSourceEntity);
 
             // If the profile doesn't have source or the current source is not
             // the profile source, throw an exception
@@ -700,7 +685,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private boolean clientIsProfileSource(String clientId, ProfileEntity profile) {
         Boolean claimed = profile.getClaimed();
         SourceEntity source = profile.getSource();
-        return source != null && (claimed == null || !claimed) && clientId.equals(source.getSourceId());
+        return source != null && (claimed == null || !claimed) && clientId.equals(SourceEntityUtils.getSourceId(source));
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
@@ -758,7 +743,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         String clientId = sourceManager.retrieveSourceOrcid();
         
         ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
-        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
+        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.name().equals(client.getClientType())) {
             throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
         }
     }

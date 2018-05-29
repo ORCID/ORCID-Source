@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <div id="register" class="oauth-registration">
     <!-- First name -->
     <div class="form-group clear-fix">
@@ -24,7 +6,7 @@
             <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="" ng-model="registrationForm.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>                         
             <span class="required" ng-class="isValidClass(registrationForm.givenNames)">*</span>            
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="name-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
@@ -39,8 +21,8 @@
                 <div ng-repeat='error in registrationForm.givenNames.errors' ng-bind-html="error"></div>
             </span>
         </div>
-    </div>				
-	<!-- Last name -->
+    </div>              
+    <!-- Last name -->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
         <div class="bottomBuffer">
@@ -57,11 +39,16 @@
             <div class="relative">          
                 <input name="emailprimary234" type="text" tabindex="3" class="input-xlarge" ng-model="registrationForm.email.value" ng-blur="serverValidate('Email')"/>
                 <span class="required" ng-class="isValidClass(register.email)">*</span>
-                <span class="orcid-error" ng-show="registrationForm.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
+                <span class="orcid-error" ng-show="registrationForm.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
                     <div ng-repeat='error in registrationForm.email.errors' ng-bind-html="error"></div>
                 </span>
+                <span class="orcid-error" ng-show="showDuplicateEmailError" ng-cloak>
+                    {{errorEmail}} 
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
+                </span>
                 <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a ng-click="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
@@ -74,7 +61,7 @@
             <div class="relative">
                 <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="registrationForm.emailsAdditional[$index].value" focus-last-input="$index == focusIndex" ng-blur="serverValidate('EmailsAdditional')"/>
                 <div ng-show="$first" class="popover-help-container leftBuffer">
-                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <i class="glyphicon glyphicon-question-sign"></i>
                     <div id="email-additional-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">
@@ -86,11 +73,14 @@
                 <div ng-show="!$first" class="popover-help-container leftBuffer">
                     <a class="btn-white-no-border" ng-click="removeEmailField($index)"><i class="glyphicon glyphicon-remove-sign"></i></a>
                 </div>
-                <span class="orcid-error" ng-show="registrationForm.emailsAdditional[$index].errors.length > 0 && !showEmailsAdditionalDeactivatedError[$index] && !showEmailsAdditionalReactivationSent[$index]">
+                <span class="orcid-error" ng-show="registrationForm.emailsAdditional[$index].errors.length > 0 && !showEmailsAdditionalDeactivatedError[$index] && !showEmailsAdditionalReactivationSent[$index] && !showEmailsAdditionalDuplicateEmailError[$index]">
                     <div ng-repeat='error in registrationForm.emailsAdditional[$index].errors track by $index' ng-bind-html="error"></div>
                 </span>
+                <span class="orcid-error" ng-show="showEmailsAdditionalDuplicateEmailError[$index]" ng-cloak>{{errorEmailsAdditional[$index]}}
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[$index]}}${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
+                </span>
                 <span class="orcid-error" ng-show="showEmailsAdditionalDeactivatedError[$index]" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendEmailsAdditionalReactivationEmail($index)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a ng-click="sendEmailsAdditionalReactivationEmail($index)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" ng-show="showEmailsAdditionalReactivationSent[$index]" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
@@ -105,8 +95,12 @@
             <label class="control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
             <div class="bottomBuffer">
                 <input id="register-form-email" name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
-                <span class="required" ng-class="isValidClass(registrationForm.email)">*</span> <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0 && !showDeactivatedError && !showReactivationSent">
+                <span class="required" ng-class="isValidClass(registrationForm.email)">*</span> <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
                     <div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
+                </span>
+                <span class="orcid-error" ng-show="showDuplicateEmailError" ng-cloak>{{errorEmail}} 
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a  ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{registrationForm.email.value}}
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
@@ -169,7 +163,7 @@
             <div class="visibilityHelp">
                 <span class="required" ng-class="isValidClass(registrationForm.activitiesDefaultVisibility)">*</span>
                 <div class="popover-help-container">
-                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                    <i class="glyphicon glyphicon-question-sign"></i>
                     <div id="name-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">
@@ -188,22 +182,40 @@
             <div ng-repeat='error in registrationForm.activitiesVisibilityDefault.errors' ng-bind-html="error"></div>
         </span>
         </div>
-        <!--Email frequency-->
-        <div class="form-group clear-fix">              
-            <div>   
-                <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
-                <p>
-                    ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
-                </p>
-                <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-                    class="input-xlarge"
-                    ng-model="registrationForm.sendEmailFrequencyDays.value">
-                    <#list sendEmailFrequencies?keys as key>
-                        <option value="${key}" ng-selected="registrationForm.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-                    </#list>
-                </select>        
+        
+        <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS'>
+            <!--Notifications settings -->
+            <div id="notificationSettings" class="form-group clear-fix">
+                <div>   
+                    <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
+                    <p><@orcid.msg 'register.paragraph.1' /></p>
+                    <p><@orcid.msg 'register.paragraph.2' /></p>
+                    <div class="control-group">
+                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" ng-model="registrationForm.sendOrcidNews.value" />
+                        <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
+                    </div>
+                    <p><@orcid.msg 'register.paragraph.3' /></p>
+                </div>
             </div>
-        </div>
+        </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS' enabled=false>
+            <!--Email frequency-->
+            <div class="form-group clear-fix">              
+                <div>   
+                    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
+                    <p>
+                        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+                    </p>
+                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+                        class="input-xlarge"
+                        ng-model="registrationForm.sendEmailFrequencyDays.value">
+                        <#list sendEmailFrequencies?keys as key>
+                            <option value="${key}" ng-selected="registrationForm.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+                        </#list>
+                    </select>        
+                </div>
+            </div>
+        </@orcid.checkFeatureStatus>
         <!--Terms and conditions-->
         <div class="bottomBuffer">
             <h4><@orcid.msg 'register.labelTermsofUse'/>
@@ -287,14 +299,14 @@
     <!--Registration error-->
     <div style="margin-bottom: 15px;" ng-show="generalRegistrationError = null">
         <span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
-    </div>	 
+    </div>   
     <!-- Buttons  -->
     <div class="bottomBuffer col-xs-12 col-sm-3">
-    	<#if (RequestParameters['linkRequest'])??>
-			<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
-		<#else>
-			<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
-		</#if>
+        <#if (RequestParameters['linkRequest'])??>
+            <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
+        <#else>
+            <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
+        </#if>
     </div>  
 </div>
 <#include "/includes/duplicates_modal_inc.ftl" />        

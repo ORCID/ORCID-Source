@@ -1,20 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
-
 *,
 body,
 .orcid-id,
@@ -80,6 +63,7 @@ h4 {
 .affiliation-type,
 .journaltitle,
 .workspace-accordion-header a.toggle-text,
+.workspace-accordion-header h2.toggle-text,
 .work-title a.toggle-text {
     font-size: 14px;
 }

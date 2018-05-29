@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.oauth.service;
 
 import java.util.Arrays;
@@ -127,8 +111,8 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Override
     @Cacheable(value = "count-tokens", key = "#userName.concat('-').concat(#lastModified)")
-    public int findCountByUserName(String userName, long lastModified) {
-        return orcidOauth2TokenDetailDao.findCountByUserName(userName);
+    public boolean hasToken(String userName, long lastModified) {
+        return orcidOauth2TokenDetailDao.hasToken(userName);
     }
 
     @Override

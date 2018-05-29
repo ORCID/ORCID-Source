@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.io.BufferedReader;
@@ -49,8 +33,8 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.RelevancyScore;
-import org.orcid.jaxb.model.v3.dev1.search.Result;
-import org.orcid.jaxb.model.v3.dev1.search.Search;
+import org.orcid.jaxb.model.v3.rc1.search.Result;
+import org.orcid.jaxb.model.v3.rc1.search.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.utils.DateUtils;

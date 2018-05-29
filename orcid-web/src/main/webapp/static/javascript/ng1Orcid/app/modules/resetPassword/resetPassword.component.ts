@@ -1,6 +1,6 @@
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -46,7 +46,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
                 this.resetPasswordForm = data;
             },
             error => {
-                //console.log('error fetching password-reset.json', error);
+                console.log('error fetching password-reset.json');
             } 
         );
  
@@ -56,7 +56,6 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
         var urlParts = window.location.href.split('/');
         var encryptedEmail = urlParts[urlParts.length -1];
         this.resetPasswordForm.encryptedEmail = encryptedEmail;
-
         this.passwordService.postPasswordReset( this.resetPasswordForm )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -69,13 +68,12 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
 
             },
             error => {
-                //console.log('error posting to reset-password-email.json', error);
+                console.log('error posting to reset-password-email.json');
             } 
         );
     }
 
     serverValidate(): void {
-
         this.passwordService.serverValidate( this.resetPasswordForm )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -83,7 +81,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
                 this.commonSrvc.copyErrorsLeft(this.resetPasswordForm, data);
             },
             error => {
-                //console.log('error posting to reset-password-email.json', error);
+                console.log('error posting to reset-password-form-validate.json');
             } 
         );
     }

@@ -33,8 +33,8 @@
 			<common:country>AF</common:country>
 		</common:address>
 		<common:disambiguated-organization>
-			<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-			<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+			<common:disambiguated-organization-identifier>http://dx.doi.org/10.13039/100000001</common:disambiguated-organization-identifier>
+            <common:disambiguation-source>FUNDREF</common:disambiguation-source>
 		</common:disambiguated-organization>
 	</employment:organization>	
 </employment:employment>

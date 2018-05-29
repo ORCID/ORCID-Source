@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -36,7 +20,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -107,12 +90,12 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
     
     @Test
     public void testGetExternalIdentifiersUsingVisibility() {
-        List<ExternalIdentifierEntity> extIds = dao.getExternalIdentifiers("4444-4444-4444-4442", Visibility.LIMITED);
+        List<ExternalIdentifierEntity> extIds = dao.getExternalIdentifiers("4444-4444-4444-4442", "LIMITED");
         assertNotNull(extIds);
         assertEquals(1, extIds.size());
         assertEquals(Long.valueOf(3), extIds.get(0).getId());
         
-        extIds = dao.getExternalIdentifiers("4444-4444-4444-4442", Visibility.PUBLIC);
+        extIds = dao.getExternalIdentifiers("4444-4444-4444-4442", "PUBLIC");
         assertNotNull(extIds);
         assertEquals(1, extIds.size());
         assertEquals(Long.valueOf(2), extIds.get(0).getId());                
@@ -128,7 +111,7 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
         assertEquals("abc456", extId.getExternalIdReference());
         assertEquals("http://www.facebook.com/abc456", extId.getExternalIdUrl());
         assertEquals(Long.valueOf(3), extId.getId());        
-        assertEquals(Visibility.LIMITED, extId.getVisibility());
+        assertEquals("LIMITED", extId.getVisibility());
         assertNotNull(extId.getElementSourceId());
         assertEquals("4444-4444-4444-4442", extId.getElementSourceId());
     }

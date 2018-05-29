@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
@@ -36,7 +20,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.orcid.jaxb.model.message.Iso3166Country;
 
 /**
  * 
@@ -62,7 +45,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     private String name;
     private String city;
     private String region;
-    private Iso3166Country country;
+    private String country;
     private String url;
     private String status;
     private Date lastIndexedDate;
@@ -152,13 +135,12 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.region = region;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
-    public Iso3166Country getCountry() {
+    @Column
+    public String getCountry() {
         return country;
     }
 
-    public void setCountry(Iso3166Country country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 

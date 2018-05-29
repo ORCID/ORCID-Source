@@ -25,3 +25,4 @@ orcid-web/src/main/webapp/static/javascript/angular_orcid_generated.js
 orcid-activemq/activemq-data/
 orcid-activemq/logs/
 orcid-message-listener/logs/
+*.md.html

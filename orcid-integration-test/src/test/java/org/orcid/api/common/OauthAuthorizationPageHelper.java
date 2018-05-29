@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.common;
 
 import static org.orcid.integration.blackbox.api.BBBUtil.TIMEOUT_SECONDS;
@@ -89,13 +73,14 @@ public class OauthAuthorizationPageHelper {
         waitForAngular();
 
         if (longLife == false) {
-            // disablePersistentToken
-            WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
-            if (persistentElement.isDisplayed()) {
-                if (persistentElement.isSelected()) {
-                    persistentElement.click();
-                }
-            }
+            // No longer an option!
+            // WebElement persistentElement =
+            // webDriver.findElement(By.id("enablePersistentToken"));
+            // if (persistentElement.isDisplayed()) {
+            // if (persistentElement.isSelected()) {
+            // persistentElement.click();
+            // }
+            // }
         }
         waitForAngular();
 

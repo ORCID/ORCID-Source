@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected nav="record">
 <#escape x as x?html>
 
@@ -57,9 +39,19 @@
 
     <#-- hidden divs that trigger angular -->
     <#if RequestParameters['recordClaimed']??>
-    <div ng-controller="ClaimThanks" style="display: hidden;"></div>      
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <claim-thanks-ng2></claim-thanks-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
+    <div ng-controller="ClaimThanks" style="display: hidden;"></div>
+    </@orcid.checkFeatureStatus> 
     <#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
+    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <verify-email-ng2></verify-email-ng2>
+    </@orcid.checkFeatureStatus>
+    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
     <div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
+    </@orcid.checkFeatureStatus> 
     </#if>
   
     <!-- ID Banner and other account information -->
@@ -73,9 +65,9 @@
             <#include "includes/print_record.ftl"/>
 
             <div class="qrcode-container">
-                <a href="<@orcid.rootPath "/my-orcid-qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
+                <a href="<@orcid.rootPath "/qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
                     <div class="popover-help-container">
-                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <i class="glyphicon glyphicon-question-sign"></i>
                         <div id="qrcode-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">
@@ -87,103 +79,30 @@
             </div>
 
             <!-- Other Names -->
-
-            <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
             <also-known-as-ng2></also-known-as-ng2>
-            </@orcid.checkFeatureStatus>
 
-            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-              <div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
-                <div class="workspace-section-header">
-                  <div class="workspace-section-title">
-                    <div class="edit-other-names edit-option" id="open-edit-other-names" ng-click="openEditModal()">                      
-                      <div class="glyphicon glyphicon-pencil">
-                        <div class="popover popover-tooltip top"> 
-                          <div class="arrow"></div>
-                          <div class="popover-content">
-                            <span><@orcid.msg 'manage_bio_settings.editOtherNames' /></span>
-                          </div>                
-                        </div>                  
-                      </div>
-                    </div>
-                    <div class="workspace-section-label"><@orcid.msg 'workspace.Alsoknownas'/></div>
-                  </div>                
-                </div>
-                <div class="workspace-section-content">
-                  <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
-                    {{ $last?otherName.content:otherName.content + ", "}}
-                   </span>
-                </div>
-              </div>
-            </@orcid.checkFeatureStatus>
-
-            <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+            <!-- Country -->
             <country-ng2></country-ng2>
-            </@orcid.checkFeatureStatus>
 
-            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-            <div ng-controller="CountryCtrl" class="workspace-section country">
-                <div class="workspace-section-header">
-                    <div class="workspace-section-title">
-                        <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
-                            <div class="glyphicon glyphicon-pencil"> 
-                                <div class="popover popover-tooltip top"> 
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
-                                    </div>                
-                                </div>
-                            </div>                  
-                        </div>
-                        <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
-                    </div>
-                </div>
-                <div class="workspace-section-content">
-                    <span ng-repeat="country in countryForm.addresses">                                       
-                        <span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
-                    </span>
-                </div>
-            </div>
-            </@orcid.checkFeatureStatus>
 
             <keywords-ng2></keywords-ng2>
 
             <!-- Websites  -->
-            <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
             <websites-ng2></websites-ng2>
-            </@orcid.checkFeatureStatus>
-            
-            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>         
-            <div ng-controller="WebsitesCtrl" class="workspace-section websites">
-                <div class="workspace-section-header">
-                    <div class="workspace-section-title">
-                        <div id="open-edit-websites" class="edit-websites edit-option" ng-click="openEditModal()">
-                            <div class="glyphicon glyphicon-pencil">
-                                <div class="popover popover-tooltip top">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <span><@orcid.msg 'manage_bio_settings.editWebsites' /></span>
-                                    </div>                
-                                </div>
-                            </div>         
-                        </div>
-                        <div class="workspace-section-label"><@orcid.msg 'public_profile.labelWebsites'/></div>
-                    </div>
-                </div>  
-                <div class="workspace-section-content">
-                    <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
-                        <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow">{{website.urlName != null? website.urlName : website.url.value}}</a>
-                    </div>
-                </div>
-            </div>
-            </@orcid.checkFeatureStatus>
 
-      <!-- Emails  -->
+            <!-- Emails  -->
         
-        <emails-ng2></emails-ng2>
+            <emails-ng2></emails-ng2>
 
 
-      <!--  External Identifiers -->          
+      <!--  External Identifiers -->
+
+      <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+      <div ng-hide="!externalIdentifiersForm.externalIdentifiers.length">
+        <external-identifiers-ng2></external-identifiers-ng2>
+      </div>
+      </@orcid.checkFeatureStatus>
+      <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>   
       <div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
         <div class="workspace-section-header">
           <div class="workspace-section-title">                 
@@ -206,7 +125,8 @@
             <span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="externalIdentifier.commonName">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>
           </div>
         </div>
-      </div>          
+      </div>
+      </@orcid.checkFeatureStatus>       
     </div>
   </div>
 
@@ -221,20 +141,28 @@
         </div>
       </div>                
       </#if>
+      <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+      <work-summary-ng2></work-summary-ng2>
+      </@orcid.checkFeatureStatus>         
+        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
       <div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
         <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
           <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/><a href="https://support.orcid.org/knowledgebase/articles/460004" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a><@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
         </div>                
       </div>
+      </@orcid.checkFeatureStatus>  
       <div class="workspace-accordion" id="workspace-accordion">
         <!-- Notification alert -->                       
         <#include "includes/notification_alert.ftl"/>             
         <!-- Personal Information -->
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+        <personal-info-ng2></personal-info-ng2>
+        </@orcid.checkFeatureStatus>         
         <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">              
           <div class="workspace-accordion-content" ng-if="displayInfo">
             <#include "workspace_personal_v3.ftl"/>
           </div>
-        </div>
+        </div>    
         <!-- Affiliations / Education / Employment -->
         <#include "workspace_affiliations_body_list_v3.ftl"/>
         <!-- Fundings -->
@@ -244,7 +172,6 @@
         <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
         <works-ng2></works-ng2>
         </@orcid.checkFeatureStatus>         
-        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
         <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.loading != true}}">
           <#include "includes/work/work_section_header_inc_v3.ftl"/>
           <!-- Work Import Wizard -->
@@ -492,7 +419,6 @@
             <#include "includes/work/body_work_inc_v3.ftl"/>            
           </div>
         </div>
-        </@orcid.checkFeatureStatus>
 
         <div ng-controller="PeerReviewCtrl">
           <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
@@ -732,20 +658,13 @@
 </script>
 
 <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
-<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645">
-    <also-known-as-form-ng2></also-known-as-form-ng2>
-</modalngcomponent><!-- Ng2 component --> 
 
-<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
-    <country-form-ng2></country-form-ng2>
+<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
+    <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
-
-<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
-    <websites-form-ng2></websites-form-ng2>
-</modalngcomponent><!-- Ng2 component -->  
 </@orcid.checkFeatureStatus> 
 
-<modalngcomponent elementHeight="300" elementId="modalAffiliationDelete" elementWidth="300">
+<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
@@ -753,22 +672,33 @@
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645" setFocus="true">
+    <also-known-as-form-ng2></also-known-as-form-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
+    <country-form-ng2 ></country-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
     <emails-form-ng2 popUp="true"></emails-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
-
-<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
-    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
-</modalngcomponent><!-- Ng2 component --> 
 
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
+<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
+    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645" setFocus="true">
     <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645" setFocus="true">
+    <websites-form-ng2></websites-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>

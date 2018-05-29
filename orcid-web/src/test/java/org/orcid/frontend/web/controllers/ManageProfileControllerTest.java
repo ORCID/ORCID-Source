@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
@@ -58,16 +42,15 @@ import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
-import org.orcid.jaxb.model.v3.dev1.common.CreditName;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.FamilyName;
-import org.orcid.jaxb.model.v3.dev1.record.GivenNames;
-import org.orcid.jaxb.model.v3.dev1.record.Name;
+import org.orcid.jaxb.model.v3.rc1.common.CreditName;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.FamilyName;
+import org.orcid.jaxb.model.v3.rc1.record.GivenNames;
+import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -130,7 +113,7 @@ public class ManageProfileControllerTest {
 
     private RecordNameEntity getRecordName(String orcidId) {
         RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         recordName.setFamilyName(orcidId + " Family Name");
         recordName.setGivenNames(orcidId + " Given Names");
         return recordName;
@@ -195,7 +178,7 @@ public class ManageProfileControllerTest {
                     e1.setGiver(invocation.getArgument(0));
                     ProfileSummaryEntity ps = new ProfileSummaryEntity();
                     RecordNameEntity recordName = new RecordNameEntity();
-                    recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                    recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                     if (i == 0) {
                         ps.setId("0000-0000-0000-0004");
                         recordName.setCreditName("Credit Name");
@@ -216,7 +199,7 @@ public class ManageProfileControllerTest {
                 email1.setDateCreated(new Date());
                 email1.setLastModified(new Date());
                 email1.setPrimary(true);
-                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
                 EmailEntity email2 = new EmailEntity();
                 email2.setId(invocation.getArgument(0) + "_2@test.orcid.org");
@@ -225,7 +208,7 @@ public class ManageProfileControllerTest {
                 email2.setDateCreated(new Date());
                 email2.setLastModified(new Date());
                 email2.setPrimary(false);
-                email2.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                email2.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
                 Set<EmailEntity> emails = new HashSet<EmailEntity>();
                 emails.add(email1);
@@ -265,7 +248,7 @@ public class ManageProfileControllerTest {
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
                 email.setId(emailString);
-                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
                 entity.setRecordNameEntity(getRecordName(orcidString));
@@ -312,7 +295,7 @@ public class ManageProfileControllerTest {
                 email1.setDateCreated(new Date());
                 email1.setLastModified(new Date());
                 email1.setPrimary(true);
-                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
                 Set<EmailEntity> emails = new HashSet<EmailEntity>();
                 emails.add(email1);
@@ -334,7 +317,7 @@ public class ManageProfileControllerTest {
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
                 email.setId(emailString);
-                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
                 entity.setRecordNameEntity(getRecordName(orcidString));
@@ -360,7 +343,7 @@ public class ManageProfileControllerTest {
                 email1.setDateCreated(new Date());
                 email1.setLastModified(new Date());
                 email1.setPrimary(true);
-                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
                 Set<EmailEntity> emails = new HashSet<EmailEntity>();
                 emails.add(email1);
@@ -382,7 +365,7 @@ public class ManageProfileControllerTest {
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
                 email.setId(emailString);
-                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
                 entity.setRecordNameEntity(getRecordName(orcidString));
@@ -738,7 +721,7 @@ public class ManageProfileControllerTest {
                 email1.setDateCreated(new Date());
                 email1.setLastModified(new Date());
                 email1.setPrimary(true);
-                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+                email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
                 Set<EmailEntity> emails = new HashSet<EmailEntity>();
                 emails.add(email1);
@@ -944,8 +927,9 @@ public class ManageProfileControllerTest {
     }
     
     protected Authentication getAuthentication(String orcid) {
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null, OrcidType.USER);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, null, Arrays.asList(OrcidWebRole.ROLE_USER));
+        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null, roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, null, roles);
         auth.setDetails(details);
         return auth;
     }

@@ -1,24 +1,7 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -36,10 +19,10 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
     
     List<OrgEntity> getOrgsByName(String searchTerm);
 
-    OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, Iso3166Country country);
+    OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, String country);
     
     void removeOrgsByClientSourceId(String clientSourceId);
 
-    OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, Iso3166Country country, OrgDisambiguatedEntity orgDisambiguated);
+    OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, String country, OrgDisambiguatedEntity orgDisambiguated);
 
 }

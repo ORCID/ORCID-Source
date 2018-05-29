@@ -1,23 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.jaxb.model.notification.permission_v2;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * 
@@ -33,4 +19,9 @@ public enum ItemType {
     @XmlEnumValue("peer-review") PEER_REVIEW,
     @XmlEnumValue("work") WORK;
     //@formatter:on
+    
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
+    }
 }

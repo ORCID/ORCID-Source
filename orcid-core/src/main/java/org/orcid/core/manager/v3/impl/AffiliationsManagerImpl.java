@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Arrays;
@@ -29,19 +13,19 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -314,7 +298,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         entity.setProfile(profile);
         setIncomingWorkPrivacy(entity, profile);
-        entity.setAffiliationType(type);
+        entity.setAffiliationType(type.name());
         
         orgAffiliationRelationDao.persist(entity);
         orgAffiliationRelationDao.flush();
@@ -362,11 +346,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         String existingSourceId = entity.getSourceId();
         String existingClientSourceId = entity.getClientSourceId();
 
-        org.orcid.jaxb.model.common_v2.Visibility originalVisibility = entity.getVisibility();
+        String originalVisibility = entity.getVisibility();
         orcidSecurityManager.checkSource(entity);
 
         activityValidator.validateAffiliation(affiliation, sourceEntity, false, isApiRequest,
-                org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(originalVisibility.value()));
+                org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(originalVisibility));
 
         if (isApiRequest) {
             checkAffiliationExternalIDsForDuplicates(orcid, affiliation, sourceEntity);
@@ -396,7 +380,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             break;
         }
         
-        entity.setVisibility(originalVisibility);
+        if (isApiRequest) {
+            entity.setVisibility(originalVisibility);
+        }
+        
 
         // Be sure it doesn't overwrite the source
         entity.setSourceId(existingSourceId);
@@ -407,7 +394,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
         entity.setOrg(updatedOrganization);
 
-        entity.setAffiliationType(type);            
+        entity.setAffiliationType(type.name());            
         entity = orgAffiliationRelationDao.merge(entity);
         orgAffiliationRelationDao.flush();
         
@@ -461,40 +448,32 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orcidSecurityManager.checkSource(affiliationEntity);
         boolean result = orgAffiliationRelationDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if (result) {
-            switch(affiliationEntity.getAffiliationType()) {
-            case DISTINCTION:
+            if (AffiliationType.DISTINCTION.name().equals(affiliationEntity.getAffiliationType())) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(affiliationEntity));
-                break;
-            case EDUCATION:
+            } else if (AffiliationType.EDUCATION.name().equals(affiliationEntity.getAffiliationType())) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(affiliationEntity));
-                break;
-            case EMPLOYMENT:
+            } else if (AffiliationType.EMPLOYMENT.name().equals(affiliationEntity.getAffiliationType())) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(affiliationEntity));
-                break;
-            case INVITED_POSITION:
+            } else if (AffiliationType.INVITED_POSITION.name().equals(affiliationEntity.getAffiliationType())) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.INVITED_POSITION, createItemList(affiliationEntity));
-                break;
-            case MEMBERSHIP:
+            } else if (AffiliationType.MEMBERSHIP.name().equals(affiliationEntity.getAffiliationType())) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.MEMBERSHIP, createItemList(affiliationEntity));
-                break;
-            case QUALIFICATION:
+            } else if (AffiliationType.QUALIFICATION.name().equals(affiliationEntity.getAffiliationType())) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.QUALIFICATION, createItemList(affiliationEntity));
-                break;
-            case SERVICE:
+            } else if (AffiliationType.SERVICE.name().equals(affiliationEntity.getAffiliationType())) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.SERVICE, createItemList(affiliationEntity));
-                break;
             }            
         }
         return result;
     }
 
     private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingElementVisibility = orgAffiliationRelationEntity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultElementVisibility = profile.getActivitiesVisibilityDefault();
+        String incomingElementVisibility = orgAffiliationRelationEntity.getVisibility();
+        String defaultElementVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
             orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);
         } else if (incomingElementVisibility == null) {
-            orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }
 
@@ -502,28 +481,20 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         Item item = new Item();
         item.setItemName(orgAffiliationEntity.getOrg().getName());
         ItemType itemType = null;
-        switch(orgAffiliationEntity.getAffiliationType()) {
-        case DISTINCTION:
+        if (AffiliationType.DISTINCTION.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.DISTINCTION;
-            break;
-        case EDUCATION:
+        } else if (AffiliationType.EDUCATION.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.EDUCATION;
-            break;
-        case EMPLOYMENT:
+        } else if (AffiliationType.EMPLOYMENT.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.EMPLOYMENT;
-            break;
-        case INVITED_POSITION:
+        } else if (AffiliationType.INVITED_POSITION.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.INVITED_POSITION;
-            break;
-        case MEMBERSHIP:
+        } else if (AffiliationType.MEMBERSHIP.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.MEMBERSHIP;
-            break;
-        case QUALIFICATION:
+        } else if (AffiliationType.QUALIFICATION.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.QUALIFICATION;
-            break;
-        case SERVICE:
+        } else if (AffiliationType.SERVICE.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.SERVICE;
-            break;
         }
         item.setItemType(itemType);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
@@ -532,8 +503,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
     @Override
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
-        return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId,
-                org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.value()));
+        return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility.name());
     }
 
     /**

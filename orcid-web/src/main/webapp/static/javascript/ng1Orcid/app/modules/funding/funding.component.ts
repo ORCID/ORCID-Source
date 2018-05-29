@@ -6,7 +6,7 @@ declare var sortState: any;
 declare var typeahead: any;
 
 //Import all the angular components
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -189,10 +189,10 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                         fundingSrvc.addFundingToScope(path);
                     },50);
                 }
-                */
-
+                
                 let ids = data.splice(0,20).join();
                 this.getFundingsById( ids );
+                */
             },
             error => {
                 //console.log('getBiographyFormError', error);

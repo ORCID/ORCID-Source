@@ -1,6 +1,6 @@
 # Webhooks
 
-This tutorial shows how register and unregister webhooks. Webhook change notifications enable applications to be informed when data within an ORCID record changes. (Note: Actual data exchange is based on privacy levels set by the ORCID iD holder and permissions the individual has granted to the client.)
+This tutorial shows how to register and unregister webhooks. Webhook change notifications enable applications to be informed when data within an ORCID record changes. (Note: Actual data exchange is based on visibility levels set by the ORCID iD holder and permissions the individual has granted to the client.)
 
 This feature is only available on the Member API and only for Premium ORCID Members, it can be used on sandbox or production.
 

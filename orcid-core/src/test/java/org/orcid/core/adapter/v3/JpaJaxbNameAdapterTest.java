@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -26,12 +10,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.v3.JpaJaxbNameAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.CreditName;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.FamilyName;
-import org.orcid.jaxb.model.v3.dev1.record.GivenNames;
-import org.orcid.jaxb.model.v3.dev1.record.Name;
+import org.orcid.jaxb.model.v3.rc1.common.CreditName;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.FamilyName;
+import org.orcid.jaxb.model.v3.rc1.record.GivenNames;
+import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -63,7 +47,7 @@ public class JpaJaxbNameAdapterTest extends MockSourceNameCache {
         assertEquals("Credit Name", entity.getCreditName());        
         assertEquals("Family Name", entity.getFamilyName());
         assertEquals("Given Names", entity.getGivenNames());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, entity.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), entity.getVisibility());
         assertNotNull(entity.getProfile());
         assertEquals("0000-0000-0000-0000", entity.getProfile().getId());        
     }
@@ -74,7 +58,7 @@ public class JpaJaxbNameAdapterTest extends MockSourceNameCache {
         entity.setCreditName("Credit Name");
         entity.setFamilyName("Family Name");
         entity.setGivenNames("Given Names");
-        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         
         Name name = adapter.toName(entity);

@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:sec="http://www.springframework.org/schema/security"
@@ -36,6 +18,9 @@
 	<sec:http pattern="/v2**/o2c.html" security="none"/>
 	<sec:http pattern="/v3**/" security="none"/>
 	<sec:http pattern="/v3**/o2c.html" security="none"/>
+	
+	<!--  Status check -->
+	<sec:http pattern="/v*/apiStatus" security="none"/>
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">

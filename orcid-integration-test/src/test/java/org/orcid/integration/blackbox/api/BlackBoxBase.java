@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +9,6 @@ import static org.orcid.integration.blackbox.api.BBBUtil.findElements;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementsByXpath;
 import static org.orcid.integration.blackbox.api.BBBUtil.ngAwareClick;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForAngular;
-import static org.orcid.integration.blackbox.api.BBBUtil.waitForCboxComplete;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForElementVisibility;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForNoCboxOverlay;
 
@@ -57,7 +40,6 @@ import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -186,9 +168,9 @@ public class BlackBoxBase {
     
     protected static WebDriver webDriver = BlackBoxWebDriver.getWebDriver();
     
-    public void adminSignIn(String adminUserName, String adminPassword) {
-        webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        webDriver.get(this.getWebBaseUrl() + "/admin-actions");
+    public static void adminSignIn(String adminUserName, String adminPassword) {
+        webDriver.get(getWebBaseUri() + "/userStatus.json?logUserOut=true");
+        webDriver.get(getWebBaseUri() + "/admin-actions");
         signIn(webDriver, adminUserName, adminPassword);
         dismissVerifyEmailModal();
     }
@@ -201,16 +183,17 @@ public class BlackBoxBase {
      * @param f
      * @param value
      */
-    public void toggleFeature(String adminUserName, String adminPassword, Features f, boolean value){
+    public static void toggleFeature(String adminUserName, String adminPassword, Features f, boolean value){
         adminSignIn(adminUserName, adminPassword);
-        webDriver.get(this.getWebBaseUrl() + "/togglz/edit?f="+f.name());
+        webDriver.get(getWebBaseUri() + "/togglz/edit?f="+f.name());
         boolean state = webDriver.findElement(By.id("enabled")).isSelected();
         if (state == value)
             return;
         webDriver.findElement(By.id("enabled")).click();
         webDriver.findElement(By.id("enabled")).submit();
+        signout();
     }
-    
+
     /** 
      * Returns current state of toggle feature
      * @param adminUserName
@@ -218,10 +201,12 @@ public class BlackBoxBase {
      * @param feature
      * @param value
      */
-    public boolean getTogglzFeatureState(String adminUserName, String adminPassword, Features feature) {
+    public static boolean getTogglzFeatureState(String adminUserName, String adminPassword, Features feature) {
         adminSignIn(adminUserName, adminPassword);
-        webDriver.get(this.getWebBaseUrl() + "/togglz/edit?f=" + feature.name());
-        return webDriver.findElement(By.id("enabled")).isSelected();
+        webDriver.get(getWebBaseUri() + "/togglz/edit?f=" + feature.name());
+        boolean isEnabled = webDriver.findElement(By.id("enabled")).isSelected();
+        signout();
+        return isEnabled;
     }
 
     public void adminUnlockAccount(String adminUserName, String adminPassword, String orcidToUnlock) {
@@ -282,7 +267,7 @@ public class BlackBoxBase {
     }
     
     public static void changeDefaultUserVisibility(WebDriver webDriver, String visibility, boolean logUserOut) {
-        String baseUri = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String baseUri = getWebBaseUri();
         String userOrcid = BBBUtil.getProperty("org.orcid.web.testUser1.username");
         String userPassword = BBBUtil.getProperty("org.orcid.web.testUser1.password");
         
@@ -307,13 +292,10 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(toggle, webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         
-        String clickXPathStr = "//div[@id='privacy-settings' and contains(text(),'By default, who should')]//a[contains(@name,'" + Visibility.valueOf(visibility).value() + "')]";
-        String clickWorkedStr =  "//div[@id='privacy-settings' and contains(text(),'By default, who should ')]//li[@class='" + Visibility.valueOf(visibility).value() + "Active']//a[contains(@name,'" + Visibility.valueOf(visibility).value() + "')]";
-
+        String clickXPathStr = "(//div[@id='privacy-settings' and contains(text(),'By default, who should')]//input)[" + getPrivacyIndex(visibility) + "]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
     }
     
     
@@ -380,7 +362,7 @@ public class BlackBoxBase {
     }
     
     public static void showMyOrcidPage() {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String baseUrl = getWebBaseUri();
         webDriver.get(baseUrl + "/my-orcid");
         BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
@@ -394,14 +376,14 @@ public class BlackBoxBase {
     }
     
     public static void signin(String userName, String password) {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");        
+        String baseUrl = getWebBaseUri();        
         webDriver.get(baseUrl + "/signin");
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         signIn(webDriver, userName, password);
     }
 
     public static void signout() {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String baseUrl = getWebBaseUri();
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
     }
     
@@ -538,21 +520,20 @@ public class BlackBoxBase {
         waitForElementVisibility(By.id("open-edit-other-names"));
         clickAwayFromPopOver();
         ngAwareClick(findElementById("open-edit-other-names"));
-        waitForCboxComplete();
     }
 
     public static void deleteOtherNames() {
         waitForAngular();
-        By rowBy = By.xpath("//div[@ng-repeat='otherName in otherNamesForm.otherNames']");
+        By rowBy = By.xpath("//div[@id='other-names']");
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement : webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteOtherName(otherName)']")));            
+            ngAwareClick(webElement.findElement(By.xpath("//div[contains(@class, 'delete-other-name')]")));            
         }
     }
 
     public static void createOtherName(String otherName) {
-        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        By addNew = By.xpath("//a[@id='add-other-name']/span");
         waitForElementVisibility(addNew);
         waitForAngular();
         ngAwareClick(findElement(addNew));
@@ -563,7 +544,7 @@ public class BlackBoxBase {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        By emptyInput = By.xpath("(//input[@ng-model='otherName.content' and contains(@class, 'ng-empty')])[last()]");
+        By emptyInput = By.xpath("(//input[contains(@class, 'other-name-content')])[last()]");
         waitForElementVisibility(emptyInput);
         WebElement input = findElement(emptyInput);
         input.sendKeys(otherName);
@@ -578,7 +559,7 @@ public class BlackBoxBase {
 
     public static void changeOtherNamesVisibility(String visibility) {
         int index = getPrivacyIndex(visibility);
-        String otherNamesVisibilityXpath = "//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + index + "]";
+        String otherNamesVisibilityXpath = "//div[@id='other-names']//ul[@id='privacy-toggle']/li[" + index + "]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(otherNamesVisibilityXpath)), webDriver);
 
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
@@ -638,7 +619,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@class='glyphicon glyphicon-trash']")));            
+            ngAwareClick(webElement.findElement(By.xpath("//div[contains(@class, 'delete-keyword')]")));            
         }
     }
     
@@ -648,7 +629,6 @@ public class BlackBoxBase {
     public static void openEditAddressModal() {
         waitForElementVisibility(By.id("country-open-edit-modal"));
         ngAwareClick(findElementById("country-open-edit-modal"));
-        waitForCboxComplete();
     }
 
     public static void saveEditAddressModal() {
@@ -660,7 +640,7 @@ public class BlackBoxBase {
     public static void changeAddressVisibility(String visibility) {
         int index = getPrivacyIndex(visibility);
         
-        String countriesVisibilityXpath = "//div[@ng-repeat='country in countryForm.addresses']//descendant::div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        String countriesVisibilityXpath = "//div[@id='addresses']//descendant::div[@class='privacy-bar-impr']/ul/li[" + index + "]/a";
         BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath(countriesVisibilityXpath)), webDriver);
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(countriesVisibilityXpath));
@@ -670,12 +650,12 @@ public class BlackBoxBase {
     }                
     
     public static void createAddress(String countryCode) {
-        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        By addNew = By.xpath("//a[@id='add-new-country']/span");
         waitForElementVisibility(addNew);
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
-        By emptyInput = By.xpath("(//select[@ng-model='country.iso2Country.value'])[last()]//option[@value = " + Quotes.escape(countryCode) + "]");
+        By emptyInput = By.xpath("(//select[@name='country'])[last()]//option[@value = " + Quotes.escape(countryCode) + "]");
         waitForElementVisibility(emptyInput);
         WebElement countryElement = findElement(emptyInput);
         BBBUtil.ngAwareClick(countryElement, webDriver);        
@@ -683,11 +663,11 @@ public class BlackBoxBase {
     
     public static void deleteAddresses() {
         waitForAngular();
-        By rowBy = By.xpath("//div[@ng-repeat='country in countryForm.addresses']");
+        By rowBy = By.xpath("//div[@id='addresses']");
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteCountry(country)']")));            
+            ngAwareClick(webElement.findElement(By.xpath("//div[@id='delete-country']")));            
         }
     }        
     
@@ -697,20 +677,18 @@ public class BlackBoxBase {
     public static void openEditResearcherUrlsModal() {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-websites")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
     
     public static void saveResearcherUrlsModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
+        ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));  
+        waitForNoCboxOverlay();
+        waitForElementVisibility(By.id("open-edit-websites"));
     }
     
     public static void changeResearcherUrlsVisibility(String visibility) {
         int index = getPrivacyIndex(visibility);
-        String researcherUrlsVisibilityXpath = "//div[@ng-repeat='website in websitesForm.websites']//ul[@class='privacyToggle']/li[" + index +"]";
+        String researcherUrlsVisibilityXpath = "//div[@id='websites']//ul[@id='privacy-toggle']/li[" + index +"]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(researcherUrlsVisibilityXpath)), webDriver);
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(researcherUrlsVisibilityXpath));
@@ -720,12 +698,12 @@ public class BlackBoxBase {
     }
     
     public static void createResearcherUrl(String url) {
-        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        By addNew = By.xpath("//a[@id='add-website']/span");
         waitForElementVisibility(addNew);
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
-        By urlXpath = By.xpath("(//input[@ng-model='website.url.value'])[last()]");
+        By urlXpath = By.xpath("(//input[contains(@class, 'website-value')])[last()]");
         waitForElementVisibility(urlXpath);
         WebElement urlInput = findElement(urlXpath);
         urlInput.sendKeys(url);
@@ -734,11 +712,11 @@ public class BlackBoxBase {
     
     public static void deleteResearcherUrls() {
         waitForAngular();
-        By rowBy = By.xpath("//div[@id='colorbox']//div[@ng-repeat='website in websitesForm.websites']");
+        By rowBy = By.xpath("//div[@id='colorbox']//div[@id='websites']");
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteWebsite(website)']")));            
+            ngAwareClick(webElement.findElement(By.xpath("//div[@id='delete-website']")));            
         }
     }
     
@@ -753,7 +731,6 @@ public class BlackBoxBase {
     public static void openEditExternalIdentifiersModal() {
         waitForElementVisibility(By.id("open-edit-external-identifiers"));
         ngAwareClick(findElementById("open-edit-external-identifiers"));
-        waitForCboxComplete();
     }
     
     public static void saveExternalIdentifiersModal() {
@@ -866,7 +843,6 @@ public class BlackBoxBase {
         while (!trashCans.isEmpty()) {
             for (WebElement trashCan : trashCans) {
                 ngAwareClick(trashCan);
-                waitForCboxComplete();
                 By deleteButton = By.xpath("//div[@id='colorbox']//div[@class='btn btn-danger']");
                 waitForElementVisibility(deleteButton);
                 ngAwareClick(findElement(deleteButton));
@@ -1093,7 +1069,7 @@ public class BlackBoxBase {
      * ACCOUNT SETTINGS PAGE
      * */
     public static void showAccountSettingsPage() {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String baseUrl = getWebBaseUri();
         webDriver.get(baseUrl + "/account");
         BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
@@ -1400,12 +1376,16 @@ public class BlackBoxBase {
         return Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
     }
     
-    public String getAdminUserName() {
-        return adminUserName;
+    private static String getWebBaseUri() {
+        return BBBUtil.getProperty("org.orcid.web.baseUri");
     }
 
-    public String getAdminPassword() {
-        return adminPassword;
+    public static String getAdminUserName() {
+        return BBBUtil.getProperty("org.orcid.web.adminUser.username");
+    }
+
+    public static String getAdminPassword() {
+        return BBBUtil.getProperty("org.orcid.web.adminUser.password");
     }
 
     public String getAdminOrcidId() {

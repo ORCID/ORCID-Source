@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/email" xmlns:email="http://www.orcid.org/ns/email"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="email" uri="http://www.orcid.org/ns/email" />
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_3.0_rc1/common-3.0_rc1.xsd" />
+	<xs:element name="emails">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Email's container
+				</xs:documentation>
+			</xs:annotation>
+			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+				<xs:element name="email" type="email:email" minOccurs="0"
+					maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute name="path" type="common:element-path" use="optional" />
+		</xs:complexType>
+	</xs:element>
+	
+	
+	<xs:element name="email">
+		<xs:annotation>
+			<xs:documentation>Email element.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="email:email"></xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	
+	<xs:complexType name="email">
+		<xs:complexContent>
+			<xs:extension base="common:element-summary">
+				<xs:sequence>
+					<xs:element name="email" type="common:email" />					
+				</xs:sequence>
+				<xs:attribute name="verified" type="xs:boolean" />
+				<xs:attribute name="primary" type="xs:boolean" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>	

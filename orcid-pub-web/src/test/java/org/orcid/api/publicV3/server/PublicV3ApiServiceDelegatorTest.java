@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.publicV3.server;
 
 import static org.junit.Assert.assertEquals;
@@ -22,15 +6,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.AfterClass;
@@ -40,6 +28,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgExternalID;
+import org.orcid.api.common.writer.schemaorg.SchemaOrgMBWriterV3;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl;
 import org.orcid.core.api.OrcidApiConstants;
@@ -55,65 +46,65 @@ import org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.client.Client;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Locale;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.error.OrcidError;
-import org.orcid.jaxb.model.v3.dev1.record.Address;
-import org.orcid.jaxb.model.v3.dev1.record.Addresses;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.History;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Keyword;
-import org.orcid.jaxb.model.v3.dev1.record.Keywords;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.Person;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Record;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
-import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
-import org.orcid.jaxb.model.v3.dev1.search.Result;
-import org.orcid.jaxb.model.v3.dev1.search.Search;
+import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Locale;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.History;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Keyword;
+import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.search.Result;
+import org.orcid.jaxb.model.v3.rc1.search.Search;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -123,6 +114,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
@@ -134,7 +129,7 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
 
     private final String ORCID = "0000-0000-0000-0003";
 
-    @Resource(name = "publicV3ApiServiceDelegatorV3_0_dev1")
+    @Resource(name = "publicV3ApiServiceDelegatorV3_0_rc1")
     PublicV3ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
     @BeforeClass
@@ -296,8 +291,8 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/educations", educations.getPath());
         assertNotNull(educations.getLastModifiedDate());
         assertNotNull(educations.getLastModifiedDate().getValue());
-        assertEquals(1, educations.getSummaries().size());
-        EducationSummary education = educations.getSummaries().get(0);
+        assertEquals(1, educations.retrieveGroups().size());
+        EducationSummary education = educations.retrieveGroups().iterator().next().getActivities().get(0);
         assertEquals(Long.valueOf(20), education.getPutCode());
         assertNotNull(education.getLastModifiedDate());
         assertNotNull(education.getLastModifiedDate().getValue());
@@ -379,8 +374,8 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/employments", employments.getPath());
         assertNotNull(employments.getLastModifiedDate());
         assertNotNull(employments.getLastModifiedDate().getValue());
-        assertEquals(1, employments.getSummaries().size());
-        EmploymentSummary employment = employments.getSummaries().get(0);
+        assertEquals(1, employments.retrieveGroups().size());
+        EmploymentSummary employment = employments.retrieveGroups().iterator().next().getActivities().get(0);
         assertEquals(Long.valueOf(17), employment.getPutCode());
         assertNotNull(employment.getLastModifiedDate());
         assertNotNull(employment.getLastModifiedDate().getValue());
@@ -706,12 +701,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(educations);
         assertNotNull(educations.getLastModifiedDate());
         assertNotNull(educations.getLastModifiedDate().getValue());
-        assertNotNull(educations.getSummaries());
-        assertEquals(1, educations.getSummaries().size());
-        assertEquals(Long.valueOf(20), educations.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, educations.getSummaries().get(0).getVisibility());
-        assertNotNull(educations.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(educations.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(educations.retrieveGroups());
+        assertEquals(1, educations.retrieveGroups().size());
+        
+        EducationSummary summary = educations.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(20), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test
@@ -723,12 +720,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(educations);
         assertNotNull(educations.getLastModifiedDate());
         assertNotNull(educations.getLastModifiedDate().getValue());
-        assertNotNull(educations.getSummaries());
-        assertEquals(1, educations.getSummaries().size());
-        assertEquals(Long.valueOf(20), educations.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, educations.getSummaries().get(0).getVisibility());
-        assertNotNull(educations.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(educations.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(educations.retrieveGroups());
+        assertEquals(1, educations.retrieveGroups().size());
+        
+        EducationSummary summary = educations.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(20), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test(expected = OrcidNonPublicElementException.class)
@@ -766,12 +765,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(employments);
         assertNotNull(employments.getLastModifiedDate());
         assertNotNull(employments.getLastModifiedDate().getValue());
-        assertNotNull(employments.getSummaries());
-        assertEquals(1, employments.getSummaries().size());
-        assertEquals(Long.valueOf(17), employments.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, employments.getSummaries().get(0).getVisibility());
-        assertNotNull(employments.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(employments.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(employments.retrieveGroups());
+        assertEquals(1, employments.retrieveGroups().size());
+        
+        EmploymentSummary summary = employments.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(17), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test
@@ -783,12 +784,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(employments);
         assertNotNull(employments.getLastModifiedDate());
         assertNotNull(employments.getLastModifiedDate().getValue());
-        assertNotNull(employments.getSummaries());
-        assertEquals(1, employments.getSummaries().size());
-        assertEquals(Long.valueOf(17), employments.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, employments.getSummaries().get(0).getVisibility());
-        assertNotNull(employments.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(employments.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(employments.retrieveGroups());
+        assertEquals(1, employments.retrieveGroups().size());
+        
+        EmploymentSummary summary = employments.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(17), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test(expected = OrcidNonPublicElementException.class)
@@ -1281,8 +1284,8 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/distinctions", distinctions.getPath());
         assertNotNull(distinctions.getLastModifiedDate());
         assertNotNull(distinctions.getLastModifiedDate().getValue());
-        assertEquals(1, distinctions.getSummaries().size());
-        DistinctionSummary distinction = distinctions.getSummaries().get(0);
+        assertEquals(1, distinctions.retrieveGroups().size());
+        DistinctionSummary distinction = distinctions.retrieveGroups().iterator().next().getActivities().get(0);
         assertEquals(Long.valueOf(27), distinction.getPutCode());
         assertNotNull(distinction.getLastModifiedDate());
         assertNotNull(distinction.getLastModifiedDate().getValue());
@@ -1312,12 +1315,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(distinctions);
         assertNotNull(distinctions.getLastModifiedDate());
         assertNotNull(distinctions.getLastModifiedDate().getValue());
-        assertNotNull(distinctions.getSummaries());
-        assertEquals(1, distinctions.getSummaries().size());
-        assertEquals(Long.valueOf(27), distinctions.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, distinctions.getSummaries().get(0).getVisibility());
-        assertNotNull(distinctions.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(distinctions.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(distinctions.retrieveGroups());
+        assertEquals(1, distinctions.retrieveGroups().size());
+        
+        DistinctionSummary summary = distinctions.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(27), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test
@@ -1329,12 +1334,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(distinctions);
         assertNotNull(distinctions.getLastModifiedDate());
         assertNotNull(distinctions.getLastModifiedDate().getValue());
-        assertNotNull(distinctions.getSummaries());
-        assertEquals(1, distinctions.getSummaries().size());
-        assertEquals(Long.valueOf(27), distinctions.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, distinctions.getSummaries().get(0).getVisibility());
-        assertNotNull(distinctions.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(distinctions.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(distinctions.retrieveGroups());
+        assertEquals(1, distinctions.retrieveGroups().size());
+        
+        DistinctionSummary summary = distinctions.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(27), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test(expected = OrcidNonPublicElementException.class)
@@ -1376,8 +1383,8 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/invited-positions", invitedPositions.getPath());
         assertNotNull(invitedPositions.getLastModifiedDate());
         assertNotNull(invitedPositions.getLastModifiedDate().getValue());
-        assertEquals(1, invitedPositions.getSummaries().size());
-        InvitedPositionSummary invitedPosition = invitedPositions.getSummaries().get(0);
+        assertEquals(1, invitedPositions.retrieveGroups().size());
+        InvitedPositionSummary invitedPosition = invitedPositions.retrieveGroups().iterator().next().getActivities().get(0);
         assertEquals(Long.valueOf(32), invitedPosition.getPutCode());
         assertNotNull(invitedPosition.getLastModifiedDate());
         assertNotNull(invitedPosition.getLastModifiedDate().getValue());
@@ -1407,12 +1414,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(invitedPositions);
         assertNotNull(invitedPositions.getLastModifiedDate());
         assertNotNull(invitedPositions.getLastModifiedDate().getValue());
-        assertNotNull(invitedPositions.getSummaries());
-        assertEquals(1, invitedPositions.getSummaries().size());
-        assertEquals(Long.valueOf(32), invitedPositions.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, invitedPositions.getSummaries().get(0).getVisibility());
-        assertNotNull(invitedPositions.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(invitedPositions.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(invitedPositions.retrieveGroups());
+        assertEquals(1, invitedPositions.retrieveGroups().size());
+        
+        InvitedPositionSummary summary = invitedPositions.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(32), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test
@@ -1424,12 +1433,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(invitedPositions);
         assertNotNull(invitedPositions.getLastModifiedDate());
         assertNotNull(invitedPositions.getLastModifiedDate().getValue());
-        assertNotNull(invitedPositions.getSummaries());
-        assertEquals(1, invitedPositions.getSummaries().size());
-        assertEquals(Long.valueOf(32), invitedPositions.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, invitedPositions.getSummaries().get(0).getVisibility());
-        assertNotNull(invitedPositions.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(invitedPositions.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(invitedPositions.retrieveGroups());
+        assertEquals(1, invitedPositions.retrieveGroups().size());
+        
+        InvitedPositionSummary summary = invitedPositions.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(32), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test(expected = OrcidNonPublicElementException.class)
@@ -1471,8 +1482,8 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/memberships", memberships.getPath());
         assertNotNull(memberships.getLastModifiedDate());
         assertNotNull(memberships.getLastModifiedDate().getValue());
-        assertEquals(1, memberships.getSummaries().size());
-        MembershipSummary membership = memberships.getSummaries().get(0);
+        assertEquals(1, memberships.retrieveGroups().size());
+        MembershipSummary membership = memberships.retrieveGroups().iterator().next().getActivities().get(0);
         assertEquals(Long.valueOf(37), membership.getPutCode());
         assertNotNull(membership.getLastModifiedDate());
         assertNotNull(membership.getLastModifiedDate().getValue());
@@ -1502,12 +1513,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(memberships);
         assertNotNull(memberships.getLastModifiedDate());
         assertNotNull(memberships.getLastModifiedDate().getValue());
-        assertNotNull(memberships.getSummaries());
-        assertEquals(1, memberships.getSummaries().size());
-        assertEquals(Long.valueOf(37), memberships.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, memberships.getSummaries().get(0).getVisibility());
-        assertNotNull(memberships.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(memberships.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(memberships.retrieveGroups());
+        assertEquals(1, memberships.retrieveGroups().size());
+        
+        MembershipSummary summary = memberships.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(37), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test
@@ -1519,12 +1532,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(memberships);
         assertNotNull(memberships.getLastModifiedDate());
         assertNotNull(memberships.getLastModifiedDate().getValue());
-        assertNotNull(memberships.getSummaries());
-        assertEquals(1, memberships.getSummaries().size());
-        assertEquals(Long.valueOf(37), memberships.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, memberships.getSummaries().get(0).getVisibility());
-        assertNotNull(memberships.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(memberships.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(memberships.retrieveGroups());
+        assertEquals(1, memberships.retrieveGroups().size());
+        
+        MembershipSummary summary = memberships.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(37), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test(expected = OrcidNonPublicElementException.class)
@@ -1566,8 +1581,9 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/qualifications", qualifications.getPath());
         assertNotNull(qualifications.getLastModifiedDate());
         assertNotNull(qualifications.getLastModifiedDate().getValue());
-        assertEquals(1, qualifications.getSummaries().size());
-        QualificationSummary qualification = qualifications.getSummaries().get(0);
+        assertEquals(1, qualifications.retrieveGroups().size());
+        
+        QualificationSummary qualification = qualifications.retrieveGroups().iterator().next().getActivities().get(0);
         assertEquals(Long.valueOf(42), qualification.getPutCode());
         assertNotNull(qualification.getLastModifiedDate());
         assertNotNull(qualification.getLastModifiedDate().getValue());
@@ -1597,12 +1613,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(qualifications);
         assertNotNull(qualifications.getLastModifiedDate());
         assertNotNull(qualifications.getLastModifiedDate().getValue());
-        assertNotNull(qualifications.getSummaries());
-        assertEquals(1, qualifications.getSummaries().size());
-        assertEquals(Long.valueOf(42), qualifications.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, qualifications.getSummaries().get(0).getVisibility());
-        assertNotNull(qualifications.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(qualifications.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(qualifications.retrieveGroups());
+        assertEquals(1, qualifications.retrieveGroups().size());
+        
+        QualificationSummary summary = qualifications.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(42), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test
@@ -1614,12 +1632,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(qualifications);
         assertNotNull(qualifications.getLastModifiedDate());
         assertNotNull(qualifications.getLastModifiedDate().getValue());
-        assertNotNull(qualifications.getSummaries());
-        assertEquals(1, qualifications.getSummaries().size());
-        assertEquals(Long.valueOf(42), qualifications.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, qualifications.getSummaries().get(0).getVisibility());
-        assertNotNull(qualifications.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(qualifications.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(qualifications.retrieveGroups());
+        assertEquals(1, qualifications.retrieveGroups().size());
+        
+        QualificationSummary summary = qualifications.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(42), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test(expected = OrcidNonPublicElementException.class)
@@ -1661,8 +1681,8 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/services", services.getPath());
         assertNotNull(services.getLastModifiedDate());
         assertNotNull(services.getLastModifiedDate().getValue());
-        assertEquals(1, services.getSummaries().size());
-        ServiceSummary service = services.getSummaries().get(0);
+        assertEquals(1, services.retrieveGroups().size());
+        ServiceSummary service = services.retrieveGroups().iterator().next().getActivities().get(0);
         assertEquals(Long.valueOf(47), service.getPutCode());
         assertNotNull(service.getLastModifiedDate());
         assertNotNull(service.getLastModifiedDate().getValue());
@@ -1692,12 +1712,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(services);
         assertNotNull(services.getLastModifiedDate());
         assertNotNull(services.getLastModifiedDate().getValue());
-        assertNotNull(services.getSummaries());
-        assertEquals(1, services.getSummaries().size());
-        assertEquals(Long.valueOf(47), services.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, services.getSummaries().get(0).getVisibility());
-        assertNotNull(services.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(services.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(services.retrieveGroups());
+        assertEquals(1, services.retrieveGroups().size());
+        
+        ServiceSummary summary = services.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(47), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test
@@ -1709,12 +1731,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(services);
         assertNotNull(services.getLastModifiedDate());
         assertNotNull(services.getLastModifiedDate().getValue());
-        assertNotNull(services.getSummaries());
-        assertEquals(1, services.getSummaries().size());
-        assertEquals(Long.valueOf(47), services.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, services.getSummaries().get(0).getVisibility());
-        assertNotNull(services.getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(services.getSummaries().get(0).getLastModifiedDate().getValue());
+        assertNotNull(services.retrieveGroups());
+        assertEquals(1, services.retrieveGroups().size());
+        
+        ServiceSummary summary = services.retrieveGroups().iterator().next().getActivities().get(0);
+        assertEquals(Long.valueOf(47), summary.getPutCode());
+        assertEquals(Visibility.PUBLIC, summary.getVisibility());
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
     }
 
     @Test(expected = OrcidNonPublicElementException.class)
@@ -1881,92 +1905,106 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEducations());
         assertNotNull(summary.getEducations().getLastModifiedDate());
         assertNotNull(summary.getEducations().getLastModifiedDate().getValue());
-        assertNotNull(summary.getEducations().getSummaries());
-        assertEquals(1, summary.getEducations().getSummaries().size());
-        assertNotNull(summary.getEducations().getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(summary.getEducations().getSummaries().get(0).getLastModifiedDate().getValue());
-        assertEquals(Long.valueOf(20), summary.getEducations().getSummaries().get(0).getPutCode());
-        assertEquals("/0000-0000-0000-0003/education/20", summary.getEducations().getSummaries().get(0).getPath());
-        assertEquals("PUBLIC Department", summary.getEducations().getSummaries().get(0).getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), summary.getEducations().getSummaries().get(0).getVisibility().value());
+        assertNotNull(summary.getEducations().retrieveGroups());
+        assertEquals(1, summary.getEducations().retrieveGroups().size());
+        
+        EducationSummary educationSumamry = summary.getEducations().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(educationSumamry.getLastModifiedDate());
+        assertNotNull(educationSumamry.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(20), educationSumamry.getPutCode());
+        assertEquals("/0000-0000-0000-0003/education/20", educationSumamry.getPath());
+        assertEquals("PUBLIC Department", educationSumamry.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), educationSumamry.getVisibility().value());
 
         // Check Employments
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getLastModifiedDate());
         assertNotNull(summary.getEmployments().getLastModifiedDate().getValue());
-        assertNotNull(summary.getEmployments().getSummaries());
-        assertEquals(1, summary.getEmployments().getSummaries().size());
-        assertNotNull(summary.getEmployments().getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(summary.getEmployments().getSummaries().get(0).getLastModifiedDate().getValue());
-        assertEquals(Long.valueOf(17), summary.getEmployments().getSummaries().get(0).getPutCode());
-        assertEquals("/0000-0000-0000-0003/employment/17", summary.getEmployments().getSummaries().get(0).getPath());
-        assertEquals("PUBLIC Department", summary.getEmployments().getSummaries().get(0).getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), summary.getEmployments().getSummaries().get(0).getVisibility().value());
+        assertNotNull(summary.getEmployments().retrieveGroups());
+        assertEquals(1, summary.getEmployments().retrieveGroups().size());
+        
+        EmploymentSummary employmentSummary = summary.getEmployments().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(employmentSummary.getLastModifiedDate());
+        assertNotNull(employmentSummary.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(17), employmentSummary.getPutCode());
+        assertEquals("/0000-0000-0000-0003/employment/17", employmentSummary.getPath());
+        assertEquals("PUBLIC Department", employmentSummary.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), employmentSummary.getVisibility().value());
 
         // Check Distinctions
         assertNotNull(summary.getDistinctions());
         assertNotNull(summary.getDistinctions().getLastModifiedDate());
         assertNotNull(summary.getDistinctions().getLastModifiedDate().getValue());
-        assertNotNull(summary.getDistinctions().getSummaries());
-        assertEquals(1, summary.getDistinctions().getSummaries().size());
-        assertNotNull(summary.getDistinctions().getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(summary.getDistinctions().getSummaries().get(0).getLastModifiedDate().getValue());
-        assertEquals(Long.valueOf(27), summary.getDistinctions().getSummaries().get(0).getPutCode());
-        assertEquals("/0000-0000-0000-0003/distinction/27", summary.getDistinctions().getSummaries().get(0).getPath());
-        assertEquals("PUBLIC Department", summary.getDistinctions().getSummaries().get(0).getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), summary.getDistinctions().getSummaries().get(0).getVisibility().value());
+        assertNotNull(summary.getDistinctions().retrieveGroups());
+        assertEquals(1, summary.getDistinctions().retrieveGroups().size());
+        
+        DistinctionSummary distinctionSummary = summary.getDistinctions().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(distinctionSummary.getLastModifiedDate());
+        assertNotNull(distinctionSummary.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(27), distinctionSummary.getPutCode());
+        assertEquals("/0000-0000-0000-0003/distinction/27", distinctionSummary.getPath());
+        assertEquals("PUBLIC Department", distinctionSummary.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), distinctionSummary.getVisibility().value());
 
         // Check InvitedPositions
         assertNotNull(summary.getInvitedPositions());
         assertNotNull(summary.getInvitedPositions().getLastModifiedDate());
         assertNotNull(summary.getInvitedPositions().getLastModifiedDate().getValue());
-        assertNotNull(summary.getInvitedPositions().getSummaries());
-        assertEquals(1, summary.getInvitedPositions().getSummaries().size());
-        assertNotNull(summary.getInvitedPositions().getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(summary.getInvitedPositions().getSummaries().get(0).getLastModifiedDate().getValue());
-        assertEquals(Long.valueOf(32), summary.getInvitedPositions().getSummaries().get(0).getPutCode());
-        assertEquals("/0000-0000-0000-0003/invited-position/32", summary.getInvitedPositions().getSummaries().get(0).getPath());
-        assertEquals("PUBLIC Department", summary.getInvitedPositions().getSummaries().get(0).getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), summary.getInvitedPositions().getSummaries().get(0).getVisibility().value());
+        assertNotNull(summary.getInvitedPositions().retrieveGroups());
+        assertEquals(1, summary.getInvitedPositions().retrieveGroups().size());
+        
+        InvitedPositionSummary invitedPositionSummary = summary.getInvitedPositions().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(invitedPositionSummary.getLastModifiedDate());
+        assertNotNull(invitedPositionSummary.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(32), invitedPositionSummary.getPutCode());
+        assertEquals("/0000-0000-0000-0003/invited-position/32", invitedPositionSummary.getPath());
+        assertEquals("PUBLIC Department", invitedPositionSummary.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), invitedPositionSummary.getVisibility().value());
     
         // Check Memberships 
         assertNotNull(summary.getMemberships());
         assertNotNull(summary.getMemberships().getLastModifiedDate());
         assertNotNull(summary.getMemberships().getLastModifiedDate().getValue());
-        assertNotNull(summary.getMemberships().getSummaries());
-        assertEquals(1, summary.getMemberships().getSummaries().size());
-        assertNotNull(summary.getMemberships().getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(summary.getMemberships().getSummaries().get(0).getLastModifiedDate().getValue());
-        assertEquals(Long.valueOf(37), summary.getMemberships().getSummaries().get(0).getPutCode());
-        assertEquals("/0000-0000-0000-0003/membership/37", summary.getMemberships().getSummaries().get(0).getPath());
-        assertEquals("PUBLIC Department", summary.getMemberships().getSummaries().get(0).getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), summary.getMemberships().getSummaries().get(0).getVisibility().value());
+        assertNotNull(summary.getMemberships().retrieveGroups());
+        assertEquals(1, summary.getMemberships().retrieveGroups().size());
+        
+        MembershipSummary membershipSummary = summary.getMemberships().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(membershipSummary.getLastModifiedDate());
+        assertNotNull(membershipSummary.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(37), membershipSummary.getPutCode());
+        assertEquals("/0000-0000-0000-0003/membership/37", membershipSummary.getPath());
+        assertEquals("PUBLIC Department", membershipSummary.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), membershipSummary.getVisibility().value());
     
         // Check Qualifications
         assertNotNull(summary.getQualifications());
         assertNotNull(summary.getQualifications().getLastModifiedDate());
         assertNotNull(summary.getQualifications().getLastModifiedDate().getValue());
-        assertNotNull(summary.getQualifications().getSummaries());
-        assertEquals(1, summary.getQualifications().getSummaries().size());
-        assertNotNull(summary.getQualifications().getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(summary.getQualifications().getSummaries().get(0).getLastModifiedDate().getValue());
-        assertEquals(Long.valueOf(42), summary.getQualifications().getSummaries().get(0).getPutCode());
-        assertEquals("/0000-0000-0000-0003/qualification/42", summary.getQualifications().getSummaries().get(0).getPath());
-        assertEquals("PUBLIC Department", summary.getQualifications().getSummaries().get(0).getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), summary.getQualifications().getSummaries().get(0).getVisibility().value());
+        assertNotNull(summary.getQualifications().retrieveGroups());
+        assertEquals(1, summary.getQualifications().retrieveGroups().size());
+        
+        QualificationSummary qualificationSummary = summary.getQualifications().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(qualificationSummary.getLastModifiedDate());
+        assertNotNull(qualificationSummary.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(42), qualificationSummary.getPutCode());
+        assertEquals("/0000-0000-0000-0003/qualification/42", qualificationSummary.getPath());
+        assertEquals("PUBLIC Department", qualificationSummary.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), qualificationSummary.getVisibility().value());
     
         // Check Services
         assertNotNull(summary.getServices());
         assertNotNull(summary.getServices().getLastModifiedDate());
         assertNotNull(summary.getServices().getLastModifiedDate().getValue());
-        assertNotNull(summary.getServices().getSummaries());
-        assertEquals(1, summary.getServices().getSummaries().size());
-        assertNotNull(summary.getServices().getSummaries().get(0).getLastModifiedDate());
-        assertNotNull(summary.getServices().getSummaries().get(0).getLastModifiedDate().getValue());
-        assertEquals(Long.valueOf(47), summary.getServices().getSummaries().get(0).getPutCode());
-        assertEquals("/0000-0000-0000-0003/service/47", summary.getServices().getSummaries().get(0).getPath());
-        assertEquals("PUBLIC Department", summary.getServices().getSummaries().get(0).getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), summary.getServices().getSummaries().get(0).getVisibility().value());
+        assertNotNull(summary.getServices().retrieveGroups());
+        assertEquals(1, summary.getServices().retrieveGroups().size());
+        
+        ServiceSummary serviceSummary = summary.getServices().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(serviceSummary.getLastModifiedDate());
+        assertNotNull(serviceSummary.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(47), serviceSummary.getPutCode());
+        assertEquals("/0000-0000-0000-0003/service/47", serviceSummary.getPath());
+        assertEquals("PUBLIC Department", serviceSummary.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), serviceSummary.getVisibility().value());
     }
 
     private void validateRecord(Record record) {
@@ -1991,5 +2029,37 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(record.getOrcidIdentifier());
         OrcidIdentifier id = record.getOrcidIdentifier();
         assertEquals("0000-0000-0000-0003", id.getPath());
+    }
+    
+    @Resource
+    SchemaOrgMBWriterV3 writerV3;
+    
+    @Test
+    public void testSchemaOrgMBWriterV3() throws WebApplicationException, IOException{
+        Response response = serviceDelegator.viewRecord(ORCID);
+        Record record = (Record) response.getEntity();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        writerV3.writeTo(record, record.getClass(), null, null, null, null, out);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        SchemaOrgDocument doc = objectMapper.readerFor(SchemaOrgDocument.class).readValue(out.toString());
+        assertTrue(doc.id.endsWith(ORCID));
+        assertEquals("Person",doc.type);
+        assertEquals("http://schema.org",doc.context);
+        assertEquals("Credit Name",doc.name);
+        assertEquals("Given Names",doc.givenName);
+        assertEquals("Family Name",doc.familyName);
+        assertEquals("Other Name PUBLIC",doc.alternateName.get(0));
+        assertEquals("WDB",doc.alumniOf.iterator().next().identifier.iterator().next().propertyID);
+        //they've been squashed into one because they're all the same Org.
+        assertEquals("WDB",doc.affiliation.iterator().next().identifier.iterator().next().propertyID);
+        Set<String> fundingIds = Sets.newHashSet();
+        for (SchemaOrgExternalID i: doc.worksAndFunding.funder.iterator().next().identifier)
+            fundingIds.add(i.propertyID);
+        assertEquals(Sets.newHashSet("WDB","grant_number"),fundingIds);
+        assertEquals("PUBLIC",doc.worksAndFunding.creator.iterator().next().name);
+        assertEquals("http://www.researcherurl.com?id=13",doc.url.get(0));
+        assertEquals("public_type",doc.identifier.get(0).propertyID);
+        assertEquals( "public_ref",doc.identifier.get(0).value);
     }
 }

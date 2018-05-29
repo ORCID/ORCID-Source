@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 /**
@@ -36,5 +20,9 @@ public enum ProfileEventType {
     
     
     // Verified_Required_Announcement_2017
-    VERIFIED_REQUIRED_SKIPPED_2017, VERIFIED_REQUIRED_HAS_VALIDATED_2017, VERIFIED_REQUIRED_SENT_2017, VERIFIED_REQUIRED_FAIL_2017;
+    VERIFIED_REQUIRED_SKIPPED_2017, VERIFIED_REQUIRED_HAS_VALIDATED_2017, VERIFIED_REQUIRED_SENT_2017, VERIFIED_REQUIRED_FAIL_2017,
+    
+    // EmailFrequencyServiceAnnouncement2018
+    GDPR_EMAIL_FREQUENCY_UPDATES_2018_SKIPPED, GDPR_EMAIL_FREQUENCY_UPDATES_2018_NOTIFICATION_CREATED, 
+    GDPR_EMAIL_FREQUENCY_UPDATES_2018_SENT, GDPR_EMAIL_FREQUENCY_UPDATES_2018_FAIL;
 }

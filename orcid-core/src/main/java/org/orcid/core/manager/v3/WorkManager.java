@@ -1,27 +1,11 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3;
 
 import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 
 public interface WorkManager extends WorkManagerReadOnly {
     
@@ -102,5 +86,12 @@ public interface WorkManager extends WorkManagerReadOnly {
      * */
     Work updateWork(String orcid, Work work, boolean isApiRequest); 
     
-    boolean checkSourceAndRemoveWork(String orcid, Long workId);    
+    boolean checkSourceAndRemoveWork(String orcid, Long workId);
+
+    /**
+     * Groups the collection of works matching the specified work ID list
+     * 
+     * @param workIds
+     */
+    void createNewWorkGroup(List<Long> workIds, String orcid);    
 }

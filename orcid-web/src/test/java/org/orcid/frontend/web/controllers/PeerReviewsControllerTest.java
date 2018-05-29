@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
@@ -41,10 +25,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -74,6 +58,9 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
     @Resource
     protected PeerReviewsController peerReviewsController;
+    
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
 
     @Mock
     private HttpServletRequest servletRequest;
@@ -81,18 +68,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
     @Override
     protected Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
-
-        OrcidProfileUserDetails details = null;
-        if (orcidProfile.getType() != null) {
-            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
-        } else {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
-        }
+        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcidProfile.retrieveOrcidPath());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4446", null, Arrays.asList(OrcidWebRole.ROLE_USER));
         auth.setDetails(details);
         return auth;
@@ -217,7 +193,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setRole(Text.valueOf("reviewer"));
         form.setType(Text.valueOf("evaluation"));
         form.setUrl(Text.valueOf("http://orcid.org"));
-        form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED));
+        form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED));
 
         Date completionDate = new Date();
         completionDate.setDay("01");

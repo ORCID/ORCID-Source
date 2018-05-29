@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.common.jaxb;
 
 import org.w3c.dom.ls.LSInput;
@@ -56,8 +40,8 @@ public class OrcidResourceResolver implements LSResourceResolver {
             return "/record_2.0_rc4/" + systemId;
         } else if(systemId.endsWith("-2.1.xsd")) {
             return "/record_2.1/" + systemId;
-        } else if(systemId.endsWith("-3.0_dev1.xsd")) {
-            return "/record_3.0_dev1/" + systemId;
+        } else if(systemId.endsWith("-3.0_rc1.xsd")) {
+            return "/record_3.0_rc1/" + systemId;
         }
         return "/" + systemId;
     }

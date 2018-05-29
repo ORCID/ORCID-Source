@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.security.NoSuchAlgorithmException;
@@ -25,6 +9,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
@@ -39,6 +24,7 @@ import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -89,6 +75,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Resource
     private OrcidGenerationManager orcidGenerationManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
     
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -226,7 +215,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
             throw new RuntimeException(e);
         }
         
-        newRecord.setOrcidType(OrcidType.USER);
+        newRecord.setOrcidType(OrcidType.USER.name());
         newRecord.setDateCreated(now);
         newRecord.setLastModified(now);
         newRecord.setSubmissionDate(now);
@@ -251,10 +240,11 @@ public class RegistrationManagerImpl implements RegistrationManager {
         }
         newRecord.setCreationMethod(PojoUtil.isEmpty(registration.getCreationType()) ? CreationMethod.DIRECT.value() : registration.getCreationType().getValue());
         newRecord.setSendChangeNotifications(registration.getSendChangeNotifications().getValue());
+        newRecord.setSendAdministrativeChangeNotifications(true);
         newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());
-        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()));
+        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN.name() : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()).name());
         // Visibility defaults
-        newRecord.setActivitiesVisibilityDefault(Visibility.fromValue(registration.getActivitiesVisibilityDefault().getVisibility().value()));
+        newRecord.setActivitiesVisibilityDefault(registration.getActivitiesVisibilityDefault().getVisibility().name());
 
         // Encrypt the password
         newRecord.setEncryptedPassword(encryptionManager.hashForInternalUse(registration.getPassword().getValue()));
@@ -267,7 +257,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         emailEntity.setCurrent(true);
         emailEntity.setVerified(false);
         // Email is private by default
-        emailEntity.setVisibility(Visibility.PRIVATE);
+        emailEntity.setVisibility(Visibility.PRIVATE.name());
         emailEntity.setSourceId(orcid);
         Set<EmailEntity> emails = new HashSet<>();
         emails.add(emailEntity);
@@ -282,7 +272,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                 emailAdditionalEntity.setCurrent(true);
                 emailAdditionalEntity.setVerified(false);
                 // Email is private by default
-                emailAdditionalEntity.setVisibility(Visibility.PRIVATE);
+                emailAdditionalEntity.setVisibility(Visibility.PRIVATE.name());
                 emailAdditionalEntity.setSourceId(orcid);
                 emails.add(emailAdditionalEntity);
             }
@@ -297,7 +287,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         recordNameEntity.setLastModified(now);
         recordNameEntity.setProfile(newRecord);
         // Name is public by default
-        recordNameEntity.setVisibility(Visibility.PUBLIC);
+        recordNameEntity.setVisibility(Visibility.PUBLIC.name());
         if (!PojoUtil.isEmpty(registration.getFamilyNames())) {
             recordNameEntity.setFamilyName(registration.getFamilyNames().getValue().trim());
         }
@@ -316,6 +306,16 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
         profileDao.persist(newRecord);
         profileDao.flush();
+        
+        // Create email frequency entity
+        boolean sendQuarterlyTips = (registration.getSendOrcidNews() == null) ? false : registration.getSendOrcidNews().getValue();
+        if(PojoUtil.isEmpty(registration.getSendEmailFrequencyDays())) {
+            emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);
+        } else {
+            SendEmailFrequency f = SendEmailFrequency.fromValue(registration.getSendEmailFrequencyDays().getValue());
+            emailFrequencyManager.createOnRegister(orcid, f, f, f, sendQuarterlyTips);
+        }
+                        
         return newRecord.getId();
     }
 

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager;
 
 import static org.junit.Assert.fail;
@@ -130,15 +114,15 @@ public class OrcidSecurityManagerTestBase {
         
         ClientDetailsEntity client1 = new ClientDetailsEntity();
         client1.setId(CLIENT_1);
-        client1.setClientType(ClientType.CREATOR);
+        client1.setClientType(ClientType.CREATOR.name());
         
         ClientDetailsEntity client2 = new ClientDetailsEntity();
         client2.setId(CLIENT_2);
-        client2.setClientType(ClientType.UPDATER);
+        client2.setClientType(ClientType.UPDATER.name());
         
         ClientDetailsEntity publicClient = new ClientDetailsEntity();
         publicClient.setId(PUBLIC_CLIENT);
-        publicClient.setClientType(ClientType.PUBLIC_CLIENT);
+        publicClient.setClientType(ClientType.PUBLIC_CLIENT.name());
         
         when(clientDetailsEntityCacheManager.retrieve(CLIENT_1)).thenReturn(client1);
         when(clientDetailsEntityCacheManager.retrieve(CLIENT_2)).thenReturn(client2);

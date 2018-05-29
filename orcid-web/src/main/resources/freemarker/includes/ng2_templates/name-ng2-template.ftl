@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="name-ng2-template">
     <!-- Name -->    
     <div class="workspace-section" id="names-section"> 
@@ -55,7 +36,7 @@
            
             <input type="text" [(ngModel)]="nameForm.givenNames.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
            
-            <span class="orcid-error" *ngIf="nameForm.givenNames.errors.length > 0">
+            <span class="orcid-error" *ngIf="nameForm?.givenNames?.errors?.length > 0">
                 <div *ngFor='let error of nameForm.givenNames.errors'>{{error}}</div>
             </span>
             <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>

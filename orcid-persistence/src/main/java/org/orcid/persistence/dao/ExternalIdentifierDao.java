@@ -1,24 +1,7 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEntity, Long> {
@@ -53,7 +36,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @return a list of all external identifiers associated with the given
      *         profile and that have the given visibility
      */
-    List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, Visibility visibility);
+    List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, String visibility);
 
     /**
      * Retrieve the external identifier that matches the give id and profile id

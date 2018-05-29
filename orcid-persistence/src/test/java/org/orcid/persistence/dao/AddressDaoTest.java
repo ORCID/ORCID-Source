@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +13,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -69,7 +52,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Long.valueOf(1), address.getId());
         assertNotNull(address.getUser());
         assertEquals("4444-4444-4444-4442", address.getUser().getId());
-        assertEquals(Iso3166Country.US, address.getIso2Country());        
+        assertEquals("US", address.getIso2Country());        
 
         address = dao.getAddress("4444-4444-4444-4447", 2L);
         assertNotNull(address);
@@ -78,7 +61,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Long.valueOf(2), address.getId());
         assertNotNull(address.getUser());
         assertEquals("4444-4444-4444-4447", address.getUser().getId());
-        assertEquals(Iso3166Country.US, address.getIso2Country());
+        assertEquals("US", address.getIso2Country());
 
         address = dao.getAddress("4444-4444-4444-4447", 3L);
         assertNotNull(address);
@@ -87,7 +70,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Long.valueOf(3), address.getId());
         assertNotNull(address.getUser());
         assertEquals("4444-4444-4444-4447", address.getUser().getId());
-        assertEquals(Iso3166Country.CR, address.getIso2Country());       
+        assertEquals("CR", address.getIso2Country());       
     }
     
     @Test

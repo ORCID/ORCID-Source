@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <head>
     <meta charset="utf-8" />
     <title>${title!"ORCID"}</title>
@@ -60,19 +42,21 @@
         </#if>      
       
         <#if (showLogin)??>
-        orcidVar.showLogin = ${showLogin};
+            orcidVar.showLogin = ${showLogin};
         </#if>
 
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.lastModified = '${(lastModifiedTime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
+        orcidVar.resetParams = '${(resetParams)!}';
         orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
         orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
         orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
         orcidVar.features = JSON.parse("${featuresJson}");
+        orcidVar.providerId = '${(providerId)!}';
         
         <#if (oauth2Screens)??>
         orcidVar.oauth2Screens = true;
@@ -88,6 +72,10 @@
         </#if>     
       
         orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
+        orcidVar.firstName = "${(RequestParameters.firstName?js_string)!}";
+        orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
+        orcidVar.emailId = "${(RequestParameters.emailId?js_string)!}";
+        orcidVar.linkRequest = "${(RequestParameters.linkRequest?js_string)!}";
         orcidVar.memberSlug = "${(memberSlug?js_string)!}";
     </script>
 
@@ -141,42 +129,64 @@
 
     <!-- ***************************************************** -->
     <!-- Ng2 Templates - BEGIN -->
-
-
+    
     <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
-    <!-- NG2: Under development -->
-    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-        <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
-        <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/funding-ng2-template.ftl">
-    </#if>
+        <!-- NG2: Under development -->
+        <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
+        <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
+        
+        <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
+            <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
+            <#include "/includes/ng2_templates/works-ng2-template.ftl">
+        </#if>
+
+        <!-- Probably this one wont be needed -->
+        <#if springMacroRequestContext.requestUri?contains("/my-orcid") 
+            || springMacroRequestContext.requestUri?contains("/print")
+            || (isPublicProfile??)>
+            <#include "/includes/ng2_templates/personal-info-ng2-template.ftl">
+        </#if>
     </@orcid.checkFeatureStatus> 
 
     <!-- NG2: QA -->
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-    <#include "/includes/ng2_templates/header-ng2-template.ftl">
-    <#include "/includes/ng2_templates/language-ng2-template.ftl">
+        
+        <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
+        <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
+        <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl">
+        
+        <#if springMacroRequestContext.requestUri?contains("/social") ||  springMacroRequestContext.requestUri?contains("/shibboleth/signin") || (RequestParameters['linkRequest'])??>
+            <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
+        </#if>
+        
+        <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
+            <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
+            <#include "/includes/ng2_templates/funding-ng2-template.ftl">     
+            <#include "/includes/ng2_templates/workspace-summary-ng2-template.ftl">
+            <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
+        </#if>
 
-    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-        <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
-        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/country-ng2-template.ftl">
-        <#include "/includes/ng2_templates/websites-ng2-template.ftl">
-        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/works-ng2-template.ftl">
-    </#if>
     </@orcid.checkFeatureStatus> 
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
         <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
             <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+            <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
+            <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
+            <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
+            <#include "/includes/ng2_templates/affiliation-ext-id-popover-ng2-template.ftl">
         </#if>
     </@orcid.checkFeatureStatus> 
-    
+ 
+    <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">
+    <#include "/includes/ng2_templates/header-ng2-template.ftl">
+    <#include "/includes/ng2_templates/language-ng2-template.ftl">
+    <#include "/includes/ng2_templates/modal-ng2-template.ftl">
+
     <#if springMacroRequestContext.requestUri?contains("/account") >
         <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
         <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
+        <#include "/includes/ng2_templates/security-question-edit-ng2-template.ftl">
         <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
         <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
         <#include "/includes/ng2_templates/works-privacy-preferences-ng2-template.ftl">
@@ -189,21 +199,31 @@
         <#include "/includes/ng2_templates/emails-ng2-template.ftl">
     </#if>
 
-    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >        
-        <#include "/includes/ng2_templates/biography-ng2-template.ftl">        
+    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
+        <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
+        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">      
+        <#include "/includes/ng2_templates/biography-ng2-template.ftl">
+        <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/country-ng2-template.ftl">     
         <#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
         <#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
         <#include "/includes/ng2_templates/keywords-form-ng2-template.ftl">
         <#include "/includes/ng2_templates/keywords-ng2-template.ftl">
-        <#include "/includes/ng2_templates/modal-ng2-template.ftl">
         <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
         <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
+        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
     </#if>
 
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/developer-tools") || springMacroRequestContext.requestUri?contains("/inbox") || springMacroRequestContext.requestUri?contains("/my-orcid")>
         <#include "/includes/ng2_templates/name-ng2-template.ftl">
         <#include "/includes/ng2_templates/privacy-toggle-ng2-template.ftl">
         <#include "/includes/ng2_templates/widget-ng2-template.ftl">
+    </#if>
+
+    <#if springMacroRequestContext.requestUri?contains("/reset-password") >
+        <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
     </#if>
 
     <!-- Ng2 Templates - END -->

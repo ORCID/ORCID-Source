@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
@@ -82,8 +66,8 @@ public class EmailMessageSenderTest extends BaseTest {
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setGivenNames("John");
         recordName.setFamilyName("Watson");
-        recordName.setVisibility(Visibility.LIMITED);
-        entity.setLocale(Locale.EN);
+        recordName.setVisibility(Visibility.LIMITED.name());
+        entity.setLocale(Locale.EN.name());
         entity.setRecordNameEntity(recordName);
         when(profileEntityCacheManagerMock.retrieve(anyString())).thenReturn(entity);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManagerMock);

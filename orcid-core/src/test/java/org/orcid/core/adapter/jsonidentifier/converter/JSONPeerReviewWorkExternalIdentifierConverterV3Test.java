@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.jsonidentifier.converter;
 
 import static org.junit.Assert.assertEquals;
@@ -26,8 +10,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -60,7 +44,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
     private PeerReview getPeerReview() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_dev1/samples/read_samples/peer-review-full-3.0_dev1.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/peer-review-full-3.0_rc1.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);
     }
@@ -68,7 +52,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
     private PeerReviewEntity getPeerReviewEntity() {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
-        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US);
+        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
@@ -80,8 +64,8 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
         result.setExternalIdentifiersJson(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:external-identifier-id\"}}]}");
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
-        result.setRole(org.orcid.jaxb.model.record_v2.Role.MEMBER);
-        result.setType(org.orcid.jaxb.model.record_v2.PeerReviewType.EVALUATION);
+        result.setRole(org.orcid.jaxb.model.record_v2.Role.MEMBER.name());
+        result.setType(org.orcid.jaxb.model.record_v2.PeerReviewType.EVALUATION.name());
         result.setUrl("peer-review:url");
         result.setSubjectExternalIdentifiersJson(
                 "{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}");
@@ -90,8 +74,8 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
         result.setSubjectTranslatedName("peer-review:subject-translated-name");
         result.setSubjectTranslatedNameLanguageCode("en");
         result.setSubjectUrl("peer-review:subject-url");
-        result.setSubjectType(org.orcid.jaxb.model.record_v2.WorkType.BOOK_REVIEW);
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        result.setSubjectType(org.orcid.jaxb.model.record_v2.WorkType.BOOK_REVIEW.name());
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         result.setClientSourceId("APP-000000001");
         result.setGroupId("orcid-generated:12345");
         result.setId(12345L);

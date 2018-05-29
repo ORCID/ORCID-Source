@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.t2.server.delegator.impl;
 
 import java.util.HashMap;
@@ -41,6 +25,7 @@ import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -387,8 +372,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
                     // not old enough
                     SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
     
-                    String profileSource = entity.getSource() == null ? null : entity.getSource().getSourceId();
-                    String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
+                    String profileSource = entity.getSource() == null ? null : SourceEntityUtils.getSourceId(entity.getSource());
+                    String currentSource = currentSourceEntity == null ? null : SourceEntityUtils.getSourceId(currentSourceEntity);
     
                     // If the profile doesn't have source or the current source is not
                     // the profile source, throw an exception

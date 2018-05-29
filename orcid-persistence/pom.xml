@@ -49,11 +49,6 @@
         <!-- Internal dependencies -->
         <dependency>
             <groupId>org.orcid</groupId>
-            <artifactId>orcid-model</artifactId>
-            <version>1.1.5-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.orcid</groupId>
             <artifactId>orcid-utils</artifactId>
             <version>1.1.5-SNAPSHOT</version>
         </dependency>
@@ -148,8 +143,16 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
+            <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
+        </dependency>
+        <dependency>
+      	    <groupId>javax.cache</groupId>
+      	    <artifactId>cache-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
         </dependency>
 
         <!-- Solr -->

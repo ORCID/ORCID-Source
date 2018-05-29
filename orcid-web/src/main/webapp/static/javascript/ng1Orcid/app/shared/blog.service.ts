@@ -1,8 +1,21 @@
-import { Injectable } from '@angular/core';
-import { CookieXSRFStrategy, HttpModule, XSRFStrategy } from '@angular/http';
-import { Headers, Http, Response, RequestOptions} from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Injectable } 
+    from '@angular/core';
+
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+import { CookieXSRFStrategy, HttpModule, XSRFStrategy } 
+    from '@angular/http';
+
+import { Headers, Http, Response, RequestOptions} 
+    from '@angular/http';
+
+import { Observable }
+    from 'rxjs/Observable';
+
+import { Subject } 
+    from 'rxjs/Subject';
+
 import 'rxjs/Rx';
 
 @Injectable()
@@ -12,9 +25,9 @@ export class BlogService {
     notifyObservable$ = this.notify.asObservable();
 
     constructor(
-        private http: Http) {
+        private http: HttpClient) {
 
-     }
+    }
 
     private handleError (error: Response | any) {
         let errMsg: string;
@@ -30,12 +43,7 @@ export class BlogService {
     }
 
     getBlogFeed(url): Observable<any> {
-        var options = new RequestOptions({
-          headers: new Headers({
-            'Accept': 'application/json'
-          })
-        });
-        return this.http.get(url, options).map(( res: Response ) => res.text()).catch(this.handleError);
+        return this.http.get(url, { responseType: 'text'}).catch(this.handleError);
 
     }
 

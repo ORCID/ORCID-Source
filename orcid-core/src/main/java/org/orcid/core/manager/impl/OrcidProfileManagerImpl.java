@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.net.URI;
@@ -43,7 +27,6 @@ import java.util.concurrent.FutureTask;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
@@ -61,6 +44,7 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.UpdateOptions;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.ActivitiesContainer;
 import org.orcid.jaxb.model.message.Activity;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -126,19 +110,14 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.messaging.JmsMessageSender;
-import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
-import org.orcid.utils.listener.LastModifiedMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import net.sf.ehcache.Element;
 
 /**
  * The profile manager is responsible for passing onto the persistence layer
@@ -221,9 +200,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
 
-    @Resource
-    private JmsMessageSender messaging;
-
     private int claimReminderAfterDays = 8;
 
     @Value("${org.orcid.core.activities.max:10000}")
@@ -234,6 +210,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = null;
+    
     
     private ConcurrentMap<String, Object> addWorksLock = new ConcurrentHashMap<>();
     
@@ -393,7 +370,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
-                Visibility defaultVisibility = Visibility.fromValue(existingProfileEntity.getActivitiesVisibilityDefault().value());
+                Visibility defaultVisibility = Visibility.fromValue(existingProfileEntity.getActivitiesVisibilityDefault());
 
                 if (existingProfileEntity != null) {
                     // Dont delete the existing elements anymore
@@ -880,7 +857,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         float sendEmailFrequencyDays = Float
                 .valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences.getSendEmailFrequencyDays());
         profileDao.updatePreferences(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendOrcidNews, sendMemberUpdateRequests,
-                activitiesVisibilityDefault, developerToolsEnabled, sendEmailFrequencyDays);
+                activitiesVisibilityDefault.name(), developerToolsEnabled, sendEmailFrequencyDays);
     }
 
     @Override    
@@ -1219,7 +1196,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getPath());
                     if (profile != null) {
                         if (profile.getRecordNameEntity() != null) {
-                            if (org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {
+                            if (org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name().equals(profile.getRecordNameEntity().getVisibility())) {
                                 contributor.setCreditName(new CreditName(profile.getRecordNameEntity().getCreditName()));
                             }
                         }
@@ -1234,7 +1211,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
                         if (profileEntity.getRecordNameEntity() != null
-                                && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(profileEntity.getRecordNameEntity().getVisibility())) {
+                                && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name().equals(profileEntity.getRecordNameEntity().getVisibility())) {
                             contributor.setCreditName(new CreditName(profileEntity.getRecordNameEntity().getCreditName()));
                         } else {
                             contributor.setCreditName(null);
@@ -1617,99 +1594,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     static Object executorServiceLock = new Object();
     static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();
 
-    /**
-     * Simple method to be called by scheduler. Looks for profiles with REINDEX
-     * flag and adds LastModifiedMessages to the REINDEX queue Then sets
-     * indexing flag to DONE (although there is no guarantee it will be done!)
-     * 
-     */
-    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, JmsDestination destination) {
-        LOG.info("processing profiles with " + status.name() + " flag. sending to " + destination.name());
-        List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
-        List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
-        indexingStatuses.add(status);
-        boolean connectionIssue = false;
-        do {
-            orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
-            LOG.info("processing batch of " + orcidsForIndexing.size());
-            for (Pair<String, IndexingStatus> p : orcidsForIndexing) {
-                String orcid = p.getLeft();
-                Date last = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
-                LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
-                if (messaging.send(mess, destination))
-                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
-                else
-                    connectionIssue = true;
-            }
-        } while (!connectionIssue && !orcidsForIndexing.isEmpty());
-        if (connectionIssue)
-            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + destination.name());
-    }
-
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
-    @Override
-    public void processProfilesWithPendingFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, JmsDestination.UPDATED_ORCIDS);
-    }
-
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
-    @Override
-    public void processProfilesWithReindexFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
-    }
-
-    /**
-     * TODO: Disabled until we get move our solr indexing to the message
-     * listener
-     */
-    @Override
-    public void processProfilesWithFailedFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
-    }
-
-    public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                LOG.info("About to index profile: {}", orcid);
-                OrcidProfile orcidProfile = retrievePublicOrcidProfile(orcid);
-                if (orcidProfile == null) {
-                    LOG.debug("Null profile found during indexing: {}", orcid);
-                } else {
-                    LOG.debug("Got profile to index: {}", orcid);
-                    orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
-                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
-                }
-
-                // TODO: This code exists so we can run old indexing and S3
-                // updating in parallel
-                // IF you just want MQ driven indexing, you need to disable the
-                // old calls in the
-                // context and enable the new ones.
-                if (messaging.isEnabled()) {
-                    Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-                    LastModifiedMessage mess = new LastModifiedMessage(orcid, lastModifiedFromDb);
-                    JmsDestination jmsDestination = JmsDestination.REINDEX;
-                    if (IndexingStatus.PENDING.equals(indexingStatus)) {
-                        jmsDestination = JmsDestination.UPDATED_ORCIDS;
-                    }
-                    if (messaging.send(mess, jmsDestination)) {
-                        LOG.info("Record " + orcid + " was sent to the message queue");
-                    } else {
-                        LOG.error("Record " + orcid + " couldnt been sent to the message queue");
-                        profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
-                    }
-                }
-            }
-        });
-    }
-
     @Override
     synchronized public void processUnclaimedProfilesToFlagForIndexing() {
         LOG.info("About to process unclaimed profiles to flag for indexing");
@@ -1756,25 +1640,20 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private Set<OrcidGrantedAuthority> getGrantedAuthorities(ProfileEntity profileEntity) {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
-        OrcidType userType = (profileEntity.getOrcidType() == null) ? OrcidType.USER : OrcidType.fromValue(profileEntity.getOrcidType().value());
+        OrcidType userType = (profileEntity.getOrcidType() == null) ? OrcidType.USER : OrcidType.valueOf(profileEntity.getOrcidType());
         if (userType.equals(OrcidType.USER))
             authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
         else if (userType.equals(OrcidType.ADMIN))
             authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
         else if (userType.equals(OrcidType.GROUP)) {
-            switch (profileEntity.getGroupType()) {
-            case BASIC:
+            if (MemberType.BASIC.name().equals(profileEntity.getGroupType())) {
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
-                break;
-            case PREMIUM:
+            } else if (MemberType.PREMIUM.name().equals(profileEntity.getGroupType())) {
                 authority.setAuthority(OrcidWebRole.ROLE_PREMIUM.getAuthority());
-                break;
-            case BASIC_INSTITUTION:
+            } else if (MemberType.BASIC_INSTITUTION.name().equals(profileEntity.getGroupType())) {
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC_INSTITUTION.getAuthority());
-                break;
-            case PREMIUM_INSTITUTION:
+            } else if (MemberType.PREMIUM_INSTITUTION.name().equals(profileEntity.getGroupType())) {
                 authority.setAuthority(OrcidWebRole.ROLE_PREMIUM_INSTITUTION.getAuthority());
-                break;
             }
         }
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
@@ -1813,10 +1692,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         profileEntityManager.updateLastModifed(orcid);
     }
 
-    static public OrcidProfile toOrcidProfile(Element element) {
-        return (OrcidProfile) (element != null ? element.getObjectValue() : null);
-    }
-
     @Override
     public void clearOrcidProfileCache() {
         orcidProfileCacheManager.removeAll();
@@ -1833,19 +1708,17 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             // Names should be public by default
             if (profileEntity.getRecordNameEntity() != null && profileEntity.getRecordNameEntity().getVisibility() == null) {
                 profileEntity.getRecordNameEntity()
-                        .setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                        .setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().name());
             }
 
             if (profileEntity.getActivitiesVisibilityDefault() == null) {
                 if (useMemberDefaults) {
-                    profileEntity.setActivitiesVisibilityDefault(
-                            org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value()));
+                    profileEntity.setActivitiesVisibilityDefault(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().name());
                 } else {
                     if (defaultVisibility != null) {
-                        profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
+                        profileEntity.setActivitiesVisibilityDefault(defaultVisibility.name());
                     } else {
-                        profileEntity.setActivitiesVisibilityDefault(
-                                org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility().value()));
+                        profileEntity.setActivitiesVisibilityDefault(OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility().name());
                     }
                 }
             }
@@ -1853,17 +1726,17 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             if (profileEntity.getRecordNameEntity() != null) {
                 if (profileEntity.getRecordNameEntity().getVisibility() == null) {
                     profileEntity.getRecordNameEntity()
-                            .setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                            .setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().name());
                 }
             }
 
             if (profileEntity.getBiographyEntity() != null) {
                 if (profileEntity.getBiographyEntity().getVisibility() == null) {
                     if (defaultVisibility != null) {
-                        profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
+                        profileEntity.getBiographyEntity().setVisibility(defaultVisibility.name());
                     } else {
                         profileEntity.getBiographyEntity()
-                                .setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                                .setVisibility(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().name());
                     }
                 }
             }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +12,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -62,7 +45,7 @@ public class BiographyDaoTest extends DBUnitTest {
         BiographyEntity bio = biographyDao.getBiography("4444-4444-4444-4447", System.currentTimeMillis());
         assertNotNull(bio);
         assertEquals("Biography for 4444-4444-4444-4447", bio.getBiography());
-        assertEquals(Visibility.LIMITED, bio.getVisibility());        
+        assertEquals("LIMITED", bio.getVisibility());        
     }
     
     @Test
@@ -70,15 +53,15 @@ public class BiographyDaoTest extends DBUnitTest {
         BiographyEntity bio = biographyDao.getBiography("4444-4444-4444-4442", System.currentTimeMillis());
         assertNotNull(bio);
         assertEquals("Biography for 4444-4444-4444-4442", bio.getBiography());
-        assertEquals(Visibility.PUBLIC, bio.getVisibility()); 
+        assertEquals("PUBLIC", bio.getVisibility()); 
         
         bio.setBiography("Updated biography");
-        bio.setVisibility(Visibility.LIMITED);
+        bio.setVisibility("LIMITED");
         assertTrue(biographyDao.updateBiography("4444-4444-4444-4442", bio.getBiography(), bio.getVisibility()));
         
         BiographyEntity updatedBio = biographyDao.getBiography("4444-4444-4444-4442", System.currentTimeMillis());
         assertNotNull(updatedBio);
         assertEquals("Updated biography", bio.getBiography());
-        assertEquals(Visibility.LIMITED, bio.getVisibility());
+        assertEquals("LIMITED", bio.getVisibility());
     }
 }

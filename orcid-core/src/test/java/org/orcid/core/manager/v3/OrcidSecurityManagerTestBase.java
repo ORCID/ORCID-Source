@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.fail;
@@ -39,47 +23,48 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.dev1.common.Country;
-import org.orcid.jaxb.model.v3.dev1.common.CreditName;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Address;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.FamilyName;
-import org.orcid.jaxb.model.v3.dev1.record.GivenNames;
-import org.orcid.jaxb.model.v3.dev1.record.Keyword;
-import org.orcid.jaxb.model.v3.dev1.record.Name;
-import org.orcid.jaxb.model.v3.dev1.record.OtherName;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.dev1.record.SourceAware;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Distinctions;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositions;
-import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Memberships;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Qualifications;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Services;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.common.Country;
+import org.orcid.jaxb.model.v3.rc1.common.CreditName;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.FamilyName;
+import org.orcid.jaxb.model.v3.rc1.record.GivenNames;
+import org.orcid.jaxb.model.v3.rc1.record.Keyword;
+import org.orcid.jaxb.model.v3.rc1.record.Name;
+import org.orcid.jaxb.model.v3.rc1.record.OtherName;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -142,15 +127,15 @@ public class OrcidSecurityManagerTestBase {
         
         ClientDetailsEntity client1 = new ClientDetailsEntity();
         client1.setId(CLIENT_1);
-        client1.setClientType(ClientType.CREATOR);
+        client1.setClientType(ClientType.CREATOR.name());
         
         ClientDetailsEntity client2 = new ClientDetailsEntity();
         client2.setId(CLIENT_2);
-        client2.setClientType(ClientType.UPDATER);
+        client2.setClientType(ClientType.UPDATER.name());
         
         ClientDetailsEntity publicClient = new ClientDetailsEntity();
         publicClient.setId(PUBLIC_CLIENT);
-        publicClient.setClientType(ClientType.PUBLIC_CLIENT);
+        publicClient.setClientType(ClientType.PUBLIC_CLIENT.name());
         
         when(clientDetailsEntityCacheManager.retrieve(CLIENT_1)).thenReturn(client1);
         when(clientDetailsEntityCacheManager.retrieve(CLIENT_2)).thenReturn(client2);
@@ -325,7 +310,9 @@ public class OrcidSecurityManagerTestBase {
     protected Distinctions createDistinctions(DistinctionSummary... elements) {
         Distinctions e = new Distinctions();
         for (DistinctionSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<DistinctionSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -340,7 +327,9 @@ public class OrcidSecurityManagerTestBase {
     protected Educations createEducations(EducationSummary... elements) {
         Educations e = new Educations();
         for (EducationSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<EducationSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -355,7 +344,9 @@ public class OrcidSecurityManagerTestBase {
     protected Employments createEmployments(EmploymentSummary... elements) {
         Employments e = new Employments();
         for (EmploymentSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<EmploymentSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -370,7 +361,9 @@ public class OrcidSecurityManagerTestBase {
     protected InvitedPositions createInvitedPositions(InvitedPositionSummary... elements) {
         InvitedPositions e = new InvitedPositions();
         for (InvitedPositionSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<InvitedPositionSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -385,7 +378,9 @@ public class OrcidSecurityManagerTestBase {
     protected Memberships createMemberships(MembershipSummary... elements) {
         Memberships e = new Memberships();
         for (MembershipSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<MembershipSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -400,7 +395,9 @@ public class OrcidSecurityManagerTestBase {
     protected Qualifications createQualifications(QualificationSummary... elements) {
         Qualifications e = new Qualifications();
         for (QualificationSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<QualificationSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }
@@ -415,7 +412,9 @@ public class OrcidSecurityManagerTestBase {
     protected Services createServices(ServiceSummary... elements) {
         Services e = new Services();
         for (ServiceSummary s : elements) {
-            e.getSummaries().add(s);
+            AffiliationGroup<ServiceSummary> group = new AffiliationGroup<>();
+            group.getActivities().add(s);
+            e.retrieveGroups().add(group);
         }
         return e;
     }

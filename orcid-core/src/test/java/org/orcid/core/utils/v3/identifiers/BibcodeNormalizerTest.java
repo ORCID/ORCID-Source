@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.utils.v3.identifiers;
 
 import static org.junit.Assert.*;
@@ -36,6 +20,7 @@ public class BibcodeNormalizerTest {
             "Bibcode: 123456789.A23456789 ",
             "BIBCODE:  123456789.A23456789 ",
             "bibcode 123456789.A23456789 ",
+            "1974AJ.....79..819H",
             //invalid
             " 123456789.A2345678 ",
             " 123456789. A23456789 ",
@@ -50,6 +35,7 @@ public class BibcodeNormalizerTest {
             "123456789.A23456789",
             "123456789.A23456789",
             "123456789.A23456789",
+            "1974AJ.....79..819H",
             "",
             "",
             ""

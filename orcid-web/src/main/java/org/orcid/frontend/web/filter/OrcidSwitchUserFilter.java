@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.filter;
 
 import java.io.IOException;
@@ -33,10 +17,11 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.exception.SwitchUserAuthenticationException;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
+import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -51,7 +36,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 
@@ -76,11 +60,14 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
     @Resource
     private ProfileDao profileDao;
     
-    private UserDetailsService orcidUserDetailsService;
+    @Resource
+    private GivenPermissionToDao givenPermissionToDao;
+    
+    private OrcidUserDetailsService orcidUserDetailsService;
 
     private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
     
-    public void setOrcidUserDetailsService(UserDetailsService userDetailsService) {
+    public void setOrcidUserDetailsService(OrcidUserDetailsService userDetailsService) {
         this.orcidUserDetailsService = userDetailsService;        
         super.setUserDetailsService(userDetailsService);
     }
@@ -111,14 +98,16 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
     protected Authentication attemptSwitchUser(HttpServletRequest request) throws AuthenticationException {
         String targetUserOrcid = request.getParameter(SPRING_SECURITY_SWITCH_USERNAME_KEY);
         ProfileEntity profileEntity = sourceManager.retrieveSourceProfileEntity();
-        if (OrcidType.ADMIN.equals(OrcidType.valueOf(profileEntity.getOrcidType().name()))) {
+        if (OrcidType.ADMIN.name().equals(profileEntity.getOrcidType())) {
             return switchUser(request);
         }
         // If we are switching back to me it is OK
         if (isSwitchingBack(request)) {
             return switchUser(request);
         }
-        for (GivenPermissionByEntity gpbe : profileEntity.getGivenPermissionBy()) {
+        
+        List<GivenPermissionByEntity> givenPermissionBy = givenPermissionToDao.findByReceiver(profileEntity.getId());
+        for (GivenPermissionByEntity gpbe : givenPermissionBy) {
             if (gpbe.getGiver().getId().equals(targetUserOrcid)) {
                 return switchUser(request);
             }
@@ -184,13 +173,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
     
     private OrcidProfileUserDetails generateOrcidProfileUserDetails(String orcid) {
         ProfileEntity profileEntity = profileDao.find(orcid);
-        for (EmailEntity email : profileEntity.getEmails()) {
-            if (email.getPrimary()) {
-                OrcidType orcidType = OrcidType.valueOf(profileEntity.getOrcidType().name());
-                return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword(), orcidType);
-            }
-        }
-        return null;
+        return orcidUserDetailsService.loadUserByProfile(profileEntity);
     }
 
 }

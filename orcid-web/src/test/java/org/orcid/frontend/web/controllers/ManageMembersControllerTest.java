@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 /**
@@ -28,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -45,7 +30,6 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.v3.dev1.common.OrcidType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -116,8 +100,9 @@ public class ManageMembersControllerTest extends DBUnitTest {
     }    
         
     protected Authentication getAuthentication() {    
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails("5555-5555-5555-0000", "premium_institution@group.com", "", OrcidType.GROUP, MemberType.PREMIUM_INSTITUTION);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "5555-5555-5555-0000", Arrays.asList(OrcidWebRole.ROLE_GROUP));
+        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_GROUP);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails("5555-5555-5555-0000", "premium_institution@group.com", "", roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "5555-5555-5555-0000", roles);
         return auth;
     }
     

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.blackbox.api;
 
 import static org.orcid.integration.blackbox.api.BlackBoxWebDriver.getWebDriver;
@@ -46,11 +30,17 @@ import com.paulhammant.ngwebdriver.NgWebDriver;
 public class BBBUtil {
     
     private static String jQueryWaitScript;
+    private static String angular2WaitScript;
     static {
         try {
             jQueryWaitScript = IOUtils.toString(BBBUtil.class.getResourceAsStream("jqueryWait.js"));
         } catch (IOException e) {
             throw new RuntimeException("Error reading jquery wait script", e);
+        }
+        try {
+            angular2WaitScript = IOUtils.toString(BBBUtil.class.getResourceAsStream("angular2Wait.js"));
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading angular 2 wait script", e);
         }
     }
 
@@ -146,9 +136,9 @@ public class BBBUtil {
     public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
         waitForAngular(webDriver);
         Actions actions = new Actions(webDriver);
-        actions.moveToElement(webElement).perform();        
+//        actions.moveToElement(webElement).perform();        
         actions.click(webElement).perform();
-        waitForAngular(webDriver);
+//        waitForAngular(webDriver);
     }
     
     public static void ngAwareSendKeys(String keys, String id, WebDriver webDriver) {
@@ -208,11 +198,13 @@ public class BBBUtil {
     }
 
     public static void waitForAngular() {
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), getWebDriver());
+        waitForAngular(getWebDriver());
     }
-    
+
     public static void waitForAngular(WebDriver webDriver) {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        JavascriptExecutor javascriptExecutor = (JavascriptExecutor) webDriver;
+        javascriptExecutor.executeAsyncScript(angular2WaitScript);
     }
 
     public static void waitForElementVisibility(By elementLocatedBy) {
@@ -244,17 +236,20 @@ public class BBBUtil {
         return new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver driver) {
-                ((JavascriptExecutor) driver).executeScript(jQueryWaitScript);
-                Object obj = ((JavascriptExecutor) driver).executeScript("" + "return window._selenium_jquery_done;");
+                JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+                javascriptExecutor.executeScript(jQueryWaitScript);
+                Object obj = javascriptExecutor.executeScript("" + "return window._selenium_jquery_done;");
                 Boolean jqueryDone = (obj == null ? false : Boolean.valueOf(obj.toString()));
                 if (jqueryDone) {
-                    new NgWebDriver((JavascriptExecutor) driver).waitForAngularRequestsToFinish();
+                    NgWebDriver ngWebDriver = new NgWebDriver(javascriptExecutor);
+                    ngWebDriver.waitForAngularRequestsToFinish();
+                    
                 }
                 return jqueryDone;
             }
         };
     }
-
+    
     public static ExpectedCondition<Boolean> cboxComplete() {
         /*
          * Getting complex. 1. We want to make sure Angular is done. So you call

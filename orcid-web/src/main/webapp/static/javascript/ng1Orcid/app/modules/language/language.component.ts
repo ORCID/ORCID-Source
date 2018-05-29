@@ -3,7 +3,7 @@ declare var orcidVar: any;
 
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
@@ -42,6 +42,7 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         private widgetSrvc: WidgetService
     ) {
         this.language = {};
+        this.languages = [];
         this.productionLangList =
             [
                 {
@@ -148,60 +149,84 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
                     "label": '繁體中文'
                 }
             ];
-        this.languages = {};
+        
+    }
+
+    getCookie(cname): any {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
     }
 
     getCurrentLanguage(): void{
         let locale_v3: any;
 
-        this.language = this.languages[0]; //Default
+        if(this.languages != undefined && this.languages.length > 0){
+            this.language = "en"; //Default
+            let cookie = this.getCookie('locale_v3');
+            let tempLanguages = this.languages;
+            
+            typeof(cookie) !== 'undefined' ? locale_v3 = cookie : locale_v3 = "en";   
+
+            tempLanguages.forEach(
+                function(value, key) {
+                    if (value.value == locale_v3){
+                        this.language = this.languages[key].value;
+                    }
+
+                }.bind(this)
+            );
+        
+        }
 
         
-        /*
-        typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
-        
-        angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
-            if (value.value == locale_v3){
-                $scope.language = $scope.languages[key];
-                $scope.widgetSrvc.locale = $scope.language.value; 
-            }
-        });
-        */
     };
 
     selectedLanguage(): void {
 
-        this.languageService.selectedLanguage( this.language.value )
+        this.languageService.selectedLanguage( this.language )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                this.languages.forEach(function(value, key){
-                    var params;
-                    if(value.value == data.locale){
-                        this.language = this.languages[key];                        
-                        this.widgetSrvc.setLocale(this.language.value);
-                        //In case some parameters were sent via URL
-                        params = window.location.href.split("?")[1];
-                        if (typeof params != 'undefined'){
-                            params = params.split("&");
-                            //Removing language parameter (lang=[code]) if it exists
-                            for ( var i = 0; i < params.length; i++ ){
-                                if(params[i].indexOf("lang=") > -1){
-                                    params.splice(i, 1);    
+                this.languages.forEach(
+                    function(value, key){
+                        var params;
+                        if(value.value == data.locale){
+                            this.language = this.languages[key].value;                        
+                            this.widgetSrvc.setLocale(this.language.value);
+                            //In case some parameters were sent via URL
+                            params = window.location.href.split("?")[1];
+                            if (typeof params != 'undefined'){
+                                params = params.split("&");
+                                //Removing language parameter (lang=[code]) if it exists
+                                for ( var i = 0; i < params.length; i++ ){
+                                    if(params[i].indexOf("lang=") > -1){
+                                        params.splice(i, 1);    
+                                    }
                                 }
+                                
+                                if ( params.length > 0 ) {                                
+                                    window.location.href = window.location.href.split("?")[0] + '?' + params.join("&");
+                                } else {
+                                    window.location.href = window.location.href.split("?")[0];
+                                }
+                                
+                            }else{
+                                window.location.reload(true);
                             }
-                            
-                            if ( params.length > 0 ) {                                
-                                window.location.href = window.location.href.split("?")[0] + '?' + params.join("&");
-                            } else {
-                                window.location.href = window.location.href.split("?")[0];
-                            }
-                            
-                        }else{
-                            window.location.reload(true);
                         }
-                    }
-                });
+                    }.bind(this)
+                );
             },
             error => {
                 //console.log('getWebsitesFormError', error);

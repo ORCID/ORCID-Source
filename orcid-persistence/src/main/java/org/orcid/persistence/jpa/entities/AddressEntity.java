@@ -1,26 +1,7 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,9 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.orcid.jaxb.model.common_v2.Iso3166Country;
-import org.orcid.jaxb.model.common_v2.Visibility;
 
 /**
  * 
@@ -44,8 +22,8 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 public class AddressEntity extends SourceAwareEntity<Long> implements ProfileAware, DisplayIndexInterface {
     private static final long serialVersionUID = -331185018871126442L;
     private Long id;
-    private Iso3166Country iso2Country;
-    private Visibility visibility;    
+    private String iso2Country;
+    private String visibility;    
     private ProfileEntity user;
     private Long displayIndex;
 
@@ -61,25 +39,21 @@ public class AddressEntity extends SourceAwareEntity<Long> implements ProfileAwa
         this.id = id;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "iso2_country", length = 2)
-    public Iso3166Country getIso2Country() {
+    public String getIso2Country() {
         return iso2Country;
     }
 
-    public void setIso2Country(Iso3166Country iso2Country) {
+    public void setIso2Country(String iso2Country) {
         this.iso2Country = iso2Country;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "visibility")
-    public Visibility getVisibility() {
+    public String getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Visibility visibility) {
+    public void setVisibility(String visibility) {
         this.visibility = visibility;
     }
 

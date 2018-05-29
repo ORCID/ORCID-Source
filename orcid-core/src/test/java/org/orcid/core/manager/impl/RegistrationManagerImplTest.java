@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -42,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
@@ -58,7 +43,9 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
@@ -92,6 +79,12 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Mock
     SourceManager mockSourceManager;
     
+    @Mock
+    EmailFrequencyManager mockEmailFrequencyManager;
+    
+    @Resource
+    ProfileDao profileDao;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
@@ -101,6 +94,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);        
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
     }
     
@@ -124,6 +118,9 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         Map<String, String> map = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map);
         assertEquals(userOrcid, map.get(email));
+        ProfileEntity entity = profileDao.find(userOrcid);
+        assertNotNull(entity);
+        assertEquals("EN", entity.getLocale());
     }
     
     @Test

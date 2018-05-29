@@ -1,59 +1,23 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.orcid.core.cache.GenericCacheManager;
+import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
-import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.util.TimeUtil;
 
 public class WorksCacheManagerImpl implements WorksCacheManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(WorksCacheManagerImpl.class);  
 
-    // Default time to live will be one hour
-    private static final int DEFAULT_TTL = 3600;
-
-    // Default time to idle will be one hour
-    private static final int DEFAULT_TTI = 3600;
-
-    @Resource(name = "groupedWorksCache")
-    private Cache groupedWorksCache;
-    private int groupedWorksCacheTTL;
-    private int groupedWorksCacheTTI;
+    @Resource(name = "groupedWorksGenericCacheManager")
+    private GenericCacheManager<OrcidString, Works> groupedWorksGenericCacheManager;
     
-    @PostConstruct
-    private void init() {
-        CacheConfiguration config1 = groupedWorksCache.getCacheConfiguration();
-        groupedWorksCacheTTI = config1.getTimeToIdleSeconds() > 0 ? TimeUtil.convertTimeToInt(config1.getTimeToIdleSeconds()) : DEFAULT_TTI;
-        groupedWorksCacheTTL = config1.getTimeToLiveSeconds() > 0 ? TimeUtil.convertTimeToInt(config1.getTimeToLiveSeconds()) : DEFAULT_TTL;
-    }
-
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
     
@@ -62,47 +26,7 @@ public class WorksCacheManagerImpl implements WorksCacheManager {
 
     @Override
     public Works getGroupedWorks(String orcid) {
-        Object key = new WorksCacheKey(orcid, profileEntityManagerReadOnly.getLastModified(orcid));
-        Works groupedWorks = null;
-        try {
-            groupedWorksCache.acquireReadLockOnKey(key);
-            groupedWorks = toWorks(getElementFromCache(key, orcid));
-        } finally {
-            groupedWorksCache.releaseReadLockOnKey(key);
-        }
-        if (groupedWorks == null) {
-            try {
-                groupedWorksCache.acquireWriteLockOnKey(key);
-                groupedWorks = toWorks(getElementFromCache(key, orcid));
-                if (groupedWorks == null) {
-                    groupedWorks = workManagerReadOnly.getWorksAsGroups(orcid);
-                    groupedWorksCache.put(new Element(key, groupedWorks, groupedWorksCacheTTI, groupedWorksCacheTTL));
-                }
-
-            } finally {
-                groupedWorksCache.releaseWriteLockOnKey(key);
-            }
-        }
-        return groupedWorks;
+        return groupedWorksGenericCacheManager.retrieve(new OrcidString(orcid));
     }
     
-    private Works toWorks(Element element) {
-        return (Works) (element != null ? element.getObjectValue() : null);
-    }
-
-    private Element getElementFromCache(Object key, String orcid) {
-        try {
-            return groupedWorksCache.get(key);
-        } catch(Exception e) {
-            String message;
-            if(PojoUtil.isEmpty(orcid)) {
-                message = String.format("Exception fetching element: '%s'.\n%s", key, e.getMessage());
-            } else {
-                message = String.format("Exception fetching element: '%s' that belongs to '%s'.\n%s", key, orcid, e.getMessage());
-            }            
-            LOGGER.error(message, e);
-            throw e;
-        }
-    }
-
 }

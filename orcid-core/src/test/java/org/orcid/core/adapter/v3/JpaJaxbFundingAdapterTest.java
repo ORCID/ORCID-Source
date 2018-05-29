@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -31,10 +15,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.v3.JpaJaxbFundingAdapter;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingType;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.FundingType;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
@@ -60,8 +44,8 @@ public class JpaJaxbFundingAdapterTest {
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         // Enums
-        assertEquals(Visibility.PRIVATE.value(), pfe.getVisibility().value());
-        assertEquals(FundingType.GRANT.value(), pfe.getType().value());
+        assertEquals(Visibility.PRIVATE.name(), pfe.getVisibility());
+        assertEquals(FundingType.GRANT.name(), pfe.getType());
 
         // General info
         assertEquals(Long.valueOf(0), pfe.getId());
@@ -181,8 +165,8 @@ public class JpaJaxbFundingAdapterTest {
         result.setTitle("funding:title");
         result.setTranslatedTitle("funding:translatedTitle");
         result.setTranslatedTitleLanguageCode("ES");
-        result.setType(org.orcid.jaxb.model.record_v2.FundingType.SALARY_AWARD);
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        result.setType(org.orcid.jaxb.model.record_v2.FundingType.SALARY_AWARD.name());
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         return result;
     }
 

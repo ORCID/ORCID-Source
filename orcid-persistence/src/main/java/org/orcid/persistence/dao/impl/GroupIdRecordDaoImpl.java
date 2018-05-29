@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao.impl;
 
 import java.util.List;
@@ -36,7 +20,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
         query.setMaxResults(pageSize);
         return query.getResultList();
     }
-    
+
     @Override
     public boolean exists(String groupId) {
         TypedQuery<Long> query = entityManager.createQuery("select count(*) from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))", Long.class);
@@ -44,10 +28,11 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }
-    
+
     @Override
     public GroupIdRecordEntity findByGroupId(String groupId) {
-        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))", GroupIdRecordEntity.class);
+        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))",
+                GroupIdRecordEntity.class);
         query.setParameter("groupId", groupId);
         GroupIdRecordEntity result = query.getSingleResult();
         return result;
@@ -55,7 +40,8 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
 
     @Override
     public GroupIdRecordEntity findByName(String name) {
-        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(group_name)) = trim(lower(:group_name))", GroupIdRecordEntity.class);
+        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(group_name)) = trim(lower(:group_name))",
+                GroupIdRecordEntity.class);
         query.setParameter("group_name", name);
         GroupIdRecordEntity result = query.getSingleResult();
         return result;
@@ -65,6 +51,22 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     public boolean haveAnyPeerReview(String groupId) {
         TypedQuery<Long> query = entityManager.createQuery("select count(*) from PeerReviewEntity where trim(lower(groupId)) = trim(lower(:groupId))", Long.class);
         query.setParameter("groupId", groupId);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
+
+    @Override
+    public boolean duplicateExists(Long putCode, String groupId) {
+        StringBuilder queryString = new StringBuilder("select count(*) from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))");
+        if (putCode != null) {
+            queryString.append(" and id != :putCode");
+        }
+        TypedQuery<Long> query = entityManager.createQuery(queryString.toString(), Long.class);
+        query.setParameter("groupId", groupId);
+
+        if (putCode != null) {
+            query.setParameter("putCode", putCode);
+        }
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.cli;
 
 import java.io.File;
@@ -156,7 +140,7 @@ public class LoadFundRefData {
                     if(entityChanged(rdfOrganization, existingEntity)) {
                         existingEntity.setCity(rdfOrganization.city);
                         Iso3166Country country = StringUtils.isNotBlank(rdfOrganization.country) ? Iso3166Country.fromValue(rdfOrganization.country) : null;
-                        existingEntity.setCountry(country);
+                        existingEntity.setCountry(country.name());
                         existingEntity.setName(rdfOrganization.name);                        
                         String orgType = rdfOrganization.type + (StringUtils.isNotBlank(rdfOrganization.subtype) ? ('/' + rdfOrganization.subtype) : "");
                         existingEntity.setOrgType(orgType);                        
@@ -414,7 +398,7 @@ public class LoadFundRefData {
         }
         // Check country
         if (StringUtils.isNotBlank(org.country)) {
-            if (entity.getCountry() == null || !org.country.equals(entity.getCountry().value())) {
+            if (entity.getCountry() == null || !org.country.equals(entity.getCountry())) {
                 return true;
             }
         } else if (entity.getCountry() != null) {
@@ -471,7 +455,7 @@ public class LoadFundRefData {
         Iso3166Country country = StringUtils.isNotBlank(organization.country) ? Iso3166Country.fromValue(organization.country) : null;
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
         orgDisambiguatedEntity.setName(organization.name);
-        orgDisambiguatedEntity.setCountry(country);       
+        orgDisambiguatedEntity.setCountry(country.name());       
         orgDisambiguatedEntity.setCity(organization.city);
         orgDisambiguatedEntity.setRegion(organization.stateCode);        
         orgDisambiguatedEntity.setOrgType(orgType);

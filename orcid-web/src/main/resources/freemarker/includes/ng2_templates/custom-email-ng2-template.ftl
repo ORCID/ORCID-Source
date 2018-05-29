@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="custom-email-ng2-template">
     <div>    
         <!-- Top content, instructions -->
@@ -71,7 +52,7 @@
                     <div class="inner-row">
                         <span><strong><@orcid.msg 'custom_email.template.create.sender.label'/></strong></span>
                         <input type="text" placeholder="<@orcid.msg 'custom_email.template.create.sender.placeholder'/>" class="input-xlarge" [(ngModel)]="customEmail.sender.value">
-                        <span class="orcid-error" *ngIf="customEmail.sender.errors.length > 0">
+                        <span class="orcid-error" *ngIf="customEmail?.sender?.errors?.length > 0">
                             <div *ngFor='let error of customEmail.sender.errors' [innerHTML]="error"></div>
                         </span>
                     </div>                      
@@ -82,7 +63,7 @@
                         <span><strong><@orcid.msg 'custom_email.template.create.subject.label'/></strong></span>
                         <input type="text" placeholder="<@orcid.msg 'custom_email.template.create.subject.placeholder'/>" class="input-xlarge" [(ngModel)]="customEmail.subject.value">
                         <span class="orcid-error" *ngIf="customEmail.subject.errors.length > 0">
-                            <div *ngFor='let error of customEmail.subject.errors' [innerHTML]="error"></div>
+                            <div *ngFor='let error of customEmail?.subject?.errors' [innerHTML]="error"></div>
                         </span>
                     </div>
                 </div>
@@ -92,7 +73,7 @@
                         <span><strong><@orcid.msg 'custom_email.template.create.content.label'/></strong></span>
                         <textarea placeholder="<@orcid.msg 'custom_email.template.create.content.placeholder'/>" [(ngModel)]="customEmail.content.value"></textarea>
                         <span class="orcid-error" *ngIf="customEmail.content.errors.length > 0">
-                            <div *ngFor='let error of customEmail.content.errors' [innerHTML]="error"></div>
+                            <div *ngFor='let error of customEmail?.content?.errors' [innerHTML]="error"></div>
                         </span>
                     </div>
                 </div>
@@ -128,7 +109,7 @@
                     <div class="inner-row">
                         <span><strong><@orcid.msg 'custom_email.template.create.sender.label'/></strong></span>
                         <input type="text" placeholder="<@orcid.msg 'custom_email.template.create.sender.placeholder'/>" class="input-xlarge" [(ngModel)]="editedCustomEmail.sender.value">
-                        <span class="orcid-error" *ngIf="editedCustomEmail.sender.errors.length > 0">
+                        <span class="orcid-error" *ngIf="editedCustomEmail?.sender?.errors?.length > 0">
                             <div *ngFor='let error of editedCustomEmail.sender.errors' [innerHTML]="error"></div>
                         </span>
                     </div>                      
@@ -139,7 +120,7 @@
                         <span><strong><@orcid.msg 'custom_email.template.create.subject.label'/></strong></span>
                         <input type="text" placeholder="<@orcid.msg 'custom_email.template.create.subject.placeholder'/>" class="input-xlarge" [(ngModel)]="editedCustomEmail.subject.value">
                         <span class="orcid-error" *ngIf="editedCustomEmail.subject.errors.length > 0">
-                            <div *ngFor='let error of editedCustomEmail.subject.errors' [innerHTML]="error"></div>
+                            <div *ngFor='let error of editedCustomEmail?.subject?.errors' [innerHTML]="error"></div>
                         </span>
                     </div>
                 </div>
@@ -148,7 +129,7 @@
                     <div class="inner-row content">
                         <span><strong><@orcid.msg 'custom_email.template.create.content.label'/></strong></span>
                         <textarea placeholder="<@orcid.msg 'custom_email.template.create.content.placeholder'/>" [(ngModel)]="editedCustomEmail.content.value"></textarea>
-                        <span class="orcid-error" *ngIf="editedCustomEmail.content.errors.length > 0">
+                        <span class="orcid-error" *ngIf="editedCustomEmail?.content?.errors?.length > 0">
                             <div *ngFor='let error of editedCustomEmail.content.errors' [innerHTML]="error"></div>
                         </span>
                     </div>

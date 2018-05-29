@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
@@ -127,7 +111,7 @@ public class OauthRegistrationControllerTest extends DBUnitTest {
         
         OauthRegistrationForm reg = new OauthRegistrationForm();
         org.orcid.pojo.ajaxForm.Visibility fv = new org.orcid.pojo.ajaxForm.Visibility();
-        fv.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC);
+        fv.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC);
         reg.setActivitiesVisibilityDefault(fv);        
         reg.setEmail(email);
         reg.setEmailConfirm(email);

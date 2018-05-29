@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager;
 
 import static org.junit.Assert.*;
@@ -31,6 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -92,7 +77,7 @@ public class OrgManagerTest extends BaseTest {
         OrgEntity inputOrg = new OrgEntity();
         inputOrg.setName("An institution");
         inputOrg.setCity("London");
-        inputOrg.setCountry(Iso3166Country.GB);
+        inputOrg.setCountry(Iso3166Country.GB.name());
 
         OrgEntity resultOrg = orgManager.createUpdate(inputOrg);
 
@@ -103,14 +88,14 @@ public class OrgManagerTest extends BaseTest {
         assertEquals(inputOrg.getCountry(), resultOrg.getCountry());
         assertEquals(1, resultOrg.getId().longValue());
     }
-
+    
     @Test
     @Transactional
     public void testCreateUpdateWhenDoesNotAlreadyExists() {
         OrgEntity inputOrg = new OrgEntity();
         inputOrg.setName("Le Institution");
         inputOrg.setCity("Paris");
-        inputOrg.setCountry(Iso3166Country.FR);
+        inputOrg.setCountry(Iso3166Country.FR.name());
 
         OrgEntity resultOrg = orgManager.createUpdate(inputOrg);
 

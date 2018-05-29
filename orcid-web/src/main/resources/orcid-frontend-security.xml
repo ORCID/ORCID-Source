@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <beans xmlns:sec="http://www.springframework.org/schema/security"
 	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
@@ -38,8 +20,6 @@
 		<property name="tokenGranter" ref="tokenGranter" />
 		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />		
 	</bean>
-
-	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />
 
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
           xmlns="http://www.springframework.org/schema/beans">
@@ -125,6 +105,7 @@
     <bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
 	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
 	<sec:http pattern="/tomcatUp.json" security="none" create-session="stateless" />
+	<sec:http pattern="/webStatus.json" security="none" create-session="stateless" />
 	<sec:http pattern="/error" security="none" />
 	<sec:http pattern="/not-found" security="none" />
 	<sec:http pattern="/favicon.ico" security="none" create-session="stateless" />
@@ -147,7 +128,7 @@
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />     
 	</sec:http>
-
+	
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
     	<sec:csrf disabled="true"/>
@@ -169,7 +150,7 @@
         <sec:custom-filter ref="revokeTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
-    
+
 	<sec:http use-expressions="false" pattern="/oauth/.*" 
 	    authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager" 
 	    create-session="ifRequired" request-matcher="regex" entry-point-ref="approveOauthAuthenticationEntryPoint">
@@ -209,7 +190,7 @@
 		<sec:session-management session-fixation-protection="migrateSession"/>
 		<sec:logout/>
 	</sec:http>
-	
+
 	<bean id="approveOauthAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
 	    <constructor-arg name="loginFormUrl" value="/oauth/signin" />
 	</bean>
@@ -387,7 +368,6 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools/.*" 
 			access="ROLE_USER"/>
-		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients" 
@@ -408,8 +388,12 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/works/countries.json(\?.*)?" 
 			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/get-my-data" 
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/togglz/*" 
 			access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/profile-history/.*" 
+            access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 

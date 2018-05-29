@@ -1,32 +1,19 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.listener.orcid;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
@@ -50,14 +37,12 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
 
-import org.mockito.Matchers;
-
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
 public class v2ClientPerMessageCacheTest {
 
     @Resource
-    private Orcid20APIClient orcid20ApiClient;
+    private Orcid20Manager orcid20ApiClient;
     
     @Mock
     private Client mock_jerseyClient;
@@ -100,7 +85,7 @@ public class v2ClientPerMessageCacheTest {
     }
     
     @Test
-    public void testRecordCache() throws LockedRecordException, DeprecatedRecordException{
+    public void testRecordCache() throws ExecutionException, LockedRecordException, DeprecatedRecordException{
         Date date = new Date();
         date.setYear(1900);
         BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
@@ -119,63 +104,9 @@ public class v2ClientPerMessageCacheTest {
             r = orcid20ApiClient.fetchPublicRecord(message2);
             fail("returned cached when it should get fresh");
         }catch(RuntimeException e){
-            if (e.getMessage()!="called twice!")
-                fail("something weird");
+            if (e.getCause().getMessage()!="called twice!")
+                fail("something weird"+e.getLocalizedMessage());
         }
 
-    }
-    
-    @Test
-    public void testActivityCache() throws LockedRecordException, DeprecatedRecordException{
-         //get it once
-        Date date = new Date();
-        date.setYear(1900);
-        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
-        ActivitiesSummary s = orcid20ApiClient.fetchPublicActivities(message1);
-        assertEquals(s.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),"blah");
-        
-        //get it twice, if no error, then it's the cached version
-        when(mock_response.getEntity(Record.class)).thenThrow(new RuntimeException("called twice!"));
-        s = orcid20ApiClient.fetchPublicActivities(message1);
-        assertEquals(s.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),"blah");
-        
-        //get it with a different message, should return fresh
-        BaseMessage message2 = new LastModifiedMessage("0000-0000-0000-0000",new Date());  
-        try{
-            s = orcid20ApiClient.fetchPublicActivities(message2);
-            fail("returned cached when it should get fresh");
-        }catch(RuntimeException e){
-            if (e.getMessage()!="called twice!")
-                fail("something weird");
-        }
-
-    }
-    
-    @Test
-    public void testRecordThenActivityCache() throws LockedRecordException, DeprecatedRecordException{
-        // get it once
-        Date date = new Date();
-        date.setYear(1900);
-        BaseMessage message1 = new LastModifiedMessage("0000-0000-0000-0000",date);        
-
-        Record r = orcid20ApiClient.fetchPublicRecord(message1);
-        assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
-
-        //get it twice, if no error, then it's the cached version
-        when(mock_response.getEntity(Record.class)).thenThrow(new RuntimeException("called twice!"));
-        ActivitiesSummary s = orcid20ApiClient.fetchPublicActivities(message1);
-        assertEquals(s.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),"blah");
-        
-        //get it with a different message, should return fresh
-        BaseMessage message2 = new LastModifiedMessage("0000-0000-0000-0000",new Date());  
-        try{
-            s = orcid20ApiClient.fetchPublicActivities(message2);
-            fail("returned cached when it should get fresh");
-        }catch(RuntimeException e){
-            if (e.getMessage()!="called twice!")
-                fail("something weird");
-        }
-
-    }
-    
+    }           
 }

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
@@ -203,7 +187,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
-        clientDetailsEntity.setClientType(clientType);
+        clientDetailsEntity.setClientType(clientType.name());
         clientDetailsEntity.setClientName(name);
         clientDetailsEntity.setClientDescription(description);
         clientDetailsEntity.setAuthenticationProviderId(idp);

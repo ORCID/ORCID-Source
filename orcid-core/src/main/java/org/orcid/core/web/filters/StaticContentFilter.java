@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.web.filters;
 
 import java.io.IOException;
@@ -31,15 +15,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class StaticContentFilter extends OncePerRequestFilter {
 
     private static final Pattern versionPattern = Pattern.compile("/static/([^/]+)/.+");
+    private static final Pattern excludePattern = Pattern.compile("/static/(img/favicon.ico|img/idp-placeholder-logo.png)");
 
     private static final String currentReleaseVersion = ReleaseNameUtils.getReleaseName();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestUri = request.getRequestURI();
-        Matcher matcher = versionPattern.matcher(requestUri);
-        if (matcher.find()) {
-            String releaseVersion = matcher.group(1);
+        Matcher releaseMatcher = versionPattern.matcher(requestUri);
+        Matcher exlcudeMatcher = excludePattern.matcher(requestUri);
+        if (!exlcudeMatcher.find() && releaseMatcher.find()) {
+            String releaseVersion = releaseMatcher.group(1);
             if (!currentReleaseVersion.equals(releaseVersion)) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 response.getWriter().println("<html><head><title>Oops an error happened!</title></head>");

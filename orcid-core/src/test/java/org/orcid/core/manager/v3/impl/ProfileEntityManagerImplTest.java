@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import static org.junit.Assert.assertEquals;
@@ -29,17 +13,23 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.jaxb.model.v3.dev1.common.Locale;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
+import org.orcid.jaxb.model.v3.rc1.common.Locale;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -58,7 +48,9 @@ import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -69,6 +61,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProfileEntityManagerImplTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";   
     private static final String USER_ORCID = "0000-0000-0000-0001";    
+    
+    @Mock
+    private EmailFrequencyManager emailFrequencyManager;
     
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
@@ -101,6 +96,12 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(profileEntityManager, "emailFrequencyManager", emailFrequencyManager);        
+    }
+    
     @Test
     public void testFindByOrcid() throws Exception {
         String harrysOrcid = "4444-4444-4444-4444";
@@ -115,6 +116,10 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
+        ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
+        
         UserconnectionPK pk = new UserconnectionPK();
         pk.setProviderid("providerId");
         pk.setProvideruserid("provideruserid");
@@ -170,34 +175,34 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0001");
         assertNotNull(profile);
         assertNotNull(profile.getBiographyEntity());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, profile.getBiographyEntity().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), profile.getBiographyEntity().getVisibility());
         assertNotNull(profile.getAddresses());
         assertEquals(3, profile.getAddresses().size());
         for(AddressEntity a : profile.getAddresses()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, a.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), a.getVisibility());
         }
         
         assertNotNull(profile.getExternalIdentifiers());
         assertEquals(3, profile.getExternalIdentifiers().size());
         for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, e.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), e.getVisibility());
         }
         assertNotNull(profile.getKeywords());
         assertEquals(3, profile.getKeywords().size());
         for(ProfileKeywordEntity k : profile.getKeywords()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, k.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), k.getVisibility());
         }
         
         assertNotNull(profile.getOtherNames());
         assertEquals(3, profile.getOtherNames().size());
         for(OtherNameEntity o : profile.getOtherNames()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, o.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), o.getVisibility());
         }
         
         assertNotNull(profile.getResearcherUrls());
         assertEquals(3, profile.getResearcherUrls().size());
         for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, r.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), r.getVisibility());
         }        
     }
     

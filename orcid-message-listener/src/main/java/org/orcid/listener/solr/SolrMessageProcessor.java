@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.listener.solr;
 
 import java.util.ArrayList;
@@ -28,7 +12,7 @@ import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.listener.orcid.Orcid20APIClient;
+import org.orcid.listener.orcid.Orcid20Manager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.listener.BaseMessage;
@@ -49,7 +33,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
     private boolean isSolrIndexingEnabled;
     
     @Resource
-    private Orcid20APIClient orcid20ApiClient;
+    private Orcid20Manager orcid20ApiClient;
     
     @Resource
     private SolrIndexUpdater solrUpdater;

@@ -1,35 +1,13 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-
-import org.orcid.jaxb.model.message.ContributorRole;
-import org.orcid.jaxb.model.message.SequenceType;
 
 /**
  * @author Declan Newman (declan) Date: 08/08/2012
@@ -41,8 +19,8 @@ public abstract class BaseContributorEntity extends BaseEntity<Long> implements 
     private ProfileEntity profile;
     private String creditName;
     private String contributorEmail;
-    private SequenceType sequence;
-    private ContributorRole contributorRole;
+    private String sequence;
+    private String contributorRole;
 
     @Column(name = "credit_name", length = 450)
     public String getCreditName() {
@@ -62,25 +40,21 @@ public abstract class BaseContributorEntity extends BaseEntity<Long> implements 
         this.contributorEmail = contributorEmail;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "contributor_role", length = 90)
-    public ContributorRole getContributorRole() {
+    public String getContributorRole() {
         return contributorRole;
     }
 
-    public void setContributorRole(ContributorRole contributorRole) {
+    public void setContributorRole(String contributorRole) {
         this.contributorRole = contributorRole;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "contributor_sequence", length = 90)
-    public SequenceType getSequence() {
+    public String getSequence() {
         return sequence;
     }
 
-    public void setSequence(SequenceType sequence) {
+    public void setSequence(String sequence) {
         this.sequence = sequence;
     }
 

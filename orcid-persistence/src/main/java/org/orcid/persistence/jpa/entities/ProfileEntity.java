@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.jpa.entities;
 
 import java.io.Serializable;
@@ -42,11 +26,6 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.Locale;
-import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.utils.DateUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -74,6 +53,10 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     public static final String ADMIN_DEPRECATION = "ADMIN";
     
     public static final String AUTO_DEPRECATION = "AUTO";
+    
+    private static final String DEFAULT_LOCALE = "EN";
+    
+    private static final String DEFAULT_ACTIVITIES_VISIBILITY_DEFAULT = "PRIVATE";
 
     public ProfileEntity() {
 
@@ -85,8 +68,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     // Main fields for publishing
     private String orcid;
-    private OrcidType orcidType;
-    private MemberType groupType;
+    private String orcidType;
+    private String groupType;
     private SortedSet<OtherNameEntity> otherNames;
     private SortedSet<ResearcherUrlEntity> researcherUrls;
     private SortedSet<ProfileKeywordEntity> keywords;
@@ -128,20 +111,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private SortedSet<ProfileFundingEntity> profileFunding;
     private Set<AddressEntity> addresses;
     private SortedSet<PeerReviewEntity> peerReviews;
-    private Locale locale = Locale.EN;
-    private Boolean sendChangeNotifications;
-    private Boolean sendAdministrativeChangeNotifications;
-    private Boolean sendOrcidNews;
-    private Boolean sendMemberUpdateRequests;
+    private String locale = DEFAULT_LOCALE;
+    
     private SortedSet<ClientDetailsEntity> clients;
     private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Set<ProfileEventEntity> profileEvents;
     private boolean enableDeveloperTools;
     private Date developerToolsEnabledDate;
-    private float sendEmailFrequencyDays;
-    private Boolean enableNotifications = Boolean.TRUE;
-
+    
     // Salesfore ID
     private String salesforeId;
 
@@ -153,7 +131,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private String userLastIp;
     private boolean reviewed = Boolean.FALSE;
 
-    private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;   
+    private String activitiesVisibilityDefault = DEFAULT_ACTIVITIES_VISIBILITY_DEFAULT;   
     
     private RecordNameEntity recordNameEntity;
     
@@ -165,6 +143,19 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Boolean using2FA = Boolean.FALSE;
     private String secretFor2FA;
     
+    // Notifications
+    @Deprecated
+    private Boolean enableNotifications = Boolean.TRUE;
+    @Deprecated
+    private float sendEmailFrequencyDays;
+    @Deprecated
+    private Boolean sendChangeNotifications;
+    @Deprecated
+    private Boolean sendAdministrativeChangeNotifications;
+    @Deprecated
+    private Boolean sendOrcidNews;
+    @Deprecated
+    private Boolean sendMemberUpdateRequests;    
     
     @Id
     @Column(name = "orcid", length = 19)
@@ -210,25 +201,21 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         this.secretFor2FA = secretFor2FA;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "orcid_type")
-    public OrcidType getOrcidType() {
+    public String getOrcidType() {
         return orcidType;
     }
 
-    public void setOrcidType(OrcidType orcidType) {
+    public void setOrcidType(String orcidType) {
         this.orcidType = orcidType;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "group_type")
-    public MemberType getGroupType() {
+    public String getGroupType() {
         return groupType;
     }
 
-    public void setGroupType(MemberType groupType) {
+    public void setGroupType(String groupType) {
         this.groupType = groupType;
     }
 
@@ -902,14 +889,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         this.usedRecaptchaOnRegistration = usedRecaptchaOnRegistration;
     }
     
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "activities_visibility_default")
-    public Visibility getActivitiesVisibilityDefault() {
+    public String getActivitiesVisibilityDefault() {
         return activitiesVisibilityDefault;
     }
 
-    public void setActivitiesVisibilityDefault(Visibility activitesVisibilityDefault) {
+    public void setActivitiesVisibilityDefault(String activitesVisibilityDefault) {
         this.activitiesVisibilityDefault = activitesVisibilityDefault;
     }
             
@@ -938,14 +923,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         return true;
     }
 
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "locale")
-    public Locale getLocale() {
+    public String getLocale() {
         return locale;
     }
 
-    public void setLocale(Locale locale) {
+    public void setLocale(String locale) {
         this.locale = locale;
     }
 

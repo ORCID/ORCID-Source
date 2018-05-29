@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.exception;
 
 import java.util.HashMap;
@@ -46,7 +30,7 @@ public class OrcidCoreExceptionMapper {
     public static final String V2_RC4 = "2.0_rc4";
     public static final String V2 = "2.0";
     public static final String V2_1 = "2.1";
-    public static final String V3_DEV1 = "3.0_dev1";
+    public static final String V3_RC1 = "3.0_rc1";
 
     private static final String latest = "2.0";
     
@@ -116,6 +100,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotClaimedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9036)); 
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidElementCantBeDeletedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9040));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DeactivatedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9044));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ExceedMaxNumberOfElementsException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9048));
     }
     
     public static Pair<Status, Integer> getHttpStatusAndErrorCode(Throwable t) {
@@ -132,8 +117,8 @@ public class OrcidCoreExceptionMapper {
         return (org.orcid.jaxb.model.error_v2.OrcidError) getOrcidError(t, latest);
     }
     
-    public org.orcid.jaxb.model.v3.dev1.error.OrcidError getV3OrcidError(Throwable t) {
-        return (org.orcid.jaxb.model.v3.dev1.error.OrcidError) getOrcidError(t, V3_DEV1);
+    public org.orcid.jaxb.model.v3.rc1.error.OrcidError getV3OrcidError(Throwable t) {
+        return (org.orcid.jaxb.model.v3.rc1.error.OrcidError) getOrcidError(t, V3_RC1);
     }
     
     public Object getOrcidError(Throwable t, String version) {
@@ -154,8 +139,8 @@ public class OrcidCoreExceptionMapper {
             orcidError = (org.orcid.jaxb.model.error_rc3.OrcidError) getOrcidErrorV2Rc3(errorCode, status, t);
         } else if (V2_RC2.equals(version)) {
             orcidError = (org.orcid.jaxb.model.error_rc2.OrcidError) getOrcidErrorV2Rc2(errorCode, status, t);
-        } else if (V3_DEV1.equals(version)) {
-            orcidError = (org.orcid.jaxb.model.v3.dev1.error.OrcidError) getOrcidErrorV3Dev1(errorCode, status, t);
+        } else if (V3_RC1.equals(version)) {
+            orcidError = (org.orcid.jaxb.model.v3.rc1.error.OrcidError) getOrcidErrorV3Rc1(errorCode, status, t);
         } else {
             orcidError = (OrcidError) getOrcidErrorV2Rc1(errorCode, status, t);
         }
@@ -239,9 +224,9 @@ public class OrcidCoreExceptionMapper {
         return orcidError;
     }
     
-    public org.orcid.jaxb.model.v3.dev1.error.OrcidError getOrcidErrorV3Dev1(int errorCode, int status, Throwable t) {
+    public org.orcid.jaxb.model.v3.rc1.error.OrcidError getOrcidErrorV3Rc1(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
-        org.orcid.jaxb.model.v3.dev1.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.dev1.error.OrcidError();
+        org.orcid.jaxb.model.v3.rc1.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.rc1.error.OrcidError();
         orcidError.setResponseCode(status);
         orcidError.setErrorCode(errorCode);
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));

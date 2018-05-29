@@ -1,23 +1,8 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +10,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
@@ -35,16 +21,18 @@ import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.frontend.web.pagination.WorksPage;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkCategory;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkCategory;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
+import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -96,6 +84,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource(name = "bibtexManagerV3")
     private BibtexManager bibtexManager;
+    
+    @Resource
+    PIDResolverService resolverService;
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody ArrayList<Long> removeWork(@PathVariable("workIdsStr") String workIdsStr) {
@@ -109,6 +100,14 @@ public class WorksController extends BaseWorkspaceController {
             workManager.removeWorks(getEffectiveUserOrcid(), workIdLs);
         }
         return workIdLs;
+    }
+    
+
+    @RequestMapping(value = "/group/{workIdsStr}", method = RequestMethod.POST)
+    public @ResponseBody List<Long> groupWorks(@PathVariable("workIdsStr") String workIdsStr) {
+        List<Long> workIds = Arrays.stream(workIdsStr.split(",")).mapToLong(n -> Long.parseLong(n)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        workManager.createNewWorkGroup(workIds, getCurrentUserOrcid());
+        return workIds;
     }
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
@@ -130,8 +129,9 @@ public class WorksController extends BaseWorkspaceController {
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = profile.getActivitiesVisibilityDefault() == null
-                    ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+                    ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(defaultVis);
             w.setVisibility(v);
         }
 
@@ -560,15 +560,16 @@ public class WorksController extends BaseWorkspaceController {
                 setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
             }
 
+            //check type is valid
             Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
             if (wId.getWorkExternalIdentifierType().getValue() != null  
                     && !wId.getWorkExternalIdentifierType().getValue().trim().isEmpty() 
                     && !types.keySet().contains(wId.getWorkExternalIdentifierType().getValue())){
                 setError(wId.getWorkExternalIdentifierType(), "manualWork.id_invalid");
-            
-            
-            validateUrl(wId.getUrl());            
             }
+            
+            if (wId.getUrl() != null)
+                validateUrl(wId.getUrl());                        
         }
 
         return work;
@@ -649,7 +650,7 @@ public class WorksController extends BaseWorkspaceController {
         ArrayList<Long> workIds = new ArrayList<Long>();
         for (String workId : workIdsStr.split(","))
             workIds.add(new Long(workId));
-        workManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(visibilityStr));
+        workManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibilityStr));
         return workIds;
     }
 
@@ -726,6 +727,19 @@ public class WorksController extends BaseWorkspaceController {
         }
         
         return datums;
+    }
+    
+    /** Attempts to resolve an identifier to a landing page.
+     * 
+     * Do it real time (on exit)
+     * 
+     * @param type
+     * @param value
+     * @return "resolved" if it can be resolved, "resolvableType" if we attempted to resolve it.
+     */
+    @RequestMapping(value = "/id/{type}", method = RequestMethod.GET)
+    public @ResponseBody PIDResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value){        
+        return resolverService.resolve(type, value);
     }
 
 }

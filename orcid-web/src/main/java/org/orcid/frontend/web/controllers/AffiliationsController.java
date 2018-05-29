@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
@@ -28,14 +12,14 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -177,9 +161,15 @@ public class AffiliationsController extends BaseWorkspaceController {
         AffiliationForm affiliationForm = new AffiliationForm();
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null
-                ? org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().value())
-                : profile.getActivitiesVisibilityDefault());
+        
+        Visibility v = null;
+        org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = null;
+        if (profile.getActivitiesVisibilityDefault() != null) {
+            defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+        } else {
+            defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().name());
+        }
+        v = Visibility.valueOf(defaultVis);
         affiliationForm.setVisibility(v);
 
         Text affiliationName = new Text();
@@ -362,7 +352,7 @@ public class AffiliationsController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
-        org.orcid.jaxb.model.v3.dev1.common.Visibility visibility = org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(affiliation.getVisibility().getVisibility().value());
+        org.orcid.jaxb.model.v3.rc1.common.Visibility visibility = org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(affiliation.getVisibility().getVisibility().value());
         affiliationsManager.updateVisibility(getEffectiveUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()), visibility);
         return affiliation;
     }
@@ -460,39 +450,33 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
         boolean primaryValidation = true;
-
-        if (!PojoUtil.isEmpty(affiliationForm.getStartDate()))
-            affiliationForm.getStartDate().setErrors(new ArrayList<String>());
+        if(affiliationForm.getStartDate() == null) {
+            affiliationForm.setStartDate(getEmptyDate());
+        }
+        
+        affiliationForm.getStartDate().setErrors(new ArrayList<String>());
+        
         if (!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             affiliationForm.getEndDate().setErrors(new ArrayList<String>());
         if ((PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth())
                 && PojoUtil.isEmpty(affiliationForm.getStartDate().getDay()))) {
             primaryValidation = false;
             setError(affiliationForm.getStartDate(), "common.dates.start_date_required");
+        } else {
+            if (!validDate(affiliationForm.getStartDate())) {
+                primaryValidation = false;
+                setError(affiliationForm.getStartDate(), "common.dates.invalid");
+            }            
         }
-        if ((PojoUtil.isEmpty(affiliationForm.getStartDate().getYear())
-                && (!PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()) || !PojoUtil.isEmpty(affiliationForm.getStartDate().getDay())))
-                || (!PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && !PojoUtil.isEmpty(affiliationForm.getStartDate().getDay())
-                        && PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()))) {
-            primaryValidation = false;
-            setError(affiliationForm.getStartDate(), "common.dates.invalid");
-        }
-        if ((PojoUtil.isEmpty(affiliationForm.getEndDate().getYear())
-                && (!PojoUtil.isEmpty(affiliationForm.getEndDate().getMonth()) || !PojoUtil.isEmpty(affiliationForm.getEndDate().getDay())))
-                || (!PojoUtil.isEmpty(affiliationForm.getEndDate().getYear()) && !PojoUtil.isEmpty(affiliationForm.getEndDate().getDay())
-                        && PojoUtil.isEmpty(affiliationForm.getEndDate().getMonth()))) {
+        
+        if (!PojoUtil.isEmpty(affiliationForm.getEndDate()) && !validDate(affiliationForm.getEndDate())) {
             primaryValidation = false;
             setError(affiliationForm.getEndDate(), "common.dates.invalid");
         }
+        
         if (primaryValidation && (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
             if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
-        }
-        if (!validDate(affiliationForm.getStartDate())) {
-            setError(affiliationForm.getStartDate(), "common.dates.invalid");
-        }
-        if (!PojoUtil.isEmpty(affiliationForm.getEndDate()) && !validDate(affiliationForm.getEndDate())) {
-            setError(affiliationForm.getEndDate(), "common.dates.invalid");
         }
 
         return affiliationForm;

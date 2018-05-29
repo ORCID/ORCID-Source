@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.validator;
 
 import static org.junit.Assert.fail;
@@ -36,57 +20,58 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.jaxb.model.v3.dev1.common.Amount;
-import org.orcid.jaxb.model.v3.dev1.common.Contributor;
-import org.orcid.jaxb.model.v3.dev1.common.ContributorAttributes;
-import org.orcid.jaxb.model.v3.dev1.common.ContributorEmail;
-import org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.dev1.common.ContributorRole;
-import org.orcid.jaxb.model.v3.dev1.common.Country;
-import org.orcid.jaxb.model.v3.dev1.common.CreditName;
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
-import org.orcid.jaxb.model.v3.dev1.common.Organization;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
-import org.orcid.jaxb.model.v3.dev1.common.SourceName;
-import org.orcid.jaxb.model.v3.dev1.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.dev1.common.Subtitle;
-import org.orcid.jaxb.model.v3.dev1.common.Title;
-import org.orcid.jaxb.model.v3.dev1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.dev1.common.TranslatedTitle;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.common.Year;
-import org.orcid.jaxb.model.v3.dev1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.dev1.record.Citation;
-import org.orcid.jaxb.model.v3.dev1.record.CitationType;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributorAttributes;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributorRole;
-import org.orcid.jaxb.model.v3.dev1.record.FundingContributors;
-import org.orcid.jaxb.model.v3.dev1.record.FundingTitle;
-import org.orcid.jaxb.model.v3.dev1.record.FundingType;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.Role;
-import org.orcid.jaxb.model.v3.dev1.record.SequenceType;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkContributors;
-import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc1.common.Amount;
+import org.orcid.jaxb.model.v3.rc1.common.Contributor;
+import org.orcid.jaxb.model.v3.rc1.common.ContributorAttributes;
+import org.orcid.jaxb.model.v3.rc1.common.ContributorEmail;
+import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.rc1.common.ContributorRole;
+import org.orcid.jaxb.model.v3.rc1.common.Country;
+import org.orcid.jaxb.model.v3.rc1.common.CreditName;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.Organization;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc1.common.SourceName;
+import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.rc1.common.Subtitle;
+import org.orcid.jaxb.model.v3.rc1.common.Title;
+import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc1.record.Citation;
+import org.orcid.jaxb.model.v3.rc1.record.CitationType;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.FundingContributor;
+import org.orcid.jaxb.model.v3.rc1.record.FundingContributorAttributes;
+import org.orcid.jaxb.model.v3.rc1.record.FundingContributorRole;
+import org.orcid.jaxb.model.v3.rc1.record.FundingContributors;
+import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
+import org.orcid.jaxb.model.v3.rc1.record.FundingType;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.Role;
+import org.orcid.jaxb.model.v3.rc1.record.SequenceType;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
+import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -627,7 +612,7 @@ public class ActivityValidatorTest {
     @Test(expected = InvalidPutCodeException.class)
     public void validatePeerReview_invalidPutCodeTest() {   
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         PeerReview pr = getPeerReview();
         pr.setPutCode(1L);
         activityValidator.validatePeerReview(pr, source, true, true, Visibility.PUBLIC);
@@ -713,7 +698,7 @@ public class ActivityValidatorTest {
     @Test
     public void validateGroupId_validTest() {   
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         GroupIdRecord g = getGroupIdRecord();
         activityValidator.validateGroupIdRecord(g, true, source);
     }
@@ -721,7 +706,7 @@ public class ActivityValidatorTest {
     @Test(expected = InvalidPutCodeException.class)
     public void validateGroupId_invalidPutCodeTest() { 
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         GroupIdRecord g = getGroupIdRecord();
         g.setPutCode(1L);
         activityValidator.validateGroupIdRecord(g, true, source);
@@ -730,7 +715,7 @@ public class ActivityValidatorTest {
     @Test(expected = OrcidValidationException.class)
     public void validateGroupId_invalidGroupIdTest() {
         SourceEntity source = mock(SourceEntity.class);
-        when(source.getSourceName()).thenReturn("source name");
+        when(source.getCachedSourceName()).thenReturn("source name");
         GroupIdRecord g = getGroupIdRecord();
         g.setGroupId("invalid");
         activityValidator.validateGroupIdRecord(g, true, source);
@@ -752,8 +737,8 @@ public class ActivityValidatorTest {
     @Test
     public void validateDuplicatedExtIds_noDuplicatesTest() {                
         SourceEntity source1 = mock(SourceEntity.class);
-        when(source1.getSourceName()).thenReturn("source name");
-        when(source1.getSourceId()).thenReturn("APP-00000000000000");
+        when(source1.getCachedSourceName()).thenReturn("source name");
+        when(source1.getCachedSourceId()).thenReturn("APP-00000000000000");
         
         SourceOrcid sourceOrcid = new SourceOrcid();
         sourceOrcid.setPath("0000-0000-0000-0000");
@@ -770,8 +755,8 @@ public class ActivityValidatorTest {
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void validateDuplicatedExtIds_duplicatesFoundTest() {
         SourceEntity source1 = mock(SourceEntity.class);
-        when(source1.getSourceName()).thenReturn("source name");
-        when(source1.getSourceId()).thenReturn("APP-00000000000000");
+        when(source1.getCachedSourceName()).thenReturn("source name");
+        when(source1.getCachedSourceId()).thenReturn("APP-00000000000000");
         
         SourceClientId sourceClientId = new SourceClientId();
         sourceClientId.setPath("APP-00000000000000");
@@ -853,8 +838,8 @@ public class ActivityValidatorTest {
         ids2.getExternalIdentifier().add(id2);
         
         SourceEntity source1 = mock(SourceEntity.class);
-        when(source1.getSourceName()).thenReturn("source name");
-        when(source1.getSourceId()).thenReturn("APP-00000000000000");
+        when(source1.getCachedSourceName()).thenReturn("source name");
+        when(source1.getCachedSourceId()).thenReturn("APP-00000000000000");
         
         SourceClientId sourceClientId = new SourceClientId();
         sourceClientId.setPath("APP-00000000000000");

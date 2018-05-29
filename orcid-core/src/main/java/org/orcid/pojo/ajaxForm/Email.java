@@ -1,25 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.pojo.ajaxForm;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 
 public class Email implements ErrorsInterface {
 
@@ -39,7 +23,7 @@ public class Email implements ErrorsInterface {
 
     private List<String> errors = new ArrayList<String>();
 
-    public static Email valueOf(org.orcid.jaxb.model.v3.dev1.record.Email e) {
+    public static Email valueOf(org.orcid.jaxb.model.v3.rc1.record.Email e) {
         Email email = new Email();
         if (e != null) {
             email.setCurrent(e.isCurrent());
@@ -52,8 +36,8 @@ public class Email implements ErrorsInterface {
         return email;
     }
     
-    public org.orcid.jaxb.model.v3.dev1.record.Email toV3Email() {
-        org.orcid.jaxb.model.v3.dev1.record.Email email = new org.orcid.jaxb.model.v3.dev1.record.Email();
+    public org.orcid.jaxb.model.v3.rc1.record.Email toV3Email() {
+        org.orcid.jaxb.model.v3.rc1.record.Email email = new org.orcid.jaxb.model.v3.rc1.record.Email();
         email.setCurrent(current);
         email.setEmail(value);
         email.setLastModifiedDate(null);

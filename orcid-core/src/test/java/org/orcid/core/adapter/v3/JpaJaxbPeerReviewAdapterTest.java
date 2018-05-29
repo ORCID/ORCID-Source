@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -30,12 +14,12 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.dev1.record.Role;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc1.record.Role;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -64,10 +48,10 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNotNull(pe);
         //General info
         assertEquals(Long.valueOf(12345), pe.getId());
-        assertEquals(Visibility.PRIVATE.value(), pe.getVisibility().value());        
+        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());        
         assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
-        assertEquals("reviewer", pe.getRole().value());
-        assertEquals("review", pe.getType().value());
+        assertEquals("REVIEWER", pe.getRole());
+        assertEquals("REVIEW", pe.getType());
         assertEquals("peer-review:url", pe.getUrl());
         
         //Dates
@@ -84,7 +68,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("common:name", pe.getOrg().getName());
         assertEquals("common:city", pe.getOrg().getCity());
         assertEquals("common:region", pe.getOrg().getRegion());        
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.value(), pe.getOrg().getCountry().value());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), pe.getOrg().getCountry());
         assertEquals("http://dx.doi.org/10.13039/100000001", pe.getOrg().getOrgDisambiguated().getSourceId());
         assertEquals("FUNDREF", pe.getOrg().getOrgDisambiguated().getSourceType()); 
         
@@ -95,7 +79,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("peer-review:subject-translated-name", pe.getSubjectTranslatedName());
         assertEquals("en", pe.getSubjectTranslatedNameLanguageCode());
         assertEquals("peer-review:subject-url", pe.getSubjectUrl());
-        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.JOURNAL_ARTICLE, pe.getSubjectType());
+        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.JOURNAL_ARTICLE.name(), pe.getSubjectType());
         
         //Check group id
         assertEquals("orcid-generated:12345", pe.getGroupId());
@@ -166,9 +150,9 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     private PeerReview getPeerReview(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_dev1/samples/read_samples/peer-review-3.0_dev1.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml";
         if(full) {
-            name = "/record_3.0_dev1/samples/read_samples/peer-review-full-3.0_dev1.xml";
+            name = "/record_3.0_rc1/samples/read_samples/peer-review-full-3.0_rc1.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);
@@ -177,7 +161,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     private PeerReviewEntity getPeerReviewEntity() {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
-        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US);
+        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
@@ -188,8 +172,8 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setCompletionDate(new CompletionDateEntity(2015, 1, 1));
         result.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:external-identifier-id\"}}]}");
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
-        result.setRole(org.orcid.jaxb.model.record_v2.Role.MEMBER);
-        result.setType(org.orcid.jaxb.model.record_v2.PeerReviewType.EVALUATION);
+        result.setRole(org.orcid.jaxb.model.record_v2.Role.MEMBER.name());
+        result.setType(org.orcid.jaxb.model.record_v2.PeerReviewType.EVALUATION.name());
         result.setUrl("peer-review:url");        
         result.setSubjectExternalIdentifiersJson("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}");
         result.setSubjectContainerName("peer-review:subject-container-name");
@@ -197,8 +181,8 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setSubjectTranslatedName("peer-review:subject-translated-name");
         result.setSubjectTranslatedNameLanguageCode("en");
         result.setSubjectUrl("peer-review:subject-url");                
-        result.setSubjectType(org.orcid.jaxb.model.record_v2.WorkType.BOOK_REVIEW);        
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);   
+        result.setSubjectType(org.orcid.jaxb.model.record_v2.WorkType.BOOK_REVIEW.name());        
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
         result.setGroupId("orcid-generated:12345");
         result.setId(12345L);

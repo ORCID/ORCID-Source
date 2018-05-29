@@ -7,7 +7,7 @@ declare var orcidVar: any;
 
 //Import all the angular components
 
-import { NgFor, NgIf } 
+import { NgForOf, NgIf } 
     from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
@@ -147,7 +147,7 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
-                if(data.errors.length != 0){
+                if(data['errors'].length != 0){
                     //console.log("Unable to delete external identifier.");
                 } else {
                     this.externalIdentifiersForm.externalIdentifiers.splice(this.removeExternalIdentifierIndex, 1);

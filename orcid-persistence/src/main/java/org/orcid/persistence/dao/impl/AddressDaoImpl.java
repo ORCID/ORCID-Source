@@ -1,26 +1,9 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
 import javax.persistence.Query;
 
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implements AddressDao {
+    
+    private static final String PUBLIC_VISIBILITY = "PUBLIC";
 
     public AddressDaoImpl() {
         super(AddressEntity.class);
@@ -65,12 +50,12 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @Override
     @Cacheable(value = "public-address", key = "#orcid.concat('-').concat(#lastModified)")
     public List<AddressEntity> getPublicAddresses(String orcid, long lastModified) {
-        return getAddresses(orcid, Visibility.PUBLIC);
+        return getAddresses(orcid, PUBLIC_VISIBILITY);
     }
    
     @SuppressWarnings("unchecked")
     @Override
-    public List<AddressEntity> getAddresses(String orcid, Visibility visibility) {
+    public List<AddressEntity> getAddresses(String orcid, String visibility) {
         Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);

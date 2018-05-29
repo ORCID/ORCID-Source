@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
@@ -37,7 +19,10 @@
         <class>org.orcid.persistence.jpa.entities.MinimizedWorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationItemEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAddItemsEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAmendedEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationTipEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationCustomEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity</class>
@@ -70,7 +55,8 @@
         <class>org.orcid.persistence.jpa.entities.RecordNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.BiographyEntity</class>  
         <class>org.orcid.persistence.jpa.entities.IdentifierTypeEntity</class>
-        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>        
+        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>   
+        <class>org.orcid.persistence.jpa.entities.EmailFrequencyEntity</class>     
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>
@@ -93,7 +79,8 @@
 		
 		<!-- Invalid record data changes -->
 		<class>org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity</class>
-		<class>org.orcid.persistence.jpa.entities.BackupCodeEntity</class>		
+		<class>org.orcid.persistence.jpa.entities.BackupCodeEntity</class>
+		<class>org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity</class>		
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 

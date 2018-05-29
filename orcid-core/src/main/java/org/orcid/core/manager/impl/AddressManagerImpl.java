@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
@@ -33,6 +17,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.AddressManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
@@ -57,7 +42,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
-        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
+        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility());
         
         //Save the original source
         String existingSourceId = updatedEntity.getSourceId();
@@ -148,7 +133,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         if (!existing.getId().equals(address.getPutCode())) {
             //If they have the same source 
             String existingSourceId = existing.getElementSourceId(); 
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
                 if(existing.getIso2Country().equals(address.getCountry().getValue())) {
                     return true;
                 }
@@ -158,12 +143,12 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }    
     
     private void setIncomingPrivacy(AddressEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingCountryVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());        
+        String incomingCountryVisibility = entity.getVisibility();
+        String defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name() : profile.getActivitiesVisibilityDefault();        
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultCountryVisibility);            
         } else if (incomingCountryVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }    
     
@@ -197,8 +182,8 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                    for(AddressEntity existingAddress : existingAddressList) {
                        if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
                            existingAddress.setLastModified(new Date());
-                           existingAddress.setVisibility(updatedOrNew.getVisibility());
-                           existingAddress.setIso2Country(updatedOrNew.getCountry().getValue());
+                           existingAddress.setVisibility(updatedOrNew.getVisibility().name());
+                           existingAddress.setIso2Country(updatedOrNew.getCountry().getValue().name());
                            existingAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                            addressDao.merge(existingAddress);
                        }
@@ -219,7 +204,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                         newAddress.setClientSourceId(sourceEntity.getSourceClient().getId());
                     }
                                                             
-                    newAddress.setVisibility(updatedOrNew.getVisibility());
+                    newAddress.setVisibility(updatedOrNew.getVisibility().name());
                     newAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     addressDao.persist(newAddress);
                     

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.integration.blackbox.oauth;
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +8,7 @@ import static org.junit.Assert.fail;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -71,6 +56,7 @@ public class PersistentTokensIntegrationTest extends BlackBoxBaseV2Release {
     }
 
     @Test
+    @Ignore // Short live tokens no longer available on prod because toggle is off
     public void createShortLivedTokenTest() throws InterruptedException, JSONException {
         String clientId = getClient1ClientId();
         String clientRedirectUri = getClient1RedirectUri();

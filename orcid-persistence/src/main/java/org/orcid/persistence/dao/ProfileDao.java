@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao;
 
 import java.util.Collection;
@@ -21,13 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 
@@ -43,9 +23,11 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          The list of desired indexing status
      * @param maxResults
      *          Max number of results
+     * @param delay
+     *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
 
     /**
      * Get a list of the ORCID ids with the given indexing status
@@ -55,22 +37,12 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          Max number of results
      * @param orcidsToExclude
      *          List of ORCID ids to exclude from the results
+     * @param delay
+     *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
-
-    /**
-     * Get a list of the ORCID ids with the given indexing status
-     * @param indexingStatuses
-     *          The list of desired indexing status
-     * @param maxResults
-     *          Max number of results
-     * @param orcidsToExclude
-     *          List of ORCID ids to exclude from the results
-     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
-     * */
-    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
-
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
+    
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findUnclaimedNeedingReminder(int reminderAfterDays, int maxResults, Collection<String> orcidsToExclude);
@@ -106,13 +78,13 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev);
 
-    OrcidType retrieveOrcidType(String orcid);
+    String retrieveOrcidType(String orcid);
 
     List<Object[]> findInfoForDecryptionAnalysis();
 
-    Locale retrieveLocale(String orcid);
+    String retrieveLocale(String orcid);
 
-    void updateLocale(String orcid, Locale locale);
+    void updateLocale(String orcid, String locale);
 
     boolean deprecateProfile(String toDeprecate, String primaryOrcid, String deprecatedMethod, String adminUser);
 
@@ -125,7 +97,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
 
     void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
-            boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
+            boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 
@@ -133,9 +105,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     
     public boolean getClaimedStatusByEmail(String email);
 
-    ClientType getClientType(String orcid);
+    String getClientType(String orcid);
 
-    MemberType getGroupType(String orcid);
+    String getGroupType(String orcid);
 
     public boolean removeProfile(String orcid);
 
@@ -158,7 +130,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean updateNotificationsPreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests);
     
-    boolean updateDefaultVisibility(String orcid, Visibility visibility);
+    boolean updateDefaultVisibility(String orcid, String visibility);
     
     boolean updateSendEmailFrequencyDays(String orcid, Float sendEmailFrequencyDays);
 
@@ -175,4 +147,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void update2FASecret(String orcid, String secret);
     
     boolean deactivate(String orcid);
+
+    List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid);
 }

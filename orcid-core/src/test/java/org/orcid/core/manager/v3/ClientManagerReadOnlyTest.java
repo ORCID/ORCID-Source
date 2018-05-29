@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
@@ -40,11 +24,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.client.Client;
-import org.orcid.jaxb.model.v3.dev1.client.ClientRedirectUri;
-import org.orcid.jaxb.model.v3.dev1.client.ClientSummary;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.jaxb.model.v3.rc1.client.ClientRedirectUri;
+import org.orcid.jaxb.model.v3.rc1.client.ClientSummary;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -183,7 +167,7 @@ public class ClientManagerReadOnlyTest {
         entity.setAuthenticationProviderId("authentication-provider-id " + randomString);
         entity.setClientDescription("description " + randomString);
         entity.setClientName("client-name " + randomString);
-        entity.setClientType(ClientType.CREATOR);
+        entity.setClientType(ClientType.CREATOR.name());
         entity.setClientWebsite("client-website " + randomString);
         entity.setDateCreated(now);
         entity.setEmailAccessReason("email-access-reason " + randomString);

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.frontend.spring;
 
 import java.io.IOException;
@@ -24,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.security.DeprecatedProfileException;
+import org.orcid.core.security.InvalidUserTypeException;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
@@ -70,6 +55,9 @@ public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         } else if (exception instanceof Bad2FARecoveryCodeException) {
             writer.println(",");
             writer.println("\"badRecoveryCode\": true");
+        } else if (exception.getCause() instanceof InvalidUserTypeException) {
+            writer.println(",");
+            writer.println("\"invalidUserType\": true");
         }
         writer.println("}");
     }

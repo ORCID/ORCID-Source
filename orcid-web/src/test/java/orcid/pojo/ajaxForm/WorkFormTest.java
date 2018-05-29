@@ -1,52 +1,36 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package orcid.pojo.ajaxForm;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
-
-import net.sf.ehcache.util.MemoryEfficientByteArrayOutputStream;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
-import org.orcid.jaxb.model.v3.dev1.common.ContributorAttributes;
-import org.orcid.jaxb.model.v3.dev1.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.dev1.common.ContributorRole;
-import org.orcid.jaxb.model.v3.dev1.common.Country;
-import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
-import org.orcid.jaxb.model.v3.dev1.common.CreditName;
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
-import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.dev1.common.Subtitle;
-import org.orcid.jaxb.model.v3.dev1.common.Title;
-import org.orcid.jaxb.model.v3.dev1.common.TranslatedTitle;
-import org.orcid.jaxb.model.v3.dev1.common.Url;
-import org.orcid.jaxb.model.v3.dev1.common.Year;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.dev1.record.CitationType;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.dev1.record.Relationship;
-import org.orcid.jaxb.model.v3.dev1.record.SequenceType;
-import org.orcid.jaxb.model.v3.dev1.record.Work;
-import org.orcid.jaxb.model.v3.dev1.record.WorkContributors;
-import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.common.ContributorAttributes;
+import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.rc1.common.ContributorRole;
+import org.orcid.jaxb.model.v3.rc1.common.Country;
+import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
+import org.orcid.jaxb.model.v3.rc1.common.CreditName;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc1.common.Subtitle;
+import org.orcid.jaxb.model.v3.rc1.common.Title;
+import org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.record.CitationType;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.SequenceType;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
+import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
@@ -65,7 +49,9 @@ public class WorkFormTest extends XMLTestCase {
     public void testSerializeWork() throws Exception {
         Work work = getWork();
         WorkForm workForm =  WorkForm.valueOf(work);
-        MemoryEfficientByteArrayOutputStream.serialize(workForm);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(workForm);
     }
     
     @Test
@@ -148,10 +134,10 @@ public class WorkFormTest extends XMLTestCase {
         work.setPutCode(Long.valueOf("12345"));
         work.setShortDescription("Short description");
         work.setUrl(new Url("http://test.com"));
-        work.setVisibility(org.orcid.jaxb.model.v3.dev1.common.Visibility.LIMITED);
-        work.setWorkCitation(new org.orcid.jaxb.model.v3.dev1.record.Citation("Citation", CitationType.BIBTEX));
+        work.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED);
+        work.setWorkCitation(new org.orcid.jaxb.model.v3.rc1.record.Citation("Citation", CitationType.BIBTEX));
         WorkContributors contributors = new WorkContributors();
-        org.orcid.jaxb.model.v3.dev1.common.Contributor contributor = new org.orcid.jaxb.model.v3.dev1.common.Contributor();
+        org.orcid.jaxb.model.v3.rc1.common.Contributor contributor = new org.orcid.jaxb.model.v3.rc1.common.Contributor();
         contributor.setCreditName(new CreditName("Credit name"));
         contributor.setContributorOrcid(new ContributorOrcid("0000-0000-0000-0000"));
         ContributorAttributes att = new ContributorAttributes();

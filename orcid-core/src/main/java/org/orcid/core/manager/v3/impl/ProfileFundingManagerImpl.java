@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3.impl;
 
 import java.io.IOException;
@@ -34,11 +18,11 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -106,7 +90,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * @return true if the relationship was updated
      * */
     public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility) {
-        return profileFundingDao.updateProfileFundingVisibility(clientOrcid, profileFundingId, org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.value()));
+        return profileFundingDao.updateProfileFundingVisibility(clientOrcid, profileFundingId, visibility.name());
     }    
     
     /**
@@ -210,12 +194,12 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     }
 
     private void setIncomingWorkPrivacy(ProfileFundingEntity profileFundingEntity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Visibility incomingWorkVisibility = profileFundingEntity.getVisibility();
-        org.orcid.jaxb.model.common_v2.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        String incomingWorkVisibility = profileFundingEntity.getVisibility();
+        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {            
             profileFundingEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
-            profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
     }
     
@@ -232,7 +216,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
     	ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
-    	Visibility originalVisibility = Visibility.fromValue(pfe.getVisibility().value());
+    	Visibility originalVisibility = Visibility.valueOf(pfe.getVisibility());
         
         //Save the original source
         String existingSourceId = pfe.getSourceId();
@@ -253,7 +237,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         orcidSecurityManager.checkSource(pfe);
         
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
-        pfe.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(originalVisibility.value()));        
+        pfe.setVisibility(originalVisibility.name());        
         
         //Be sure it doesn't overwrite the source
         pfe.setSourceId(existingSourceId);

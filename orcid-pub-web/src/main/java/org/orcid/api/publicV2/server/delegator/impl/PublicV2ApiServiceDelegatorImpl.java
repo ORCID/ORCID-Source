@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.api.publicV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
@@ -261,7 +245,7 @@ public class PublicV2ApiServiceDelegatorImpl
         String creditName = null;
         RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
         if (recordNameEntity != null) {
-            if (!recordNameEntity.getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
+            if (!Visibility.valueOf(recordNameEntity.getVisibility()).isMoreRestrictiveThan(Visibility.PUBLIC)) {
                 creditName = recordNameEntity.getCreditName();
                 if (StringUtils.isBlank(creditName)) {
                     creditName = recordNameEntity.getGivenNames();

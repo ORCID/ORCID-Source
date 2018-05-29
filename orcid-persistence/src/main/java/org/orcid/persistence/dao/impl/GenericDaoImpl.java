@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.persistence.dao.impl;
 
 import java.io.Serializable;
@@ -24,6 +8,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.OrcidEntity;
 import org.springframework.transaction.annotation.Propagation;
@@ -105,6 +90,13 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
         entityManager.persist(e);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    @ExcludeFromProfileLastModifiedUpdate
+    public void persistIgnoringProfileLastModifiedUpdate(E e) {
+        entityManager.persist(e);
+    }
+    
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public E merge(E e) {

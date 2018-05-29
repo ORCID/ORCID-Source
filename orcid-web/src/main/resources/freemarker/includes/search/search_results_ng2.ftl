@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <div class="col-md-12">
     <p *ngIf="areResults()">${springMacroRequestContext.getMessage("search_results.showing")} {{resultsShowing}} ${springMacroRequestContext.getMessage("search_results.of")} {{numFound}} <span *ngIf="numFound==1">${springMacroRequestContext.getMessage("search_results.result")}</span><span *ngIf="numFound>1">${springMacroRequestContext.getMessage("search_results.results")}</span></p>
     <table class="table table-striped" *ngIf="areResults()">
@@ -25,7 +7,7 @@
                 <th>${springMacroRequestContext.getMessage("search_results.thGivenname")}</th>
                 <th>${springMacroRequestContext.getMessage("search_results.thFamilynames")}</th>
                 <th>${springMacroRequestContext.getMessage("search_results.thOthernames")}</th>
-                <th>${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</th>
+                <th *ngIf="searchResultsAffiliationsFeatureEnabled">${springMacroRequestContext.getMessage("workspace_bio.Affiliations")}</th>
             </tr>
         </thead>
         <tbody>
@@ -34,7 +16,7 @@
                 <td>{{result['given-names']}}</td>
                 <td>{{result['family-name']}}</td>  
                 <td>{{concatPropertyValues(result['other-name'], 'content')}}</td>
-                <td>{{result['affiliations']}}</td>
+                <td *ngIf="searchResultsAffiliationsFeatureEnabled" >{{result['affiliations'].join(", ")}}</td>
             </tr>
         </tbody>
     </table>

@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.io.Writer;
@@ -21,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.common_v2.OrganizationHolder;
@@ -76,7 +61,7 @@ public class OrgManagerImpl implements OrgManager {
             chunk = getAmbiguousOrgs(firstResult, CHUNK_SIZE);
             for (AmbiguousOrgEntity orgEntity : chunk) {
                 String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceOrcid(), orgEntity.getName(), orgEntity.getCity(),
-                        orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getUsedCount()) };
+                        orgEntity.getRegion(), orgEntity.getCountry(), String.valueOf(orgEntity.getUsedCount()) };
                 csvWriter.writeNext(line);
             }
             firstResult += chunk.size();
@@ -95,7 +80,7 @@ public class OrgManagerImpl implements OrgManager {
             chunk = orgDisambiguatedDao.getChunk(firstResult, CHUNK_SIZE);
             for (OrgDisambiguatedEntity orgEntity : chunk) {
                 String[] line = new String[] { String.valueOf(orgEntity.getId()), orgEntity.getSourceId(), orgEntity.getSourceType(), orgEntity.getOrgType(),
-                        orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(), orgEntity.getCountry().value(), String.valueOf(orgEntity.getPopularity()) };
+                        orgEntity.getName(), orgEntity.getCity(), orgEntity.getRegion(), orgEntity.getCountry(), String.valueOf(orgEntity.getPopularity()) };
                 csvWriter.writeNext(line);
             }
             firstResult += chunk.size();
@@ -167,12 +152,16 @@ public class OrgManagerImpl implements OrgManager {
         org.orcid.jaxb.model.common_v2.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
-        orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));
+        orgEntity.setCountry(address.getCountry().value());
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
-            orgEntity.setOrgDisambiguated(orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
-                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
+            OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
+                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource());
+            if (disambiguatedOrg == null) {
+                throw new InvalidDisambiguatedOrgException();
+            }
+            orgEntity.setOrgDisambiguated(disambiguatedOrg);
         }
-        return createUpdate(orgEntity);        
+        return matchOrCreateOrg(orgEntity);        
     }
     
     @Override
@@ -187,6 +176,29 @@ public class OrgManagerImpl implements OrgManager {
             country = org.getAddress().getCountry();
                     
         }
-        return orgDao.findByNameCityRegionAndCountry(name, city, region, country);        
+        return orgDao.findByNameCityRegionAndCountry(name, city, region, country.value());        
+    }
+    
+    private OrgEntity matchOrCreateOrg(OrgEntity org) {
+        OrgEntity match = orgDao.findByAddressAndDisambiguatedOrg(org.getName(), org.getCity(), org.getRegion(), org.getCountry(), org.getOrgDisambiguated());
+        if (match != null) {
+            return match;
+        }
+        
+        SourceEntity entity = sourceManager.retrieveSourceEntity();
+        if (entity != null) {
+            SourceEntity newEntity = new SourceEntity();
+            if(entity.getSourceClient() != null) {
+                newEntity.setSourceClient(new ClientDetailsEntity(entity.getSourceClient().getId()));
+            }
+            if(entity.getSourceProfile() != null) {
+                newEntity.setSourceProfile(new ProfileEntity(entity.getSourceProfile().getId()));
+            }
+                
+            org.setSource(newEntity);
+        }
+        
+        orgDao.persist(org);
+        return org;
     }
 }

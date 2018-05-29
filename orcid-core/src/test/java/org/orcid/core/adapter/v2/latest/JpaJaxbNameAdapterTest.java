@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
@@ -63,7 +47,7 @@ public class JpaJaxbNameAdapterTest extends MockSourceNameCache {
         assertEquals("Credit Name", entity.getCreditName());        
         assertEquals("Family Name", entity.getFamilyName());
         assertEquals("Given Names", entity.getGivenNames());
-        assertEquals(Visibility.PUBLIC, entity.getVisibility());
+        assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());
         assertNotNull(entity.getProfile());
         assertEquals("0000-0000-0000-0000", entity.getProfile().getId());        
     }
@@ -74,7 +58,7 @@ public class JpaJaxbNameAdapterTest extends MockSourceNameCache {
         entity.setCreditName("Credit Name");
         entity.setFamilyName("Family Name");
         entity.setGivenNames("Given Names");
-        entity.setVisibility(Visibility.PUBLIC);
+        entity.setVisibility(Visibility.PUBLIC.name());
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         
         Name name = adapter.toName(entity);

@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected classes=['manage'] nav="settings">
 <#if twitter?? && twitter>
      <div class="alert alert-success">
@@ -45,7 +27,7 @@
     <div class="col-md-9 col-sm-12 col-xs-12" id="settings">
         <h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
         <div class="popover-help-container">
-            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+            <i class="glyphicon glyphicon-question-sign"></i>
             <div id="account-settings-help" class="popover bottom">
                 <div class="arrow"></div>
                 <div class="popover-content">
@@ -60,7 +42,10 @@
             <tbody>
                 <tr>
                     <!-- Email header -->
-                    <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
+                    <th><a name="editEmail"></a>
+                    <@orcid.checkFeatureStatus 'GDPR_EMAIL_NOTIFICATIONS'>${springMacroRequestContext.getMessage("manage.email_notification_preferences")}</@orcid.checkFeatureStatus>
+                    <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS' enabled=false>${springMacroRequestContext.getMessage("manage.thEmail")}</@orcid.checkFeatureStatus>
+                    </th>
                     <td><a href="" id="account-settings-toggle-email-edit" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a></td>
                 </tr>
                 <tr>
@@ -73,34 +58,24 @@
                     <th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
                     <td><a href="" id="" ng-click="toggleLanguageEdit()" ng-bind="languageToggleText"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                 <tr ng-show="showEditLanguage" ng-cloak>
-                    <td>
-                        
-                        <language-ng2></language-ng2>
-                    </td>
-                </tr>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="languageCtrl" ng-show="showEditLanguage" ng-cloak>                                
-                    <td colspan="2">
+                    <td  colspan="2">
                         <p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
                         <div class="row">
-                            <div class="col-md-12" ng-include="'edit-language'">
-                                
-                            </div>                          
-                            
-                        </div>                      
+                            <div class="col-md-12">
+                                <language-ng2></language-ng2>
+                            </div>
+                        </div>
                     </td>
                 </tr>
+                <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS' enabled=false>
+                    <!-- Notifications-->
+                    <tr>
+                        <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.notification_preferences")}</th>
+                        <td><a href="" ng-click="toggleEmailPreferencesEdit()"
+                            ng-bind="emailPreferencesToggleText"></a></td>
+                    </tr>
                 </@orcid.checkFeatureStatus>
-                <!-- Notifications -->
-                <tr>
-                    <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.notification_preferences")}</th>
-                    <td><a href="" ng-click="toggleEmailPreferencesEdit()"
-                        ng-bind="emailPreferencesToggleText"></a></td>
-                </tr>
-
                 <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                 <tr ng-show="showEditEmailPreferences">
                     <td colspan="2">
@@ -109,50 +84,52 @@
                 </tr>
                 </@orcid.checkFeatureStatus>
                 <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="NotificationPreferencesCtrl"
-                    ng-show="showEditEmailPreferences" ng-cloak>
-                    <td colspan="2">
-                        <p>${springMacroRequestContext.getMessage("manage.notification_header")}</p>
-                        <div class="editTablePadCell35">                                
-                            <label class="checkbox"> <input type="checkbox"
-                                id="sendOrcidChangeNotifcations"
-                                name="sendOrcidChangeNotifcations"
-                                ng-model="prefsSrvc.prefs['send_change_notifications']"
-                                ng-change="prefsSrvc.updateNotificationPreferences()" />
-                                ${springMacroRequestContext.getMessage("change_notification_preferences.sendnotification")}
-                            </label>
-                            <label class="checkbox"> <input type="checkbox"
-                                id="sendAdministrativeChangeNotifcations"
-                                name="sendAdministrativeChangeNotifcations"
-                                ng-model="prefsSrvc.prefs['send_administrative_change_notifications']"
-                                ng-change="prefsSrvc.updateNotificationPreferences()" />
-                                ${springMacroRequestContext.getMessage("change_notification_preferences.sendadministrativenotification")}
-                            </label>                                
-                            <label class="checkbox"> <input type="checkbox"
-                                id="sendMemberUpdateRequests" name="sendMemberUpdateRequests"
-                                ng-model="prefsSrvc.prefs['send_member_update_requests']"
-                                ng-change="prefsSrvc.updateNotificationPreferences()" />
-                                ${springMacroRequestContext.getMessage("change_notification_preferences.sendmemberupdaterequests")}
-                            </label>
-                            <label class="checkbox"> <input type="checkbox"
-                                id="sendOrcidNews" name="sendOrcidNews"
-                                ng-model="prefsSrvc.prefs['send_orcid_news']"
-                                ng-change="prefsSrvc.updateNotificationPreferences()" />
-                                ${springMacroRequestContext.getMessage("change_notification_preferences.news")}
-                            </label>
-                        </div>
-                        <p>
-                            ${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation_1")}
-                            <a href="http://orcid.org/newsletter/subscriptions" target="subscribe">${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation_2")}</a>${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation_3")}
-                        </p>
-                        <p>
-                            <a href="https://support.orcid.org/knowledgebase/articles/665437" target="learnmore">
-                            ${springMacroRequestContext.getMessage("change_notification_preferences.learn_more")}
-                            </a>
-                            ${springMacroRequestContext.getMessage("change_notification_preferences.about_inbox_notifications")}
-                        </p>
-                    </td>
-                </tr>
+                    <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS' enabled=false>
+                        <tr ng-controller="NotificationPreferencesCtrl"
+                            ng-show="showEditEmailPreferences" ng-cloak>
+                            <td colspan="2">
+                                <p>${springMacroRequestContext.getMessage("manage.notification_header")}</p>
+                                <div class="editTablePadCell35">                                
+                                    <label class="checkbox"> <input type="checkbox"
+                                        id="sendOrcidChangeNotifcations"
+                                        name="sendOrcidChangeNotifcations"
+                                        ng-model="prefsSrvc.prefs['send_change_notifications']"
+                                        ng-change="prefsSrvc.updateNotificationPreferences()" />
+                                        ${springMacroRequestContext.getMessage("change_notification_preferences.sendnotification")}
+                                    </label>
+                                    <label class="checkbox"> <input type="checkbox"
+                                        id="sendAdministrativeChangeNotifcations"
+                                        name="sendAdministrativeChangeNotifcations"
+                                        ng-model="prefsSrvc.prefs['send_administrative_change_notifications']"
+                                        ng-change="prefsSrvc.updateNotificationPreferences()" />
+                                        ${springMacroRequestContext.getMessage("change_notification_preferences.sendadministrativenotification")}
+                                    </label>                                
+                                    <label class="checkbox"> <input type="checkbox"
+                                        id="sendMemberUpdateRequests" name="sendMemberUpdateRequests"
+                                        ng-model="prefsSrvc.prefs['send_member_update_requests']"
+                                        ng-change="prefsSrvc.updateNotificationPreferences()" />
+                                        ${springMacroRequestContext.getMessage("change_notification_preferences.sendmemberupdaterequests")}
+                                    </label>
+                                    <label class="checkbox"> <input type="checkbox"
+                                        id="sendOrcidNews" name="sendOrcidNews"
+                                        ng-model="prefsSrvc.prefs['send_orcid_news']"
+                                        ng-change="prefsSrvc.updateNotificationPreferences()" />
+                                        ${springMacroRequestContext.getMessage("change_notification_preferences.news")}
+                                    </label>
+                                </div>
+                                <p>
+                                    ${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation_1")}
+                                    <a href="http://orcid.org/newsletter/subscriptions" target="subscribe">${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation_2")}</a>${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation_3")}
+                                </p>
+                                <p>
+                                    <a href="https://support.orcid.org/knowledgebase/articles/665437" target="learnmore">
+                                    ${springMacroRequestContext.getMessage("change_notification_preferences.learn_more")}
+                                    </a>
+                                    ${springMacroRequestContext.getMessage("change_notification_preferences.about_inbox_notifications")}
+                                </p>
+                            </td>
+                        </tr>
+                    </@orcid.checkFeatureStatus>                
                 </@orcid.checkFeatureStatus>
                 <tr>
                     <th><a name="editPassword"></a>${springMacroRequestContext.getMessage("manage.password")}</th>
@@ -210,24 +187,6 @@
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
                         ng-bind="privacyPreferencesToggleText" id="privacyPreferencesToggle"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="WorksPrivacyPreferencesCtrl"
-                    ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection" ng-cloak>
-                    <td colspan="2">
-                        <div class="editTablePadCell35" id="privacy-settings">
-                            ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
-                            <@orcid.privacyToggle3
-                            angularModel="prefsSrvc.prefs['default_visibility']"
-                            questionClick="toggleClickPrivacyHelp('workPrivHelp')"
-                            clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-                            publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
-                            limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
-                            privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
-                            elementId="workPrivHelp" />    
-                        </div>
-                    </td>
-                </tr>
-                </@orcid.checkFeatureStatus>
                 <tr ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection">
                     <td colspan="2">
                         <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
@@ -285,47 +244,13 @@
                     <td><a href="" ng-click="toggleDeactivateEdit()"
                         ng-bind="deactivateToggleText"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+
                 <tr ng-show="showEditDeactivate" >
                     <td colspan="2">
                         <deactivate-account-ng2></deactivate-account-ng2>
                     </td>
                 </tr>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="DeactivateAccountCtrl"
-                    ng-show="showEditDeactivate" ng-cloak>
-                    <td colspan="2">
-                        <div class="editTablePadCell35 close-account-container">
-                            <p>${springMacroRequestContext.getMessage("deactivate_orcid.you_may")}</p>
-                            
-                            <h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
-                            <p>
-                                ${springMacroRequestContext.getMessage("deactivate_orcid.once")} <a
-                                    href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
-                                    target="deactivate_orcid.close_an">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a>
-                            </p>
-                            
-                            <h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
-                            <p>
-                                ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")}&nbsp;<strong>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}</strong>
-                                <a
-                                        href="${knowledgeBaseUri}/articles/580410"
-                                        target="deprecate_orcid.learn_more_link" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
-                            </p>
-                            
-                                                            
-                            <h4>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</h4>
-                            <ol>
-                                <li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
-                                <li>${springMacroRequestContext.getMessage("deactivate_orcid.b2")}</li>
-                                <li>${springMacroRequestContext.getMessage("deactivate_orcid.b3")}</li>
-                            </ol>
-                            <button ng-click="sendDeactivateEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</button>
-                        </div>
-                    </td>
-                </tr>
-                </@orcid.checkFeatureStatus>
+
                 <!-- / Deactivate Account -->
                 <!-- Deprecate duplicate account -->
                 <tr>
@@ -415,6 +340,30 @@
                     </tr>
                     </@orcid.checkFeatureStatus>
                 </@orcid.checkFeatureStatus>
+                <@orcid.checkFeatureStatus 'GET_MY_DATA'>
+                    <tr>
+                        <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
+                        <td><a href="" ng-click="toggleGetMyDataEdit()" ng-bind="getMyDataToggleText" /></a></td>
+                    </tr>
+                    <tr ng-show="showEditGetMyData" ng-cloak id="get-my-data">
+                        <td colspan="2">
+                            <p>
+                                <@orcid.msg 'manage.get_my_data.details.p1' />
+                            </p>
+                            <p>
+                                <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="${knowledgeBaseUri}/articles/117225"><@orcid.msg 'common.learn_more' /></a>
+                            </p>
+                            <p>
+                                <form action="${baseUri}/get-my-data" method="POST">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <button class="btn btn-primary">
+                                        <@orcid.msg 'manage.get_my_data.button' />
+                                    </button>
+                                </form>
+                            </p>
+                        </td>
+                    </tr>
+                </@orcid.checkFeatureStatus>                
                 <#if RequestParameters['OrcidSocial']??>
                     <tr>
                         <th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
@@ -465,7 +414,7 @@
                 ${springMacroRequestContext.getMessage("manage.trusted_organisations")}
             </h1>
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="trusted-organizations-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
@@ -523,7 +472,7 @@
                 ${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
             </h1>
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="trusted-individuals-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
@@ -653,7 +602,7 @@
                 <@orcid.msg 'manage_signin_title' />
             </h1>
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="alternative-signin-accounts-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
@@ -698,12 +647,6 @@
         </div>
     </div>
 </div>
-
-<script type="text/ng-template" id="deactivate-account-modal">
-    <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
-    <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
-    </div>
-</script>
         
 <script type="text/ng-template" id="settings-verify-email-modal">
     <div style="padding: 20px;">
@@ -1032,6 +975,8 @@
     </div>
 </script>
 
-<#include "/includes/language_selector.ftl">
+<modalngcomponent elementHeight="200" elementId="modalDeactivateAccountMessage" elementWidth="645">
+    <deactivate-account-message-ng2></deactivate-account-message-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
 </@protected>

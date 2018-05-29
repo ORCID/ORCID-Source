@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <@protected classes=['manage'] nav="settings">
 <div id="2FASetup" ng-controller="2FASetupCtrl" ng-init="startSetup()">
     <div class="row">           
@@ -32,15 +14,15 @@
                 <ul id="2FASetupSteps" class="twoFactorAuthSetup">
                     <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step1")}</li>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details")}</p>
-                    <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_2")}<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">${springMacroRequestContext.getMessage("2FA.setup.step1.details.googleAuthenticator")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.list_separator")}<a href="https://freeotp.github.io">${springMacroRequestContext.getMessage("2FA.setup.step1.details.freeOTP")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.list_separator")}${springMacroRequestContext.getMessage("2FA.setup.step1.details.or")}<a href="https://authy.com">${springMacroRequestContext.getMessage("2FA.setup.step1.details.authy")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.end")}</p>
+                    <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_2")}<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="2fa-otp">${springMacroRequestContext.getMessage("2FA.setup.step1.details.googleAuthenticator")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.list_separator")}<a href="https://freeotp.github.io" target="2fa-otp">${springMacroRequestContext.getMessage("2FA.setup.step1.details.freeOTP")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.list_separator")}${springMacroRequestContext.getMessage("2FA.setup.step1.details.or")}<a href="https://authy.com" target="2fa-otp">${springMacroRequestContext.getMessage("2FA.setup.step1.details.authy")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.end")}</p>
                     <p><a href="https://support.orcid.org/knowledgebase/articles/1190068">${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_3")}</a></p>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_4")}</p>
                     <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
-                    <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a href="javascript:void(0);" id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
+                    <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
                     <img id="2FA-QR-code" ng-show="showQRCode" />
                     <pre ng-bind="textCodeFor2FA" ng-show="showTextCode"></pre>
-                    <p ng-show="showTextCode">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR")}<a href="javascript:void(0);" id="showQRCodeAgain">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR.click_here")}</a></p>
+                    <p ng-show="showTextCode">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR")}<a  id="showQRCodeAgain">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR.click_here")}</a></p>
                     <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>
                     <p>${springMacroRequestContext.getMessage("2FA.setup.step3.details")}</p>
                 </ul>
@@ -49,7 +31,7 @@
                     <div id="invalidCodeError" class="orcid-error" ng-show="showInvalidCodeError" ng-cloak">${springMacroRequestContext.getMessage("2FA.setup.invalidCode")}</div>
                     <hr>
                     <button id="sendVerificationCode" ng-click="sendVerificationCode()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.continue")}</button>
-                    <a class="leftBuffer" id="cancel2FASetup" ng-click="cancel2FASetup()" href="javascript:void(0);">${springMacroRequestContext.getMessage("2FA.cancel")}</a>
+                    <a class="leftBuffer" id="cancel2FASetup" ng-click="cancel2FASetup()" >${springMacroRequestContext.getMessage("2FA.cancel")}</a>
                 </form>
              </div>
              <div ng-show="show2FARecoveryCodes" ng-cloak>

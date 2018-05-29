@@ -1,8 +1,12 @@
 import { Injectable } 
     from '@angular/core';
 
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+
+
+
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -14,7 +18,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class PreferencesService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
     public prefs: any;
     public saved: boolean;
@@ -22,10 +26,12 @@ export class PreferencesService {
     
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.prefs = null;
@@ -37,7 +43,7 @@ export class PreferencesService {
         return this.http.get(
             this.url
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     updateEmailFrequency( prefs ): Observable<any> {
@@ -47,7 +53,7 @@ export class PreferencesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     updateNotificationPreferences(): Observable<any>  {
@@ -58,18 +64,16 @@ export class PreferencesService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
-    updateDefaultVisibility(): Observable<any> {
-        let encoded_data = JSON.stringify( this.prefs['default_visibility'] );
-        
+    updateDefaultVisibility(newPriv): Observable<any> {
         return this.http.post( 
             getBaseUri() + '/account/default_visibility.json', 
-            encoded_data, 
+            newPriv, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        .share();
     }
 
     clearMessage(): void {

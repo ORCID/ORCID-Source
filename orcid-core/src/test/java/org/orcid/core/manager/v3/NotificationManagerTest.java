@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.v3;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -50,6 +34,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.junit.After;
@@ -74,16 +59,16 @@ import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.v3.dev1.common.Locale;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.notification.Notification;
-import org.orcid.jaxb.model.v3.dev1.notification.NotificationType;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.dev1.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.dev1.notification.permission.NotificationPermissions;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.model.v3.dev1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.rc1.common.Locale;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.notification.Notification;
+import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -103,6 +88,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -281,7 +267,7 @@ public class NotificationManagerTest extends DBUnitTest {
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
             assertTrue(latestNotification.getId() > minNotificationId);
-            assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED, latestNotification.getNotificationType());
+            assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED.name(), latestNotification.getNotificationType());
         }
     }
 
@@ -299,7 +285,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity();
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         profile.setSendAdministrativeChangeNotifications(true);
         profile.setSendChangeNotifications(true);
@@ -346,7 +332,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(delegateOrcid)).thenReturn(delegateEmail);
         
         for(org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", delegateOrcid);
         }
     }
@@ -360,7 +346,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         
         Email email = new Email();
@@ -370,7 +356,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
         
         for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendOrcidDeactivateEmail(orcid);
         }        
     }
@@ -388,9 +374,16 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
         String userOrcid = "0000-0000-0000-0003";
-        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        ProfileEntity profile = new ProfileEntity(userOrcid);
+        RecordNameEntity recordName = new RecordNameEntity();
+        recordName.setCreditName("My credit name");
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
+        profile.setRecordNameEntity(recordName);
+        when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
+        String primaryEmail = "limited_0000-0000-0000-0003@test.orcid.org";
         for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
+            profile.setLocale(locale.name());
             notificationManager.sendVerificationReminderEmail(userOrcid, primaryEmail);
         }
     }
@@ -414,7 +407,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         
         Email email = new Email();
@@ -424,7 +417,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
         
         for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {            
-            profile.setLocale(locale);
+            profile.setLocale(locale.name());
             notificationManager.sendEmailAddressChangedNotification(orcid, "new@email.com", "original@email.com");
         }
     }

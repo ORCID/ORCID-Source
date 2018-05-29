@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
@@ -22,12 +6,12 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
-import org.orcid.jaxb.model.v3.dev1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.utils.DateUtils;
 
 public class Date implements ErrorsInterface, Required, Serializable {
@@ -63,14 +47,14 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return fd;
     }        
     
-    public org.orcid.jaxb.model.v3.dev1.common.FuzzyDate toV3FuzzyDate() {
-        org.orcid.jaxb.model.v3.dev1.common.FuzzyDate fd = new org.orcid.jaxb.model.v3.dev1.common.FuzzyDate();
+    public org.orcid.jaxb.model.v3.rc1.common.FuzzyDate toV3FuzzyDate() {
+        org.orcid.jaxb.model.v3.rc1.common.FuzzyDate fd = new org.orcid.jaxb.model.v3.rc1.common.FuzzyDate();
         if (!PojoUtil.isEmpty(this.getDay()))
-            fd.setDay(new org.orcid.jaxb.model.v3.dev1.common.Day(new Integer(this.getDay())));
+            fd.setDay(new org.orcid.jaxb.model.v3.rc1.common.Day(new Integer(this.getDay())));
         if (!PojoUtil.isEmpty(this.getMonth()))
-            fd.setMonth(new org.orcid.jaxb.model.v3.dev1.common.Month(new Integer(this.getMonth())));
+            fd.setMonth(new org.orcid.jaxb.model.v3.rc1.common.Month(new Integer(this.getMonth())));
         if (!PojoUtil.isEmpty(this.getYear()))
-            fd.setYear(new org.orcid.jaxb.model.v3.dev1.common.Year(new Integer(this.getYear())));
+            fd.setYear(new org.orcid.jaxb.model.v3.rc1.common.Year(new Integer(this.getYear())));
         return fd;
     }       
     

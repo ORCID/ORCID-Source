@@ -1,19 +1,3 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
 package org.orcid.core.manager.impl;
 
 import java.util.Collection;
@@ -23,6 +7,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -78,7 +63,7 @@ public class SourceManagerImpl implements SourceManager {
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
             SourceEntity sourceEntity = new SourceEntity();
             sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));
-            sourceEntity.getSourceName();
+            SourceEntityUtils.getSourceName(sourceEntity);
             return sourceEntity;
         }
         String userOrcid = retrieveEffectiveOrcid(authentication);

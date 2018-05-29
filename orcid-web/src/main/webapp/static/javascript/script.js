@@ -32,7 +32,7 @@ var enableRightToLeft = function(){
     var rightToLeftLang = ["rl", "ar"];
     var currentLanguage = lang;
 
-    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the html tag, this was missing.
+    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the htmfl tag, this was missing.
 
     if( rightToLeftLang.indexOf( currentLanguage ) >= 0 ){
         document.body.className += " lang-rl"; //Add class that display right to left for selected languages
@@ -288,11 +288,12 @@ var OrcidCookie = new function() {
     };
 
     this.setCookie = function(c_name, value, exdays) {
+        var cookieDomain = getCookieDomain(window.location);
         var exdate = new Date();
         exdate.setDate(exdate.getDate() + exdays);
         var c_value = escape(value)
                 + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
-        document.cookie = c_name + "=" + c_value + ";path=/";
+        document.cookie = c_name + "=" + c_value + ";domain=" + cookieDomain + ";path=/";
     };
     
     this.checkIfCookiesEnabled = function() {
@@ -328,6 +329,18 @@ function logAjaxError(e){
 function getBaseUri() {
     return 'https:' == document.location.protocol ? orcidVar.baseUri
             : orcidVar.baseUriHttp;
+}
+
+function getCookieDomain(location){
+        host = location.host;
+        if(host.indexOf("qa.orcid.org") >= 0){
+            cookieDomain = "qa.orcid.org"
+        } else if(host.indexOf("localhost") >= 0){
+            cookieDomain = "localhost"
+        } else{
+            cookieDomain = "orcid.org"
+        }   
+        return cookieDomain;
 }
 
 function getStaticCdnPath() {
@@ -404,30 +417,10 @@ function logOffReload(reload_param) {
     });
 };
 
-function addShibbolethGa(oauthGaString){
-    $('#idpSelectSelectButton').click(
-        function() {
-            if(typeof oauthGaString !== 'undefined') orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + oauthGaString]);
-            var entityId = $(this).prev()[0].value;
-            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Federated', entityId]);
-            return true;
-        }
-    );
-    $('#idpSelectPreferredIdPTile a').click(
-        function() {
-            if(typeof oauthGaString !== 'undefined') orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + oauthGaString]);
-            var encodedEntityId = this.href.substring(this.href.lastIndexOf('=') + 1);
-            var entityId = decodeURIComponent(encodedEntityId);
-            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Federated', entityId]);
-        }
-    );
-}
-
 // jquery ready
 $(function() {
     
     // Common
-    
     window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname;
 
@@ -438,6 +431,58 @@ $(function() {
         setInterval(checkOrcidLoggedIn, 15000);
     }
 
+    // track when deactived people are pushed to signin page
+    if (window.location.href.endsWith("signin#deactivated")) {
+        showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
+    }
+
+    // jquery browser is deprecated, when you upgrade
+    // to 1.9 or higher you will need to use the pluggin
+    var oldBrowserFlag = false;
+    //IE 11
+    if (!!navigator.userAgent.match(/Trident\/7\./)) {
+        // IE 11
+        oldBrowserFlag = false;
+    } else if ($.browser.msie && parseInt($.browser.version, 10) < 11) {
+        oldBrowserFlag = true;
+    } else if (/edge/.test(navigator.userAgent.toLowerCase())
+            && parseInt($.browser.version, 10) < 14) {
+        oldBrowserFlag = true;
+    } else if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())
+            && parseInt($.browser.version, 10) < 55) {
+        oldBrowserFlag = true;
+    } else if ($.browser.mozilla && parseInt($.browser.version, 10) < 50) {
+        oldBrowserFlag = true;
+    } else if ($.browser.opera && parseInt($.browser.version, 10) < 42) {
+        oldBrowserFlag = true;
+    //safari 10
+    } else if ($.browser.safari && parseInt($.browser.version, 10) < 602) {
+        oldBrowserFlag = true;
+    }
+
+    if (oldBrowserFlag && location == parent.location) {
+        var cookieName = "oldBrowserAlert";
+        if (!OrcidCookie.getCookie(cookieName)) {
+            var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
+            wHtml = wHtml + '<p>';
+            wHtml = wHtml + om.get('common.old.browser_1');
+            wHtml = wHtml + om.get('common.old_browser_2');
+            wHtml = wHtml + ' <a href="https://support.orcid.org/knowledgebase/articles/1804765-technical-requirements-for-using-the-orcid-site" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
+            wHtml = wHtml + '</p>';
+            wHtml = wHtml
+                    + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
+            wHtml = wHtml + om.get('common.cookies.click_dismiss');
+            wHtml = wHtml + '</button>';
+            wHtml = wHtml + '</div>';
+            $('body').prepend(wHtml);
+            $("#browser-warn-dismiss").click(function() {
+                $("#browser-warn-div").remove();
+                OrcidCookie.setCookie(cookieName, "dont show message", 7);
+                return false;
+            });
+        }
+    }
+
     // if not iframed check if not orcid.org
     if (location == parent.location
             && window.location.hostname.toLowerCase() != "orcid.org") {
@@ -445,26 +490,26 @@ $(function() {
         var cookieName = "testWarningCookie";
         var warnMessCookie = OrcidCookie.getCookie(cookieName);
         if (!warnMessCookie) {
-            var wHtml = '<div class="alert" id="test-warn-div">';
-            wHtml = wHtml + '<strong>';
+            var wHtml = '<div class="alert alert-banner" id="test-warn-div">';
+            wHtml = wHtml + '<p><strong>';
             wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
                     '{{curentDomian}}', window.location.hostname);
-            wHtml = wHtml + '<a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
+            wHtml = wHtml + '</strong> <a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
             wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
             wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
             wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
             wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
-            wHtml = wHtml + '</strong> ';
+            wHtml = wHtml + '</p> ';
             // don't let the warning be disabled for test-warn-dismiss
             if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
                     && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
                 wHtml = wHtml
-                        + ' <div style="float: right" class="small"><a href="#" id="test-warn-dismiss">'
+                        + ' <button class="btn btn-primary" id="test-warn-dismiss">'
                 wHtml = wHtml + om.get('common.cookies.click_dismiss');
-                wHtml = wHtml + '</a></div>';
+                wHtml = wHtml + '</button>';
             }
             wHtml = wHtml + '</div>';
-            $(wHtml).insertBefore('body');
+            $('body').prepend(wHtml);
             $("#test-warn-dismiss").click(function() {
                 $("#test-warn-div").remove();
                 OrcidCookie.setCookie(cookieName, "dont show message", 365);
@@ -474,55 +519,9 @@ $(function() {
 
     }
 
-    // track when deactived people are pushed to signin page
-    if (window.location.href.endsWith("signin#deactivated")) {
-        orcidGA.gaPush([ 'send', 'event', 'Disengagement', 'Deactivate_Complete',
-                'Website' ]);
-        showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
-    }
+    $(document)
+            .on('submit', 'form#loginForm',
 
-    // if on signin or register do cookie check
-    if (basePath.startsWith(baseUrl + 'register')
-            || basePath.startsWith(baseUrl + 'signin')
-            || basePath.startsWith(baseUrl + 'oauth/signin')) {
-        if (!OrcidCookie.checkIfCookiesEnabled()) {
-            $('#cookie-check-msg').css("display", "inline");
-        }
-    }
-
-    // jquery browser is deprecated, when you upgrade
-    // to 1.9 or higher you will need to use the pluggin
-    var oldBrowserFlag = false;
-
-    if (!!navigator.userAgent.match(/Trident\/7\./)) {
-        // IE 11
-        oldBrowserFlag = false;
-    } else if ($.browser.msie && parseInt($.browser.version, 10) < 8) {
-        oldBrowserFlag = true;
-    } else if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())
-            && parseInt($.browser.version, 10) < 22) {
-        oldBrowserFlag = true;
-    } else if ($.browser.mozilla && parseInt($.browser.version, 10) < 15) {
-        oldBrowserFlag = true;
-    } else if ($.browser.opera && parseInt($.browser.version, 10) < 12) {
-        oldBrowserFlag = true;
-    } else if ($.browser.safari && parseInt($.browser.version, 10) < 6) {
-        oldBrowserFlag = true;
-    }
-
-    if (oldBrowserFlag && location == parent.location) {
-        var wHtml = '<div class="alert" id="browser-warn-div">';
-        wHtml = wHtml + '<strong>';
-        wHtml = wHtml + om.get('common.old.browser_1');
-        wHtml = wHtml + '<a href="https://support.orcid.org/knowledgebase/articles/1804765-technical-requirements-for-using-the-orcid-site" target="common.old_browser_2">' + om.get('common.old_browser_2') + '</a> ';
-        wHtml = wHtml + om.get('common.old_browser_3');
-        wHtml = wHtml + '</strong>';
-        wHtml = wHtml + '</div>';
-        $('body').prepend(wHtml);
-    }
-
-    $('form#loginForm')
-            .submit(
                     function() {
                         var loginUrl = baseUrl + 'signin/auth.json';
                         var gaString = angular.element($("#loginForm")).scope().gaString;
@@ -530,17 +529,6 @@ $(function() {
                         if (signinLocked) return false;
                         disableSignin();
                         
-                        if (gaString) {
-                            orcidGA.gaPush([
-                                    'send',
-                                    'event',
-                                    'RegGrowth',
-                                    'Sign-In-Submit',
-                                    'OAuth '
-                                            + gaString ]);
-                        } else
-                            orcidGA.gaPush([ 'send', 'event', 'RegGrowth',
-                                    'Sign-In-Submit', 'Website' ]);
                         if (basePath.startsWith(baseUrl + 'shibboleth')) {
                             loginUrl = baseUrl + 'shibboleth/signin/auth.json';
                         }
@@ -555,7 +543,7 @@ $(function() {
                                         {
                                             url : loginUrl,
                                             type : 'POST',
-                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()),
+                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()) + '&oauthRequest=' + encodeURIComponent($('input[name=oauthRequest]').val()),
                                             dataType : 'json',
                                             success : function(data) {
                                                 if (data.success) {
@@ -624,6 +612,11 @@ $(function() {
                                                     } else if (data.badRecoveryCode) {
                                                         message = om
                                                         .get('orcid.frontend.security.2fa.bad_recovery_code');
+                                                    } else if(data.invalidUserType) {
+                                                        message = om.get('orcid.frontend.security.invalid_user_type_1');
+                                                        message = message + ' <a href="https://orcid.org/help/contact-us">';
+                                                        message = message + om.get('orcid.frontend.security.invalid_user_type_2');
+                                                        message = message + '</a>';
                                                     } else {
                                                         message = om
                                                                .get('orcid.frontend.security.bad_credentials');
@@ -698,17 +691,27 @@ $(function() {
     }
     
     function showLoginDeactivatedError() {
-        angular.element($("#login-deactivated-error")).scope().showDeactivationError();
+        if(orcidVar.features['ANGULAR2_QA']){
+            window.angularComponentReference.zone.run(
+                function(){
+                    window.angularComponentReference.showDeactivationError(); 
+                    
+                }
+
+            );
+        } else {
+          angular.element($("#login-deactivated-error")).scope().showDeactivationError();  
+        }
         if ($('form#loginForm #login-error-mess').length == 0) {
             $('form#loginForm #login-deactivated-error').fadeIn('fast');
         } else {
-             $(
-             'form#loginForm #login-error-mess')
+             $('form#loginForm #login-error-mess')
              .fadeOut(
-                    'fast',
-                     function() {
-                        $('form#loginForm #login-deactivated-error').fadeIn('fast');
-                     });
+                'fast',
+                 function() {
+                    $('form#loginForm #login-deactivated-error').fadeIn('fast');
+                 }
+             );
         }
     }
 
@@ -857,21 +860,6 @@ $(function() {
         height : 400,
         href : baseUrl + "account/search-for-delegates #add-an-individual"
     });
-
-    // Search hack
-
-    $('#form-search')
-            .on(
-                    'submit',
-                    function(e) {
-                        if ($('[name="huh_radio"]:checked', this).val() === "registry") {
-                            e.preventDefault();
-                            window.location = baseUrl
-                                    + "orcid-search/quick-search/?searchQuery="
-                                    + encodeURIComponent($('[type="search"]',
-                                            this).val());
-                        }
-                    });
 
     // delgates
     $('#searchForDelegatesForm').on(

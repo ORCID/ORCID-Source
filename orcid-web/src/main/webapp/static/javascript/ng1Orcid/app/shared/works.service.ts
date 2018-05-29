@@ -1,8 +1,12 @@
 import { Injectable } 
     from '@angular/core';
 
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+
+
+
 
 import { Observable } 
     from 'rxjs/Observable';
@@ -14,7 +18,7 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class WorksService {
-    private headers: Headers;
+    private headers: HttpHeaders;
     private notify = new Subject<any>();
     private offset: Number;
     private url: string;
@@ -29,7 +33,7 @@ export class WorksService {
     
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: Http ){
+    constructor( private http: HttpClient ){
         this.bibtexJson = {};
         this.constants = { 
             'access_type': { 
@@ -40,9 +44,11 @@ export class WorksService {
         this.details = new Object();
         this.groups = new Array();
         this.groupsLabel = null;
-        this.headers = new Headers(
-            { 
-                'Content-Type': 'application/json' 
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
         this.offset = 0;
@@ -62,7 +68,7 @@ export class WorksService {
         return this.http.get(
             url
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     consistentVis(group): boolean {
@@ -156,7 +162,7 @@ export class WorksService {
         return this.http.get(
             url
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 
     makeDefault(group, putCode): any {
@@ -343,9 +349,10 @@ export class WorksService {
     }
     */
 
-    notifyOther(): void {
-        this.notify.next();
-        console.log('notify');
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
     }
 
     setData( obj ): Observable<any> {
@@ -356,7 +363,7 @@ export class WorksService {
             encoded_data, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        
     }
 }
 

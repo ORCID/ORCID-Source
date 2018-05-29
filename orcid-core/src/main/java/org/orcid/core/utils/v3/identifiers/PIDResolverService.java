@@ -1,0 +1,72 @@
+package org.orcid.core.utils.v3.identifiers;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
+import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.utils.v3.identifiers.resolvers.Resolver;
+import org.orcid.pojo.PIDResolutionResult;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.stereotype.Component;
+
+@Component
+public class PIDResolverService {
+
+    @Resource
+    List<Resolver> Resolvers = new ArrayList<Resolver>();
+
+    @Resource
+    IdentifierTypeManager idman;
+
+    Map<String, LinkedList<Resolver>> map = new HashMap<String, LinkedList<Resolver>>();
+
+    @PostConstruct
+    public void init() {
+        Collections.sort(Resolvers, AnnotationAwareOrderComparator.INSTANCE);
+        for (String type : idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).keySet()) {
+            map.put(type, new LinkedList<Resolver>());
+        }
+        for (Resolver n : Resolvers) {
+            List<String> supported = n.canHandle();
+            if (supported.isEmpty()) {
+                for (String type : map.keySet())
+                    map.get(type).add(n);
+            } else {
+                for (String type : supported) {
+                    map.get(type).add(n);
+                }
+            }
+        }
+    }
+
+    /**
+     * Ensure this is the API type name, not the DB type name.
+     * 
+     * @param type the api type name
+     * @param value the url value
+     * @return a resolution result containing the resolved URL (if successful), 
+     * a flag indicating success and a flag indicating if resolution was attempted 
+     * (i.e. there is a resolver that can handle the type)
+     */
+    public PIDResolutionResult resolve(String apiTypeName, String value) {
+        PIDResolutionResult result = PIDResolutionResult.NOT_ATTEMPTED;
+        if (apiTypeName == null || value == null)
+            return result;
+        
+        for (Resolver r : map.get(apiTypeName)) {
+            result = r.resolve(apiTypeName, value);
+            if (result.isResolved())
+                return result;
+        } 
+        return result;
+    }
+
+}
