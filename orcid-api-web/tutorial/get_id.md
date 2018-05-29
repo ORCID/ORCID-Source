@@ -1,6 +1,8 @@
 # Get Authenticate iDs
 
-This tutorial shows how to collect a user's authenticated ORCID iD using OAuth, examples are provided in curl.
+This tutorial shows how to collect a user's authenticated ORCID iD using OAuth, the OAuth token can then be used to read the public record. Organizations who only need to collect authenticated iDs may want to consider the [implicit workflow](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md#implicit-flow).
+
+This example worflow uses the `/authenticate` scope, it can also be completed use `openid` scope for organizations that want to use [OpenID Connect workflow](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md).
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 
@@ -8,20 +10,23 @@ This workflow can be used with Public or Member API credentials on sandbox or th
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| Base URL 				| https://sandbox.orcid.org/oauth/token|
+| Base URL 				| https://sandbox.orcid.org/oauth/authorize|
 | Client\_id 		| *Your client ID* |
 | Response_type       | code |
 | Scope				| /authenticate |
+| Redirect URI				| *Your redirect uri* |
 
 **Example authorization url:**
 
 ```
-https://sandbox.orcid.org/oauth/authorize?client_id=[Your client ID]&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
+https://sandbox.orcid.org/oauth/authorize?client_id=APP-RU42Z8TDSYBG7T2S&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
 ```
    
 ## Grant authorization
 
 Go to the authorization URL in your browser. If you have a sandbox ORCID account log into it then grant access. If you do not have and account, register for a new sandbox ORCID account and grant access.
+
+Users must grant authorization for you to get their authenticated ORCID iD and it must be completed in a browser window- this step can not be automated.
 
 ## Get the authorization code
 
@@ -44,7 +49,7 @@ The authorization code can be exchanged for an access token and the user's ORCID
 
 **Curl example:**
 
-```curl -i -L -H "Accept: application/json" --data "client_id=[Your client ID]&client_secret=[Your client secret]&grant_type=authorization_code&code=eUeiz2" "https://sandbox.orcid.org/oauth/token"```
+```curl -i -L -H "Accept: application/json" --data "client_id=APP-RU42Z8TDSYBG7T2S&client_secret=749daee6-c5ec-466a-b86b-b58453e3a01c&grant_type=authorization_code&code=eUeiz2" "https://sandbox.orcid.org/oauth/token"```
 
 The response will include an access_token and refresh_token and the scopes and expiration time of those tokens as well as the user's ORCID iD and the name recorded on the ORCID record if it is public.
 
@@ -64,6 +69,7 @@ You will need to store at least the ORCID iD and access token in your local syst
 You can read public information on the ORCID record using the access token. 
   
 Version is the the version of the API you are using, the latest stable release is v2.1.
+
 Endpoint is the section of the record you want to read, 'record' returns the entire record. [List of 2.1 endpoints](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1#read-sections).
 
 ### Member API
@@ -71,14 +77,14 @@ Endpoint is the section of the record you want to read, 'record' returns the ent
 | Option| Value        |
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.sandbox.orcid.org/[version]/[ORCID iD]/[endpoint]|
-| method    | GET |
-| header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
-| header    | Authorization: Bearer [Your access token]|
+| Method    | GET |
+| Header    | Content-Type: application/vnd.orcid+xml OR  Content-Type: application/orcid+json|
+| Header    | Authorization: Bearer [Your access token]|
 
 **Curl example:**
 
 ```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://api.sandbox.orcid.org/v2.1/0000-0001-2345-6789/record' -i
+curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://api.sandbox.orcid.org/v2.1/0000-0001-2345-6789/record' -i
 ```
 
 ### Public API
@@ -86,9 +92,9 @@ curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c
 | Option| Value        |
 |--------------------|--------------------------|
 | URL 				| https<i></i>://pub.sandbox.orcid.org/[version]/[ORCID iD]/[endpoint]|
-| method    | GET |
-| header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
-| header    | Authorization: Bearer [Your access token]|
+| Method    | GET |
+| Header    | Content-Type: application/vnd.orcid+xml OR  Content-Type: application/orcid+json|
+| Header    | Authorization: Bearer [Your access token]|
 
 **Curl example:**
 
