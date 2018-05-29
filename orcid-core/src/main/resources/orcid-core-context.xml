@@ -1458,6 +1458,11 @@
         <property name="mapperFacade" ref="peerReviewMapperFacadeV3" />
     </bean>
     
+	<bean id="researchResourceMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getResearchResourceMapperFacade"/>
+    <bean id="jpaJaxbResearchResourceAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbResearchResourceAdapterImpl">
+        <property name="mapperFacade" ref="researchResourceMapperFacadeV3" />
+    </bean>
+    
     <bean id="groupIdRecordMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getGroupIdRecordMapperFacade"/>
     <bean id="jpaJaxbGroupIdRecordAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbGroupIdRecordAdapterImpl">
         <property name="mapperFacade" ref="groupIdRecordMapperFacadeV3" />

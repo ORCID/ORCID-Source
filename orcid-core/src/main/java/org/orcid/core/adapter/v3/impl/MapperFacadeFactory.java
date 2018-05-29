@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.v3.rc1.client.ClientSummary;
 import org.orcid.jaxb.model.v3.rc1.common.Day;
 import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc1.common.Source;
 import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
@@ -66,6 +67,8 @@ import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
@@ -80,6 +83,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.model.record_correction.RecordCorrection;
@@ -106,12 +110,15 @@ import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
 import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
+import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
@@ -767,6 +774,64 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
         
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getResearchResourceMapperFacade(){
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm,localeManager));
+        converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
+        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
+        
+        mapperFactory.classMap(Organization.class,OrgEntity.class)
+            .field("name","name")
+            .field("address.city","city")
+            .field("address.region","region")
+            .field("address.country","country")
+            .field("disambiguatedOrganization.disambiguatedOrganizationIdentifier","orgDisambiguated.sourceId")
+            .field("disambiguatedOrganization.disambiguationSource","orgDisambiguated.sourceType")
+            .register();
+        
+        ClassMapBuilder<ResearchResource, ResearchResourceEntity> classMap = mapperFactory.classMap(ResearchResource.class, ResearchResourceEntity.class);
+        addV3CommonFields(classMap);
+        registerSourceConverters(mapperFactory, classMap);
+        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
+        classMap.field("proposal.title.title.content", "title");
+        classMap.field("proposal.title.translatedTitle.content", "translatedTitle");
+        classMap.field("proposal.title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        classMap.fieldMap("proposal.externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        classMap.field("proposal.url.value", "url");
+        classMap.field("proposal.startDate", "startDate");
+        classMap.field("proposal.endDate", "endDate");
+        classMap.field("proposal.hosts.organization", "hosts");        
+        classMap.register();
+        //TODO: add display index to model        
+                
+        ClassMapBuilder<ResearchResourceSummary, ResearchResourceEntity> summaryClassMap = mapperFactory.classMap(ResearchResourceSummary.class, ResearchResourceEntity.class);
+        addV3CommonFields(summaryClassMap);
+        registerSourceConverters(mapperFactory, summaryClassMap);
+        summaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
+        summaryClassMap.field("proposal.title.title.content", "title");
+        summaryClassMap.field("proposal.title.translatedTitle.content", "translatedTitle");
+        summaryClassMap.field("proposal.title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        summaryClassMap.fieldMap("proposal.externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        summaryClassMap.field("proposal.url.value", "url");
+        summaryClassMap.field("proposal.startDate", "startDate");
+        summaryClassMap.field("proposal.endDate", "endDate");
+        summaryClassMap.field("proposal.hosts.organization", "hosts");
+        summaryClassMap.register();
+        
+        ClassMapBuilder<ResearchResourceItem, ResearchResourceItemEntity> itemClassMap = mapperFactory.classMap(ResearchResourceItem.class, ResearchResourceItemEntity.class);
+        itemClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        //itemClassMap.field("id", "id");
+        //TODO: what do we do about IDs?
+        itemClassMap.field("resourceName", "resourceName");
+        itemClassMap.field("resourceType", "resourceType");
+        itemClassMap.field("url.value", "url");
+        itemClassMap.field("hosts.organization", "hosts");
+        itemClassMap.register();        
         return mapperFactory.getMapperFacade();
     }
 

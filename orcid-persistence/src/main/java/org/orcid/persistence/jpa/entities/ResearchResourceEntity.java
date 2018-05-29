@@ -26,12 +26,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "research_resource")
 public class ResearchResourceEntity extends SourceAwareEntity<Long> implements Comparable<ResearchResourceEntity>, ProfileAware, DisplayIndexInterface {
-
-    /*
-                        <xs:element name="hosts" type="research-resource:hosts" minOccurs="1" maxOccurs="1" />
-                        Make a RRHostEntity = many to many table {org <-> rr}
-                        Make a RRItemHostEntity = many to many table {org <-> rri}
-     */
     
     private static final long serialVersionUID = 1L;
     private Long id;
@@ -40,7 +34,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
     private EndDateEntity endDate;
     private String visibility;    
 
-    private String proposalType; //currently only "proposal" is supported.
+    private String proposalType = "proposal"; //currently only "proposal" is supported.
     private String url;
     private String externalIdentifiersJson;
     private String title;

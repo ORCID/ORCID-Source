@@ -1,5 +1,6 @@
 package org.orcid.jaxb.model.v3.rc1.record;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -19,6 +20,8 @@ public class ResearchResourceHosts {
     protected List<Organization> organization;
 
     public List<Organization> getOrganization() {
+        if (organization == null)
+            organization = new ArrayList<Organization>();
         return organization;
     }
 

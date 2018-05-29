@@ -1,6 +1,7 @@
 package org.orcid.jaxb.model.v3.rc1.record;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,6 +33,7 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
     protected CreatedDate createdDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "proposal")
     protected ResearchResourceProposal proposal;
+
     @XmlElementWrapper(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-items")
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-item")
     protected List<ResearchResourceItem> resourceItems;
@@ -43,6 +45,24 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
     @XmlAttribute
     protected Visibility visibility;
 
+    public ResearchResourceProposal getProposal() {
+        return proposal;
+    }
+
+    public void setProposal(ResearchResourceProposal proposal) {
+        this.proposal = proposal;
+    }
+
+    public List<ResearchResourceItem> getResourceItems() {
+        if (resourceItems == null)
+            resourceItems = new ArrayList<ResearchResourceItem>();
+        return resourceItems;
+    }
+
+    public void setResourceItems(List<ResearchResourceItem> resourceItems) {
+        this.resourceItems = resourceItems;
+    }
+    
     public Source getSource() {
         return source;
     }
