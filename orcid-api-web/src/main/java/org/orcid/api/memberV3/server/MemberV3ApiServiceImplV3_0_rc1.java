@@ -201,9 +201,8 @@ public class MemberV3ApiServiceImplV3_0_rc1 extends MemberApiServiceImplHelper {
     }
     
     @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(API_STATUS_PATH)
-    @ApiOperation(nickname = "viewStatusV3dev", value = "Check the server status", response = String.class)
     public Response viewStatusJson() {
         httpRequest.setAttribute("isMonitoring", true);
         return serviceDelegator.viewStatus();
