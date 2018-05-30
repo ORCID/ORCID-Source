@@ -40,6 +40,7 @@ import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
@@ -71,6 +72,7 @@ import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
@@ -93,6 +95,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
@@ -121,6 +124,9 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Resource(name = "peerReviewManagerReadOnlyV3")
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
+
+    @Resource(name = "researchResourceManagerReadOnlyV3")
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
 
     @Resource(name = "activitiesSummaryManagerReadOnlyV3")
     private ActivitiesSummaryManagerReadOnly activitiesSummaryManagerReadOnly;
@@ -862,6 +868,42 @@ public class PublicV3ApiServiceDelegatorImpl
         } catch(DeactivatedException e) {
             // Ignore the DeactivatedException since we should be able to return the empty element
         }
+    }
+
+    @Override
+    public Response viewResearchResource(String orcid, Long putCode) {
+        ResearchResource e = researchResourceManagerReadOnly.getResearchResource(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(e);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtilsReadOnly.setSourceName(e);
+        return Response.ok(e).build();
+    }
+
+    @Override
+    public Response viewResearchResources(String orcid) {
+        List<ResearchResourceSummary> researchResources = researchResourceManagerReadOnly.getResearchResourceSummaryList(orcid);
+        List<ResearchResourceSummary> publicResearchResources = new ArrayList<>();
+        for (ResearchResourceSummary summary : researchResources) {
+                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                        ActivityUtils.setPathToActivity(summary, orcid);
+                        sourceUtilsReadOnly.setSourceName(summary);
+                        publicResearchResources.add(summary);
+                }
+        }
+        //TODO: grouping
+        //Services groupedServices = new Services(affiliationsManagerReadOnly.groupAffiliations(publicServices, true));
+        //Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedServices);
+        //ActivityUtils.setPathToAffiliations(groupedServices, orcid);
+        return Response.ok(publicResearchResources).build();
+    }
+
+    @Override
+    public Response viewResearchResourceSummary(String orcid, Long putCode) {
+        ResearchResourceSummary e = researchResourceManagerReadOnly.getResearchResourceSummary(orcid, putCode);
+        publicAPISecurityManagerV3.checkIsPublic(e);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtilsReadOnly.setSourceName(e);
+        return Response.ok(e).build();
     }
 
 }

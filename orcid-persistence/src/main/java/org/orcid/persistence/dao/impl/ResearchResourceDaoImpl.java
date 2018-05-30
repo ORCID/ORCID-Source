@@ -32,8 +32,8 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
         return query.executeUpdate() > 0 ? true : false;
     }    
     
+    //note these are not cacheable entities as they require a session to work.
     @Override
-    @Cacheable(value = "research-resources", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<ResearchResourceEntity> getByUser(String userOrcid, long lastModified) {
         TypedQuery<ResearchResourceEntity> query = entityManager.createQuery("from ResearchResourceEntity where profile.id=:userOrcid", ResearchResourceEntity.class);
         query.setParameter("userOrcid", userOrcid);

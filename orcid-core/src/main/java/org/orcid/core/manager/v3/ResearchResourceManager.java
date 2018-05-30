@@ -1,4 +1,4 @@
-package org.orcid.core.manager;
+package org.orcid.core.manager.v3;
 
 import java.util.ArrayList;
 

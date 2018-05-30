@@ -657,6 +657,14 @@
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
     </bean>
     
+    <bean id="researchResourceManagerV3" class="org.orcid.core.manager.v3.impl.ResearchResourceManagerImpl">
+        <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+    </bean>
+
+    <bean id="researchResourceManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.ResearchResourceManagerReadOnlyImpl">
+        <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+    </bean>
+    
     <bean id="workManagerV3" class="org.orcid.core.manager.v3.impl.WorkManagerImpl">
         <property name="workDao" ref="workDao" />
         <property name="workEntityCacheManager" ref="workEntityCacheManager" />
