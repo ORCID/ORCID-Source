@@ -19,7 +19,7 @@
 	<research-resource:proposal> <!-- proposal/award/credential section -->
 		<research-resource:title>
 			<common:title>Giant Laser Award</common:title>
-			<common:translated-title language-code="DE">Giant Laser Award2</common:translated-title>
+			<common:translated-title language-code="de">Giant Laser Award2</common:translated-title>
 		</research-resource:title>
 		<research-resource:hosts>
 			<common:organization>
