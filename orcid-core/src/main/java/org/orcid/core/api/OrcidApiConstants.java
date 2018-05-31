@@ -92,6 +92,8 @@ public class OrcidApiConstants {
     public static final String ACTIVITY_QUALIFICATION = "qualification";
     public static final String ACTIVITY_SERVICE = "service";
     public static final String ACTIVITY_WORK = "work";
+    public static final String ACTIVITY_RESEARCH_RESOURCE = "research-resource";
+    
     public static final String SWAGGER_PATH = "/resources";
     public static final String SWAGGER_FILE = "/swagger.json";
     public static final String SWAGGER_FILE_YAML = "/swagger.yaml";

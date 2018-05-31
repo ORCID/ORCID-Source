@@ -28,7 +28,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     }
 
     @Override
-    public void removeResearchResource(String orcid, Long researchResourceId) {
+    public void checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId) {
         // TODO Auto-generated method stub
         
     }
@@ -36,19 +36,19 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     @Override
     public boolean updateToMaxDisplay(String orcid, Long researchResourceId) {
         // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, Visibility visibility) {
         // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void removeAllResearchResources(String orcid) {
         // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException();        
     }
 
 }

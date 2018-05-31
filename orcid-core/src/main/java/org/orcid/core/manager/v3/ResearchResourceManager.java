@@ -21,7 +21,7 @@ public interface ResearchResourceManager extends ResearchResourceManagerReadOnly
      * @param researchResourceId
      *            The researchResource id
      * */
-    void removeResearchResource(String orcid, Long researchResourceId);
+    void checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId);
 
     /**
      * Updates the display index of a given peer review

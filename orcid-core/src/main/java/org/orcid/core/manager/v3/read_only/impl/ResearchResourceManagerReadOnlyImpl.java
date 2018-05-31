@@ -49,8 +49,9 @@ public class ResearchResourceManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl
 
     @Override
     public ResearchResources groupResearchResources(List<ResearchResourceSummary> researchResources, boolean justPublic) {
+        ResearchResources rr = new ResearchResources();
         // TODO GROUPS
-        return null;
+        return rr;
     }
 
 }

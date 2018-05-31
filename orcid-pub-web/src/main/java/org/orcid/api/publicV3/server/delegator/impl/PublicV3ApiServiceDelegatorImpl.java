@@ -96,6 +96,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
@@ -885,16 +886,14 @@ public class PublicV3ApiServiceDelegatorImpl
         List<ResearchResourceSummary> publicResearchResources = new ArrayList<>();
         for (ResearchResourceSummary summary : researchResources) {
                 if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        ActivityUtils.setPathToActivity(summary, orcid);
-                        sourceUtilsReadOnly.setSourceName(summary);
                         publicResearchResources.add(summary);
                 }
         }
-        //TODO: grouping
-        //Services groupedServices = new Services(affiliationsManagerReadOnly.groupAffiliations(publicServices, true));
-        //Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(groupedServices);
-        //ActivityUtils.setPathToAffiliations(groupedServices, orcid);
-        return Response.ok(publicResearchResources).build();
+        ResearchResources rr = researchResourceManagerReadOnly.groupResearchResources(publicResearchResources, true);
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(rr);
+        ActivityUtils.setPathToResearchResources(rr, orcid);
+        sourceUtilsReadOnly.setSourceName(rr);
+        return Response.ok(rr).build();
     }
 
     @Override
