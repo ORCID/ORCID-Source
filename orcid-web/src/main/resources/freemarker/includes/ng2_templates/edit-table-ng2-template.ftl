@@ -26,11 +26,6 @@
                 </td>
             </tr>
             
-            <tr *ngIf="!gdprEmailNotifications">
-                <!-- Notifications -->
-                <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.notification_preferences")}</th>
-                <td><a href="" (click)="toggleEmailPreferencesEdit()">{{emailPreferencesToggleText}}</a></td>
-            </tr>
             <tr
                 *ngIf="showEditEmailPreferences">
                 <td colspan="2">

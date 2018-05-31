@@ -95,8 +95,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     //registration form togglz features
     regMultiEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('REG_MULTI_EMAIL');
     gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
-    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');
-    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
+    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
     
     constructor(
         private zone:NgZone,

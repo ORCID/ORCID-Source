@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +45,6 @@ import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.password.constants.OrcidPasswordConstants;
@@ -247,11 +244,7 @@ public class BaseController {
         Map<String, String> map = new LinkedHashMap<>();
         for (SendEmailFrequency freq : SendEmailFrequency.values()) {
             if(freq.equals(SendEmailFrequency.NEVER)) {
-                if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
-                    map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
-                } else{
-                    map.put(String.valueOf(freq.value()), getMessage("org.orcid.persistence.constants.SendEmailFrequency.NEVER_LEGACY"));
-                }
+                map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
             } else {
                 map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
             }            

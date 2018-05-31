@@ -65,6 +65,7 @@ import org.orcid.jaxb.model.v3.rc1.notification.Notification;
 import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
 import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
@@ -287,10 +288,6 @@ public class NotificationManagerTest extends DBUnitTest {
         recordName.setCreditName("My credit name");
         recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
-        profile.setSendAdministrativeChangeNotifications(true);
-        profile.setSendChangeNotifications(true);
-        profile.setSendMemberUpdateRequests(true);
-        profile.setSendOrcidNews(true);
         EmailEntity emailEntity = new EmailEntity();
         emailEntity.setId("test@email.com");
         emailEntity.setPrimary(true);
@@ -442,24 +439,7 @@ public class NotificationManagerTest extends DBUnitTest {
         for (Locale locale : Locale.values()) {            
             notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
         }
-    }
-
-    @Test
-    public void testCreateCustomNotification() {
-        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
-        String testOrcid = "0000-0000-0000-0003";
-        NotificationCustom notification = new NotificationCustom();
-        notification.setSubject("Test subject");
-        notification.setLang("en-gb");
-        Notification result = notificationManager.createNotification(testOrcid, notification);
-        assertNotNull(result);
-        assertTrue(result instanceof NotificationCustom);
-        NotificationCustom customResult = (NotificationCustom) result;
-        assertEquals("Test subject", customResult.getSubject());
-        assertEquals("en-gb", customResult.getLang());
-    }
+    }    
 
     @Test
     public void deriveEmailFriendlyNameTest() {
@@ -589,5 +569,33 @@ public class NotificationManagerTest extends DBUnitTest {
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("tooOld1@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("tooOld2@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
     }     
+    
+    @Test
+    public void createPermissionNotificationTest() {
+        String orcid = "0000-0000-0000-0003";
+        NotificationPermission notification = new NotificationPermission();
+        notification.setAuthorizationUrl(new AuthorizationUrl("http://test.orcid.org"));
+        Notification result = notificationManager.createPermissionNotification(orcid, notification);
+        assertNotNull(result.getPutCode());
+    }
+    
+    @Test
+    public void sendAcknowledgeMessageTest() throws Exception {
+        String clientId = "APP-5555555555555555";
+        String orcidNever = "0000-0000-0000-0002";
+        String orcidDaily = "0000-0000-0000-0003";
+        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
+        
+        // Should not generate the notification
+        notificationManager.sendAcknowledgeMessage(orcidNever, clientId);
+        verify(mockNotificationDao, never()).persist(Matchers.any());
+        
+        // Should generate the notification
+        notificationManager.sendAcknowledgeMessage(orcidDaily, clientId);
+        verify(mockNotificationDao, times(1)).persist(Matchers.any());
+        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
+    }
     
 }

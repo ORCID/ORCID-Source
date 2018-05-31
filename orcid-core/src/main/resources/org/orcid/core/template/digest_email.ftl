@@ -52,14 +52,6 @@ ${(notification.subject)}
 <#if ((totalMessageCount?number) > 1)>
 </#if>
 <@emailMacros.msg "email.digest.plaintext.viewyourinbox" /><@emailMacros.space />${baseUri}/inbox
-
-<#assign frequency>
-    <#switch emailFrequencyString>
-        <#case "0.0"><@emailMacros.msg "email.digest.frequency.immediate" /><#break>
-        <#case "7.0"><@emailMacros.msg "email.digest.frequency.weekly" /><#break>
-        <#case "91.3105"><@emailMacros.msg "email.digest.frequency.quarterly" /><#break>
-    </#switch>
-</#assign>
-<@emailMacros.msg "email.digest.youhavereceived_1" /><@emailMacros.space />${frequency}<@emailMacros.space /><@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.space /><@emailMacros.msg "email.digest.plaintext.learnmore_1" /><@emailMacros.msg "email.digest.learnmorelink" /><@emailMacros.msg "email.digest.plaintext.learnmore_2" />
+<@emailMacros.msg "email.digest.youhavereceived_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.space /><@emailMacros.msg "email.digest.plaintext.learnmore_1" /><@emailMacros.msg "email.digest.learnmorelink" /><@emailMacros.msg "email.digest.plaintext.learnmore_2" />
 <@emailMacros.msg "email.digest.youmayadjust_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.accountsettings" /><@emailMacros.space /><@emailMacros.msg "email.digest.youmayadjust_2" />${baseUri}/account<@emailMacros.msg "email.digest.youmayadjust_3" />
 <#include "email_footer.ftl"/>

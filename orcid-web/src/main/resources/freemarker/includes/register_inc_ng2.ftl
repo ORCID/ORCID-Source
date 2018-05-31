@@ -200,7 +200,7 @@
                 <div *ngFor="let error of registrationForm.activitiesVisibilityDefault.errors" [innerHTML]="error"></div>
             </span>
         </div>
-        <div *ngIf="gdprEmailNotifications">
+        <div>
             <!--Notifications settings -->
             <div id="notificationSettings" class="form-group clear-fix">  
                 <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
@@ -212,25 +212,7 @@
                 </div>
                 <p><@orcid.msg 'register.paragraph.3' /></p>
             </div>
-        </div>
-        <div *ngIf="!gdprEmailNotifications">
-            <!--Email frequency-->
-            <div class="form-group clear-fix">              
-                <div>   
-                    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
-                    <p>
-                        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
-                    </p>
-                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-                        class="input-xlarge"
-                        [(ngModel)]="registrationForm.sendEmailFrequencyDays.value">
-                        <#list sendEmailFrequencies?keys as key>
-                            <option value="${key}" [selected]="registrationForm.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-                        </#list>
-                    </select>        
-                </div>
-            </div>
-        </div>
+        </div>        
         <!--Terms and conditions-->
         <div class="clearfix bottomBuffer">
             <h4><@orcid.msg 'register.labelTermsofUse'/>

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV1;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV1;
-import org.orcid.core.constants.DefaultPreferences;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
@@ -37,6 +38,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.*;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -106,6 +108,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     @Resource(name = "workEntityCacheManager")
     private WorkEntityCacheManager workEntityCacheManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
     
     public void setWorkEntityCacheManager(WorkEntityCacheManager workEntityCacheManager) {
         this.workEntityCacheManager = workEntityCacheManager;
@@ -1000,19 +1005,24 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         securityDetails.setEncryptedVerificationCode(profileEntity.getEncryptedVerificationCode() != null ? new EncryptedVerificationCode(profileEntity
                 .getEncryptedVerificationCode()) : null);
 
+        Map<String, String> emailFrequencies = emailFrequencyManager.getEmailFrequency(profileEntity.getId());
+        
+        
+        
+        
+        SendEmailFrequency admin = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS));
+        SendEmailFrequency change = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.CHANGE_NOTIFICATIONS));
+        SendEmailFrequency member = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS));
+        Boolean tips = Boolean.valueOf(emailFrequencies.get(EmailFrequencyManager.QUARTERLY_TIPS));
+        
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);
-        preferences.setSendEmailFrequencyDays(String.valueOf(profileEntity.getSendEmailFrequencyDays()));
-        preferences.setSendChangeNotifications(new SendChangeNotifications(
-                profileEntity.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : profileEntity.getSendChangeNotifications()));
-        preferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(
-                profileEntity.getSendAdministrativeChangeNotifications() == null ? preferences.getSendChangeNotifications().isValue() : profileEntity
-                        .getSendAdministrativeChangeNotifications()));
-        preferences.setSendOrcidNews(new SendOrcidNews(profileEntity.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : profileEntity
-                .getSendOrcidNews()));
-        preferences.setSendMemberUpdateRequests(profileEntity.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : profileEntity
-                .getSendMemberUpdateRequests());
-        preferences.setNotificationsEnabled(profileEntity.getEnableNotifications() == null ? DefaultPreferences.NOTIFICATIONS_ENABLED : profileEntity.getEnableNotifications());
+        preferences.setSendEmailFrequencyDays(String.valueOf(0));
+        preferences.setSendChangeNotifications(new SendChangeNotifications(SendEmailFrequency.NEVER.equals(change)));
+        preferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(SendEmailFrequency.NEVER.equals(admin)));
+        preferences.setSendOrcidNews(new SendOrcidNews(tips));
+        preferences.setSendMemberUpdateRequests(SendEmailFrequency.NEVER.equals(member));
+        preferences.setNotificationsEnabled(true);
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.valueOf(profileEntity.getActivitiesVisibilityDefault())));
@@ -1020,7 +1030,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         // Set developer tools preference
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));
 
-        preferences.setNotificationsEnabled(profileEntity.getEnableNotifications());
+        preferences.setNotificationsEnabled(true);
 
         if (profileEntity.getReferredBy() != null) {
             orcidInternal.setReferredBy(new ReferredBy(getOrcidIdBase(profileEntity.getReferredBy())));

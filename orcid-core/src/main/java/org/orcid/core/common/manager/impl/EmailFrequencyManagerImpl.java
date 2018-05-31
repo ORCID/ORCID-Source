@@ -15,7 +15,6 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,37 +40,13 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         Map<String, String> result = new HashMap<String, String>();
         try {
             EmailFrequencyEntity entity = emailFrequencyDaoReadOnly.findByOrcid(orcid);
-            result.put("send_administrative_change_notifications", String.valueOf(entity.getSendAdministrativeChangeNotifications()));
-            result.put("send_change_notifications", String.valueOf(entity.getSendChangeNotifications()));
-            result.put("send_member_update_requests", String.valueOf(entity.getSendMemberUpdateRequests()));
-            result.put("send_quarterly_tips", String.valueOf(entity.getSendQuarterlyTips()));
+            result.put(ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendAdministrativeChangeNotifications()));
+            result.put(CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendChangeNotifications()));
+            result.put(MEMBER_UPDATE_REQUESTS, String.valueOf(entity.getSendMemberUpdateRequests()));
+            result.put(QUARTERLY_TIPS, String.valueOf(entity.getSendQuarterlyTips()));
         } catch(Exception e) {
-            LOG.warn("Couldn't find email_frequency for {} using profile_entity settings", orcid);
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
-            if(profileEntity.getSendAdministrativeChangeNotifications() != null && profileEntity.getSendAdministrativeChangeNotifications()) {
-                result.put("send_administrative_change_notifications", String.valueOf(emailFrequencyDays));
-            } else {
-                result.put("send_administrative_change_notifications", SendEmailFrequency.NEVER.value());
-            }
-            
-            if(profileEntity.getSendChangeNotifications() != null && profileEntity.getSendChangeNotifications()) {
-                result.put("send_change_notifications", String.valueOf(emailFrequencyDays));
-            } else {
-                result.put("send_change_notifications", SendEmailFrequency.NEVER.value());
-            }
-            
-            if(profileEntity.getSendMemberUpdateRequests() != null && profileEntity.getSendMemberUpdateRequests()) {
-                result.put("send_member_update_requests", String.valueOf(emailFrequencyDays));
-            } else {
-                result.put("send_member_update_requests", SendEmailFrequency.NEVER.value());
-            }
-            
-            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && emailFrequencyDays < SendEmailFrequency.NEVER.floatValue()) {
-                result.put("send_quarterly_tips", String.valueOf(Boolean.TRUE));
-            } else {
-                result.put("send_quarterly_tips", String.valueOf(Boolean.FALSE));
-            }
+            LOG.error("Couldn't find email_frequency for {}", orcid);
+            throw e;
         }
         return result;
     }
@@ -108,34 +83,8 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         if(emailFrequencyExists(orcid)) {
             result = emailFrequencyDao.updateSendChangeNotifications(orcid, frequency);
         } else {
-            LOG.warn("Creating email_frequency based on profile_entity settings");
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
-            SendEmailFrequency defaultEmailFrequency = SendEmailFrequency.fromValue(emailFrequencyDays);
-            SendEmailFrequency sendChangeNotifications = frequency;
-            
-            SendEmailFrequency sendAdministrativeChangeNotifications;
-            if(profileEntity.getSendAdministrativeChangeNotifications() != null && profileEntity.getSendAdministrativeChangeNotifications()) {
-                sendAdministrativeChangeNotifications = defaultEmailFrequency;
-            } else {
-                sendAdministrativeChangeNotifications = SendEmailFrequency.NEVER;
-            }            
-            
-            SendEmailFrequency sendMemberUpdateRequests;
-            if(profileEntity.getSendMemberUpdateRequests() != null && profileEntity.getSendMemberUpdateRequests()) {
-                sendMemberUpdateRequests = defaultEmailFrequency;
-            } else {
-                sendMemberUpdateRequests = SendEmailFrequency.NEVER;
-            }
-            
-            Boolean sendQuarterlyTips;
-            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && SendEmailFrequency.NEVER.equals(defaultEmailFrequency)) {
-                sendQuarterlyTips = true;
-            } else {
-                sendQuarterlyTips = false;
-            }
-            
-            result = createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips, false);
+            LOG.error("Unable to find email frequencies for {}", orcid);
+            throw new IllegalArgumentException("Unable to find email frequencies for " + orcid);
         }        
         
         profileHistoryEventManager.recordEvent(ProfileHistoryEventType.UPDATE_AMEND_NOTIF_FREQ, orcid, "New value: " + frequency.value());
@@ -149,34 +98,8 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         if(emailFrequencyExists(orcid)) {
             result = emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, frequency);
         } else {
-            LOG.warn("Creating email_frequency based on profile_entity settings");
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
-            SendEmailFrequency defaultEmailFrequency = SendEmailFrequency.fromValue(emailFrequencyDays);
-            SendEmailFrequency sendAdministrativeChangeNotifications = frequency;
-            
-            SendEmailFrequency sendChangeNotifications;
-            if(profileEntity.getSendChangeNotifications() != null && profileEntity.getSendChangeNotifications()) {
-                sendChangeNotifications = defaultEmailFrequency;
-            } else {
-                sendChangeNotifications = SendEmailFrequency.NEVER;
-            }            
-            
-            SendEmailFrequency sendMemberUpdateRequests;
-            if(profileEntity.getSendMemberUpdateRequests() != null && profileEntity.getSendMemberUpdateRequests()) {
-                sendMemberUpdateRequests = defaultEmailFrequency;
-            } else {
-                sendMemberUpdateRequests = SendEmailFrequency.NEVER;
-            }
-            
-            Boolean sendQuarterlyTips;
-            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && SendEmailFrequency.NEVER.equals(defaultEmailFrequency)) {
-                sendQuarterlyTips = true;
-            } else {
-                sendQuarterlyTips = false;
-            }
-            
-            result = createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips, false);
+            LOG.error("Unable to find email frequencies for {}", orcid);
+            throw new IllegalArgumentException("Unable to find email frequencies for " + orcid);
         }        
         
         profileHistoryEventManager.recordEvent(ProfileHistoryEventType.UPDATE_ADMINISTRATIVE_NOTIF_FREQ, orcid, "New value: " + frequency.value());
@@ -190,34 +113,8 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         if(emailFrequencyExists(orcid)) {
             result = emailFrequencyDao.updateSendMemberUpdateRequests(orcid, frequency);
         } else {
-            LOG.warn("Creating email_frequency based on profile_entity settings");
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
-            SendEmailFrequency defaultEmailFrequency = SendEmailFrequency.fromValue(emailFrequencyDays);
-            SendEmailFrequency sendMemberUpdateRequests = frequency;
-            
-            SendEmailFrequency sendChangeNotifications;
-            if(profileEntity.getSendChangeNotifications() != null && profileEntity.getSendChangeNotifications()) {
-                sendChangeNotifications = defaultEmailFrequency;
-            } else {
-                sendChangeNotifications = SendEmailFrequency.NEVER;
-            }            
-            
-            SendEmailFrequency sendAdministrativeChangeNotifications;
-            if(profileEntity.getSendAdministrativeChangeNotifications() != null && profileEntity.getSendAdministrativeChangeNotifications()) {
-                sendAdministrativeChangeNotifications = defaultEmailFrequency;
-            } else {
-                sendAdministrativeChangeNotifications = SendEmailFrequency.NEVER;
-            }
-            
-            Boolean sendQuarterlyTips;
-            if(profileEntity.getSendOrcidNews() != null && profileEntity.getSendOrcidNews() && SendEmailFrequency.NEVER.equals(defaultEmailFrequency)) {
-                sendQuarterlyTips = true;
-            } else {
-                sendQuarterlyTips = false;
-            }
-            
-            result = createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips, false);
+            LOG.error("Unable to find email frequencies for {}", orcid);
+            throw new IllegalArgumentException("Unable to find email frequencies for " + orcid);    
         }        
         
         profileHistoryEventManager.recordEvent(ProfileHistoryEventType.UPDATE_MEMBER_PERMISSION_NOTIF_FREQ, orcid, "New value: " + frequency.value());
@@ -231,35 +128,8 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         if(emailFrequencyExists(orcid)) {
             result = emailFrequencyDao.updateSendQuarterlyTips(orcid, enabled);
         } else {
-            LOG.warn("Creating email_frequency based on profile_entity settings");
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-            Float emailFrequencyDays = profileEntity.getSendEmailFrequencyDays();
-            SendEmailFrequency defaultEmailFrequency = SendEmailFrequency.fromValue(emailFrequencyDays);
-            
-            SendEmailFrequency sendMemberUpdateRequests;
-            if(profileEntity.getSendMemberUpdateRequests() != null && profileEntity.getSendMemberUpdateRequests()) {
-                sendMemberUpdateRequests = defaultEmailFrequency;
-            } else {
-                sendMemberUpdateRequests = SendEmailFrequency.NEVER;
-            }
-            
-            SendEmailFrequency sendChangeNotifications;
-            if(profileEntity.getSendChangeNotifications() != null && profileEntity.getSendChangeNotifications()) {
-                sendChangeNotifications = defaultEmailFrequency;
-            } else {
-                sendChangeNotifications = SendEmailFrequency.NEVER;
-            }            
-            
-            SendEmailFrequency sendAdministrativeChangeNotifications;
-            if(profileEntity.getSendAdministrativeChangeNotifications() != null && profileEntity.getSendAdministrativeChangeNotifications()) {
-                sendAdministrativeChangeNotifications = defaultEmailFrequency;
-            } else {
-                sendAdministrativeChangeNotifications = SendEmailFrequency.NEVER;
-            }
-            
-            Boolean sendQuarterlyTips = enabled;
-            
-            result = createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendMemberUpdateRequests, sendQuarterlyTips, false);
+            LOG.error("Unable to find email frequencies for {}", orcid);
+            throw new IllegalArgumentException("Unable to find email frequencies for " + orcid);
         }
 
         profileHistoryEventManager.recordEvent(ProfileHistoryEventType.UPDATE_QUARTERLY_TIPS_NOTIF, orcid, "New value: " + enabled);

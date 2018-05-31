@@ -113,22 +113,19 @@
                                  </div>
                             </div>                            
                         </@orcid.checkFeatureStatus> 
-                        
-                        <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS'>
-                            <div *ngIf="gdprEmailNotifications">
-                                <!--Notifications settings -->
-                                <div id="notificationSettings" class="form-group clear-fix">  
-                                    <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
-                                    <p><@orcid.msg 'register.paragraph.1' /></p>
-                                    <p><@orcid.msg 'register.paragraph.2' /></p>
-                                    <div class="control-group">
-                                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" ng-model="register.sendOrcidNews.value" />
-                                        <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
-                                    </div>
-                                    <p><@orcid.msg 'register.paragraph.3' /></p>
+                         <div>
+                            <!--Notifications settings -->
+                            <div id="notificationSettings" class="form-group clear-fix">  
+                                <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
+                                <p><@orcid.msg 'register.paragraph.1' /></p>
+                                <p><@orcid.msg 'register.paragraph.2' /></p>
+                                <div class="control-group">
+                                    <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" ng-model="register.sendOrcidNews.value" />
+                                    <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
                                 </div>
+                                <p><@orcid.msg 'register.paragraph.3' /></p>
                             </div>
-                        </@orcid.checkFeatureStatus>
+                        </div>
                         
                         <!--Terms and conditions-->
                         <@orcid.checkFeatureStatus featureName='GDPR_UI'> 
