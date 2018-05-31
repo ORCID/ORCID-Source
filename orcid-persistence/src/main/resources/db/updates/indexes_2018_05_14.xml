@@ -1,0 +1,24 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="ADD-INDEX-CLIENT-DETAILS-GROUP_ORCID" author="rcpeters" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="client_details_group_orcid_idx" tableName="client_details" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY client_details_group_orcid_idx ON client_details(group_orcid)</sql>
+    </changeSet>
+
+    <changeSet id="ADD-ORG-DISA-ORG-DIS-ID" author="rcpeters" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="org_disambiguated_external_identifier_org_disambiguated_id_idx" tableName="org_disambiguated_external_identifier" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY org_disambiguated_external_identifier_org_disambiguated_id_idx ON org_disambiguated_external_identifier(org_disambiguated_id)</sql>
+    </changeSet>
+
+	
+</databaseChangeLog>		

@@ -76,7 +76,25 @@ mvn clean install -Dmaven.test.skip=true
 ```
 Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 ```
-   
+## Verify you have the DigiCertGlobalRootG2.crt
+This is an annoying issue where Java's cacerts file lags behind listing common Certificate Authorities. Mailgun uses DigiCertGlobalRootG2 and you'll need verify the cert is installed.
+
+Run the following with administrator privileges(windows users will have have to use an admin account and remove sudo command) while in the project root.
+
+1. Make sure everything is compiled
+
+        mvn compile;
+
+2. Run command as adminstrator  
+   Linux: 
+ 
+        sudo mvn exec:java -pl orcid-utils -Dexec.mainClass="org.orcid.utils.AddCacertsUtil" -Dexec.args="--keystore_password changeit" 
+   Windows:
+  
+       	mvn exec:java -pl orcid-utils -Dexec.mainClass="org.orcid.utils.AddCacertsUtil" -Dexec.args="--keystore_password changeit"
+   Note: the java keystore password is usefully 'changeit' this can be different if you've changed it.  
+
+
 ## Create the Database Schema
 
 ```
