@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.v3.dev1.common.Locale;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Locale;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 

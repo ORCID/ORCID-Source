@@ -16,10 +16,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -56,10 +56,10 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         //Dates
         assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
-        assertEquals(Integer.valueOf(1848), oar.getStartDate().getYear());
+        assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
-        assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
+        assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
         
         //Source                
         assertNull(oar.getSourceId());        
@@ -121,9 +121,9 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Marshaller m = context.createMarshaller();
-        String name = "/record_3.0_dev1/samples/read_samples/employment-3.0_dev1.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/employment-3.0_rc1.xml";
         if(full) {
-            name = "/record_3.0_dev1/samples/read_samples/employment-full-3.0_dev1.xml";
+            name = "/record_3.0_rc1/samples/read_samples/employment-full-3.0_rc1.xml";
         }            
         InputStream inputStream = getClass().getResourceAsStream(name);
         Employment e = (Employment) unmarshaller.unmarshal(inputStream);

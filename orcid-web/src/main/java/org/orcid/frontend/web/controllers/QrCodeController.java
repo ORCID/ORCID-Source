@@ -12,13 +12,13 @@ import net.glxn.qrgen.QRCode;
 @Controller
 public class QrCodeController extends BaseController {
 
-    @RequestMapping(value = { "/my-orcid-qr-code" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/qr-code" }, method = RequestMethod.GET)
     public ModelAndView myOrcidQrCode() {
         ModelAndView mav = new ModelAndView("my_orcid_qr_code");
         return mav;
     }
 
-    @RequestMapping(value = "/my-orcid-qr-code.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @RequestMapping(value = "/qr-code.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     public @ResponseBody byte[] generateQrCode() {
         String orcid = getCurrentUser().getOrcid();
         return QRCode.from(getBaseUri() + "/" + orcid).stream().toByteArray();

@@ -5,7 +5,8 @@
 <#if justRegistered?? && justRegistered>
 <div class="alert alert-success">
     <strong>
-        <thanks-for-registering-ng2></thanks-for-registering-ng2>
+      <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
+      <thanks-for-registering-ng2></thanks-for-registering-ng2>
     </strong>
 </div>
 </#if>
@@ -16,6 +17,7 @@
     <strong>
         <@spring.message "orcid.frontend.web.email_verified"/>
         <#if primaryEmailUnverified?? && primaryEmailUnverified>
+        <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
         <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
         </#if>
     </strong>
@@ -40,6 +42,7 @@
     <#-- hidden divs that trigger angular -->
     <#if RequestParameters['recordClaimed']??>
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+    <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
     <claim-thanks-ng2></claim-thanks-ng2>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
@@ -65,9 +68,9 @@
             <#include "includes/print_record.ftl"/>
 
             <div class="qrcode-container">
-                <a href="<@orcid.rootPath "/my-orcid-qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
+                <a href="<@orcid.rootPath "/qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
                     <div class="popover-help-container">
-                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <i class="glyphicon glyphicon-question-sign"></i>
                         <div id="qrcode-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">
@@ -79,19 +82,22 @@
             </div>
 
             <!-- Other Names -->
+            <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
             <also-known-as-ng2></also-known-as-ng2>
 
             <!-- Country -->
+            <#include "/includes/ng2_templates/country-ng2-template.ftl">  
             <country-ng2></country-ng2>
 
-
+            <#include "/includes/ng2_templates/keywords-ng2-template.ftl">
             <keywords-ng2></keywords-ng2>
 
             <!-- Websites  -->
+            <#include "/includes/ng2_templates/websites-ng2-template.ftl">
             <websites-ng2></websites-ng2>
 
             <!-- Emails  -->
-        
+            <#include "/includes/ng2_templates/emails-ng2-template.ftl">
             <emails-ng2></emails-ng2>
 
 
@@ -672,31 +678,38 @@
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645">
+<#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl"> 
+<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645" setFocus="true">
     <also-known-as-form-ng2></also-known-as-form-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
+<#include "/includes/ng2_templates/country-form-ng2-template.ftl">
 <modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
-    <country-form-ng2></country-form-ng2>
+    <country-form-ng2 ></country-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
     <emails-form-ng2 popUp="true"></emails-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
 <modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
+<#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645">
+<#include "/includes/ng2_templates/keywords-form-ng2-template.ftl">
+<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645" setFocus="true">
     <keywords-form-ng2></keywords-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645">
+<#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
+<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645" setFocus="true">
     <websites-form-ng2></websites-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 

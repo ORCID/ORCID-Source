@@ -39,7 +39,9 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
         this.errors = null;
         this.password = null;
         this.securityQuestions = [];
-        this.securityQuestionPojo = {};
+        this.securityQuestionPojo = {
+            securityQuestionId: null
+        };
 
     }
 

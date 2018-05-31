@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { CountryService } 
-    from '../../shared/country.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts'; 
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -34,9 +34,10 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
     formDataAddresses: any;
     emails: any;
     emailSrvc: any;
+    url_path: any;
 
     constructor( 
-        private countryService: CountryService,
+        private countryService: GenericService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
@@ -47,10 +48,11 @@ export class CountryComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.formDataAddresses = [];
         this.emails = {};
+        this.url_path = '/account/countryForm.json';
     }
 
     getformData(): void {
-        this.countryService.getCountryData()
+        this.countryService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

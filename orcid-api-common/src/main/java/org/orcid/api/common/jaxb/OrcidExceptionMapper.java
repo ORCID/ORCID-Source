@@ -19,6 +19,7 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidApiException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
@@ -91,15 +92,12 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
         String clientId = securityManager.getClientIdFromAPIRequest();
-        if (PojoUtil.isEmpty(clientId)) {
-            LOGGER.error("An exception has occured, no client id info provided", t);
+        if (t instanceof NotFoundException) {
+            logShortError(t, clientId);
+        } else if (t instanceof NoResultException) {
+            logShortError(t, clientId); 
         } else {
-            if (t instanceof NotFoundException) {
-                StringBuffer temp = new StringBuffer("An exception has occured processing request from client ").append(clientId).append(". ").append(t.getMessage());
-                LOGGER.error(temp.toString());
-            } else {
                 LOGGER.error("An exception has occured processing request from client " + clientId, t);
-            }
         }
 
         if (isOAuthTokenRequest()) {
@@ -122,8 +120,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC4);
             case OrcidCoreExceptionMapper.V2_1:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_1);
-            case OrcidCoreExceptionMapper.V3_DEV1:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3_DEV1);
+            case OrcidCoreExceptionMapper.V3_RC1:
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3_RC1);
             }
         }
 
@@ -135,6 +133,11 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         default:
             return legacyErrorResponse(t);
         }
+    }
+
+    private void logShortError(Throwable t, String clientId) {
+        StringBuffer temp = new StringBuffer(t.getClass().getSimpleName() + " exception from client: ").append(clientId).append(". ").append(t.getMessage());
+        LOGGER.error(temp.toString());
     }
 
     private Response oAuthErrorResponse(Throwable t) {
@@ -277,8 +280,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             statusCode = ((org.orcid.jaxb.model.error_rc4.OrcidError) orcidError).getResponseCode();
         } else if (org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
         	statusCode = ((org.orcid.jaxb.model.error_v2.OrcidError) orcidError).getResponseCode();
-        } else if (org.orcid.jaxb.model.v3.dev1.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.v3.dev1.error.OrcidError) orcidError).getResponseCode();
+        } else if (org.orcid.jaxb.model.v3.rc1.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+            statusCode = ((org.orcid.jaxb.model.v3.rc1.error.OrcidError) orcidError).getResponseCode();
         }
 
         if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {

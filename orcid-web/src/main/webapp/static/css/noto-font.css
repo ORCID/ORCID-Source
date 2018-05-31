@@ -63,6 +63,7 @@ h4 {
 .affiliation-type,
 .journaltitle,
 .workspace-accordion-header a.toggle-text,
+.workspace-accordion-header h2.toggle-text,
 .work-title a.toggle-text {
     font-size: 14px;
 }

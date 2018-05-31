@@ -1,13 +1,13 @@
 package org.orcid.core.utils.v3;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 public class RecordNameUtils {
 
     public static String getPublicName(RecordNameEntity recordName) {
-        if (org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC.name().equals(recordName.getVisibility())) {
+        if (org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.name().equals(recordName.getVisibility())) {
             if (!StringUtils.isBlank(recordName.getCreditName())) {
                 return recordName.getCreditName();
             } else {
@@ -16,25 +16,30 @@ public class RecordNameUtils {
         }
         return null;
     }
-    
+
     public static String getDisplayName(RecordNameEntity recordNameEntity) {
-        if(recordNameEntity == null) {
+        if (recordNameEntity == null) {
             return null;
         }
-        if (StringUtils.isNotBlank(recordNameEntity.getCreditName()) && Visibility.PUBLIC.name().equals(recordNameEntity.getVisibility())) {
-            return recordNameEntity.getCreditName();
-        }
-        StringBuilder builder = new StringBuilder();
-        if (StringUtils.isNotBlank(recordNameEntity.getGivenNames())) {
-            builder.append(recordNameEntity.getGivenNames());
-        }
-        if (StringUtils.isNotBlank(recordNameEntity.getFamilyName())) {
-            if (builder.length() > 0) {
-                builder.append(" ");
+
+        if (Visibility.PUBLIC.name().equals(recordNameEntity.getVisibility())) {
+            if (StringUtils.isNotBlank(recordNameEntity.getCreditName())) {
+                return recordNameEntity.getCreditName();
             }
-            builder.append(recordNameEntity.getFamilyName());
+            StringBuilder builder = new StringBuilder();
+            if (StringUtils.isNotBlank(recordNameEntity.getGivenNames())) {
+                builder.append(recordNameEntity.getGivenNames());
+            }
+            if (StringUtils.isNotBlank(recordNameEntity.getFamilyName())) {
+                if (builder.length() > 0) {
+                    builder.append(" ");
+                }
+                builder.append(recordNameEntity.getFamilyName());
+            }
+            return builder.length() > 0 ? builder.toString() : null;
+        } else {
+            return null;
         }
-        return builder.length() > 0 ? builder.toString() : null;
     }
 
 }

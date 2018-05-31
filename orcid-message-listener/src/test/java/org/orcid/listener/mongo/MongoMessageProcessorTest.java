@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -35,7 +36,7 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.listener.orcid.Orcid20APIClient;
+import org.orcid.listener.orcid.Orcid20Manager;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -55,7 +56,7 @@ public class MongoMessageProcessorTest {
     MongoMessageProcessor mongo;
     
     @Mock
-    private Orcid20APIClient mock_orcid20ApiClient;
+    private Orcid20Manager mock_orcid20ApiClient;
     
     @Resource
     private MongoClient mongoClient;
@@ -73,18 +74,18 @@ public class MongoMessageProcessorTest {
     
     /** Sets up a FONGO instance and injects it into the MessageProcessor.
      * 
-     * @throws LockedRecordException
+     * @throws ExecutionException, LockedRecordException
      * @throws DeprecatedRecordException
      */
     @Before
-    public void before() throws LockedRecordException, DeprecatedRecordException {
+    public void before() throws ExecutionException, LockedRecordException, DeprecatedRecordException {
         MockitoAnnotations.initMocks(this);        
         TargetProxyHelper.injectIntoProxy(mongo, "orcid20ApiClient", mock_orcid20ApiClient);
         col = mongoClient.getDatabase(mongoDatabase).getCollection(mongoCollection);
     }
     
     @Test
-    public void testInsertAndUpsert() throws LockedRecordException, DeprecatedRecordException{
+    public void testInsertAndUpsert() throws ExecutionException, LockedRecordException, DeprecatedRecordException{
         Record record = new Record();
         record.setOrcidIdentifier(new OrcidIdentifier("http://orcid.org/"+this.orcid));
         ActivitiesSummary sum = new ActivitiesSummary();
@@ -127,7 +128,7 @@ public class MongoMessageProcessorTest {
     }
     
     @Test
-    public void testLocked() throws LockedRecordException, DeprecatedRecordException{
+    public void testLocked() throws ExecutionException, LockedRecordException, DeprecatedRecordException{
         when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.any())).thenThrow(new LockedRecordException(new OrcidError()));
         LastModifiedMessage m = new LastModifiedMessage(this.orcid, new Date());
         mongo.accept(m);
@@ -140,7 +141,7 @@ public class MongoMessageProcessorTest {
     }
 
     @Test
-    public void testDeprecated() throws LockedRecordException, DeprecatedRecordException{
+    public void testDeprecated() throws ExecutionException, LockedRecordException, DeprecatedRecordException{
         when(mock_orcid20ApiClient.fetchPublicRecord(Matchers.any())).thenThrow(new DeprecatedRecordException(new OrcidError()));
         LastModifiedMessage m = new LastModifiedMessage(this.orcid, new Date());
         mongo.accept(m);
@@ -153,7 +154,7 @@ public class MongoMessageProcessorTest {
     }
 
     @Test
-    public void testDeactivated() throws LockedRecordException, DeprecatedRecordException, DatatypeConfigurationException{  
+    public void testDeactivated() throws ExecutionException, LockedRecordException, DeprecatedRecordException, DatatypeConfigurationException{  
         Record deactivatedRecord = new Record();
         deactivatedRecord.setOrcidIdentifier(new OrcidIdentifier("http://orcid.org/"+this.orcid2));
         History h = new History();

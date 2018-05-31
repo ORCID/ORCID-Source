@@ -12,9 +12,11 @@ import javax.ws.rs.core.Response;
  */
 public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, INVITED_POSITION, FUNDING, GROUP_ID_RECORD, MEMBERSHIP, OTHER_NAME, PEER_REVIEW, QUALIFICATION, RESEARCHER_URL, SERVICE, WORK> {
 
-    static final String LATEST_V3_VERSION = "3.0_dev1";
+    static final String LATEST_V3_VERSION = "3.0_rc1";
 
     Response viewStatusText();
+    
+    Response viewStatus();
 
     Response viewActivities(String orcid);
 

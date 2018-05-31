@@ -15,10 +15,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.v3.JpaJaxbFundingAdapter;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.FundingType;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.FundingType;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
@@ -61,10 +61,10 @@ public class JpaJaxbFundingAdapterTest {
         // Dates
         assertEquals(Integer.valueOf(2), pfe.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), pfe.getStartDate().getMonth());
-        assertEquals(Integer.valueOf(1848), pfe.getStartDate().getYear());
+        assertEquals(Integer.valueOf(1948), pfe.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), pfe.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), pfe.getEndDate().getMonth());
-        assertEquals(Integer.valueOf(1848), pfe.getEndDate().getYear());
+        assertEquals(Integer.valueOf(1948), pfe.getEndDate().getYear());
 
         // Contributors
         assertEquals(

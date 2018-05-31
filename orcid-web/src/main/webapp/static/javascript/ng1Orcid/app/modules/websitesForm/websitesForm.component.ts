@@ -1,7 +1,7 @@
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable } 
@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { WebsitesService } 
-    from '../../shared/websites.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -31,6 +31,8 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
+    public newInput = new EventEmitter<boolean>();
+
     defaultVisibility: any;
     emails: any;
     formData: any;
@@ -41,12 +43,13 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     scrollTop: any;
     showEdit: any;
     showElement: any;
+    url_path: any;
 
     constructor( 
         private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private modalService: ModalService,
-        private websitesService: WebsitesService
+        private websitesService: GenericService
     ) {
         this.defaultVisibility = null;
         this.emails = {};
@@ -60,6 +63,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.scrollTop = 0;
         this.showEdit = false;
         this.showElement = {};
+        this.url_path = '/my-orcid/websitesForms.json';
     }
 
     addNew(): void {
@@ -81,15 +85,20 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
             "displayIndex": 1
         };         
         this.formData.websites.push(tmpObj);        
-        this.updateDisplayIndex();    
+        this.cdr.detectChanges();       
+        this.updateDisplayIndex();
+        this.newInput.emit(true);     
     };
 
     closeEditModal(): void{
         this.formData = this.formDataBeforeChange;
+        this.cdr.detectChanges();
+        this.websitesService.notifyOther();
         this.modalService.notifyOther({action:'close', moduleId: 'modalWebsitesForm'});
     };
 
-    deleteEntry( website ): void{
+    deleteEntry( website, index ): void{
+        this.commonSrvc.hideTooltip('tooltip-websites-delete-'+index)
         let websites = this.formData.websites;
         let len = websites.length;
         while (len--) {
@@ -107,7 +116,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getformData(): void {
-        this.websitesService.getData()
+        this.websitesService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -157,7 +166,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setFormData( closeAfterAction ): void {
-        this.websitesService.setData( this.formData )
+        this.websitesService.setData( this.formData, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -215,6 +224,11 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
+        this.subscription = this.websitesService.notifyObservable$.subscribe(
+            (res) => {
+                this.getformData();
+            }
+        );
     };
 
     ngOnDestroy() {

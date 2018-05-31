@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,22 +209,39 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<NotificationEntity> findUnsentServiceAnnouncementsAndTips(int batchSize) {
-        Query query = entityManager.createNativeQuery("select n.* from notification n, email_frequency ef where n.sent_date is NULL AND n.sendable != false AND n.orcid = ef.orcid AND ((n.notification_type = 'SERVICE_ANNOUNCEMENT') OR (n.notification_type = 'TIP' AND ef.send_quarterly_tips IS true))", NotificationEntity.class);
+    public List<NotificationEntity> findUnsentServiceAnnouncements(int batchSize) {
+        Query query = entityManager.createNativeQuery("select n.* from notification n where n.sent_date is NULL AND n.sendable != false AND n.notification_type = 'SERVICE_ANNOUNCEMENT'", NotificationEntity.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void flagAsNonSendable(String orcid, Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity set sendable=false where orcid = :orcid and id = :id");
+    public List<NotificationEntity> findUnsentTips(int batchSize) {
+        Query query = entityManager.createNativeQuery("select n.* from notification n, email_frequency ef where n.sent_date is NULL AND n.sendable != false AND n.orcid = ef.orcid AND n.notification_type = 'TIP' AND ef.send_quarterly_tips IS true", NotificationEntity.class);
+        query.setMaxResults(batchSize);
+        return query.getResultList();
+    }
+    
+    @Override
+    public void flagAsSendable(String orcid, Long id) {
+        Query query = entityManager.createQuery("update NotificationEntity set sendable=true where orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
     }
     
+    @Override
+    @ExcludeFromProfileLastModifiedUpdate
+    public void flagAsNonSendable(String orcid, Long id) {
+        Query query = entityManager.createQuery("update NotificationEntity set sendable=false where orcid = :orcid and id = :id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }    
     
     @Override
+    @ExcludeFromProfileLastModifiedUpdate
     public void updateRetryCount(String orcid, Long id, Long retryCount) {
         Query query = entityManager.createQuery("update NotificationEntity set retryCount = :count where orcid = :orcid and id = :id");
         query.setParameter("count", retryCount);

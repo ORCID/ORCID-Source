@@ -90,17 +90,8 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
     }
 
     private void validateDuplicate(GroupIdRecord newGroupIdRecord) {
-        List<GroupIdRecordEntity> existingGroupIdRecords = groupIdRecordDao.getAll();
-        if (existingGroupIdRecords != null && !existingGroupIdRecords.isEmpty()) {
-            for (GroupIdRecordEntity existing : existingGroupIdRecords) {
-                // Compare if it is a new element or if the element to compare
-                // dont have the same put code than me
-                if (newGroupIdRecord.getPutCode() == null || !newGroupIdRecord.getPutCode().equals(existing.getId())) {
-                    if (newGroupIdRecord.getGroupId().equalsIgnoreCase(existing.getGroupId())) {
-                        throw new DuplicatedGroupIdRecordException();
-                    }
-                }
-            }
+        if (groupIdRecordDao.duplicateExists(newGroupIdRecord.getPutCode(), newGroupIdRecord.getGroupId())) {
+            throw new DuplicatedGroupIdRecordException();
         }
     }
 

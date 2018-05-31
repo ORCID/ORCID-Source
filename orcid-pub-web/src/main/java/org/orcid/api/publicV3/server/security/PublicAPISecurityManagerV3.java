@@ -1,20 +1,20 @@
 package org.orcid.api.publicV3.server.security;
 
-import org.orcid.jaxb.model.v3.dev1.common.VisibilityType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.dev1.record.ActivitiesContainer;
-import org.orcid.jaxb.model.v3.dev1.record.Addresses;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.GroupsContainer;
-import org.orcid.jaxb.model.v3.dev1.record.Keywords;
-import org.orcid.jaxb.model.v3.dev1.record.OtherNames;
-import org.orcid.jaxb.model.v3.dev1.record.Person;
-import org.orcid.jaxb.model.v3.dev1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.dev1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.dev1.record.Record;
-import org.orcid.jaxb.model.v3.dev1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.dev1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
+import org.orcid.jaxb.model.v3.rc1.record.ActivitiesContainer;
+import org.orcid.jaxb.model.v3.rc1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
+import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 
 public interface PublicAPISecurityManagerV3 {
     void checkIsPublic(VisibilityType visibilityType);

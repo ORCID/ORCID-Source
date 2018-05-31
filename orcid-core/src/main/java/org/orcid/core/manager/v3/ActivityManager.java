@@ -2,9 +2,9 @@ package org.orcid.core.manager.v3;
 
 import java.util.LinkedHashMap;
 
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.Funding;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface ActivityManager {

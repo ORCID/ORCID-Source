@@ -267,6 +267,12 @@
     
     <bean id="profileHistoryEventDao" class="org.orcid.persistence.dao.impl.ProfileHistoryEventDaoImpl" />
     
+    <bean id="miscDao" class="org.orcid.persistence.dao.impl.MiscDaoImpl" />
+	
+	<bean id="miscDaoReadOnly" class="org.orcid.persistence.dao.impl.MiscDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />		
+	</bean>
+    
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
@@ -501,40 +507,9 @@
         <property name="encryptor" ref="internalEncryptor" />
     </bean>
     
-    <!-- JMS Messaging -->
-	<!-- enable the configuration of jms on annotations -->
-	<jms:annotation-driven/>
-	
-	<bean id="redeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
-        <property name="initialRedeliveryDelay" value="${org.orcid.persistence.messaging.redelivery.initialDelay}" />
-        <property name="backOffMultiplier" value="${org.orcid.persistence.messaging.redelivery.backOffMultiplier}" />
-        <property name="useExponentialBackOff" value="${org.orcid.persistence.messaging.redelivery.exponentialBackOff}" />
-        <property name="maximumRedeliveries" value="${org.orcid.persistence.messaging.redelivery.maxRedeliveries}" />
-	</bean>
-	
-	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<!-- lets use an embedded broker for now (easier to test!) -->
-    	<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
-    	<property name="redeliveryPolicy" ref="redeliveryPolicy" />
-	</bean>
-	
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-	  <property name="connectionFactory" ref="jmsConnectionFactory" />
-	  
-	  <!-- set to topics rather than queues -->
-	  <property name="pubSubDomain" value="true"/>
-	</bean>
-	
-	<bean id="jmsMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">
-		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>		
-	</bean>
-
-	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
+    <bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>	
 	
-	<util:properties id="notification_queries" location="classpath:queries/notifications.xml" />
-	
-	
-	
+	<util:properties id="notification_queries" location="classpath:queries/notifications.xml" />	
 </beans>

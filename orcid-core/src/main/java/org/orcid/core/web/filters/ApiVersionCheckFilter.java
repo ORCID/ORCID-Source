@@ -63,7 +63,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_version_disabled.1_1.exception"));
             }
         } else if(version != null && (version.startsWith("2.") || version.startsWith("3."))) {
-            if(!OrcidUrlManager.isSecure(httpRequest)) {
+            if(!OrcidUrlManager.isSecure(httpRequest) && !(path.endsWith("/pubStatus") || path.endsWith("/apiStatus"))) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_secure_only.exception"));
             }
         }

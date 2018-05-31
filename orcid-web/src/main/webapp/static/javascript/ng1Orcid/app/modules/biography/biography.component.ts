@@ -15,8 +15,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { BiographyService } 
-    from '../../shared/biography.service.ts'; 
+import { GenericService } 
+    from '../../shared/generic.service.ts'; 
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -36,9 +36,10 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     emailSrvc: any;
     lengthError: any;
     showEdit: any;
+    url_path: any;
 
     constructor(
-        private biographyService: BiographyService,
+        private biographyService: GenericService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
@@ -51,6 +52,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
         this.lengthError = false;
         this.showEdit = false;
+        this.url_path = '/account/biographyForm.json';
     }
 
     cancel(): void {
@@ -73,12 +75,11 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getformData(): void {
-        this.biographyService.getBiographyData()
+        this.biographyService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
                 this.formData = data;
-                console.log('this.formData', this.formData);
 
                 if( this.formData.biography == null  ) {
                     this.formData.biography = {
@@ -104,7 +105,7 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         if( this.checkLength() == false ){    
             return; // do nothing if there is a length error
         }
-        this.biographyService.setBiographyData( this.formData )
+        this.biographyService.setData( this.formData, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

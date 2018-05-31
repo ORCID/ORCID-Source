@@ -154,79 +154,81 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="emailFrequency" class="bottomBuffer" *ngIf="gdprEmailNotifications">
-                                <h2><@orcid.msg 'manage.email.email_frequency.notifications.header' /></h2>
-                                <div class="editTablePadCell35">
-                                    <p><@orcid.msg 'manage.email.email_frequency.notifications.1' /></p>
-                                    <p><@orcid.msg 'manage.email.email_frequency.notifications.2' /></p>
-                                    <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.header' /></p>                                            
-                                    <div class="control-group">
-                                        <label for="amend-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></label>
-                                        <select id="amend-frequency" name="amend-frequency" [(ngModel)]="sendChangeNotifications" (ngModelChange)="updateChangeNotificationsFrequency()">   
-                                            <#list sendEmailFrequencies?keys as key>
-                                                <option value="${key}">${sendEmailFrequencies[key]}</option>
-                                            </#list>
-                                        </select>
-                                    </div>
-                                    <div class="control-group">
-                                        <label for="administrative-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></label>
-                                        <select id="administrative-frequency" name="administrative-frequency" [(ngModel)]="sendAdministrativeChangeNotifications" (ngModelChange)="updateAdministrativeChangeNotificationsFrequency()">   
-                                            <#list sendEmailFrequencies?keys as key>
-                                                <option value="${key}">${sendEmailFrequencies[key]}</option>
-                                            </#list>
-                                        </select>
-                                    </div>
-                                    <div class="control-group">
-                                        <label for="permission-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></label>                  
-                                        <select id="permission-frequency" name="permission-frequency" [(ngModel)]="sendMemberUpdateRequestsNotifications" (ngModelChange)="updateMemberUpdateRequestsFrequency()">   
-                                            <#list sendEmailFrequencies?keys as key>
-                                                <option value="${key}">${sendEmailFrequencies[key]}</option>
-                                            </#list>
-                                        </select>
-                                    </div>
-                                </div> 
-                                <h2><@orcid.msg 'manage.email.email_frequency.news.header' /></h2>
-                                <div class="editTablePadCell35">
-                                    <div class="control-group">
-                                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips" (ngModelChange)="updateSendQuarterlyTips()"/>
-                                        <label for="send-orcid-news">
-                                        <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
-                                    </div>
-                                </div>
-                                <p><small class="italic"><@orcid.msg 'manage.email.email_frequency.bottom' /> <a href="https://orcid.org/privacy-policy#How_we_use_information" target="_blank"><@orcid.msg 'public-layout.privacy_policy' /></a></small></p>  
-                            </div>
-                            <div *ngIf="!gdprEmailNotifications">
-                                <div class="row bottomBuffer">
-                                    <h2>${springMacroRequestContext.getMessage("manage.email.email_frequency")}</h2>
-                                </div>              
-                                <div class="control-group">
-                                    <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="manage.send_email_to_primary_2">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
-                                    <form class="form-inline">
-                                        <div class="form-group">                            
-                                            <div class="input-group">
-                                                <select 
-                                                [(ngModel)]="prefs.email_frequency" 
-                                                (ngModelChange)="clearMessage(false)"
-                                                name="email-frequency"
-                                                >   
-                                                    <#list sendEmailFrequencies?keys as key>
-                                                        <option value="${key}">${sendEmailFrequencies[key]}</option>
-                                                    </#list>
-
-                                                </select>
-                                            </div>
+                            <#if springMacroRequestContext.requestUri?contains("/account") >
+                                <div id="emailFrequency" class="bottomBuffer" *ngIf="gdprEmailNotifications">
+                                    <h2><@orcid.msg 'manage.email.email_frequency.notifications.header' /></h2>
+                                    <div class="editTablePadCell35">
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.1' /></p>
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.2' /></p>
+                                        <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.header' /></p>                                            
+                                        <div class="control-group">
+                                            <label for="amend-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></label>
+                                            <select id="amend-frequency" name="amend-frequency" [(ngModel)]="sendChangeNotifications" (ngModelChange)="updateChangeNotificationsFrequency()">   
+                                                <#list sendEmailFrequencies?keys as key>
+                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                </#list>
+                                            </select>
                                         </div>
-                                        <button (click)="updateEmailFrequency()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.send_email_frequency_save")}</button>
-                                        <small class="green" *ngIf="prefsSrvc.saved">${springMacroRequestContext.getMessage("manage.send_email_frequency_saved")}</small>    
-                                    </form>
+                                        <div class="control-group">
+                                            <label for="administrative-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></label>
+                                            <select id="administrative-frequency" name="administrative-frequency" [(ngModel)]="sendAdministrativeChangeNotifications" (ngModelChange)="updateAdministrativeChangeNotificationsFrequency()">   
+                                                <#list sendEmailFrequencies?keys as key>
+                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                        <div class="control-group">
+                                            <label for="permission-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></label>                  
+                                            <select id="permission-frequency" name="permission-frequency" [(ngModel)]="sendMemberUpdateRequestsNotifications" (ngModelChange)="updateMemberUpdateRequestsFrequency()">   
+                                                <#list sendEmailFrequencies?keys as key>
+                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                    </div> 
+                                    <h2><@orcid.msg 'manage.email.email_frequency.news.header' /></h2>
+                                    <div class="editTablePadCell35">
+                                        <div class="control-group">
+                                            <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips" (ngModelChange)="updateSendQuarterlyTips()"/>
+                                            <label for="send-orcid-news">
+                                            <@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
+                                        </div>
+                                    </div>
+                                    <p><small class="italic"><@orcid.msg 'manage.email.email_frequency.bottom' /> <a href="https://orcid.org/privacy-policy#How_we_use_information" target="_blank"><@orcid.msg 'public-layout.privacy_policy' /></a></small></p>  
                                 </div>
-                                <div class="control-group">
-                                    <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
-                                    <p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
-                                    <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
-                                    </p>
+                                <div *ngIf="!gdprEmailNotifications">
+                                    <div class="row bottomBuffer">
+                                        <h2>${springMacroRequestContext.getMessage("manage.email.email_frequency")}</h2>
+                                    </div>              
+                                    <div class="control-group">
+                                        <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="manage.send_email_to_primary_2">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
+                                        <form class="form-inline">
+                                            <div class="form-group">                            
+                                                <div class="input-group">
+                                                    <select 
+                                                    [(ngModel)]="prefs.email_frequency" 
+                                                    (ngModelChange)="clearMessage(false)"
+                                                    name="email-frequency"
+                                                    >   
+                                                        <#list sendEmailFrequencies?keys as key>
+                                                            <option value="${key}">${sendEmailFrequencies[key]}</option>
+                                                        </#list>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <button (click)="updateEmailFrequency()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.send_email_frequency_save")}</button>
+                                            <small class="green" *ngIf="prefsSrvc.saved">${springMacroRequestContext.getMessage("manage.send_email_frequency_saved")}</small>    
+                                        </form>
+                                    </div>
+                                    <div class="control-group">
+                                        <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
+                                        <p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
+                                        <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>                                                            
+                            </#if>                                                            
                         </td>
                     </tr>
                 </table>

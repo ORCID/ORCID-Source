@@ -5,7 +5,7 @@
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
     
     <!-- Name -->
-    
+    <#include "/includes/ng2_templates/name-ng2-template.ftl">
     <name-ng2 class="clearfix"></name-ng2>
 
     <div class="oid">

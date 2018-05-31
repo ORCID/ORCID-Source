@@ -14,10 +14,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -54,10 +54,10 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         //Dates
         assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
-        assertEquals(Integer.valueOf(1848), oar.getStartDate().getYear());
+        assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
-        assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
+        assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
         
         // Source
         assertNull(oar.getSourceId());        
@@ -87,7 +87,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertNotNull(education.getOrganization().getAddress());
         assertEquals("org:city", education.getOrganization().getAddress().getCity());
         assertEquals("org:region", education.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.v3.dev1.common.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
         assertNotNull(education.getSource());        
         assertNotNull(education.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", education.getSource().retrieveSourcePath());
@@ -118,9 +118,9 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     private Education getEducation(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Education.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_dev1/samples/read_samples/education-3.0_dev1.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/education-3.0_rc1.xml";
         if(full) {
-            name = "/record_3.0_dev1/samples/read_samples/education-full-3.0_dev1.xml";
+            name = "/record_3.0_rc1/samples/read_samples/education-full-3.0_rc1.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Education) unmarshaller.unmarshal(inputStream);

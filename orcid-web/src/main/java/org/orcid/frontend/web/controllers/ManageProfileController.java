@@ -33,15 +33,14 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.v3.dev1.record.Addresses;
-import org.orcid.jaxb.model.v3.dev1.record.Biography;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
-import org.orcid.jaxb.model.v3.dev1.record.Name;
+import org.orcid.jaxb.model.v3.rc1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.constants.SendEmailFrequency;
@@ -65,7 +64,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -363,7 +361,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             throw new IllegalArgumentException("Invalid visibility provided: " + defaultVisibility);
         }
         
-        return "{\"status\":" + defaultVisibility + "}";
+        return "{\"status\": \"" + defaultVisibility + "\"}";
     }
     
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
@@ -687,24 +685,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+        org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
         Visibility v = Visibility.valueOf(defaultVis);
         
         // Set the default visibility
         if (profile.getActivitiesVisibilityDefault() != null) {
             form.setVisibility(v);
-        }
-
-        // Return an empty country in case we dont have any
-        if (form.getAddresses() == null) {
-            form.setAddresses(new ArrayList<AddressForm>());
-        }
-
-        if (form.getAddresses().isEmpty()) {
-            AddressForm address = new AddressForm();
-            address.setDisplayIndex(1L);
-            address.setVisibility(v);
-            form.getAddresses().add(address);
         }
 
         return form;
@@ -794,7 +780,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         BiographyForm form = BiographyForm.valueOf(bio);
         if(form.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid()); 
-            org.orcid.jaxb.model.v3.dev1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.dev1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = Visibility.valueOf(defaultVis);          
             form.setVisibility(v);
         }
@@ -819,7 +805,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setContent(bf.getBiography().getValue());
             }
             if (bf.getVisibility() != null && bf.getVisibility().getVisibility() != null) {
-                org.orcid.jaxb.model.v3.dev1.common.Visibility v = org.orcid.jaxb.model.v3.dev1.common.Visibility.fromValue(bf.getVisibility().getVisibility().value());
+                org.orcid.jaxb.model.v3.rc1.common.Visibility v = org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(bf.getVisibility().getVisibility().value());
                 bio.setVisibility(v);
             }
 

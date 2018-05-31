@@ -29,6 +29,9 @@ import { UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated modules imports
+import { AffiliationExtIdPopoverNg2Module } 
+    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
+
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
 
@@ -128,6 +131,9 @@ import { PublicEduAffiliationNg2Module }
 import { OauthAuthorizationNg2Module } 
     from './oauthAuthorization/oauthAuthorization.ts';
 
+import { OrgIdentifierPopoverNg2Module } 
+    from './orgIdentifierPopover/orgIdentifierPopover.ts';
+
 import { ReactivationNg2Module } 
     from './reactivation/reactivation.ts';
 
@@ -142,6 +148,9 @@ import { ResetPasswordNg2Module }
 
 import { SearchNg2Module } 
     from './search/search.ts';
+
+import { SecurityQuestionEditNg2Module } 
+    from './securityQuestionEdit/securityQuestionEdit.ts';
 
 import { SelfServiceNg2Module } 
     from './selfService/selfService.ts';
@@ -296,6 +305,7 @@ export class RootCmp {
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
+        AffiliationExtIdPopoverNg2Module,
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
@@ -328,7 +338,9 @@ export class RootCmp {
         PasswordEditNg2Module,
         PersonalInfoNg2Module,
         PublicEduAffiliationNg2Module,
+        SecurityQuestionEditNg2Module,
         OauthAuthorizationNg2Module,
+        OrgIdentifierPopoverNg2Module,
         ReactivationNg2Module,
         RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,

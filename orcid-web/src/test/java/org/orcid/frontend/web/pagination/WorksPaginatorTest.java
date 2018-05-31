@@ -16,23 +16,23 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.common.CreatedDate;
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
-import org.orcid.jaxb.model.v3.dev1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.dev1.common.Source;
-import org.orcid.jaxb.model.v3.dev1.common.SourceClientId;
-import org.orcid.jaxb.model.v3.dev1.common.Subtitle;
-import org.orcid.jaxb.model.v3.dev1.common.Title;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.common.Year;
-import org.orcid.jaxb.model.v3.dev1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.dev1.record.WorkType;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc1.common.Subtitle;
+import org.orcid.jaxb.model.v3.rc1.common.Title;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
 
@@ -98,13 +98,9 @@ public class WorksPaginatorTest {
     @Test
     public void testGetPublicWorksCount() {
         Mockito.when(workManagerReadOnly.getWorksSummaryList(Mockito.anyString())).thenReturn(new ArrayList<WorkSummary>());
-        Mockito.when(workManagerReadOnly.groupWorks(Mockito.anyList(), Mockito.anyBoolean())).thenReturn(getPageSizeOfMixedWorkGroups());
+        Mockito.when(workManagerReadOnly.groupWorks(Mockito.anyList(), Mockito.eq(true))).thenReturn(getPageSizeOfPublicWorkGroups());
         int count = worksPaginator.getPublicWorksCount("orcid");
-        assertEquals(WorksPaginator.PAGE_SIZE / 2, count);
-        
-        Mockito.when(workManagerReadOnly.groupWorks(Mockito.anyList(), Mockito.anyBoolean())).thenReturn(getFiveLimitedWorkGroups());        
-        count = worksPaginator.getPublicWorksCount("orcid");
-        assertEquals(0, count);
+        assertEquals(WorksPaginator.PAGE_SIZE, count);
     }
 
     @Test
@@ -205,6 +201,17 @@ public class WorksPaginatorTest {
 
         for (int i = 0; i < WorksPaginator.PAGE_SIZE; i++) {
             works.getWorkGroup().add(getMixedWorkGroup(i));
+        }
+        return works;
+    }
+    
+    private Works getPageSizeOfPublicWorkGroups() {
+        Works works = new Works();
+        works.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        works.setPath("some path");
+
+        for (int i = 0; i < WorksPaginator.PAGE_SIZE; i++) {
+            works.getWorkGroup().add(getPublicWorkGroup(i));
         }
         return works;
     }

@@ -1,9 +1,9 @@
 package org.orcid.core.utils.v3;
 
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
-import org.orcid.jaxb.model.v3.dev1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
 

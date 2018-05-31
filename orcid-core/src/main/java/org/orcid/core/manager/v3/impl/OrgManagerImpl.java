@@ -10,7 +10,7 @@ import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationHolder;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationHolder;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
@@ -126,9 +126,9 @@ public class OrgManagerImpl implements OrgManager {
             return null;
         
         OrgEntity orgEntity = new OrgEntity();
-        org.orcid.jaxb.model.v3.dev1.common.Organization organization = holder.getOrganization();
+        org.orcid.jaxb.model.v3.rc1.common.Organization organization = holder.getOrganization();
         orgEntity.setName(organization.getName());
-        org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress address = organization.getAddress();
+        org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
         orgEntity.setCountry(address.getCountry().name());

@@ -65,7 +65,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
-import org.orcid.jaxb.model.v3.dev1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.dao.WorkDao;
@@ -305,7 +305,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             @Override
             public void mapBtoA(NotificationAmendedEntity b, NotificationAmended a, MappingContext context) {
                 if (b.getAmendedSection() != null) {
-                    if (AmendedSection.SERVICE.name().equals(b.getAmendedSection())) {
+                    if (AmendedSection.AFFILIATION.name().equals(b.getAmendedSection()) 
+                            || AmendedSection.DISTINCTION.name().equals(b.getAmendedSection())
+                            || AmendedSection.INVITED_POSITION.name().equals(b.getAmendedSection()) 
+                            || AmendedSection.MEMBERSHIP.name().equals(b.getAmendedSection())
+                            || AmendedSection.QUALIFICATION.name().equals(b.getAmendedSection()) 
+                            || AmendedSection.SERVICE.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.AFFILIATION);
                     } else if (AmendedSection.BIO.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.BIO);
@@ -325,7 +330,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.UNKNOWN);
                     } else if (AmendedSection.WORK.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.WORK);
-                    } 
+                    } else {
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.UNKNOWN);
+                    }
                 }
             }
         })).register();

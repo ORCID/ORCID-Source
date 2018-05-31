@@ -11,14 +11,14 @@ import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.GroupableActivityComparator;
-import org.orcid.jaxb.model.v3.dev1.record.ExternalID;
-import org.orcid.jaxb.model.v3.dev1.record.GroupAble;
-import org.orcid.jaxb.model.v3.dev1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.dev1.record.PeerReview;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewGroupKey;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroupKey;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
@@ -79,7 +79,7 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         PeerReviews result = new PeerReviews();
         for (PeerReviewSummary peerReview : peerReviews) {
-            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.v3.dev1.common.Visibility.PUBLIC)) {
+            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {

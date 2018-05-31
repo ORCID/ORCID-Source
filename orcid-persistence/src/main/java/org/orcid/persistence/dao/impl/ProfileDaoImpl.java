@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -47,13 +48,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      *            The list of desired indexing status
      * @param maxResults
      *            Max number of results
+     * @param delay
+     *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {
-        return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST);
+    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
+        return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST, delay);
     }
 
     /**
@@ -65,14 +68,16 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      *            Max number of results
      * @param orcidsToExclude
      *            List of ORCID id's to exclude from the results
+     * @param delay
+     *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
     @Override
-    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
+    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {
         List<IndexingStatus> indexingStatuses = new ArrayList<>(1);
         indexingStatuses.add(indexingStatus);
-        return findOrcidsByIndexingStatus(indexingStatuses, maxResults, orcidsToExclude);
+        return findOrcidsByIndexingStatus(indexingStatuses, maxResults, orcidsToExclude, delay);
     }
 
     /**
@@ -88,10 +93,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      *         and object[1] contains the indexing status
      */
     @SuppressWarnings("unchecked")
-    @Override
-    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults,
-            Collection<String> orcidsToExclude) {
-        StringBuilder builder = new StringBuilder("SELECT p.orcid, p.indexing_status FROM profile p WHERE p.indexing_status IN :indexingStatus");
+    private List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults,
+            Collection<String> orcidsToExclude, Integer delay) {
+        StringBuilder builder = new StringBuilder("SELECT p.orcid, p.indexing_status FROM profile p WHERE p.indexing_status IN :indexingStatus ");
+        if(delay != null && delay > 0) {
+            builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+        }
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }
@@ -672,7 +679,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public boolean isLocked(String orcid) {
         TypedQuery<Boolean> query = entityManager.createQuery("select recordLocked from ProfileEntity where orcid = :orcid", Boolean.class);
         query.setParameter("orcid", orcid);
-        Boolean result = query.getSingleResult();
+        Boolean result;
+        try {
+            result = query.getSingleResult();
+        } catch (NoResultException nre) {
+            throw new NoResultException("ORCID iD " +  orcid + " not found");
+        }
         return result;
     }
 

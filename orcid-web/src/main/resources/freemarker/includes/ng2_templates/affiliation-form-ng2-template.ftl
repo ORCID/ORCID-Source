@@ -47,7 +47,7 @@
                            <label><@orcid.msg 'manual_affiliation_form_contents.labelorganization'/></label>
                         </span>
                         <span id="remove-disambiguated" class="pull-right">
-                            <a href="javascript:void(0)" (click)="removeDisambiguatedAffiliation()">
+                            <a (click)="removeDisambiguatedAffiliation()">
                                 <span class="glyphicon glyphicon-remove-sign"></span><@orcid.msg 'common.remove'/>
                             </a>
                         </span>
@@ -192,8 +192,7 @@
                             </select>                   
                             <select id="startDay" name="startDay" [(ngModel)]="editAffiliation.startDate.day" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
                                 <#list days?keys as key>
-                                    <option [disabled]="checkAvailableDays(
-                                    '${days[key]}', editAffiliation.startDate.month, editAffiliation.startDate.year)" value="${key}">${days[key]}</option>
+                                    <option value="${key}">${days[key]}</option>
                                 </#list>
                             </select>
                         </div>
@@ -221,8 +220,7 @@
                             <select id="endDay" name="endDay" [(ngModel)]="editAffiliation.endDate.day">
                                 
                                 <#list days?keys as key>
-                                    <option [disabled]="checkAvailableDays(
-                                    '${days[key]}', editAffiliation.endDate.month, editAffiliation.endDate.year)" value="${key}">${days[key]}</option>
+                                    <option value="${key}">${days[key]}</option>
                                 </#list>
                                 
                             </select>

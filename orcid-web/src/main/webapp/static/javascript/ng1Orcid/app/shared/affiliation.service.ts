@@ -125,7 +125,7 @@ export class AffiliationService {
     updateVisibility( obj ): Observable<any> {
         let encoded_data = JSON.stringify( obj );         
         
-        return this.http.post(
+        return this.http.put(
             this.urlAffiliation,
             encoded_data,
             { headers: this.headers }

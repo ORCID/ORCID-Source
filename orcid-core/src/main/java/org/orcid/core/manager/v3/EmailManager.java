@@ -3,9 +3,9 @@ package org.orcid.core.manager.v3;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.record.Email;
-import org.orcid.jaxb.model.v3.dev1.record.Emails;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc1.record.Emails;
 
 
 /**

@@ -290,9 +290,12 @@ privacy-toggle-ng2 .privacy-bar-impr {
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container{
     bottom: 40px;
     display: block;
+    left: auto!important;
     left: initial!important;
+    margin:0 !important;
     margin: initial !important;
     right: calc(50% - 121px);
+    top: auto!important;
     top: initial!important;
     width: 270px;
 }
@@ -303,16 +306,23 @@ privacy-toggle-ng2 .privacy-bar-impr .privacyToggle {
 
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container .popover.privacy-myorcid3, 
 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container .popover.privacy-myorcid3:hover {
+    bottom: auto;
     bottom: initial;
+    left: auto;
     left: initial;
+    margin: auto;
     margin: initial;
     position: relative;
+    right: auto;
     right: initial;
+    top: auto;
     top: initial;
 }
 
 privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.arrow {
+    left: auto;
     left: initial;
+    margin: 0;
     margin: initial;
     right: calc(50% - 11px);
 }
@@ -1782,14 +1792,37 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #fff
 }
 
-.work-title a.toggle-text,.workspace-accordion-header a.toggle-text,.workspace-title a.toggle-text {
+.work-title a.toggle-text,
+.workspace-accordion-header a.toggle-text,
+.workspace-accordion-header h2.toggle-text,
+.workspace-title a.toggle-text {
     color: #fff;
     //display: inline-block;
     font-size: 16px;
     font-weight: 700;
     height: 30px;
     line-height: 31px;
-    width: 100%
+    width: 100%;
+    cursor: pointer;
+}
+
+.workspace-accordion-header h2.toggle-text {
+    width: initial;
+    float: left;
+}
+
+.workspace-accordion-header .popover-help-container {
+    margin-left: 6px;
+    line-height: 31px;
+}
+
+.workspace-accordion-header i.glyphicon-question-sign {
+    color: #338caf;
+    cursor: pointer;
+}
+
+.workspace-accordion-header i.glyphicon-question-sign:hover {
+    color: #a6ce39;
 }
 
 .toggle-text:hover {
@@ -2385,18 +2418,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .privacyToggle+.popover-help-container {
     bottom: 45px;
+    left: auto;
     left: initial;
     position: absolute;
     right: -70px;
+    top: auto;
     top: initial
 }
-/*
-.privacyToggle+.popover-help-container .popover {
-    left: initial;
-    position: relative;
-    right: initial
-}
-*/
 
 .workspace-top .privacyToggle+.popover-help-container .popover.privacy-myorcid3, 
 .workspace-top .privacyToggle+.popover-help-container .popover.privacy-myorcid3:hover {
@@ -4372,8 +4400,10 @@ ul.sources-edit-list>li {
     margin-top: 15px
 }
 
+#workspace-distinction-invited-position .workspace-accordion-header .popover-help-container .popover,
 #workspace-education .workspace-accordion-header .popover-help-container .popover,
 #workspace-employment .workspace-accordion-header .popover-help-container .popover,
+#workspace-membership-service .workspace-accordion-header .popover-help-container .popover,
 #workspace-fundings .workspace-accordion-header .popover-help-container .popover,
 #workspace-publications .workspace-accordion-header .popover-help-container .popover,
 #workspace-peer-review .workspace-accordion-header .popover-help-container .popover,
@@ -5220,7 +5250,6 @@ multiselect .dropdown-menu .dropdown-menu-list {
 
 .close-account-container h4 {
     margin-top: 20px;
-    margin-bottom: 0
 }
 
 .admin-edit-client {
@@ -5974,7 +6003,6 @@ a#reset-password-toggle-text:hover:active {
 .edit-record-emails {
     width: 600px;
     padding: 15px 0 15px 15px;
-    min-height: 678px
 }
 
 .fixed-area .scroll-area input[type=text],.fixed-area .scroll-area input[type=textbox],.fixed-area .scroll-area select {
@@ -8276,7 +8304,9 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .url-popover .popover-help-container .popover {
+    left: auto;
     left: initial;
+    top: auto;
     top: initial;
     position: relative
 }
@@ -8319,6 +8349,7 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .workspace-section-title .edit-option .popover-tooltip {
+    left: auto;
     left: initial;
     right: -25px;
 }
@@ -8343,6 +8374,7 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .popover-registry .popover-help-container .popover {
+    left: auto;
     left: initial;
     right: -127px;
 }

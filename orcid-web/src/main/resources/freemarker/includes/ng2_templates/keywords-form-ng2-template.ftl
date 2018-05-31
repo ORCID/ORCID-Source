@@ -14,7 +14,7 @@
         <div class="row bottomBuffer">
             <div class="row bulk-edit-modal">
                 <div class="pull-right bio-edit-modal">             
-                    <span class="right">Edit all privacy settings</span>
+                    <span class="right"><@orcid.msg 'groups.common.bulk_edit_privacy'/></span>
                     <div class="bulk-privacy-bar">
                         <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
                             <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
@@ -27,24 +27,24 @@
                             <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <strong>Who can see this? </strong>
+                                    <strong><@orcid.msg 'privacyToggle.help.who_can_see'/> </strong>
                                     <ul class="privacyHelp">
-                                        <li class="public" style="color: #009900;">everyone</li>
-                                        <li class="limited" style="color: #ffb027;">trusted parties</li>
-                                        <li class="private" style="color: #990000;">only me</li>
+                                        <li class="public" style="color: #009900;"><@orcid.msg 'privacyToggle.help.everyone'/></li>
+                                        <li class="limited" style="color: #ffb027;"><@orcid.msg 'privacyToggle.help.trusted_parties'/></li>
+                                        <li class="private" style="color: #990000;"><@orcid.msg 'privacyToggle.help.only_me'/></li>
                                     </ul>
-                                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">More information on privacy settings</a>
-                                </div>                
+                                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information'/></a>
+                                </div>              
                             </div>                              
                         </div>
 
                     </div>
                     <div class="bulk-help popover-help-container">
-                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <i class="glyphicon glyphicon-question-sign"></i>
                         <div id="bulk-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">
-                                <p>Use Edit all privacy settings to change the visibility level of all items, or Edit individual privacy settings to select different visibility levels for each item.</p>
+                                <p><@orcid.msg 'groups.common.bulk_edit_privacy_help'/></p>
                             </div>
                        </div>
                     </div>
@@ -63,7 +63,7 @@
                         <div class="row aka-row" *ngFor="let keyword of formData.keywords; let index = index; let first = first; let last = last;">      
                             <div class="col-md-6">
                                 <div class="aka" *ngIf="keyword">                                       
-                                    <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" focus-me="newInput" />
+                                    <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !keyword.content}" />
                                     <span *ngIf="keyword.source != orcidId">{{keyword.content}}</span>                                     
                                 </div>
                                 <div class="source" *ngIf="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="keyword.sourceName">{{keyword.sourceName}}</span><span *ngIf="keyword.sourceName == null">{{orcidId}}</span></div>      
@@ -80,7 +80,7 @@
                                         <@orcid.tooltipNg2 elementId="'tooltip-keyword-move-down-'+index" message="common.modals.move_down" />                                            
                                     </li>
                                     <li>                                        
-                                        <div class="glyphicon glyphicon-trash" (click)="deleteKeyword(keyword)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-delete-'+index)"></div>
+                                        <div class="delete-keyword glyphicon glyphicon-trash" (click)="deleteKeyword(keyword, index)" (mouseenter)="commonSrvc.showTooltip('tooltip-keyword-delete-'+index, $event, 37, 50, 39)" (mouseleave)="commonSrvc.hideTooltip('tooltip-keyword-delete-'+index)"></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-keyword-delete-'+index" message="common.modals.delete" />                                          
                                     </li>
                                     <li>

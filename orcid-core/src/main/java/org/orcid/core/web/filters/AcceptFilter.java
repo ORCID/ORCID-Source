@@ -44,7 +44,7 @@ public class AcceptFilter extends OncePerRequestFilter {
             if (isValidAcceptType(contentType))
                 requestWrapper = new AcceptHeaderRequestWrapper(request, contentType);
             else
-                if (OrcidUrlManager.getPathWithoutContextPath(request).startsWith("/oauth/"))
+                if (isStandardJsonRequest(request))
                     requestWrapper = new AcceptHeaderRequestWrapper(request, MediaType.APPLICATION_JSON);
                 else
                     requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
@@ -52,6 +52,11 @@ public class AcceptFilter extends OncePerRequestFilter {
         } else {
             filterChain.doFilter(request, response);
         }
+    }
+
+    private boolean isStandardJsonRequest(HttpServletRequest request) {
+        String path = OrcidUrlManager.getPathWithoutContextPath(request);
+        return path.startsWith("/oauth/") || path.endsWith("/pubStatus") || path.endsWith("/apiStatus");
     }
 
     private boolean isValidAcceptType(String testAccept) {

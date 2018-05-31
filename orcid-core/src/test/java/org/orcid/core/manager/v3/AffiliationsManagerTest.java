@@ -19,30 +19,34 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.v3.dev1.common.Day;
-import org.orcid.jaxb.model.v3.dev1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.dev1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.dev1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.dev1.common.Month;
-import org.orcid.jaxb.model.v3.dev1.common.Organization;
-import org.orcid.jaxb.model.v3.dev1.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.dev1.common.Visibility;
-import org.orcid.jaxb.model.v3.dev1.common.Year;
-import org.orcid.jaxb.model.v3.dev1.record.Affiliation;
-import org.orcid.jaxb.model.v3.dev1.record.Distinction;
-import org.orcid.jaxb.model.v3.dev1.record.Education;
-import org.orcid.jaxb.model.v3.dev1.record.Employment;
-import org.orcid.jaxb.model.v3.dev1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.dev1.record.Membership;
-import org.orcid.jaxb.model.v3.dev1.record.Qualification;
-import org.orcid.jaxb.model.v3.dev1.record.Service;
-import org.orcid.jaxb.model.v3.dev1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.dev1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.Organization;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.Distinction;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc1.record.Membership;
+import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -441,9 +445,184 @@ public class AffiliationsManagerTest extends BaseTest {
         assertTrue(found5);
     }
     
+    @Test
+    public void testGroupAffiliationsDistinctions() {
+        List<DistinctionSummary> distinctionSummaries = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            DistinctionSummary distinctionSummary = getDistinctionSummary();
+            distinctionSummary.setDepartmentName("department" + i);
+            distinctionSummary.setDisplayIndex(String.valueOf(i));
+            distinctionSummary.setRoleTitle("role" + i);
+            ExternalIDs externalIDs = new ExternalIDs();
+            externalIDs.getExternalIdentifier().add(getExternalID("some-external-id-type", i % 2 == 0 ? "0" : "1"));
+            distinctionSummary.setExternalIDs(externalIDs);
+            distinctionSummaries.add(distinctionSummary);
+        }
+        List<AffiliationGroup<DistinctionSummary>> groups = affiliationsManager.groupAffiliations(distinctionSummaries, true);
+        assertEquals(2, groups.size());
+        
+        AffiliationGroup<DistinctionSummary> group1 = groups.get(0);
+        AffiliationGroup<DistinctionSummary> group2 = groups.get(1);
+        
+        assertEquals(5, group1.getActivities().size());
+        assertEquals(5, group2.getActivities().size());
+    }
+    
+    @Test
+    public void testGroupAffiliationsEducations() {
+        List<EducationSummary> educationSummaries = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            EducationSummary educationSummary = getEducationSummary();
+            educationSummary.setDepartmentName("department" + i);
+            educationSummary.setDisplayIndex(String.valueOf(i));
+            educationSummary.setRoleTitle("role" + i);
+            ExternalIDs externalIDs = new ExternalIDs();
+            externalIDs.getExternalIdentifier().add(getExternalID("some-external-id-type", i % 2 == 0 ? "0" : "1"));
+            educationSummary.setExternalIDs(externalIDs);
+            educationSummaries.add(educationSummary);
+        }
+        List<AffiliationGroup<EducationSummary>> groups = affiliationsManager.groupAffiliations(educationSummaries, true);
+        assertEquals(2, groups.size());
+        
+        AffiliationGroup<EducationSummary> group1 = groups.get(0);
+        AffiliationGroup<EducationSummary> group2 = groups.get(1);
+        
+        assertEquals(5, group1.getActivities().size());
+        assertEquals(5, group2.getActivities().size());
+    }
+    
+    @Test
+    public void testGroupAffiliationsEmployments() {
+        List<EmploymentSummary> employmentSummaries = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            EmploymentSummary employmentSummary = getEmploymentSummary();
+            employmentSummary.setDepartmentName("department" + i);
+            employmentSummary.setDisplayIndex(String.valueOf(i));
+            employmentSummary.setRoleTitle("role" + i);
+            ExternalIDs externalIDs = new ExternalIDs();
+            externalIDs.getExternalIdentifier().add(getExternalID("some-external-id-type", i % 2 == 0 ? "0" : "1"));
+            employmentSummary.setExternalIDs(externalIDs);
+            employmentSummaries.add(employmentSummary);
+        }
+        List<AffiliationGroup<EmploymentSummary>> groups = affiliationsManager.groupAffiliations(employmentSummaries, true);
+        assertEquals(2, groups.size());
+        
+        AffiliationGroup<EmploymentSummary> group1 = groups.get(0);
+        AffiliationGroup<EmploymentSummary> group2 = groups.get(1);
+        
+        assertEquals(5, group1.getActivities().size());
+        assertEquals(5, group2.getActivities().size());
+    }
+    
+    @Test
+    public void testGroupAffiliationsInvitedPositions() {
+        List<InvitedPositionSummary> invitedPositionSummaries = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            InvitedPositionSummary invitedPositionSummary = getInvitedPositionSummary();
+            invitedPositionSummary.setDepartmentName("department" + i);
+            invitedPositionSummary.setDisplayIndex(String.valueOf(i));
+            invitedPositionSummary.setRoleTitle("role" + i);
+            ExternalIDs externalIDs = new ExternalIDs();
+            externalIDs.getExternalIdentifier().add(getExternalID("some-external-id-type", i % 2 == 0 ? "0" : "1"));
+            invitedPositionSummary.setExternalIDs(externalIDs);
+            invitedPositionSummaries.add(invitedPositionSummary);
+        }
+        List<AffiliationGroup<InvitedPositionSummary>> groups = affiliationsManager.groupAffiliations(invitedPositionSummaries, true);
+        assertEquals(2, groups.size());
+        
+        AffiliationGroup<InvitedPositionSummary> group1 = groups.get(0);
+        AffiliationGroup<InvitedPositionSummary> group2 = groups.get(1);
+        
+        assertEquals(5, group1.getActivities().size());
+        assertEquals(5, group2.getActivities().size());
+    }
+    
+    @Test
+    public void testGroupAffiliationsMemberships() {
+        List<MembershipSummary> membershipSummaries = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            MembershipSummary membershipSummary = getMembershipSummary();
+            membershipSummary.setDepartmentName("department" + i);
+            membershipSummary.setDisplayIndex(String.valueOf(i));
+            membershipSummary.setRoleTitle("role" + i);
+            ExternalIDs externalIDs = new ExternalIDs();
+            externalIDs.getExternalIdentifier().add(getExternalID("some-external-id-type", i % 2 == 0 ? "0" : "1"));
+            membershipSummary.setExternalIDs(externalIDs);
+            membershipSummaries.add(membershipSummary);
+        }
+        List<AffiliationGroup<MembershipSummary>> groups = affiliationsManager.groupAffiliations(membershipSummaries, true);
+        assertEquals(2, groups.size());
+        
+        AffiliationGroup<MembershipSummary> group1 = groups.get(0);
+        AffiliationGroup<MembershipSummary> group2 = groups.get(1);
+        
+        assertEquals(5, group1.getActivities().size());
+        assertEquals(5, group2.getActivities().size());
+        
+    }
+    
+    @Test
+    public void testGroupAffiliationsQualifications() {
+        List<QualificationSummary> qualificationSummaries = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            QualificationSummary qualificationSummary = getQualificationSummary();
+            qualificationSummary.setDepartmentName("department" + i);
+            qualificationSummary.setDisplayIndex(String.valueOf(i));
+            qualificationSummary.setRoleTitle("role" + i);
+            ExternalIDs externalIDs = new ExternalIDs();
+            externalIDs.getExternalIdentifier().add(getExternalID("some-external-id-type", i % 2 == 0 ? "0" : "1"));
+            qualificationSummary.setExternalIDs(externalIDs);
+            qualificationSummaries.add(qualificationSummary);
+        }
+        List<AffiliationGroup<QualificationSummary>> groups = affiliationsManager.groupAffiliations(qualificationSummaries, true);
+        assertEquals(2, groups.size());
+        
+        AffiliationGroup<QualificationSummary> group1 = groups.get(0);
+        AffiliationGroup<QualificationSummary> group2 = groups.get(1);
+        
+        assertEquals(5, group1.getActivities().size());
+        assertEquals(5, group2.getActivities().size());
+    }
+    
+    @Test
+    public void testGroupAffiliationsServices() {
+        List<ServiceSummary> serviceSummaries = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            ServiceSummary serviceSummary = getServiceSummary();
+            serviceSummary.setDepartmentName("departmentName" + i);
+            serviceSummary.setDisplayIndex(String.valueOf(i));
+            serviceSummary.setRoleTitle("roleTitle" + i);
+            ExternalIDs externalIDs = new ExternalIDs();
+            externalIDs.getExternalIdentifier().add(getExternalID("some-external-id-type", i % 2 == 0 ? "0" : "1"));
+            serviceSummary.setExternalIDs(externalIDs);
+            serviceSummaries.add(serviceSummary);
+        }
+        List<AffiliationGroup<ServiceSummary>> groups = affiliationsManager.groupAffiliations(serviceSummaries, true);
+        assertEquals(2, groups.size());
+        
+        AffiliationGroup<ServiceSummary> group1 = groups.get(0);
+        AffiliationGroup<ServiceSummary> group2 = groups.get(1);
+        
+        assertEquals(5, group1.getActivities().size());
+        assertEquals(5, group2.getActivities().size());
+    }
+    
+    private ExternalID getExternalID(String type, String value) {
+        ExternalID externalID = new ExternalID();
+        externalID.setType(type);
+        externalID.setValue(value);
+        return externalID;
+    }
+    
     private Distinction getDistinction() {
         Distinction element = new Distinction();
         fillAffiliation(element);
+        return element;
+    }
+    
+    private DistinctionSummary getDistinctionSummary() {
+        DistinctionSummary element = new DistinctionSummary();
+        fillAffiliationSummary(element);
         return element;
     }
     
@@ -453,9 +632,21 @@ public class AffiliationsManagerTest extends BaseTest {
         return element;
     }
     
+    private EducationSummary getEducationSummary() {
+        EducationSummary element = new EducationSummary();
+        fillAffiliationSummary(element);
+        return element;
+    }
+    
     private Employment getEmployment() {
         Employment element = new Employment();
         fillAffiliation(element);
+        return element;
+    }
+    
+    private EmploymentSummary getEmploymentSummary() {
+        EmploymentSummary element = new EmploymentSummary();
+        fillAffiliationSummary(element);
         return element;
     }
     
@@ -465,9 +656,21 @@ public class AffiliationsManagerTest extends BaseTest {
         return element;
     }
     
+    private InvitedPositionSummary getInvitedPositionSummary() {
+        InvitedPositionSummary element = new InvitedPositionSummary();
+        fillAffiliationSummary(element);
+        return element;
+    }
+    
     private Membership getMembership() {
         Membership element = new Membership();
         fillAffiliation(element);
+        return element;
+    }
+    
+    private MembershipSummary getMembershipSummary() {
+        MembershipSummary element = new MembershipSummary();
+        fillAffiliationSummary(element);
         return element;
     }
     
@@ -477,9 +680,21 @@ public class AffiliationsManagerTest extends BaseTest {
         return element;
     }
     
+    private QualificationSummary getQualificationSummary() {
+        QualificationSummary element = new QualificationSummary();
+        fillAffiliationSummary(element);
+        return element;
+    }
+    
     private Service getService() {
         Service element = new Service();
         fillAffiliation(element);
+        return element;
+    }
+    
+    private ServiceSummary getServiceSummary() {
+        ServiceSummary element = new ServiceSummary();
+        fillAffiliationSummary(element);
         return element;
     }
     
@@ -498,4 +713,20 @@ public class AffiliationsManagerTest extends BaseTest {
         aff.setStartDate(new FuzzyDate(new Year(2016), new Month(3), new Day(29)));
         aff.setVisibility(Visibility.PUBLIC);
     }
+    
+    private void fillAffiliationSummary(AffiliationSummary aff) {
+        Organization org = new Organization();
+        org.setName("org-name");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        org.setAddress(address);
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        org.setDisambiguatedOrganization(disambiguatedOrg);
+        aff.setOrganization(org);
+        aff.setStartDate(new FuzzyDate(new Year(2016), new Month(3), new Day(29)));
+        aff.setVisibility(Visibility.PUBLIC);
+    } 
 }
