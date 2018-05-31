@@ -24,8 +24,8 @@ import { Subscription }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
-import { RequestPasswordResetService } 
-    from '../../shared/requestPasswordReset.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 
 @Component({
@@ -44,22 +44,24 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     resetPasswordToggleText: any;
     requestResetPassword: any;
     showSendResetLinkError: any;
+    url_path: string;
 
     constructor(
         private cdr:ChangeDetectorRef,
         private commonService: CommonService,
         private elementRef: ElementRef, 
-        private requestPasswordResetService: RequestPasswordResetService,
+        private requestPasswordResetService: GenericService,
     ) {
         this.authorizationForm = elementRef.nativeElement.getAttribute('authorizationForm');
         this.showDeactivatedError = elementRef.nativeElement.getAttribute('showDeactivatedError');
         this.showReactivationSent = elementRef.nativeElement.getAttribute('showReactivationSent');
         this.showSendResetLinkError = false;
         this.requestResetPassword = {};
+        this.url_path = '/reset-password.json';
     }
 
     getRequestResetPassword(): void {
-        this.requestPasswordResetService.getResetPasswordRequest( )
+        this.requestPasswordResetService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -77,7 +79,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         this.showSendResetLinkError = false;
         this.showDeactivatedError = false;
 
-        this.requestPasswordResetService.postResetPasswordRequest( this.requestResetPassword )
+        this.requestPasswordResetService.setData( this.requestResetPassword, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

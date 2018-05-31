@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { WebsitesService } 
-    from '../../shared/websites.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -43,12 +43,13 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     scrollTop: any;
     showEdit: any;
     showElement: any;
+    url_path: any;
 
     constructor( 
         private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private modalService: ModalService,
-        private websitesService: WebsitesService
+        private websitesService: GenericService
     ) {
         this.defaultVisibility = null;
         this.emails = {};
@@ -62,6 +63,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.scrollTop = 0;
         this.showEdit = false;
         this.showElement = {};
+        this.url_path = '/my-orcid/websitesForms.json';
     }
 
     addNew(): void {
@@ -114,7 +116,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getformData(): void {
-        this.websitesService.getData()
+        this.websitesService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -164,7 +166,7 @@ export class WebsitesFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setFormData( closeAfterAction ): void {
-        this.websitesService.setData( this.formData )
+        this.websitesService.setData( this.formData, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

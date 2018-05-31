@@ -23,12 +23,10 @@
     "core-js": "^2.4.1",
     "intl": "~1.2.5",
     "jquery": "^3.2.1",
-    "mdn-polyfills": "~3.4.0",
-    
+    "mdn-polyfills": "~3.4.0",   
     "reflect-metadata": "^0.1.9",
     "rxjs": "^5.4.2",
     "systemjs": "0.19.40",
-    
     "xml2js": "^0.4.19",
     "zone.js": "^0.7.6"
   },

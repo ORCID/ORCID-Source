@@ -117,12 +117,6 @@ import { CommonService }
 import { ConsortiaService }
     from '../../shared/consortia.service.ts'
 
-import { DelegatorsService }
-    from '../../shared/delegators.service.ts';
-
-import { DeprecateProfileService }
-    from '../../shared/deprecateProfile.service.ts';
-
 import { DiscoService }
     from '../../shared/disco.service.ts';
 
@@ -141,12 +135,6 @@ import { FundingService }
 import { GenericService } 
     from '../../shared/generic.service.ts';
 
-//import { GroupedActivitiesUtilService } 
-//    from '../shared/groupedActivities.service.ts';
-
-import { KeywordsService } 
-    from '../../shared/keywords.service.ts';
-
 import { LanguageService }
     from '../../shared/language.service.ts';
 
@@ -155,9 +143,6 @@ import { ManageMembersService }
 
 import { ModalService } 
     from '../../shared/modal.service.ts';
-
-import { NameService } 
-    from '../../shared/name.service.ts';
 
 import { NotificationsService } 
     from '../../shared/notifications.service.ts';
@@ -174,26 +159,17 @@ import { PreferencesService }
 import { ReactivationService }
     from '../../shared/reactivation.service.ts';
 
-import { RequestPasswordResetService }
-    from '../../shared/requestPasswordReset.service.ts';
-
 import { SearchService } 
     from '../../shared/search.service.ts';
 
 import { SocialNetworkService }
     from '../../shared/socialNetwork.service.ts';
 
-import { StaticsService }
-    from '../../shared/statics.service.ts';
-
 import { SwitchUserService } 
     from '../../shared/switchUser.service.ts';
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
-
-import { WebsitesService } 
-    from '../../shared/websites.service.ts';
 
 import { WidgetService }
     from '../../shared/widget.service.ts'
@@ -272,8 +248,6 @@ import { EmailFrequencyService }
             ClientService,
             CommonService,
             ConsortiaService,
-            DelegatorsService,
-            DeprecateProfileService,
             DiscoService,
             EmailFrequencyService,
             EmailService,
@@ -281,24 +255,18 @@ import { EmailFrequencyService }
             FeaturesService,
             FundingService,
             GenericService,
-            //GroupedActivitiesUtilService,
-            KeywordsService,
             LanguageService,
             ManageMembersService,
             ModalService,
-            NameService,
             NotificationsService,
             OauthService,
             PasswordService,
             PreferencesService,
             ReactivationService,
-            RequestPasswordResetService,
             SearchService,
             SocialNetworkService,
-            StaticsService,
             TwoFAStateService,
             SwitchUserService,
-            WebsitesService,
             WidgetService,
             WorksService,
             WorkspaceService

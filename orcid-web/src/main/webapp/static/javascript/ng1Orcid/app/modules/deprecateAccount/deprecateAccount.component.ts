@@ -15,8 +15,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { DeprecateProfileService } 
-    from '../../shared/deprecateProfile.service.ts'; 
+import { GenericService } 
+    from '../../shared/generic.service.ts'; 
 
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
@@ -29,12 +29,14 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     deprecateProfilePojo: any;
+    url_path: string;
 
     constructor(
-        private deprecateProfileService: DeprecateProfileService,
+        private deprecateProfileService: GenericService,
         private modalService: ModalService
     ) {
         this.deprecateProfilePojo = {};
+        this.url_path = '/account/deprecate-profile.json';
     }
 
     closeEditModal(): void{
@@ -43,7 +45,7 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
 
     getDeprecateProfile(): void {
 
-        this.deprecateProfileService.getFormData()
+        this.deprecateProfileService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -58,7 +60,7 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
     };
 
     submitModal(): void {
-        this.deprecateProfileService.setFormData( this.deprecateProfilePojo )
+        this.deprecateProfileService.setData( this.deprecateProfilePojo, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

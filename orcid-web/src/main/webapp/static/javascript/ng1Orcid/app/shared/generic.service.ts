@@ -16,6 +16,7 @@ import 'rxjs/Rx';
 export class GenericService {
     private headers: HttpHeaders;
     private notify = new Subject<any>();
+    private objAlsoKnownAs: any;
     private url: string;
     
     notifyObservable$ = this.notify.asObservable();
@@ -28,6 +29,10 @@ export class GenericService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
+        this.objAlsoKnownAs = {
+            data: null,
+            hasNewData: true
+        };
         this.url = getBaseUri();
     }
 
@@ -35,10 +40,25 @@ export class GenericService {
         this.notify.next();
     }
 
-    getData( url_path ): Observable<any> {
+    getData( url_path: string, requestComponent?: string ): Observable<any> {
+        if( requestComponent == "alsoKnownAs" ){
+
+            if( this.objAlsoKnownAs.data != null 
+                && this.objAlsoKnownAs.hasNewData == false ){
+                return this.objAlsoKnownAs.data;
+                
+            }
+            else {
+                return this.http.get(
+                    this.url + url_path
+                )
+            }
+        }
+
         return this.http.get(
-            this.url + url_path
-        )
+                this.url + url_path
+            )
+
         
     }
 

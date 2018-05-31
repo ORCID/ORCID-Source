@@ -48,7 +48,7 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     getformData(): void {
-        this.alsoKnownAsService.getData( this.url_path )
+        this.alsoKnownAsService.getData( this.url_path, 'alsoKnownAs' )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

@@ -1,4 +1,6 @@
-var webpack = require('webpack');
+const MinifyPlugin = require("babel-minify-webpack-plugin");
+const webpack = require('webpack');
+
 
 module.exports = {
     entry: "./require.js",
