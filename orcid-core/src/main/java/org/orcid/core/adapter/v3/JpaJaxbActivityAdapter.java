@@ -18,5 +18,5 @@ public interface JpaJaxbActivityAdapter <M,E,S>{
     
     List<S> toSummaries(Collection<E> entities);
     
-    E toEntity(M ResearchResource, E existing);
+    E toEntity(M model, E existing);
 }

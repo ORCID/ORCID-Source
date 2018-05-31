@@ -170,7 +170,69 @@ public class ResearchResourceManagerTest extends BaseTest {
         assertNotNull(rrr2);
     }
     
+    @Test
+    public void testUpdate(){
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        ResearchResource r1 = researchResourceManager.createResearchResource(USER_ORCID,generateResearchResourceWithItems("title5","id5"),true);
+        ResearchResource r2 = generateResearchResourceWithItems("title5","id5");
+        r2.setPutCode(r1.getPutCode());
+        r2.getProposal().setTitle(new ResearchResourceTitle());
+        r2.getProposal().getTitle().setTitle(new Title("changedTitle"));
+        
+        Organization org1 = new Organization();
+        org1.setName("changedOrg");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        org1.setAddress(address);
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        org1.setDisambiguatedOrganization(disambiguatedOrg);
+        
+        r2.getProposal().getHosts().setOrganization(new ArrayList<Organization>());
+        r2.getProposal().getHosts().getOrganization().add(org1);
+        
+        r2.getResourceItems().get(0).getHosts().getOrganization().set(0, org1);
+        assertEquals("title5-item1",r2.getResourceItems().get(0).getResourceName());
+        r2.getResourceItems().get(0).setResourceName("changedResourceName");
+        assertEquals("changedResourceName",r2.getResourceItems().get(0).getResourceName());
+        
+        ResearchResource r3 = researchResourceManager.updateResearchResource(USER_ORCID, r2, true);
+        assertEquals("changedTitle",r3.getProposal().getTitle().getTitle().getContent());
+        assertEquals(1,r3.getProposal().getHosts().getOrganization().size());
+        assertEquals("changedOrg",r3.getProposal().getHosts().getOrganization().get(0).getName());
+        assertEquals("abc456",r3.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals(2,r3.getResourceItems().get(0).getHosts().getOrganization().size());
+        assertEquals("changedOrg",r3.getResourceItems().get(0).getHosts().getOrganization().get(0).getName());
+        assertEquals("changedResourceName",r3.getResourceItems().get(0).getResourceName());
+        
+        ResearchResource r4 = researchResourceManager.getResearchResource(USER_ORCID, r1.getPutCode());
+        assertEquals("changedTitle",r4.getProposal().getTitle().getTitle().getContent());
+        assertEquals(1,r4.getProposal().getHosts().getOrganization().size());
+        assertEquals("changedOrg",r4.getProposal().getHosts().getOrganization().get(0).getName());
+        assertEquals("abc456",r4.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals(2,r4.getResourceItems().get(0).getHosts().getOrganization().size());
+        //TODO: fix ordering so it's by the order added, not created.
+        assertEquals("changedOrg",r4.getResourceItems().get(0).getHosts().getOrganization().get(1).getName());
+        assertEquals("changedResourceName",r4.getResourceItems().get(0).getResourceName());
+    }
+
+    @Test(expected = javax.persistence.NoResultException.class)
+    public void testDelete(){
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        ResearchResource rr1 = researchResourceManager.createResearchResource(USER_ORCID, generateResearchResource("title6","id6"), true);
+        researchResourceManager.checkSourceAndRemoveResearchResource(USER_ORCID, rr1.getPutCode());
+        ResearchResource rr2 = researchResourceManager.getResearchResource(USER_ORCID, rr1.getPutCode());
+    }
     
+    @Test
+    public void testUpdateOrgDoesntUpdateDiambiguatedOrg(){
+        
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   
     public ResearchResource generateResearchResourceWithoutDisambiguatedOrg(String title, String extIdValue){
         ResearchResource rr = generateResearchResource(title,extIdValue);
         for (Organization o : rr.getProposal().getHosts().getOrganization())

@@ -3,7 +3,7 @@ package org.orcid.core.manager.v3;
 import java.util.ArrayList;
 
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 
 public interface ResearchResourceManager extends ResearchResourceManagerReadOnly{
@@ -20,8 +20,9 @@ public interface ResearchResourceManager extends ResearchResourceManagerReadOnly
      *            the researchResource owner
      * @param researchResourceId
      *            The researchResource id
+     * @return 
      * */
-    void checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId);
+    boolean checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId);
 
     /**
      * Updates the display index of a given peer review

@@ -17,19 +17,15 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ResearchResourceManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
 import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem;
 import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
-import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnlyImpl implements ResearchResourceManager {
@@ -107,24 +103,64 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
 
     @Override
     public ResearchResource updateResearchResource(String orcid, ResearchResource rr, boolean isApiRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        ResearchResourceEntity rre = rrDao.getResearchResource(orcid, rr.getPutCode());
+        Visibility originalVisibility = Visibility.valueOf(rre.getVisibility());
+        
+        //Save the original source
+        String existingSourceId = rre.getSourceId();
+        String existingClientSourceId = rre.getClientSourceId();
+        
+        activityValidator.validateResearchResource(rr, sourceEntity, false, isApiRequest, originalVisibility);
+        if(!isApiRequest) {
+            List<ResearchResourceEntity> existingFundings = rrDao.getByUser(orcid, getLastModified(orcid));
+            for(ResearchResourceEntity existingFunding : existingFundings) {
+                ResearchResource existing = jpaJaxbResearchResourceAdapter.toModel(existingFunding);
+                if(!existing.getPutCode().equals(rr.getPutCode())) {
+                    activityValidator.checkExternalIdentifiersForDuplicates(rr.getProposal().getExternalIdentifiers(),
+                                     rr.getProposal().getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                }
+            }
+        }       
+                
+        orcidSecurityManager.checkSource(rre);
+        
+        jpaJaxbResearchResourceAdapter.toEntity(rr, rre);
+        rre.setVisibility(originalVisibility.name());        
+        
+        //Be sure it doesn't overwrite the source
+        rre.setSourceId(existingSourceId);
+        rre.setClientSourceId(existingClientSourceId);
+        
+        List<OrgEntity> updatedOrganizations = orgManager.getOrgEntities(rr.getProposal().getHosts());
+        rre.setHosts(updatedOrganizations);
+        //set the orgs and parent for the items
+        for (int i=0;i<rr.getResourceItems().size();i++){
+            List<OrgEntity> itemOrganizations = orgManager.getOrgEntities(rr.getResourceItems().get(i).getHosts());
+            rre.getResourceItems().get(i).setHosts(itemOrganizations);
+            rre.getResourceItems().get(i).setResearchResourceEntity(rre);
+        }
+        
+        rre = rrDao.merge(rre);
+        rrDao.flush();
+        if(!isApiRequest) {
+            notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(rre));
+        }
+        return jpaJaxbResearchResourceAdapter.toModel(rre);
     }
 
     @Override
-    public void checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+    @Transactional
+    public boolean checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId) {
+        ResearchResourceEntity rr = rrDao.getResearchResource(orcid, researchResourceId);
+        orcidSecurityManager.checkSource(rr);        
+        boolean result = rrDao.removeResearchResource(orcid, researchResourceId);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(rr));
+        return result;
     }
 
     @Override
     public boolean updateToMaxDisplay(String orcid, Long researchResourceId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, Visibility visibility) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
@@ -151,6 +187,12 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         item.setItemType(ItemType.RESEARCH_RESOURCE);
         item.setPutCode(String.valueOf(researchResourceEntity.getId()));
         return Arrays.asList(item);
+    }
+
+    @Override
+    public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, Visibility visibility) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();  
     }
 
 }
