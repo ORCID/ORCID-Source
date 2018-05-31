@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,10 +16,33 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.InvalidDisambiguatedOrgException;
+import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.Organization;
+import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc1.common.Title;
+import org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceProposal;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceTitle;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.persistence.dao.ResearchResourceDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
 public class ResearchResourceManagerTest extends BaseTest {
@@ -28,12 +51,13 @@ public class ResearchResourceManagerTest extends BaseTest {
     
     private static String USER_ORCID = "0000-0000-0000-0003";
     private static String OTHER_USER_ORCID = "4444-4444-4444-4446";
+    private static final String CLIENT_1_ID = "4444-4444-4444-4498";
     
     @Mock
     private SourceManager sourceManager;
     
     @Resource(name = "researchResourceManagerV3")
-    private ResearchResourceManagerReadOnly researchResourceManager;
+    private ResearchResourceManager researchResourceManager;
 
     @Resource(name = "researchResourceManagerReadOnlyV3")
     private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
@@ -84,7 +108,169 @@ public class ResearchResourceManagerTest extends BaseTest {
     public void testViewSummaries(){
         List<ResearchResourceSummary> r = researchResourceManagerReadOnly.getResearchResourceSummaryList(OTHER_USER_ORCID);
         assertEquals(3,r.size());
+        ResearchResources rr = researchResourceManagerReadOnly.groupResearchResources(r, true);
+        assertEquals(2,rr.getResearchResourceGroup().size()); 
     }
+    
+    @Test(expected = InvalidDisambiguatedOrgException.class)
+    public void testCreateWithoutDisambiguatedOrg(){
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        researchResourceManager.createResearchResource(USER_ORCID, generateResearchResourceWithoutDisambiguatedOrg("title1","id1"), true);
+    }
+
+    @Test
+    public void testCreateWithoutDisambiguatedOrg2(){
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        researchResourceManager.createResearchResource(USER_ORCID, generateResearchResourceWithoutDisambiguatedOrg("title1","id2"), false);
+    }
+
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void testCreateWithoutExternalIdentifiers(){
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        researchResourceManager.createResearchResource(USER_ORCID, generateResearchResourceWithoutExternalID("title1","id2"), false);
+    }
+
+    @Test
+    public void testCreate(){
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        ResearchResource rr1 = researchResourceManager.createResearchResource(USER_ORCID, generateResearchResource("title2","id2"), true);
+        assertNotNull(rr1.getCreatedDate());
+        assertNotNull(rr1.getLastModifiedDate());
+        assertNotNull(rr1.getPutCode());
+        assertNotNull(rr1.getSource());
+        assertEquals(CLIENT_1_ID,rr1.getSource().getSourceClientId().getPath());
+        assertNotNull(rr1.getVisibility());
+        assertEquals(Visibility.PUBLIC,rr1.getVisibility());
+        assertNotNull(rr1.getProposal());
+        assertEquals("title2",rr1.getProposal().getTitle().getTitle().getContent());
+        assertNotNull(rr1.getProposal().getHosts());
+        assertEquals(2,rr1.getProposal().getHosts().getOrganization().size());
+        assertNotNull(rr1.getProposal().getHosts().getOrganization().get(0));
+        assertEquals("orgName",rr1.getProposal().getHosts().getOrganization().get(0).getName());
+        assertNotNull(rr1.getProposal().getStartDate());
+        assertEquals("2011",rr1.getProposal().getStartDate().getYear().getValue());
+        assertNotNull(rr1.getProposal().getEndDate());
+        assertEquals("2012",rr1.getProposal().getEndDate().getYear().getValue());
+        assertEquals(1,rr1.getProposal().getExternalIdentifiers().getExternalIdentifier().size());
+        
+        ResearchResource rr2 = researchResourceManager.createResearchResource(USER_ORCID, generateResearchResourceWithItems("title4","id4"), true);
+        assertNotNull(rr2.getResourceItems());
+        assertEquals(2,rr2.getResourceItems().size());
+        assertNotNull(rr2.getResourceItems().get(0));
+        assertNotNull(rr2.getResourceItems().get(0).getHosts());
+        assertNotNull(rr2.getResourceItems().get(0).getHosts().getOrganization().get(0));
+        
+        ResearchResourceSummary rs1 = researchResourceManagerReadOnly.getResearchResourceSummary(USER_ORCID, rr1.getPutCode());
+        assertNotNull(rs1);
+        ResearchResourceSummary rs2 = researchResourceManagerReadOnly.getResearchResourceSummary(USER_ORCID, rr2.getPutCode());
+        assertNotNull(rs2);
+        ResearchResource rrr1 = researchResourceManagerReadOnly.getResearchResource(USER_ORCID, rr1.getPutCode());
+        assertNotNull(rrr1);
+        ResearchResource rrr2 = researchResourceManagerReadOnly.getResearchResource(USER_ORCID, rr2.getPutCode());
+        assertNotNull(rrr2);
+    }
+    
+    
+    public ResearchResource generateResearchResourceWithoutDisambiguatedOrg(String title, String extIdValue){
+        ResearchResource rr = generateResearchResource(title,extIdValue);
+        for (Organization o : rr.getProposal().getHosts().getOrganization())
+            o.setDisambiguatedOrganization(null);
+        return rr;
+    }
+    
+    public ResearchResource generateResearchResourceWithoutExternalID(String title, String extIdValue){
+        ResearchResource rr = generateResearchResource(title,extIdValue);
+        rr.getProposal().setExternalIdentifiers(null);
+        return rr;
+    }
+    public ResearchResource generateResearchResource(String title, String extIdValue){
+        ResearchResource rr = new ResearchResource();
+        ResearchResourceProposal rp = new ResearchResourceProposal();
+        rr.setProposal(rp);
+        rp.setUrl(new Url("http://blah.com"));
+        rp.setTitle(new ResearchResourceTitle());
+        rp.getTitle().setTitle(new Title(title));
+        rp.getTitle().setTranslatedTitle(new TranslatedTitle("translatedTitle","EN"));
+        
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://orcid.org"));        
+        extId.setValue(extIdValue);               
+        extIds.getExternalIdentifier().add(extId);
+        rp.setExternalIdentifiers(extIds);
+        rp.setEndDate(new FuzzyDate(new Year(2012),new Month(1),new Day(1)));
+        rp.setStartDate(new FuzzyDate(new Year(2011),new Month(1),new Day(1)));
+        Organization org1 = new Organization();
+        org1.setName("orgName");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        org1.setAddress(address);
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        org1.setDisambiguatedOrganization(disambiguatedOrg);
+        Organization org2 = new Organization();
+        org2.setName("orgName2");
+        org2.setAddress(address);
+        DisambiguatedOrganization disambiguatedOrg2 = new DisambiguatedOrganization();
+        disambiguatedOrg2.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg2.setDisambiguationSource("WDB");
+        org2.setDisambiguatedOrganization(disambiguatedOrg2);
+        rp.getHosts().getOrganization().add(org1);
+        rp.getHosts().getOrganization().add(org2);
+        
+        return rr;
+    }
+    
+    public ResearchResource generateResearchResourceWithItems(String title, String extIdValue){
+        ResearchResource rr = generateResearchResource(title,extIdValue);
+        rr.getResourceItems().add(generateResearchResourceItem(title+"-item1", extIdValue+"item1"));
+        rr.getResourceItems().add(generateResearchResourceItem(title+"-item2", extIdValue+"item2"));
+        return rr;
+    }
+    
+    public ResearchResourceItem generateResearchResourceItem(String title, String extIdValue){
+        ResearchResourceItem ri1 = new ResearchResourceItem();
+        ri1.setResourceName(title);
+        ri1.setResourceType("infrastrutures");
+        ri1.setUrl(new Url("http://orcid.org")); 
+        
+        Organization org1 = new Organization();
+        org1.setName("orgName");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        org1.setAddress(address);
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        org1.setDisambiguatedOrganization(disambiguatedOrg);
+        Organization org2 = new Organization();
+        org2.setName("orgName2");
+        org2.setAddress(address);
+        DisambiguatedOrganization disambiguatedOrg2 = new DisambiguatedOrganization();
+        disambiguatedOrg2.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg2.setDisambiguationSource("WDB");
+        org2.setDisambiguatedOrganization(disambiguatedOrg2);
+        ri1.getHosts().getOrganization().add(org1);
+        ri1.getHosts().getOrganization().add(org2);
+        
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://orcid.org"));        
+        extId.setValue(extIdValue);               
+        extIds.getExternalIdentifier().add(extId);
+        ri1.setExternalIdentifiers(extIds);
+        
+        return ri1;
+    }
+    
+
     /*
     
     @Test

@@ -9,12 +9,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.v3.rc1.common.MultipleOrganizationHolder;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "organization" })
 @XmlRootElement(name = "hosts", namespace = "http://www.orcid.org/ns/research-resource")
-public class ResearchResourceHosts {
+public class ResearchResourceHosts implements MultipleOrganizationHolder{
 
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "organization")
     protected List<Organization> organization;

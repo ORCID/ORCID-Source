@@ -36,6 +36,8 @@ public class ResearchResourceProposal {
     }
 
     public ResearchResourceHosts getHosts() {
+        if (hosts == null)
+            hosts = new ResearchResourceHosts();
         return hosts;
     }
 
