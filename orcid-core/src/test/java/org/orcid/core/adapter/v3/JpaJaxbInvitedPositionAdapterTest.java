@@ -54,10 +54,10 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         //Dates
         assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
-        assertEquals(Integer.valueOf(1848), oar.getStartDate().getYear());
+        assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
-        assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
+        assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
         
         // Source
         assertNull(oar.getSourceId());        

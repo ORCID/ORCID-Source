@@ -954,11 +954,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(distinction.getEndDate());
         assertEquals("02", distinction.getEndDate().getDay().getValue());
         assertEquals("02", distinction.getEndDate().getMonth().getValue());
-        assertEquals("1848", distinction.getEndDate().getYear().getValue());
+        assertEquals("1948", distinction.getEndDate().getYear().getValue());
         assertNotNull(distinction.getStartDate());
         assertEquals("02", distinction.getStartDate().getDay().getValue());
         assertEquals("02", distinction.getStartDate().getMonth().getValue());
-        assertEquals("1848", distinction.getStartDate().getYear().getValue());
+        assertEquals("1948", distinction.getStartDate().getYear().getValue());
         assertNotNull(distinction.getOrganization());
         assertEquals("common:name", distinction.getOrganization().getName());
         assertEquals("common:city", distinction.getOrganization().getAddress().getCity());
@@ -977,11 +977,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(education.getEndDate());
         assertEquals("02", education.getEndDate().getDay().getValue());
         assertEquals("02", education.getEndDate().getMonth().getValue());
-        assertEquals("1848", education.getEndDate().getYear().getValue());
+        assertEquals("1948", education.getEndDate().getYear().getValue());
         assertNotNull(education.getStartDate());
         assertEquals("02", education.getStartDate().getDay().getValue());
         assertEquals("02", education.getStartDate().getMonth().getValue());
-        assertEquals("1848", education.getStartDate().getYear().getValue());
+        assertEquals("1948", education.getStartDate().getYear().getValue());
         assertNotNull(education.getOrganization());
         assertEquals("common:name", education.getOrganization().getName());
         assertEquals("common:city", education.getOrganization().getAddress().getCity());
@@ -1000,11 +1000,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(employment.getEndDate());
         assertEquals("02", employment.getEndDate().getDay().getValue());
         assertEquals("02", employment.getEndDate().getMonth().getValue());
-        assertEquals("1848", employment.getEndDate().getYear().getValue());
+        assertEquals("1948", employment.getEndDate().getYear().getValue());
         assertNotNull(employment.getStartDate());
         assertEquals("02", employment.getStartDate().getDay().getValue());
         assertEquals("02", employment.getStartDate().getMonth().getValue());
-        assertEquals("1848", employment.getStartDate().getYear().getValue());
+        assertEquals("1948", employment.getStartDate().getYear().getValue());
         assertNotNull(employment.getOrganization());
         assertEquals("common:name", employment.getOrganization().getName());
         assertEquals("common:city", employment.getOrganization().getAddress().getCity());
@@ -1023,11 +1023,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(invitedPosition.getEndDate());
         assertEquals("02", invitedPosition.getEndDate().getDay().getValue());
         assertEquals("02", invitedPosition.getEndDate().getMonth().getValue());
-        assertEquals("1848", invitedPosition.getEndDate().getYear().getValue());
+        assertEquals("1948", invitedPosition.getEndDate().getYear().getValue());
         assertNotNull(invitedPosition.getStartDate());
         assertEquals("02", invitedPosition.getStartDate().getDay().getValue());
         assertEquals("02", invitedPosition.getStartDate().getMonth().getValue());
-        assertEquals("1848", invitedPosition.getStartDate().getYear().getValue());
+        assertEquals("1948", invitedPosition.getStartDate().getYear().getValue());
         assertNotNull(invitedPosition.getOrganization());
         assertEquals("common:name", invitedPosition.getOrganization().getName());
         assertEquals("common:city", invitedPosition.getOrganization().getAddress().getCity());
@@ -1060,11 +1060,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(funding.getEndDate());
         assertEquals("02", funding.getEndDate().getDay().getValue());
         assertEquals("02", funding.getEndDate().getMonth().getValue());
-        assertEquals("1848", funding.getEndDate().getYear().getValue());
+        assertEquals("1948", funding.getEndDate().getYear().getValue());
         assertNotNull(funding.getStartDate());
         assertEquals("02", funding.getStartDate().getDay().getValue());
         assertEquals("02", funding.getStartDate().getMonth().getValue());
-        assertEquals("1848", funding.getStartDate().getYear().getValue());
+        assertEquals("1948", funding.getStartDate().getYear().getValue());
 
         assertNotNull(activities.getMemberships());
         Memberships memberships = activities.getMemberships();
@@ -1078,11 +1078,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(membership.getEndDate());
         assertEquals("02", membership.getEndDate().getDay().getValue());
         assertEquals("02", membership.getEndDate().getMonth().getValue());
-        assertEquals("1848", membership.getEndDate().getYear().getValue());
+        assertEquals("1948", membership.getEndDate().getYear().getValue());
         assertNotNull(membership.getStartDate());
         assertEquals("02", membership.getStartDate().getDay().getValue());
         assertEquals("02", membership.getStartDate().getMonth().getValue());
-        assertEquals("1848", membership.getStartDate().getYear().getValue());
+        assertEquals("1948", membership.getStartDate().getYear().getValue());
         assertNotNull(membership.getOrganization());
         assertEquals("common:name", membership.getOrganization().getName());
         assertEquals("common:city", membership.getOrganization().getAddress().getCity());
@@ -1151,11 +1151,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(qualification.getEndDate());
         assertEquals("02", qualification.getEndDate().getDay().getValue());
         assertEquals("02", qualification.getEndDate().getMonth().getValue());
-        assertEquals("1848", qualification.getEndDate().getYear().getValue());
+        assertEquals("1948", qualification.getEndDate().getYear().getValue());
         assertNotNull(qualification.getStartDate());
         assertEquals("02", qualification.getStartDate().getDay().getValue());
         assertEquals("02", qualification.getStartDate().getMonth().getValue());
-        assertEquals("1848", qualification.getStartDate().getYear().getValue());
+        assertEquals("1948", qualification.getStartDate().getYear().getValue());
         assertNotNull(qualification.getOrganization());
         assertEquals("common:name", qualification.getOrganization().getName());
         assertEquals("common:city", qualification.getOrganization().getAddress().getCity());
@@ -1174,11 +1174,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(service.getEndDate());
         assertEquals("02", service.getEndDate().getDay().getValue());
         assertEquals("02", service.getEndDate().getMonth().getValue());
-        assertEquals("1848", service.getEndDate().getYear().getValue());
+        assertEquals("1948", service.getEndDate().getYear().getValue());
         assertNotNull(service.getStartDate());
         assertEquals("02", service.getStartDate().getDay().getValue());
         assertEquals("02", service.getStartDate().getMonth().getValue());
-        assertEquals("1848", service.getStartDate().getYear().getValue());
+        assertEquals("1948", service.getStartDate().getYear().getValue());
         assertNotNull(service.getOrganization());
         assertEquals("common:name", service.getOrganization().getName());
         assertEquals("common:city", service.getOrganization().getAddress().getCity());
@@ -1213,7 +1213,7 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(work.getPublicationDate());
         assertEquals("02", work.getPublicationDate().getDay().getValue());
         assertEquals("02", work.getPublicationDate().getMonth().getValue());
-        assertEquals("1848", work.getPublicationDate().getYear().getValue());
+        assertEquals("1948", work.getPublicationDate().getYear().getValue());
 
         // Check biography
         Person person = record.getPerson();
@@ -1564,10 +1564,10 @@ public class ValidateV3_rc1SamplesTest {
         }
         assertEquals("department-name", object.getDepartmentName());
         assertEquals("role-title", object.getRoleTitle());
-        assertEquals("1848", object.getStartDate().getYear().getValue());
+        assertEquals("1948", object.getStartDate().getYear().getValue());
         assertEquals("02", object.getStartDate().getMonth().getValue());
         assertEquals("02", object.getStartDate().getDay().getValue());
-        assertEquals("1848", object.getEndDate().getYear().getValue());
+        assertEquals("1948", object.getEndDate().getYear().getValue());
         assertEquals("02", object.getEndDate().getMonth().getValue());
         assertEquals("02", object.getEndDate().getDay().getValue());
         assertEquals("common:name", object.getOrganization().getName());
