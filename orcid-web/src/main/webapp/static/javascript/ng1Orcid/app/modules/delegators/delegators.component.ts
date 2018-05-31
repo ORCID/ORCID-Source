@@ -19,8 +19,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { DelegatorsService } 
-    from '../../shared/delegators.service.ts'; 
+import { GenericService } 
+    from '../../shared/generic.service.ts'; 
 
 
 @Component({
@@ -32,15 +32,17 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
    
     delegators: any;
     sort: any;
+    url_path: string;
 
     constructor(
-        private delegatorsService: DelegatorsService
+        private delegatorsService: GenericService
     ) {
         this.sort = {
             column: 'delegateSummary.giverName.value',
             descending: false
         };
         this.delegators = {};
+        this.url_path = '/delegators/delegators-and-me.json';
 
     }
 
@@ -55,7 +57,7 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getDelegators(): void {
-        this.delegatorsService.getDelegators()
+        this.delegatorsService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

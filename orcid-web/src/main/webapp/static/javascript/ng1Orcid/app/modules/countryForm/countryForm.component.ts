@@ -18,8 +18,8 @@ import { Subscription }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
-import { CountryService } 
-    from '../../shared/country.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts'; 
 
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
@@ -40,12 +40,13 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     newElementDefaultVisibility: any; ///
     newInput: boolean;
     orcidId: any;
-    primaryElementIndex: any;  
+    primaryElementIndex: any;
+    url_path: any;
 
     constructor(
         private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
-        private countryService: CountryService,
+        private countryService: GenericService,
         private modalService: ModalService
     ) {
         this.bulkEditShow = false;
@@ -57,7 +58,8 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.newElementDefaultVisibility = 'PRIVATE';
         this.newInput = false;    
         this.orcidId = orcidVar.orcidId;
-        this.primaryElementIndex = null;   
+        this.primaryElementIndex = null; 
+        this.url_path = '/account/countryForm.json';  
     }
 
     addNewCountry(): void {  
@@ -105,7 +107,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getformData(): void{
-        this.countryService.getCountryData()
+        this.countryService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -177,7 +179,7 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData.addresses.splice(i, 1);
             }                                                                
         }
-        this.countryService.setCountryData( this.formData )
+        this.countryService.setData( this.formData, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

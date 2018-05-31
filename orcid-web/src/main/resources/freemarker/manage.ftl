@@ -50,6 +50,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" ng-show="showEditEmail" ng-cloak>
+                        <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
                         <emails-form-ng2 popUp="false"></emails-form-ng2>                                            
                     </td>
                 </tr>
@@ -140,6 +141,7 @@
                 <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                 <tr ng-show="showEditPassword">
                     <td colspan="2">
+                        <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
                         <password-edit-ng2></password-edit-ng2>
                     </td>
                 </tr>
@@ -189,6 +191,7 @@
                 </tr>
                 <tr ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection">
                     <td colspan="2">
+                        <#include "/includes/ng2_templates/works-privacy-preferences-ng2-template.ftl">
                         <works-privacy-preferences-ng2></works-privacy-preferences-ng2>
                     </td>
                 </tr>
@@ -197,9 +200,13 @@
                     <td><a href="" ng-click="toggleSecurityQuestionEdit()"
                         ng-bind="securityQuestionToggleText"></a></td>
                 </tr>
-                <tr ng-controller="SecurityQuestionEditCtrl"
-                    ng-show="showEditSecurityQuestion" ng-cloak>
+                <tr
+                    ng-show="showEditSecurityQuestion">
                     <td colspan="2">
+                        <#include "/includes/ng2_templates/security-question-edit-ng2-template.ftl">
+                        <security-question-edit-ng2></security-question-edit-ng2>
+
+                        <!--
                         <div class="editTablePadCell35">
                             <span class="orcid-error" ng-show="errors.length > 0"> <span
                                 ng-repeat='error in errors' ng-bind-html="error"></span>
@@ -236,6 +243,7 @@
                                 </div>
                             </#if>
                         </div>
+                        -->
                     </td>
                 </tr>
                 <!-- Deactivate Account -->
@@ -247,6 +255,7 @@
 
                 <tr ng-show="showEditDeactivate" >
                     <td colspan="2">
+                        <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
                         <deactivate-account-ng2></deactivate-account-ng2>
                     </td>
                 </tr>
@@ -261,6 +270,7 @@
                 <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                 <tr ng-show="showEditDeprecate" >
                     <td colspan="2">
+                        <#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
                         <deprecate-account-ng2></deprecate-account-ng2>
                     </td>
                 </tr>
@@ -313,6 +323,7 @@
                     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                     <tr ng-show="showEdit2FA" >
                         <td colspan="2">
+                            <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
                             <two-fa-state-ng2></two-fa-state-ng2>
                         </td>
                     </tr>
@@ -373,6 +384,7 @@
                     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                     <tr ng-show="showEditSocialSettings" >
                         <td colspan="2">
+                            <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
                             <social-networks-ng2></social-networks-ng2>
                         </td>
                     </tr>

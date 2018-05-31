@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { AlsoKnownAsService } 
-    from '../../shared/alsoKnownAs.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -42,9 +42,10 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     scrollTop: any;
     showEdit: any;
     showElement: any;
+    url_path: string;
 
     constructor( 
-        private alsoKnownAsService: AlsoKnownAsService,
+        private alsoKnownAsService: GenericService,
         private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
         private modalService: ModalService
@@ -60,6 +61,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.scrollTop = 0;
         this.showEdit = false;
         this.showElement = {};
+        this.url_path = '/my-orcid/otherNamesForms.json';
     }
 
     addNew(): void {
@@ -104,7 +106,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     getformData(): void {
-        this.alsoKnownAsService.getData()
+        this.alsoKnownAsService.getData( this.url_path, 'alsoKnownAs' )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -133,7 +135,7 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     setFormData( closeAfterAction ): void {
-        this.alsoKnownAsService.setData( this.formData )
+        this.alsoKnownAsService.setData( this.formData, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

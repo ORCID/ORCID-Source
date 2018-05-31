@@ -15,8 +15,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { NameService } 
-    from '../../shared/name.service.ts'; 
+import { GenericService } 
+    from '../../shared/generic.service.ts'; 
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -35,9 +35,10 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     nameForm: any;
     originalData: object;
     showEdit: boolean;
+    url_path: string;
 
     constructor(
-        private nameService: NameService,
+        private nameService: GenericService,
         private emailService: EmailService
     ) {
         
@@ -47,6 +48,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
         this.nameForm = {};
         this.originalData = {};
         this.showEdit = false;
+        this.url_path = '/account/nameForm.json';
     }
 
     cancel(): void {
@@ -91,7 +93,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getNameForm(): void {
-        this.nameService.getData()
+        this.nameService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -120,7 +122,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setNameForm( closeAfterAction ): any {
-        this.nameService.setData( this.nameForm )
+        this.nameService.setData( this.nameForm, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

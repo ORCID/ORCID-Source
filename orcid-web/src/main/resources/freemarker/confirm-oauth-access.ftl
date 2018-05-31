@@ -1,5 +1,6 @@
 <@base>
 <@orcid.checkFeatureStatus 'COOKIE_BANNER'>
+    <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">  
     <alert-banner-ng2></alert-banner-ng2>
 </@orcid.checkFeatureStatus>
 <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
