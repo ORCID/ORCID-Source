@@ -42,15 +42,24 @@ export class GenericService {
 
     getData( url_path: string, requestComponent?: string ): Observable<any> {
         if( requestComponent == "alsoKnownAs" ){
-
             if( this.objAlsoKnownAs.data != null 
                 && this.objAlsoKnownAs.hasNewData == false ){
+                console.log('aka obj call');
+
                 return this.objAlsoKnownAs.data;
                 
             }
             else {
+                console.log('aka http call');
+                
                 return this.http.get(
                     this.url + url_path
+                )
+                .do(
+                    (data) => {
+                        this.objAlsoKnownAs.data = data;
+                        this.objAlsoKnownAs.hasNewData = false;                      
+                    }
                 )
             }
         }
@@ -69,6 +78,11 @@ export class GenericService {
             this.url + url_path, 
             encoded_data, 
             { headers: this.headers }
+        )
+        .do(
+            (data) => {
+                this.objAlsoKnownAs.hasNewData = true;                      
+            }
         )
         
     }
