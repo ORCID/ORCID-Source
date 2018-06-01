@@ -48,10 +48,12 @@ export class PreferencesService {
 
     updateEmailFrequency( prefs ): Observable<any> {
         console.log('updateEmailFrequency is deprecated and does not work anymore');
+        return null;
     }
 
     updateNotificationPreferences(): Observable<any>  {
         console.log('updateNotificationPreferences is deprecated and does not work anymore');        
+        return null;
     }
 
     updateDefaultVisibility(newPriv): Observable<any> {
