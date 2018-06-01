@@ -1007,9 +1007,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         Map<String, String> emailFrequencies = emailFrequencyManager.getEmailFrequency(profileEntity.getId());
         
-        
-        
-        
         SendEmailFrequency admin = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS));
         SendEmailFrequency change = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.CHANGE_NOTIFICATIONS));
         SendEmailFrequency member = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS));
