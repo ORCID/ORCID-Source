@@ -38,7 +38,7 @@
 
                     </div>
                     <div class="bulk-help popover-help-container">
-                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <i class="glyphicon glyphicon-question-sign"></i>
                         <div id="bulk-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">
@@ -60,7 +60,7 @@
                 <div class="fixed-area" scroll>             
                     <div class="scroll-area">       
                                     
-                        <div class="row aka-row" *ngFor="let country of formDataAddresses; let index = index; let first = first; let last = last">
+                        <div class="row aka-row" id="addresses" *ngFor="let country of formDataAddresses; let index = index; let first = first; let last = last">
                             <div class="col-md-6">                                
                                 <div class="aka" *ngIf="country.iso2Country != undefined">
                                     <select 
@@ -115,7 +115,7 @@
                                             (click)="deleteCountry(country, index)" 
                                             (mouseenter)="commonSrvc.showTooltip('tooltip-country-delete-'+index, $event, 37, 50, 39)" 
                                             (mouseleave)="commonSrvc.hideTooltip('tooltip-country-delete-'+index)"
-                                            class="glyphicon glyphicon-trash" 
+                                            id="delete-country" class="glyphicon glyphicon-trash" 
                                         ></div>
                                         <@orcid.tooltipNg2 elementId="'tooltip-country-delete-'+index" message="common.modals.delete" />                               
                                     </li>
@@ -141,7 +141,7 @@
                     </div>
                 </div>                  
                 <div class="record-buttons">                        
-                    <a (click)="addNewCountry()"><span class="glyphicon glyphicon-plus pull-left">
+                    <a (click)="addNewCountry()" id="add-new-country"><span class="glyphicon glyphicon-plus pull-left">
                         <div class="popover popover-tooltip-add top">
                             <div class="arrow"></div>
                             <div class="popover-content">

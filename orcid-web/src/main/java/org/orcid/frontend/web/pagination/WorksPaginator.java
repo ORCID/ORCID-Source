@@ -34,8 +34,7 @@ public class WorksPaginator {
     public int getPublicWorksCount(String orcid) {
         List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
-        List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> groups = filter(publicWorks, true);
-        return groups.size();
+        return publicWorks.getWorkGroup().size();
     }
 
     public WorksPage getWorksPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {

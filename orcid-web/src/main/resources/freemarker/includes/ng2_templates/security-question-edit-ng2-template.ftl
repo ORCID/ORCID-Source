@@ -6,13 +6,16 @@
         <div class="control-group">
             <label for="changeSecurityQuestionForm.securityQuestionAnswer"
                 class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>                                    
-            <div class="relative" ng-init="securityQuestions = [<#list securityQuestions?keys as key>'${securityQuestions[key]?js_string}',</#list>]">
+            <div class="relative" >
+                <!-- ng-init="securityQuestions = [<#list securityQuestions?keys as key>'${securityQuestions[key]?js_string}',</#list>]"-->
                 <select id="securityQuestionId" name="securityQuestionId"
                     class="input-xlarge"
                     [(ngModel)]="securityQuestionPojo.securityQuestionId">
                     >
                         <!-- ng-options="securityQuestions.indexOf(securityOption) as securityOption for securityOption in securityQuestions" -->
-                        <option *ngFor="let securityQuestions.indexOf(securityOption) as securityOption for securityOption of securityQuestions">{{rUri.value.value}}</option>                                    
+
+                        <option *ngFor="let securityOption of securityQuestions">{{securityOption}}</option>                                    
+
                 </select>
             </div>
         </div>
@@ -23,7 +26,7 @@
                 <input type="text" id="securityQuestionAnswer"
                     name="securityQuestionAnswer" class="input-xlarge"
                     [(ngModel)]="securityQuestionPojo.securityAnswer"
-                    (keyup.enter)="checkCredentials()">
+                    (keyup.enter)="checkCredentials()" />
             </div>
         </div>
         <#if isPasswordConfirmationRequired>

@@ -10,7 +10,7 @@
                     <input type="password" name="password" class="input-xlarge" [(ngModel)]="register.password.value" (ngModelChange)="serverValidate('Password')"/>
                     <span class="required" [ngClass]="isValidClass(register.password)">*</span>
                     <div class="popover-help-container" style="display: inline;float: none;">
-                        <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                        <i class="glyphicon glyphicon-question-sign"></i>
                         <div id="name-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">

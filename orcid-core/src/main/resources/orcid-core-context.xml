@@ -1554,6 +1554,8 @@
     </bean>
     
     <bean id="groupedWorksRetriever" class="org.orcid.core.cache.impl.GroupedWorksRetriever" />
+    
+    <bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
 	
 	<bean id="apiAnalyticsTaskExecutor"
         class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">

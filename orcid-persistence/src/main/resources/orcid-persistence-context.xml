@@ -267,6 +267,12 @@
     
     <bean id="profileHistoryEventDao" class="org.orcid.persistence.dao.impl.ProfileHistoryEventDaoImpl" />
     
+    <bean id="miscDao" class="org.orcid.persistence.dao.impl.MiscDaoImpl" />
+	
+	<bean id="miscDaoReadOnly" class="org.orcid.persistence.dao.impl.MiscDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />		
+	</bean>
+    
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />

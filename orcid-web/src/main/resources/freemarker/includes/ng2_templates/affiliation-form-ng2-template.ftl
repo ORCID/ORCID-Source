@@ -47,7 +47,7 @@
                            <label><@orcid.msg 'manual_affiliation_form_contents.labelorganization'/></label>
                         </span>
                         <span id="remove-disambiguated" class="pull-right">
-                            <a href="javascript:void(0)" (click)="removeDisambiguatedAffiliation()">
+                            <a (click)="removeDisambiguatedAffiliation()">
                                 <span class="glyphicon glyphicon-remove-sign"></span><@orcid.msg 'common.remove'/>
                             </a>
                         </span>

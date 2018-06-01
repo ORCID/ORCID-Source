@@ -1004,32 +1004,35 @@
 
 	<xs:simpleType name="year">
 		<xs:annotation>
-			<xs:documentation>4-character string representing a year of a date.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:pattern value="\d{4}" />
-		</xs:restriction>
+            <xs:documentation>4-digit integer representing a year of a date.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1900"/>
+            <xs:maxInclusive value="2100"/>
+        </xs:restriction>
 	</xs:simpleType>
 
 	<xs:simpleType name="month">
 		<xs:annotation>
-			<xs:documentation>2-character string representing a month of a date.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:pattern value="\d{2}" />
-		</xs:restriction>
+            <xs:documentation>2-digit integer representing a month of a date.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="12"/>
+        </xs:restriction>
 	</xs:simpleType>
 
 	<xs:simpleType name="day">
 		<xs:annotation>
-			<xs:documentation>2-character string representing a day of a date.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:pattern value="\d{2}" />
-		</xs:restriction>
+            <xs:documentation>2-digit integer representing a day of a date.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="31"/>
+        </xs:restriction>
 	</xs:simpleType>
 
 	<xs:element name="fuzzy-date" type="common:fuzzy-date" />

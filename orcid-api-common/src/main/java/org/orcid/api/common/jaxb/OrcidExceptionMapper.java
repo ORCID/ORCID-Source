@@ -19,6 +19,7 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidApiException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
@@ -91,15 +92,12 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
         String clientId = securityManager.getClientIdFromAPIRequest();
-        if (PojoUtil.isEmpty(clientId)) {
-            LOGGER.error("An exception has occured, no client id info provided", t);
+        if (t instanceof NotFoundException) {
+            logShortError(t, clientId);
+        } else if (t instanceof NoResultException) {
+            logShortError(t, clientId); 
         } else {
-            if (t instanceof NotFoundException) {
-                StringBuffer temp = new StringBuffer("An exception has occured processing request from client ").append(clientId).append(". ").append(t.getMessage());
-                LOGGER.error(temp.toString());
-            } else {
                 LOGGER.error("An exception has occured processing request from client " + clientId, t);
-            }
         }
 
         if (isOAuthTokenRequest()) {
@@ -135,6 +133,11 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         default:
             return legacyErrorResponse(t);
         }
+    }
+
+    private void logShortError(Throwable t, String clientId) {
+        StringBuffer temp = new StringBuffer(t.getClass().getSimpleName() + " exception from client: ").append(clientId).append(". ").append(t.getMessage());
+        LOGGER.error(temp.toString());
     }
 
     private Response oAuthErrorResponse(Throwable t) {

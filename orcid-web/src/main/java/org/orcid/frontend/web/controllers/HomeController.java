@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -12,8 +13,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
+import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.togglz.Features;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
 public class HomeController extends BaseController {
+    
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
     @Resource
@@ -39,6 +42,9 @@ public class HomeController extends BaseController {
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private StatusManager statusManager;
     
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
@@ -60,6 +66,15 @@ public class HomeController extends BaseController {
         request.setAttribute("isMonitoring", true);
         return "{tomcatUp:true}";
     }
+    
+    @RequestMapping(value = "/webStatus.json")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody Map<String, Boolean> webStatus(HttpServletRequest request) {
+        request.setAttribute("isMonitoring", true);
+        return statusManager.createStatusMap();
+    }
+
+    
 
     @RequestMapping(value = "/robots.txt")
     public String dynamicRobots(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {

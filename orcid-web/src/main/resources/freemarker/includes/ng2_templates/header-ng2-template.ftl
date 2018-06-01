@@ -5,9 +5,9 @@
             <div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"
                 id="search" *ngIf="searchVisible == true || settingsVisible == true" >
                 <!-- Search Form  -->               
-                <form id="form-search" action='<@orcid.rootPath "/search/node" />' method="POST" *ngIf="searchVisible == true" >
+                <form id="form-search" (ngSubmit)="searchSubmit()" *ngIf="searchVisible == true">
                     <div id="search-box">
-                        <input type="search" id="search-input" name="keys"
+                        <input type="search" id="searchInput" [(ngModel)]="headerSearch.searchInput" name="searchInput"
                             (focus)="searchFocus()" (blur)="searchBlur()"
                             placeholder="<@orcid.msg 'public-layout.search'/>" />
                     </div>
@@ -15,12 +15,11 @@
                     <div class="bar">
                         <fieldset class="search_options" *ngIf="filterActive == true"
                             >
-                            <input type="radio" name="huh_radio" id="filter_registry"
-                                value="registry" (click)="focusActive()" checked /> <label
+                            <input type="radio" name="searchOption" id="filter_registry" [(ngModel)]="headerSearch.searchOption" name="searchOption" (click)="filterChange()"
+                                value="registry" checked /> <label
                                 for="filter_registry"><@orcid.msg
-                                'public-layout.search.choice.registry'/></label> <input type="radio"
-                                name="huh_radio" id="filter_website" value="website"
-                                (click)="focusActive()" /> <label for="filter_website"><@orcid.msg
+                                'public-layout.search.choice.registry'/></label> 
+                            <input type="radio" name="searchOption" (click)="filterChange()"id="filter_website" [(ngModel)]="headerSearch.searchOption" value="website" /> <label for="filter_website"><@orcid.msg
                                 'public-layout.search.choice.website'/></label>
                         </fieldset>
                     </div>

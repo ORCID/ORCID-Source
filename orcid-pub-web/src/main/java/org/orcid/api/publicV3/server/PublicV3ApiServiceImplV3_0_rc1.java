@@ -22,6 +22,7 @@ import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION;
 import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITIONS;
 import static org.orcid.core.api.OrcidApiConstants.INVITED_POSITION_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
 import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIP;
 import static org.orcid.core.api.OrcidApiConstants.MEMBERSHIPS;
@@ -34,6 +35,7 @@ import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEWS;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
+import static org.orcid.core.api.OrcidApiConstants.PUB_STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATIONS;
@@ -52,7 +54,6 @@ import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCES;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 
 import java.util.List;
 import java.util.Map;
@@ -137,6 +138,9 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
 
     @Value("${org.orcid.core.pubBaseUri}")
     protected String pubBaseUri;
+    
+    @Context
+    private HttpServletRequest httpRequest;
 
     public void setServiceDelegator(
             PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator) {
@@ -162,6 +166,14 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @ApiOperation( nickname="viewStatusTextV3dev", value = "Check the server status", response = String.class)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
+    }
+    
+    @GET
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(PUB_STATUS_PATH)
+    public Response viewStatusJson() {
+        httpRequest.setAttribute("isMonitoring", true);
+        return serviceDelegator.viewStatus();
     }
 
     @GET
@@ -631,7 +643,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(RESEARCH_RESOURCE + PUTCODE)
+    @Path(RESEARCH_RESOURCE_SUMMARY + PUTCODE)
     @ApiOperation(nickname = "viewResearchResourceSummaryV3dev", value = "Fetch a Research Resource summary", response = ResearchResourceSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewResearchResourceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {

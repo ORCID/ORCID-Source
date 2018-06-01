@@ -61,10 +61,10 @@ public class JpaJaxbFundingAdapterTest {
         // Dates
         assertEquals(Integer.valueOf(2), pfe.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), pfe.getStartDate().getMonth());
-        assertEquals(Integer.valueOf(1848), pfe.getStartDate().getYear());
+        assertEquals(Integer.valueOf(1948), pfe.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), pfe.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), pfe.getEndDate().getMonth());
-        assertEquals(Integer.valueOf(1848), pfe.getEndDate().getYear());
+        assertEquals(Integer.valueOf(1948), pfe.getEndDate().getYear());
 
         // Contributors
         assertEquals(

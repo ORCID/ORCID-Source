@@ -3,7 +3,7 @@
         <div class="widget-header">
             <a (click)="toggleCopyWidget();"><span class="glyphicon glyphicon-phone"></span> <@orcid.msg 'orcid_widget.header'/></a>
             <div class="popover-help-container">
-                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="widget-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">

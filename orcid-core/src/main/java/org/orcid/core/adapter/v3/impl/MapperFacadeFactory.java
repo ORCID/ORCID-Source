@@ -327,7 +327,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 source = createOrcidSource(sourceId);
             }
             a.setSource(source);
-            source.setSourceName(new SourceName(sourceNameCacheManager.retrieve(sourceId)));
+            
+            String sourceNameValue = sourceNameCacheManager.retrieve(sourceId);
+            if (sourceNameValue != null) {
+                source.setSourceName(new SourceName(sourceNameValue));
+            }
         }
 
         private boolean isClient(String sourceId) {
@@ -719,6 +723,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         summaryClassMap.field("departmentName", "department");
         summaryClassMap.field("roleTitle", "title");
         summaryClassMap.field("displayIndex", "displayIndex");
+        summaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();    
         summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
         summaryClassMap.register();
 

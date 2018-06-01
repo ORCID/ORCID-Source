@@ -6,56 +6,56 @@
  * @author Will Simpson
  -->
 
-<#macro privacyToggle angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
-	<div class="relative" id="privacy-bar">
-		<ul class="privacyToggle">
-			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
-			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
-			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
-		</ul>
-		<div class="popover-help-container" ng-class="${clickedClassCheck}"  style="position: absolute; left: 110px; top: 0px;">
-        	<a ng-click="${questionClick}"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+<#macro privacyToggle angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">   
+    <div class="relative" id="privacy-bar">
+        <ul class="privacyToggle">
+            <li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
+            <li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
+            <li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
+        </ul>
+        <div class="popover-help-container" ng-class="${clickedClassCheck}"  style="position: absolute; left: 110px; top: 0px;">
+            <a ng-click="${questionClick}"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
             <div class="popover bottom" style="${popoverStyle}">
-		        <div class="arrow" style="${arrowStyle}"></div>
-		        <div class="popover-content">
-		        	<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
-			        <ul class="privacyHelp">
-			        	<li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
-			        	<li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
-			        	<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
-			        </ul>
-			        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
-		        </div>                
-		    </div>
-    	</div>				   					
-	</div>
+                <div class="arrow" style="${arrowStyle}"></div>
+                <div class="popover-content">
+                    <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+                    <ul class="privacyHelp">
+                        <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+                        <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+                        <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+                    </ul>
+                    <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+                </div>                
+            </div>
+        </div>                                  
+    </div>
 </#macro>
 
 <#-- This macro is the base to improve the others privacy components into one -->
-<#macro privacyComponent angularModel publicClick limitedClick privateClick placement="" popoverStyle="" arrowStyle="">	
-	<div id="privacy-bar">
-		<div class="relative privacy-component" style="width: 100px; float: left">
-			<ul class="privacyToggle">
-				<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
-				<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
-				<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
-			</ul>
-			<div class="popover-help-container">
-	            <div class="popover ${placement}" style="${popoverStyle}">
-			        <div class="arrow" style="${arrowStyle}"></div>
-			        <div class="popover-content">
-			        	<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
-				        <ul class="privacyHelp">
-				        	<li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
-				        	<li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
-				        	<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
-				        </ul>
-				        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
-			        </div>
-			    </div>
-	    	</div>
-		</div>		
-	</div>
+<#macro privacyComponent angularModel publicClick limitedClick privateClick placement="" popoverStyle="" arrowStyle=""> 
+    <div id="privacy-bar">
+        <div class="relative privacy-component" style="width: 100px; float: left">
+            <ul class="privacyToggle">
+                <li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
+                <li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
+                <li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
+            </ul>
+            <div class="popover-help-container">
+                <div class="popover ${placement}" style="${popoverStyle}">
+                    <div class="arrow" style="${arrowStyle}"></div>
+                    <div class="popover-content">
+                        <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+                        <ul class="privacyHelp">
+                            <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+                            <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+                            <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+                        </ul>
+                        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+                    </div>
+                </div>
+            </div>
+        </div>      
+    </div>
 </#macro>
 
 <#macro itemDetails item="" field="" tag="div">
@@ -108,7 +108,7 @@ kind of variable. This temp value is only used in this macro lib -->
     <#if (url.value)?? && !url.value?starts_with("http")>
         http://${url.value?html}
     <#else>
-        ${url.value}	
+        ${url.value}    
     </#if> 
     </#compress>     
 </#macro>
@@ -123,7 +123,7 @@ kind of variable. This temp value is only used in this macro lib -->
             <ul class="privacy-dropdown-menu privacy-menu">
                 <li><a class="btn btn-success btn-privacy" href="#public">${springMacroRequestContext.getMessage("manage.lipublic")} <span class="caret"></span></a></li>
                 <li><a class="btn btn-warning btn-privacy" href="#limited">${springMacroRequestContext.getMessage("manage.lilimited")} <span class="caret"></span></a></li>
-                <li><a class="btn btn-danger btn-privacy" href="#private">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>	
+                <li><a class="btn btn-danger btn-privacy" href="#private">${springMacroRequestContext.getMessage("manage.liprivate")} <span class="caret"></span></a></li>  
                 <li><a class="btn" href="${helpLink}" target="manage.lihelp">${springMacroRequestContext.getMessage("manage.lihelp")} <span class="caret"></span></a></li>
             </ul>
         </div>
@@ -145,7 +145,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </#compress></#macro>
 
 <#--
-	Make is easy to get properties.
+    Make is easy to get properties.
 -->
 <#macro msg key, htmlEscape=false>${springMacroRequestContext.getMessage(key, [], "", htmlEscape)}</#macro>
 
@@ -220,33 +220,33 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro passwordHelpPopup>
-	<div class="popover-help-container" style="display: inline; position: relative;">
-		<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-		<div id="name-help" class="popover bottom">
-			<div class="arrow"></div>
-			<div class="popover-content">
-		    	<p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
-		        <ul>
-					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
-					<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}
-						<ul>
-							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
-							<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * &#40; &#41; ~ ` &nbsp; &#123; &#125; &#91; &#93; | \ &amp; _</li>
-						</ul>
-					</li>
-					<li>
-					   ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_1")}<br/>
-					   ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_2")}
-					</li>
-				</ul>                         
-				<p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/10_million_password_list_top_1000.txt" target="password_one_time_reset.commonpasswordslink">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>
-				<p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
-			</div>                
-		</div>
-	</div>
+    <div class="popover-help-container" style="display: inline; position: relative;">
+        <i class="glyphicon glyphicon-question-sign"></i>
+        <div id="name-help" class="popover bottom">
+            <div class="arrow"></div>
+            <div class="popover-content">
+                <p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
+                <ul>
+                    <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
+                    <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}
+                        <ul>
+                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
+                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * &#40; &#41; ~ ` &nbsp; &#123; &#125; &#91; &#93; | \ &amp; _</li>
+                        </ul>
+                    </li>
+                    <li>
+                       ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_1")}<br/>
+                       ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_2")}
+                    </li>
+                </ul>                         
+                <p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/10_million_password_list_top_1000.txt" target="password_one_time_reset.commonpasswordslink">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>
+                <p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
+            </div>                
+        </div>
+    </div>
 </#macro>
 
-<#macro editActivityIcon activity click toolTipSuffix toolTipClass>	  
+<#macro editActivityIcon activity click toolTipSuffix toolTipClass>   
     <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
@@ -261,7 +261,7 @@ kind of variable. This temp value is only used in this macro lib -->
     </a>
     <div class="${toolTipClass}" ng-show="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" ng-class="{'two-lines' : (!userIsSource(${activity}) && group.hasUserVersion()) || (!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys())}">
         <div class="arrow"></div>
-        <div class="popover-content">        	   
+        <div class="popover-content">              
               <span ng-show="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
               <span ng-show="!userIsSource(${activity}) && group.hasUserVersion()">
                 <@orcid.msg 'groups.common.open_source_to_1' /><br />
@@ -354,28 +354,28 @@ kind of variable. This temp value is only used in this macro lib -->
     </div>
 </#macro>  
 
-<#macro privacyToggle2 angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
-	<div class="relative" id="privacy-bar">
-		<ul class="privacyToggle" ng-mouseenter="showTooltip(group.groupId+'-privacy')" ng-mouseleave="hideTooltip(group.groupId+'-privacy')">
-			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}"></a></li>
-			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}"></a></li>
-			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}"></a></li>
-		</ul>
-	</div>
-	<div class="popover-help-container">
+<#macro privacyToggle2 angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
+    <div class="relative" id="privacy-bar">
+        <ul class="privacyToggle" ng-mouseenter="showTooltip(group.groupId+'-privacy')" ng-mouseleave="hideTooltip(group.groupId+'-privacy')">
+            <li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}"></a></li>
+            <li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}"></a></li>
+            <li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}"></a></li>
+        </ul>
+    </div>
+    <div class="popover-help-container">
        <div class="popover top privacy-myorcid3" ng-class="showElement[group.groupId+'-privacy'] == true ? 'block' : ''">
-			<div class="arrow"></div>
-			<div class="popover-content">
-		    	<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
-			    <ul class="privacyHelp">
-				    <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
-				    <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
-				    <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
-			    </ul>
-		       <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
-		    </div>                
-	  	</div>    			   				
- 	</div>
+            <div class="arrow"></div>
+            <div class="popover-content">
+                <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+                <ul class="privacyHelp">
+                    <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+                    <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+                    <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+                </ul>
+               <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+            </div>                
+        </div>                              
+    </div>
 </#macro>
 
 <#macro privacyToggle2Ng2 angularModel publicClick limitedClick privateClick elementId popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
@@ -451,17 +451,17 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro registrationEmailFrequencySelector angularElementName>
-<div>	
+<div>   
     <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
     <label class="control-label dark-label">
         ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
     </label>
     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-    	class="input-xlarge"
-     	ng-model="${angularElementName}.sendEmailFrequencyDays.value">
-		<#list sendEmailFrequencies?keys as key>
-			<option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-		</#list>
+        class="input-xlarge"
+        ng-model="${angularElementName}.sendEmailFrequencyDays.value">
+        <#list sendEmailFrequencies?keys as key>
+            <option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+        </#list>
     </select>        
 </div>        
 </#macro>
@@ -483,14 +483,14 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro tooltip elementId message>
-	<div>	
-		<div class="popover popover-tooltip top" ng-class="commonSrvc.shownElement[${elementId}] == true ? 'block' : ''">
-	    	<div class="arrow"></div>
-	    	<div class="popover-content">
-				<span><@spring.message "${message}"/></span>
-	    	</div>
-	   	</div>                
-   	</div>	
+    <div>   
+        <div class="popover popover-tooltip top" ng-class="commonSrvc.shownElement[${elementId}] == true ? 'block' : ''">
+            <div class="arrow"></div>
+            <div class="popover-content">
+                <span><@spring.message "${message}"/></span>
+            </div>
+        </div>                
+    </div>  
 </#macro>
 
 <#macro tooltipNg2 elementId message>

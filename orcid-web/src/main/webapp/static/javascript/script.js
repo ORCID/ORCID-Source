@@ -288,11 +288,12 @@ var OrcidCookie = new function() {
     };
 
     this.setCookie = function(c_name, value, exdays) {
+        var cookieDomain = getCookieDomain(window.location);
         var exdate = new Date();
         exdate.setDate(exdate.getDate() + exdays);
         var c_value = escape(value)
                 + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
-        document.cookie = c_name + "=" + c_value + ";path=/";
+        document.cookie = c_name + "=" + c_value + ";domain=" + cookieDomain + ";path=/";
     };
     
     this.checkIfCookiesEnabled = function() {
@@ -328,6 +329,18 @@ function logAjaxError(e){
 function getBaseUri() {
     return 'https:' == document.location.protocol ? orcidVar.baseUri
             : orcidVar.baseUriHttp;
+}
+
+function getCookieDomain(location){
+        host = location.host;
+        if(host.indexOf("qa.orcid.org") >= 0){
+            cookieDomain = "qa.orcid.org"
+        } else if(host.indexOf("localhost") >= 0){
+            cookieDomain = "localhost"
+        } else{
+            cookieDomain = "orcid.org"
+        }   
+        return cookieDomain;
 }
 
 function getStaticCdnPath() {
@@ -847,21 +860,6 @@ $(function() {
         height : 400,
         href : baseUrl + "account/search-for-delegates #add-an-individual"
     });
-
-    // Search hack
-
-    $('#form-search')
-            .on(
-                    'submit',
-                    function(e) {
-                        if ($('[name="huh_radio"]:checked', this).val() === "registry") {
-                            e.preventDefault();
-                            window.location = baseUrl
-                                    + "orcid-search/quick-search/?searchQuery="
-                                    + encodeURIComponent($('[type="search"]',
-                                            this).val());
-                        }
-                    });
 
     // delgates
     $('#searchForDelegatesForm').on(

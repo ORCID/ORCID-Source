@@ -3,6 +3,8 @@ package org.orcid.internal.server.delegator.impl;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -10,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.core.manager.MembersManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
+import org.orcid.core.togglz.Features;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
@@ -59,6 +62,15 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
         }
         MemberInfo memberInfo = MemberInfo.fromMember(member);
         return Response.ok(memberInfo).build();        
+    }
+
+    @Override
+    public Response viewTogglz() {
+        Map<Features, Boolean> featuresMap = new HashMap<>();
+        for(Features feature : Features.values()) {
+            featuresMap.put(feature, feature.isActive());
+        }
+        return Response.ok(featuresMap).build();
     }        
     
     

@@ -27,9 +27,6 @@ import { AffiliationService }
 import { EmailService } 
     from '../../shared/email.service.ts';
 
-import { GroupedActivitiesUtilService } 
-    from '../../shared/groupedActivities.service.ts';
-
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 

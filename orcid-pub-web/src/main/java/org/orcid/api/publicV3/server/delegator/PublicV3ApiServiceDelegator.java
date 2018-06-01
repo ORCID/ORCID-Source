@@ -15,6 +15,8 @@ public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
     static final String LATEST_V3_VERSION = "3.0_rc1";
 
     Response viewStatusText();
+    
+    Response viewStatus();
 
     Response viewActivities(String orcid);
 

@@ -1,6 +1,7 @@
 package org.orcid.internal.server;
 
 import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_PERSON_READ;
+import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_TOGGLZ_READ;
 import static org.orcid.core.api.OrcidApiConstants.MEMBER_INFO;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 
@@ -80,6 +81,14 @@ public abstract class InternalApiServiceImplBase {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response viewMemberDetails(@RequestParam String member) {
         Response response = serviceDelegator.viewMemberInfo(member);
+        return response;
+    }
+    
+    @GET
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(INTERNAL_API_TOGGLZ_READ)
+    public Response viewTogglz() {
+        Response response = serviceDelegator.viewTogglz();
         return response;
     }
 }

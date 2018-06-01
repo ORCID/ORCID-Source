@@ -15,7 +15,7 @@
                         </a>
                         <#if !(isPublicProfile??)> 
                         <div class="popover-help-container">
-                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                            <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="funding-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
