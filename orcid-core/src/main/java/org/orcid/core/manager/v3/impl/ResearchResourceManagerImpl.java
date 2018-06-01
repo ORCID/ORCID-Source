@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.OrderColumn;
 import javax.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
@@ -79,6 +80,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
             List<OrgEntity> itemOrganizations = orgManager.getOrgEntities(rr.getResourceItems().get(i).getHosts());
             researchResourceEntity.getResourceItems().get(i).setHosts(itemOrganizations);
             researchResourceEntity.getResourceItems().get(i).setResearchResourceEntity(researchResourceEntity);
+            researchResourceEntity.getResourceItems().get(i).setItemOrder(i);
         }
         
         //Set the source
@@ -132,12 +134,11 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         rre.setSourceId(existingSourceId);
         rre.setClientSourceId(existingClientSourceId);
         
+        //update orgs (ordering managed by @OrderColumn on lists)
         List<OrgEntity> updatedOrganizations = orgManager.getOrgEntities(rr.getProposal().getHosts());
         rre.setHosts(updatedOrganizations);
-        //set the orgs and parent for the items
         for (int i=0;i<rr.getResourceItems().size();i++){
-            List<OrgEntity> itemOrganizations = orgManager.getOrgEntities(rr.getResourceItems().get(i).getHosts());
-            rre.getResourceItems().get(i).setHosts(itemOrganizations);
+            rre.getResourceItems().get(i).setHosts(orgManager.getOrgEntities(rr.getResourceItems().get(i).getHosts()));
             rre.getResourceItems().get(i).setResearchResourceEntity(rre);
         }
         

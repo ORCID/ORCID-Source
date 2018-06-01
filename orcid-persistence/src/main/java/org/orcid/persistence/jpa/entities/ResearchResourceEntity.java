@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -157,6 +158,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
     }
     
     @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval =true )
+    @OrderColumn(name="item_index")
     public List<ResearchResourceItemEntity> getResourceItems() {
         return resourceItems;
     }
@@ -169,6 +171,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
     @JoinTable(name = "research_resource_org", 
                joinColumns = { @JoinColumn(name = "research_resource_id", referencedColumnName="id") }, 
                inverseJoinColumns = { @JoinColumn(name = "org_id", referencedColumnName="id") })
+    @OrderColumn(name="org_index")
     public List<OrgEntity> getHosts() {
         return hosts;
     }

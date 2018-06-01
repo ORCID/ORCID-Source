@@ -214,7 +214,7 @@ public class ResearchResourceManagerTest extends BaseTest {
         assertEquals("abc456",r4.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
         assertEquals(2,r4.getResourceItems().get(0).getHosts().getOrganization().size());
         //TODO: fix ordering so it's by the order added, not created.
-        assertEquals("changedOrg",r4.getResourceItems().get(0).getHosts().getOrganization().get(1).getName());
+        assertEquals("changedOrg",r4.getResourceItems().get(0).getHosts().getOrganization().get(0).getName());
         assertEquals("changedResourceName",r4.getResourceItems().get(0).getResourceName());
     }
 
@@ -227,8 +227,24 @@ public class ResearchResourceManagerTest extends BaseTest {
     }
     
     @Test
-    public void testUpdateOrgDoesntUpdateDiambiguatedOrg(){
+    public void testUpdateOrgDoesntUpdateOthers(){
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        ResearchResource r1 = researchResourceManager.createResearchResource(USER_ORCID,generateResearchResourceWithItems("title6","id6"),true);
+        ResearchResource r2 = researchResourceManager.createResearchResource(USER_ORCID,generateResearchResourceWithItems("title7","id7"),true);
         
+        //update orgName does not affect the other
+        r1.getProposal().getHosts().getOrganization().get(0).setName("changedOrg");
+        ResearchResource r3 = researchResourceManager.updateResearchResource(USER_ORCID, r1, true);        
+        ResearchResource r4 = researchResourceManager.getResearchResource(USER_ORCID, r2.getPutCode());
+        assertEquals("changedOrg",r3.getProposal().getHosts().getOrganization().get(0).getName());
+        assertEquals("orgName",r4.getProposal().getHosts().getOrganization().get(0).getName());
+        
+        //update disambiguated does not update the other
+        r1.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier("abc456");
+        ResearchResource r5 = researchResourceManager.updateResearchResource(USER_ORCID, r1, true);
+        ResearchResource r6 = researchResourceManager.getResearchResource(USER_ORCID, r2.getPutCode());
+        assertEquals("abc456",r5.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals("def456",r6.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

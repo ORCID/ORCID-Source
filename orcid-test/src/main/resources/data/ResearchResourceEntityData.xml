@@ -89,6 +89,7 @@ source_id="4444-4444-4444-4442"
 <!-- couple of items -->
 <research_resource_item 
 id="1"
+item_index="0"
 research_resource_id="1"
 resource_name="the resource name1"
 resource_type="the resource type1"
@@ -97,6 +98,7 @@ external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExter
 />
 <research_resource_item 
 id="2"
+item_index="1"
 research_resource_id="1"
 resource_name="the resource name2"
 resource_type="the resource type2"
@@ -108,20 +110,24 @@ external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExter
 <research_resource_org 
 research_resource_id="1"
 org_id="1"
+org_index="0"
 />
 <research_resource_org 
 research_resource_id="1"
 org_id="2"
+org_index="1"
 />
 
 <!-- couple of hosts -->
 <research_resource_item_org 
 research_resource_item_id="1"
 org_id="1"
+org_index="0"
 />
 <research_resource_item_org 
 research_resource_item_id="1"
 org_id="2"
+org_index="1"
 />
 
 </dataset>

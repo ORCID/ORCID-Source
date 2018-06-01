@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -29,6 +30,7 @@ public class ResearchResourceItemEntity {
     private List<OrgEntity> hosts;
     private String externalIdentifiersJson;
     private String url;
+    private int itemOrder;
     
     private ResearchResourceEntity researchResourceEntity;
 
@@ -88,11 +90,21 @@ public class ResearchResourceItemEntity {
     public void setUrl(String url) {
         this.url = url;
     }
+    
+    @Column(name = "item_index")
+    public int getItemOrder() {
+        return itemOrder;
+    }
+
+    public void setItemOrder(int itemOrder) {
+        this.itemOrder = itemOrder;
+    }
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "research_resource_item_org", 
                joinColumns = { @JoinColumn(name = "research_resource_item_id") }, 
                inverseJoinColumns = { @JoinColumn(name = "org_id") })
+    @OrderColumn(name="org_index")
     public List<OrgEntity> getHosts() {
         return hosts;
     }

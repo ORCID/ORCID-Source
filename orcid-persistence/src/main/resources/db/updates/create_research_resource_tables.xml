@@ -60,7 +60,10 @@
 			<column name="external_identifiers_json" type="text">
 				<constraints nullable="false" />
 			</column>			
-			<column name="url" type="VARCHAR(350)" />								
+			<column name="url" type="VARCHAR(350)" />	
+			<column name="item_index" type="bigint">
+				<constraints nullable="false"/>
+			</column>							
 		</createTable>
 		
 		<addForeignKeyConstraint constraintName="research_resource_orcid_fk" baseTableName="research_resource" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
@@ -73,6 +76,9 @@
 			<column name="org_id" type="bigint">
 				<constraints nullable="false" />
 			</column>
+			<column name="org_index" type="bigint">
+				<constraints nullable="false"/>
+			</column>							
 		</createTable>
 		
 		<addPrimaryKey constraintName="research_resource_org_pkey" tableName="research_resource_org" columnNames="research_resource_id,org_id"/>		
@@ -86,6 +92,9 @@
 			<column name="org_id" type="bigint">
 				<constraints nullable="false" />
 			</column>
+			<column name="org_index" type="bigint">
+				<constraints nullable="false"/>
+			</column>							
 		</createTable>
 
 		<addPrimaryKey constraintName="research_resource_item_org_pkey" tableName="research_resource_item_org" columnNames="research_resource_item_id,org_id"/>		
