@@ -1652,7 +1652,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(params);
         }
         clearSource(researchResource);
-        ResearchResource e = researchResourceManager.createResearchResource(orcid, researchResource, true);
+        ResearchResource e = researchResourceManager.updateResearchResource(orcid, researchResource, true);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
