@@ -11,7 +11,8 @@
     * Second email: 00_ma_test_[DD][month][YYYY]@mailinator.com
     * Password: test1234
     * Default privacy for new activities: Everyone
-    * Accept terms and conditions (Do we need to test the subscription option too?)
+    * Subscribe to quarterly emails about new features
+    * Accept terms and conditions
 3. Attempt to edit the biography of the record- check you get a warning message to verify your email address
 5. Visit https://qa.orcid.org/signout
 6. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
@@ -62,8 +63,8 @@
 44. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com and change the visibility to public
 45. Add a biography: "Bio!"
 46. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
-47. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list). Add a country and city.
-48. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “0000” click through warning about the identifier validation.
+47. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
+48. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “0000” click through warning about the identifier validation
 49. Set the work you just added to private
 50. Visit public page (https://qa.orcid.org/[orcid id])
     * Verify information added in the steps above is visible, but not the private work or email addresses
@@ -82,7 +83,7 @@
 
 55. Check you are prompted with a window asking if the record you created earlier is you. Click Continue to registration
 
-56. In a terminal window use curl to exchange the authorization code (the 6 digit code returned with the URI, you do not need to do anything on the Google Playground page). If using Windows you will need to install curl and replace single quotes with double quotes in steps 52, 53 and 55:
+56. Use curl to exchange the authorization code (the 6 digit code returned with the URI, you do not need to do anything on the Google Playground page). On a Mac you can open a terminal window and run the calls there, if using Windows you will need to install curl and replace single quotes with double quotes in steps 52, 53 and 55 or use an online tool that lets you execute curl commands such as https://onlinecurl.com/:
 
     ```
     curl -i -L -H 'Accept: application/json' --data 'client_id=APP-6QJHHJ6OH7I9Z5XO&client_secret=[replace with client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
