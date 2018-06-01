@@ -108,7 +108,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals("proposal",e.getProposalType());
         assertEquals("Giant Laser Award",e.getTitle());
         assertEquals("Giant Laser Award2",e.getTranslatedTitle());
-        assertEquals("DE",e.getTranslatedTitleLanguageCode());
+        assertEquals("de",e.getTranslatedTitleLanguageCode());
         assertEquals("PUBLIC",e.getVisibility());        
         assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"PROPOSAL_ID\",\"workExternalIdentifierId\":{\"content\":\"123456\"}},{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"HANDLE\",\"workExternalIdentifierId\":{\"content\":\"https://grants.net/123456\"}}]}",e.getExternalIdentifiersJson());
         //assertEquals("",e.getProfile().getId());
