@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { WebsitesService } 
-    from '../../shared/websites.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -33,9 +33,10 @@ export class WebsitesComponent implements AfterViewInit, OnDestroy, OnInit {
     formData: any;
     emails: any;
     emailSrvc: any;
+    url_path: string;
 
     constructor( 
-        private websitesService: WebsitesService,
+        private websitesService: GenericService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
@@ -43,10 +44,11 @@ export class WebsitesComponent implements AfterViewInit, OnDestroy, OnInit {
             websites: null
         };
         this.emails = {};
+        this.url_path = '/my-orcid/websitesForms.json';
     }
 
     getformData(): void {
-        this.websitesService.getData()
+        this.websitesService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

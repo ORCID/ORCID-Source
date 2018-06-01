@@ -355,7 +355,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         checkResponse(getPeerReviewSummaryResponse);
         PeerReviewSummary summary = getPeerReviewSummaryResponse.getEntity(PeerReviewSummary.class);
         assertNotNull(summary);        
-        assertEquals("1848", summary.getCompletionDate().getYear().getValue());
+        assertEquals("1948", summary.getCompletionDate().getYear().getValue());
     }
                 
     @Test

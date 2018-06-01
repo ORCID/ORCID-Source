@@ -11,4 +11,5 @@ public interface InternalApiServiceDelegator {
     Response viewStatusText();
     Response viewPersonLastModified(String orcid);
     Response viewMemberInfo(String memberIdOrName);
+    Response viewTogglz();
 }

@@ -156,7 +156,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
         } catch (IllegalArgumentException e) {
-            throw new NoResultException();
+            throw new NoResultException("ORCID iD " +  orcid + " not found");
         }
 
         // Check if the user record is deprecated

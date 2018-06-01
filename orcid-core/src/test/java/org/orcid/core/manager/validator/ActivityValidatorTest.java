@@ -14,11 +14,11 @@ import org.junit.runner.RunWith;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
+import org.orcid.core.exception.InvalidFuzzyDateException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Amount;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.ContributorAttributes;
@@ -144,7 +144,7 @@ public class ActivityValidatorTest {
             work.getPublicationDate().getYear().setValue("invalid");
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(ActivityTypeValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
@@ -153,7 +153,7 @@ public class ActivityValidatorTest {
             work.getPublicationDate().getMonth().setValue("invalid");
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(ActivityTypeValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
@@ -162,7 +162,7 @@ public class ActivityValidatorTest {
             work.getPublicationDate().getDay().setValue("invalid");
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(ActivityTypeValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
@@ -171,7 +171,7 @@ public class ActivityValidatorTest {
             work.setPublicationDate(new PublicationDate(null, new Month(1), new Day(1)));
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(OrcidValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
@@ -180,7 +180,7 @@ public class ActivityValidatorTest {
             work.setPublicationDate(new PublicationDate(new Year(2017), null, new Day(1)));
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(OrcidValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
@@ -189,7 +189,7 @@ public class ActivityValidatorTest {
             work.setPublicationDate(new PublicationDate(null, null, new Day(1)));
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(OrcidValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
@@ -199,7 +199,7 @@ public class ActivityValidatorTest {
             work.setPublicationDate(new PublicationDate(new Year(25), new Month(1), new Day(1)));
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(OrcidValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
@@ -209,7 +209,7 @@ public class ActivityValidatorTest {
             work.setPublicationDate(new PublicationDate(new Year(2017), new Month(100), new Day(1)));
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(OrcidValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
@@ -219,7 +219,7 @@ public class ActivityValidatorTest {
             work.setPublicationDate(new PublicationDate(new Year(2017), new Month(1), new Day(100)));
             activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(OrcidValidationException e) {
+        } catch(InvalidFuzzyDateException e) {
             
         }
         
