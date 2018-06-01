@@ -485,7 +485,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         Preferences preferences = orcidInternal.getPreferences();
         assertNotNull(preferences);
         assertTrue(preferences.getSendChangeNotifications().isValue());
-        assertFalse(preferences.getSendOrcidNews().isValue());
+        assertTrue(preferences.getSendOrcidNews().isValue());
     }
 
     private void validateAgainstSchema(OrcidMessage orcidMessage) throws SAXException, IOException {

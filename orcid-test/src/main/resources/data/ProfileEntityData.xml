@@ -2313,5 +2313,59 @@
 		last_modified="2016-04-01 15:00:00.00"
 		date_created="2016-04-01 15:00:00.00"		
     />
-                           
+    
+    <email_frequency 
+    	id="UUID4"
+		orcid="4444-4444-4444-4441"
+		send_administrative_change_notifications="3.40282346638529e+38"
+		send_change_notifications="3.40282346638529e+38"
+		send_member_update_requests="3.40282346638529e+38"
+		send_quarterly_tips="true"
+		last_modified="2016-04-01 15:00:00.00"
+		date_created="2016-04-01 15:00:00.00"		
+    />
+    
+    <email_frequency 
+    	id="UUID5"
+		orcid="4444-4444-4444-4443"
+		send_administrative_change_notifications="3.40282346638529e+38"
+		send_change_notifications="3.40282346638529e+38"
+		send_member_update_requests="3.40282346638529e+38"
+		send_quarterly_tips="true"
+		last_modified="2016-04-01 15:00:00.00"
+		date_created="2016-04-01 15:00:00.00"		
+    />
+    
+    <email_frequency 
+    	id="UUID6"
+		orcid="4444-4444-4444-4445"
+		send_administrative_change_notifications="3.40282346638529e+38"
+		send_change_notifications="3.40282346638529e+38"
+		send_member_update_requests="3.40282346638529e+38"
+		send_quarterly_tips="true"
+		last_modified="2016-04-01 15:00:00.00"
+		date_created="2016-04-01 15:00:00.00"		
+    /> 
+    
+    <email_frequency 
+    	id="UUID7"
+		orcid="4444-4444-4444-4446"
+		send_administrative_change_notifications="3.40282346638529e+38"
+		send_change_notifications="3.40282346638529e+38"
+		send_member_update_requests="3.40282346638529e+38"
+		send_quarterly_tips="true"
+		last_modified="2016-04-01 15:00:00.00"
+		date_created="2016-04-01 15:00:00.00"		
+    /> 
+    
+    <email_frequency 
+    	id="UUID8"
+		orcid="4444-4444-4444-444X"
+		send_administrative_change_notifications="3.40282346638529e+38"
+		send_change_notifications="3.40282346638529e+38"
+		send_member_update_requests="3.40282346638529e+38"
+		send_quarterly_tips="true"
+		last_modified="2016-04-01 15:00:00.00"
+		date_created="2016-04-01 15:00:00.00"		
+    />                      
 </dataset>

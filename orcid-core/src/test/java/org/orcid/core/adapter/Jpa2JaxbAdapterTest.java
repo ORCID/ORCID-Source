@@ -3,13 +3,16 @@ package org.orcid.core.adapter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,9 +24,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
@@ -81,8 +85,9 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
 
     @Mock
     private WorkEntityCacheManager mockWorkEntityCacheManager;
-
-    Jpa2JaxbAdapterImpl jpa2JaxbAdapterImpl;
+    
+    @Mock
+    private EmailFrequencyManager mockEmailFrequencyManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -91,14 +96,22 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
 
     @Before
     public void initMocks() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        jpa2JaxbAdapterImpl = TargetProxyHelper.getTargetObject(adapter, Jpa2JaxbAdapterImpl.class);
-        jpa2JaxbAdapterImpl.setWorkEntityCacheManager(mockWorkEntityCacheManager);
+        MockitoAnnotations.initMocks(this);        
+        
+        Map<String, String> frequenciesMap = new HashMap<String, String>();
+        frequenciesMap.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.QUARTERLY_TIPS, "true");
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(frequenciesMap);
+        
+        TargetProxyHelper.injectIntoProxy(adapter, "workEntityCacheManager", mockWorkEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(adapter, "emailFrequencyManager", mockEmailFrequencyManager);
     }
 
     @After
     public void replaceMocks() {
-        jpa2JaxbAdapterImpl.setWorkEntityCacheManager(realWorkEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(adapter, "workEntityCacheManager", realWorkEntityCacheManager);        
     }
 
     @AfterClass

@@ -4,10 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -17,6 +20,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.Contributor;
@@ -69,11 +74,27 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
     @Mock
     private SourceManager anotherMockSourceManager;
 
+    @Mock
+    private EmailFrequencyManager mockEmailFrequencyManager;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
     private static boolean init = false;
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
+        
+        Map<String, String> frequenciesMap = new HashMap<String, String>();
+        frequenciesMap.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.QUARTERLY_TIPS, "true");
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(frequenciesMap);
+
+        TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);
+        
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
         TargetProxyHelper.injectIntoProxy(orcidJaxbCopyManager, "sourceManager", mockSourceManager);
@@ -124,9 +145,7 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
             init = true;
         }
         // Set the default visibility to PRIVATE
-        OrcidProfile profile1 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PRIVATE));
-        orcidProfileManager.updatePreferences(TEST_ORCID, profile1.getOrcidInternal().getPreferences());
+        profileDao.updateDefaultVisibility(TEST_ORCID, Visibility.PRIVATE.name());
 
         addDataToTestRecord();
     }
@@ -267,8 +286,7 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
     @Test
     public void testAddWorkRespectDefaultVisibility() {
         OrcidProfile profile1 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.LIMITED));
-        orcidProfileManager.updatePreferences(TEST_ORCID, profile1.getOrcidInternal().getPreferences());
+        profileDao.updateDefaultVisibility(TEST_ORCID, Visibility.LIMITED.name());
 
         OrcidWork work2 = createWork2();
         work2.setVisibility(Visibility.PUBLIC);
@@ -281,8 +299,7 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
         assertEquals(Visibility.PRIVATE, updatedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getVisibility());
         assertEquals(Visibility.LIMITED, updatedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(1).getVisibility());
 
-        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
-        orcidProfileManager.updatePreferences(TEST_ORCID, profile1.getOrcidInternal().getPreferences());
+        profileDao.updateDefaultVisibility(TEST_ORCID, Visibility.PUBLIC.name());
 
         OrcidWork work3 = createWork3();
         work3.setVisibility(Visibility.PRIVATE);
@@ -312,8 +329,7 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
         profile1 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         profile1.setOrcidActivities(new OrcidActivities());
         profile1.getOrcidActivities().setOrcidWorks(new OrcidWorks());
-        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.LIMITED));
-        orcidProfileManager.updatePreferences(TEST_ORCID, profile1.getOrcidInternal().getPreferences());
+        profileDao.updateDefaultVisibility(TEST_ORCID, Visibility.LIMITED.name());
 
         work2 = createWork2();
         work2.setVisibility(Visibility.PUBLIC);
@@ -326,8 +342,8 @@ public class OrcidProfileManagerImpl_NonTransactionalTest extends OrcidProfileMa
         //TODO: public?????
         assertEquals(Visibility.LIMITED, updatedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getVisibility());
 
-        profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
-        orcidProfileManager.updatePreferences(TEST_ORCID, profile1.getOrcidInternal().getPreferences());
+        profileDao.updateDefaultVisibility(TEST_ORCID, Visibility.PUBLIC.name());
+
 
         work3 = createWork3();
         work3.setVisibility(Visibility.PRIVATE);

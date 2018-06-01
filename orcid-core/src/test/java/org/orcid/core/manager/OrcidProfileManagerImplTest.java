@@ -10,11 +10,14 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -29,6 +32,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.adapter.JpaJaxbEntityAdapter;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
@@ -180,11 +186,27 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Mock
     private SourceManager anotherMockSourceManager;
     
+    @Mock
+    private EmailFrequencyManager mockEmailFrequencyManager;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
     @Before
     @Transactional
     @Rollback
     public void before() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        
+        Map<String, String> frequenciesMap = new HashMap<String, String>();
+        frequenciesMap.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, "0.0");
+        frequenciesMap.put(EmailFrequencyManager.QUARTERLY_TIPS, "true");
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(frequenciesMap);
 
+        TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);
+        
         OrcidProfileManagerImpl orcidProfileManagerImpl = getTargetObject(orcidProfileManager, OrcidProfileManagerImpl.class);
         orcidProfileManagerImpl.setNotificationManager(notificationManager);
 
@@ -204,7 +226,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         delegateCreditName.setVisibility(Visibility.PUBLIC);
         delegatePersonalDetails.setCreditName(delegateCreditName);
         orcidProfileManager.createOrcidProfile(delegateProfile, false, false);
-
+        
         OrcidProfile applicationProfile = new OrcidProfile();
         applicationProfile.setOrcidIdentifier(APPLICATION_ORCID);
         OrcidBio applicationBio = new OrcidBio();
@@ -213,7 +235,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         applicationBio.setPersonalDetails(applicationPersonalDetails);
         applicationPersonalDetails.setCreditName(new CreditName("Brown University"));
         orcidProfileManager.createOrcidProfile(applicationProfile, false, false);
-
+        
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         clientDetails.setId(applicationProfile.getOrcidIdentifier().getPath());
         ProfileEntity applicationProfileEntity = profileDao.find(applicationProfile.getOrcidIdentifier().getPath());
@@ -580,34 +602,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertTrue(encryptionManager.hashMatches("password", derivedProfile.getPassword()));
         assertEquals("random answer", retrievedProfile.getSecurityQuestionAnswer());
         assertEquals("1234", retrievedProfile.getVerificationCode());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testUpdatePreferences() {
-        OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
-        assertEquals(Visibility.PRIVATE, profile1.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
-
-        OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcidIdentifier(TEST_ORCID);
-        OrcidInternal internal = new OrcidInternal();
-        profile2.setOrcidInternal(internal);
-        Preferences preferences = new Preferences();
-        internal.setPreferences(preferences);
-        preferences.setSendChangeNotifications(new SendChangeNotifications(false));
-        preferences.setSendOrcidNews(new SendOrcidNews(true));
-        preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(true));
-        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
-
-        orcidProfileManager.updatePreferences(profile2.getOrcidIdentifier().getPath(), profile2.getOrcidInternal().getPreferences());
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        assertEquals(false, retrievedProfile.getOrcidInternal().getPreferences().getSendChangeNotifications().isValue());
-        assertEquals(true, retrievedProfile.getOrcidInternal().getPreferences().getSendOrcidNews().isValue());
-        assertEquals(true, retrievedProfile.getOrcidInternal().getPreferences().getDeveloperToolsEnabled().isValue());
-        assertEquals(Visibility.PUBLIC, retrievedProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
     }
 
     @Test
