@@ -240,8 +240,7 @@ public class NotificationManagerTest extends DBUnitTest {
             assertTrue(n.getPutCode() > minNotificationId);
             // New notification entity should have been created
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
-            assertNotNull(latestNotification);
-            System.out.println("----------->" + locale.value() + " -> " + minNotificationId + " -> " + latestNotification.getId());
+            assertNotNull(latestNotification);            
             assertTrue(latestNotification.getId() > minNotificationId);
             assertEquals(NotificationType.AMENDED.name(), latestNotification.getNotificationType());
         }
