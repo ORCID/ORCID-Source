@@ -133,17 +133,11 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     public Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
         checkIfProfileDeprecated(orcid);
         notificationValidationManager.validateNotificationPermission(notification);
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        if (profile == null) {
-            throw OrcidNotFoundException.newInstance(orcid);
-        }
-        if (profile.getSendMemberUpdateRequests() != null && !profile.getSendMemberUpdateRequests()) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("orcid", orcid);
-            throw new OrcidNotificationException(params);
-        }
-        Notification createdNotification = notificationManager.createNotification(orcid, notification);
+        Notification createdNotification = notificationManager.createPermissionNotification(orcid, notification);
         try {
+            if(createdNotification == null) {
+                return Response.notModified().build();
+            }
             return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.notification_uri.exception"), e);
