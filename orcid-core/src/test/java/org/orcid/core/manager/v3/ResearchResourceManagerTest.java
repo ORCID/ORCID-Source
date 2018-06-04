@@ -139,7 +139,7 @@ public class ResearchResourceManagerTest extends BaseTest {
         assertNotNull(rr1.getLastModifiedDate());
         assertNotNull(rr1.getPutCode());
         assertNotNull(rr1.getSource());
-        assertEquals(CLIENT_1_ID,rr1.getSource().getSourceClientId().getPath());
+        assertEquals(CLIENT_1_ID,rr1.getSource().retrieveSourcePath());
         assertNotNull(rr1.getVisibility());
         assertEquals(Visibility.PUBLIC,rr1.getVisibility());
         assertNotNull(rr1.getProposal());
