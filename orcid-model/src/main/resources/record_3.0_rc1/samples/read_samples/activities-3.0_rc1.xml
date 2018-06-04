@@ -102,12 +102,12 @@
 				</common:department-name>
 				<common:role-title>education:role-title</common:role-title>
 				<common:start-date>
-					<common:year>1848</common:year>
+					<common:year>1948</common:year>
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:start-date>
 				<common:end-date>
-					<common:year>1848</common:year>
+					<common:year>1948</common:year>
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:end-date>
@@ -161,12 +161,12 @@
 				</common:department-name>
 				<common:role-title>employment:role-title</common:role-title>
 				<common:start-date>
-					<common:year>1848</common:year>
+					<common:year>1948</common:year>
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:start-date>
 				<common:end-date>
-					<common:year>1848</common:year>
+					<common:year>1948</common:year>
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:end-date>
@@ -231,12 +231,12 @@
 				</common:external-ids>
 				<funding:type>grant</funding:type>
 				<common:start-date>
-					<common:year>1848</common:year>
+					<common:year>1948</common:year>
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:start-date>
 				<common:end-date>
-					<common:year>1848</common:year>
+					<common:year>1948</common:year>
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:end-date>
@@ -413,7 +413,7 @@
 					</common:external-id>
 				</common:external-ids>
 				<peer-review:completion-date>
-					<common:year>1848</common:year>
+					<common:year>1948</common:year>
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</peer-review:completion-date>
@@ -598,7 +598,7 @@
 				</common:external-ids>
 				<work:type>artistic-performance</work:type>
 				<common:publication-date>
-					<common:year>1848</common:year>
+					<common:year>1948</common:year>
 					<common:month>02</common:month>
 					<common:day>02</common:day>
 				</common:publication-date>

@@ -78,7 +78,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(WorkType.ARTISTIC_PERFORMANCE.name(), workEntity.getWorkType());
         PublicationDateEntity publicationDateEntity = workEntity.getPublicationDate();
         assertNotNull(publicationDateEntity);
-        assertEquals(1848, publicationDateEntity.getYear().intValue());
+        assertEquals(1948, publicationDateEntity.getYear().intValue());
         assertEquals(02, publicationDateEntity.getMonth().intValue());
         assertEquals(02, publicationDateEntity.getDay().intValue());
         assertEquals(

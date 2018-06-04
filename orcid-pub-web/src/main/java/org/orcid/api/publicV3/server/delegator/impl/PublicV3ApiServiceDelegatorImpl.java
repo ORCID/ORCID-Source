@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
@@ -112,9 +110,6 @@ import de.undercouch.citeproc.csl.CSLItemData;
 public class PublicV3ApiServiceDelegatorImpl
         implements PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> {
 
-    @Context
-    private HttpServletRequest httpRequest;
-    
     // Activities managers
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
@@ -213,7 +208,6 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewStatus() {
-        httpRequest.setAttribute("isMonitoring", true);
         return Response.ok(statusManager.createStatusMap()).build();
     }
 

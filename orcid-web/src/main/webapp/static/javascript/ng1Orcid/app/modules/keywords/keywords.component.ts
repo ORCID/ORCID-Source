@@ -13,8 +13,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { KeywordsService } 
-    from '../../shared/keywords.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -33,9 +33,10 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
     formData: any;
     emails: any;
     emailSrvc: any;
+    url_path: string;
 
     constructor( 
-        private keywordsService: KeywordsService,
+        private keywordsService: GenericService,
         private emailService: EmailService,
         private modalService: ModalService
     ) {
@@ -44,10 +45,11 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
         };
 
         this.emails = {};
+        this.url_path = '/my-orcid/keywordsForms.json';
     }
 
     getData(): void {
-        this.keywordsService.getData()
+        this.keywordsService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -85,7 +87,6 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.subscription = this.keywordsService.notifyObservable$.subscribe(
             (res) => {
                 this.getData();
-                ////console.log('notified', res);
             }
         );
     };

@@ -19,8 +19,8 @@ import { Subscription }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
-import { KeywordsService } 
-    from '../../shared/keywords.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
@@ -40,11 +40,12 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     formDataBeforeChange: any;
     newElementDefaultVisibility: string;
     orcidId: any;
+    url_path: string;
  
     constructor(
         private cdr:ChangeDetectorRef,
         private commonSrvc: CommonService,
-        private keywordsService: KeywordsService,
+        private keywordsService: GenericService,
         private modalService: ModalService
     ) {
         this.bulkEditShow = false;
@@ -52,6 +53,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.formDataBeforeChange = {};
         this.newElementDefaultVisibility = 'PRIVATE';
         this.orcidId = orcidVar.orcidId; //Do not remove
+        this.url_path = '/my-orcid/keywordsForms.json';
     }
 
     addNew(): void {       
@@ -96,7 +98,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getData(): void{
-        this.keywordsService.getData()
+        this.keywordsService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {
@@ -126,7 +128,7 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setForm( closeAfterAction ): void {
 
-        this.keywordsService.setData( this.formData )
+        this.keywordsService.setData( this.formData, this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

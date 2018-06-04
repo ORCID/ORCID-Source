@@ -57,7 +57,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         //Dates
         assertEquals(Integer.valueOf(2), pe.getCompletionDate().getDay());        
         assertEquals(Integer.valueOf(2), pe.getCompletionDate().getMonth());
-        assertEquals(Integer.valueOf(1848), pe.getCompletionDate().getYear());        
+        assertEquals(Integer.valueOf(1948), pe.getCompletionDate().getYear());        
         
         // Source
         assertNull(pe.getSourceId());        

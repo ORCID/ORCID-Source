@@ -54,9 +54,6 @@ import { EditTableNg2Module }
     from './../editTable/editTable.ts';
 */
 
-import { EmailFrecuencyNg2Module }
-    from './../emailFrecuency/emailFrecuency.ts';
-
 import { HeaderNg2Module }
     from './../header/header.ts';
 
@@ -105,12 +102,6 @@ import { AffiliationService }
 import { AccountService }
     from '../../shared/account.service.ts';
 
-import { AlsoKnownAsService } 
-    from '../../shared/alsoKnownAs.service.ts';
-
-import { BiographyService } 
-    from '../../shared/biography.service.ts';
-
 import { BlogService }
     from '../../shared/blog.service.ts';
 
@@ -125,15 +116,6 @@ import { CommonService }
 
 import { ConsortiaService }
     from '../../shared/consortia.service.ts'
-
-import { CountryService } 
-    from '../../shared/country.service.ts';
-
-import { DelegatorsService }
-    from '../../shared/delegators.service.ts';
-
-import { DeprecateProfileService }
-    from '../../shared/deprecateProfile.service.ts';
 
 import { DiscoService }
     from '../../shared/disco.service.ts';
@@ -150,11 +132,8 @@ import { FeaturesService }
 import { FundingService } 
     from '../../shared/funding.service.ts';
 
-//import { GroupedActivitiesUtilService } 
-//    from '../shared/groupedActivities.service.ts';
-
-import { KeywordsService } 
-    from '../../shared/keywords.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { LanguageService }
     from '../../shared/language.service.ts';
@@ -164,9 +143,6 @@ import { ManageMembersService }
 
 import { ModalService } 
     from '../../shared/modal.service.ts';
-
-import { NameService } 
-    from '../../shared/name.service.ts';
 
 import { NotificationsService } 
     from '../../shared/notifications.service.ts';
@@ -183,26 +159,17 @@ import { PreferencesService }
 import { ReactivationService }
     from '../../shared/reactivation.service.ts';
 
-import { RequestPasswordResetService }
-    from '../../shared/requestPasswordReset.service.ts';
-
 import { SearchService } 
     from '../../shared/search.service.ts';
 
 import { SocialNetworkService }
     from '../../shared/socialNetwork.service.ts';
 
-import { StaticsService }
-    from '../../shared/statics.service.ts';
-
 import { SwitchUserService } 
     from '../../shared/switchUser.service.ts';
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
-
-import { WebsitesService } 
-    from '../../shared/websites.service.ts';
 
 import { WidgetService }
     from '../../shared/widget.service.ts'
@@ -227,7 +194,6 @@ import { EmailFrequencyService }
             AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
-            EmailFrecuencyNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
@@ -266,7 +232,6 @@ import { EmailFrequencyService }
             AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
-            EmailFrecuencyNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
@@ -278,40 +243,30 @@ import { EmailFrequencyService }
             AccountService,
             AdminDelegatesService,
             AffiliationService,
-            AlsoKnownAsService,
-            BiographyService,
             BlogService,
             ClaimService,
             ClientService,
             CommonService,
             ConsortiaService,
-            CountryService,
-            DelegatorsService,
-            DeprecateProfileService,
             DiscoService,
             EmailFrequencyService,
             EmailService,
             ExternalIdentifiersService,
             FeaturesService,
             FundingService,
-            //GroupedActivitiesUtilService,
-            KeywordsService,
+            GenericService,
             LanguageService,
             ManageMembersService,
             ModalService,
-            NameService,
             NotificationsService,
             OauthService,
             PasswordService,
             PreferencesService,
             ReactivationService,
-            RequestPasswordResetService,
             SearchService,
             SocialNetworkService,
-            StaticsService,
             TwoFAStateService,
             SwitchUserService,
-            WebsitesService,
             WidgetService,
             WorksService,
             WorkspaceService

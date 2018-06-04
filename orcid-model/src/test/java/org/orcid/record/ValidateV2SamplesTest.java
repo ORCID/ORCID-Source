@@ -766,11 +766,11 @@ public class ValidateV2SamplesTest {
         assertNotNull(education.getEndDate());
         assertEquals("02", education.getEndDate().getDay().getValue());
         assertEquals("02", education.getEndDate().getMonth().getValue());
-        assertEquals("1848", education.getEndDate().getYear().getValue());
+        assertEquals("1948", education.getEndDate().getYear().getValue());
         assertNotNull(education.getStartDate());
         assertEquals("02", education.getStartDate().getDay().getValue());
         assertEquals("02", education.getStartDate().getMonth().getValue());
-        assertEquals("1848", education.getStartDate().getYear().getValue());
+        assertEquals("1948", education.getStartDate().getYear().getValue());
         assertNotNull(education.getOrganization());
         assertEquals("common:name", education.getOrganization().getName());
         assertEquals("common:city", education.getOrganization().getAddress().getCity());        
@@ -789,11 +789,11 @@ public class ValidateV2SamplesTest {
         assertNotNull(employment.getEndDate());
         assertEquals("02", employment.getEndDate().getDay().getValue());
         assertEquals("02", employment.getEndDate().getMonth().getValue());
-        assertEquals("1848", employment.getEndDate().getYear().getValue());
+        assertEquals("1948", employment.getEndDate().getYear().getValue());
         assertNotNull(employment.getStartDate());
         assertEquals("02", employment.getStartDate().getDay().getValue());
         assertEquals("02", employment.getStartDate().getMonth().getValue());
-        assertEquals("1848", employment.getStartDate().getYear().getValue());
+        assertEquals("1948", employment.getStartDate().getYear().getValue());
         assertNotNull(employment.getOrganization());
         assertEquals("common:name", employment.getOrganization().getName());
         assertEquals("common:city", employment.getOrganization().getAddress().getCity());        
@@ -826,11 +826,11 @@ public class ValidateV2SamplesTest {
         assertNotNull(funding.getEndDate());
         assertEquals("02", funding.getEndDate().getDay().getValue());
         assertEquals("02", funding.getEndDate().getMonth().getValue());
-        assertEquals("1848", funding.getEndDate().getYear().getValue());
+        assertEquals("1948", funding.getEndDate().getYear().getValue());
         assertNotNull(funding.getStartDate());
         assertEquals("02", funding.getStartDate().getDay().getValue());
         assertEquals("02", funding.getStartDate().getMonth().getValue());
-        assertEquals("1848", funding.getStartDate().getYear().getValue());
+        assertEquals("1948", funding.getStartDate().getYear().getValue());
         
         assertNotNull(funding.getOrganization());
         assertEquals("common:name", funding.getOrganization().getName());
@@ -906,7 +906,7 @@ public class ValidateV2SamplesTest {
         assertNotNull(work.getPublicationDate());
         assertEquals("02", work.getPublicationDate().getDay().getValue());
         assertEquals("02", work.getPublicationDate().getMonth().getValue());
-        assertEquals("1848", work.getPublicationDate().getYear().getValue());
+        assertEquals("1948", work.getPublicationDate().getYear().getValue());
         
         //Check biography
         Person person = record.getPerson();        

@@ -674,8 +674,8 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
             for(DistinctionSummary summary : group.getActivities()) {
                 if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
                     assertEquals("department-name", summary.getDepartmentName());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getEndDate());
                     distinctionPutCode = summary.getPutCode();
                     found = true;
                     break;
@@ -690,8 +690,8 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
             for(EducationSummary summary : group.getActivities()) {
                 if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
                     assertEquals("department-name", summary.getDepartmentName());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getEndDate());
                     educationPutCode = summary.getPutCode();
                     found = true;
                     break;
@@ -709,8 +709,8 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
             for(EmploymentSummary summary : group.getActivities()) {
                 if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {
                     assertEquals("department-name", summary.getDepartmentName());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getEndDate());
                     employmentPutCode = summary.getPutCode();
                     found = true;
                     break;
@@ -725,8 +725,8 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
             for(InvitedPositionSummary summary : group.getActivities()) {
                 if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
                     assertEquals("department-name", summary.getDepartmentName());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getEndDate());
                     invitedPositionPutCode = summary.getPutCode();
                     found = true;
                     break;
@@ -741,8 +741,8 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
             for(MembershipSummary summary : group.getActivities()) {
                 if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
                     assertEquals("department-name", summary.getDepartmentName());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getEndDate());
                     membershipPutCode = summary.getPutCode();
                     found = true;
                     break;
@@ -757,8 +757,8 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
             for(QualificationSummary summary : group.getActivities()) {
                 if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
                     assertEquals("department-name", summary.getDepartmentName());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getEndDate());
                     qualificationPutCode = summary.getPutCode();
                     found = true;
                     break;
@@ -773,8 +773,8 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
             for(ServiceSummary summary : group.getActivities()) {
                 if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("role-title")) {                
                     assertEquals("department-name", summary.getDepartmentName());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
-                    assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getStartDate());
+                    assertEquals(FuzzyDate.valueOf(1948, 2, 2), summary.getEndDate());
                     servicePutCode = summary.getPutCode();
                     found = true;
                     break;
@@ -832,7 +832,7 @@ public class MemberV3Rc1Test extends BlackBoxBaseV3_0_rc1 {
         for(PeerReviewGroup group : activities.getPeerReviews().getPeerReviewGroup()) {
             for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
                 if(summary.getCompletionDate() != null && summary.getCompletionDate().getYear() != null) {
-                    if(summary.getCompletionDate().getYear().getValue().equals("1848")) {
+                    if(summary.getCompletionDate().getYear().getValue().equals("1948")) {
                         found1 = true;
                         peerReviewPutCodes.add(summary.getPutCode());
                     } else if(summary.getCompletionDate().getYear().getValue().equals("2016")) {
