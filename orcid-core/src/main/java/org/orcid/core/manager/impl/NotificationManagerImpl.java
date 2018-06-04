@@ -982,17 +982,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendAutoDeprecateNotification(String primaryOrcid, String deprecatedOrcid) {
-        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(primaryOrcid);
-        String frequencyString = frequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS);
-        SendEmailFrequency administrativeChangeEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
-
-        if (SendEmailFrequency.NEVER.equals(administrativeChangeEmailFrequency)) {
-            LOGGER.debug("Not sending auto deprecate notifiation, because option to send administrative change notifications is ste to never for record: {}",
-                    primaryOrcid);
-            return;
-        }
-        
+    public void sendAutoDeprecateNotification(String primaryOrcid, String deprecatedOrcid) {        
         ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve(primaryOrcid);
         ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(SourceEntityUtils.getSourceId(deprecatedProfileEntity.getSource()));

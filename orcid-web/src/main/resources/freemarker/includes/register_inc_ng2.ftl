@@ -161,7 +161,7 @@
             <div *ngFor="let error of registrationForm.passwordConfirm.errors" [innerHTML]="error"></div>
         </span>
     </div>
-    <div *ngIf="gdprUiFeatureEnabled">
+    <div>
         <!--Visibility default-->
         <div class="form-group clear-fix popover-registry">  
             <h4>${springMacroRequestContext.getMessage("register.privacy_settings")}</h4>         
@@ -234,51 +234,7 @@
                 </span>
             </div>
         </div>
-    </div><!--GDPR UI feature enabled-->
-    <div *ngIf="!gdprUiFeatureEnabled">
-        <!--Visibility default-->
-        <div class="form-group clear-fix popover-registry">
-            <div class="oauth-privacy">                   
-                <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
-                <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
-                <@orcid.privacyToggle3Ng2
-                    angularModel="registrationForm.activitiesVisibilityDefault.visibility"
-                    publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
-                    limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
-                    privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
-                    elementId="workPrivHelp" position="bottom" /> 
-            </div>
-        </div>
-        <!--Email frequency-->
-        <div>
-            <div class="relative">              
-                <@orcid.registrationEmailFrequencySelectorNg2 angularElementName="registrationForm" />
-            </div>
-        </div>
-        <!--Recaptcha-->
-        <div *ngIf="!disableRecaptchaFeatureEnabled">   
-            <div class="bottomBuffer relative recaptcha"  id="recaptcha">
-                <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
-                <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
-                    <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
-                </span>
-            </div>
-        </div>
-        <!--Terms and conditions-->
-        <div class="bottomBuffer">
-            <label for="termsConditions">
-                <@orcid.msg 'register.labelTermsofUse'/>
-                <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}">*</span>
-            </label>
-            <p>
-                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
-                <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
-            </p>
-            <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
-                <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
-            </span>
-        </div>
-    </div><!--GDPR UI feature disabled-->   
+    </div>
     <!--Registration error-->
     <div style="margin-bottom: 15px;" *ngIf="showGeneralRegistrationError">
         <span class="orcid-error" [innerHtml]="generalRegistrationError"></span>

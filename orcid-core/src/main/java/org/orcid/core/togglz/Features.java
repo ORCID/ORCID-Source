@@ -18,9 +18,6 @@ public enum Features implements Feature {
     @Label("Cookie policy banner")
     COOKIE_BANNER,
 
-    @Label("UI changes for GDPR compliance")
-    GDPR_UI,
-
     @Label("Https for links to iDs")
     HTTPS_IDS,
 
@@ -91,10 +88,7 @@ public enum Features implements Feature {
     OPENID_SIMPLE_SUBJECT,
     
     @Label("Disable 1.1 version from any API")
-    DISABLE_1_1,
-    
-    @Label("GDPR deactivate")
-    GDPR_DEACTIVATE;
+    DISABLE_1_1;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

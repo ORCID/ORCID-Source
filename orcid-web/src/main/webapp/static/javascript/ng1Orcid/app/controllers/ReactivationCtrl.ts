@@ -29,9 +29,7 @@ export const ReactivationCtrl = angular.module('orcidApp').controller(
                     success: function(data) {
                        $scope.register = data;
                        $scope.register.resetParams = resetParams;
-                       if (orcidVar.features['GDPR_UI'] == true){
-                            $scope.register.activitiesVisibilityDefault.visibility = null;
-                        }
+                       $scope.register.activitiesVisibilityDefault.visibility = null;
                        $scope.$apply();               
             
                        $scope.$watch('register.givenNames.value', function() {

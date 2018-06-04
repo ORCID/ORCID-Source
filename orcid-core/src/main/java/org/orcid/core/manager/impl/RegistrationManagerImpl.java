@@ -293,12 +293,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         
         // Create email frequency entity
         boolean sendQuarterlyTips = (registration.getSendOrcidNews() == null) ? false : registration.getSendOrcidNews().getValue();
-        if(PojoUtil.isEmpty(registration.getSendEmailFrequencyDays())) {
-            emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);
-        } else {
-            SendEmailFrequency f = SendEmailFrequency.fromValue(registration.getSendEmailFrequencyDays().getValue());
-            emailFrequencyManager.createOnRegister(orcid, f, f, f, sendQuarterlyTips);
-        }
+        emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);
                         
         return newRecord.getId();
     }
