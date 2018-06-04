@@ -130,6 +130,7 @@ public class ResearchResourceManagerTest extends BaseTest {
         researchResourceManager.createResearchResource(USER_ORCID, generateResearchResourceWithoutExternalID("title1","id2"), false);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testCreate(){
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
@@ -213,7 +214,6 @@ public class ResearchResourceManagerTest extends BaseTest {
         assertEquals("changedOrg",r4.getProposal().getHosts().getOrganization().get(0).getName());
         assertEquals("abc456",r4.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
         assertEquals(2,r4.getResourceItems().get(0).getHosts().getOrganization().size());
-        //TODO: fix ordering so it's by the order added, not created.
         assertEquals("changedOrg",r4.getResourceItems().get(0).getHosts().getOrganization().get(0).getName());
         assertEquals("changedResourceName",r4.getResourceItems().get(0).getResourceName());
     }
