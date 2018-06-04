@@ -446,6 +446,7 @@
         <property name="peerReviewManager" ref="peerReviewManagerReadOnlyV3" />
         <property name="workManager" ref="workManagerReadOnlyV3" />       
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+        <property name="researchResourceManager" ref="researchResourceManagerReadOnlyV3" />
     </bean>
 	
     <bean id="activityManagerV3" class="org.orcid.core.manager.v3.impl.ActivityManagerImpl" />
