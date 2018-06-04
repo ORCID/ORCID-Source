@@ -30,9 +30,6 @@ public enum Features implements Feature {
     @Label("New footer")
     NEW_FOOTER,
 
-    @Label("Mutiple emails on register form")
-    REG_MULTI_EMAIL,
-
     @Label("Revoke access token if authorization code is reused")
     REVOKE_TOKEN_ON_CODE_REUSE,
 

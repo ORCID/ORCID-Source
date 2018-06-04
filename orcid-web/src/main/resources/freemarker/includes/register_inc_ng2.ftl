@@ -50,7 +50,7 @@
             </span>
         </div>
     </div>
-    <div *ngIf="regMultiEmailFeatureEnabled">
+    <div>
         <!-- Primary email -->
         <div class="form-group clear-fix">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
@@ -105,41 +105,7 @@
             </div>
         </div>
         <button (click)="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>  
-    </div><!--reg multi email feature enabled-->
-    <div *ngIf="!regMultiEmailFeatureEnabled">
-        <!-- Email -->                  
-        <div class="form-group clear-fix">
-            <label class="control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
-            <div class="bottomBuffer">
-                <input id="register-form-email" name="email" type="email" tabindex="3" class="" [(ngModel)]="registrationForm.email.value" (blur)="serverValidate('Email')" />
-                <span class="required" [ngClass]="isValidClass(registrationForm.email)">*</span>
-                <span class="orcid-error" *ngIf="registrationForm.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
-                    <div *ngFor="let error of registrationForm.email.errors" [innerHTML]="error"></div>
-                </span>
-                <span class="orcid-error" *ngIf="showDuplicateEmailError">{{errorEmail}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
-                </span>
-                <span class="orcid-error" *ngIf="showDeactivatedError">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" (click)="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
-                </span>
-                <span class="orcid-error" *ngIf="showReactivationSent">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
-                </span>                                             
-            </div>
-        </div>
-        <!--Re-enter email-->
-        <div class="form-group clear-fix">
-            <label class="control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
-            <div class="bottomBuffer">
-                <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" [(ngModel)]="registrationForm.emailConfirm.value" (blur)="serverValidate('EmailConfirm')" />
-                <span class="required" [ngClass]="isValidClass(registrationForm.emailConfirm)">*</span>                  
-                <span class="orcid-error" *ngIf="registrationForm.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
-                    <div *ngFor="let error of registrationForm.emailConfirm.errors" [innerHTML]="error"></div>
-                </span>
-            </div>
-        </div>
-    </div><!--reg multi email feature disabled-->
+    </div>
     <!--Password-->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>

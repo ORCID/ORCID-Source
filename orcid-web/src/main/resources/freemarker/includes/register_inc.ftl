@@ -32,96 +32,61 @@
             </span>
         </div>
     </div>
-    <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
-        <!-- Primary email -->
-        <div class="form-group clear-fix">
-            <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
-            <div class="relative">          
-                <input name="emailprimary234" type="text" tabindex="3" class="input-xlarge" ng-model="registrationForm.email.value" ng-blur="serverValidate('Email')"/>
-                <span class="required" ng-class="isValidClass(register.email)">*</span>
-                <span class="orcid-error" ng-show="registrationForm.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
-                    <div ng-repeat='error in registrationForm.email.errors' ng-bind-html="error"></div>
-                </span>
-                <span class="orcid-error" ng-show="showDuplicateEmailError" ng-cloak>
-                    {{errorEmail}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
-                </span>
-                <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a ng-click="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
-                </span>
-                <span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
-                </span>
-            </div>
-        </div>  
-        <!-- Additional emails -->
-        <div class="form-group clear-fix" ng-repeat="emailAdditional in registrationForm.emailsAdditional track by $index">
-            <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
-            <div class="relative">
-                <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="registrationForm.emailsAdditional[$index].value" focus-last-input="$index == focusIndex" ng-blur="serverValidate('EmailsAdditional')"/>
-                <div ng-show="$first" class="popover-help-container leftBuffer">
-                    <i class="glyphicon glyphicon-question-sign"></i>
-                    <div id="email-additional-help" class="popover bottom">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                            <p><@orcid.msg ''/></p>
-                            <p><@orcid.msg 'orcid.frontend.register.help.email_additional'/></p>
-                        </div>
+    <!-- Primary email -->
+    <div class="form-group clear-fix">
+        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
+        <div class="relative">          
+            <input name="emailprimary234" type="text" tabindex="3" class="input-xlarge" ng-model="registrationForm.email.value" ng-blur="serverValidate('Email')"/>
+            <span class="required" ng-class="isValidClass(register.email)">*</span>
+            <span class="orcid-error" ng-show="registrationForm.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
+                <div ng-repeat='error in registrationForm.email.errors' ng-bind-html="error"></div>
+            </span>
+            <span class="orcid-error" ng-show="showDuplicateEmailError" ng-cloak>
+                {{errorEmail}} 
+                ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
+                ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
+            </span>
+            <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
+                ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a ng-click="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+            </span>
+            <span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
+                ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
+            </span>
+        </div>
+    </div>  
+    <!-- Additional emails -->
+    <div class="form-group clear-fix" ng-repeat="emailAdditional in registrationForm.emailsAdditional track by $index">
+        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
+        <div class="relative">
+            <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" ng-model="registrationForm.emailsAdditional[$index].value" focus-last-input="$index == focusIndex" ng-blur="serverValidate('EmailsAdditional')"/>
+            <div ng-show="$first" class="popover-help-container leftBuffer">
+                <i class="glyphicon glyphicon-question-sign"></i>
+                <div id="email-additional-help" class="popover bottom">
+                    <div class="arrow"></div>
+                    <div class="popover-content">
+                        <p><@orcid.msg ''/></p>
+                        <p><@orcid.msg 'orcid.frontend.register.help.email_additional'/></p>
                     </div>
                 </div>
-                <div ng-show="!$first" class="popover-help-container leftBuffer">
-                    <a class="btn-white-no-border" ng-click="removeEmailField($index)"><i class="glyphicon glyphicon-remove-sign"></i></a>
-                </div>
-                <span class="orcid-error" ng-show="registrationForm.emailsAdditional[$index].errors.length > 0 && !showEmailsAdditionalDeactivatedError[$index] && !showEmailsAdditionalReactivationSent[$index] && !showEmailsAdditionalDuplicateEmailError[$index]">
-                    <div ng-repeat='error in registrationForm.emailsAdditional[$index].errors track by $index' ng-bind-html="error"></div>
-                </span>
-                <span class="orcid-error" ng-show="showEmailsAdditionalDuplicateEmailError[$index]" ng-cloak>{{errorEmailsAdditional[$index]}}
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[$index]}}${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
-                </span>
-                <span class="orcid-error" ng-show="showEmailsAdditionalDeactivatedError[$index]" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a ng-click="sendEmailsAdditionalReactivationEmail($index)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
-                </span>
-                <span class="orcid-error" ng-show="showEmailsAdditionalReactivationSent[$index]" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
-                </span>
             </div>
-        </div>
-        <button ng-click="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>
-    </@orcid.checkFeatureStatus>
-    <@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL' enabled=false> 
-        <!-- Email -->                  
-        <div class="form-group clear-fix">
-            <label class="control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
-            <div class="bottomBuffer">
-                <input id="register-form-email" name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
-                <span class="required" ng-class="isValidClass(registrationForm.email)">*</span> <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
-                    <div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
-                </span>
-                <span class="orcid-error" ng-show="showDuplicateEmailError" ng-cloak>{{errorEmail}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a  ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{registrationForm.email.value}}
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
-                </span>
-                <span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
-                </span>
-                <span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
-                </span>                                             
+            <div ng-show="!$first" class="popover-help-container leftBuffer">
+                <a class="btn-white-no-border" ng-click="removeEmailField($index)"><i class="glyphicon glyphicon-remove-sign"></i></a>
             </div>
+            <span class="orcid-error" ng-show="registrationForm.emailsAdditional[$index].errors.length > 0 && !showEmailsAdditionalDeactivatedError[$index] && !showEmailsAdditionalReactivationSent[$index] && !showEmailsAdditionalDuplicateEmailError[$index]">
+                <div ng-repeat='error in registrationForm.emailsAdditional[$index].errors track by $index' ng-bind-html="error"></div>
+            </span>
+            <span class="orcid-error" ng-show="showEmailsAdditionalDuplicateEmailError[$index]" ng-cloak>{{errorEmailsAdditional[$index]}}
+                ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a ng-click="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[$index]}}${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
+            </span>
+            <span class="orcid-error" ng-show="showEmailsAdditionalDeactivatedError[$index]" ng-cloak>
+                ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a ng-click="sendEmailsAdditionalReactivationEmail($index)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+            </span>
+            <span class="orcid-error" ng-show="showEmailsAdditionalReactivationSent[$index]" ng-cloak>
+                ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
+            </span>
         </div>
-        <!--Re-enter email-->
-        <div class="form-group clear-fix">
-            <label class="control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
-            <div class="bottomBuffer">
-                <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
-                <span class="required" ng-class="isValidClass(registrationForm.emailConfirm)">*</span>                  
-                <span class="orcid-error" ng-show="registrationForm.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
-                    <div ng-repeat='error in registrationForm.emailConfirm.errors' ng-bind-html="error"></div>
-                </span>
-            </div>
-        </div>
-    </@orcid.checkFeatureStatus>
+    </div>
+    <button ng-click="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>
     <!--Password-->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>

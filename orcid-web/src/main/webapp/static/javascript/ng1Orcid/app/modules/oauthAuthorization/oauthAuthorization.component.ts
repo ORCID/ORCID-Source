@@ -92,8 +92,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     socialSignInForm: any;
     loadTime: any;
     generalRegistrationError: any;
-    //registration form togglz features
-    regMultiEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('REG_MULTI_EMAIL');
+    //registration form togglz features    
     disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
     
     constructor(
