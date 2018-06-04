@@ -294,28 +294,6 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testRemove() {
-        ProfileEntity profile = profileDao.find("4444-4444-4444-4442");
-        profileDao.remove(profile);
-        profileDao.flush();
-        profile = profileDao.find("4444-4444-4444-4442");
-        assertNull(profile);
-
-        profile = profileDao.find("4444-4444-4444-4443");
-        assertNotNull(profile);
-        profileDao.remove(profile.getId());
-        profileDao.flush();
-
-        profile = profileDao.find("4444-4444-4444-4443");
-        assertNull(profile);
-
-        List<ProfileEntity> all = profileDao.getAll();
-        assertEquals(20, all.size());
-    }
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testOrcidExists() {
         assertTrue(profileDao.orcidExists("4444-4444-4444-4442"));
         assertFalse(profileDao.orcidExists("4445-4444-4444-4442"));
