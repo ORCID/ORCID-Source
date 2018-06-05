@@ -3,17 +3,26 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
@@ -27,6 +36,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,8 +55,27 @@ public class CustomEmailControllerTest extends BaseControllerTest {
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
 
+    @Mock
+    private EmailFrequencyManager mockEmailFrequencyManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
     @Before
     public void init() {
+        MockitoAnnotations.initMocks(this);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
+        
+        ReflectionTestUtils.setField(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
+        
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         assertNotNull(customEmailController);
     }
@@ -57,6 +86,11 @@ public class CustomEmailControllerTest extends BaseControllerTest {
                 "/data/ClientDetailsEntityData.xml"));
     }
 
+    @After
+    public void after() {
+        ReflectionTestUtils.setField(jpa2JaxbAdapter, "emailFrequencyManager", emailFrequencyManager);
+    }   
+    
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
