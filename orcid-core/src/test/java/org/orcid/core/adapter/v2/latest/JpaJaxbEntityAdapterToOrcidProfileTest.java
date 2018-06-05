@@ -111,7 +111,32 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         ProfileEntity profileEntity = profileDao.find("4444-4444-4444-4443");
         long start = System.currentTimeMillis();
         OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, LoadOptions.ALL);
-        checkOrcidProfile(orcidProfile);
+        assertNotNull(orcidProfile);
+        assertNotNull(orcidProfile.getOrcidBio());
+        checkOrcidProfile(orcidProfile.getOrcidBio());
+
+        assertNotNull(orcidProfile.getOrcidHistory());
+        checkOrcidHistory(orcidProfile.getOrcidHistory());
+
+        checkAffiliations(orcidProfile.getOrcidActivities().getAffiliations().getAffiliation());
+        assertNotNull(orcidProfile.retrieveOrcidWorks());
+        checkOrcidWorks(orcidProfile.retrieveOrcidWorks());
+        checkOrcidFundings(orcidProfile.retrieveFundings());
+        assertEquals("4444-4444-4444-4443", orcidProfile.getOrcidIdentifier().getPath());
+
+        assertNotNull(orcidProfile.getOrcidInternal());
+        SecurityDetails securityDetails = orcidProfile.getOrcidInternal().getSecurityDetails();
+        assertNotNull(securityDetails);
+        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", securityDetails
+                .getEncryptedPassword().getContent());
+        assertEquals(1, securityDetails.getSecurityQuestionId().getValue());
+        assertEquals("iTlIoR2JsFl5guE56cazmg==", securityDetails.getEncryptedSecurityAnswer().getContent());
+        assertEquals("1vLkD2Lm8c24TyALcW0Brg==", securityDetails.getEncryptedVerificationCode().getContent());
+        Preferences preferences = orcidProfile.getOrcidInternal().getPreferences();
+        assertNotNull(preferences);
+        assertTrue(preferences.getSendChangeNotifications().isValue());
+        assertTrue(preferences.getSendOrcidNews().isValue());
+        
         validateAgainstSchema(new OrcidMessage(orcidProfile));
     }
 
@@ -181,25 +206,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4441", orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
         assertTrue(orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidId().getValue().endsWith("/4444-4444-4444-4441"));
         validateAgainstSchema(new OrcidMessage(orcidProfile));
-    }
-
-    private void checkOrcidProfile(OrcidProfile orcidProfile) {
-        assertNotNull(orcidProfile);
-        assertNotNull(orcidProfile.getOrcidBio());
-        checkOrcidProfile(orcidProfile.getOrcidBio());
-
-        assertNotNull(orcidProfile.getOrcidHistory());
-        checkOrcidHistory(orcidProfile.getOrcidHistory());
-
-        checkAffiliations(orcidProfile.getOrcidActivities().getAffiliations().getAffiliation());
-        assertNotNull(orcidProfile.retrieveOrcidWorks());
-        checkOrcidWorks(orcidProfile.retrieveOrcidWorks());
-        checkOrcidFundings(orcidProfile.retrieveFundings());
-        assertEquals("4444-4444-4444-4443", orcidProfile.getOrcidIdentifier().getPath());
-
-        assertNotNull(orcidProfile.getOrcidInternal());
-        checkOrcidInternal(orcidProfile.getOrcidInternal());
-    }
+    }    
 
     private void checkOrcidWorks(OrcidWorks orcidWorks) {
         assertNotNull(orcidWorks);
@@ -471,20 +478,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(address);
         assertEquals(Iso3166Country.GB, address.getCountry());
     }    
-
-    private void checkOrcidInternal(OrcidInternal orcidInternal) {
-        SecurityDetails securityDetails = orcidInternal.getSecurityDetails();
-        assertNotNull(securityDetails);
-        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", securityDetails
-                .getEncryptedPassword().getContent());
-        assertEquals(1, securityDetails.getSecurityQuestionId().getValue());
-        assertEquals("iTlIoR2JsFl5guE56cazmg==", securityDetails.getEncryptedSecurityAnswer().getContent());
-        assertEquals("1vLkD2Lm8c24TyALcW0Brg==", securityDetails.getEncryptedVerificationCode().getContent());
-        Preferences preferences = orcidInternal.getPreferences();
-        assertNotNull(preferences);
-        assertTrue(preferences.getSendChangeNotifications().isValue());
-        assertTrue(preferences.getSendOrcidNews().isValue());
-    }
 
     private void validateAgainstSchema(OrcidMessage orcidMessage) throws SAXException, IOException {
         //We need to manually remove the visibility from the given and family names to match the schema

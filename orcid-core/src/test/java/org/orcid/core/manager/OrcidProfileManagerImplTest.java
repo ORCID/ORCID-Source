@@ -140,8 +140,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     protected static final String TEST_ORCID = "4444-4444-4444-0001";
 
-    protected static final String TEST_ORCID_WITH_WORKS = "4444-4444-4444-4443";
-
     private int currentWorkId = 0;
     
     @Resource
@@ -191,6 +189,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
     
     @Before
     @Transactional
@@ -287,7 +288,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profileDao.remove(APPLICATION_ORCID);
         orcidProfileManager.clearOrcidProfileCache();
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", emailFrequencyManager);
     }
 
     @Test
