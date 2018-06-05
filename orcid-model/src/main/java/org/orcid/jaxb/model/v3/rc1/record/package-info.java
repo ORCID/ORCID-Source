@@ -30,6 +30,7 @@
         @javax.xml.bind.annotation.XmlNs(prefix = "preferences", namespaceURI = "http://www.orcid.org/ns/preferences"),
         @javax.xml.bind.annotation.XmlNs(prefix = "qualification", namespaceURI = "http://www.orcid.org/ns/qualification"),
         @javax.xml.bind.annotation.XmlNs(prefix = "record", namespaceURI = "http://www.orcid.org/ns/record"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "research-resource", namespaceURI = "http://www.orcid.org/ns/research-resource"),
         @javax.xml.bind.annotation.XmlNs(prefix = "researcher-url", namespaceURI = "http://www.orcid.org/ns/researcher-url"),
         @javax.xml.bind.annotation.XmlNs(prefix = "service", namespaceURI = "http://www.orcid.org/ns/service"),
         @javax.xml.bind.annotation.XmlNs(prefix = "work", namespaceURI = "http://www.orcid.org/ns/work")}, 

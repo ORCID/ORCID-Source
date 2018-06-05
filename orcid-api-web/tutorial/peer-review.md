@@ -1,6 +1,6 @@
 # Write, update and delete peer-review items
 
-This tutorial goes over editing information in the peer-review section of an ORCID record. The ```peer-review``` activity type is intended to allow for recognition of and exchange of data about peer review service contributed by researchers. 
+This tutorial goes over editing information in the peer-review section of an ORCID record. The ```peer-review``` activity type is intended to allow for recognition of and exchange of data about peer review service contributed by researchers.
 
 The ```peer-review``` activity type follows the [CASRAI Peer Review Services data profile](http://dictionary.casrai.org/Peer_Review_Services).
 
@@ -47,7 +47,7 @@ Send a request to the ORCID API for a two step token
 **Example request in curl**
 
 ```
-curl -i -L -H 'Accept: application/json' -d 'client_id=APP-674MCQQR985VZZQ2' -d 'client_secret=d08b711e-9411-788d-a474-46efd3956652' -d 'scope=group-id-record/update' -d 'grant_type=client_credentials' 'https://sandbox.orcid.org/oauth/token'
+curl -i -L -H 'Accept: application/json' -d 'client_id=APP-674MCQQR985VZZQ2' -d 'client_secret=d08b711e-9411-788d-a474-46efd3956652' -d 'scope=/group-id-record/update' -d 'grant_type=client_credentials' 'https://sandbox.orcid.org/oauth/token'
 ```
 
 Example response:
@@ -104,9 +104,9 @@ For more information on working with peer-review groups see [Group id record API
 
 - **review-type** _(required)_ The kind of review applied to the subject type reviewed. This field is selected from a list containing the following values: _evaluation, review_
 
-- **review-completion-date** _(required)_ The date on which the review was completed (formatted to ISO 8601). Allowable values: yyyy; yyyy-mm; yyyy-mm-dd. 
+- **review-completion-date** _(required)_ The date on which the review was completed (formatted to ISO 8601). Allowable values: yyyy; yyyy-mm; yyyy-mm-dd.
 
-- **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID must be pre-registered before use. (see [Create a peer-review group]() above for more information.) 
+- **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID must be pre-registered before use. (see [Create a peer-review group]() above for more information.)
 
 **Describing the subject of the reivew**
 
@@ -165,7 +165,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 | Method    | POST |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the work you are posting in json or xml format | 
+| data        | the work you are posting in json or xml format |
 
 **Example request in curl**
 ```
@@ -180,7 +180,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 | Method    | PUT |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the updated work in json or xml format | 
+| data        | the updated work in json or xml format |
 
 **Example request in curl**
 ```
@@ -203,4 +203,3 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 
 Example response
 ```HTTP/1.1 204 No Content```
-

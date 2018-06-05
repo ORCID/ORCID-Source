@@ -51,6 +51,9 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCES;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE_SUMMARY;
 
 import java.util.List;
 import java.util.Map;
@@ -82,6 +85,7 @@ import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
@@ -102,6 +106,8 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
@@ -613,4 +619,35 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     public Response viewServiceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewServiceSummary(orcid, Long.valueOf(putCode));
     }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCE + PUTCODE)
+    @ApiOperation(nickname = "viewResearchResourceV3dev", value = "Fetch a Research Resource", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResearchResource.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewResearchResource(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewResearchResource(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCES)
+    @ApiOperation(nickname = "viewResearchResourcesV3dev", value = "Fetch all Research Resources", response = ResearchResources.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewResearchResources(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewResearchResources(orcid);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCE_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewResearchResourceSummaryV3dev", value = "Fetch a Research Resource summary", response = ResearchResourceSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewResearchResourceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewResearchResourceSummary(orcid, Long.valueOf(putCode));
+    }
+    
 }
