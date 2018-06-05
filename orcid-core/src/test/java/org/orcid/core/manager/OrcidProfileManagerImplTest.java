@@ -284,12 +284,12 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     @After
     public void after() {
-        profileDao.remove(DELEGATE_ORCID);
-        profileDao.remove(APPLICATION_ORCID);
-        orcidProfileManager.clearOrcidProfileCache();
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", emailFrequencyManager);
+        profileDao.remove(DELEGATE_ORCID);
+        profileDao.remove(APPLICATION_ORCID);
+        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test

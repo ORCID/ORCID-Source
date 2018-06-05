@@ -89,6 +89,9 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
     @Mock
     private EmailFrequencyManager mockEmailFrequencyManager;
 
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -112,6 +115,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
     @After
     public void replaceMocks() {
         TargetProxyHelper.injectIntoProxy(adapter, "workEntityCacheManager", realWorkEntityCacheManager);        
+        TargetProxyHelper.injectIntoProxy(adapter, "emailFrequencyManager", emailFrequencyManager);
     }
 
     @AfterClass

@@ -40,6 +40,7 @@ public class TokenTargetFilterTest {
     
     @After
     public void after() {
+        SecurityContextHolder.clearContext();
         RequestContextHolder.resetRequestAttributes();
     }
     
