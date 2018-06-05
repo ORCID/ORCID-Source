@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.naming.OperationNotSupportedException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
@@ -34,6 +35,7 @@ import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc1.common.Day;
 import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.MultipleOrganizationHolder;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
@@ -51,6 +53,8 @@ import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
@@ -336,6 +340,23 @@ public class ActivityValidator {
             throw new InvalidDisambiguatedOrgException();
         }
     }
+    
+    private void validateDisambiguatedOrg(MultipleOrganizationHolder organizationHolder) {
+        if (organizationHolder.getOrganization() == null) {
+            throw new InvalidOrgException();
+        }
+
+        for (Organization org : organizationHolder.getOrganization()){
+            if (org.getDisambiguatedOrganization() == null) {
+                throw new InvalidDisambiguatedOrgException();
+            }
+
+            if (org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() == null
+                    || org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier().isEmpty()) {
+                throw new InvalidDisambiguatedOrgException();
+            }
+        }
+    }
 
     public void validateAffiliation(Affiliation affiliation, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (affiliation.getPutCode() != null && createFlag) {
@@ -482,6 +503,35 @@ public class ActivityValidator {
             if (!updatedVisibility.equals(originalVisibility)) {
                 throw new VisibilityMismatchException();
             }
+        }
+    }
+
+    public void validateResearchResource(ResearchResource rr, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+        if (rr.getProposal().getExternalIdentifiers() == null || rr.getProposal().getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+            throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Proposal");
+        }
+        externalIDValidator.validateWorkOrPeerReview(rr.getProposal().getExternalIdentifiers());
+        if (isApiRequest)
+            validateDisambiguatedOrg(rr.getProposal().getHosts());
+        for (ResearchResourceItem i:rr.getResourceItems()){
+            if (i.getExternalIdentifiers() == null || i.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Item");
+            }
+            externalIDValidator.validateWorkOrPeerReview(i.getExternalIdentifiers());
+            if (isApiRequest)
+                validateDisambiguatedOrg(i.getHosts());
+        }
+        
+        if (rr.getPutCode() != null && createFlag) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+            throw new InvalidPutCodeException(params);
+        }
+
+        // Check that we are not changing the visibility
+        if (isApiRequest && !createFlag) {
+            Visibility updatedVisibility = rr.getVisibility();
+            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
     }
 

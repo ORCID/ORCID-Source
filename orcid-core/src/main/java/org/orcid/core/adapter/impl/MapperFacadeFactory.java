@@ -289,6 +289,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                     case UNKNOWN:
                         b.setAmendedSection(AmendedSection.UNKNOWN.name());
                         break;
+                    case RESEARCH_RESOURCE:
+                        b.setAmendedSection(AmendedSection.RESEARCH_RESOURCE.name());
+                        break;
                     case WORK:
                         b.setAmendedSection(AmendedSection.WORK.name());
                         break;
@@ -328,6 +331,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.PREFERENCES);
                     } else if (AmendedSection.UNKNOWN.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.UNKNOWN);
+                    } else if (AmendedSection.RESEARCH_RESOURCE.name().equals(b.getAmendedSection())) {
+                        a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.RESEARCH_RESOURCE);
                     } else if (AmendedSection.WORK.name().equals(b.getAmendedSection())) {
                         a.setAmendedSection(org.orcid.jaxb.model.notification.amended_v2.AmendedSection.WORK);
                     } else {

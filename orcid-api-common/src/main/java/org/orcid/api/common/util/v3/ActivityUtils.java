@@ -13,6 +13,7 @@ import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.rc1.record.Membership;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
@@ -38,6 +39,9 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
@@ -79,6 +83,8 @@ public class ActivityUtils {
             activityType = OrcidApiConstants.ACTIVITY_QUALIFICATION;
         }  else if (Service.class.isInstance(activity) || ServiceSummary.class.isInstance(activity)) {
             activityType = OrcidApiConstants.ACTIVITY_SERVICE;
+        }  else if (ResearchResource.class.isInstance(activity) || ResearchResourceSummary.class.isInstance(activity)) {
+            activityType = OrcidApiConstants.ACTIVITY_RESEARCH_RESOURCE;
         }
         
         // Build the path string
@@ -178,6 +184,25 @@ public class ActivityUtils {
             }
         }
     }    
+    
+    /**
+     * Set the path attribute to every peer review inside the PeerReviews element.
+     * 
+     * @param PeerReviews
+     *            The peer reviews container
+     * @param orcid
+     *            The activity owner
+     * */
+    public static void setPathToResearchResources(ResearchResources rr, String orcid) {
+        if(rr != null) {
+            rr.setPath(OrcidApiConstants.RESEARCH_RESOURCES.replace("{orcid}", orcid));
+            for(ResearchResourceGroup group : rr.getResearchResourceGroup()) {
+                for(ResearchResourceSummary summary : group.getResearchResourceSummary()) {
+                    setPathToActivity(summary, orcid);
+                }
+            }
+        }
+    }
     
     /**
      * Set the path attribute to all activities in the summary object
