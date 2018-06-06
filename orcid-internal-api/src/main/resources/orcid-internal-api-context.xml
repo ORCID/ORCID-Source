@@ -12,6 +12,37 @@
     <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
+     <!-- Override data source configuration so we can customize it for the internal api -->
+     <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${org.orcid.persistence.db.class}" />
+        <property name="jdbcUrl" value="${org.orcid.persistence.db.url}" />
+        <property name="user" value="${org.orcid.persistence.db.username}" />
+        <property name="password" value="${org.orcid.persistence.db.password}" />
+        <property name="initialPoolSize" value="${org.orcid.persistence.internal_api.db.initialPoolSize:1}" />
+        <property name="minPoolSize" value="${org.orcid.persistence.internal_api.db.minPoolSize:1}" />
+        <property name="maxPoolSize" value="${org.orcid.persistence.internal_api.db.maxPoolSize:3}" />
+        <property name="maxStatements" value="${org.orcid.persistence.db.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="${org.orcid.persistence.db.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="${org.orcid.persistence.db.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="${org.orcid.persistence.db.preferredTestQuery}" />
+        <property name="numHelperThreads" value="${org.orcid.persistence.db.numHelperThreads:10}"/>
+    </bean>
+    
+    <bean id="pooledDataSourceReadOnly" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${org.orcid.persistence.db.readonly.class}" />
+        <property name="jdbcUrl" value="${org.orcid.persistence.db.readonly.url}" />
+        <property name="user" value="${org.orcid.persistence.db.readonly.username}" />
+        <property name="password" value="${org.orcid.persistence.db.readonly.password}" />
+        <property name="initialPoolSize" value="${org.orcid.persistence.internal_api.db.readonly.initialPoolSize:1}" />
+        <property name="minPoolSize" value="${org.orcid.persistence.internal_api.db.readonly.minPoolSize:1}" />
+        <property name="maxPoolSize" value="${org.orcid.persistence.internal_api.db.readonly.maxPoolSize:3}" />
+        <property name="maxStatements" value="${org.orcid.persistence.db.readonly.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="${org.orcid.persistence.db.readonly.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="${org.orcid.persistence.db.readonly.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="${org.orcid.persistence.db.readonly.preferredTestQuery}" />
+        <property name="numHelperThreads" value="${org.orcid.persistence.db.readonly.numHelperThreads:10}"/>
+    </bean>
+     
     <!--  Internal API -->
     <bean id="internalApiServiceDelegator" class="org.orcid.internal.server.delegator.impl.InternalApiServiceDelegatorImpl" />
     <bean id="internalApiServiceImplV1_0_rc1" class="org.orcid.internal.server.InternalApiServiceImplV1_0_rc1">
