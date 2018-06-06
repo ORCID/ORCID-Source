@@ -22,7 +22,7 @@
 
     <!-- Authentication for internal API -->
     <sec:http use-expressions="true" create-session="stateless">
-    	<sec:csrf disabled="true"/>
+    	    <sec:csrf disabled="true"/>
         <sec:anonymous enabled="true" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
         <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT') or isAnonymous()"/>

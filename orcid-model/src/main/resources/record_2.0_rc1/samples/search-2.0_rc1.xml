@@ -112,12 +112,12 @@
 						<education:department-name>education:department-name</education:department-name>
 						<education:role-title>education:role-title</education:role-title>
 						<common:start-date>
-							<common:year>1848</common:year>
+							<common:year>1948</common:year>
 							<common:month>02</common:month>
 							<common:day>02</common:day>
 						</common:start-date>
 						<common:end-date>
-							<common:year>1848</common:year>
+							<common:year>1948</common:year>
 							<common:month>02</common:month>
 							<common:day>02</common:day>
 						</common:end-date>
@@ -152,12 +152,12 @@
 						<affiliation:department-name>affiliation:department-name</affiliation:department-name>
 						<affiliation:role-title>affiliation:role-title</affiliation:role-title>
 						<common:start-date>
-							<common:year>1848</common:year>
+							<common:year>1948</common:year>
 							<common:month>02</common:month>
 							<common:day>02</common:day>
 						</common:start-date>
 						<common:end-date>
-							<common:year>1848</common:year>
+							<common:year>1948</common:year>
 							<common:month>02</common:month>
 							<common:day>02</common:day>
 						</common:end-date>
@@ -209,12 +209,12 @@
 							</funding:external-identifiers>
 							<funding:type>grant</funding:type>
 							<common:start-date>
-								<common:year>1848</common:year>
+								<common:year>1948</common:year>
 								<common:month>02</common:month>
 								<common:day>02</common:day>
 							</common:start-date>
 							<common:end-date>
-								<common:year>1848</common:year>
+								<common:year>1948</common:year>
 								<common:month>02</common:month>
 								<common:day>02</common:day>
 							</common:end-date>
@@ -254,7 +254,7 @@
 							</work:external-identifiers>
 							<work:type>artistic-performance</work:type>
 							<common:publication-date>
-								<common:year>1848</common:year>
+								<common:year>1948</common:year>
 								<common:month>02</common:month>
 								<common:day>02</common:day>
 							</common:publication-date>

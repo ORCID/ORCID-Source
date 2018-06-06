@@ -438,6 +438,7 @@
         <property name="peerReviewManager" ref="peerReviewManagerV3" />
         <property name="workManager" ref="workManagerV3" />       
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+        <property name="researchResourceManager" ref="researchResourceManagerV3" />
     </bean>
     
     <bean id="activitiesSummaryManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.ActivitiesSummaryManagerReadOnlyImpl">
@@ -446,6 +447,7 @@
         <property name="peerReviewManager" ref="peerReviewManagerReadOnlyV3" />
         <property name="workManager" ref="workManagerReadOnlyV3" />       
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+        <property name="researchResourceManager" ref="researchResourceManagerReadOnlyV3" />
     </bean>
 	
     <bean id="activityManagerV3" class="org.orcid.core.manager.v3.impl.ActivityManagerImpl" />
@@ -654,6 +656,14 @@
     
     <bean id="researcherUrlManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.ResearcherUrlManagerReadOnlyImpl">
         <property name="researcherUrlDao" ref="researcherUrlDaoReadOnly" />
+        <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+    </bean>
+    
+    <bean id="researchResourceManagerV3" class="org.orcid.core.manager.v3.impl.ResearchResourceManagerImpl">
+        <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+    </bean>
+
+    <bean id="researchResourceManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.ResearchResourceManagerReadOnlyImpl">
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
     </bean>
     
@@ -1456,6 +1466,11 @@
     <bean id="peerReviewMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getPeerReviewMapperFacade"/>
     <bean id="jpaJaxbPeerReviewAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbPeerReviewAdapterImpl">
         <property name="mapperFacade" ref="peerReviewMapperFacadeV3" />
+    </bean>
+    
+	<bean id="researchResourceMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getResearchResourceMapperFacade"/>
+    <bean id="jpaJaxbResearchResourceAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbResearchResourceAdapterImpl">
+        <property name="mapperFacade" ref="researchResourceMapperFacadeV3" />
     </bean>
     
     <bean id="groupIdRecordMapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getGroupIdRecordMapperFacade"/>

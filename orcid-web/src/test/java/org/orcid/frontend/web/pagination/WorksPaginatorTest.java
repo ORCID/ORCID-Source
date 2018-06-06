@@ -98,13 +98,9 @@ public class WorksPaginatorTest {
     @Test
     public void testGetPublicWorksCount() {
         Mockito.when(workManagerReadOnly.getWorksSummaryList(Mockito.anyString())).thenReturn(new ArrayList<WorkSummary>());
-        Mockito.when(workManagerReadOnly.groupWorks(Mockito.anyList(), Mockito.anyBoolean())).thenReturn(getPageSizeOfMixedWorkGroups());
+        Mockito.when(workManagerReadOnly.groupWorks(Mockito.anyList(), Mockito.eq(true))).thenReturn(getPageSizeOfPublicWorkGroups());
         int count = worksPaginator.getPublicWorksCount("orcid");
-        assertEquals(WorksPaginator.PAGE_SIZE / 2, count);
-        
-        Mockito.when(workManagerReadOnly.groupWorks(Mockito.anyList(), Mockito.anyBoolean())).thenReturn(getFiveLimitedWorkGroups());        
-        count = worksPaginator.getPublicWorksCount("orcid");
-        assertEquals(0, count);
+        assertEquals(WorksPaginator.PAGE_SIZE, count);
     }
 
     @Test
@@ -205,6 +201,17 @@ public class WorksPaginatorTest {
 
         for (int i = 0; i < WorksPaginator.PAGE_SIZE; i++) {
             works.getWorkGroup().add(getMixedWorkGroup(i));
+        }
+        return works;
+    }
+    
+    private Works getPageSizeOfPublicWorkGroups() {
+        Works works = new Works();
+        works.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        works.setPath("some path");
+
+        for (int i = 0; i < WorksPaginator.PAGE_SIZE; i++) {
+            works.getWorkGroup().add(getPublicWorkGroup(i));
         }
         return works;
     }

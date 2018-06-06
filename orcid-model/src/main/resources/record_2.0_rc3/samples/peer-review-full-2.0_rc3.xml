@@ -26,7 +26,7 @@
 	<peer-review:review-url>peer-review:url</peer-review:review-url>
 	<peer-review:review-type>review</peer-review:review-type>	
 	<peer-review:review-completion-date>
-		<common:year>1848</common:year>
+		<common:year>1948</common:year>
 		<common:month>02</common:month>
 		<common:day>02</common:day>
 	</peer-review:review-completion-date>	

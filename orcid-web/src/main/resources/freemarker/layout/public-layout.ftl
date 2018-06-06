@@ -19,6 +19,7 @@
     <div class="dev-watermark"></div>
 </#if>-->
 <@orcid.checkFeatureStatus 'COOKIE_BANNER'>
+    <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">  
     <alert-banner-ng2></alert-banner-ng2>
 </@orcid.checkFeatureStatus>
 <!--OAUTH SCREEN HEADER-->
@@ -38,10 +39,12 @@
 <!--hide header if oauth login-->
 <#if !(RequestParameters['oauth'])??>
 <div class="container">
-        <header-ng2></header-ng2>
+    <#include "/includes/ng2_templates/header-ng2-template.ftl">
+    <#include "/includes/ng2_templates/language-ng2-template.ftl">
+    <header-ng2></header-ng2>
 
         <div id="main" role="main" class="main">
-    </#if>
+</#if>
     <#include
         '../common/maintenance_header.ftl'/> <#-- wtf --> <#nested>
     </div>

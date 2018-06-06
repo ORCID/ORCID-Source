@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -10,6 +11,7 @@ import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.v3.rc1.common.MultipleOrganizationHolder;
 import org.orcid.jaxb.model.v3.rc1.common.OrganizationHolder;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -124,9 +126,11 @@ public class OrgManagerImpl implements OrgManager {
     public OrgEntity getOrgEntity(OrganizationHolder holder) {
         if(holder == null)
             return null;
-        
+        return getOrgEntity(holder.getOrganization());      
+    }
+    
+    private OrgEntity getOrgEntity(org.orcid.jaxb.model.v3.rc1.common.Organization organization){
         OrgEntity orgEntity = new OrgEntity();
-        org.orcid.jaxb.model.v3.rc1.common.Organization organization = holder.getOrganization();
         orgEntity.setName(organization.getName());
         org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
@@ -142,7 +146,16 @@ public class OrgManagerImpl implements OrgManager {
             }
             orgEntity.setOrgDisambiguated(disambiguatedOrg);
         }
-        return matchOrCreateOrg(orgEntity);        
+        return matchOrCreateOrg(orgEntity); 
+    }
+    
+    @Override
+    public List<OrgEntity> getOrgEntities(MultipleOrganizationHolder holder) {
+        ArrayList<OrgEntity> entities = new ArrayList<OrgEntity>();
+        for (org.orcid.jaxb.model.v3.rc1.common.Organization organization : holder.getOrganization()){
+            entities.add(getOrgEntity(organization));
+        }
+        return entities;
     }
     
     @Override

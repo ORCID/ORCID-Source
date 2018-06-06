@@ -15,8 +15,9 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { DeprecateProfileService } 
-    from '../../shared/deprecateProfile.service.ts'; 
+import { 
+    GenericService } 
+    from '../../shared/generic.service.ts'; 
 
 
 @Component({
@@ -27,7 +28,7 @@ export class DeprecateAccountFormComponent implements AfterViewInit, OnDestroy, 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
    
     constructor(
-        private deprecateProfileService: DeprecateProfileService
+        private deprecateProfileService: GenericService
     ) {
 
     }

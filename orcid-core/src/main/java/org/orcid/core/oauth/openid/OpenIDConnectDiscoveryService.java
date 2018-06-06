@@ -24,7 +24,7 @@ public class OpenIDConnectDiscoveryService {
         private List<String> scopes_supported = Lists.newArrayList("openid");
         private List<String> subject_types_supported  = Lists.newArrayList("public");
         private List<String> response_types_supported = Lists.newArrayList("code");
-        private String claims_parameter_supported = "false";
+        private Boolean claims_parameter_supported = false;
         private List<String> token_endpoint_auth_methods_supported = Lists.newArrayList("client_secret_basic");
         public String getIssuer() {
             return path;
@@ -59,7 +59,7 @@ public class OpenIDConnectDiscoveryService {
         public List<String> getResponse_types_supported() {
             return response_types_supported;
         }
-        public String getClaims_parameter_supported() {
+        public Boolean getClaims_parameter_supported() {
             return claims_parameter_supported;
         }
         public List<String> getToken_endpoint_auth_methods_supported() {

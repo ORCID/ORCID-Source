@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -678,7 +679,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public boolean isLocked(String orcid) {
         TypedQuery<Boolean> query = entityManager.createQuery("select recordLocked from ProfileEntity where orcid = :orcid", Boolean.class);
         query.setParameter("orcid", orcid);
-        Boolean result = query.getSingleResult();
+        Boolean result;
+        try {
+            result = query.getSingleResult();
+        } catch (NoResultException nre) {
+            throw new NoResultException("ORCID iD " +  orcid + " not found");
+        }
         return result;
     }
 

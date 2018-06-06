@@ -6,7 +6,7 @@ This workflow can be used with Public or Member API credentials on sandbox or th
 
 ## Generate a two step (/read-public) access token
 
-Read-public access tokens are generated with a direct call to the ORCID API, they do not require the record holder to grant access.
+Read-public access tokens are generated with a direct call to the ORCID API, they do not require the record holder to grant access. A single /read-public token can be used multiple times and on multiple records, you should store a single token for reuse rather than generating a new token each time you read a record.
 
 Send a request to the ORCID API for a two step token
 

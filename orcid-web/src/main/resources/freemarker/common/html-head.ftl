@@ -134,11 +134,7 @@
         <!-- NG2: Under development -->
         <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
         <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
-        
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-            <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
-            <#include "/includes/ng2_templates/works-ng2-template.ftl">
-        </#if>
+    
 
         <!-- Probably this one wont be needed -->
         <#if springMacroRequestContext.requestUri?contains("/my-orcid") 
@@ -160,9 +156,6 @@
         </#if>
         
         <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-            <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
-            <#include "/includes/ng2_templates/funding-ng2-template.ftl">     
-            <#include "/includes/ng2_templates/workspace-summary-ng2-template.ftl">
             <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
         </#if>
 
@@ -177,53 +170,13 @@
             <#include "/includes/ng2_templates/affiliation-ext-id-popover-ng2-template.ftl">
         </#if>
     </@orcid.checkFeatureStatus> 
- 
-    <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">
-    <#include "/includes/ng2_templates/header-ng2-template.ftl">
-    <#include "/includes/ng2_templates/language-ng2-template.ftl">
+   
     <#include "/includes/ng2_templates/modal-ng2-template.ftl">
 
-    <#if springMacroRequestContext.requestUri?contains("/account") >
-        <#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
-        <#include "/includes/ng2_templates/password-edit-ng2-template.ftl">
-        <#include "/includes/ng2_templates/security-question-edit-ng2-template.ftl">
-        <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
-        <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
-        <#include "/includes/ng2_templates/works-privacy-preferences-ng2-template.ftl">
-    </#if>
-
-    <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/my-orcid")>
-        <#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
-        <#include "/includes/ng2_templates/email-frequency-ng2-template.ftl">
-        <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/emails-ng2-template.ftl">
-    </#if>
-
-    <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-        <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
-        <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl">      
-        <#include "/includes/ng2_templates/biography-ng2-template.ftl">
-        <#include "/includes/ng2_templates/country-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/country-ng2-template.ftl">     
-        <#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
-        <#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
-        <#include "/includes/ng2_templates/keywords-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/keywords-ng2-template.ftl">
-        <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
-        <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
-        <#include "/includes/ng2_templates/websites-ng2-template.ftl">
-        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
-        <#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
-    </#if>
-
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/developer-tools") || springMacroRequestContext.requestUri?contains("/inbox") || springMacroRequestContext.requestUri?contains("/my-orcid")>
-        <#include "/includes/ng2_templates/name-ng2-template.ftl">
+        
         <#include "/includes/ng2_templates/privacy-toggle-ng2-template.ftl">
-        <#include "/includes/ng2_templates/widget-ng2-template.ftl">
-    </#if>
-
-    <#if springMacroRequestContext.requestUri?contains("/reset-password") >
-        <#include "/includes/ng2_templates/reset-password-ng2-template.ftl">
+        
     </#if>
 
     <!-- Ng2 Templates - END -->

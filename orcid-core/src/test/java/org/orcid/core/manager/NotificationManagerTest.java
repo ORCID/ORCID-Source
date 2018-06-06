@@ -449,5 +449,4 @@ public class NotificationManagerTest extends DBUnitTest {
         
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
     }
-    
 }

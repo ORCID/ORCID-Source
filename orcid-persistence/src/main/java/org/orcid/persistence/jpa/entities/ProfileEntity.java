@@ -76,6 +76,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Set<ExternalIdentifierEntity> externalIdentifiers;
     private SortedSet<OrgAffiliationRelationEntity> orgAffiliationRelations;
     private Set<EmailEntity> emails;
+    private SortedSet<ResearchResourceEntity> researchResources;
 
     // Security fields
     private String encryptedPassword;
@@ -931,5 +932,22 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
+    }
+    
+    /**
+     * @return the peer reviews
+     * */
+    @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Sort(type = SortType.NATURAL)//TODO: ?  this seems like it might need a display id comparator.
+    public SortedSet<ResearchResourceEntity> getResearchResource() {
+        return researchResources;
+    }
+
+    /**
+     * @param peerReviews
+     *            the peer reviews set
+     * */
+    public void setResearchResource(SortedSet<ResearchResourceEntity> researchResources) {
+        this.researchResources = researchResources;
     }
 }

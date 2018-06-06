@@ -60,6 +60,10 @@ public class OrcidApiConstants {
     public static final String PEER_REVIEW = "/{orcid}/peer-review";
     public static final String PEER_REVIEWS = "/{orcid}/peer-reviews";
     public static final String PEER_REVIEW_SUMMARY = "/{orcid}/peer-review/summary";
+    public static final String RESEARCH_RESOURCE = "/{orcid}/research-resource";
+    public static final String RESEARCH_RESOURCES = "/{orcid}/research-resources";
+    public static final String RESEARCH_RESOURCE_SUMMARY = "/{orcid}/research-resource/summary";
+
     public static final String GROUP_ID_RECORD = "/group-id-record";
     public static final String STATS_PATH = "/statistics";
     public static final String IDENTIFIER_PATH = "/identifiers";
@@ -90,6 +94,8 @@ public class OrcidApiConstants {
     public static final String ACTIVITY_QUALIFICATION = "qualification";
     public static final String ACTIVITY_SERVICE = "service";
     public static final String ACTIVITY_WORK = "work";
+    public static final String ACTIVITY_RESEARCH_RESOURCE = "research-resource";
+    
     public static final String SWAGGER_PATH = "/resources";
     public static final String SWAGGER_FILE = "/swagger.json";
     public static final String SWAGGER_FILE_YAML = "/swagger.yaml";
@@ -98,6 +104,7 @@ public class OrcidApiConstants {
     public static final String EMAIL = "/{orcid}/email";
     public static final String EXTERNAL_IDENTIFIERS = "/{orcid}/external-identifiers";
     public static final String INTERNAL_API_PERSON_READ = "/{orcid}/person";
+    public static final String INTERNAL_API_TOGGLZ_READ = "/togglz";
     public static final String OTHER_NAMES = "/{orcid}/other-names";
     public static final String PERSONAL_DETAILS = "/{orcid}/personal-details";
     public static final String MEMBER_INFO = "/member-info";

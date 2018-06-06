@@ -19,8 +19,8 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-import { StaticsService } 
-    from '../../shared/statics.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 
 @Component({
@@ -31,16 +31,18 @@ export class StaticsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     liveIds: any;
+    url_path: string;
 
     constructor(
-        private staticsService: StaticsService
+        private staticsService: GenericService
     ) {
         this.liveIds = 0;
+        this.url_path = '/statistics/liveids.json';
     }
 
     getLiveIds(): void {
 
-        this.staticsService.getLiveIds()
+        this.staticsService.getData( this.url_path )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
             data => {

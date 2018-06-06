@@ -30,9 +30,6 @@ import { EmailService }
 import { FundingService } 
     from '../../shared/funding.service.ts';
 
-import { GroupedActivitiesUtilService } 
-    from '../../shared/groupedActivities.service.ts';
-
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 
@@ -73,7 +70,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor(
         private fundingService: FundingService,
         private emailService: EmailService,
-        //private groupedActivitiesUtilService: GroupedActivitiesUtilService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService
     ) {

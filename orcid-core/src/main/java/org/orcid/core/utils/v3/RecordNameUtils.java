@@ -16,25 +16,30 @@ public class RecordNameUtils {
         }
         return null;
     }
-    
+
     public static String getDisplayName(RecordNameEntity recordNameEntity) {
-        if(recordNameEntity == null) {
+        if (recordNameEntity == null) {
             return null;
         }
-        if (StringUtils.isNotBlank(recordNameEntity.getCreditName()) && Visibility.PUBLIC.name().equals(recordNameEntity.getVisibility())) {
-            return recordNameEntity.getCreditName();
-        }
-        StringBuilder builder = new StringBuilder();
-        if (StringUtils.isNotBlank(recordNameEntity.getGivenNames())) {
-            builder.append(recordNameEntity.getGivenNames());
-        }
-        if (StringUtils.isNotBlank(recordNameEntity.getFamilyName())) {
-            if (builder.length() > 0) {
-                builder.append(" ");
+
+        if (Visibility.PUBLIC.name().equals(recordNameEntity.getVisibility())) {
+            if (StringUtils.isNotBlank(recordNameEntity.getCreditName())) {
+                return recordNameEntity.getCreditName();
             }
-            builder.append(recordNameEntity.getFamilyName());
+            StringBuilder builder = new StringBuilder();
+            if (StringUtils.isNotBlank(recordNameEntity.getGivenNames())) {
+                builder.append(recordNameEntity.getGivenNames());
+            }
+            if (StringUtils.isNotBlank(recordNameEntity.getFamilyName())) {
+                if (builder.length() > 0) {
+                    builder.append(" ");
+                }
+                builder.append(recordNameEntity.getFamilyName());
+            }
+            return builder.length() > 0 ? builder.toString() : null;
+        } else {
+            return null;
         }
-        return builder.length() > 0 ? builder.toString() : null;
     }
 
 }

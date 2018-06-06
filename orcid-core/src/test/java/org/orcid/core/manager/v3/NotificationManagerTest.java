@@ -66,6 +66,7 @@ import org.orcid.jaxb.model.v3.rc1.common.Source;
 import org.orcid.jaxb.model.v3.rc1.notification.Notification;
 import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
 import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
@@ -643,7 +644,6 @@ public class NotificationManagerTest extends DBUnitTest {
         map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
         when(mockEmailFrequencyManager.getEmailFrequency(orcidNever)).thenReturn(map);
         
-        
         // Should not generate the notification
         notificationManager.sendAcknowledgeMessage(orcidNever, clientId);
         verify(mockNotificationDao, never()).persist(Matchers.any());
@@ -653,6 +653,5 @@ public class NotificationManagerTest extends DBUnitTest {
         verify(mockNotificationDao, times(1)).persist(Matchers.any());
         
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
-    }
-    
+    }    
 }

@@ -19,8 +19,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.util.JAXBSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -56,6 +58,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Preferences;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
@@ -75,6 +78,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
@@ -581,6 +585,33 @@ public class ValidateV3_rc1SamplesTest {
         ActivitiesSummary activities = (ActivitiesSummary) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/activities-3.0_rc1.xml", ActivitiesSummary.class,
                 "/record_3.0_rc1/activities-3.0_rc1.xsd");
         assertNotNull(activities);
+        
+        assertNotNull(activities.getResearchResources());
+        assertNotNull(activities.getResearchResources().getLastModifiedDate());
+        assertNotNull(activities.getResearchResources().getPath());
+        assertNotNull(activities.getResearchResources().getResearchResourceGroup());
+        assertEquals(1,activities.getResearchResources().getResearchResourceGroup().size());
+        assertNotNull(activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary());
+        assertEquals(1,activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().size());
+        assertNotNull(activities.getResearchResources().getResearchResourceGroup().get(0).getActivities());
+        assertEquals(1,activities.getResearchResources().getResearchResourceGroup().get(0).getActivities().size());
+        assertNotNull(activities.getResearchResources().getResearchResourceGroup().get(0).getLastModifiedDate());
+        assertNotNull(activities.getResearchResources().getResearchResourceGroup().get(0).getIdentifiers());
+        assertNotNull(activities.getResearchResources().getResearchResourceGroup().get(0).getIdentifiers().getExternalIdentifier());
+        assertEquals(1,activities.getResearchResources().getResearchResourceGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("123456",activities.getResearchResources().getResearchResourceGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("proposal_id",activities.getResearchResources().getResearchResourceGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("self",activities.getResearchResources().getResearchResourceGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getRelationship().value());
+        assertEquals("Giant Laser Award",activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getProposal().getTitle().getTitle().getContent());
+        assertEquals("grid",activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguationSource());
+        assertEquals("XX",activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals(Visibility.PUBLIC,activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getVisibility());
+        assertEquals("1234",activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getPutCode().toString());
+        assertEquals("/0000-0003-0902-4386/research-resource/1234",activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getPath());
+        assertEquals("1999",activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getProposal().getStartDate().getYear().getValue());
+        assertEquals("2012",activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getProposal().getEndDate().getYear().getValue());
+        assertEquals("http://xsede.org/GiantLaserAward",activities.getResearchResources().getResearchResourceGroup().get(0).getResearchResourceSummary().get(0).getProposal().getUrl().getValue());
+
         assertNotNull(activities.getDistinctions());
         assertNotNull(activities.getDistinctions());
         assertNotNull(activities.getDistinctions().getLastModifiedDate());
@@ -954,11 +985,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(distinction.getEndDate());
         assertEquals("02", distinction.getEndDate().getDay().getValue());
         assertEquals("02", distinction.getEndDate().getMonth().getValue());
-        assertEquals("1848", distinction.getEndDate().getYear().getValue());
+        assertEquals("1948", distinction.getEndDate().getYear().getValue());
         assertNotNull(distinction.getStartDate());
         assertEquals("02", distinction.getStartDate().getDay().getValue());
         assertEquals("02", distinction.getStartDate().getMonth().getValue());
-        assertEquals("1848", distinction.getStartDate().getYear().getValue());
+        assertEquals("1948", distinction.getStartDate().getYear().getValue());
         assertNotNull(distinction.getOrganization());
         assertEquals("common:name", distinction.getOrganization().getName());
         assertEquals("common:city", distinction.getOrganization().getAddress().getCity());
@@ -977,11 +1008,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(education.getEndDate());
         assertEquals("02", education.getEndDate().getDay().getValue());
         assertEquals("02", education.getEndDate().getMonth().getValue());
-        assertEquals("1848", education.getEndDate().getYear().getValue());
+        assertEquals("1948", education.getEndDate().getYear().getValue());
         assertNotNull(education.getStartDate());
         assertEquals("02", education.getStartDate().getDay().getValue());
         assertEquals("02", education.getStartDate().getMonth().getValue());
-        assertEquals("1848", education.getStartDate().getYear().getValue());
+        assertEquals("1948", education.getStartDate().getYear().getValue());
         assertNotNull(education.getOrganization());
         assertEquals("common:name", education.getOrganization().getName());
         assertEquals("common:city", education.getOrganization().getAddress().getCity());
@@ -1000,11 +1031,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(employment.getEndDate());
         assertEquals("02", employment.getEndDate().getDay().getValue());
         assertEquals("02", employment.getEndDate().getMonth().getValue());
-        assertEquals("1848", employment.getEndDate().getYear().getValue());
+        assertEquals("1948", employment.getEndDate().getYear().getValue());
         assertNotNull(employment.getStartDate());
         assertEquals("02", employment.getStartDate().getDay().getValue());
         assertEquals("02", employment.getStartDate().getMonth().getValue());
-        assertEquals("1848", employment.getStartDate().getYear().getValue());
+        assertEquals("1948", employment.getStartDate().getYear().getValue());
         assertNotNull(employment.getOrganization());
         assertEquals("common:name", employment.getOrganization().getName());
         assertEquals("common:city", employment.getOrganization().getAddress().getCity());
@@ -1023,11 +1054,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(invitedPosition.getEndDate());
         assertEquals("02", invitedPosition.getEndDate().getDay().getValue());
         assertEquals("02", invitedPosition.getEndDate().getMonth().getValue());
-        assertEquals("1848", invitedPosition.getEndDate().getYear().getValue());
+        assertEquals("1948", invitedPosition.getEndDate().getYear().getValue());
         assertNotNull(invitedPosition.getStartDate());
         assertEquals("02", invitedPosition.getStartDate().getDay().getValue());
         assertEquals("02", invitedPosition.getStartDate().getMonth().getValue());
-        assertEquals("1848", invitedPosition.getStartDate().getYear().getValue());
+        assertEquals("1948", invitedPosition.getStartDate().getYear().getValue());
         assertNotNull(invitedPosition.getOrganization());
         assertEquals("common:name", invitedPosition.getOrganization().getName());
         assertEquals("common:city", invitedPosition.getOrganization().getAddress().getCity());
@@ -1060,11 +1091,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(funding.getEndDate());
         assertEquals("02", funding.getEndDate().getDay().getValue());
         assertEquals("02", funding.getEndDate().getMonth().getValue());
-        assertEquals("1848", funding.getEndDate().getYear().getValue());
+        assertEquals("1948", funding.getEndDate().getYear().getValue());
         assertNotNull(funding.getStartDate());
         assertEquals("02", funding.getStartDate().getDay().getValue());
         assertEquals("02", funding.getStartDate().getMonth().getValue());
-        assertEquals("1848", funding.getStartDate().getYear().getValue());
+        assertEquals("1948", funding.getStartDate().getYear().getValue());
 
         assertNotNull(activities.getMemberships());
         Memberships memberships = activities.getMemberships();
@@ -1078,11 +1109,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(membership.getEndDate());
         assertEquals("02", membership.getEndDate().getDay().getValue());
         assertEquals("02", membership.getEndDate().getMonth().getValue());
-        assertEquals("1848", membership.getEndDate().getYear().getValue());
+        assertEquals("1948", membership.getEndDate().getYear().getValue());
         assertNotNull(membership.getStartDate());
         assertEquals("02", membership.getStartDate().getDay().getValue());
         assertEquals("02", membership.getStartDate().getMonth().getValue());
-        assertEquals("1848", membership.getStartDate().getYear().getValue());
+        assertEquals("1948", membership.getStartDate().getYear().getValue());
         assertNotNull(membership.getOrganization());
         assertEquals("common:name", membership.getOrganization().getName());
         assertEquals("common:city", membership.getOrganization().getAddress().getCity());
@@ -1151,11 +1182,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(qualification.getEndDate());
         assertEquals("02", qualification.getEndDate().getDay().getValue());
         assertEquals("02", qualification.getEndDate().getMonth().getValue());
-        assertEquals("1848", qualification.getEndDate().getYear().getValue());
+        assertEquals("1948", qualification.getEndDate().getYear().getValue());
         assertNotNull(qualification.getStartDate());
         assertEquals("02", qualification.getStartDate().getDay().getValue());
         assertEquals("02", qualification.getStartDate().getMonth().getValue());
-        assertEquals("1848", qualification.getStartDate().getYear().getValue());
+        assertEquals("1948", qualification.getStartDate().getYear().getValue());
         assertNotNull(qualification.getOrganization());
         assertEquals("common:name", qualification.getOrganization().getName());
         assertEquals("common:city", qualification.getOrganization().getAddress().getCity());
@@ -1174,11 +1205,11 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(service.getEndDate());
         assertEquals("02", service.getEndDate().getDay().getValue());
         assertEquals("02", service.getEndDate().getMonth().getValue());
-        assertEquals("1848", service.getEndDate().getYear().getValue());
+        assertEquals("1948", service.getEndDate().getYear().getValue());
         assertNotNull(service.getStartDate());
         assertEquals("02", service.getStartDate().getDay().getValue());
         assertEquals("02", service.getStartDate().getMonth().getValue());
-        assertEquals("1848", service.getStartDate().getYear().getValue());
+        assertEquals("1948", service.getStartDate().getYear().getValue());
         assertNotNull(service.getOrganization());
         assertEquals("common:name", service.getOrganization().getName());
         assertEquals("common:city", service.getOrganization().getAddress().getCity());
@@ -1213,7 +1244,7 @@ public class ValidateV3_rc1SamplesTest {
         assertNotNull(work.getPublicationDate());
         assertEquals("02", work.getPublicationDate().getDay().getValue());
         assertEquals("02", work.getPublicationDate().getMonth().getValue());
-        assertEquals("1848", work.getPublicationDate().getYear().getValue());
+        assertEquals("1948", work.getPublicationDate().getYear().getValue());
 
         // Check biography
         Person person = record.getPerson();
@@ -1551,6 +1582,20 @@ public class ValidateV3_rc1SamplesTest {
         Services object = (Services) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/services-3.0_rc1.xml", Services.class);
         marshall(object, "/record_3.0_rc1/activities-3.0_rc1.xsd");   
     }
+    
+    @Test
+    public void testMarshallResearchResource() throws JAXBException, SAXException, URISyntaxException {
+        ResearchResource object = (ResearchResource) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/research-resource-3.0_rc1.xml", ResearchResource.class);
+        marshall(object, "/record_3.0_rc1/research-resource-3.0_rc1.xsd");  
+        object = (ResearchResource) unmarshallFromPath("/record_3.0_rc1/samples/write_samples/research-resource-3.0_rc1.xml", ResearchResource.class);
+        marshall(object, "/record_3.0_rc1/research-resource-3.0_rc1.xsd");  
+    }
+
+    @Test
+    public void testMarshallResearchResources() throws JAXBException, SAXException, URISyntaxException {
+        ResearchResources object = (ResearchResources) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/research-resources-3.0_rc1.xml", ResearchResources.class);
+        marshall(object, "/record_3.0_rc1/activities-3.0_rc1.xsd");   
+    }
 
     private void validateAffiliation(Affiliation object, boolean writeSample) {
         assertNotNull(object);
@@ -1564,10 +1609,10 @@ public class ValidateV3_rc1SamplesTest {
         }
         assertEquals("department-name", object.getDepartmentName());
         assertEquals("role-title", object.getRoleTitle());
-        assertEquals("1848", object.getStartDate().getYear().getValue());
+        assertEquals("1948", object.getStartDate().getYear().getValue());
         assertEquals("02", object.getStartDate().getMonth().getValue());
         assertEquals("02", object.getStartDate().getDay().getValue());
-        assertEquals("1848", object.getEndDate().getYear().getValue());
+        assertEquals("1948", object.getEndDate().getYear().getValue());
         assertEquals("02", object.getEndDate().getMonth().getValue());
         assertEquals("02", object.getEndDate().getDay().getValue());
         assertEquals("common:name", object.getOrganization().getName());
@@ -1670,6 +1715,10 @@ public class ValidateV3_rc1SamplesTest {
                 result = (Service) obj;
             } else if (Services.class.equals(type)) {
                 result = (Services) obj;
+            } else if (ResearchResource.class.equals(type)) {
+                result = (ResearchResource) obj;
+            } else if (ResearchResources.class.equals(type)) {
+                result = (ResearchResources) obj;
             }
             return result;
         } catch (IOException e) {
