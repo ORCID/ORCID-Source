@@ -25,6 +25,7 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
@@ -765,12 +766,12 @@ public class NotificationManagerImpl implements NotificationManager {
     public Notification createPermissionNotification(String orcid, NotificationPermission notification) {
         Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(orcid);
         String frequencyString = frequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS);
-        SendEmailFrequency memberUpdateEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
-
+        SendEmailFrequency memberUpdateEmailFrequency = SendEmailFrequency.fromValue(frequencyString);        
+        
         if (SendEmailFrequency.NEVER.equals(memberUpdateEmailFrequency)) {
-            LOGGER.debug("Not sending acknowledge notification, because option to send member updates is set to never for record: {}",
-                    orcid);
-            return null;
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", orcid);
+            throw new OrcidNotificationException(params);
         }
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
