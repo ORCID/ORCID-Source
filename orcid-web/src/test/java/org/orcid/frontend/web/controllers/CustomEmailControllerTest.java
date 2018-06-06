@@ -27,9 +27,10 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.ajaxForm.CustomEmailForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -44,8 +45,10 @@ import org.springframework.transaction.annotation.Transactional;
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public class CustomEmailControllerTest extends BaseControllerTest {
+public class CustomEmailControllerTest extends DBUnitTest {
 
+    protected OrcidProfile orcidProfile;
+    
     @Resource
     CustomEmailController customEmailController;
 
@@ -97,8 +100,7 @@ public class CustomEmailControllerTest extends BaseControllerTest {
                 "/data/SecurityQuestionEntityData.xml"));
     }
 
-    @Override
-    protected Authentication getAuthentication() {
+    private Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("5555-5555-5555-5558");
         OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcidProfile.retrieveOrcidPath());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("5555-5555-5555-5558", details.getPassword(), getRole());
