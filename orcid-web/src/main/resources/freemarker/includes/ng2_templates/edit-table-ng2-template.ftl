@@ -94,30 +94,28 @@
                     </td>
                 </tr>
             </@orcid.checkFeatureStatus>
-            <@orcid.checkFeatureStatus 'GET_MY_DATA'>
-                <tr>
-                    <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
-                    <td><a href="" (click)="toggleGetMyDataEdit()">{{twoFAToggleText}}</a></td>
-                </tr>
-                <tr *ngIf="showEditGetMyData" >
-                    <td colspan="2">
-                        <p>
-                            <@orcid.msg 'manage.get_my_data.details.p1' />
-                        </p>
-                        <p>
-                            <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="${knowledgeBaseUri}/articles/117225"><@orcid.msg 'common.learn_more' /></a>
-                        </p>
-                        <p>
-                            <form ngNoForm action="${baseUri}/get-my-data" method="POST">
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <button class="btn btn-primary">
-                                    <@orcid.msg 'manage.get_my_data.button' />
-                                </button>
-                            </form>
-                        </p>
-                    </td>
-                </tr>
-            </@orcid.checkFeatureStatus>
+            <tr>
+                <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
+                <td><a href="" (click)="toggleGetMyDataEdit()">{{twoFAToggleText}}</a></td>
+            </tr>
+            <tr *ngIf="showEditGetMyData">
+                <td colspan="2">
+                    <p>
+                        <@orcid.msg 'manage.get_my_data.details.p1' />
+                    </p>
+                    <p>
+                        <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="${knowledgeBaseUri}/articles/117225"><@orcid.msg 'common.learn_more' /></a>
+                    </p>
+                    <p>
+                        <form ngNoForm action="${baseUri}/get-my-data" method="POST">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <button class="btn btn-primary">
+                                <@orcid.msg 'manage.get_my_data.button' />
+                            </button>
+                        </form>
+                    </p>
+                </td>
+            </tr>
             <#if RequestParameters['OrcidSocial']??>
                 <tr>
                     <th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>

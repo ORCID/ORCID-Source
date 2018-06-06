@@ -5,9 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,11 +18,16 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.util.v3.ActivityUtils;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidAccessControlException;
@@ -29,6 +37,7 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -70,6 +79,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.orcid.test.helper.v3.Utils;
 import org.orcid.utils.DateUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -92,6 +102,33 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     @Resource(name = "memberV3ApiServiceDelegatorV3_0_rc1")
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
+    @Resource
+    protected EmailFrequencyManager emailFrequencyManager;
+    
+    @Mock
+    protected EmailFrequencyManager mockEmailFrequencyManager;
+        
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
+    
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
+        
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);         
+    }
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
