@@ -134,21 +134,13 @@
         <!-- NG2: Under development -->
         <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
         <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
-        
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-            <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
-            <#include "/includes/ng2_templates/works-ng2-template.ftl">
-        </#if>
+    
 
         <!-- Probably this one wont be needed -->
         <#if springMacroRequestContext.requestUri?contains("/my-orcid") 
             || springMacroRequestContext.requestUri?contains("/print")
             || (isPublicProfile??)>
             <#include "/includes/ng2_templates/personal-info-ng2-template.ftl">
-        </#if>
-
-        <#if springMacroRequestContext.requestUri?contains("/account") >
-        
         </#if>
     </@orcid.checkFeatureStatus> 
 

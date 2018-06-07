@@ -122,4 +122,10 @@ public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response viewServiceSummary(String orcid, Long putCode);
 
+    Response viewResearchResource(String orcid, Long valueOf);
+
+    Response viewResearchResources(String orcid);
+
+    Response viewResearchResourceSummary(String orcid, Long valueOf);
+
 }

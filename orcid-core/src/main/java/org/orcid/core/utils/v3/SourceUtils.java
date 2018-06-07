@@ -37,6 +37,9 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
@@ -283,6 +286,16 @@ public class SourceUtils {
         if (peerReviews != null) {
             for (PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
                 for (PeerReviewSummary summary : group.getPeerReviewSummary()) {
+                    setSourceName(summary);
+                }
+            }
+        }
+    }
+    
+    public void setSourceName(ResearchResources rr) {
+        if (rr != null) {
+            for (ResearchResourceGroup group : rr.getResearchResourceGroup()) {
+                for (ResearchResourceSummary summary : group.getResearchResourceSummary()) {
                     setSourceName(summary);
                 }
             }

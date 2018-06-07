@@ -40,6 +40,7 @@ import org.orcid.core.manager.v3.PeerReviewManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
+import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
@@ -57,6 +58,7 @@ import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.v3.ContributorUtils;
@@ -64,6 +66,7 @@ import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.version.impl.Api3_0_RC1LastModifiedDatesHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc1.client.ClientSummary;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords;
@@ -89,6 +92,7 @@ import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
@@ -112,6 +116,8 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
@@ -193,6 +199,12 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Resource(name = "activitiesSummaryManagerReadOnlyV3")
     private ActivitiesSummaryManagerReadOnly activitiesSummaryManagerReadOnly;
+    
+    @Resource(name = "researchResourceManagerV3")
+    private ResearchResourceManager researchResourceManager;
+
+    @Resource(name = "researchResourceManagerReadOnlyV3")
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
 
     // Person managers
     @Resource(name = "researcherUrlManagerReadOnlyV3")
@@ -1573,4 +1585,84 @@ public class MemberV3ApiServiceDelegatorImpl implements
             }
         }
     }
+
+    @Override
+    public Response viewResearchResource(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
+        ResearchResource e = researchResourceManagerReadOnly.getResearchResource(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
+    }
+
+    @Override
+    public Response viewResearchResources(String orcid) {
+        checkProfileStatus(orcid, true);
+        List<ResearchResourceSummary> list = researchResourceManagerReadOnly.getResearchResourceSummaryList(orcid);
+
+        // Lets copy the list so we don't modify the cached collection
+        List<ResearchResourceSummary> filteredList = null;
+        if (list != null) {
+            filteredList = new ArrayList<ResearchResourceSummary>(list);
+        }
+        list = filteredList;
+
+        orcidSecurityManager.checkAndFilter(orcid, list, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ResearchResources rr = researchResourceManagerReadOnly.groupResearchResources(list, false);
+        ActivityUtils.setPathToResearchResources(rr, orcid);
+        sourceUtils.setSourceName(rr);
+        Api3_0_RC1LastModifiedDatesHelper.calculateLastModified(rr);
+        return Response.ok(rr).build();
+    }
+
+    @Override
+    public Response viewResearchResourceSummary(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
+        ResearchResourceSummary r = researchResourceManagerReadOnly.getResearchResourceSummary(orcid, putCode);
+        orcidSecurityManager.checkAndFilter(orcid, r, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        ActivityUtils.setPathToActivity(r, orcid);
+        sourceUtils.setSourceName(r);
+        return Response.ok(r).build();
+    }
+
+    @Override
+    public Response createResearchResource(String orcid, ResearchResource researchResource) {
+        checkProfileStatus(orcid, false);
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_UPDATE);
+        clearSource(researchResource);
+        ResearchResource e = researchResourceManager.createResearchResource(orcid, researchResource, true);
+        sourceUtils.setSourceName(e);
+        try {
+            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
+        } catch (URISyntaxException ex) {
+            //TODO: update errors.
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createresearch_resource_response.exception"), ex);
+        }
+    }
+
+    @Override
+    public Response updateResearchResource(String orcid, Long putCode, ResearchResource researchResource) {
+        checkProfileStatus(orcid, false);
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
+        if (!putCode.equals(researchResource.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(researchResource.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        clearSource(researchResource);
+        ResearchResource e = researchResourceManager.updateResearchResource(orcid, researchResource, true);
+        sourceUtils.setSourceName(e);
+        return Response.ok(e).build();
+    }
+
+    @Override
+    public Response deleteResearchResource(String orcid, Long putCode) {
+        checkProfileStatus(orcid, false);
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
+        researchResourceManager.checkSourceAndRemoveResearchResource(orcid, putCode);//TODO: make it check scopes.
+        return Response.noContent().build();
+    }
+    
 }

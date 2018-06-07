@@ -28,13 +28,15 @@ import { PasswordService }
 })
 export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-   
+
+    displayError: boolean;
     resetPasswordForm: any;
 
     constructor(
         private commonSrvc: CommonService,
         private passwordService: PasswordService
     ) {
+        this.displayError = false;
         this.resetPasswordForm = {};
     }
 
@@ -74,6 +76,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
     }
 
     serverValidate(): void {
+        console.log('server validate');
         this.passwordService.serverValidate( this.resetPasswordForm )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -84,6 +87,13 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
                 console.log('error posting to reset-password-form-validate.json');
             } 
         );
+    }
+
+    validatePassword(): void {
+        if( this.resetPasswordForm.retypedPassword != this.resetPasswordForm.password ){
+            this.displayError = true;
+        }
+        this.displayError = false;
     }
 
     //Default init functions provided by Angular Core

@@ -51,6 +51,7 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Membership.class, "/record_3.0_rc1/membership-3.0_rc1.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Qualification.class, "/record_3.0_rc1/qualification-3.0_rc1.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Service.class, "/record_3.0_rc1/service-3.0_rc1.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.ResearchResource.class, "/record_3.0_rc1/research-resource-3.0_rc1.xsd");
         
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Work.class, "/record_2.0/work-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Funding.class, "/record_2.0/funding-2.0.xsd");

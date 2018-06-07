@@ -6,6 +6,7 @@ import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
@@ -24,6 +25,8 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
@@ -37,6 +40,8 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
     private PeerReviewManagerReadOnly peerReviewManager;
     
     private WorkManagerReadOnly workManager;
+    
+    private ResearchResourceManagerReadOnly researchResourceManager;
 
     public void setAffiliationsManager(AffiliationsManagerReadOnly affiliationsManager) {
         this.affiliationsManager = affiliationsManager;
@@ -52,7 +57,11 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
 
     public void setWorkManager(WorkManagerReadOnly workManager) {
         this.workManager = workManager;
-    }    
+    }  
+    
+    public void setResearchResourceManager(ResearchResourceManagerReadOnly researchResourceManager) {
+        this.researchResourceManager = researchResourceManager;
+    }  
 
     @Override
     public ActivitiesSummary getActivitiesSummary(String orcid) {
@@ -116,6 +125,10 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
         List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid);
         Works works = workManager.groupWorks(workSummaries, justPublic);        
         activities.setWorks(works);
+        
+        List<ResearchResourceSummary> researchResourceSummary = researchResourceManager.getResearchResourceSummaryList(orcid); 
+        ResearchResources researchResources = researchResourceManager.groupResearchResources(researchResourceSummary, justPublic);
+        activities.setResearchResources(researchResources);
 
         return activities;
     }

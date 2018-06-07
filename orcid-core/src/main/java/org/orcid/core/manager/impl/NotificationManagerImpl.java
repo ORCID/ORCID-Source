@@ -21,9 +21,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
@@ -42,7 +44,6 @@ import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationAdministrative;
-import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.Items;
@@ -50,8 +51,8 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
-import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -67,7 +68,6 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
@@ -81,6 +81,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * @author Will Simpson
  */
+@Deprecated
 public class NotificationManagerImpl implements NotificationManager {
 
     private static final String UPDATE_NOTIFY_ORCID_ORG = "ORCID <update@notify.orcid.org>";
@@ -163,6 +164,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource(name = "emailManagerReadOnly")
     private EmailManagerReadOnly emailManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
     
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
@@ -353,22 +357,6 @@ public class NotificationManagerImpl implements NotificationManager {
     private String getSubject(String code, Locale locale) {
         return messages.getMessage(code, null, locale);
     }
-
-    public void sendVerificationReminderEmail(String userOrcid, String email) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();        
-        String emailFriendlyName = deriveEmailFriendlyName(record);
-        Locale locale = getUserLocaleFromProfileEntity(record);
-        String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email,
-                primaryEmail, locale);
-        addMessageParams(templateParams, locale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", locale), body, htmlBody);
-    }
     
     private String createSubjectForVerificationEmail(String email, String primaryEmail, Locale userLocale) {
         return getSubject(primaryEmail.equalsIgnoreCase(email) ? "email.subject.verify_reminder_primary" : "email.subject.verify_reminder", userLocale);
@@ -391,7 +379,6 @@ public class NotificationManagerImpl implements NotificationManager {
         return templateParams;
     }
     
-
     @Override
     public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
         String result = null;
@@ -462,113 +449,40 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> items) {
+    public Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> items) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
-        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
-        Locale locale = getUserLocaleFromProfileEntity(record);
         
         if (amenderOrcid == null) {
             LOGGER.info("Not sending amend email to {} because amender is null", userOrcid);
-            return;
+            return null;
         }
         if (amenderOrcid.equals(userOrcid)) {
             LOGGER.debug("Not sending amend email, because self edited: {}", userOrcid);
-            return;
+            return null;
         }
         
-        Boolean sendChangeNotifications = record.getSendChangeNotifications();
+        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userOrcid);
+        String frequencyString = frequencies.get(EmailFrequencyManager.CHANGE_NOTIFICATIONS);
+        SendEmailFrequency amendEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
         
-        if (sendChangeNotifications == null || !sendChangeNotifications) {
+        if (SendEmailFrequency.NEVER.equals(amendEmailFrequency)) {
             LOGGER.debug("Not sending amend email, because option to send change notifications is disabled: {}", userOrcid);
-            return;
+            return null;
         }
         String amenderType = profileDao.retrieveOrcidType(amenderOrcid);
         if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.valueOf(amenderType))) {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, userOrcid);
-            return;
+            return null;
         }
-
-        String subject = getSubject("email.subject.amend", locale);
-
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(record));
-        templateParams.put("orcid", userOrcid);
-        templateParams.put("amenderName", extractAmenderName(userOrcid, amenderOrcid));
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("subject", subject);
-
-        addMessageParams(templateParams, locale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("amend_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
-
-        boolean notificationsEnabled = record.getEnableNotifications();
-        if (notificationsEnabled) {
-            NotificationAmended notification = new NotificationAmended();
-            notification.setNotificationType(NotificationType.AMENDED);
-            notification.setAmendedSection(amendedSection);
-            if (items != null) {
-                notification.setItems(new Items(new ArrayList<>(items)));
-            }
-            createNotification(userOrcid, notification);
-        } else {
-            String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, primaryEmail, subject, body, html);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission) {
-        ProfileEntity delegateProfileEntity = profileEntityCacheManager.retrieve(userReceivingPermission);
-        Boolean sendAdministrativeChangeNotifications = delegateProfileEntity.getSendAdministrativeChangeNotifications();
-        if (sendAdministrativeChangeNotifications == null || !sendAdministrativeChangeNotifications) {
-            LOGGER.debug("Not sending added delegate email, because option to send administrative change notifications not set to true for delegate: {}",
-                    delegateProfileEntity.getId());
-            return;
-        }
-
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);
-        Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
-        String subject = getSubject("email.subject.added_as_delegate", userLocale);
         
-        org.orcid.jaxb.model.record_v2.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
-        String grantingOrcidEmail = primaryEmail.getEmail();
-        String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
-        String email = emailManager.findPrimaryEmail(userReceivingPermission).getEmail();
-        String assetsUrl = getAssetsUrl();
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailNameForDelegate", emailNameForDelegate);
-        templateParams.put("grantingOrcidValue", userGrantingPermission);
-        templateParams.put("grantingOrcidName", deriveEmailFriendlyName(profile));
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
-        templateParams.put("subject", subject);
-        templateParams.put("assetsUrl", assetsUrl);
-        
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
-
-        boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
-        if (notificationsEnabled) {
-            NotificationAdministrative notification = new NotificationAdministrative();
-            notification.setNotificationType(NotificationType.ADMINISTRATIVE);
-            notification.setSubject(subject);
-            notification.setBodyHtml(html);
-            createNotification(userReceivingPermission, notification);
-        } else {
-            mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+        NotificationAmended notification = new NotificationAmended();
+        notification.setNotificationType(NotificationType.AMENDED);
+        notification.setAmendedSection(amendedSection);
+        if (items != null) {
+            notification.setItems(new Items(new ArrayList<>(items)));
         }
-    }
+        return createNotification(userOrcid, notification);        
+    }    
 
     @Override
     public void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail) {
@@ -756,19 +670,6 @@ public class NotificationManagerImpl implements NotificationManager {
         }
     }
 
-    private String extractAmenderName(String userOrcid, String amenderId) {
-        DelegateForm delegateForm = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(userOrcid, amenderId);
-        if(delegateForm != null && !PojoUtil.isEmpty(delegateForm.getReceiverName())) {
-            return delegateForm.getReceiverName().getValue();
-        }
-        
-        ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(amenderId);
-        if (clientDetailsEntity != null) {
-            return clientDetailsEntity.getClientName();
-        }
-        return "";
-    }
-
     @Override
     public String createClaimVerificationUrl(String email, String baseUri) {
         return createEmailBaseUrl(email, baseUri, "claim");
@@ -805,6 +706,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link) {
+        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(managedOrcid);
+        String frequencyString = frequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS);
+        SendEmailFrequency adminEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
+        
+        if (SendEmailFrequency.NEVER.equals(adminEmailFrequency)) {
+            LOGGER.debug("Not sending delegation request email, because option to send administrative change notifications is disabled: {}", managedOrcid);
+            return;
+        }
+        
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -841,24 +751,38 @@ public class NotificationManagerImpl implements NotificationManager {
         // Send message
         if (apiRecordCreationEmailEnabled) {
             String subject = messages.getMessage("email.subject.admin_as_delegate", new Object[] { trustedOrcidName }, userLocale);
-            boolean notificationsEnabled = trustedEntity != null ? trustedEntity.getEnableNotifications() : false;
-            if (notificationsEnabled) {
-                NotificationAdministrative notification = new NotificationAdministrative();
-                notification.setNotificationType(NotificationType.ADMINISTRATIVE);
-                notification.setSubject(subject);
-                notification.setBodyHtml(htmlBody);
-                createNotification(managedOrcid, notification);
-            } else {
-                mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail, subject, null, htmlBody);
-            }
+            NotificationAdministrative notification = new NotificationAdministrative();
+            notification.setNotificationType(NotificationType.ADMINISTRATIVE);
+            notification.setSubject(subject);
+            notification.setBodyHtml(htmlBody);
+            createNotification(managedOrcid, notification);
             profileEventDao.persist(new ProfileEventEntity(managedOrcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
         } else {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
         }
     }
 
-    @Override
-    public Notification createNotification(String orcid, Notification notification) {
+    @Override 
+    public Notification createPermissionNotification(String orcid, NotificationPermission notification) {
+        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(orcid);
+        String frequencyString = frequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS);
+        SendEmailFrequency memberUpdateEmailFrequency = SendEmailFrequency.fromValue(frequencyString);        
+        
+        if (SendEmailFrequency.NEVER.equals(memberUpdateEmailFrequency)) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", orcid);
+            throw new OrcidNotificationException(params);
+        }
+        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        if (profile == null) {
+            throw OrcidNotFoundException.newInstance(orcid);
+        }
+        
+        return createNotification(orcid, notification);
+    }
+    
+    private Notification createNotification(String orcid, Notification notification) {
         if (notification.getPutCode() != null) {
             throw new IllegalArgumentException("Put code must be null when creating a new notification");
         }
@@ -1001,53 +925,28 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
+        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userOrcid);
+        String frequencyString = frequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS);
+        SendEmailFrequency memberUpdateEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
+        
+        if (SendEmailFrequency.NEVER.equals(memberUpdateEmailFrequency)) {
+            LOGGER.debug("Not sending acknowledge notification, because option to send member updates is set to never for record: {}",
+                    userOrcid);
+            return;
+        }
+        
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale() == null) ? Locale.ENGLISH
-                : LocaleUtils.toLocale(profileEntity.getLocale().toLowerCase());
-        String subject = getSubject("email.subject.institutional_sign_in", userLocale);
         String authorizationUrl = buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
 
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(profileEntity));
-        templateParams.put("orcid", userOrcid);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("subject", subject);
-        templateParams.put("clientName", clientDetails.getClientName());
-        templateParams.put("authorization_url", authorizationUrl);
-
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("authenticate_request_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("authenticate_request_email_html.ftl", templateParams);
-
-        boolean notificationsEnabled = profileEntity.getEnableNotifications();
-        if (notificationsEnabled) {
-            NotificationInstitutionalConnection notification = new NotificationInstitutionalConnection();
-            notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);
-            notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
-            NotificationInstitutionalConnectionEntity notificationEntity = (NotificationInstitutionalConnectionEntity) notificationAdapter
-                    .toNotificationEntity(notification);
-            notificationEntity.setProfile(new ProfileEntity(userOrcid));
-            notificationEntity.setClientSourceId(clientId);
-            notificationEntity.setAuthenticationProviderId(clientDetails.getAuthenticationProviderId());
-            notificationDao.persist(notificationEntity);
-        } else {
-            Emails emails = emailManager.getEmails(userOrcid);
-            String primaryEmail = null;
-            if (emails == null || emails.getEmails() == null) {
-                throw new IllegalArgumentException("Unable to find primary email for: " + userOrcid);
-            }
-            for (org.orcid.jaxb.model.record_v2.Email email : emails.getEmails()) {
-                if (email.isPrimary()) {
-                    primaryEmail = email.getEmail();
-                }
-            }
-            mailGunManager.sendEmail(UPDATE_NOTIFY_ORCID_ORG, primaryEmail, subject, body, html);
-        }
+        NotificationInstitutionalConnection notification = new NotificationInstitutionalConnection();
+        notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);
+        notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
+        NotificationInstitutionalConnectionEntity notificationEntity = (NotificationInstitutionalConnectionEntity) notificationAdapter
+                .toNotificationEntity(notification);
+        notificationEntity.setProfile(new ProfileEntity(userOrcid));
+        notificationEntity.setClientSourceId(clientId);
+        notificationEntity.setAuthenticationProviderId(clientDetails.getAuthenticationProviderId());
+        notificationDao.persist(notificationEntity);
     }
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException {
@@ -1085,6 +984,16 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendAutoDeprecateNotification(String primaryOrcid, String deprecatedOrcid) {
+        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(primaryOrcid);
+        String frequencyString = frequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS);
+        SendEmailFrequency administrativeChangeEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
+
+        if (SendEmailFrequency.NEVER.equals(administrativeChangeEmailFrequency)) {
+            LOGGER.debug("Not sending auto deprecate notifiation, because option to send administrative change notifications is ste to never for record: {}",
+                    primaryOrcid);
+            return;
+        }
+        
         ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve(primaryOrcid);
         ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(SourceEntityUtils.getSourceId(deprecatedProfileEntity.getSource()));
@@ -1145,11 +1054,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
         List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
-        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
-            notifications = notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, recordActiveDate);
-        } else {
-            notifications = notificationDaoReadOnly.findNotificationsToSendLegacy(new Date(), orcid, emailFrequencyDays, recordActiveDate);
-        }   
+        notifications = notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, recordActiveDate);          
         return notificationAdapter.toNotification(notifications);
     }
 

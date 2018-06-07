@@ -43,6 +43,8 @@ import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATIONS;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.SERVICE;
@@ -98,6 +100,7 @@ import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
@@ -119,6 +122,8 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
@@ -1313,5 +1318,71 @@ public class MemberV3ApiServiceImplV3_0_rc1 extends MemberApiServiceImplHelper {
     @ApiResponses(value = { @ApiResponse(code = 204, message = "Service deleted") })
     public Response deleteService(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.deleteAffiliation(orcid, getPutCode(putCode));
+    }
+    
+    //Research resources
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCE + PUTCODE)
+    @ApiOperation(nickname = "viewResearchResourceV3dev", value = "Fetch a Research Resource", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResearchResource.class),
+            @ApiResponse(code = 404, message = "putCode not found", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid putCode or ORCID ID", response = String.class) })
+    public Response viewResearchResource(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewResearchResource(orcid, getPutCode(putCode));
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCE)
+    @ApiOperation(nickname = "viewResearchResourcesV3dev", value = "Fetch all Research Resources", response = ResearchResources.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewResearchResources(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewResearchResources(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCE_SUMMARY + PUTCODE)
+    @ApiOperation(nickname = "viewResearchResourceSummaryV3dev", value = "Fetch a Research Resource summary", response = ResearchResourceSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    public Response viewResearchResourceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewResearchResourceSummary(orcid, getPutCode(putCode));
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCE)
+    @ApiOperation(nickname = "createResearchResourceV3dev", value = "Create a Research Resource", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "ResearchResource created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created ResearchResource resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid ResearchResource representation", response = String.class),
+            @ApiResponse(code = 500, message = "Invalid ResearchResource representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
+    public Response createResearchResource(@PathParam("orcid") String orcid, ResearchResource ResearchResource) {
+        return serviceDelegator.createResearchResource(orcid, ResearchResource);
+    }
+
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCE + PUTCODE)
+    @ApiOperation(nickname = "updateResearchResourceV3dev", value = "Update a Research Resource", response = ResearchResource.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "ResearchResource updated") })
+    public Response updateResearchResource(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ResearchResource ResearchResource) {
+        return serviceDelegator.updateResearchResource(orcid, getPutCode(putCode), ResearchResource);
+    }
+
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCH_RESOURCE + PUTCODE)
+    @ApiOperation(nickname = "deleteResearchResourceV3dev", value = "Delete an Research Resource", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "ResearchResource deleted") })
+    public Response deleteResearchResource(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteResearchResource(orcid, getPutCode(putCode));
     }
 }
