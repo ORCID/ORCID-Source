@@ -46,6 +46,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     */
     addingFunding: boolean;
     deleFunding: any;
+    deleteGroup: any;
+    deletePutCode: any;
     disambiguatedFunding: any;
     displayFundingxtIdPopOver: any;
     displayURLPopOver: any;
@@ -77,6 +79,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         */
         this.addingFunding = false;
         this.deleFunding = null;
+        this.deleteGroup = null;
+        this.deletePutCode = null;
         this.displayURLPopOver = {};
         this.editFunding = {};
         this.emails = {};
@@ -101,6 +105,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.addingFunding = true;
         this.editFunding.errors.length = 0;
         
+        /*
         this.fundingService.setData( this.editFunding )
         .takeUntil(this.ngUnsubscribe)
         .subscribe(
@@ -118,6 +123,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('setBiographyFormError', error);
             } 
         );
+        */
         
     };
 
@@ -224,22 +230,30 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     deleteFunding(delFunding): void {
-        this.fundingService.deleteData(delFunding);
+        //this.fundingService.deleteData(delFunding);
         this.closeModal();
     };
 
     deleteFundingByPut(putCode, deleteGroup): void {
         if (deleteGroup){
-            this.fundingSrvc.deleteGroupFunding(putCode);
+            //this.fundingSrvc.deleteGroupFunding(putCode);
         }
         else {
-            this.fundingSrvc.deleteFunding(putCode);
+            //this.fundingSrvc.deleteFunding(putCode);
         }
         //$.colorbox.close();
     };
 
     deleteFundingConfirm(putCode, deleteGroup): void {
-        var funding = fundingSrvc.getFunding(putCode);
+        //var funding = fundingSrvc.getFunding(putCode);
+        var funding = {
+            fundingTitle: {
+                title: {
+                    value: null
+                }
+            }
+        };
+
         var maxSize = 100;
         
         this.deletePutCode = putCode;
@@ -323,7 +337,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     funding = data[i];
                     groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
                 };
-                this.getFundingsById( ids );
                 
                 /*
                 if (fundingSrvc.fundingToAddIds.length == 0) {
@@ -337,6 +350,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 
                 let ids = data.splice(0,20).join();
+                this.getFundingsById( ids );
                 */
             },
             error => {
@@ -470,7 +484,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     typeChanged(): void {
-        var selectedType = $scope.editFunding.fundingType.value;
+        var selectedType = this.editFunding.fundingType.value;
         switch (selectedType){
         case 'award':
             $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
