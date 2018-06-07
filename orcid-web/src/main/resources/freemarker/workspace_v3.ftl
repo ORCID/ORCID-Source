@@ -174,8 +174,10 @@
         <!-- Fundings -->
         <#include "workspace_fundings_body_list_v3.ftl"/>
 
+        <!--
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
         <funding-ng2></funding-ng2>
+        -->
 
         <!-- Works -->
         <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
