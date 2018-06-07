@@ -255,4 +255,5 @@
 	<include file="/db/updates/indexes_2018_05_14.xml" />
 	<include file="/db/updates/add-display-index-to-org-affiliation-relation.xml" />
 	<include file="/db/updates/add_index_oauth2_token_detail_code.xml" />
+	<include file="/db/updates/grouping_suggestion.xml" />
 </databaseChangeLog>
