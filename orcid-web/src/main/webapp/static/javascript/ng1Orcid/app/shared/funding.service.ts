@@ -43,36 +43,6 @@ export class FundingService {
         return this.http.get(
             this.urlFundingsById + idList
         )
-        
-        /*
-        if( fundingSrvc.fundingToAddIds.length != 0 ) {
-                var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
-                $.ajax({
-                    url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
-                    dataType: 'json',
-                    success: function(data) {
-                        for (var i in data) {
-                            var funding = data[i];
-                            groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
-                        };
-                        if (fundingSrvc.fundingToAddIds.length == 0) {
-                            $timeout(function() {
-                              fundingSrvc.loading = false;
-                            });
-                        } else {
-                            $timeout(function () {
-                                fundingSrvc.addFundingToScope(path);
-                            },50);
-                        }
-                    }
-                }).fail(function(e) {
-                    console.log("Error fetching fundings");
-                    logAjaxError(e);
-                });
-            } else {
-                fundingSrvc.loading = false;
-            };
-            */
     }
 
     getFundingsId() {
@@ -83,29 +53,6 @@ export class FundingService {
             this.urlFundingsId
         )
         
-        /*
-        getFundings: function(path) {
-            //clear out current fundings
-            
-            //new way
-            
-            //get funding ids
-            $.ajax({
-                url: getBaseUri() + '/'  + path,
-                dataType: 'json',
-                success: function(data) {
-                    $timeout(function(){
-                        fundingSrvc.fundingToAddIds = data;
-                        fundingSrvc.addFundingToScope('fundings/fundings.json');
-                    });
-                }
-            }).fail(function(e){
-                // something bad is happening!
-                console.log("error fetching fundings");
-                logAjaxError(e);
-            });
-        },
-        */
     }
 
 }

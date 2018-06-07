@@ -92,6 +92,9 @@ import { ExternalIdentifiersNg2Module }
 import { FundingNg2Module } 
     from './funding/funding.ts';
 
+import { FundingFormNg2Module } 
+    from './funding/fundingForm.ts';
+
 import { HomeNg2Module } 
     from './home/home.ts';
 
@@ -326,6 +329,7 @@ export class RootCmp {
         EmailVerificationSentMesssageNg2Module,//Aproved
         ExternalIdentifiersNg2Module,
         HeaderNg2Module,
+        FundingFormNg2Module,
         FundingNg2Module,
         HomeNg2Module,
         KeywordsFormNg2Module,//Approved
