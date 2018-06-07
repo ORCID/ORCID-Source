@@ -42,7 +42,6 @@ export class AccountService {
 
     notifyOther(): void {
         this.notify.next();
-        console.log('notify');
     }
 
     addDelegate( obj ): Observable<any> {
@@ -136,6 +135,7 @@ export class AccountService {
     }
 
     submitModal( obj ): Observable<any> {
+
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
