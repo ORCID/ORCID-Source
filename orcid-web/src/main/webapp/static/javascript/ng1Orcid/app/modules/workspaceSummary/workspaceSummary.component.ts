@@ -18,7 +18,6 @@ import { Subject }
 import { Subscription }
     from 'rxjs/Subscription';
 
-
 @Component({
     selector: 'work-summary-ng2',
     template:  scriptTmpl("work-summary-ng2-template")
