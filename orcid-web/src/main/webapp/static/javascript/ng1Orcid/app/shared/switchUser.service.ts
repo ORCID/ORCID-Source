@@ -8,11 +8,8 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 
 
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject }
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 import 'rxjs/Rx';
 
@@ -53,7 +50,7 @@ export class SwitchUserService {
             getBaseUri() + '/switch-user?username=' + targetOrcid, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     notifyOther(): void {

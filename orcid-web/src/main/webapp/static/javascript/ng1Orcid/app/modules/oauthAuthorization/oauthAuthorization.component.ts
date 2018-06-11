@@ -16,14 +16,9 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChi
 import { ReCaptchaComponent } 
     from 'angular2-recaptcha';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import 'rxjs/add/operator/takeUntil';
 
 import { CommonNg2Module }
     from './../common/common.ts';

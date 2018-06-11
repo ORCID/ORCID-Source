@@ -7,13 +7,11 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject }
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 import 'rxjs/Rx';
+import 'rxjs/add/operator/do';
 
 @Injectable()
 export class EmailService {
@@ -76,7 +74,7 @@ export class EmailService {
                 }                         
             }
         )
-        .share();
+        ;
     }
 
     deleteEmail() {        
@@ -88,7 +86,7 @@ export class EmailService {
                 this.getEmails();                       
             }
         )
-        .share();
+        ;
     }
 
     getEmailFrequencies(): Observable<any> {
@@ -107,7 +105,7 @@ export class EmailService {
                 }                                                
             }
         )
-        .share();
+        ;
     }
 
     getEmailPrimary(): any {
@@ -129,7 +127,7 @@ export class EmailService {
                 }                                                
             }
         )
-        .share();
+        ;
     }
 
     getData = this.getEmails;
@@ -166,7 +164,7 @@ export class EmailService {
                 }                         
             }
         )
-        .share();
+        ;
     }
 
     saveEmailFrequencies( obj ): Observable<any> {
@@ -186,7 +184,7 @@ export class EmailService {
                 }                         
             }
         )
-        .share();
+        ;
     }
 
     setData( obj ): Observable<any> {
@@ -206,7 +204,7 @@ export class EmailService {
                 }                         
             }
         )
-        .share();
+        ;
     }
 
     setEmailPrivacy(email): Observable<any> {
@@ -217,7 +215,7 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     setPrimary(email, callback?): Observable<any> {
@@ -237,7 +235,7 @@ export class EmailService {
                 }                         
             }
         )
-        .share();
+        ;
 
         /*
         Old code, behaviour changed with new email functionality
@@ -273,7 +271,7 @@ export class EmailService {
         return this.http.get(
             getBaseUri() + '/account/verifyEmail.json?email=' + encodeURIComponent(_email.value)
         )
-        .share();
+        ;
     }
 
     deleteCustomEmail( obj ): Observable<any> {
@@ -284,7 +282,7 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     editCustomEmail( obj ): Observable<any> {
@@ -295,7 +293,7 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     saveCustomEmail( obj ): Observable<any> {
@@ -306,20 +304,20 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     displayCreateForm( clientId ): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/custom-emails/get-empty.json?clientId=' + clientId
         )
-        .share();
+        ;
     }
 
     getCustomEmails( clientId ): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/custom-emails/get.json?clientId=' + clientId
         )
-        .share();
+        ;
     }
 }

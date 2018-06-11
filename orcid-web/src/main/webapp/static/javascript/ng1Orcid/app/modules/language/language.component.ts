@@ -9,14 +9,9 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import 'rxjs/add/operator/takeUntil';
 
 import { LanguageService } 
     from '../../shared/language.service.ts';

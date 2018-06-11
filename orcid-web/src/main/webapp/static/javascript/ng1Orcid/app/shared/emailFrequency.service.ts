@@ -4,11 +4,8 @@ import { Injectable }
 import { Headers, Http, RequestOptions, Response } 
     from '@angular/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject }
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 import 'rxjs/Rx';
 
@@ -40,7 +37,7 @@ export class EmailFrequencyService {
         return this.http.get(
                 this.email_frequencies_url
             )
-            .map((res:Response) => res.json()).share();
+            .map((res:Response) => res.json());
     }   
     
     updateFrequency( name, frequency ): Observable<any> {
@@ -60,6 +57,6 @@ export class EmailFrequencyService {
             frequency, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json()).share();
+        .map((res:Response) => res.json());
     }
 }

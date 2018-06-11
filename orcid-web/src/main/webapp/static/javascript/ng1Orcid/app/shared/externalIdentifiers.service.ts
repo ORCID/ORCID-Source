@@ -7,13 +7,11 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject }
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 import 'rxjs/Rx';
+import 'rxjs/add/operator/do';
 
 @Injectable()
 export class ExternalIdentifiersService {
@@ -52,7 +50,7 @@ export class ExternalIdentifiersService {
             (data) => {                      
             }
         )
-        .share();
+        ;
     }
 
 
@@ -65,7 +63,7 @@ export class ExternalIdentifiersService {
             (data) => {                                              
             }
         )
-        .share();
+        ;
     }
 
      removeExternalIdentifier( data ) {
@@ -80,7 +78,7 @@ export class ExternalIdentifiersService {
             (data) => {                   
             }
         )
-        .share();
+        ;
 
     }
 }

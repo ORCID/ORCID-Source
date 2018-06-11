@@ -10,11 +10,8 @@ import { CookieXSRFStrategy, HttpModule, XSRFStrategy }
 import { Headers, Http, Response, RequestOptions} 
     from '@angular/http';
 
-import { Observable }
-    from 'rxjs/Observable';
-
-import { Subject } 
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 import 'rxjs/Rx';
 

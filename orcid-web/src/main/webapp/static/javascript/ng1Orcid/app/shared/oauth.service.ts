@@ -4,13 +4,8 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Injectable, ChangeDetectorRef } 
     from '@angular/core';
 
-
-
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject } 
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 import 'rxjs/Rx';
 
@@ -86,7 +81,7 @@ export class OauthService {
         return this.http.get(
             getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json'
         )
-        .share();
+        ;
     }
 
     oauth2ScreensLoadRegistrationForm( ): Observable<any> {

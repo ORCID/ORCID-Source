@@ -7,13 +7,11 @@ import { Injectable }
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject }
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 import 'rxjs/Rx';
+import 'rxjs/add/operator/do';
 
 @Injectable()
 export class NotificationsService {
@@ -162,7 +160,7 @@ export class NotificationsService {
                 this.retrieveUnreadCount();                                             
             }
         )
-        .share();
+        ;
 
         /*
         $.ajax({
@@ -202,7 +200,7 @@ export class NotificationsService {
                 this.retrieveUnreadCount();                                              
             }
         )
-        .share();
+        ;
         /*
         $.ajax({
             url: getBaseUri() + '/inbox/notification-alerts.json',
@@ -230,7 +228,7 @@ export class NotificationsService {
                 this.unreadCount = data;                                             
             }
         )
-        .share();
+        ;
         /*
         $.ajax({
             url: getBaseUri() + '/inbox/unreadCount.json',
@@ -266,7 +264,7 @@ export class NotificationsService {
                 this.retrieveUnreadCount();                        
             }
         )
-        .share();
+        ;
         /*
         $.ajax({
             url: getBaseUri() + '/inbox/' + notificationId + '/read.json',
@@ -314,7 +312,7 @@ export class NotificationsService {
                 this.retrieveUnreadCount();                       
             }
         )
-        .share();
+        ;
 
         /*
         $.ajax({
@@ -361,7 +359,7 @@ export class NotificationsService {
                 }                                            
             }
         )
-        .share();
+        ;
 
         /*
         $.ajax({
@@ -407,7 +405,7 @@ export class NotificationsService {
                                                              
                 }
             )
-            .share();
+            ;
 
             /*
             var defer = $q.defer(notificationId);                

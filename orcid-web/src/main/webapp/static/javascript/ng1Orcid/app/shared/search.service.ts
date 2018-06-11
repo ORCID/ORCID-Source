@@ -1,13 +1,17 @@
 declare var orcidVar: any;
 
-import { Injectable } from '@angular/core';
-import { CookieXSRFStrategy, HttpModule, XSRFStrategy } from '@angular/http';
-import { JsonpModule } from '@angular/http';
-import { Headers, Http, Response, RequestOptions, Jsonp } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Injectable } 
+    from '@angular/core';
+
+import { CookieXSRFStrategy, HttpModule, XSRFStrategy, JsonpModule, Headers, Http, Response, RequestOptions, Jsonp } 
+    from '@angular/http';
+
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
+
+import { Observable, Subject } 
+    from 'rxjs';
+
 import 'rxjs/Rx';
 
 //import { Preferences } from './preferences';

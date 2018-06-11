@@ -8,11 +8,8 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 
 
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject }
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 import 'rxjs/Rx';
 
@@ -73,7 +70,7 @@ export class PreferencesService {
             newPriv, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     clearMessage(): void {

@@ -12,14 +12,9 @@ import { AfterViewInit, Component, OnDestroy, OnInit }
 import { FormsModule }
     from '@angular/forms';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import 'rxjs/add/operator/takeUntil';
 
 import { NotificationsService } 
     from '../../shared/notifications.service.ts'; 
