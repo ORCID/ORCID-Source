@@ -46,7 +46,7 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name="created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
-    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
     protected Organization organization;
 
     @XmlAttribute(name="put-code")
