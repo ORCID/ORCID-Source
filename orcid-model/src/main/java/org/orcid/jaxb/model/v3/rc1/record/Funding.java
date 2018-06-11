@@ -52,7 +52,7 @@ public class Funding implements Filterable, Activity, Serializable, Organization
     protected OrganizationDefinedFundingSubType organizationDefinedType;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected FundingTitle title;
-    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
     protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "short-description")
     protected String description;
