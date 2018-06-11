@@ -304,7 +304,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         Map<String, Object> preferences = new HashMap<String, Object>();
         
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        preferences.put("email_frequency", String.valueOf(0));
         preferences.put("default_visibility", entity.getActivitiesVisibilityDefault());
         preferences.put("developer_tools_enabled", entity.getEnableDeveloperTools());
         return preferences;
