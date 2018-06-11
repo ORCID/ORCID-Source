@@ -7,7 +7,6 @@
 
 package org.orcid.jaxb.model.v3.rc1.record.summary;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,28 +17,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Group;
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "workSummary" })
 @XmlRootElement(name = "work-group", namespace = "http://www.orcid.org/ns/activities")
-public class WorkGroup implements Group, Serializable {
+public class WorkGroup extends ActivityGroup {
+    
     private static final long serialVersionUID = 1L;
-    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
-    protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
-    private ExternalIDs identifiers;
     @XmlElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
     private List<WorkSummary> workSummary;
-
-    public ExternalIDs getIdentifiers() {
-        if (identifiers == null)
-            identifiers = new ExternalIDs();
-        return identifiers;
-    }
 
     public List<WorkSummary> getWorkSummary() {
         if (workSummary == null)
@@ -55,8 +42,7 @@ public class WorkGroup implements Group, Serializable {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((identifiers == null) ? 0 : identifiers.hashCode());
+        int result = super.hashCode();
         result = prime * result + ((workSummary == null) ? 0 : workSummary.hashCode());
         return result;
     }
@@ -65,29 +51,16 @@ public class WorkGroup implements Group, Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!super.equals(obj))
             return false;
         if (getClass() != obj.getClass())
             return false;
         WorkGroup other = (WorkGroup) obj;
-        if (identifiers == null) {
-            if (other.identifiers != null)
-                return false;
-        } else if (!identifiers.equals(other.identifiers))
-            return false;
         if (workSummary == null) {
             if (other.workSummary != null)
                 return false;
         } else if (!workSummary.equals(other.workSummary))
             return false;
         return true;
-    }
-
-    public LastModifiedDate getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
+    }         
 }
