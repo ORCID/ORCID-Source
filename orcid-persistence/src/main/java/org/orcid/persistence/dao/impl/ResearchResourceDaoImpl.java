@@ -26,6 +26,9 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     @Override
     @Transactional
     public boolean removeResearchResource(String userOrcid, Long researchResourceId) {
+        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity where research_resource_id=:researchResourceId");
+        queryItem.setParameter("researchResourceId", researchResourceId);
+        queryItem.executeUpdate();
         Query query = entityManager.createQuery("delete from ResearchResourceEntity where profile.id=:userOrcid and id=:researchResourceId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("researchResourceId", researchResourceId);
