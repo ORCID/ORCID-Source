@@ -6,9 +6,9 @@ This workflow can be used with Public or Member API credentials on sandbox or th
 
 Depending on your use you should consider these alternatives to the ORCID API search:
 
-    * To get researchers' ORCID iDs, use OAuth to ensure there are no false matches. See the tutorial on [Getting Authenticate iDs](/get_id.md).
-    * If you are parsing data from a large section of the registry you may want to use [ORCID's public data file](https://orcid.org/content/download-file) -- a snapshot of all public data. Premium ORCID members may want to use the [ORCID sync](https://github.com/ORCID/public-data-sync/blob/master/README.md) process to access a regularly updated data file.
-    * For specific instructions on finding your institution’s researchers, see [tips on finding ORCID record-holders at your institution](https://members.orcid.org/api/resources/find-myresearchers).
+  * To get researchers' ORCID iDs, use OAuth to ensure there are no false matches. See the tutorial on [Getting Authenticate iDs](/get_id.md).
+  * If you are parsing data from a large section of the registry you may want to use [ORCID's public data file](https://orcid.org/content/download-file) -- a snapshot of all public data. Premium ORCID members may want to use the [ORCID sync](https://github.com/ORCID/public-data-sync/blob/master/README.md) process to access a regularly updated data file.
+  * For specific instructions on finding your institution’s researchers, see [tips on finding ORCID record-holders at your institution](https://members.orcid.org/api/resources/find-myresearchers).
 
 ## Generate a two step (/read-public) access token
 
@@ -36,7 +36,7 @@ Example response:
 ```
 
 ## Search for ORCID recods
-  
+
 Version is the the version of the API you are using, the latest stable release is v2.1.
 Query is the terms you are searching for.
 
@@ -85,41 +85,41 @@ Example response
   [...]
   </search:search>
  ```
- 
+
  ## Search technical information
- 
- The default behavior is a free-form, unrestricted search across the entire record. A basic search for "newman" will therefore turn up researchers with the published name Newman, given name Newman, or associated with a work with "newman" in the title, etc. 
- 
+
+ The default behavior is a free-form, unrestricted search across the entire record. A basic search for "newman" will therefore turn up researchers with the published name Newman, given name Newman, or associated with a work with "newman" in the title, etc.
+
  The API supports Boolean searches using multiple keywords, exact phrases, and other Boolean search features. Keywords must be combined using brackets and “AND” or “OR” in uppercase.
- 
+
  [All query syntaxes available in SOLR 3.6 are supported](https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser), including Lucene with Solr extensions (default), DisMax, and Extended Dismax.
- 
+
  The number of matching records is returned in the num-found field in the results.
- 
+
  100 results are returned by default, up to 200 results can be returned with one query using paging -see examples.
- 
+
  Like all API calls, search querys are restricted by the [API limits](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#api-limits).
- 
+
  ## Indexed fields
- 
+
  The entire ORCID record is indexed and can be searched using basic keyword searching. Search can also be limited to the specific fields listed below:
- 
+
 **Biographical data**
 
 * given-names
-    
+
 * family-name
-    
+
 * credit-name
-    
+
 * other-names
-    
+
 * email
-    
+
 * keyword
-    
+
 * external-id-reference
-    
+
 **Affiliations data**
 
 * affiliation-org-name
@@ -155,7 +155,7 @@ Example response
 * profile-submission-date
 
 * profile-last-modified-date
- 
+
 &ast; For a full list of external identifier see the [identifiers list](https://pub.qa.orcid.org/v2.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
 
 ## Example search queries
@@ -304,4 +304,3 @@ Description: Search for records affiliated with the GRID ID grid.5509.9 (Univers
 Paging: Default
 
 URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=grid-org-id:grid.5509.9```
- 
