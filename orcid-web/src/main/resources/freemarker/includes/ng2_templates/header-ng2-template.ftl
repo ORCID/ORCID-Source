@@ -152,6 +152,10 @@
                                     <li><a ${(nav=="members")?then('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
                                     <li><a ${(nav=="admin")?then('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
                                 </@security.authorize>
+
+                                <@security.authorize access="hasRole('ROLE_SELF_SERVICE')">
+                                    <li><a ${(nav=="self-service")?then('class="active" ', '')}href="<@orcid.rootPath "/self-service" />"><@orcid.msg 'workspace.self_service' /></a></li>
+                                </@security.authorize>
                                     
                             </@security.authorize>                                                             
                             <li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
