@@ -9,7 +9,9 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
+
+import { catchError, map } 
+    from 'rxjs/operators';
 
 import { CommonNg2Module }
     from './../modules/common/common.ts';

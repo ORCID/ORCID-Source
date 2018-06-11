@@ -11,7 +11,8 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, O
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
-import 'rxjs/add/operator/takeUntil';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { LanguageService } 
     from '../../shared/language.service.ts';

@@ -10,7 +10,9 @@ import { Headers, Http, RequestOptions, Response, URLSearchParams }
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
+
+import { catchError, map } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class ShibbolethService {

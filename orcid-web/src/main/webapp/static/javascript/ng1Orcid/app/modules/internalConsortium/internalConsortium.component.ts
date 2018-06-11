@@ -13,7 +13,8 @@ import { AfterViewInit, Component, OnDestroy, OnInit }
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
-import 'rxjs/add/operator/takeUntil';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { ManageMembersService } 
     from '../../shared/manageMembers.service.ts'; 

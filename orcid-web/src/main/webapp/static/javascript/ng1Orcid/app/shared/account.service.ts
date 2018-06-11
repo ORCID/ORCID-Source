@@ -9,7 +9,12 @@ import { Injectable }
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
+import { catchError, map } 
+    from 'rxjs/operators';
+
+
+import { catchError, map } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class AccountService {

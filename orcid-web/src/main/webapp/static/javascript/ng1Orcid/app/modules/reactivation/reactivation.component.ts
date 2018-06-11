@@ -11,7 +11,8 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit }
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
-import 'rxjs/add/operator/takeUntil';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { OauthService } 
     from '../../shared/oauth.service.ts'; 

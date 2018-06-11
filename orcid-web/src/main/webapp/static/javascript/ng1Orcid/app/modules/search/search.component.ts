@@ -10,7 +10,8 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef }
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
-import 'rxjs/add/operator/takeUntil';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonNg2Module }
     from './../common/common.ts';

@@ -14,7 +14,8 @@ import { AfterViewInit, Component, ChangeDetectorRef, ElementRef, EventEmitter, 
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
-import 'rxjs/add/operator/takeUntil';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonService } 
     from '../../shared/common.service.ts';

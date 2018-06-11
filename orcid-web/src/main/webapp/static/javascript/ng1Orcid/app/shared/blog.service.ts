@@ -13,7 +13,9 @@ import { Headers, Http, Response, RequestOptions}
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
+
+import { catchError, map } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class BlogService {
@@ -40,7 +42,7 @@ export class BlogService {
     }
 
     getBlogFeed(url): Observable<any> {
-        return this.http.get(url, { responseType: 'text'}).catch(this.handleError);
+        return this.http.get(url, { responseType: 'text'}).catchError(this.handleError);
 
     }
 

@@ -10,8 +10,10 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
-import 'rxjs/add/operator/do';
+
+import { catchError, map, tap } 
+    from 'rxjs/operators';
+
 
 @Injectable()
 export class NotificationsService {
@@ -143,7 +145,7 @@ export class NotificationsService {
         return this.http.get(
             url
         )
-        .do(
+        .tap(
             (data: any) => {
                 if(data.length === 0 || data.length < this.maxResults){
                     this.areMoreFlag = false;
@@ -194,7 +196,7 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/notification-alerts.json'
         )
-        .do(
+        .tap(
             (data) => {
                 this.notificationAlerts = data;
                 this.retrieveUnreadCount();                                              
@@ -223,7 +225,7 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/unreadCount.json'
         )
-        .do(
+        .tap(
             (data) => {
                 this.unreadCount = data;                                             
             }
@@ -252,7 +254,7 @@ export class NotificationsService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
+        .tap(
             (data) => {
                 var updated = data;
                 for(var i = 0;  i < this.notifications.length; i++){
@@ -296,7 +298,7 @@ export class NotificationsService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
+        .tap(
             (data) => {
                 var updated = data;
                 for(var i = 0;  i < this.notifications.length; i++){
@@ -345,7 +347,7 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
         )
-        .do(
+        .tap(
             (data) => {
                 for(var i = 0;  i < this.notifications.length; i++){
                     var existing = this.notifications[i];
@@ -400,7 +402,7 @@ export class NotificationsService {
             return this.http.get(
                 getBaseUri() + '/inbox/' + notificationId + '/archive.json'
             )
-            .do(
+            .tap(
                 (data) => {
                                                              
                 }

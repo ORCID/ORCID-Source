@@ -12,7 +12,9 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
+
+import { catchError, map } 
+    from 'rxjs/operators';
 
 //import { Preferences } from './preferences';
 
@@ -53,14 +55,14 @@ export class SearchService {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
 
 
-        return this.http.get(url, {headers: this.publicApiHeaders}).catch(this.handleError);
+        return this.http.get(url, {headers: this.publicApiHeaders}).catchError(this.handleError);
     }
 
     getNames(orcid): Observable<any> {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
 
 
-        return this.http.get(url, {headers: this.publicApiHeaders}).catch(this.handleError);
+        return this.http.get(url, {headers: this.publicApiHeaders}).catchError(this.handleError);
     }
 
 

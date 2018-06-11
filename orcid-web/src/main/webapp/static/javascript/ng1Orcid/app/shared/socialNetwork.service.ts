@@ -11,7 +11,9 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
+
+import { catchError, map } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class SocialNetworkService {

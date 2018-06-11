@@ -10,7 +10,9 @@ import { Headers, Http, RequestOptions, Response, URLSearchParams }
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
+
+import { catchError, map } 
+    from 'rxjs/operators';
 import 'rxjs/add/operator/do';
 
 @Injectable()
@@ -45,12 +47,7 @@ export class ExternalIdentifiersService {
             getBaseUri() + '/my-orcid/externalIdentifiers.json', 
             encoded_data, 
             { headers: this.headers }
-        )
-        .do(
-            (data) => {                      
-            }
-        )
-        ;
+        );
     }
 
 
@@ -58,12 +55,7 @@ export class ExternalIdentifiersService {
     getExternalIdentifiersForm(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/my-orcid/externalIdentifiers.json'
-        )
-        .do(
-            (data) => {                                              
-            }
-        )
-        ;
+        );
     }
 
      removeExternalIdentifier( data ) {
@@ -73,12 +65,7 @@ export class ExternalIdentifiersService {
         
         return this.http.delete( 
             getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encodeURIComponent(data)
-        )
-        .do(
-            (data) => {                   
-            }
-        )
-        ;
+        );
 
     }
 }

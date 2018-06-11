@@ -7,7 +7,8 @@ import { Headers, Http, RequestOptions, Response }
 import { Observable, Subject } 
     from 'rxjs';
 
-import 'rxjs/Rx';
+import { catchError, map } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class EmailFrequencyService {
