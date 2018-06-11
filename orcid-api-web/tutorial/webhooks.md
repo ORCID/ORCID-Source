@@ -21,15 +21,15 @@ This process is completed using the [2 step token exchange](https://github.com/O
 ```
 curl -i -L -H "Accept: application/json"
   -d "client_id=APP-NPXKK6HFN6TJ4YYI"
-  -d "client_secret=060c36f2-cce2-4f74-bde0-a17d8bb30a97" 
+  -d "client_secret=060c36f2-cce2-4f74-bde0-a17d8bb30a97"
   -d "scope=/webhook"
   -d "grant_type=client_credentials"
   "https://sandbox.orcid.org/oauth/token"
   ```
-  
+
 Example response:
 
-``` 
+```
 HTTP/1.1 200 OK
 Server: Apache-Coyote/1.1
 Cache-Control: no-store
@@ -51,11 +51,12 @@ Date: Fri, 05 Apr 2013 13:05:01 GMT
 | Method    | PUT |
 | header      | Authorication: Bearer [Your authorization code] |
 
-**Curl example:** 
+**Curl example:**
 
 Registering the URL `https://nowhere2.com/0000-0002-7465-2162/updated` for the record at http://sandbox.orcid.org/0000-0002-7465-2162.
 
-```curl -i -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee" 
+```
+curl -i -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee"
   -X PUT "https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%2Fnowhere2.com%2F0000-0002-7465-2162%2Fupdated"
   ```
 
@@ -69,7 +70,7 @@ Server: nginx/1.1.19
 Connection: keep-alive
 Location: https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%2Fnowhere2.com%2F0000-0002-7465-2162%2Fupdated
   ```
-  
+
 ## Unregister a webhook
 
 | Parameter| Value        |
@@ -77,12 +78,13 @@ Location: https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%
 | URL 				| https<i></i>://api.[host]/[ORCID iD]/webhook/[encoded url] |
 | Method    | DELETE |
 | header      | Authorication: Bearer [Your authorization code] |
-  
+
 The response should be 204 No Content.
 
-**Curl example:** 
+**Curl example:**
 
-```curl -i -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee" 
+```
+curl -i -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee" 
   -X DELETE "https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%2Fnowhere2.com%2F0000-0002-7465-2162%2Fupdated"
   ```
 
