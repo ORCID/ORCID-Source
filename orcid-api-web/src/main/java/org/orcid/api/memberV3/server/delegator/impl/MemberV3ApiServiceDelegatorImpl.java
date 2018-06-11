@@ -1661,7 +1661,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     public Response deleteResearchResource(String orcid, Long putCode) {
         checkProfileStatus(orcid, false);
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_UPDATE);
-        researchResourceManager.checkSourceAndRemoveResearchResource(orcid, putCode);//TODO: make it check scopes.
+        researchResourceManager.checkSourceAndRemoveResearchResource(orcid, putCode);
         return Response.noContent().build();
     }
     

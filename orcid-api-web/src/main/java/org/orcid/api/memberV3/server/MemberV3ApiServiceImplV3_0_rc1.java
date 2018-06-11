@@ -44,6 +44,7 @@ import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATIONS;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCES;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
@@ -1335,7 +1336,7 @@ public class MemberV3ApiServiceImplV3_0_rc1 extends MemberApiServiceImplHelper {
 
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(RESEARCH_RESOURCE)
+    @Path(RESEARCH_RESOURCES)
     @ApiOperation(nickname = "viewResearchResourcesV3dev", value = "Fetch all Research Resources", response = ResearchResources.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewResearchResources(@PathParam("orcid") String orcid) {
