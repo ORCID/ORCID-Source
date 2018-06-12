@@ -24,7 +24,7 @@ import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 @XmlRootElement(name = "work-group", namespace = "http://www.orcid.org/ns/activities")
 public class WorkGroup extends ActivityGroup {
     
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6172489241759247746L;
     @XmlElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
     private List<WorkSummary> workSummary;
 
