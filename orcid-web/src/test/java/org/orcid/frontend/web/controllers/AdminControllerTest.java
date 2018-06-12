@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -34,7 +36,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.admin.LockReason;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -107,6 +111,15 @@ public class AdminControllerTest extends BaseControllerTest {
     @Mock
     private ProfileHistoryEventManager profileHistoryEventManager;
     
+    @Mock
+    private EmailFrequencyManager mockEmailFrequencyManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
@@ -116,11 +129,25 @@ public class AdminControllerTest extends BaseControllerTest {
     @Before
     public void beforeInstance() {
         MockitoAnnotations.initMocks(this);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
+        
+        ReflectionTestUtils.setField(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
+        
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         assertNotNull(adminController);
         assertNotNull(profileDao);
     }
 
+    @After
+    public void after() {
+        ReflectionTestUtils.setField(jpa2JaxbAdapter, "emailFrequencyManager", emailFrequencyManager);
+    }    
+    
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml",

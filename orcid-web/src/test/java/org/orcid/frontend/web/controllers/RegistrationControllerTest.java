@@ -179,8 +179,6 @@ public class RegistrationControllerTest extends DBUnitTest {
     }
     @Test
     public void regActivitiesVisibilityDefaultIsNotNull() {
-        //TODO: Update this test after GDPR privacy selector is live
-        togglzRule.enable(Features.GDPR_UI);
         Registration reg = new Registration();
         reg.getActivitiesVisibilityDefault().setVisibility(null);
         assertNull(reg.getActivitiesVisibilityDefault().getVisibility());

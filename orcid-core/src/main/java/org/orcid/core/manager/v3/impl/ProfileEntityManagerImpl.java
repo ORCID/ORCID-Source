@@ -13,7 +13,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -52,7 +51,6 @@ import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.jaxb.model.v3.rc1.record.FamilyName;
 import org.orcid.jaxb.model.v3.rc1.record.GivenNames;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
-import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -151,9 +149,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
     
-    @Resource
-    private EmailFrequencyManager emailFrequencyManager;
-
     @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
@@ -443,8 +438,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             profile.setLocale(locale.name());
         }
         if (claim != null) {
-            profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
-            profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
             profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility().name());
         }
 
@@ -491,22 +484,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             }
         }
         profileDao.merge(profile);
-        profileDao.flush();
-        
-        // Create email frequency entity
-        boolean sendQuarterlyTips = (claim.getSendOrcidNews() == null) ? false : claim.getSendOrcidNews().getValue();
-        SendEmailFrequency f = SendEmailFrequency.NEVER;
-        
-        try {
-            f = SendEmailFrequency.fromValue(profile.getSendEmailFrequencyDays());
-        } catch(Exception e) {
-            
-        }
-        if(emailFrequencyManager.emailFrequencyExists(orcid)) {
-            emailFrequencyManager.update(orcid, f, f, f, sendQuarterlyTips);
-        } else {
-            emailFrequencyManager.createOnRegister(orcid, f, f, f, sendQuarterlyTips);
-        }        
+        profileDao.flush();        
         
         return true;
     }

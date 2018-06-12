@@ -101,15 +101,8 @@
                      ${viewyourinbox}                    
                 </a>
             </p>
-            <p>
-                <#assign frequency>
-                <#switch emailFrequencyString>
-                     <#case "0.0"><@emailMacros.msg "email.digest.frequency.immediate" /><#break>
-                     <#case "7.0"><@emailMacros.msg "email.digest.frequency.weekly" /><#break>
-                     <#case "91.3105"><@emailMacros.msg "email.digest.frequency.quarterly" /><#break>
-                </#switch>
-                </#assign>
-                <@emailMacros.msg "email.digest.youhavereceived_1" /><@emailMacros.space />${frequency}<@emailMacros.space /><@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.space /><a href="<@emailMacros.msg "email.digest.learnmorelink" />" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.learnmore" /></a>
+            <p>                
+                <@emailMacros.msg "email.digest.youhavereceived_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.space /><a href="<@emailMacros.msg "email.digest.learnmorelink" />" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.learnmore" /></a>
             </p>
             <p>
                 <@emailMacros.msg "email.digest.youmayadjust_1" /><@emailMacros.space /><a href="${baseUri}/account?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.accountsettings" /></a>.

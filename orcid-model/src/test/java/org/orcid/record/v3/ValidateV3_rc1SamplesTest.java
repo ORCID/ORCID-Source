@@ -11,6 +11,8 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.net.URISyntaxException;
 
@@ -1750,6 +1752,11 @@ public class ValidateV3_rc1SamplesTest {
         Schema schema = sf.newSchema(new File(getClass().getResource(path).toURI()));
 
         marshaller.setSchema(schema);
-        marshaller.marshal(object, System.out);
+        
+        marshaller.marshal(object, new PrintStream(new OutputStream() {
+            public void write(int b) {
+                //DO NOTHING
+            }
+        }));
     }
 }

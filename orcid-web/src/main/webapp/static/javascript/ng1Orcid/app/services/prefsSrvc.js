@@ -18,36 +18,10 @@ angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
             });
         },
         updateEmailFrequency: function() {
-        	$.ajax({
-                url: getBaseUri() + '/account/email_preferences.json',
-                type: 'POST',
-                data: serv.prefs['email_frequency'],
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'text',
-                success: function(data) {                    
-                    serv.saved = true;
-                    $rootScope.$apply();
-                }
-            }).fail(function() {
-                // something bad is happening!
-                console.log("error with prefs");
-            });
+            console.log('updateEmailFrequency is deprecated and does not work anymore');
         }, 
         updateNotificationPreferences: function() {
-        	$.ajax({
-                url: getBaseUri() + '/account/notification_preferences.json',
-                type: 'POST',
-                data: angular.toJson(serv.prefs),
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function(data) {                    
-                    serv.saved = true;
-                    $rootScope.$apply();
-                }
-            }).fail(function() {
-                // something bad is happening!
-                console.log("error with prefs");
-            });
+            console.log('updateNotificationPreferences is deprecated and does not work anymore');
         },
         updateDefaultVisibility: function() {
         	$.ajax({

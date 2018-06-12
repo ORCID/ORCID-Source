@@ -55,110 +55,70 @@
                                 </span>
                             </div>
                         </div>
-                                                
-                        <@orcid.checkFeatureStatus featureName='GDPR_UI'> 
-                            <!--Visibility default-->
-                            <div class="form-group clear-fix popover-registry">  
-                                <h4>${springMacroRequestContext.getMessage("register.privacy_settings")}</h4>         
-                                <p>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</p> 
-                                <p><b>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</b></p>
-                                <div class="visibilityDefault">
-                                    <div class="radio">
-                                      <label><input type="radio" name="defaultVisibility" ng-model="register.activitiesVisibilityDefault.visibility" value="PUBLIC" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
-                                    </div>
-                                    <div class="radio">
-                                      <label><input type="radio" name="defaultVisibility" ng-model="register.activitiesVisibilityDefault.visibility" value="LIMITED" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
-                                    </div>
-                                    <div class="radio">
-                                      <label><input type="radio" name="defaultVisibility" ng-model="register.activitiesVisibilityDefault.visibility" value="PRIVATE" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
-                                    </div>
+                        <!--Visibility default-->
+                        <div class="form-group clear-fix popover-registry">  
+                            <h4>${springMacroRequestContext.getMessage("register.privacy_settings")}</h4>         
+                            <p>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</p> 
+                            <p><b>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</b></p>
+                            <div class="visibilityDefault">
+                                <div class="radio">
+                                  <label><input type="radio" name="defaultVisibility" ng-model="register.activitiesVisibilityDefault.visibility" value="PUBLIC" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
                                 </div>
-                                <div class="visibilityHelp">
-                                    <span class="required" ng-class="isValidClass(register.activitiesDefaultVisibility)">*</span>
-                                    <div class="popover-help-container">
-                                        <i class="glyphicon glyphicon-question-sign"></i>
-                                        <div id="name-help" class="popover bottom">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
-                                                <ul class="privacyHelp">
-                                                    <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
-                                                    <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
-                                                    <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
-                                                </ul>
-                                                <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
-                                            </div>
+                                <div class="radio">
+                                  <label><input type="radio" name="defaultVisibility" ng-model="register.activitiesVisibilityDefault.visibility" value="LIMITED" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
+                                </div>
+                                <div class="radio">
+                                  <label><input type="radio" name="defaultVisibility" ng-model="register.activitiesVisibilityDefault.visibility" value="PRIVATE" ng-change="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
+                                </div>
+                            </div>
+                            <div class="visibilityHelp">
+                                <span class="required" ng-class="isValidClass(register.activitiesDefaultVisibility)">*</span>
+                                <div class="popover-help-container">
+                                    <i class="glyphicon glyphicon-question-sign"></i>
+                                    <div id="name-help" class="popover bottom">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+                                            <ul class="privacyHelp">
+                                                <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+                                                <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+                                                <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+                                            </ul>
+                                            <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
                                         </div>
                                     </div>
                                 </div>
-                                <span class="orcid-error" ng-show="register.activitiesVisibilityDefault.errors.length > 0">
-                                <div ng-repeat='error in register.activitiesVisibilityDefault.errors' ng-bind-html="error"></div>
-                            </span>
                             </div>
-                        </@orcid.checkFeatureStatus>
-                        <@orcid.checkFeatureStatus featureName='GDPR_UI' enabled=false>
-                            <div class="margin-top-box privacy">
-                                <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
-                                <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
-                                <@orcid.privacyToggle "register.activitiesVisibilityDefault.visibility" "updateActivitiesVisibilityDefault('PUBLIC', $event)"
-                                    "updateActivitiesVisibilityDefault('LIMITED', $event)" "updateActivitiesVisibilityDefault('PRIVATE', $event)" /> 
-                            </div>                    
-                            <div class="margin-top-box">
-                                <div class="relative">
-                                    <label></strong>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
-                                        ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
-                                    </label>                                
-                                 </div>
-                            </div>                            
-                        </@orcid.checkFeatureStatus> 
-                        
-                        <@orcid.checkFeatureStatus featureName='GDPR_EMAIL_NOTIFICATIONS'>
-                            <div *ngIf="gdprEmailNotifications">
-                                <!--Notifications settings -->
-                                <div id="notificationSettings" class="form-group clear-fix">  
-                                    <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
-                                    <p><@orcid.msg 'register.paragraph.1' /></p>
-                                    <p><@orcid.msg 'register.paragraph.2' /></p>
-                                    <div class="control-group">
-                                        <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" ng-model="register.sendOrcidNews.value" />
-                                        <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
-                                    </div>
-                                    <p><@orcid.msg 'register.paragraph.3' /></p>
+                            <span class="orcid-error" ng-show="register.activitiesVisibilityDefault.errors.length > 0">
+                            <div ng-repeat='error in register.activitiesVisibilityDefault.errors' ng-bind-html="error"></div>
+                        </span>
+                        </div>
+                         <div>
+                            <!--Notifications settings -->
+                            <div id="notificationSettings" class="form-group clear-fix">  
+                                <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
+                                <p><@orcid.msg 'register.paragraph.1' /></p>
+                                <p><@orcid.msg 'register.paragraph.2' /></p>
+                                <div class="control-group">
+                                    <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" ng-model="register.sendOrcidNews.value" />
+                                    <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
                                 </div>
+                                <p><@orcid.msg 'register.paragraph.3' /></p>
                             </div>
-                        </@orcid.checkFeatureStatus>
+                        </div>
                         
                         <!--Terms and conditions-->
-                        <@orcid.checkFeatureStatus featureName='GDPR_UI'> 
-                            <div class="form-group clear-fix bottomBuffer">
-                                <h4><@orcid.msg 'register.labelTermsofUse'/>
-                                    <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}"></span></h4>  
-                                <p>
-                                    <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
-                                    <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
-                                </p>
-                                <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
-                                    <div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
-                                </span>
-                            </div>
-                        </@orcid.checkFeatureStatus>                                                                                                           
-                        <@orcid.checkFeatureStatus featureName='GDPR_UI' enabled=false>
-                            <div class="margin-top-box">
-                                <div class="relative">
-                                    <label>${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')"/>
-                                        ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")} ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}</p>
-                                    </label>
-                                    <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
-                                        <div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
-                                    </span>
-                                </div>
-                            </div>
-                        </@orcid.checkFeatureStatus>
-                        
+                        <div class="form-group clear-fix bottomBuffer">
+                            <h4><@orcid.msg 'register.labelTermsofUse'/>
+                                <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}"></span></h4>  
+                            <p>
+                                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
+                                <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
+                            </p>
+                            <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
+                                <div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
                         <div class="relative centered-mobile">
                               <button type="submit" class="btn btn-primary" ng-click="postClaim()">${springMacroRequestContext.getMessage("claim.btnClaim")}</button>
                               <span ng-show="postingClaim" ng-cloak>

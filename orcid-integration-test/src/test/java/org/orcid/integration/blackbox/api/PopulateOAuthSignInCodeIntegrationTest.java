@@ -36,17 +36,6 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
     
     private String authorizeScreen = null;
     
-    private static boolean previousRegMultiEmailState;
-
-    @BeforeClass
-    public static void beforeClass() {
-        previousRegMultiEmailState = getTogglzFeatureState(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, previousRegMultiEmailState);
-    }
     
     @Before    
     public void before() {
@@ -55,29 +44,11 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
     
     @Test
     public void checkNoPrePop() throws JSONException, InterruptedException {
-        //Multiple emails disabled
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, false);
         signout();
         getUrlAndWait(authorizeScreen);
         switchToRegisterForm();
         // make sure we are on the page
-        By emailElement = By.xpath("//input[@name='email']");
-        waitForElementVisibility(emailElement);        
-        assertTrue(findElement(emailElement).getAttribute("value").equals(""));
-        assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals(""));
-        assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals(""));
-        // verify we don't populate signin
-        assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
-        getUrlAndWait(authorizeScreen);
-        switchToRegisterForm();
-        
-        //Multiple emails enabled
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, true);
-        signout();
-        getUrlAndWait(authorizeScreen);
-        switchToRegisterForm();
-        // make sure we are on the page
-        emailElement= By.xpath("//input[@name='emailprimary234']");
+        By emailElement= By.xpath("//input[@name='emailprimary234']");
         waitForElementVisibility(emailElement);        
         assertTrue(findElement(emailElement).getAttribute("value").equals(""));
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals(""));
@@ -90,45 +61,12 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
 
     @Test
     public void emailPrePopulate() throws JSONException, InterruptedException {
-        //Multiple emails disabled
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, false);
         signout();
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
         getUrlAndWait(url);        
         
-        By element = By.xpath("//input[@name='email']");
-        waitForElementVisibility(element);       
-        assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
-        assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
-        assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals("test_given_name"));
-        // verify we don't populate signin
-        assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
-
-        // test existing email
-        url = authorizeScreen + "&email=" + this.getUser1UserName() + "&family_names=test_family_names&given_names=test_given_name";
-        getUrl(url);
-        element = By.xpath("//input[@name='userId']");
-        waitForElementVisibility(element);               
-        assertTrue(findElement(element).getAttribute("value").equals(this.getUser1UserName()));
-        // make sure register
-        assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(this.getUser1UserName()));
-
-        // populating check populating orcid
-        url = authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();
-        getUrl(url);
-        element = By.xpath("//input[@name='userId']");
-        waitForElementVisibility(element);                
-        assertTrue(findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
-        
-        //Multiple emails enabled
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, true);
-        signout();
-        // test populating form with email that doesn't exist
-        url = authorizeScreen + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
-        getUrlAndWait(url);        
-        
-        element = By.xpath("//input[@name='emailprimary234']");
+        By element = By.xpath("//input[@name='emailprimary234']");
         waitForElementVisibility(element);       
         assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
@@ -139,50 +77,12 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         
     @Test
     public void emailPrePopulateWithHtmlEncodedEmail() throws JSONException, InterruptedException {
-        //Multiple emails disabled
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, false);
         signout();
-        String scapedEmail = StringEscapeUtils.escapeHtml4(this.getUser1UserName());
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";                
         getUrlAndWait(url);
         
-        By element = By.xpath("//input[@name='email']");
-        waitForElementVisibility(element);
-        assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
-        assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
-        assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals("test_given_name"));
-        // verify we don't populate signin
-        assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
-                
-        // test existing email
-        url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name";
-        getUrlAndWait(url);
-        
-        element = By.xpath("//input[@name='userId']");
-        waitForElementVisibility(element);                
-        WebElement inputElement = findElement(element);
-        assertNotNull(inputElement);
-        assertNotNull(inputElement.getAttribute("value"));
-        assertEquals(scapedEmail, inputElement.getAttribute("value"));
-        // make sure register
-        assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(scapedEmail));
-
-        // populating check populating orcid
-        url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();
-        getUrlAndWait(url);
-        element = By.xpath("//input[@name='userId']");
-        waitForElementVisibility(element);                
-        assertTrue(findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
-        
-        //Multiple emails enabled
-        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REG_MULTI_EMAIL, true);
-        signout();
-        // test populating form with email that doesn't exist
-        url = authorizeScreen + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";                
-        getUrlAndWait(url);
-        
-        element = By.xpath("//input[@name='emailprimary234']");
+        By element = By.xpath("//input[@name='emailprimary234']");
         waitForElementVisibility(element);
         assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));

@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="works-privacy-preferences-ng2-template">
-    <div *ngIf="gdprUiFeatureEnabled"> 
+    <div> 
         <div class="editTablePadCell35" id="privacy-settings">  
             ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}
             <br>
@@ -35,17 +35,5 @@
                 ${springMacroRequestContext.getMessage("privacy_preferences.error_updating_visibility")}
             </span>
         </div>
-    </div>
-    <div *ngIf="!gdprUiFeatureEnabled">
-        <div class="editTablePadCell35" id="privacy-settings">
-            ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}
-            <br>
-            <@orcid.privacyToggle3Ng2
-            angularModel="this.prefs['default_visibility']"
-            publicClick="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'PUBLIC', $event)" 
-            limitedClick="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'LIMITED', $event)" 
-            privateClick="updateActivitiesVisibilityDefault(prefs['default_visibility'], 'PRIVATE', $event)" 
-            elementId="workPrivHelp" /> 
-        </div>
-    </div>
+    </div>    
 </script> 

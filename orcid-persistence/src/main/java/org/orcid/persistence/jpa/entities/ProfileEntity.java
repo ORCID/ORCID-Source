@@ -144,20 +144,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Boolean using2FA = Boolean.FALSE;
     private String secretFor2FA;
     
-    // Notifications
-    @Deprecated
-    private Boolean enableNotifications = Boolean.TRUE;
-    @Deprecated
-    private float sendEmailFrequencyDays;
-    @Deprecated
-    private Boolean sendChangeNotifications;
-    @Deprecated
-    private Boolean sendAdministrativeChangeNotifications;
-    @Deprecated
-    private Boolean sendOrcidNews;
-    @Deprecated
-    private Boolean sendMemberUpdateRequests;    
-    
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {
@@ -698,42 +684,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         return enabled != null ? enabled : Boolean.TRUE;
     }
 
-    @Column(name = "send_change_notifications")
-    public Boolean getSendChangeNotifications() {
-        return sendChangeNotifications;
-    }
-
-    public void setSendChangeNotifications(Boolean sendChangeNotifications) {
-        this.sendChangeNotifications = sendChangeNotifications;
-    }
-    
-    @Column(name = "send_administrative_change_notifications")
-    public Boolean getSendAdministrativeChangeNotifications() {
-        return sendAdministrativeChangeNotifications;
-    }
-
-    public void setSendAdministrativeChangeNotifications(Boolean sendAdministrativeChangeNotifications) {
-        this.sendAdministrativeChangeNotifications = sendAdministrativeChangeNotifications;
-    }
-
-    @Column(name = "send_orcid_news")
-    public Boolean getSendOrcidNews() {
-        return sendOrcidNews;
-    }
-
-    public void setSendOrcidNews(Boolean sendOrcidNews) {
-        this.sendOrcidNews = sendOrcidNews;
-    }
-
-    @Column(name = "send_member_update_requests")
-    public Boolean getSendMemberUpdateRequests() {
-        return sendMemberUpdateRequests;
-    }
-
-    public void setSendMemberUpdateRequests(Boolean sendMemberUpdateRequests) {
-        this.sendMemberUpdateRequests = sendMemberUpdateRequests;
-    }
-
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JoinColumn(name = "group_orcid")
     @Sort(type = SortType.COMPARATOR, comparator = OrcidEntityIdComparator.class)
@@ -785,24 +735,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         this.enableDeveloperTools = enableDeveloperTools;
     }
 
-    @Column(name = "send_email_frequency_days")
-    public float getSendEmailFrequencyDays() {
-        return sendEmailFrequencyDays;
-    }
-
-    public void setSendEmailFrequencyDays(float sendEmailFrequencyDays) {
-        this.sendEmailFrequencyDays = sendEmailFrequencyDays;
-    }
-
-    @Column(name = "enable_notifications")
-    public Boolean getEnableNotifications() {
-        return enableNotifications;
-    }
-
-    public void setEnableNotifications(Boolean enableNotifications) {
-        this.enableNotifications = enableNotifications;
-    }
-    
     @Column(name = "profile_deactivation_date")
     public Date getDeactivationDate() {
         return deactivationDate;

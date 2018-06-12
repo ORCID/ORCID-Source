@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -223,25 +222,10 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setEnableDeveloperTools(false);
         newRecord.setRecordLocked(false);
         newRecord.setReviewed(false);
-        newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
         newRecord.setUsedRecaptchaOnRegistration(usedCaptcha);
         newRecord.setUserLastIp(ip);
         newRecord.setLastLogin(now);
-        if (PojoUtil.isEmpty(registration.getSendEmailFrequencyDays())) {
-            newRecord.setSendEmailFrequencyDays(Float.valueOf(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS));
-        } else {
-            newRecord.setSendEmailFrequencyDays(Float.valueOf(registration.getSendEmailFrequencyDays().getValue()));
-        }
-
-        if (registration.getSendMemberUpdateRequests() == null) {
-            newRecord.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
-        } else {
-            newRecord.setSendMemberUpdateRequests(registration.getSendMemberUpdateRequests().getValue());
-        }
         newRecord.setCreationMethod(PojoUtil.isEmpty(registration.getCreationType()) ? CreationMethod.DIRECT.value() : registration.getCreationType().getValue());
-        newRecord.setSendChangeNotifications(registration.getSendChangeNotifications().getValue());
-        newRecord.setSendAdministrativeChangeNotifications(true);
-        newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());
         newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN.name() : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()).name());
         // Visibility defaults
         newRecord.setActivitiesVisibilityDefault(registration.getActivitiesVisibilityDefault().getVisibility().name());
@@ -309,12 +293,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         
         // Create email frequency entity
         boolean sendQuarterlyTips = (registration.getSendOrcidNews() == null) ? false : registration.getSendOrcidNews().getValue();
-        if(PojoUtil.isEmpty(registration.getSendEmailFrequencyDays())) {
-            emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);
-        } else {
-            SendEmailFrequency f = SendEmailFrequency.fromValue(registration.getSendEmailFrequencyDays().getValue());
-            emailFrequencyManager.createOnRegister(orcid, f, f, f, sendQuarterlyTips);
-        }
+        emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);
                         
         return newRecord.getId();
     }
