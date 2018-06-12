@@ -11,9 +11,8 @@ import { Observable, Subject }
     from 'rxjs';
 
 
-import { catchError, map } 
+import { catchError, map, tap } 
     from 'rxjs/operators';
-import 'rxjs/add/operator/do';
 
 @Injectable()
 export class AffiliationService {
@@ -62,12 +61,14 @@ export class AffiliationService {
         return this.http.delete( 
             this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
-        )      
-        .do(
-            (data) => {
-                this.getData();                       
-            }
         )
+        .pipe(
+            tap(
+                (data) => {
+                    this.getData();                       
+                }
+            )
+        )  
         ;
     }
     

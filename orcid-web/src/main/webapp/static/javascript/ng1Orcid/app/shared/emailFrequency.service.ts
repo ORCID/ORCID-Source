@@ -7,7 +7,7 @@ import { Headers, Http, RequestOptions, Response }
 import { Observable, Subject } 
     from 'rxjs';
 
-import { catchError, map } 
+import { catchError, map, tap } 
     from 'rxjs/operators';
 
 @Injectable()

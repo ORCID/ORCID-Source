@@ -8,7 +8,7 @@ import { Observable, Subject }
     from 'rxjs';
 
 
-import { catchError, map } 
+import { catchError, map, tap } 
     from 'rxjs/operators';
 
 @Injectable()
@@ -54,11 +54,13 @@ export class GenericService {
                 return this.http.get(
                     this.url + url_path
                 )
-                .do(
-                    (data) => {
-                        this.objAlsoKnownAs.data = data;
-                        this.objAlsoKnownAs.hasNewData = false;                      
-                    }
+                .pipe(
+                    tap(
+                        (data) => {
+                            this.objAlsoKnownAs.data = data;
+                            this.objAlsoKnownAs.hasNewData = false;                      
+                        }
+                    )
                 )
             }
         }
@@ -78,10 +80,12 @@ export class GenericService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.objAlsoKnownAs.hasNewData = true;                      
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.objAlsoKnownAs.hasNewData = true;                      
+                }
+            )
         )
         
     }

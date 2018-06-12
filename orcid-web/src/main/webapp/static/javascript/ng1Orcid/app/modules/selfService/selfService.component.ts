@@ -4,11 +4,8 @@ import { NgForOf, NgIf }
 import { Component, Input, NgModule } 
     from '@angular/core';
 
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
 
 import { CommonService } 
     from '../../shared/common.service.ts';

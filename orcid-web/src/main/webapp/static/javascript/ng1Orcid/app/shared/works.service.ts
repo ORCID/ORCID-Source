@@ -12,7 +12,7 @@ import { Observable, Subject }
     from 'rxjs';
 
 
-import { catchError, map } 
+import { catchError, map, tap } 
     from 'rxjs/operators';
 
 @Injectable()
@@ -277,7 +277,7 @@ export class WorksService {
                 url: url,
                 dataType: 'json',
                 cache: true,
-              }).done(function(data) {
+              }).tapne(function(data) {
                   for (var key in data) {
                       $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
                   }
@@ -301,7 +301,7 @@ export class WorksService {
             dataType: 'json',
             cache: true,
             async: false,
-          }).done(function(data) {
+          }).tapne(function(data) {
               for (var key in data) {
                   $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
               }

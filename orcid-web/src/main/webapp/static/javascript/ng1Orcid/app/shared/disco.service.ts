@@ -10,7 +10,7 @@ import { Observable, Subject }
     from 'rxjs';
 
 
-import { catchError, map } 
+import { catchError, map, tap } 
     from 'rxjs/operators';
 
 import { CommonNg2Module }

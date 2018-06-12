@@ -9,11 +9,7 @@ import { Injectable }
 import { Observable, Subject } 
     from 'rxjs';
 
-import { catchError, map } 
-    from 'rxjs/operators';
-
-
-import { catchError, map } 
+import { catchError, map, tap } 
     from 'rxjs/operators';
 
 @Injectable()

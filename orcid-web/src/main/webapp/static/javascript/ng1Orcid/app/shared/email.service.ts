@@ -11,9 +11,8 @@ import { Observable, Subject }
     from 'rxjs';
 
 
-import { catchError, map } 
+import { catchError, map, tap } 
     from 'rxjs/operators';
-import 'rxjs/add/operator/do';
 
 @Injectable()
 export class EmailService {
@@ -67,14 +66,16 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
         ;
     }
@@ -83,10 +84,12 @@ export class EmailService {
         return this.http.delete( 
             getBaseUri() + '/account/deleteEmail.json?email=' + encodeURIComponent(this.delEmail.value), { headers: this.deleteEmailHeaders }
         )
-        .do(
-            (data) => {
-                this.getEmails();                       
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.getEmails();                       
+                }
+            )
         )
         ;
     }
@@ -95,17 +98,19 @@ export class EmailService {
         return this.http.get(
             window.location.href + '/email-frequencies.json'
         )
-        .do(
-            (data) => {
-                this.emails = data;
-                
-                for (let i in data['emails']){
-                    console.log('data[i]', data['emails'][i]);
-                    if (data['emails'][i].primary == true){
-                        this.primaryEmail = data['emails'][i];
-                    }
-                }                                                
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.emails = data;
+                    
+                    for (let i in data['emails']){
+                        console.log('data[i]', data['emails'][i]);
+                        if (data['emails'][i].primary == true){
+                            this.primaryEmail = data['emails'][i];
+                        }
+                    }                                                
+                }
+            )
         )
         ;
     }
@@ -118,16 +123,18 @@ export class EmailService {
         return this.http.get(
             this.url
         )
-        .do(
-            (data) => {
-                this.emails = data;
-                for (let i in data['emails']){
-                    //console.log('data.emails[i]', data.emails[i]);
-                    if (data['emails'][i].primary == true){
-                        this.primaryEmail = data['emails'][i];
-                    }
-                }                                                
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.emails = data;
+                    for (let i in data['emails']){
+                        //console.log('data.emails[i]', data.emails[i]);
+                        if (data['emails'][i].primary == true){
+                            this.primaryEmail = data['emails'][i];
+                        }
+                    }                                                
+                }
+            )
         )
         ;
     }
@@ -157,14 +164,16 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
         ;
     }
@@ -177,14 +186,16 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
         ;
     }
@@ -197,14 +208,16 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
         ;
     }
@@ -228,14 +241,16 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
         ;
 
