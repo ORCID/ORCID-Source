@@ -103,7 +103,9 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     getformData(): void {
         this.alsoKnownAsService.getData( this.url_path, 'alsoKnownAs' )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
@@ -132,7 +134,9 @@ export class AlsoKnownAsFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     setFormData( closeAfterAction ): void {
         this.alsoKnownAsService.setData( this.formData, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;

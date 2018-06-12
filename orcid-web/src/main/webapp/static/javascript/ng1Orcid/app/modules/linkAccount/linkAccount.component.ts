@@ -57,7 +57,9 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
 
     loadDiscoFeed = function() {
         this.discoService.getDiscoFeed()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.feed = data;
@@ -79,7 +81,9 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
 
     loadRequestInfoForm = function() {
         this.oauthService.loadRequestInfoForm()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data){                     

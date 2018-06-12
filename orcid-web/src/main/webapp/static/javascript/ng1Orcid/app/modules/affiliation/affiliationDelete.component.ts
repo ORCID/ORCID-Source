@@ -64,7 +64,9 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
 
     deleteAffiliation(): void {        
         this.affiliationService.deleteAffiliation(this.deleteAffiliationObj)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(data => {       
                 
                 if(data.errors.length == 0) {

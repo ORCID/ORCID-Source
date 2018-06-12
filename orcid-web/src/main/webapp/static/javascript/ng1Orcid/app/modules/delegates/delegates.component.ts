@@ -95,7 +95,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         addDelegate.password = this.password;
 
         this.accountService.addDelegate( addDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -125,7 +127,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         addDelegate.password = this.password;
 
         this.accountService.addDelegateByEmail( addDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -146,7 +150,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
         this.accountService.getDelegates(  )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.delegatesByOrcid = {};
@@ -174,7 +180,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         revokeDelegate.password = this.password;
 
         this.accountService.revoke( revokeDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -200,7 +208,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         revokeDelegate.password = this.password;
 
         this.accountService.searchByEmail( this.input.text )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.confirmAddDelegateByEmail(data);
@@ -220,7 +230,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     getResults(): void {
 
         this.accountService.getResults( this.input )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 var bottom = null;

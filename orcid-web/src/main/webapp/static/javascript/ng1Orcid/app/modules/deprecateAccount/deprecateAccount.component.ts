@@ -42,7 +42,9 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
     getDeprecateProfile(): void {
 
         this.deprecateProfileService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
@@ -57,7 +59,9 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
 
     submitModal(): void {
         this.deprecateProfileService.setData( this.deprecateProfilePojo, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {

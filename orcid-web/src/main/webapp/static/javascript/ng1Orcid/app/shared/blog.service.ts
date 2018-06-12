@@ -42,7 +42,10 @@ export class BlogService {
     }
 
     getBlogFeed(url): Observable<any> {
-        return this.http.get(url, { responseType: 'text'}).catchError(this.handleError);
+        return this.http.get(url, { responseType: 'text'})
+        .pipe(
+            catchError(this.handleError)
+        );
 
     }
 

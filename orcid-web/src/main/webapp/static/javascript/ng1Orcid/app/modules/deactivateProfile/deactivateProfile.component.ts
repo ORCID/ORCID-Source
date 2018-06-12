@@ -36,7 +36,9 @@ export class DeactivateProfileComponent implements AfterViewInit, OnDestroy, OnI
 
     confirmDelegatesProcess(): void {
         this.adminDelegatesService.setFormData( this.orcidsToDeactivate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.result = data;

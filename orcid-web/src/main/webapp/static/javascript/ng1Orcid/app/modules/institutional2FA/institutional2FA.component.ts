@@ -44,7 +44,9 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
         });
 
         this.shibbolethService.init()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.codes = data;
@@ -58,7 +60,9 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
     submitCode(): void {
 
         this.shibbolethService.submitCode( this.codes )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.codes = data;

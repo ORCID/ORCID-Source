@@ -103,7 +103,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         
         /*
         this.fundingService.setData( this.editFunding )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.editFunding = data;
@@ -306,7 +308,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     getFundingsById( ids ): any {
-        this.fundingService.getFundingsById( ids ).takeUntil(this.ngUnsubscribe)
+        this.fundingService.getFundingsById( ids ).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
 
@@ -324,7 +328,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getFundingsIds(): any {
         this.fundingService.getFundingsId()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('getFundingsIds', data);
@@ -463,7 +469,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleEdit(): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

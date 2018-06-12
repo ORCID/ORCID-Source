@@ -103,7 +103,9 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
 
     getExternalIdentifiersForm(): void {
         this.externalIdentifiersService.getExternalIdentifiersForm()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.externalIdentifiersForm = data;
@@ -140,7 +142,9 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
         var externalIdentifier = this.externalIdentifiersForm.externalIdentifiers[this.removeExternalIdentifierIndex];
 
         this.externalIdentifiersService.removeExternalIdentifier( externalIdentifier )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data['errors'].length != 0){
@@ -175,7 +179,9 @@ export class ExternalIdentifiersComponent implements AfterViewInit, OnDestroy, O
         this.externalIdentifiersForm.visibility = null;
 
         this.externalIdentifiersService.setExternalIdentifiersForm( this.externalIdentifiersForm )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.externalIdentifiersForm = data;

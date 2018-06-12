@@ -40,7 +40,9 @@ export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnI
 
         
         this.accountService.sendDeactivateEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});

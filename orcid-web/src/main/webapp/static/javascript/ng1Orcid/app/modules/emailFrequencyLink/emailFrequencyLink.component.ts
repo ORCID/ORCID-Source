@@ -33,7 +33,9 @@ export class EmailFrecuencyLinkComponent implements AfterViewInit, OnDestroy, On
     getEmailFrequencies(): void {
 
         this.emailSrvc.getEmailFrequencies()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
@@ -49,7 +51,9 @@ export class EmailFrecuencyLinkComponent implements AfterViewInit, OnDestroy, On
 
     saveEmailFrequencies(): void {
         this.emailSrvc.saveEmailFrequencies( this.emailFrequency.sendEmailFrequencyDays )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {

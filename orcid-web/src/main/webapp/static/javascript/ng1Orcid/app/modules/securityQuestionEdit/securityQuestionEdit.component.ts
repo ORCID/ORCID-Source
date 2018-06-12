@@ -65,7 +65,9 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
 
     getSecurityQuestion(): void {
         this.accountService.getSecurityQuestion()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.securityQuestionPojo = data;
@@ -93,7 +95,9 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
     submitModal(): void {
         this.securityQuestionPojo.password=this.password;
         this.accountService.submitModal( this.securityQuestionPojo )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length != 0) {

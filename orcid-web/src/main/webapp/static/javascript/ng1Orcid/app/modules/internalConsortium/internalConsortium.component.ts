@@ -71,7 +71,9 @@ export class InternalConsotiumComponent implements AfterViewInit, OnDestroy, OnI
         this.consortium = null;
 
         this.manageMembersService.findConsortium( encodeURIComponent(this.salesForceId) )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.consortium = data;
@@ -89,7 +91,9 @@ export class InternalConsotiumComponent implements AfterViewInit, OnDestroy, OnI
     
     updateConsortium(): void {
         this.manageMembersService.updateConsortium( encodeURIComponent(this.consortium) )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length == 0){

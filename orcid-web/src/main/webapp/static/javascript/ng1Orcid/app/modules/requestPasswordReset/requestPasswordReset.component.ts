@@ -58,7 +58,9 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
 
     getRequestResetPassword(): void {
         this.requestPasswordResetService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.requestResetPassword = data;
@@ -76,7 +78,9 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         this.showDeactivatedError = false;
 
         this.requestPasswordResetService.setData( this.requestResetPassword, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.requestResetPassword = data; 

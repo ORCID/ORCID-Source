@@ -43,7 +43,9 @@ export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestr
 
     getEmails(): any {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.primaryEmail = this.emailService.getEmailPrimary().value;

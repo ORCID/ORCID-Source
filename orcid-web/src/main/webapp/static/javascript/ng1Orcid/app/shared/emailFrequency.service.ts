@@ -36,9 +36,14 @@ export class EmailFrequencyService {
     
     getEmailFrequencies(): Observable<any> {
         return this.http.get(
-                this.email_frequencies_url
+            this.email_frequencies_url
+        )
+        .pipe(
+            map(
+                (res:Response) => res.json()
             )
-            .map((res:Response) => res.json());
+        );
+
     }   
     
     updateFrequency( name, frequency ): Observable<any> {
@@ -58,6 +63,10 @@ export class EmailFrequencyService {
             frequency, 
             { headers: this.headers }
         )
-        .map((res:Response) => res.json());
+        .pipe(
+            map(
+                (res:Response) => res.json()
+            )
+        );
     }
 }

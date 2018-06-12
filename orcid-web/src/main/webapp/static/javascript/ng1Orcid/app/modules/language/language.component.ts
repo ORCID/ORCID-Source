@@ -191,7 +191,9 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
     selectedLanguage(): void {
 
         this.languageService.selectedLanguage( this.language )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.languages.forEach(

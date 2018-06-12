@@ -38,7 +38,9 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
 
     getResetPasswordForm(): void {
         this.passwordService.getResetPasswordForm()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.resetPasswordForm = data;
@@ -55,7 +57,9 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
         var encryptedEmail = urlParts[urlParts.length -1];
         this.resetPasswordForm.encryptedEmail = encryptedEmail;
         this.passwordService.postPasswordReset( this.resetPasswordForm )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if (data.successRedirectLocation != null) {
@@ -74,7 +78,9 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
     serverValidate(): void {
         console.log('server validate');
         this.passwordService.serverValidate( this.resetPasswordForm )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.commonSrvc.copyErrorsLeft(this.resetPasswordForm, data);

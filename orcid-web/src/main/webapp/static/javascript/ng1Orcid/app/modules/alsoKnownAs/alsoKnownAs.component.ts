@@ -45,7 +45,9 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getformData(): void {
         this.alsoKnownAsService.getData( this.url_path, 'alsoKnownAs' )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -64,7 +66,9 @@ export class AlsoKnownAsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openEditModal(): void{      
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

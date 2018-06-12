@@ -47,7 +47,9 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
     updateActivitiesVisibilityDefault(oldPriv, newPriv, $event: any): void {
         this.errorUpdatingVisibility = false;
         this.prefsSrvc.updateDefaultVisibility(newPriv)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
                 .subscribe(
                     response => {
                         this.prefs['default_visibility'] = newPriv;
@@ -65,7 +67,9 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
 
     getPreferences(): void {
         this.prefsSrvc.getPrivacyPreferences()
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
                 .subscribe(
                     preferences => {
                         this.prefs = preferences;

@@ -133,7 +133,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     addAffiliationModal(type, affiliation): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;
@@ -162,7 +164,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     deleteAffiliation(affiliation): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;
@@ -188,7 +192,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getAffiliationsById( affiliationIds ): void {
-        this.affiliationService.getAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
+        this.affiliationService.getAffiliationsById( affiliationIds ).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     this.parseAffiliations(data);
@@ -211,7 +217,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             this.getPublicAffiliationsById( orcidVar.affiliationIdsJson );
         } else {
             this.affiliationService.getAffiliationsId()
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     if( data.length != 0 ) {
@@ -228,7 +236,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getDisambiguatedAffiliation = function(id) {
         this.affiliationService.getDisambiguatedAffiliation(id)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if (data != null) {
@@ -245,7 +255,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getPublicAffiliationsById( affiliationIds ): void {
-        this.affiliationService.getPublicAffiliationsById( affiliationIds ).takeUntil(this.ngUnsubscribe)
+        this.affiliationService.getPublicAffiliationsById( affiliationIds ).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     this.parseAffiliations(data);
@@ -351,7 +363,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         $event.preventDefault();
         aff.visibility.visibility = priv;                
         this.affiliationService.updateVisibility(aff)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(data => {});
     };
 
@@ -449,7 +463,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleEdit(): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

@@ -55,14 +55,20 @@ export class SearchService {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
 
 
-        return this.http.get(url, {headers: this.publicApiHeaders}).catchError(this.handleError);
+        return this.http.get(url, {headers: this.publicApiHeaders})
+        .pipe(
+            catchError(this.handleError)
+        );
     }
 
     getNames(orcid): Observable<any> {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
 
 
-        return this.http.get(url, {headers: this.publicApiHeaders}).catchError(this.handleError);
+        return this.http.get(url, {headers: this.publicApiHeaders})
+        .pipe(
+            catchError(this.handleError)
+        );
     }
 
 

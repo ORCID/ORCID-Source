@@ -45,7 +45,9 @@ export class WebsitesComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getformData(): void {
         this.websitesService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -84,7 +86,9 @@ export class WebsitesComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openEditModal(): void{      
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

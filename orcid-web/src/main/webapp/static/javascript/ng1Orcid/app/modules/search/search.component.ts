@@ -94,7 +94,9 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     search(input: any) {
-        this.searchSrvc.getResults(orcidSearchUrlJs.buildUrl(this.input)).takeUntil(this.ngUnsubscribe).subscribe(
+        this.searchSrvc.getResults(orcidSearchUrlJs.buildUrl(this.input)).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(
             searchResults => {
                 this.newResults = searchResults['result'];
                 this.numFound = searchResults['num-found'];

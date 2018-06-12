@@ -50,7 +50,9 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getReactivation(resetParams, linkFlag): void{
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.registrationForm = data;
@@ -78,7 +80,9 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             baseUri += '/shibboleth';
         }
         this.reactivationService.postReactivationConfirm(this.registrationForm)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length == 0){
@@ -101,7 +105,9 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             field = '';
         }
         this.reactivationService.serverValidate(this.registrationForm, field)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.commonSrvc.copyErrorsLeft(this.registrationForm, data);

@@ -32,7 +32,9 @@ export class PasswordEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getChangePassword(): void {
         this.accountService.getChangePassword()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
@@ -49,7 +51,9 @@ export class PasswordEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
     saveChangePassword(): void {
         this.accountService.saveChangePassword( this.changePasswordPojo )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.changePasswordPojo = data;

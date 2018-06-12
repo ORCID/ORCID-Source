@@ -100,7 +100,9 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     retrieveUnreadCount(): any {
         if( this.notificationsSrvc.retrieveCountCalled == false ) {
             this.notificationsSrvc.retrieveUnreadCount()
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     this.getUnreadCount = data;

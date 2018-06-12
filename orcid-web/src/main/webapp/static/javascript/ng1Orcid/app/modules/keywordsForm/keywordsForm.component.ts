@@ -95,7 +95,9 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getData(): void{
         this.keywordsService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
@@ -125,7 +127,9 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     setForm( closeAfterAction ): void {
 
         this.keywordsService.setData( this.formData, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;

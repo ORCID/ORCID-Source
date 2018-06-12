@@ -8,6 +8,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit }
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
+    
 import { takeUntil } 
     from 'rxjs/operators';
 
@@ -133,7 +134,9 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
 
     register(): void {
         this.twoFAStateService.register()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);
@@ -149,7 +152,9 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         $('#sendVerificationCode').prop('disabled', true);
 
         this.twoFAStateService.sendVerificationCode( this.twoFactorAuthRegistration )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);
@@ -171,7 +176,9 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
 
     startSetup(): void {
         this.twoFAStateService.startSetup()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);

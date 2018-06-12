@@ -39,7 +39,9 @@ export class StaticsComponent implements AfterViewInit, OnDestroy, OnInit {
     getLiveIds(): void {
 
         this.staticsService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.liveIds = data;

@@ -44,7 +44,9 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getClaim(): void{
         this.claimService.getClaim()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.register = data;
@@ -78,7 +80,9 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
         this.postingClaim = true;
 
         this.claimService.postClaim( this.register )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.register = data;
@@ -103,7 +107,9 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
             field = '';
         }
         this.claimService.serverValidate( this.register, field )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.commonService.copyErrorsLeft(this.register, data);

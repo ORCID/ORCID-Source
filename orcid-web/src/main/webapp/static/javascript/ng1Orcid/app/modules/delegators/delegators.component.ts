@@ -54,7 +54,9 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getDelegators(): void {
         this.delegatorsService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.delegators = data.delegators;

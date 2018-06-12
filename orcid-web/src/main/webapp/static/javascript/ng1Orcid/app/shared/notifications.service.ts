@@ -145,22 +145,24 @@ export class NotificationsService {
         return this.http.get(
             url
         )
-        .tap(
-            (data: any) => {
-                if(data.length === 0 || data.length < this.maxResults){
-                    this.areMoreFlag = false;
+        .pipe(
+            map(
+                (data: any) => {
+                    if(data.length === 0 || data.length < this.maxResults){
+                        this.areMoreFlag = false;
+                    }
+                    else{
+                        this.areMoreFlag = true;
+                    }
+                    for(var i = 0; i < data.length; i++){                       
+                        this.notifications.push( data[i] );
+                    }
+                    this.loading = false;
+                    this.loadingMore = false;
+                    this.resizeIframes();
+                    this.retrieveUnreadCount();                                             
                 }
-                else{
-                    this.areMoreFlag = true;
-                }
-                for(var i = 0; i < data.length; i++){                       
-                    this.notifications.push( data[i] );
-                }
-                this.loading = false;
-                this.loadingMore = false;
-                this.resizeIframes();
-                this.retrieveUnreadCount();                                             
-            }
+            )
         )
         ;
 
@@ -196,11 +198,13 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/notification-alerts.json'
         )
-        .tap(
-            (data) => {
-                this.notificationAlerts = data;
-                this.retrieveUnreadCount();                                              
-            }
+        .pipe(
+            map(
+                (data) => {
+                    this.notificationAlerts = data;
+                    this.retrieveUnreadCount();                                              
+                }
+            )
         )
         ;
         /*
@@ -225,10 +229,12 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/unreadCount.json'
         )
-        .tap(
-            (data) => {
-                this.unreadCount = data;                                             
-            }
+        .pipe(
+            map(
+                (data) => {
+                    this.unreadCount = data;                                             
+                }
+            )
         )
         ;
         /*
@@ -254,17 +260,19 @@ export class NotificationsService {
             encoded_data, 
             { headers: this.headers }
         )
-        .tap(
-            (data) => {
-                var updated = data;
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === updated['putCode']){
-                        existing.readDate = updated['readDate'];
+        .pipe(
+            map(
+                (data) => {
+                    var updated = data;
+                    for(var i = 0;  i < this.notifications.length; i++){
+                        var existing = this.notifications[i];
+                        if(existing.putCode === updated['putCode']){
+                            existing.readDate = updated['readDate'];
+                        }
                     }
+                    this.retrieveUnreadCount();                        
                 }
-                this.retrieveUnreadCount();                        
-            }
+            )
         )
         ;
         /*
@@ -298,21 +306,23 @@ export class NotificationsService {
             encoded_data, 
             { headers: this.headers }
         )
-        .tap(
-            (data) => {
-                var updated = data;
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === updated['putCode']){
-                        this.notifications.splice(i, 1);
-                        if(this.firstResult > 0){
-                            this.firstResult--;
+        .pipe(
+            map(
+                (data) => {
+                    var updated = data;
+                    for(var i = 0;  i < this.notifications.length; i++){
+                        var existing = this.notifications[i];
+                        if(existing.putCode === updated['putCode']){
+                            this.notifications.splice(i, 1);
+                            if(this.firstResult > 0){
+                                this.firstResult--;
+                            }
+                            break;
                         }
-                        break;
                     }
+                    this.retrieveUnreadCount();                       
                 }
-                this.retrieveUnreadCount();                       
-            }
+            )
         )
         ;
 
@@ -347,21 +357,23 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
         )
-        .tap(
-            (data) => {
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === notificationId){
-                        this.notifications.splice(i, 1);
-                        if(this.firstResult > 0){
-                            this.firstResult--;
+        .pipe(
+            map(
+                (data) => {
+                    for(var i = 0;  i < this.notifications.length; i++){
+                        var existing = this.notifications[i];
+                        if(existing.putCode === notificationId){
+                            this.notifications.splice(i, 1);
+                            if(this.firstResult > 0){
+                                this.firstResult--;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                }                                            
-            }
-        )
-        ;
+                    }                                            
+                }
+            )
+
+        );
 
         /*
         $.ajax({
@@ -401,11 +413,6 @@ export class NotificationsService {
         function archive(notificationId){  
             return this.http.get(
                 getBaseUri() + '/inbox/' + notificationId + '/archive.json'
-            )
-            .tap(
-                (data) => {
-                                                             
-                }
             )
             ;
 

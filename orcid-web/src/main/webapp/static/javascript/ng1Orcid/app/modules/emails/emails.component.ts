@@ -49,7 +49,9 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getformData(): void {
         this.emailService.getData()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -65,7 +67,9 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
     openEditModal(): void{
         console.log('openEditModal emails'); 
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

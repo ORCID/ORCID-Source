@@ -34,7 +34,9 @@ export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
 
     disable2FA(): void {
         this.twoFAStateService.disable()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);
@@ -59,7 +61,9 @@ export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
 
     check2FAState(): void {
         this.twoFAStateService.checkState()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);

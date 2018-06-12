@@ -90,7 +90,9 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getNameForm(): void {
         this.nameService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.nameForm = data;
@@ -119,7 +121,9 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setNameForm( closeAfterAction ): any {
         this.nameService.setData( this.nameForm, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.nameForm = data;

@@ -47,7 +47,9 @@ export class FindIdsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     findIds(): void {
         this.adminDelegatesService.findIds( this.emails )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {

@@ -157,7 +157,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     addWorkModal(work): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;
@@ -316,7 +318,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             this.sortState.predicateKey, 
             !this.sortState.reverseKey[this.sortState.predicateKey]
         )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -382,7 +386,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     loadWorkImportWizardList(): void {
         this.worksService.loadWorkImportWizardList()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm works loadWorkImportWizardList', data);
@@ -416,7 +422,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openBibTextWizard(): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;
@@ -461,7 +469,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     putWork(): any{
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 /*
@@ -657,7 +667,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleBulkEdit(): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

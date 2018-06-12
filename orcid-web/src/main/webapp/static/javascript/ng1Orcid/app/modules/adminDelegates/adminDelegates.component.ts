@@ -59,7 +59,9 @@ export class AdminDelegatesComponent implements AfterViewInit, OnDestroy, OnInit
         }
 
         this.adminDelegatesService.getFormData( orcidOrEmail )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
@@ -80,7 +82,9 @@ export class AdminDelegatesComponent implements AfterViewInit, OnDestroy, OnInit
     confirmDelegatesProcess(): void {
         this.success = false;
         this.adminDelegatesService.setFormData( this.request )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.request = data;

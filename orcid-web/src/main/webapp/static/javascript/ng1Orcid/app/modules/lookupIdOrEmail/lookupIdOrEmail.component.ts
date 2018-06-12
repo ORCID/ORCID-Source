@@ -44,7 +44,9 @@ export class LookUpIdOrEmailComponent implements AfterViewInit, OnDestroy, OnIni
 
     lookupIdOrEmails = function() {
         this.adminDelegatesService.lookupIdOrEmails( this.idOrEmails )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.result = data;

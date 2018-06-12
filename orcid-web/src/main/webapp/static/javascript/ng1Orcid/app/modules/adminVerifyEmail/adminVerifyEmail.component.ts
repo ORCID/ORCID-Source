@@ -37,7 +37,9 @@ export class AdminVerifyEmailComponent implements AfterViewInit, OnDestroy, OnIn
 
     verifyEmail(): void {
         this.adminDelegatesService.verifyEmail( this.email )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.result = data;

@@ -39,7 +39,9 @@ export class EmailVerificationSentMesssageComponent implements AfterViewInit, On
 
     getEmails(): any {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emailPrimary = this.emailService.getEmailPrimary().value;

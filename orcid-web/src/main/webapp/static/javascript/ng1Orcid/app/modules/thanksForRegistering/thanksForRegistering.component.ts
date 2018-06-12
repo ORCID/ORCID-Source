@@ -38,7 +38,9 @@ export class ThanksForRegisteringComponent implements AfterViewInit, OnDestroy, 
 
     getEmails(): any {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emailPrimary = this.emailService.getEmailPrimary().value;
@@ -51,7 +53,9 @@ export class ThanksForRegisteringComponent implements AfterViewInit, OnDestroy, 
 
     verifyEmail(): any {
         this.emailService.verifyEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 ////console.log('verifyEmail', data);

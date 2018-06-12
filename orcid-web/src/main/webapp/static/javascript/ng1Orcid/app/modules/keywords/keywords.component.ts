@@ -46,7 +46,9 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getData(): void {
         this.keywordsService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -60,7 +62,9 @@ export class KeywordsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openEditModal(): void{      
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

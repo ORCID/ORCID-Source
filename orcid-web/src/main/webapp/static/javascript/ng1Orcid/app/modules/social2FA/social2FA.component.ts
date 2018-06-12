@@ -42,7 +42,9 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
         });
 
         this.twoFAStateService.init()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.codes = data;
@@ -55,7 +57,9 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
 
     submitCode(): void {
         this.twoFAStateService.submitCode( this.codes )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.codes = data;

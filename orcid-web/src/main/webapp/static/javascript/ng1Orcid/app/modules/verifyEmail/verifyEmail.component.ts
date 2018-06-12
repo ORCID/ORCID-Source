@@ -46,7 +46,9 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
 
     closeColorBox(): void {
         this.accountService.delayVerifyEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
  
@@ -60,7 +62,9 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
     getEmails(): void {
 
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
 
@@ -86,7 +90,9 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
 
     verifyEmail(): void {
         this.emailService.verifyEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 
