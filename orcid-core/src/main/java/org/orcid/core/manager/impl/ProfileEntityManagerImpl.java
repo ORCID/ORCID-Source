@@ -441,8 +441,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             profile.setLocale(locale.name());
         }
         if (claim != null) {
-            profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
-            profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
             profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility().name());
         }
 

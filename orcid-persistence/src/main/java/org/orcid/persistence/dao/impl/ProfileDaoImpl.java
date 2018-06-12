@@ -745,35 +745,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public boolean updateNotificationsPreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
-            boolean sendMemberUpdateRequests) {
-        Query updateQuery = entityManager.createQuery(
-                "update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
-        updateQuery.setParameter("sendAdministrativeChangeNotifications", sendAdministrativeChangeNotifications);
-        updateQuery.setParameter("sendOrcidNews", sendOrcidNews);
-        updateQuery.setParameter("sendMemberUpdateRequests", sendMemberUpdateRequests);
-        return updateQuery.executeUpdate() > 0;
-    }
-
-    @Override
-    @Transactional
     public boolean updateDefaultVisibility(String orcid, String visibility) {
         Query updateQuery = entityManager
                 .createQuery("update ProfileEntity set lastModified = now(), activitiesVisibilityDefault = :activitiesVisibilityDefault where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("activitiesVisibilityDefault", visibility);
-        return updateQuery.executeUpdate() > 0;
-    }
-
-    @Override
-    @Transactional
-    public boolean updateSendEmailFrequencyDays(String orcid, Float sendEmailFrequencyDays) {
-        Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("sendEmailFrequencyDays", sendEmailFrequencyDays);
         return updateQuery.executeUpdate() > 0;
     }
 

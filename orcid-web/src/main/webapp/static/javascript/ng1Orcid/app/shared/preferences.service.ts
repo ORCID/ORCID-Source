@@ -47,24 +47,13 @@ export class PreferencesService {
     }
 
     updateEmailFrequency( prefs ): Observable<any> {
-    	let encoded_data = encodeURIComponent(prefs.email_frequency); 
-        return this.http.post( 
-            getBaseUri() + '/account/email_preferences.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        
+        console.log('updateEmailFrequency is deprecated and does not work anymore');
+        return null;
     }
 
     updateNotificationPreferences(): Observable<any>  {
-        let encoded_data = JSON.stringify( this.prefs );
-        
-        return this.http.post( 
-            getBaseUri() + '/account/notification_preferences.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        
+        console.log('updateNotificationPreferences is deprecated and does not work anymore');        
+        return null;
     }
 
     updateDefaultVisibility(newPriv): Observable<any> {

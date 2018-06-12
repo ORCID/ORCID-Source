@@ -4,14 +4,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -27,8 +30,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -77,8 +83,8 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -104,6 +110,18 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Mock
     private UriInfo mockedUriInfo;
     
+    @Resource
+    protected EmailFrequencyManager emailFrequencyManager;
+    
+    @Mock
+    protected EmailFrequencyManager mockEmailFrequencyManager;
+        
+    @Resource(name = "notificationManager")
+    private NotificationManager notificationManager; 
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -113,12 +131,24 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         when(mockedUriInfo.getBaseUriBuilder()).thenReturn(new UriBuilderImpl());
+        
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
+        
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager);
+        TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);        
     }
 
     @After
     public void after() {
         SecurityContextHolder.clearContext();
         orcidProfileManager.clearOrcidProfileCache();
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);        
+        TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);        
     }
 
     @AfterClass

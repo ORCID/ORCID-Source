@@ -30,8 +30,7 @@ import { FeaturesService }
     template:  scriptTmpl("notification-preference-ng2-template")
 })
 export class NotificationPreferenceComponent implements AfterViewInit, OnDestroy, OnInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
-    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
+    private ngUnsubscribe: Subject<void> = new Subject<void>();    
     
     constructor(
         private emailSrvc: EmailService,

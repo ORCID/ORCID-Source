@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -27,6 +28,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientScopeDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -87,6 +89,9 @@ public class MembersManagerImpl implements MembersManager {
     
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
 
     @Override
     public Member createMember(Member member) throws IllegalArgumentException {
@@ -110,8 +115,7 @@ public class MembersManagerImpl implements MembersManager {
         newRecord.setClaimed(true);
         newRecord.setCreationMethod(CreationMethod.DIRECT.value());
         newRecord.setDateCreated(now);
-        newRecord.setEnableDeveloperTools(false);
-        newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
+        newRecord.setEnableDeveloperTools(false);       
         newRecord.setEncryptedPassword(null);
         newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()).name());
         newRecord.setLastModified(now);
@@ -119,10 +123,6 @@ public class MembersManagerImpl implements MembersManager {
         newRecord.setRecordLocked(false);
         newRecord.setReviewed(false);
         newRecord.setSalesforeId(PojoUtil.isEmpty(member.getSalesforceId()) ? null : member.getSalesforceId().getValue());
-        newRecord.setSendChangeNotifications(false);
-        newRecord.setSendEmailFrequencyDays(Float.valueOf(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS));
-        newRecord.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
-        newRecord.setSendOrcidNews(false);
         newRecord.setSubmissionDate(now);
         newRecord.setUsedRecaptchaOnRegistration(false);
         
@@ -162,7 +162,10 @@ public class MembersManagerImpl implements MembersManager {
         newRecord.setAuthorities(authorities);
 
         profileDao.persist(newRecord);
-        profileDao.flush();                        
+        profileDao.flush();         
+        
+        emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, false);
+        
         member.setGroupOrcid(Text.valueOf(orcid));
         return member;
     }

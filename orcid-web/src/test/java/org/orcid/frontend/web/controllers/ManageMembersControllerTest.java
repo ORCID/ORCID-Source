@@ -25,7 +25,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.v3.MembersManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -74,11 +76,22 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Mock
     SourceManager mockSourceManager;
     
+    @Mock 
+    ProfileHistoryEventManager mockProfileHistoryEventManager;
+    
+    @Resource
+    ProfileHistoryEventManager profileHistoryEventManager;
+    
+    @Resource
+    EmailFrequencyManager emailFrequencyManager;
+    
     @Before
     public void beforeInstance() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(membersManager, "sourceManager", mockSourceManager); 
+        TargetProxyHelper.injectIntoProxy(emailFrequencyManager, "profileHistoryEventManager", mockProfileHistoryEventManager); 
+        
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceProfile(new ProfileEntity("5555-5555-5555-0000"));
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
@@ -92,6 +105,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(membersManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(emailFrequencyManager, "profileHistoryEventManager", profileHistoryEventManager);         
     }
     
     @AfterClass
