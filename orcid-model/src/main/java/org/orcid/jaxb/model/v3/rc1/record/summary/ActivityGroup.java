@@ -11,12 +11,14 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Group;
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 
+@XmlTransient
 public abstract class ActivityGroup implements Group, Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
