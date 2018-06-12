@@ -39,7 +39,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -174,13 +174,13 @@ public class WorksController extends BaseWorkspaceController {
         initializePublicationDate(w);
 
         if (w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
-            WorkExternalIdentifier wei = new WorkExternalIdentifier();
+            ActivityExternalIdentifier wei = new ActivityExternalIdentifier();
             Text wdiType = new Text();
             wdiType.setValue(new String());
             wei.setWorkExternalIdentifierId(new Text());
             wei.setWorkExternalIdentifierType(wdiType);
             wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
-            List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
+            List<ActivityExternalIdentifier> wdiL = new ArrayList<ActivityExternalIdentifier>();
             wdiL.add(wei);
             w.setWorkExternalIdentifiers(wdiL);
         }
@@ -314,8 +314,8 @@ public class WorksController extends BaseWorkspaceController {
     private void removeEmptyExternalIdentifiers(WorkForm workForm) {
         if (workForm != null) {
             if (workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
-                List<WorkExternalIdentifier> cleanExtIds = new ArrayList<WorkExternalIdentifier>();
-                for (WorkExternalIdentifier wExtId : workForm.getWorkExternalIdentifiers()) {
+                List<ActivityExternalIdentifier> cleanExtIds = new ArrayList<ActivityExternalIdentifier>();
+                for (ActivityExternalIdentifier wExtId : workForm.getWorkExternalIdentifiers()) {
                     if (!PojoUtil.isEmpty(wExtId.getWorkExternalIdentifierType())) {
                         if (!PojoUtil.isEmpty(wExtId.getWorkExternalIdentifierId())) {
                             cleanExtIds.add(wExtId);
@@ -389,7 +389,7 @@ public class WorksController extends BaseWorkspaceController {
         copyErrors(work.getWorkType(), work);
         if (work.getWorkExternalIdentifiers() != null) {
             workWorkExternalIdentifiersValidate(work);
-            for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
+            for (ActivityExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
                 copyErrors(wId.getWorkExternalIdentifierId(), work);
                 copyErrors(wId.getWorkExternalIdentifierType(), work);
             }
@@ -540,7 +540,7 @@ public class WorksController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody WorkForm workWorkExternalIdentifiersValidate(@RequestBody WorkForm work) {
-        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
+        for (ActivityExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
             if (wId.getWorkExternalIdentifierId() == null)
                 wId.setWorkExternalIdentifierId(new Text());
             if (wId.getWorkExternalIdentifierType() == null)

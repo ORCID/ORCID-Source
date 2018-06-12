@@ -41,7 +41,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -185,8 +185,8 @@ public class WorkFormTest {
         form.setTranslatedTitle(new TranslatedTitleForm("Translated Title", "es"));
         form.setUrl(Text.valueOf("http://myurl.com"));
         form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC));        
-        List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
-        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        List<ActivityExternalIdentifier> extIds = new ArrayList<ActivityExternalIdentifier>();
+        ActivityExternalIdentifier extId = new ActivityExternalIdentifier();
         extId.setWorkExternalIdentifierId(Text.valueOf("External Identifier ID"));
         extId.setWorkExternalIdentifierType(Text.valueOf("asin"));
         extId.setRelationship(Text.valueOf(Relationship.SELF.value()));

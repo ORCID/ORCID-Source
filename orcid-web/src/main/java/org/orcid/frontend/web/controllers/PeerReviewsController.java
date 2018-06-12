@@ -31,7 +31,7 @@ import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -89,7 +89,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         emptyTranslatedTitle.setLanguageCode(StringUtils.EMPTY);
         emptyTranslatedTitle.setLanguageName(StringUtils.EMPTY);
 
-        WorkExternalIdentifier emptyExternalId = new WorkExternalIdentifier();
+        ActivityExternalIdentifier emptyExternalId = new ActivityExternalIdentifier();
         emptyExternalId.setErrors(new ArrayList<String>());
         emptyExternalId.setWorkExternalIdentifierId(Text.valueOf(StringUtils.EMPTY));
         emptyExternalId.getWorkExternalIdentifierId().setRequired(false);
@@ -98,7 +98,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         emptyExternalId.setRelationship(Text.valueOf(Relationship.SELF.value()));
         emptyExternalId.setUrl(Text.valueOf(StringUtils.EMPTY));
 
-        List<WorkExternalIdentifier> emptyExtIdsList = new ArrayList<WorkExternalIdentifier>();
+        List<ActivityExternalIdentifier> emptyExtIdsList = new ArrayList<ActivityExternalIdentifier>();
         emptyExtIdsList.add(emptyExternalId);
 
         PeerReviewForm form = new PeerReviewForm();
@@ -164,7 +164,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
                     PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
 
                     if(form.getExternalIdentifiers() != null && !form.getExternalIdentifiers().isEmpty()) {
-                        for(WorkExternalIdentifier wExtId : form.getExternalIdentifiers()) {
+                        for(ActivityExternalIdentifier wExtId : form.getExternalIdentifiers()) {
                             if(PojoUtil.isEmpty(wExtId.getRelationship())) {
                                 wExtId.setRelationship(Text.valueOf(Relationship.SELF.value()));
                             }
@@ -251,7 +251,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         copyErrors(peerReview.getUrl(), peerReview);
         copyErrors(peerReview.getGroupId(), peerReview);
         if(peerReview.getExternalIdentifiers() != null) {
-            for(WorkExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
+            for(ActivityExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
                 copyErrors(extId.getWorkExternalIdentifierId(), peerReview);
                 copyErrors(extId.getWorkExternalIdentifierType(), peerReview);
             }
@@ -339,11 +339,11 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     private void removeEmptyExternalIds(PeerReviewForm peerReview) {
-        List<WorkExternalIdentifier> extIds = peerReview.getExternalIdentifiers();
-        List<WorkExternalIdentifier> updatedExtIds = new ArrayList<WorkExternalIdentifier>();
+        List<ActivityExternalIdentifier> extIds = peerReview.getExternalIdentifiers();
+        List<ActivityExternalIdentifier> updatedExtIds = new ArrayList<ActivityExternalIdentifier>();
         if (extIds != null) {
             // For all external identifiers
-            for (WorkExternalIdentifier extId : extIds) {
+            for (ActivityExternalIdentifier extId : extIds) {
                 // Keep only the ones that contains a value or url
                 if (!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId())) {
                     updatedExtIds.add(extId);
@@ -352,7 +352,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
 
         if (updatedExtIds.isEmpty()) {
-            WorkExternalIdentifier wei = new WorkExternalIdentifier();
+            ActivityExternalIdentifier wei = new ActivityExternalIdentifier();
             updatedExtIds.add(wei);
         }
 
@@ -487,7 +487,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @RequestMapping(value = "/subject/extIdsValidate.json", method = RequestMethod.POST)
     public @ResponseBody PeerReviewForm validateSubjectExternalIdentifier(@RequestBody PeerReviewForm peerReview) {
         if(peerReview.getSubjectExternalIdentifier() == null) {
-            peerReview.setSubjectExternalIdentifier(new WorkExternalIdentifier());
+            peerReview.setSubjectExternalIdentifier(new ActivityExternalIdentifier());
         }
         validateExternalIdentifier(peerReview.getSubjectExternalIdentifier());                
         return peerReview;
@@ -498,13 +498,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         if(peerReview.getExternalIdentifiers() == null) {
             return peerReview;
         }        
-        for(WorkExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
+        for(ActivityExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
             validateExternalIdentifier(extId);
         }                
         return peerReview;
     }        
     
-    private void validateExternalIdentifier(WorkExternalIdentifier extId) {
+    private void validateExternalIdentifier(ActivityExternalIdentifier extId) {
         //Init fields
         if(extId.getWorkExternalIdentifierId() == null)
             extId.setWorkExternalIdentifierId(new Text());

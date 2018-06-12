@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
@@ -30,7 +33,7 @@ public class AffiliationGroup implements Serializable {
 
     private Boolean userVersionPresent;
 
-    private List<WorkExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
+    private List<ActivityExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
     private AffiliationType affiliationType;
 
@@ -82,11 +85,11 @@ public class AffiliationGroup implements Serializable {
         this.userVersionPresent = userVersionPresent;
     }
 
-    public List<WorkExternalIdentifier> getWorkExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {
         return workExternalIdentifiers;
     }
 
-    public void setWorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifiers) {
+    public void setWorkExternalIdentifiers(List<ActivityExternalIdentifier> workExternalIdentifiers) {
         this.workExternalIdentifiers = workExternalIdentifiers;
     }
 
@@ -133,6 +136,14 @@ public class AffiliationGroup implements Serializable {
             affiliationGroup.setAffiliations(null);
             affiliationGroup.setUserVersionPresent(null);
             affiliationGroup.setWorkExternalIdentifiers(null);
+            
+            if (summary.getExternalIdentifiers() != null) {
+                List<ActivityExternalIdentifier> workExternalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();
+                for (ExternalID extId : summary.getExternalIdentifiers().getExternalIdentifier()) {                    
+                    workExternalIdentifiersList.add(ActivityExternalIdentifier.valueOf(extId));
+                }
+                group.setWorkExternalIdentifiers(workExternalIdentifiersList);
+            }
         }
         
         return affiliationGroup;

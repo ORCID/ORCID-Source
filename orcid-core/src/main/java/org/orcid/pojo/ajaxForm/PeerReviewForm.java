@@ -28,7 +28,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
 
     private Text putCode;
 
-    private List<WorkExternalIdentifier> externalIdentifiers;
+    private List<ActivityExternalIdentifier> externalIdentifiers;
 
     private Text url;
 
@@ -52,7 +52,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
 
     private Date completionDate;    
     
-    private WorkExternalIdentifier subjectExternalIdentifier;
+    private ActivityExternalIdentifier subjectExternalIdentifier;
     
     private Text groupId;
     
@@ -92,11 +92,11 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         this.putCode = putCode;
     }
 
-    public List<WorkExternalIdentifier> getExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(List<WorkExternalIdentifier> externalIdentifiers) {
+    public void setExternalIdentifiers(List<ActivityExternalIdentifier> externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 
@@ -228,11 +228,11 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         this.groupId = groupId;
     }
 
-    public WorkExternalIdentifier getSubjectExternalIdentifier() {
+    public ActivityExternalIdentifier getSubjectExternalIdentifier() {
         return subjectExternalIdentifier;
     }
 
-    public void setSubjectExternalIdentifier(WorkExternalIdentifier subjectExternalIdentifier) {
+    public void setSubjectExternalIdentifier(ActivityExternalIdentifier subjectExternalIdentifier) {
         this.subjectExternalIdentifier = subjectExternalIdentifier;
     }
 
@@ -303,7 +303,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         // External identifiers
         if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
             peerReview.setExternalIdentifiers(new ExternalIDs());
-            for (WorkExternalIdentifier extId : externalIdentifiers) {
+            for (ActivityExternalIdentifier extId : externalIdentifiers) {
                 peerReview.getExternalIdentifiers().getExternalIdentifier().add(extId.toRecordWorkExternalIdentifier());
             }
         }
@@ -477,9 +477,9 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         // External ids
         if(peerReview.getExternalIdentifiers() != null) {
             List<ExternalID> externalIdentifiers = peerReview.getExternalIdentifiers().getExternalIdentifier();
-            form.setExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
+            form.setExternalIdentifiers(new ArrayList<ActivityExternalIdentifier>());
             for(ExternalID extId : externalIdentifiers) {                
-                form.getExternalIdentifiers().add(WorkExternalIdentifier.valueOf(extId));
+                form.getExternalIdentifiers().add(ActivityExternalIdentifier.valueOf(extId));
             }                                    
         }        
 
@@ -490,7 +490,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         
         // Subject ext Id
         if(peerReview.getSubjectExternalIdentifier() != null) {
-            WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+            ActivityExternalIdentifier wExtId = new ActivityExternalIdentifier();
             if(peerReview.getSubjectExternalIdentifier().getRelationship() != null) {
                 wExtId.setRelationship(Text.valueOf(peerReview.getSubjectExternalIdentifier().getRelationship().value()));
             }

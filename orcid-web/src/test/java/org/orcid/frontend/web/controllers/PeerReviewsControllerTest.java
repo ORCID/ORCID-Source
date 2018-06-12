@@ -35,7 +35,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -201,12 +201,12 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         completionDate.setYear("2015");
         form.setCompletionDate(completionDate);
 
-        WorkExternalIdentifier wei = new WorkExternalIdentifier();
+        ActivityExternalIdentifier wei = new ActivityExternalIdentifier();
         wei.setWorkExternalIdentifierId(Text.valueOf("extId1"));
         wei.setWorkExternalIdentifierType(Text.valueOf("bibcode"));
         wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
         wei.setUrl(Text.valueOf("http://myurl.com"));
-        List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
+        List<ActivityExternalIdentifier> extIds = new ArrayList<ActivityExternalIdentifier>();
         extIds.add(wei);
         form.setExternalIdentifiers(extIds);
         form.setSubjectContainerName(Text.valueOf("Journal Title"));
