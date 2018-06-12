@@ -311,8 +311,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliationIds.json", method = RequestMethod.GET)
     public @ResponseBody List<String> getAffiliationsJson(HttpServletRequest request) {
         // Get cached profile
-        List<String> affiliationIds = createAffiliationsIdList(request);
-        return affiliationIds;
+        return createAffiliationsIdList(request);
     }
 
     /**
