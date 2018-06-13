@@ -43,6 +43,8 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     List<Contact> retrieveContactsByAccountId(String accountId);
 
     List<Contact> retrieveFreshContactsByAccountId(String accountId);
+    
+    List<Contact> retrieveSubMemberContactsByConsortiumId(String consortiumId);
 
     void addOrcidsToContacts(List<Contact> contacts);
 

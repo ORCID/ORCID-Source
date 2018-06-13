@@ -83,7 +83,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Resource
     private SalesForceDao salesForceDao;
-    
+
     @Resource(name = "salesForceConnectionEntityCacheManager")
     private GenericCacheManager<OrcidString, List<SalesForceConnectionEntity>> salesForceConnectionEntityCacheManager;
 
@@ -176,6 +176,19 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public List<Contact> retrieveFreshContactsByAccountId(String accountId) {
         salesForceContactsCache.remove(accountId);
         return retrieveContactsByAccountId(accountId);
+    }
+
+    @Override
+    public List<Contact> retrieveSubMemberContactsByConsortiumId(String consortiumId) {
+        return findSubMembers(consortiumId).stream().flatMap(s -> {
+            String subMemberAccountid = s.getOpportunity().getTargetAccountId();
+            Member member = retrieveMember(subMemberAccountid);
+            List<Contact> contacts = retrieveContactsByAccountId(subMemberAccountid);
+            return contacts.stream().map(c -> {
+                c.setMember(member);
+                return c;
+            });
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -416,7 +429,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         }
         salesForceContactsCache.remove(accountId);
     }
-    
+
     @Override
     public void removeOrgId(OrgId orgId) {
         salesForceDao.removeOrgId(orgId.getId());
@@ -439,7 +452,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         updatedOpportunity.setRemovalRequested(true);
         updatedOpportunity.setNextStep("Removal requested by " + userOrcid);
         salesForceDao.updateOpportunity(updatedOpportunity);
-        salesForceMembersListCache.clear();;
+        salesForceMembersListCache.clear();
         removeMemberDetailsFromCache(consortiumLeadId);
         salesForceConsortiumCache.remove(consortiumLeadId);
     }
@@ -453,7 +466,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         updatedOpportunity.setRemovalRequested(false);
         updatedOpportunity.setNextStep("Removal request cancelled by " + userOrcid);
         salesForceDao.updateOpportunity(updatedOpportunity);
-        salesForceMembersListCache.clear();;
+        salesForceMembersListCache.clear();
         String consortiumLeadId = opportunity.getConsortiumLeadId();
         removeMemberDetailsFromCache(consortiumLeadId);
         salesForceConsortiumCache.remove(consortiumLeadId);

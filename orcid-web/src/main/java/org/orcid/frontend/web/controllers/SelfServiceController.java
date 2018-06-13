@@ -193,6 +193,14 @@ public class SelfServiceController extends BaseController {
         contactsForm.setRoleMap(generateSalesForceRoleMap());
         return contactsForm;
     }
+    
+    @RequestMapping(value = "/get-sub-member-contacts.json", method = RequestMethod.GET)
+    public @ResponseBody List<Contact> getSubMemberContacts(@RequestParam("accountId") String accountId) {
+        checkAccess(accountId);
+        List<Contact> contactsList = salesForceManager.retrieveSubMemberContactsByConsortiumId(accountId);
+        salesForceManager.addOrcidsToContacts(contactsList);
+        return contactsList;
+    }
 
     @RequestMapping(value = "/add-contact-by-email.json")
     public @ResponseBody Contact addContactByEmail(@RequestBody Contact contact) {
