@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc1.record.Distinction;
 import org.orcid.jaxb.model.v3.rc1.record.Education;
 import org.orcid.jaxb.model.v3.rc1.record.Employment;
@@ -20,10 +22,13 @@ import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.rc1.record.Membership;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -479,6 +484,27 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
 
         return affiliationForm;
+    }
+    
+    @RequestMapping(value = "/affiliation/grouped", method = RequestMethod.GET)
+    public @ResponseBody Map<AffiliationType, List<AffiliationGroupForm>> getGroupedAffiliations() {
+        String orcid = getCurrentUserOrcid();
+        Map<AffiliationType, List<AffiliationGroupForm>> formsMap = new HashMap<AffiliationType, List<AffiliationGroupForm>>();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, false);
+        
+        for(AffiliationType type : AffiliationType.values()) {
+            if(affiliationsMap.containsKey(type)) {
+                List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
+                List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
+                IntStream.range(0, elementsList.size()).forEach(idx -> {                
+                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), 1, orcid);
+                    elementsFormList.add(groupForm);
+                });
+                formsMap.put(type, elementsFormList);
+            }
+        }
+        
+        return formsMap;
     }
 
 }

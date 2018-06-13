@@ -91,7 +91,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
 
     private List<OrgDisambiguatedExternalIdentifiers> orgDisambiguatedExternalIdentifiers;
 
-    private List<AffiliationExternalIdentifier> affiliationExternalIdentifiers;
+    private List<ActivityExternalIdentifier> affiliationExternalIdentifiers;
 
     public static AffiliationForm valueOf(AffiliationSummary summary) {
         AffiliationForm form = new AffiliationForm();
@@ -167,9 +167,9 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         }
 
         if (summary.getExternalIDs() != null) {
-            List<AffiliationExternalIdentifier> affiliationExternalIdentifiers = new ArrayList<>();
+            List<ActivityExternalIdentifier> affiliationExternalIdentifiers = new ArrayList<>();
             for (ExternalID externalID : summary.getExternalIDs().getExternalIdentifier()) {
-                affiliationExternalIdentifiers.add(AffiliationExternalIdentifier.valueOf(externalID));
+                affiliationExternalIdentifiers.add(ActivityExternalIdentifier.valueOf(externalID));
             }
             form.setAffiliationExternalIdentifiers(affiliationExternalIdentifiers);
         }
@@ -259,9 +259,9 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         }
 
         if (affiliation.getExternalIDs() != null) {
-            List<AffiliationExternalIdentifier> affiliationExternalIdentifiers = new ArrayList<>();
+            List<ActivityExternalIdentifier> affiliationExternalIdentifiers = new ArrayList<>();
             for (ExternalID externalID : affiliation.getExternalIDs().getExternalIdentifier()) {
-                affiliationExternalIdentifiers.add(AffiliationExternalIdentifier.valueOf(externalID));
+                affiliationExternalIdentifiers.add(ActivityExternalIdentifier.valueOf(externalID));
             }
             form.setAffiliationExternalIdentifiers(affiliationExternalIdentifiers);
         }
@@ -329,8 +329,8 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         
         if (affiliationExternalIdentifiers != null) {
             ExternalIDs externalIDs = new ExternalIDs();
-            for (AffiliationExternalIdentifier affiliationExternalIdentifier : affiliationExternalIdentifiers) {
-                externalIDs.getExternalIdentifier().add(affiliationExternalIdentifier.toExternalID());
+            for (ActivityExternalIdentifier affiliationExternalIdentifier : affiliationExternalIdentifiers) {
+                externalIDs.getExternalIdentifier().add(affiliationExternalIdentifier.toExternalIdentifier());
             }
             affiliation.setExternalIDs(externalIDs);
         }
@@ -562,11 +562,11 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         this.orgDisambiguatedExternalIdentifiers = orgDisambiguatedExternalIdentifiers;
     }        
 
-    public List<AffiliationExternalIdentifier> getAffiliationExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getAffiliationExternalIdentifiers() {
         return affiliationExternalIdentifiers;
     }
 
-    public void setAffiliationExternalIdentifiers(List<AffiliationExternalIdentifier> affiliationExternalIdentifiers) {
+    public void setAffiliationExternalIdentifiers(List<ActivityExternalIdentifier> affiliationExternalIdentifiers) {
         this.affiliationExternalIdentifiers = affiliationExternalIdentifiers;
     }
 

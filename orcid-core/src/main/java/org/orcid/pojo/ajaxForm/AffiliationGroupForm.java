@@ -15,11 +15,11 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 
-public class AffiliationGroup implements Serializable {
+public class AffiliationGroupForm implements Serializable {
     
     private static final long serialVersionUID = -8347171671099477223L;
 
-    private List<AffiliationForm> affiliations;
+    private List<AffiliationForm> affiliations = new ArrayList<>();
 
     private Long activePutCode;
 
@@ -99,9 +99,10 @@ public class AffiliationGroup implements Serializable {
         this.affiliationType = affiliationType;
     }
     
-    public static AffiliationGroup valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup<? extends AffiliationSummary> group, int id, String orcid) {
-        AffiliationGroup affiliationGroup = new AffiliationGroup();
+    public static AffiliationGroupForm valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup<? extends AffiliationSummary> group, int id, String orcid) {
+        AffiliationGroupForm affiliationGroup = new AffiliationGroupForm();
         affiliationGroup.setGroupId(id);
+        affiliationGroup.setUserVersionPresent(false);
         
         Long maxDisplayIndex = null;
         for(AffiliationSummary summary : group.getActivities()) {
@@ -130,10 +131,9 @@ public class AffiliationGroup implements Serializable {
                 affiliationGroup.setDefaultAffiliation(AffiliationForm.valueOf(summary));                
             }
             
-            
-            affiliationGroup.setAffiliations(null);
-            affiliationGroup.setUserVersionPresent(null);
-            affiliationGroup.setExternalIdentifiers(null);
+            if(summary.getSource().retrieveSourcePath().equals(orcid)) {
+                affiliationGroup.setUserVersionPresent(true);
+            } 
             
             if (summary.getExternalIdentifiers() != null) {
                 List<ActivityExternalIdentifier> workExternalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();
@@ -142,6 +142,8 @@ public class AffiliationGroup implements Serializable {
                 }
                 affiliationGroup.setExternalIdentifiers(workExternalIdentifiersList);
             }
+            
+            affiliationGroup.getAffiliations().add(AffiliationForm.valueOf(summary));            
         }
         
         return affiliationGroup;
