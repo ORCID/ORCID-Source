@@ -486,7 +486,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         return affiliationForm;
     }
     
-    @RequestMapping(value = "/affiliation/grouped", method = RequestMethod.GET)
+    @RequestMapping(value = "/grouped", method = RequestMethod.GET)
     public @ResponseBody Map<AffiliationType, List<AffiliationGroupForm>> getGroupedAffiliations() {
         String orcid = getCurrentUserOrcid();
         Map<AffiliationType, List<AffiliationGroupForm>> formsMap = new HashMap<AffiliationType, List<AffiliationGroupForm>>();
@@ -497,7 +497,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
                 List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
                 IntStream.range(0, elementsList.size()).forEach(idx -> {                
-                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), 1, orcid);
+                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
                     elementsFormList.add(groupForm);
                 });
                 formsMap.put(type, elementsFormList);
