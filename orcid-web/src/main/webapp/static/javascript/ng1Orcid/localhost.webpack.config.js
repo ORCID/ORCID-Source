@@ -1,7 +1,9 @@
 var webpack = require('webpack');
 
 module.exports = {
+    context: __dirname + "/",
     entry: "./require.js",
+    mode: 'development',
     module: {
         rules: [
             {
@@ -15,7 +17,7 @@ module.exports = {
         ]
     },
     output: {
-        path: '/',
+        path: __dirname + '/',
         filename: "angular_orcid_generated.js"
     },
     plugins: [
