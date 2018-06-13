@@ -93,6 +93,12 @@ public class SelfServiceController extends BaseController {
         return mav;
     }
 
+    @RequestMapping("/{accountId}/all-consortium-contacts")
+    public ModelAndView getAllConsortiumContactsPage(@PathVariable(required = false) String accountId) {
+        ModelAndView mav = new ModelAndView("all_consortium_contacts");
+        return mav;
+    }
+    
     @RequestMapping(value = "/validate-member-details-name", method = RequestMethod.POST)
     public @ResponseBody MemberDetailsForm validateMemberDetailsName(@RequestBody MemberDetailsForm consortium) {
         // validate name isn't blank
