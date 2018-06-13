@@ -232,12 +232,12 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         if(workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
             for(ActivityExternalIdentifier wfExtId : workForm.getWorkExternalIdentifiers()) {
                 ExternalID wExtId = new ExternalID();
-                if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierId())) {
-                    wExtId.setValue(wfExtId.getWorkExternalIdentifierId().getValue());
+                if(!PojoUtil.isEmpty(wfExtId.getExternalIdentifierId())) {
+                    wExtId.setValue(wfExtId.getExternalIdentifierId().getValue());
                 }
                 
-                if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierType())) {
-                    wExtId.setType(wfExtId.getWorkExternalIdentifierType().getValue());
+                if(!PojoUtil.isEmpty(wfExtId.getExternalIdentifierType())) {
+                    wExtId.setType(wfExtId.getExternalIdentifierType().getValue());
                 }
                 
                 if(!PojoUtil.isEmpty(wfExtId.getRelationship())) {

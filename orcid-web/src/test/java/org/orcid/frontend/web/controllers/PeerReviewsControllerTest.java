@@ -29,13 +29,13 @@ import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -202,8 +202,8 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setCompletionDate(completionDate);
 
         ActivityExternalIdentifier wei = new ActivityExternalIdentifier();
-        wei.setWorkExternalIdentifierId(Text.valueOf("extId1"));
-        wei.setWorkExternalIdentifierType(Text.valueOf("bibcode"));
+        wei.setExternalIdentifierId(Text.valueOf("extId1"));
+        wei.setExternalIdentifierType(Text.valueOf("bibcode"));
         wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
         wei.setUrl(Text.valueOf("http://myurl.com"));
         List<ActivityExternalIdentifier> extIds = new ArrayList<ActivityExternalIdentifier>();

@@ -177,8 +177,8 @@ public class WorksControllerTest extends BaseControllerTest {
 
         worksController.workWorkExternalIdentifiersValidate(workForm);
         for (ActivityExternalIdentifier wId : workForm.getWorkExternalIdentifiers()) {
-            assertEquals(0, wId.getWorkExternalIdentifierId().getErrors().size());
-            assertEquals(0, wId.getWorkExternalIdentifierType().getErrors().size());
+            assertEquals(0, wId.getExternalIdentifierId().getErrors().size());
+            assertEquals(0, wId.getExternalIdentifierType().getErrors().size());
         }
 
         worksController.workCitationValidate(workForm);
@@ -246,8 +246,8 @@ public class WorksControllerTest extends BaseControllerTest {
         work.setTitle(Text.valueOf("Test add work"));
         work.setWorkType(Text.valueOf("artistic-performance"));
         ActivityExternalIdentifier wei = work.getWorkExternalIdentifiers().get(0);
-        wei.setWorkExternalIdentifierId(Text.valueOf("1"));
-        wei.setWorkExternalIdentifierType(Text.valueOf("doi"));
+        wei.setExternalIdentifierId(Text.valueOf("1"));
+        wei.setExternalIdentifierType(Text.valueOf("doi"));
         if (!PojoUtil.isEmpty(work.getPutCode())) {
             work.setPutCode(Text.valueOf(""));
         }
@@ -260,8 +260,8 @@ public class WorksControllerTest extends BaseControllerTest {
         assertNotNull(work);
         assertFalse(PojoUtil.isEmpty(work.getPutCode()));
         assertEquals(1, work.getWorkExternalIdentifiers().size());
-        assertEquals("doi", work.getWorkExternalIdentifiers().get(0).getWorkExternalIdentifierType().getValue());
-        assertEquals("1", work.getWorkExternalIdentifiers().get(0).getWorkExternalIdentifierId().getValue());
+        assertEquals("doi", work.getWorkExternalIdentifiers().get(0).getExternalIdentifierType().getValue());
+        assertEquals("1", work.getWorkExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
 
     }
 
@@ -303,13 +303,13 @@ public class WorksControllerTest extends BaseControllerTest {
         work.setWorkExternalIdentifiers(new ArrayList<ActivityExternalIdentifier>());
 
         ActivityExternalIdentifier wei1 = new ActivityExternalIdentifier();
-        wei1.setWorkExternalIdentifierId(Text.valueOf("1"));
-        wei1.setWorkExternalIdentifierType(Text.valueOf("doi"));
+        wei1.setExternalIdentifierId(Text.valueOf("1"));
+        wei1.setExternalIdentifierType(Text.valueOf("doi"));
         work.getWorkExternalIdentifiers().add(wei1);
 
         ActivityExternalIdentifier wei2 = new ActivityExternalIdentifier();
-        wei2.setWorkExternalIdentifierId(Text.valueOf("2"));
-        wei2.setWorkExternalIdentifierType(Text.valueOf("arxiv"));
+        wei2.setExternalIdentifierId(Text.valueOf("2"));
+        wei2.setExternalIdentifierType(Text.valueOf("arxiv"));
         work.getWorkExternalIdentifiers().add(wei2);
 
         work.getPublicationDate().setDay("2");
@@ -335,15 +335,15 @@ public class WorksControllerTest extends BaseControllerTest {
 
         List<ActivityExternalIdentifier> extIds = updatedWork.getWorkExternalIdentifiers();
         for (ActivityExternalIdentifier extId : extIds) {
-            if (extId.getWorkExternalIdentifierType().getValue().equals("doi") || extId.getWorkExternalIdentifierType().getValue().equals("arxiv")) {
-                if (extId.getWorkExternalIdentifierType().getValue().equals("doi")) {
-                    assertEquals("1", extId.getWorkExternalIdentifierId().getValue());
+            if (extId.getExternalIdentifierType().getValue().equals("doi") || extId.getExternalIdentifierType().getValue().equals("arxiv")) {
+                if (extId.getExternalIdentifierType().getValue().equals("doi")) {
+                    assertEquals("1", extId.getExternalIdentifierId().getValue());
                 } else {
-                    assertEquals("2", extId.getWorkExternalIdentifierId().getValue());
+                    assertEquals("2", extId.getExternalIdentifierId().getValue());
                 }
 
             } else {
-                fail("Invalid external identifier found: " + extId.getWorkExternalIdentifierType().getValue() + " : " + extId.getWorkExternalIdentifierId().getValue());
+                fail("Invalid external identifier found: " + extId.getExternalIdentifierType().getValue() + " : " + extId.getExternalIdentifierId().getValue());
             }
 
         }

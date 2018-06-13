@@ -304,7 +304,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
             peerReview.setExternalIdentifiers(new ExternalIDs());
             for (ActivityExternalIdentifier extId : externalIdentifiers) {
-                peerReview.getExternalIdentifiers().getExternalIdentifier().add(extId.toRecordWorkExternalIdentifier());
+                peerReview.getExternalIdentifiers().getExternalIdentifier().add(extId.toExternalIdentifier());
             }
         }
 
@@ -362,12 +362,12 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
                 subjectExtId.setUrl(new Url(subjectExternalIdentifier.getUrl().getValue()));
             }
             
-            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getWorkExternalIdentifierId())) {
-                subjectExtId.setValue(subjectExternalIdentifier.getWorkExternalIdentifierId().getValue());
+            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getExternalIdentifierId())) {
+                subjectExtId.setValue(subjectExternalIdentifier.getExternalIdentifierId().getValue());
             }
             
-            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getWorkExternalIdentifierType())) {
-                subjectExtId.setType(subjectExternalIdentifier.getWorkExternalIdentifierType().getValue());
+            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getExternalIdentifierType())) {
+                subjectExtId.setType(subjectExternalIdentifier.getExternalIdentifierType().getValue());
             }
             
             peerReview.setSubjectExternalIdentifier(subjectExtId);
@@ -500,11 +500,11 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
             }
             
             if(peerReview.getSubjectExternalIdentifier().getValue() != null) {
-                wExtId.setWorkExternalIdentifierId(Text.valueOf(peerReview.getSubjectExternalIdentifier().getValue()));
+                wExtId.setExternalIdentifierId(Text.valueOf(peerReview.getSubjectExternalIdentifier().getValue()));
             }
             
             if(peerReview.getSubjectExternalIdentifier().getType() != null) {
-                wExtId.setWorkExternalIdentifierType(Text.valueOf(peerReview.getSubjectExternalIdentifier().getType()));
+                wExtId.setExternalIdentifierType(Text.valueOf(peerReview.getSubjectExternalIdentifier().getType()));
             }            
             
             form.setSubjectExternalIdentifier(wExtId);

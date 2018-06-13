@@ -187,8 +187,8 @@ public class WorkFormTest {
         form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC));        
         List<ActivityExternalIdentifier> extIds = new ArrayList<ActivityExternalIdentifier>();
         ActivityExternalIdentifier extId = new ActivityExternalIdentifier();
-        extId.setWorkExternalIdentifierId(Text.valueOf("External Identifier ID"));
-        extId.setWorkExternalIdentifierType(Text.valueOf("asin"));
+        extId.setExternalIdentifierId(Text.valueOf("External Identifier ID"));
+        extId.setExternalIdentifierType(Text.valueOf("asin"));
         extId.setRelationship(Text.valueOf(Relationship.SELF.value()));
         extIds.add(extId);
         form.setWorkExternalIdentifiers(extIds);

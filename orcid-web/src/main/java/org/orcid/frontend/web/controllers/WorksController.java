@@ -177,8 +177,8 @@ public class WorksController extends BaseWorkspaceController {
             ActivityExternalIdentifier wei = new ActivityExternalIdentifier();
             Text wdiType = new Text();
             wdiType.setValue(new String());
-            wei.setWorkExternalIdentifierId(new Text());
-            wei.setWorkExternalIdentifierType(wdiType);
+            wei.setExternalIdentifierId(new Text());
+            wei.setExternalIdentifierType(wdiType);
             wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
             List<ActivityExternalIdentifier> wdiL = new ArrayList<ActivityExternalIdentifier>();
             wdiL.add(wei);
@@ -316,8 +316,8 @@ public class WorksController extends BaseWorkspaceController {
             if (workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
                 List<ActivityExternalIdentifier> cleanExtIds = new ArrayList<ActivityExternalIdentifier>();
                 for (ActivityExternalIdentifier wExtId : workForm.getWorkExternalIdentifiers()) {
-                    if (!PojoUtil.isEmpty(wExtId.getWorkExternalIdentifierType())) {
-                        if (!PojoUtil.isEmpty(wExtId.getWorkExternalIdentifierId())) {
+                    if (!PojoUtil.isEmpty(wExtId.getExternalIdentifierType())) {
+                        if (!PojoUtil.isEmpty(wExtId.getExternalIdentifierId())) {
                             cleanExtIds.add(wExtId);
                         }
                     }
@@ -390,8 +390,8 @@ public class WorksController extends BaseWorkspaceController {
         if (work.getWorkExternalIdentifiers() != null) {
             workWorkExternalIdentifiersValidate(work);
             for (ActivityExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
-                copyErrors(wId.getWorkExternalIdentifierId(), work);
-                copyErrors(wId.getWorkExternalIdentifierType(), work);
+                copyErrors(wId.getExternalIdentifierId(), work);
+                copyErrors(wId.getExternalIdentifierType(), work);
             }
         }
 
@@ -541,31 +541,31 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody WorkForm workWorkExternalIdentifiersValidate(@RequestBody WorkForm work) {
         for (ActivityExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
-            if (wId.getWorkExternalIdentifierId() == null)
-                wId.setWorkExternalIdentifierId(new Text());
-            if (wId.getWorkExternalIdentifierType() == null)
-                wId.setWorkExternalIdentifierType(new Text());
-            wId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
-            wId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
+            if (wId.getExternalIdentifierId() == null)
+                wId.setExternalIdentifierId(new Text());
+            if (wId.getExternalIdentifierType() == null)
+                wId.setExternalIdentifierType(new Text());
+            wId.getExternalIdentifierId().setErrors(new ArrayList<String>());
+            wId.getExternalIdentifierType().setErrors(new ArrayList<String>());
             // if has id type must be specified
-            if (wId.getWorkExternalIdentifierId().getValue() != null && !wId.getWorkExternalIdentifierId().getValue().trim().equals("")
-                    && (wId.getWorkExternalIdentifierType().getValue() == null || wId.getWorkExternalIdentifierType().getValue().equals(""))) {
-                setError(wId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
-            } else if (wId.getWorkExternalIdentifierId().getValue() != null && wId.getWorkExternalIdentifierId().getValue().length() > 2084) {
-                setError(wId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
+            if (wId.getExternalIdentifierId().getValue() != null && !wId.getExternalIdentifierId().getValue().trim().equals("")
+                    && (wId.getExternalIdentifierType().getValue() == null || wId.getExternalIdentifierType().getValue().equals(""))) {
+                setError(wId.getExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
+            } else if (wId.getExternalIdentifierId().getValue() != null && wId.getExternalIdentifierId().getValue().length() > 2084) {
+                setError(wId.getExternalIdentifierId(), "manualWork.length_less_2084");
             }
             // if type is set a id must set
-            if (wId.getWorkExternalIdentifierType().getValue() != null && !wId.getWorkExternalIdentifierType().getValue().trim().equals("")
-                    && (wId.getWorkExternalIdentifierId().getValue() == null || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
-                setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
+            if (wId.getExternalIdentifierType().getValue() != null && !wId.getExternalIdentifierType().getValue().trim().equals("")
+                    && (wId.getExternalIdentifierId().getValue() == null || wId.getExternalIdentifierId().getValue().trim().equals(""))) {
+                setError(wId.getExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
             }
 
             //check type is valid
             Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
-            if (wId.getWorkExternalIdentifierType().getValue() != null  
-                    && !wId.getWorkExternalIdentifierType().getValue().trim().isEmpty() 
-                    && !types.keySet().contains(wId.getWorkExternalIdentifierType().getValue())){
-                setError(wId.getWorkExternalIdentifierType(), "manualWork.id_invalid");
+            if (wId.getExternalIdentifierType().getValue() != null  
+                    && !wId.getExternalIdentifierType().getValue().trim().isEmpty() 
+                    && !types.keySet().contains(wId.getExternalIdentifierType().getValue())){
+                setError(wId.getExternalIdentifierType(), "manualWork.id_invalid");
             }
             
             if (wId.getUrl() != null)

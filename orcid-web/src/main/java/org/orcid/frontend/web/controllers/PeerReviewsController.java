@@ -91,10 +91,10 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
         ActivityExternalIdentifier emptyExternalId = new ActivityExternalIdentifier();
         emptyExternalId.setErrors(new ArrayList<String>());
-        emptyExternalId.setWorkExternalIdentifierId(Text.valueOf(StringUtils.EMPTY));
-        emptyExternalId.getWorkExternalIdentifierId().setRequired(false);
-        emptyExternalId.setWorkExternalIdentifierType(Text.valueOf(StringUtils.EMPTY));
-        emptyExternalId.getWorkExternalIdentifierType().setRequired(false);
+        emptyExternalId.setExternalIdentifierId(Text.valueOf(StringUtils.EMPTY));
+        emptyExternalId.getExternalIdentifierId().setRequired(false);
+        emptyExternalId.setExternalIdentifierType(Text.valueOf(StringUtils.EMPTY));
+        emptyExternalId.getExternalIdentifierType().setRequired(false);
         emptyExternalId.setRelationship(Text.valueOf(Relationship.SELF.value()));
         emptyExternalId.setUrl(Text.valueOf(StringUtils.EMPTY));
 
@@ -252,8 +252,8 @@ public class PeerReviewsController extends BaseWorkspaceController {
         copyErrors(peerReview.getGroupId(), peerReview);
         if(peerReview.getExternalIdentifiers() != null) {
             for(ActivityExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
-                copyErrors(extId.getWorkExternalIdentifierId(), peerReview);
-                copyErrors(extId.getWorkExternalIdentifierType(), peerReview);
+                copyErrors(extId.getExternalIdentifierId(), peerReview);
+                copyErrors(extId.getExternalIdentifierType(), peerReview);
             }
         }
         
@@ -345,7 +345,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
             // For all external identifiers
             for (ActivityExternalIdentifier extId : extIds) {
                 // Keep only the ones that contains a value or url
-                if (!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId())) {
+                if (!PojoUtil.isEmpty(extId.getExternalIdentifierId())) {
                     updatedExtIds.add(extId);
                 }
             }
@@ -363,7 +363,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         if (peerReview.getSubjectExternalIdentifier() == null) {
             return;
         }
-        if(PojoUtil.isEmpty(peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId())) {
+        if(PojoUtil.isEmpty(peerReview.getSubjectExternalIdentifier().getExternalIdentifierId())) {
             peerReview.setSubjectExternalIdentifier(null);
         }                    
     }
@@ -506,30 +506,30 @@ public class PeerReviewsController extends BaseWorkspaceController {
     
     private void validateExternalIdentifier(ActivityExternalIdentifier extId) {
         //Init fields
-        if(extId.getWorkExternalIdentifierId() == null)
-            extId.setWorkExternalIdentifierId(new Text());
-        if(extId.getWorkExternalIdentifierType() == null)
-            extId.setWorkExternalIdentifierType(new Text());
+        if(extId.getExternalIdentifierId() == null)
+            extId.setExternalIdentifierId(new Text());
+        if(extId.getExternalIdentifierType() == null)
+            extId.setExternalIdentifierType(new Text());
         if(extId.getRelationship() == null) 
             extId.setRelationship(new Text());
         if(extId.getUrl() == null)
             extId.setUrl(new Text());
         extId.setErrors(new ArrayList<String>());
-        extId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
-        extId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
+        extId.getExternalIdentifierId().setErrors(new ArrayList<String>());
+        extId.getExternalIdentifierType().setErrors(new ArrayList<String>());
         extId.getRelationship().setErrors(new ArrayList<String>());
         extId.getUrl().setErrors(new ArrayList<String>());
         
-        if(PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && !PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
+        if(PojoUtil.isEmpty(extId.getExternalIdentifierId()) && !PojoUtil.isEmpty(extId.getExternalIdentifierType())) {
             //Please select a type
-            setError(extId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
-        } else if(!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
+            setError(extId.getExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
+        } else if(!PojoUtil.isEmpty(extId.getExternalIdentifierId()) && PojoUtil.isEmpty(extId.getExternalIdentifierType())) {
             //Please add a value
-            setError(extId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
+            setError(extId.getExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
         } 
         
-        if(!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && extId.getWorkExternalIdentifierId().getValue().length() > 2084) {
-            setError(extId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
+        if(!PojoUtil.isEmpty(extId.getExternalIdentifierId()) && extId.getExternalIdentifierId().getValue().length() > 2084) {
+            setError(extId.getExternalIdentifierId(), "manualWork.length_less_2084");
         }
     }
     
