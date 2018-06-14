@@ -278,6 +278,10 @@
                     </span>
                     <hr>
                 </div>
+                <div *ngIf="memberDetails?.subMembers?.length">
+                    <h3><@spring.message "manage_consortium.all_consortium_contacts_heading"/></h3>
+                    <a [href]="memberDetails.accountId + '/all-consortium-contacts'"><@spring.message "manage_consortium.all_consortium_contacts_link"/></a>
+                </div>
                 <div *ngIf="!memberDetails?.subMembers?.length"> 
                     <p>This consortium does not have any members yet.</p>
                     <hr>
