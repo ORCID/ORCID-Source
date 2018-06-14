@@ -45,12 +45,17 @@ import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
@@ -114,61 +119,184 @@ public class MemberV3ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
     public void testViewActitivies() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewActivities(ORCID);
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        boolean found1 = false, found2 = false, found3 = false;
         ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
         assertNotNull(as);
         assertEquals("/0000-0000-0000-0003/activities", as.getPath());
         Utils.verifyLastModified(as.getLastModifiedDate());
+
+        assertNotNull(as.getDistinctions());
+        assertEquals(3, as.getDistinctions().retrieveGroups().size());
+        for (AffiliationGroup<DistinctionSummary> group : as.getDistinctions().retrieveGroups()) {
+            DistinctionSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(27))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(29), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(28))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(30))) {
+                assertEquals(1, group.getActivities().size());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }            
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);       
+        found1 = found2 = found3 = false;
+
         assertNotNull(as.getEducations());
-        assertEquals(4, as.getEducations().retrieveGroups().size());
+        assertEquals(3, as.getEducations().retrieveGroups().size());
 
         for (AffiliationGroup<EducationSummary> group : as.getEducations().retrieveGroups()) {
-            for (EducationSummary element : group.getActivities()) {
-                if (element.getPutCode().equals(Long.valueOf(20))) {
-                    found1 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(21))) {
-                    found2 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(22))) {
-                    found3 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(25))) {
-                    found4 = true;
-                } else {
-                    fail("Invalid put code " + element.getPutCode());
-                }
-            }
+            EducationSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(20))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(22), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(21))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(25))) {
+                assertEquals(1, group.getActivities().size());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }            
         }
 
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        found1 = found2 = found3 = found4 = false;
+        assertTrue(found3);       
+        found1 = found2 = found3 = false;
 
         assertNotNull(as.getEmployments());
-        assertEquals(4, as.getEmployments().retrieveGroups().size());
+        assertEquals(3, as.getEmployments().retrieveGroups().size());
 
         for (AffiliationGroup<EmploymentSummary> group : as.getEmployments().retrieveGroups()) {
-            for (EmploymentSummary element : group.getActivities()) {
-                if (element.getPutCode().equals(Long.valueOf(17))) {
-                    found1 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(18))) {
-                    found2 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(19))) {
-                    found3 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(23))) {
-                    found4 = true;
-                } else {
-                    fail("Invalid put code " + element.getPutCode());
-                }
-            }
+            EmploymentSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(17))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(19), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(18))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(23))) {
+                assertEquals(1, group.getActivities().size());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }            
         }
 
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        found1 = found2 = found3 = found4 = false;
+        assertTrue(found3);        
+        found1 = found2 = found3 = false;
 
+        assertNotNull(as.getInvitedPositions());
+        assertEquals(3, as.getInvitedPositions().retrieveGroups().size());
+        for (AffiliationGroup<InvitedPositionSummary> group : as.getInvitedPositions().retrieveGroups()) {
+            InvitedPositionSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(32))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(34), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(33))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(35))) {
+                assertEquals(1, group.getActivities().size());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }            
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);       
+        found1 = found2 = found3 = false;
+
+        assertNotNull(as.getMemberships());
+        assertEquals(3, as.getMemberships().retrieveGroups().size());
+        for (AffiliationGroup<MembershipSummary> group : as.getMemberships().retrieveGroups()) {
+            MembershipSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(37))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(39), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(38))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(40))) {
+                assertEquals(1, group.getActivities().size());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }            
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);       
+        found1 = found2 = found3 = false;
+
+        assertNotNull(as.getQualifications());
+        assertEquals(3, as.getQualifications().retrieveGroups().size());
+        for (AffiliationGroup<QualificationSummary> group : as.getQualifications().retrieveGroups()) {
+            QualificationSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(42))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(44), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(43))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(45))) {
+                assertEquals(1, group.getActivities().size());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }            
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);       
+        found1 = found2 = found3 = false;
+        
+        assertNotNull(as.getServices());
+        assertEquals(3, as.getServices().retrieveGroups().size());
+        for (AffiliationGroup<ServiceSummary> group : as.getServices().retrieveGroups()) {
+            ServiceSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(47))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(49), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(48))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(50))) {
+                assertEquals(1, group.getActivities().size());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }            
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);       
+        found1 = found2 = found3 = false;
+        
+        boolean found4 = false;
+        
         assertNotNull(as.getFundings());
         assertEquals(4, as.getFundings().getFundingGroup().size());
 
@@ -284,7 +412,7 @@ public class MemberV3ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
     }
 
     private void testActivities(ActivitiesSummary as, String orcid) {
-        boolean found1 = false, found2 = false, found3 = false;
+        boolean found1 = false, found2 = false;
         // This is more an utility that will work only for 0000-0000-0000-0003
         assertEquals("0000-0000-0000-0003", orcid);
 
@@ -292,50 +420,156 @@ public class MemberV3ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
         assertNotNull(as.getPath());
         assertEquals("/0000-0000-0000-0003/activities", as.getPath());      
         Utils.verifyLastModified(as.getLastModifiedDate());
+        
+        assertNotNull(as.getDistinctions());
+        assertEquals(2, as.getDistinctions().retrieveGroups().size());
+
+        for (AffiliationGroup<DistinctionSummary> group : as.getDistinctions().retrieveGroups()) {
+            DistinctionSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(27))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(29), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(28))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);        
+        found1 = found2 = false;
+        
         assertNotNull(as.getEducations());
-        assertEquals(3, as.getEducations().retrieveGroups().size());
+        assertEquals(2, as.getEducations().retrieveGroups().size());
         
         for (AffiliationGroup<EducationSummary> group : as.getEducations().retrieveGroups()) {
-            for (EducationSummary element : group.getActivities()) {
-                if (element.getPutCode().equals(Long.valueOf(20))) {
-                    found1 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(21))) {
-                    found2 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(22))) {
-                    found3 = true;
-                } else {
-                    fail("Invalid put code " + element.getPutCode());
-                }
-            }
+            EducationSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(20))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(22), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(21))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }            
         }
 
         assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        found1 = found2 = found3 = false;
+        assertTrue(found2);        
+        found1 = found2 = false;
 
         assertNotNull(as.getEmployments());
-        assertEquals(3, as.getEmployments().retrieveGroups().size());
+        assertEquals(2, as.getEmployments().retrieveGroups().size());
 
         for (AffiliationGroup<EmploymentSummary> group : as.getEmployments().retrieveGroups()) {
-            for (EmploymentSummary element : group.getActivities()) {
-                if (element.getPutCode().equals(Long.valueOf(17))) {
-                    found1 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(18))) {
-                    found2 = true;
-                } else if (element.getPutCode().equals(Long.valueOf(19))) {
-                    found3 = true;
-                } else {
-                    fail("Invalid put code " + element.getPutCode());
-                }
+            EmploymentSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(17))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(19), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(18))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
             }
         }
         
         assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        found1 = found2 = found3 = false;
+        assertTrue(found2);        
+        found1 = found2 = false;
 
+        assertNotNull(as.getInvitedPositions());
+        assertEquals(2, as.getInvitedPositions().retrieveGroups().size());
+
+        for (AffiliationGroup<InvitedPositionSummary> group : as.getInvitedPositions().retrieveGroups()) {
+            InvitedPositionSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(32))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(34), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(33))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);        
+        found1 = found2 = false;
+
+        assertNotNull(as.getMemberships());
+        assertEquals(2, as.getMemberships().retrieveGroups().size());
+
+        for (AffiliationGroup<MembershipSummary> group : as.getMemberships().retrieveGroups()) {
+            MembershipSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(37))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(39), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(38))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);        
+        found1 = found2 = false;
+        
+        assertNotNull(as.getQualifications());
+        assertEquals(2, as.getQualifications().retrieveGroups().size());
+
+        for (AffiliationGroup<QualificationSummary> group : as.getQualifications().retrieveGroups()) {
+            QualificationSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(42))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(44), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(43))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);        
+        found1 = found2 = false;
+        
+        assertNotNull(as.getServices());
+        assertEquals(2, as.getServices().retrieveGroups().size());
+
+        for (AffiliationGroup<ServiceSummary> group : as.getServices().retrieveGroups()) {
+            ServiceSummary element0 = group.getActivities().get(0);
+            if (element0.getPutCode().equals(Long.valueOf(47))) {
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(49), group.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if (element0.getPutCode().equals(Long.valueOf(48))) {
+                assertEquals(1, group.getActivities().size());
+                found2 = true;
+            } else {
+                fail("Invalid put code " + element0.getPutCode());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);        
+        found1 = found2 = false;
+        
+        boolean found3 = false;
+        
         assertNotNull(as.getFundings());
         assertEquals(3, as.getFundings().getFundingGroup().size());
 
