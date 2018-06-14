@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -29,6 +30,7 @@ import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc1.record.Distinction;
 import org.orcid.jaxb.model.v3.rc1.record.Education;
 import org.orcid.jaxb.model.v3.rc1.record.Employment;
@@ -605,6 +607,167 @@ public class AffiliationsManagerTest extends BaseTest {
         
         assertEquals(5, group1.getActivities().size());
         assertEquals(5, group2.getActivities().size());
+    }
+    
+    @Test
+    public void testGetGroupedAffiliations() {
+        String orcid = "0000-0000-0000-0003";
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> map = affiliationsManager.getGroupedAffiliations(orcid, false);
+        assertNotNull(map);
+        
+        // Check distinctions
+        assertTrue(map.containsKey(AffiliationType.DISTINCTION));
+        List<AffiliationGroup<AffiliationSummary>> distinctionGroups = map.get(AffiliationType.DISTINCTION);
+        assertNotNull(distinctionGroups);
+        assertEquals(3, distinctionGroups.size());
+        AffiliationGroup<AffiliationSummary> g1 = distinctionGroups.get(0);
+        assertEquals(3, g1.getActivities().size());
+        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
+        assertEquals(Long.valueOf(31), g1.getActivities().get(0).getPutCode());        
+        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
+        assertEquals(Long.valueOf(27), g1.getActivities().get(1).getPutCode());
+        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
+        assertEquals(Long.valueOf(29), g1.getActivities().get(2).getPutCode());
+        
+        AffiliationGroup<AffiliationSummary> g2 = distinctionGroups.get(1);
+        assertEquals(1, g2.getActivities().size());
+        assertEquals(Long.valueOf(30), g2.getActivities().get(0).getPutCode());
+        
+        AffiliationGroup<AffiliationSummary> g3 =distinctionGroups.get(2);
+        assertEquals(1, g3.getActivities().size());
+        assertEquals(Long.valueOf(28), g3.getActivities().get(0).getPutCode());
+    
+        // Check educations
+        assertTrue(map.containsKey(AffiliationType.EDUCATION));
+        List<AffiliationGroup<AffiliationSummary>> educationGroups = map.get(AffiliationType.EDUCATION);
+        assertNotNull(educationGroups);
+        assertEquals(3, educationGroups.size());
+        g1 = educationGroups.get(0);
+        assertEquals(3, g1.getActivities().size());
+        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
+        assertEquals(Long.valueOf(26), g1.getActivities().get(0).getPutCode());        
+        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
+        assertEquals(Long.valueOf(20), g1.getActivities().get(1).getPutCode());
+        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
+        assertEquals(Long.valueOf(22), g1.getActivities().get(2).getPutCode());
+        
+        g2 = educationGroups.get(1);
+        assertEquals(1, g2.getActivities().size());
+        assertEquals(Long.valueOf(25), g2.getActivities().get(0).getPutCode());
+        
+        g3 = educationGroups.get(2);
+        assertEquals(1, g3.getActivities().size());
+        assertEquals(Long.valueOf(21), g3.getActivities().get(0).getPutCode());
+     
+        // Check employments
+        assertTrue(map.containsKey(AffiliationType.EMPLOYMENT));
+        List<AffiliationGroup<AffiliationSummary>> employmentGroups = map.get(AffiliationType.EMPLOYMENT);
+        assertNotNull(employmentGroups);
+        assertEquals(3, employmentGroups.size());
+        g1 = employmentGroups.get(0);
+        assertEquals(3, g1.getActivities().size());
+        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
+        assertEquals(Long.valueOf(24), g1.getActivities().get(0).getPutCode());        
+        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
+        assertEquals(Long.valueOf(17), g1.getActivities().get(1).getPutCode());
+        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
+        assertEquals(Long.valueOf(19), g1.getActivities().get(2).getPutCode());
+        
+        g2 = employmentGroups.get(1);
+        assertEquals(1, g2.getActivities().size());
+        assertEquals(Long.valueOf(23), g2.getActivities().get(0).getPutCode());
+        
+        g3 = employmentGroups.get(2);
+        assertEquals(1, g3.getActivities().size());
+        assertEquals(Long.valueOf(18), g3.getActivities().get(0).getPutCode());    
+        
+        // Check invited positions
+        assertTrue(map.containsKey(AffiliationType.INVITED_POSITION));
+        List<AffiliationGroup<AffiliationSummary>> invitedPositionGroups = map.get(AffiliationType.INVITED_POSITION);
+        assertNotNull(invitedPositionGroups);
+        assertEquals(3, invitedPositionGroups.size());
+        g1 = invitedPositionGroups.get(0);
+        assertEquals(3, g1.getActivities().size());
+        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
+        assertEquals(Long.valueOf(36), g1.getActivities().get(0).getPutCode());        
+        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
+        assertEquals(Long.valueOf(32), g1.getActivities().get(1).getPutCode());
+        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
+        assertEquals(Long.valueOf(34), g1.getActivities().get(2).getPutCode());
+        
+        g2 = invitedPositionGroups.get(1);
+        assertEquals(1, g2.getActivities().size());
+        assertEquals(Long.valueOf(35), g2.getActivities().get(0).getPutCode());
+        
+        g3 = invitedPositionGroups.get(2);
+        assertEquals(1, g3.getActivities().size());
+        assertEquals(Long.valueOf(33), g3.getActivities().get(0).getPutCode());
+        
+        // Check memberships
+        assertTrue(map.containsKey(AffiliationType.MEMBERSHIP));
+        List<AffiliationGroup<AffiliationSummary>> membershipGroups = map.get(AffiliationType.MEMBERSHIP);
+        assertNotNull(membershipGroups);
+        assertEquals(3, membershipGroups.size());
+        g1 = membershipGroups.get(0);
+        assertEquals(3, g1.getActivities().size());
+        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
+        assertEquals(Long.valueOf(41), g1.getActivities().get(0).getPutCode());        
+        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
+        assertEquals(Long.valueOf(37), g1.getActivities().get(1).getPutCode());
+        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
+        assertEquals(Long.valueOf(39), g1.getActivities().get(2).getPutCode());
+        
+        g2 = membershipGroups.get(1);
+        assertEquals(1, g2.getActivities().size());
+        assertEquals(Long.valueOf(40), g2.getActivities().get(0).getPutCode());
+        
+        g3 = membershipGroups.get(2);
+        assertEquals(1, g3.getActivities().size());
+        assertEquals(Long.valueOf(38), g3.getActivities().get(0).getPutCode());
+        
+        // Check qualifications
+        assertTrue(map.containsKey(AffiliationType.QUALIFICATION));
+        List<AffiliationGroup<AffiliationSummary>> qualificationGroups = map.get(AffiliationType.QUALIFICATION);
+        assertNotNull(qualificationGroups);
+        assertEquals(3, qualificationGroups.size());
+        g1 = qualificationGroups.get(0);
+        assertEquals(3, g1.getActivities().size());
+        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
+        assertEquals(Long.valueOf(46), g1.getActivities().get(0).getPutCode());        
+        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
+        assertEquals(Long.valueOf(42), g1.getActivities().get(1).getPutCode());
+        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
+        assertEquals(Long.valueOf(44), g1.getActivities().get(2).getPutCode());
+        
+        g2 = qualificationGroups.get(1);
+        assertEquals(1, g2.getActivities().size());
+        assertEquals(Long.valueOf(45), g2.getActivities().get(0).getPutCode());
+        
+        g3 = qualificationGroups.get(2);
+        assertEquals(1, g3.getActivities().size());
+        assertEquals(Long.valueOf(43), g3.getActivities().get(0).getPutCode());
+        
+        // Check services
+        assertTrue(map.containsKey(AffiliationType.SERVICE));
+        List<AffiliationGroup<AffiliationSummary>> serviceGroups = map.get(AffiliationType.SERVICE);
+        assertNotNull(serviceGroups);
+        assertEquals(3, serviceGroups.size());
+        g1 = serviceGroups.get(0);
+        assertEquals(3, g1.getActivities().size());
+        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
+        assertEquals(Long.valueOf(51), g1.getActivities().get(0).getPutCode());        
+        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
+        assertEquals(Long.valueOf(47), g1.getActivities().get(1).getPutCode());
+        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
+        assertEquals(Long.valueOf(49), g1.getActivities().get(2).getPutCode());
+        
+        g2 = serviceGroups.get(1);
+        assertEquals(1, g2.getActivities().size());
+        assertEquals(Long.valueOf(48), g2.getActivities().get(0).getPutCode());
+        
+        g3 = serviceGroups.get(2);
+        assertEquals(1, g3.getActivities().size());
+        assertEquals(Long.valueOf(50), g3.getActivities().get(0).getPutCode());
     }
     
     private ExternalID getExternalID(String type, String value) {

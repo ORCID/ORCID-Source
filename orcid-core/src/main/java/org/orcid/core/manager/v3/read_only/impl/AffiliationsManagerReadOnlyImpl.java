@@ -384,7 +384,6 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         }
         
         Map<AffiliationType, List<AffiliationGroup<T>>> map = new HashMap<AffiliationType, List<AffiliationGroup<T>>>();
-        
         map.put(AffiliationType.DISTINCTION, group(distinctionsGroupGenerator));
         map.put(AffiliationType.EDUCATION, group(educationsGroupGenerator));
         map.put(AffiliationType.EMPLOYMENT, group(employmentsGroupGenerator));
