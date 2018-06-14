@@ -86,4 +86,12 @@ export class GenericService {
         )
         
     }
+
+    open(id: string) {
+        $('#' + id).show();
+    }
+ 
+    close(id: string) {
+        $('#' + id).hide();
+    }
 }

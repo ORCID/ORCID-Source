@@ -28,12 +28,6 @@ import { AffiliationFormModule }
 import { AlertBannerModule } 
     from './alertBanner/alertBanner.ts';
 
-import { AlsoKnownAsModule } 
-    from './alsoKnownAs/alsoKnownAs.ts';
-
-import { AlsoKnownAsFormModule } 
-    from './alsoKnownAsForm/alsoKnownAsForm.ts';
-
 import { BiographyModule } 
     from './biography/biography.ts';
 
@@ -42,12 +36,6 @@ import { ClaimThanksModule }
 
 import { ClientEditModule } 
     from './clientEdit/clientEdit.ts';
-
-import { CountryModule } 
-    from './country/country.ts';
-
-import { CountryFormModule } 
-    from './countryForm/countryForm.ts';
 
 import { DeactivateAccountModule }
     from './deactivateAccount/deactivateAccount.ts';
@@ -82,12 +70,6 @@ import { FundingFormModule }
 import { HomeModule } 
     from './home/home.ts';
 
-import { KeywordsFormModule } 
-    from './keywordsForm/keywordsForm.ts';
-
-import { KeywordsModule } 
-    from './keywords/keywords.ts';
-
 import { HeaderModule } 
     from './header/header.ts';
 
@@ -114,6 +96,9 @@ import { OrgIdentifierPopoverModule }
 
 import { PasswordEditModule } 
     from './passwordEdit/passwordEdit.ts';
+
+import { PersonModule } 
+    from './person/person.ts';
 
 import { PersonalInfoModule } 
     from './personalInfo/personalInfo.ts';
@@ -178,12 +163,6 @@ import { TwoFAStateModule }
 import { VerifyEmailModule }
     from './verifyEmail/verifyEmail.ts';
 
-import { WebsitesModule } 
-    from './websites/websites.ts';
-
-import { WebsitesFormModule } 
-    from './websitesForm/websitesForm.ts';
-
 import { WidgetModule } 
     from './widget/widget.ts';
 
@@ -211,14 +190,10 @@ export const orcidApp = angular.module(
         AffiliationModule.name,
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
-        AlsoKnownAsModule.name,
         AlertBannerModule.name,
-        AlsoKnownAsFormModule.name,
         BiographyModule.name,
         ClaimThanksModule.name,
         ClientEditModule.name,
-        CountryModule.name,
-        CountryFormModule.name,
         DeactivateAccountModule.name,
         DeactivateAccountMessageModule.name,
         DeprecateAccountModule.name,
@@ -230,8 +205,6 @@ export const orcidApp = angular.module(
         FundingModule.name,
         FundingFormModule.name,
         HomeModule.name,
-        KeywordsFormModule.name,
-        KeywordsModule.name,
         HeaderModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
@@ -240,6 +213,7 @@ export const orcidApp = angular.module(
         OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
         PasswordEditModule.name,
+        PersonModule.name,
         PersonalInfoModule.name,
         PublicEduAffiliationModule.name,
         NotificationsModule.name,
@@ -262,8 +236,6 @@ export const orcidApp = angular.module(
         TwoFASetupModule.name,
         TwoFAStateModule.name,
         VerifyEmailModule.name,
-        WebsitesFormModule.name,
-        WebsitesModule.name,
         WidgetModule.name,
         WorksFormModule.name,
         WorksModule.name,
