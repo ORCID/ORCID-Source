@@ -277,7 +277,7 @@ export class WorksService {
                 url: url,
                 dataType: 'json',
                 cache: true,
-              }).tapne(function(data) {
+              }).done(function(data) {
                   for (var key in data) {
                       $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
                   }
@@ -301,7 +301,7 @@ export class WorksService {
             dataType: 'json',
             cache: true,
             async: false,
-          }).tapne(function(data) {
+          }).done(function(data) {
               for (var key in data) {
                   $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
               }

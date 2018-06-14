@@ -146,7 +146,7 @@ export class NotificationsService {
             url
         )
         .pipe(
-            map(
+            tap(
                 (data: any) => {
                     if(data.length === 0 || data.length < this.maxResults){
                         this.areMoreFlag = false;
@@ -199,7 +199,7 @@ export class NotificationsService {
             getBaseUri() + '/inbox/notification-alerts.json'
         )
         .pipe(
-            map(
+            tap(
                 (data) => {
                     this.notificationAlerts = data;
                     this.retrieveUnreadCount();                                              
@@ -230,7 +230,7 @@ export class NotificationsService {
             getBaseUri() + '/inbox/unreadCount.json'
         )
         .pipe(
-            map(
+            tap(
                 (data) => {
                     this.unreadCount = data;                                             
                 }
@@ -261,7 +261,7 @@ export class NotificationsService {
             { headers: this.headers }
         )
         .pipe(
-            map(
+            tap(
                 (data) => {
                     var updated = data;
                     for(var i = 0;  i < this.notifications.length; i++){
@@ -307,7 +307,7 @@ export class NotificationsService {
             { headers: this.headers }
         )
         .pipe(
-            map(
+            tap(
                 (data) => {
                     var updated = data;
                     for(var i = 0;  i < this.notifications.length; i++){
@@ -358,7 +358,7 @@ export class NotificationsService {
             getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
         )
         .pipe(
-            map(
+            tap(
                 (data) => {
                     for(var i = 0;  i < this.notifications.length; i++){
                         var existing = this.notifications[i];
