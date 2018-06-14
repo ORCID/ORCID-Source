@@ -16,6 +16,7 @@ import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
@@ -38,6 +39,8 @@ import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -72,6 +75,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
+    
+    @Resource(name = "groupingSuggestionManagerV3")
+    private GroupingSuggestionManager groupingSuggestionManager;
     
     @Resource
     private MessageSource messageSource;
@@ -175,7 +181,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
-        return jpaJaxbWorkAdapter.toWork(workEntity);
+        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
+        generateGroupingSuggestions(orcid, updatedWork);
+        return updatedWork;
     }
 
     
@@ -249,7 +257,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Update the element in the bulk
                         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-                        
+                        generateGroupingSuggestions(orcid, updatedWork);
                         bulk.set(i, updatedWork);
                         
                         //Add the work extIds to the list of existing external identifiers
@@ -344,7 +352,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
-        return jpaJaxbWorkAdapter.toWork(workEntity);
+        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
+        generateGroupingSuggestions(orcid, updatedWork);
+        return updatedWork;
     }
 
     @Override
@@ -441,5 +451,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setWorkType(preferredFullData.getWorkType());
         workEntity.setWorkUrl(preferredFullData.getWorkUrl());
         return workEntity;
+    }
+    
+    private void generateGroupingSuggestions(String orcid, Work updatedWork) {
+        List<WorkSummary> summaries = getWorksSummaryList(orcid);
+        Works groupedWorks = groupWorks(summaries, true);
+        groupingSuggestionManager.generateGroupingSuggestionsForProfile(orcid, updatedWork, groupedWorks);
     }
 }

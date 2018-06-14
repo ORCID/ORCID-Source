@@ -1,13 +1,11 @@
 package org.orcid.core.manager;
 
-import java.util.List;
+import org.orcid.core.manager.read_only.GroupingSuggestionManagerReadOnly;
+import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.Work;
 
-import org.orcid.pojo.WorkGroupingSuggestion;
+public interface GroupingSuggestionManager extends GroupingSuggestionManagerReadOnly {
 
-public interface GroupingSuggestionManager {
-    
-    List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid);
-    
-    void generateGroupingSuggestionsForProfile(String orcid);
+    void generateGroupingSuggestionsForProfile(String orcid, Work work, Works groupedWorks);
 
 }

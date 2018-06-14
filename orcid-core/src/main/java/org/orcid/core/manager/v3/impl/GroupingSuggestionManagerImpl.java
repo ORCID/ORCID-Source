@@ -1,18 +1,18 @@
-package org.orcid.core.manager.impl;
+package org.orcid.core.manager.v3.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkPutCodes;
-import org.orcid.core.manager.GroupingSuggestionManager;
+import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.read_only.impl.GroupingSuggestionManagerReadOnlyImpl;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
-import org.orcid.jaxb.model.record.summary_v2.Works;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
 import org.orcid.persistence.dao.GroupingSuggestionDao;
 import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;
 

@@ -21,14 +21,14 @@ public class GroupingSuggestionEntity extends BaseEntity<Long> implements Serial
     
     private String orcid;
 
-    private String workPutCodesJson;
+    private String workPutCodes;
     
     private Date dismissedDate;
     
     @Override
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_history_event_seq")
-    @SequenceGenerator(name = "profile_history_event_seq", sequenceName = "profile_history_event_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "grouping_suggestion_seq")
+    @SequenceGenerator(name = "grouping_suggestion_seq", sequenceName = "grouping_suggestion_seq")
     public Long getId() {
         return id;
     }
@@ -47,12 +47,12 @@ public class GroupingSuggestionEntity extends BaseEntity<Long> implements Serial
     }
     
     @Column(name = "work_put_codes_json")
-    public String getWorkPutCodesJson() {
-        return workPutCodesJson;
+    public String getWorkPutCodes() {
+        return workPutCodes;
     }
 
-    public void setWorkPutCodesJson(String workPutCodesJson) {
-        this.workPutCodesJson = workPutCodesJson;
+    public void setWorkPutCodes(String workPutCodes) {
+        this.workPutCodes = workPutCodes;
     }
 
     @Column(name = "dismissed_date")

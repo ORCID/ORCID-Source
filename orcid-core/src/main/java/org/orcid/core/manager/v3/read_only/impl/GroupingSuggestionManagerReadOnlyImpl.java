@@ -1,10 +1,10 @@
-package org.orcid.core.manager.read_only.impl;
+package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkPutCodes;
-import org.orcid.core.manager.read_only.GroupingSuggestionManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.GroupingSuggestionDao;
 import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;

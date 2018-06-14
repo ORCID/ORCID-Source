@@ -19,7 +19,7 @@
         <createSequence sequenceName="grouping_suggestion_seq"/>
     </changeSet>
     
-    <changeSet id="ADD-PROFILE-HISTORY-EVENT-INDEX" author="George Nash">
+    <changeSet id="ADD-GROUPING-SUGGESTION-INDEX" author="George Nash">
         <preConditions onFail="MARK_RAN">
             <not>
                 <indexExists indexName="grouping_suggestion_orcid_idx" tableName="grouping_suggestion" />
@@ -27,4 +27,7 @@
         </preConditions>
         <sql>CREATE INDEX grouping_suggestion_orcid_idx on grouping_suggestion (orcid);</sql>
     </changeSet>    
+    <changeSet id="CHANGE-GROUPING-SUGGESTION-WORK-PUT-CODES-JSON-TYPE-TO-JSON" author="George Nash" dbms="postgresql">        
+        <sql>ALTER TABLE grouping_suggestion ALTER COLUMN work_put_codes_json TYPE json USING work_put_codes_json::JSON</sql>
+    </changeSet>
 </databaseChangeLog>                   
