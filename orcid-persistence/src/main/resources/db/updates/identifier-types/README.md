@@ -8,6 +8,7 @@ There are steps:
 - Add the description (optional)
 - Add it to a resolver for link checking (optional)
 - Add a normalizer (optional)
+- Add a link generator to the UI (optional)
 
 Add the database row using a liquibase script in this directory. 
 (also add the primary_use column - either work or funding (for now) 
@@ -26,6 +27,11 @@ Update the org.orcid.core.manager.IdentifierTypeManagerTest test. Add the new id
 To enable link checking, add it to org.orcid.core.utils.v3.identifiers.resolvers.Http200Resolver (only if it reliably returns a 200 if found)
 
 Add a Normalizer in the org.orcid.core.utils.v3.identifiers package if required
+
+Add it to script.js (this will generate URLs in the UI when viewing if no URL has been entered for the id) (this should be changed to use server side logic!)
+   typeMap['dnb'] = function (id) {
+       return 'https://d-nb.info/' + encodeURIComponent(id);
+   };
 
 Solr indexing will happen automatically.
 
