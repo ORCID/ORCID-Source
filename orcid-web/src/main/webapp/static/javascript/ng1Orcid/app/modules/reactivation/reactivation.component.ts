@@ -35,8 +35,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     privacyHelp: any;
     registrationForm: any;
-    gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
-
+    
     constructor(
         private oauthService: OauthService,
         private commonSrvc: CommonService,
@@ -57,9 +56,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.registrationForm = data;
                 this.registrationForm.resetParams = resetParams;
-                if (orcidVar.features['GDPR_UI'] === true){
-                    this.registrationForm.activitiesVisibilityDefault.visibility = null;
-                }
+                this.registrationForm.activitiesVisibilityDefault.visibility = null;
                 this.cdr.detectChanges();              
             },
             error => {

@@ -224,7 +224,7 @@ public class ActivityUtils {
             ActivityUtils.setPathToFundings(activitiesSummary.getFundings(), orcid);
             ActivityUtils.setPathToWorks(activitiesSummary.getWorks(), orcid);
             ActivityUtils.setPathToPeerReviews(activitiesSummary.getPeerReviews(), orcid);
-
+            ActivityUtils.setPathToResearchResources(activitiesSummary.getResearchResources(), orcid);
         }
     }
     

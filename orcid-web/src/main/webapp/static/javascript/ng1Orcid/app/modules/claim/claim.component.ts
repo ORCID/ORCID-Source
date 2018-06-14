@@ -27,8 +27,7 @@ import { FeaturesService }
     template:  scriptTmpl("claim-ng2-template")
 })
 export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
-    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
+    private ngUnsubscribe: Subject<void> = new Subject<void>();    
 
     postingClaim: boolean;
     register: any;

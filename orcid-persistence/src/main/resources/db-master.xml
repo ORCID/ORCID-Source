@@ -256,4 +256,6 @@
 	<include file="/db/updates/add-display-index-to-org-affiliation-relation.xml" />
 	<include file="/db/updates/add_index_oauth2_token_detail_code.xml" />
 	<include file="/db/updates/create_research_resource_tables.xml" />
+	<include file="/db/updates/identifier-types/identifier-type-42-43-pan-dnb.xml" />
+	
 </databaseChangeLog>

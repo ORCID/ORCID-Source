@@ -27,9 +27,7 @@ export const ClaimCtrl = angular.module('orcidApp').controller(
                     dataType: 'json',
                     success: function(data) {
                         $scope.register = data;
-                        if (orcidVar.features['GDPR_UI'] == true){
-                            $scope.register.activitiesVisibilityDefault.visibility = null;
-                        }
+                        $scope.register.activitiesVisibilityDefault.visibility = null;
                         $scope.$apply();
                     }
                 }).fail(function(){

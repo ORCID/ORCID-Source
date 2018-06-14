@@ -31,7 +31,6 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
     errorUpdatingVisibility: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     prefs: any;
-    gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
     
     constructor(
         private cdr:ChangeDetectorRef,

@@ -126,14 +126,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean unreviewProfile(String orcid);
     
     List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize);
-    
-    boolean updateNotificationsPreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
-            boolean sendMemberUpdateRequests);
-    
+        
     boolean updateDefaultVisibility(String orcid, String visibility);
     
-    boolean updateSendEmailFrequencyDays(String orcid, Float sendEmailFrequencyDays);
-
     List<String> getProfilesWithNoHashedOrcid(int limit);
     
     void hashOrcidIds(String orcid, String hashedOrcid);

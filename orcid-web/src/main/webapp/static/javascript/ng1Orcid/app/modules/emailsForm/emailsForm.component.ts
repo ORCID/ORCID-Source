@@ -66,9 +66,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showDeleteBox: any;
     position: any;
     inputEmail: any;
-    prefs: any;
-    
-    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');    
+    prefs: any;        
     sendChangeNotifications: string;
     sendAdministrativeChangeNotifications: string;
     sendMemberUpdateRequestsNotifications: string;
@@ -492,11 +490,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getPrivacyPreferences();
-        this.getformData();  
-        
-        if(this.gdprEmailNotifications) {
-            this.getEmailFrequencies();
-        }
+        this.getformData();          
+        this.getEmailFrequencies();        
     };
 
 }

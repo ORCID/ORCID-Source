@@ -162,8 +162,6 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertEquals(1, retrievedProfileEntity.getSecurityQuestion().getId().intValue());
         assertEquals("dMDyJ1Z7Qn6xWClFzA63fQ==", retrievedProfileEntity.getEncryptedSecurityAnswer());
         assertEquals("ghi789", retrievedProfileEntity.getEncryptedVerificationCode());
-        assertTrue(retrievedProfileEntity.getSendChangeNotifications());
-        assertFalse(retrievedProfileEntity.getSendOrcidNews());
     }
 
     @Test

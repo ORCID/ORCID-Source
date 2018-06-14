@@ -43,7 +43,6 @@ import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
-import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -62,7 +61,6 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
@@ -304,48 +302,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> getDefaultPreference(HttpServletRequest request) {
         Map<String, Object> preferences = new HashMap<String, Object>();
+        
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        preferences.put("email_frequency", String.valueOf(entity.getSendEmailFrequencyDays()));
         preferences.put("default_visibility", entity.getActivitiesVisibilityDefault());
         preferences.put("developer_tools_enabled", entity.getEnableDeveloperTools());
-        preferences.put("notifications_enabled", entity.getEnableNotifications() == null ? false : entity.getEnableNotifications());
-        preferences.put("send_administrative_change_notifications", entity.getSendAdministrativeChangeNotifications() == null ? false : entity.getSendAdministrativeChangeNotifications());
-        preferences.put("send_change_notifications", entity.getSendChangeNotifications() == null ? false : entity.getSendChangeNotifications());
-        preferences.put("send_member_update_requests", entity.getSendMemberUpdateRequests() == null ? false : entity.getSendMemberUpdateRequests());
-        preferences.put("send_orcid_news", entity.getSendOrcidNews() == null ? false : entity.getSendOrcidNews());        
-        return preferences;
-    }
-    
-    @RequestMapping(value = "/email_preferences.json", method = RequestMethod.POST)
-    public @ResponseBody String setEmailFrequency(@RequestBody String emailFrequencyDays) throws IllegalArgumentException {
-        SendEmailFrequency newFrequency = null;
-        for(SendEmailFrequency f : SendEmailFrequency.values()) {
-            if(f.value().equals(emailFrequencyDays)) {
-                newFrequency = f;
-                break;
-            }
-        }
-        
-        if(newFrequency == null) {
-            throw new IllegalArgumentException("Invalid value: " + emailFrequencyDays);
-        }                
-        
-        preferenceManager.updateEmailFrequencyDays(getCurrentUserOrcid(), newFrequency);
-        return newFrequency.value();
-    }
-             
-    @RequestMapping(value = "/notification_preferences.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> setEmailFrequency(@RequestBody Map<String, Object> preferences) throws IllegalArgumentException {
-        Boolean sendAdministrativeChangeNotifications = (Boolean) preferences.get("send_administrative_change_notifications");
-        Boolean sendChangeNotifications = (Boolean) preferences.get("send_change_notifications");
-        Boolean sendMemberUpdateRequests = (Boolean) preferences.get("send_member_update_requests");
-        Boolean sendOrcidNews = (Boolean) preferences.get("send_orcid_news");
-        
-        if(NullUtils.anyNull(sendAdministrativeChangeNotifications, sendChangeNotifications, sendMemberUpdateRequests, sendOrcidNews)) {
-            throw new IllegalArgumentException("Please provide all notification preferences: " + preferences.toString());
-        }                
-        
-        preferenceManager.updateNotifications(getCurrentUserOrcid(), sendChangeNotifications, sendAdministrativeChangeNotifications, sendOrcidNews, sendMemberUpdateRequests);
         return preferences;
     }
     

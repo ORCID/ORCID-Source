@@ -25,7 +25,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
@@ -141,11 +140,7 @@ public class RegistrationController extends BaseController {
         reg.getFamilyNames().setRequired(false);
         reg.getGivenNames().setRequired(true);
         reg.getSendChangeNotifications().setValue(true);
-        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
-            reg.getSendOrcidNews().setValue(false);           
-        } else {
-            reg.getSendOrcidNews().setValue(true);            
-        }
+        reg.getSendOrcidNews().setValue(false);                   
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
         reg.getTermsOfUse().setValue(false);   

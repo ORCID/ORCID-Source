@@ -88,11 +88,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     socialSignInForm: any;
     loadTime: any;
     generalRegistrationError: any;
-    //registration form togglz features
-    regMultiEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('REG_MULTI_EMAIL');
-    gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
-    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');
-    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
+    //registration form togglz features    
+    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
     
     constructor(
         private zone:NgZone,
@@ -350,10 +347,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.registrationForm.linkType=linkFlag; 
                 }
 
-                if (this.gdprUiFeatureEnabled == true){
-                    this.registrationForm.activitiesVisibilityDefault.visibility = null;
-                }
-
+                this.registrationForm.activitiesVisibilityDefault.visibility = null;
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
                 
                 this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
