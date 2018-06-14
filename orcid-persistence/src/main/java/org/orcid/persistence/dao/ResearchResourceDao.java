@@ -12,4 +12,6 @@ public interface ResearchResourceDao extends GenericDao<ResearchResourceEntity, 
     
     public ResearchResourceEntity getResearchResource(String userOrcid, Long researchResourceId);
 
+    void removeResearchResources(String orcid);
+
 }
