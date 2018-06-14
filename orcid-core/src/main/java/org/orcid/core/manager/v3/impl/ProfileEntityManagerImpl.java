@@ -32,6 +32,7 @@ import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
@@ -94,6 +95,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
+
+    @Resource(name = "researchResourceManagerV3")
+    private ResearchResourceManager researchResourceManager;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -616,6 +620,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         // Remove peer reviews
         peerReviewManager.removeAllPeerReviews(orcid);
+        
+        // Research resource 
+        researchResourceManager.removeAllResearchResources(orcid);
 
         // Remove addresses
         addressManager.removeAllAddress(orcid);
