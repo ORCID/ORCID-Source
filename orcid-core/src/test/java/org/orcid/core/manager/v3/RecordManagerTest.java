@@ -92,13 +92,34 @@ public class RecordManagerTest extends DBUnitTest {
         
         ActivitiesSummary activities = record.getActivitiesSummary();
         assertNotNull(activities);
+        
+        assertNotNull(activities.getDistinctions());
+        assertNotNull(activities.getDistinctions().retrieveGroups());
+        assertEquals(3, activities.getDistinctions().retrieveGroups().size());
+        
         assertNotNull(activities.getEducations());
         assertNotNull(activities.getEducations().retrieveGroups());
-        assertEquals(5, activities.getEducations().retrieveGroups().size());        
+        assertEquals(3, activities.getEducations().retrieveGroups().size());        
         
         assertNotNull(activities.getEmployments());
         assertNotNull(activities.getEmployments().retrieveGroups());
-        assertEquals(5, activities.getEmployments().retrieveGroups().size());
+        assertEquals(3, activities.getEmployments().retrieveGroups().size());
+        
+        assertNotNull(activities.getInvitedPositions());
+        assertNotNull(activities.getInvitedPositions().retrieveGroups());
+        assertEquals(3, activities.getInvitedPositions().retrieveGroups().size());
+        
+        assertNotNull(activities.getMemberships());
+        assertNotNull(activities.getMemberships().retrieveGroups());
+        assertEquals(3, activities.getMemberships().retrieveGroups().size());
+        
+        assertNotNull(activities.getQualifications());
+        assertNotNull(activities.getQualifications().retrieveGroups());
+        assertEquals(3, activities.getQualifications().retrieveGroups().size());
+        
+        assertNotNull(activities.getServices());
+        assertNotNull(activities.getServices().retrieveGroups());
+        assertEquals(3, activities.getServices().retrieveGroups().size());
         
         assertNotNull(activities.getFundings());
         assertNotNull(activities.getFundings().getFundingGroup());
@@ -167,6 +188,12 @@ public class RecordManagerTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
         
         ActivitiesSummary activities = record.getActivitiesSummary();
+        
+        assertNotNull(activities.getDistinctions());
+        assertNotNull(activities.getDistinctions().retrieveGroups());
+        assertEquals(1, activities.getDistinctions().retrieveGroups().size());
+        assertEquals(Long.valueOf(27), activities.getDistinctions().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
+        
         assertNotNull(activities.getEducations());
         assertNotNull(activities.getEducations().retrieveGroups());
         assertEquals(1, activities.getEducations().retrieveGroups().size());
@@ -176,6 +203,26 @@ public class RecordManagerTest extends DBUnitTest {
         assertNotNull(activities.getEmployments().retrieveGroups());
         assertEquals(1, activities.getEmployments().retrieveGroups().size());
         assertEquals(Long.valueOf(17), activities.getEmployments().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
+        
+        assertNotNull(activities.getInvitedPositions());
+        assertNotNull(activities.getInvitedPositions().retrieveGroups());
+        assertEquals(1, activities.getInvitedPositions().retrieveGroups().size());
+        assertEquals(Long.valueOf(32), activities.getInvitedPositions().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());        
+        
+        assertNotNull(activities.getMemberships());
+        assertNotNull(activities.getMemberships().retrieveGroups());
+        assertEquals(1, activities.getMemberships().retrieveGroups().size());
+        assertEquals(Long.valueOf(37), activities.getMemberships().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
+        
+        assertNotNull(activities.getQualifications());
+        assertNotNull(activities.getQualifications().retrieveGroups());
+        assertEquals(1, activities.getQualifications().retrieveGroups().size());
+        assertEquals(Long.valueOf(42), activities.getQualifications().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
+        
+        assertNotNull(activities.getServices());
+        assertNotNull(activities.getServices().retrieveGroups());
+        assertEquals(1, activities.getServices().retrieveGroups().size());
+        assertEquals(Long.valueOf(47), activities.getServices().retrieveGroups().iterator().next().getActivities().get(0).getPutCode());
         
         assertNotNull(activities.getFundings());
         assertNotNull(activities.getFundings().getFundingGroup());
