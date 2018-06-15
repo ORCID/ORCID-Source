@@ -74,6 +74,14 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+
+				<xs:element name="research-resources" type="activities:research-resources" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Container for the list of research resources associated
+							with the researcher or contributor
+						</xs:documentation>
+					</xs:annotation>										
+				</xs:element>
 								
 				<xs:element name="distinctions" type="activities:distinctions" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
@@ -134,14 +142,6 @@
 				<xs:element name="qualifications" type="activities:qualifications" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the list of qualifications associated
-							with the researcher or contributor
-						</xs:documentation>
-					</xs:annotation>										
-				</xs:element>
-				
-				<xs:element name="research-resources" type="activities:research-resources" minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>Container for the list of research resources associated
 							with the researcher or contributor
 						</xs:documentation>
 					</xs:annotation>										

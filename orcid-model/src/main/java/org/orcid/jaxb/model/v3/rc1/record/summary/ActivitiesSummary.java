@@ -37,8 +37,8 @@ import org.orcid.jaxb.model.v3.rc1.record.Activity;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews",
-        "qualifications", "researchResources", "services", "works" })
+@XmlType(propOrder = { "lastModifiedDate", "researchResources", "distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews",
+        "qualifications", "services", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 

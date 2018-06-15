@@ -14,6 +14,8 @@ import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.Education;
+import org.orcid.jaxb.model.v3.rc1.record.Employment;
 import org.orcid.jaxb.model.v3.rc1.record.Funding;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
