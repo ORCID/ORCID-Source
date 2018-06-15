@@ -124,7 +124,10 @@ public class AffiliationGroupForm implements Serializable {
                 } 
             }
             
-            Long displayIndex = Long.parseLong(summary.getDisplayIndex());
+            Long displayIndex = 0L;
+            if(summary.getDisplayIndex() != null) {
+                displayIndex = Long.parseLong(summary.getDisplayIndex());
+            } 
             if(maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
                 affiliationGroup.setActivePutCode(summary.getPutCode());
                 affiliationGroup.setActiveVisibility(summary.getVisibility().name());
