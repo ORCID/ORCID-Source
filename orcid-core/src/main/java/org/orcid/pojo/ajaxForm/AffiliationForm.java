@@ -9,6 +9,8 @@ import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
 import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
@@ -30,6 +32,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
+import org.orcid.utils.OrcidStringUtils;
 
 public class AffiliationForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -335,6 +338,18 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             affiliation.setExternalIDs(externalIDs);
         }
 
+        if(!PojoUtil.isEmpty(source)) {
+            org.orcid.jaxb.model.v3.rc1.common.Source source = new org.orcid.jaxb.model.v3.rc1.common.Source();
+            
+            if(OrcidStringUtils.isClientId(this.getSource())) {
+                source.setSourceClientId(new SourceClientId(this.getSource()));
+            } else {
+                source.setSourceOrcid(new SourceOrcid(this.getSource()));
+            }
+                       
+            affiliation.setSource(source);
+        }
+        
         return affiliation;
     }
 
@@ -570,4 +585,196 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         this.affiliationExternalIdentifiers = affiliationExternalIdentifiers;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((affiliationExternalIdentifiers == null) ? 0 : affiliationExternalIdentifiers.hashCode());
+        result = prime * result + ((affiliationName == null) ? 0 : affiliationName.hashCode());
+        result = prime * result + ((affiliationType == null) ? 0 : affiliationType.hashCode());
+        result = prime * result + ((affiliationTypeForDisplay == null) ? 0 : affiliationTypeForDisplay.hashCode());
+        result = prime * result + ((city == null) ? 0 : city.hashCode());
+        result = prime * result + ((country == null) ? 0 : country.hashCode());
+        result = prime * result + ((countryForDisplay == null) ? 0 : countryForDisplay.hashCode());
+        result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
+        result = prime * result + ((dateSortString == null) ? 0 : dateSortString.hashCode());
+        result = prime * result + ((departmentName == null) ? 0 : departmentName.hashCode());
+        result = prime * result + ((disambiguatedAffiliationSourceId == null) ? 0 : disambiguatedAffiliationSourceId.hashCode());
+        result = prime * result + ((disambiguationSource == null) ? 0 : disambiguationSource.hashCode());
+        result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
+        result = prime * result + ((errors == null) ? 0 : errors.hashCode());
+        result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
+        result = prime * result + ((orgDisambiguatedCity == null) ? 0 : orgDisambiguatedCity.hashCode());
+        result = prime * result + ((orgDisambiguatedCountry == null) ? 0 : orgDisambiguatedCountry.hashCode());
+        result = prime * result + ((orgDisambiguatedExternalIdentifiers == null) ? 0 : orgDisambiguatedExternalIdentifiers.hashCode());
+        result = prime * result + ((orgDisambiguatedId == null) ? 0 : orgDisambiguatedId.hashCode());
+        result = prime * result + ((orgDisambiguatedName == null) ? 0 : orgDisambiguatedName.hashCode());
+        result = prime * result + ((orgDisambiguatedRegion == null) ? 0 : orgDisambiguatedRegion.hashCode());
+        result = prime * result + ((orgDisambiguatedUrl == null) ? 0 : orgDisambiguatedUrl.hashCode());
+        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
+        result = prime * result + ((region == null) ? 0 : region.hashCode());
+        result = prime * result + ((roleTitle == null) ? 0 : roleTitle.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((sourceName == null) ? 0 : sourceName.hashCode());
+        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AffiliationForm other = (AffiliationForm) obj;
+        if (affiliationExternalIdentifiers == null) {
+            if (other.affiliationExternalIdentifiers != null)
+                return false;
+        } else if (!affiliationExternalIdentifiers.equals(other.affiliationExternalIdentifiers))
+            return false;
+        if (affiliationName == null) {
+            if (other.affiliationName != null)
+                return false;
+        } else if (!affiliationName.equals(other.affiliationName))
+            return false;
+        if (affiliationType == null) {
+            if (other.affiliationType != null)
+                return false;
+        } else if (!affiliationType.equals(other.affiliationType))
+            return false;
+        if (affiliationTypeForDisplay == null) {
+            if (other.affiliationTypeForDisplay != null)
+                return false;
+        } else if (!affiliationTypeForDisplay.equals(other.affiliationTypeForDisplay))
+            return false;
+        if (city == null) {
+            if (other.city != null)
+                return false;
+        } else if (!city.equals(other.city))
+            return false;
+        if (country == null) {
+            if (other.country != null)
+                return false;
+        } else if (!country.equals(other.country))
+            return false;
+        if (countryForDisplay == null) {
+            if (other.countryForDisplay != null)
+                return false;
+        } else if (!countryForDisplay.equals(other.countryForDisplay))
+            return false;
+        if (createdDate == null) {
+            if (other.createdDate != null)
+                return false;
+        } else if (!createdDate.equals(other.createdDate))
+            return false;
+        if (dateSortString == null) {
+            if (other.dateSortString != null)
+                return false;
+        } else if (!dateSortString.equals(other.dateSortString))
+            return false;
+        if (departmentName == null) {
+            if (other.departmentName != null)
+                return false;
+        } else if (!departmentName.equals(other.departmentName))
+            return false;
+        if (disambiguatedAffiliationSourceId == null) {
+            if (other.disambiguatedAffiliationSourceId != null)
+                return false;
+        } else if (!disambiguatedAffiliationSourceId.equals(other.disambiguatedAffiliationSourceId))
+            return false;
+        if (disambiguationSource == null) {
+            if (other.disambiguationSource != null)
+                return false;
+        } else if (!disambiguationSource.equals(other.disambiguationSource))
+            return false;
+        if (endDate == null) {
+            if (other.endDate != null)
+                return false;
+        } else if (!endDate.equals(other.endDate))
+            return false;
+        if (errors == null) {
+            if (other.errors != null)
+                return false;
+        } else if (!errors.equals(other.errors))
+            return false;
+        if (lastModified == null) {
+            if (other.lastModified != null)
+                return false;
+        } else if (!lastModified.equals(other.lastModified))
+            return false;
+        if (orgDisambiguatedCity == null) {
+            if (other.orgDisambiguatedCity != null)
+                return false;
+        } else if (!orgDisambiguatedCity.equals(other.orgDisambiguatedCity))
+            return false;
+        if (orgDisambiguatedCountry == null) {
+            if (other.orgDisambiguatedCountry != null)
+                return false;
+        } else if (!orgDisambiguatedCountry.equals(other.orgDisambiguatedCountry))
+            return false;
+        if (orgDisambiguatedExternalIdentifiers == null) {
+            if (other.orgDisambiguatedExternalIdentifiers != null)
+                return false;
+        } else if (!orgDisambiguatedExternalIdentifiers.equals(other.orgDisambiguatedExternalIdentifiers))
+            return false;
+        if (orgDisambiguatedId == null) {
+            if (other.orgDisambiguatedId != null)
+                return false;
+        } else if (!orgDisambiguatedId.equals(other.orgDisambiguatedId))
+            return false;
+        if (orgDisambiguatedName == null) {
+            if (other.orgDisambiguatedName != null)
+                return false;
+        } else if (!orgDisambiguatedName.equals(other.orgDisambiguatedName))
+            return false;
+        if (orgDisambiguatedRegion == null) {
+            if (other.orgDisambiguatedRegion != null)
+                return false;
+        } else if (!orgDisambiguatedRegion.equals(other.orgDisambiguatedRegion))
+            return false;
+        if (orgDisambiguatedUrl == null) {
+            if (other.orgDisambiguatedUrl != null)
+                return false;
+        } else if (!orgDisambiguatedUrl.equals(other.orgDisambiguatedUrl))
+            return false;
+        if (putCode == null) {
+            if (other.putCode != null)
+                return false;
+        } else if (!putCode.equals(other.putCode))
+            return false;
+        if (region == null) {
+            if (other.region != null)
+                return false;
+        } else if (!region.equals(other.region))
+            return false;
+        if (roleTitle == null) {
+            if (other.roleTitle != null)
+                return false;
+        } else if (!roleTitle.equals(other.roleTitle))
+            return false;
+        if (source == null) {
+            if (other.source != null)
+                return false;
+        } else if (!source.equals(other.source))
+            return false;
+        if (sourceName == null) {
+            if (other.sourceName != null)
+                return false;
+        } else if (!sourceName.equals(other.sourceName))
+            return false;
+        if (startDate == null) {
+            if (other.startDate != null)
+                return false;
+        } else if (!startDate.equals(other.startDate))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        return true;
+    }        
 }
