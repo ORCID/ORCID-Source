@@ -202,7 +202,7 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.closeEditModal(modalId);
                     }
                 }else{
-                    console.log('error updating person data: ', error);
+                    console.log('error updating person data');
                 }
 
             },
