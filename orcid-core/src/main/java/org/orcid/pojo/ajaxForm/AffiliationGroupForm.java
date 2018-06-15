@@ -140,7 +140,7 @@ public class AffiliationGroupForm implements Serializable {
                 for (ExternalID extId : summary.getExternalIdentifiers().getExternalIdentifier()) {                    
                     workExternalIdentifiersList.add(ActivityExternalIdentifier.valueOf(extId));
                 }
-                affiliationGroup.setExternalIdentifiers(workExternalIdentifiersList);
+                affiliationGroup.getExternalIdentifiers().addAll(workExternalIdentifiersList);
             }
             
             affiliationGroup.getAffiliations().add(AffiliationForm.valueOf(summary));            
@@ -148,4 +148,65 @@ public class AffiliationGroupForm implements Serializable {
         
         return affiliationGroup;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((activePutCode == null) ? 0 : activePutCode.hashCode());
+        result = prime * result + ((activeVisibility == null) ? 0 : activeVisibility.hashCode());
+        result = prime * result + ((affiliationType == null) ? 0 : affiliationType.hashCode());
+        result = prime * result + ((affiliations == null) ? 0 : affiliations.hashCode());
+        result = prime * result + ((defaultAffiliation == null) ? 0 : defaultAffiliation.hashCode());
+        result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
+        result = prime * result + groupId;
+        result = prime * result + ((userVersionPresent == null) ? 0 : userVersionPresent.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AffiliationGroupForm other = (AffiliationGroupForm) obj;
+        if (activePutCode == null) {
+            if (other.activePutCode != null)
+                return false;
+        } else if (!activePutCode.equals(other.activePutCode))
+            return false;
+        if (activeVisibility == null) {
+            if (other.activeVisibility != null)
+                return false;
+        } else if (!activeVisibility.equals(other.activeVisibility))
+            return false;
+        if (affiliationType != other.affiliationType)
+            return false;
+        if (affiliations == null) {
+            if (other.affiliations != null)
+                return false;
+        } else if (!affiliations.equals(other.affiliations))
+            return false;
+        if (defaultAffiliation == null) {
+            if (other.defaultAffiliation != null)
+                return false;
+        } else if (!defaultAffiliation.equals(other.defaultAffiliation))
+            return false;
+        if (externalIdentifiers == null) {
+            if (other.externalIdentifiers != null)
+                return false;
+        } else if (!externalIdentifiers.equals(other.externalIdentifiers))
+            return false;
+        if (groupId != other.groupId)
+            return false;
+        if (userVersionPresent == null) {
+            if (other.userVersionPresent != null)
+                return false;
+        } else if (!userVersionPresent.equals(other.userVersionPresent))
+            return false;
+        return true;
+    }        
 }
