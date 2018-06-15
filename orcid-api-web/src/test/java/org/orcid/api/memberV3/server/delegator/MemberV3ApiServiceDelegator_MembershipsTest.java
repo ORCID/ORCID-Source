@@ -207,33 +207,30 @@ public class MemberV3ApiServiceDelegator_MembershipsTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/memberships", memberships.getPath());
         Utils.verifyLastModified(memberships.getLastModifiedDate());
         assertNotNull(memberships.retrieveGroups());
-        assertEquals(4, memberships.retrieveGroups().size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        assertEquals(3, memberships.retrieveGroups().size());
+        boolean found1 = false, found2 = false, found3 = false;
         
         for (AffiliationGroup<MembershipSummary> group : memberships.retrieveGroups()) {
-            for (MembershipSummary summary : group.getActivities()) {
-                Utils.verifyLastModified(summary.getLastModifiedDate());
-                if (Long.valueOf(37).equals(summary.getPutCode())) {
-                    assertEquals("PUBLIC Department", summary.getDepartmentName());
-                    found1 = true;
-                } else if (Long.valueOf(38).equals(summary.getPutCode())) {
-                    assertEquals("LIMITED Department", summary.getDepartmentName());
-                    found2 = true;
-                } else if (Long.valueOf(39).equals(summary.getPutCode())) {
-                    assertEquals("PRIVATE Department", summary.getDepartmentName());
-                    found3 = true;
-                } else if (Long.valueOf(40).equals(summary.getPutCode())) {
-                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                    found4 = true;
-                } else {
-                    fail("Invalid membership found: " + summary.getPutCode());
-                }
-            }
+            MembershipSummary element0 = group.getActivities().get(0);
+            Utils.verifyLastModified(element0.getLastModifiedDate());
+            if (Long.valueOf(38).equals(element0.getPutCode())) {
+                assertEquals("LIMITED Department", element0.getDepartmentName());
+                found1 = true;
+            } else if (Long.valueOf(39).equals(element0.getPutCode())) {
+                assertEquals("PRIVATE Department", element0.getDepartmentName());
+                found2 = true;
+            } else if (Long.valueOf(40).equals(element0.getPutCode())) {
+                assertEquals("SELF LIMITED Department", element0.getDepartmentName());
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(37), group.getActivities().get(1).getPutCode());
+                found3 = true;
+            } else {
+                fail("Invalid membership found: " + element0.getPutCode());
+            }            
         }
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
-        assertTrue(found4);
     }
 
     @Test
@@ -306,7 +303,7 @@ public class MemberV3ApiServiceDelegator_MembershipsTest extends DBUnitTest {
         assertNotNull(originalSummary.getMemberships());
         Utils.verifyLastModified(originalSummary.getMemberships().getLastModifiedDate());
         assertNotNull(originalSummary.getMemberships().retrieveGroups());
-        assertEquals(4, originalSummary.getMemberships().retrieveGroups().size());
+        assertEquals(3, originalSummary.getMemberships().retrieveGroups().size());
         
         MembershipSummary membershipSummary = originalSummary.getMemberships().retrieveGroups().iterator().next().getActivities().get(0);
         assertNotNull(membershipSummary);
@@ -329,7 +326,7 @@ public class MemberV3ApiServiceDelegator_MembershipsTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getMemberships());
         Utils.verifyLastModified(summaryWithNewElement.getMemberships().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getMemberships().retrieveGroups());
-        assertEquals(5, summaryWithNewElement.getMemberships().retrieveGroups().size());
+        assertEquals(4, summaryWithNewElement.getMemberships().retrieveGroups().size());
         
         boolean haveNew = false;
 
