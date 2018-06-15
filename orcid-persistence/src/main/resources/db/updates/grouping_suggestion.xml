@@ -11,6 +11,7 @@
             <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
             <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
             <column name="dismissed_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="accepted_date" type="TIMESTAMP WITH TIME ZONE"/>
             <column name="orcid" type="VARCHAR(19)">
                 <constraints nullable="false" />
             </column>

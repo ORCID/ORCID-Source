@@ -439,6 +439,7 @@
     
     <bean id="groupingSuggestionManagerV3" class="org.orcid.core.manager.v3.impl.GroupingSuggestionManagerImpl">
        <property name="groupingSuggestionDao" ref="groupingSuggestionDao" />
+       <property name="workDao" ref="workDaoReadOnly" />
     </bean>
 
     <bean id="groupingSuggestionManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.GroupingSuggestionManagerReadOnlyImpl">

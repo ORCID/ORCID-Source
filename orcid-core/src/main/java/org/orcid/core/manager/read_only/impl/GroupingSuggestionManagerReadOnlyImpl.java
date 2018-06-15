@@ -21,6 +21,8 @@ public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestion
         for (GroupingSuggestionEntity suggestionEntity : groupingSuggestionEntities) {
             WorkGroupingSuggestion suggestionPojo = new WorkGroupingSuggestion();
             JSONWorkPutCodes putCodes = JsonUtils.readObjectFromJsonString(suggestionEntity.getWorkPutCodes(), JSONWorkPutCodes.class);
+            suggestionPojo.setId(suggestionEntity.getId());
+            suggestionPojo.setOrcid(orcid);
             suggestionPojo.setPutCodes(putCodes);
             suggestionPojos.add(suggestionPojo);
         }

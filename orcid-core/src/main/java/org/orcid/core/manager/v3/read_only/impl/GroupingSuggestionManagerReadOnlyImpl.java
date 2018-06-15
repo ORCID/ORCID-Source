@@ -12,7 +12,7 @@ import org.orcid.pojo.WorkGroupingSuggestion;
 
 public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestionManagerReadOnly {
 
-    private GroupingSuggestionDao groupingSuggestionDao;
+    protected GroupingSuggestionDao groupingSuggestionDao;
     
     @Override
     public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid) {
@@ -21,6 +21,8 @@ public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestion
         for (GroupingSuggestionEntity suggestionEntity : groupingSuggestionEntities) {
             WorkGroupingSuggestion suggestionPojo = new WorkGroupingSuggestion();
             JSONWorkPutCodes putCodes = JsonUtils.readObjectFromJsonString(suggestionEntity.getWorkPutCodes(), JSONWorkPutCodes.class);
+            suggestionPojo.setId(suggestionEntity.getId());
+            suggestionPojo.setOrcid(orcid);
             suggestionPojo.setPutCodes(putCodes);
             suggestionPojos.add(suggestionPojo);
         }

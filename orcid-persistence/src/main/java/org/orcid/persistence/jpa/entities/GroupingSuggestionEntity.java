@@ -25,6 +25,8 @@ public class GroupingSuggestionEntity extends BaseEntity<Long> implements Serial
     
     private Date dismissedDate;
     
+    private Date acceptedDate;
+    
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "grouping_suggestion_seq")
@@ -62,6 +64,15 @@ public class GroupingSuggestionEntity extends BaseEntity<Long> implements Serial
 
     public void setDismissedDate(Date dismissedDate) {
         this.dismissedDate = dismissedDate;
+    }
+    
+    @Column(name = "accepted_date")
+    public Date getAcceptedDate() {
+        return acceptedDate;
+    }
+
+    public void setAcceptedDate(Date acceptedDate) {
+        this.acceptedDate = acceptedDate;
     }
     
 }

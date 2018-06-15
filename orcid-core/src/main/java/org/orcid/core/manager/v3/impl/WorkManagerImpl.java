@@ -21,6 +21,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
@@ -45,6 +46,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +80,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Resource(name = "groupingSuggestionManagerV3")
     private GroupingSuggestionManager groupingSuggestionManager;
+    
+    @Resource(name = "groupingSuggestionManagerReadOnlyV3")
+    private GroupingSuggestionManagerReadOnly groupingSuggestionManagerReadOnly;
     
     @Resource
     private MessageSource messageSource;
@@ -372,6 +377,27 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
         return result;
     }
+    
+    @Override
+    public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid) {
+        List<WorkGroupingSuggestion> suggestions = groupingSuggestionManagerReadOnly.getGroupingSuggestions(orcid);
+        Map<Long, Object> distinctPutCodes = new HashMap<>();
+        for (WorkGroupingSuggestion workGroupingSuggestion : suggestions) {
+            for (Long putCode : workGroupingSuggestion.getPutCodes().getWorkPutCodes()) {
+                distinctPutCodes.put(putCode, null);
+            }
+        }
+        List<WorkSummary> summaries = getWorksSummaryList(orcid, Arrays.asList(distinctPutCodes.keySet().toArray(new Long[0])));
+        Works groupedWorks = groupWorks(summaries, false);
+        suggestions = groupingSuggestionManager.filterSuggestionsNoLongerApplicable(suggestions, groupedWorks);
+        return suggestions;
+    }
+
+    @Override
+    public void acceptGroupingSuggestion(WorkGroupingSuggestion groupingSuggestion) {
+        createNewWorkGroup(Arrays.asList(groupingSuggestion.getPutCodes().getWorkPutCodes()), groupingSuggestion.getOrcid());
+        groupingSuggestionManager.markGroupingSuggestionAsAccepted(groupingSuggestion.getId());
+    }
 
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
         String incomingWorkVisibility = workEntity.getVisibility();
@@ -458,4 +484,5 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         Works groupedWorks = groupWorks(summaries, true);
         groupingSuggestionManager.generateGroupingSuggestionsForProfile(orcid, updatedWork, groupedWorks);
     }
+
 }

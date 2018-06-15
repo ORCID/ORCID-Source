@@ -20,13 +20,17 @@ import javax.annotation.Resource;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
+import org.orcid.core.adapter.jsonidentifier.JSONWorkPutCodes;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.manager.WorkEntityCacheManager;
+import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc1.common.Title;
@@ -49,6 +53,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.WorkGroupingSuggestion;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -68,11 +73,17 @@ public class WorkManagerTest extends BaseTest {
     @Mock
     private GroupingSuggestionManager groupingSuggestionManager;
     
+    @Mock
+    private GroupingSuggestionManagerReadOnly groupingSuggestionManagerReadOnly;
+    
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
     
     @Resource
     private WorkDao workDao;
+    
+    @Captor
+    private ArgumentCaptor<List<Long>> idsCaptor;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -83,6 +94,7 @@ public class WorkManagerTest extends BaseTest {
     public void before() {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManager", groupingSuggestionManager);
+        TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManagerReadOnly", groupingSuggestionManagerReadOnly);
     }
     
     @AfterClass
@@ -211,6 +223,7 @@ public class WorkManagerTest extends BaseTest {
         extIds1.getExternalIdentifier().add(extId1);
         work.setWorkExternalIdentifiers(extIds1);
         work.setWorkType(WorkType.BOOK);
+        work.setVisibility(Visibility.PUBLIC);
         work = workManager.createWork(orcid, work, true);
         
         work.getWorkTitle().getTitle().setContent("updated title");
@@ -1068,6 +1081,64 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
     }
     
+    @Test
+    public void testGetGroupingSuggestions() {
+        WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
+        WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
+        
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManager);
+        
+        WorkGroupingSuggestion suggestion1 = new WorkGroupingSuggestion(new JSONWorkPutCodes(new Long[] { 1L, 2L }));
+        suggestion1.setId(1L);
+        WorkGroupingSuggestion suggestion2 = new WorkGroupingSuggestion(new JSONWorkPutCodes(new Long[] { 2L, 3L }));
+        suggestion2.setId(2L);
+        WorkGroupingSuggestion suggestion3 = new WorkGroupingSuggestion(new JSONWorkPutCodes(new Long[] { 4L, 5L }));
+        suggestion3.setId(3L);
+        Mockito.when(groupingSuggestionManagerReadOnly.getGroupingSuggestions(Mockito.eq("orcid"))).thenReturn(Arrays.asList(suggestion1, suggestion2, suggestion3));
+        
+        Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.eq("orcid"), Mockito.anyList(), Mockito.anyLong())).thenReturn(new ArrayList<>());
+        Mockito.when(groupingSuggestionManager.filterSuggestionsNoLongerApplicable(Mockito.anyList(), Mockito.any(Works.class))).thenReturn(new ArrayList<>());
+        
+        workManager.getGroupingSuggestions("orcid");
+        
+        Mockito.verify(groupingSuggestionManagerReadOnly, Mockito.times(1)).getGroupingSuggestions(Mockito.eq("orcid"));
+        Mockito.verify(cacheManager, Mockito.times(1)).retrieveMinimizedWorks(Mockito.eq("orcid"), idsCaptor.capture(), Mockito.anyLong());
+        Mockito.verify(groupingSuggestionManager, Mockito.times(1)).filterSuggestionsNoLongerApplicable(Mockito.anyList(), Mockito.any(Works.class));
+        
+        List<Long> ids = idsCaptor.getValue();
+        assertEquals(5, ids.size());
+        
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
+    }
+    
+    @Test
+    public void testAcceptGroupingSuggestion() {
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
+        WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
+        
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManager);
+        
+        Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.eq("orcid"), Mockito.anyList(), Mockito.anyLong())).thenReturn(getMinimizedWorksListForGrouping());
+        Mockito.doNothing().when(mockDao).persist(Mockito.any(WorkEntity.class));
+        Mockito.doNothing().when(groupingSuggestionManager).markGroupingSuggestionAsAccepted(Mockito.eq(1L));
+        Mockito.when(mockDao.find(Mockito.anyLong())).thenReturn(getUserPreferredWork());
+        
+        WorkGroupingSuggestion suggestion = new WorkGroupingSuggestion(new JSONWorkPutCodes(new Long[] { 1L, 2L, 3L, 4L }));
+        suggestion.setId(1L);
+        suggestion.setOrcid("orcid");
+        
+        workManager.acceptGroupingSuggestion(suggestion);
+        
+        Mockito.verify(cacheManager, Mockito.times(1)).retrieveMinimizedWorks(Mockito.eq("orcid"), Mockito.anyList(), Mockito.anyLong());
+        Mockito.verify(mockDao, Mockito.times(1)).persist(Mockito.any(WorkEntity.class));
+        Mockito.verify(groupingSuggestionManager, Mockito.times(1)).markGroupingSuggestionAsAccepted(Mockito.eq(1L));
+        
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+    }
+    
     private WorkEntity getUserPreferredWork() {
         WorkEntity userPreferred = new WorkEntity();
         userPreferred.setId(4l);
@@ -1101,6 +1172,7 @@ public class WorkManagerTest extends BaseTest {
             work.setTranslatedTitleLanguageCode("ES");
             work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
             work.setWorkUrl("work:url");
+            work.setDisplayIndex(l);
             
             if (l == 4l) {
                 work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
