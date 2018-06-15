@@ -95,31 +95,31 @@ public class RecordManagerTest extends DBUnitTest {
         
         assertNotNull(activities.getDistinctions());
         assertNotNull(activities.getDistinctions().retrieveGroups());
-        assertEquals(3, activities.getDistinctions().retrieveGroups().size());
+        assertEquals(4, activities.getDistinctions().retrieveGroups().size());
         
         assertNotNull(activities.getEducations());
         assertNotNull(activities.getEducations().retrieveGroups());
-        assertEquals(3, activities.getEducations().retrieveGroups().size());        
+        assertEquals(4, activities.getEducations().retrieveGroups().size());        
         
         assertNotNull(activities.getEmployments());
         assertNotNull(activities.getEmployments().retrieveGroups());
-        assertEquals(3, activities.getEmployments().retrieveGroups().size());
+        assertEquals(4, activities.getEmployments().retrieveGroups().size());
         
         assertNotNull(activities.getInvitedPositions());
         assertNotNull(activities.getInvitedPositions().retrieveGroups());
-        assertEquals(3, activities.getInvitedPositions().retrieveGroups().size());
+        assertEquals(4, activities.getInvitedPositions().retrieveGroups().size());
         
         assertNotNull(activities.getMemberships());
         assertNotNull(activities.getMemberships().retrieveGroups());
-        assertEquals(3, activities.getMemberships().retrieveGroups().size());
+        assertEquals(4, activities.getMemberships().retrieveGroups().size());
         
         assertNotNull(activities.getQualifications());
         assertNotNull(activities.getQualifications().retrieveGroups());
-        assertEquals(3, activities.getQualifications().retrieveGroups().size());
+        assertEquals(4, activities.getQualifications().retrieveGroups().size());
         
         assertNotNull(activities.getServices());
         assertNotNull(activities.getServices().retrieveGroups());
-        assertEquals(3, activities.getServices().retrieveGroups().size());
+        assertEquals(4, activities.getServices().retrieveGroups().size());
         
         assertNotNull(activities.getFundings());
         assertNotNull(activities.getFundings().getFundingGroup());
