@@ -617,157 +617,242 @@ public class AffiliationsManagerTest extends BaseTest {
         
         // Check distinctions
         assertTrue(map.containsKey(AffiliationType.DISTINCTION));
-        List<AffiliationGroup<AffiliationSummary>> distinctionGroups = map.get(AffiliationType.DISTINCTION);
-        assertNotNull(distinctionGroups);
-        assertEquals(3, distinctionGroups.size());
-        AffiliationGroup<AffiliationSummary> g1 = distinctionGroups.get(0);
-        assertEquals(3, g1.getActivities().size());
-        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
-        assertEquals(Long.valueOf(31), g1.getActivities().get(0).getPutCode());        
-        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
-        assertEquals(Long.valueOf(27), g1.getActivities().get(1).getPutCode());
-        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
-        assertEquals(Long.valueOf(29), g1.getActivities().get(2).getPutCode());
+        List<AffiliationGroup<AffiliationSummary>> groups = map.get(AffiliationType.DISTINCTION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
         
-        AffiliationGroup<AffiliationSummary> g2 = distinctionGroups.get(1);
-        assertEquals(1, g2.getActivities().size());
-        assertEquals(Long.valueOf(30), g2.getActivities().get(0).getPutCode());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(30L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(27), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(28L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(29L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(31L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
         
-        AffiliationGroup<AffiliationSummary> g3 =distinctionGroups.get(2);
-        assertEquals(1, g3.getActivities().size());
-        assertEquals(Long.valueOf(28), g3.getActivities().get(0).getPutCode());
-    
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+            
         // Check educations
         assertTrue(map.containsKey(AffiliationType.EDUCATION));
-        List<AffiliationGroup<AffiliationSummary>> educationGroups = map.get(AffiliationType.EDUCATION);
-        assertNotNull(educationGroups);
-        assertEquals(3, educationGroups.size());
-        g1 = educationGroups.get(0);
-        assertEquals(3, g1.getActivities().size());
-        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
-        assertEquals(Long.valueOf(26), g1.getActivities().get(0).getPutCode());        
-        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
-        assertEquals(Long.valueOf(20), g1.getActivities().get(1).getPutCode());
-        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
-        assertEquals(Long.valueOf(22), g1.getActivities().get(2).getPutCode());
+        groups = map.get(AffiliationType.EDUCATION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
         
-        g2 = educationGroups.get(1);
-        assertEquals(1, g2.getActivities().size());
-        assertEquals(Long.valueOf(25), g2.getActivities().get(0).getPutCode());
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(25L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(20), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(21L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(22L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(26L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
         
-        g3 = educationGroups.get(2);
-        assertEquals(1, g3.getActivities().size());
-        assertEquals(Long.valueOf(21), g3.getActivities().get(0).getPutCode());
-     
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
         // Check employments
         assertTrue(map.containsKey(AffiliationType.EMPLOYMENT));
-        List<AffiliationGroup<AffiliationSummary>> employmentGroups = map.get(AffiliationType.EMPLOYMENT);
-        assertNotNull(employmentGroups);
-        assertEquals(3, employmentGroups.size());
-        g1 = employmentGroups.get(0);
-        assertEquals(3, g1.getActivities().size());
-        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
-        assertEquals(Long.valueOf(24), g1.getActivities().get(0).getPutCode());        
-        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
-        assertEquals(Long.valueOf(17), g1.getActivities().get(1).getPutCode());
-        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
-        assertEquals(Long.valueOf(19), g1.getActivities().get(2).getPutCode());
+        groups = map.get(AffiliationType.EMPLOYMENT);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
         
-        g2 = employmentGroups.get(1);
-        assertEquals(1, g2.getActivities().size());
-        assertEquals(Long.valueOf(23), g2.getActivities().get(0).getPutCode());
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(23L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(17), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(18L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(19L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(24L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
         
-        g3 = employmentGroups.get(2);
-        assertEquals(1, g3.getActivities().size());
-        assertEquals(Long.valueOf(18), g3.getActivities().get(0).getPutCode());    
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
         
         // Check invited positions
         assertTrue(map.containsKey(AffiliationType.INVITED_POSITION));
-        List<AffiliationGroup<AffiliationSummary>> invitedPositionGroups = map.get(AffiliationType.INVITED_POSITION);
-        assertNotNull(invitedPositionGroups);
-        assertEquals(3, invitedPositionGroups.size());
-        g1 = invitedPositionGroups.get(0);
-        assertEquals(3, g1.getActivities().size());
-        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
-        assertEquals(Long.valueOf(36), g1.getActivities().get(0).getPutCode());        
-        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
-        assertEquals(Long.valueOf(32), g1.getActivities().get(1).getPutCode());
-        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
-        assertEquals(Long.valueOf(34), g1.getActivities().get(2).getPutCode());
+        groups = map.get(AffiliationType.INVITED_POSITION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
         
-        g2 = invitedPositionGroups.get(1);
-        assertEquals(1, g2.getActivities().size());
-        assertEquals(Long.valueOf(35), g2.getActivities().get(0).getPutCode());
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(35L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(32), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(33L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(34L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(36L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
         
-        g3 = invitedPositionGroups.get(2);
-        assertEquals(1, g3.getActivities().size());
-        assertEquals(Long.valueOf(33), g3.getActivities().get(0).getPutCode());
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
         
         // Check memberships
         assertTrue(map.containsKey(AffiliationType.MEMBERSHIP));
-        List<AffiliationGroup<AffiliationSummary>> membershipGroups = map.get(AffiliationType.MEMBERSHIP);
-        assertNotNull(membershipGroups);
-        assertEquals(3, membershipGroups.size());
-        g1 = membershipGroups.get(0);
-        assertEquals(3, g1.getActivities().size());
-        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
-        assertEquals(Long.valueOf(41), g1.getActivities().get(0).getPutCode());        
-        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
-        assertEquals(Long.valueOf(37), g1.getActivities().get(1).getPutCode());
-        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
-        assertEquals(Long.valueOf(39), g1.getActivities().get(2).getPutCode());
+        groups = map.get(AffiliationType.MEMBERSHIP);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
         
-        g2 = membershipGroups.get(1);
-        assertEquals(1, g2.getActivities().size());
-        assertEquals(Long.valueOf(40), g2.getActivities().get(0).getPutCode());
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(40L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(37), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(38L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(39L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(41L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
         
-        g3 = membershipGroups.get(2);
-        assertEquals(1, g3.getActivities().size());
-        assertEquals(Long.valueOf(38), g3.getActivities().get(0).getPutCode());
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;        
         
         // Check qualifications
         assertTrue(map.containsKey(AffiliationType.QUALIFICATION));
-        List<AffiliationGroup<AffiliationSummary>> qualificationGroups = map.get(AffiliationType.QUALIFICATION);
-        assertNotNull(qualificationGroups);
-        assertEquals(3, qualificationGroups.size());
-        g1 = qualificationGroups.get(0);
-        assertEquals(3, g1.getActivities().size());
-        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
-        assertEquals(Long.valueOf(46), g1.getActivities().get(0).getPutCode());        
-        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
-        assertEquals(Long.valueOf(42), g1.getActivities().get(1).getPutCode());
-        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
-        assertEquals(Long.valueOf(44), g1.getActivities().get(2).getPutCode());
+        groups = map.get(AffiliationType.QUALIFICATION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
         
-        g2 = qualificationGroups.get(1);
-        assertEquals(1, g2.getActivities().size());
-        assertEquals(Long.valueOf(45), g2.getActivities().get(0).getPutCode());
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(45L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(42), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(43L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(44L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(46L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
         
-        g3 = qualificationGroups.get(2);
-        assertEquals(1, g3.getActivities().size());
-        assertEquals(Long.valueOf(43), g3.getActivities().get(0).getPutCode());
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
         
         // Check services
         assertTrue(map.containsKey(AffiliationType.SERVICE));
-        List<AffiliationGroup<AffiliationSummary>> serviceGroups = map.get(AffiliationType.SERVICE);
-        assertNotNull(serviceGroups);
-        assertEquals(3, serviceGroups.size());
-        g1 = serviceGroups.get(0);
-        assertEquals(3, g1.getActivities().size());
-        assertEquals("2", g1.getActivities().get(0).getDisplayIndex());
-        assertEquals(Long.valueOf(51), g1.getActivities().get(0).getPutCode());        
-        assertEquals("1", g1.getActivities().get(1).getDisplayIndex());
-        assertEquals(Long.valueOf(47), g1.getActivities().get(1).getPutCode());
-        assertEquals("0", g1.getActivities().get(2).getDisplayIndex());
-        assertEquals(Long.valueOf(49), g1.getActivities().get(2).getPutCode());
+        groups = map.get(AffiliationType.SERVICE);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
         
-        g2 = serviceGroups.get(1);
-        assertEquals(1, g2.getActivities().size());
-        assertEquals(Long.valueOf(48), g2.getActivities().get(0).getPutCode());
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(50L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(47), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(48L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(49L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(51L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
         
-        g3 = serviceGroups.get(2);
-        assertEquals(1, g3.getActivities().size());
-        assertEquals(Long.valueOf(50), g3.getActivities().get(0).getPutCode());
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
     }
     
     private ExternalID getExternalID(String type, String value) {
