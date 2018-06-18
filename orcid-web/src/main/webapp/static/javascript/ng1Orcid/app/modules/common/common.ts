@@ -44,8 +44,7 @@ import { WorkExternalIdentifierHtmlPipe }
     from '../../pipes/workExternalIdentifierHtmlNg2.ts';
 
 //User generated modules
-import { AffiliationExtIdPopoverNg2Module }
-    from './../affiliationExtIdPopover/affiliationExtIdPopover.ts';
+
 /*
 import { DelegatesNg2Module }
     from './../delegates/delegates.ts';
@@ -53,6 +52,8 @@ import { DelegatesNg2Module }
 import { EditTableNg2Module }
     from './../editTable/editTable.ts';
 */
+import { ExtIdPopoverNg2Module }
+    from './../extIdPopover/extIdPopover.ts';
 
 import { HeaderNg2Module }
     from './../header/header.ts';
@@ -191,9 +192,9 @@ import { EmailFrequencyService }
             CommonModule,
             FormsModule,
             //User Modules
-            AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
+            ExtIdPopoverNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
@@ -229,9 +230,9 @@ import { EmailFrequencyService }
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
-            AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
+            ExtIdPopoverNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,

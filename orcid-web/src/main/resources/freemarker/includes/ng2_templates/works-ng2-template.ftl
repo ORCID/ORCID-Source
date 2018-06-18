@@ -1,11 +1,12 @@
 <script type="text/ng-template" id="works-ng2-template">
+    <!--WORKS-->
     <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active">
-         
+        <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
                 <div class="col-md-4 col-sm-3 col-xs-12">
                     <div>
-                        <a href="" (click)="workspaceSrvc.toggleWorks($event)" class="toggle-text">
+                        <a (click)="workspaceSrvc.toggleWorks()" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
                            <@orcid.msg 'workspace.Works'/> (<span>{{worksService.groupsLabel}}</span>)
                         </a>
@@ -23,26 +24,13 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
+                    <!--Sort menu-->
                     <div class="menu-container">                                     
                         <ul class="toggle-menu">
                             <li>
-                                <span class="glyphicon glyphicon-sort"></span>                          
+                                <span class="glyphicon glyphicon-sort"></span>
                                 <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                 <ul class="menu-options sort">
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='endDate'}" *ngIf="sortState.type == 'affiliation'">                                         
-                                        <a (click)="sort('endDate');" class="action-option manage-button">
-                                            <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
-                                            <span *ngIf="sortState.reverseKey['endDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='endDate'}"></span>
-                                            <span *ngIf="sortState.reverseKey['endDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='endDate'}"></span>
-                                        </a>                                                                                    
-                                    </li>
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='startDate'}" *ngIf="sortState.type == 'affiliation'">                                           
-                                        <a (click)="sort('startDate');" class="action-option manage-button">
-                                            <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
-                                            <span *ngIf="sortState.reverseKey['startDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='startDate'}"></span>
-                                            <span *ngIf="sortState.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
-                                        </a>                                                                                    
-                                    </li>
                                     <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
                                         <a (click)="sort('date');" class="action-option manage-button">
                                             <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
@@ -75,22 +63,23 @@
                             </li>
                         </ul>                                   
                     </div>
+                    <!--End sort menu-->
                     <#if !(isPublicProfile??)>
                     <ul class="workspace-bar-menu">
-                
+                        <!--Bulk edit-->
                         <li *ngIf="worksService?.groups?.length > 1" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
                                 <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                             </a>
                         </li>
-
+                        <!--Export bibtex-->
                         <li *ngIf="worksService?.groups?.length > 0" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : showBibtexExport}" (click)="toggleBibtexExport()">
                                 <span class="glyphicon glyphicon-save"></span>
                                 <@orcid.msg 'groups.common.export_works'/>
                             </a>
                         </li>
-
+                        <!--Add works-->
                         <li class="hidden-xs">
                             <div class="menu-container" id="add-work-container">
                                 <ul class="toggle-menu">
@@ -98,21 +87,21 @@
                                         <span class="glyphicon glyphicon-plus"></span>
                                         <@orcid.msg 'groups.common.add_works'/>
                                         <ul class="menu-options works">
-                                          
+                                          <!--Search & link-->
                                             <li *ngIf="noLinkFlag">
                                                 <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="showWorkImportWizard()">
                                                     <span class="glyphicon glyphicon-cloud-upload"></span>
                                                     <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                                 </a>
                                             </li>
-                                            
+                                            <!--Bibtex-->
                                             <li>
                                                 <a class="action-option manage-button" (click)="openBibTextWizard()">
                                                     <span class="glyphicons file_import bibtex-wizard"></span>
                                                     <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
                                                 </a>
                                             </li>
-                                          
+                                            <!--Add manually-->
                                             <li>
                                                 <a id="add-work" class="action-option manage-button" (click)="addWorkModal()">
                                                     <span class="glyphicon glyphicon-plus"></span>
@@ -124,21 +113,21 @@
                                 </ul>
                             </div>
                         </li>
-                    
+                        <!--Search & link-->
                         <li class="hidden-md hidden-sm visible-xs-inline">
                             <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="showWorkImportWizard()">
                                 <span class="glyphicon glyphicon-cloud-upload"></span>
                                 <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                             </a>
                         </li>
-                  
+                        <!--Bibtex-->
                         <li class="hidden-md hidden-sm visible-xs-inline">
                             <a class="action-option manage-button" (click)="openBibTextWizard()">
                                 <span class="glyphicons file_import bibtex-wizard"></span>
                                 <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
                             </a>
                         </li>
-                    
+                        <!--Mobile workaraound-->
                         <li class="hidden-md hidden-sm visible-xs-inline">
                             <a class="action-option manage-button" (click)="addWorkModal()">
                                 <span class="glyphicon glyphicon-plus"></span>
@@ -150,7 +139,7 @@
                 </div>
             </div>
         </div>
-
+        <!--End works section header-->
         <!-- Work Import Wizard -->
         <div *ngIf="workImportWizard" class="work-import-wizard">
             <div class="ie7fix-inner">
@@ -212,9 +201,8 @@
                 </div>
             </div>            
         </div>
-
-        <!-- Bulk Edit --> 
-            
+        <!--End import wizard-->
+        <!-- Bulk Edit -->  
         <div *ngIf="bulkEditShow && workspaceSrvc.displayWorks" >           
             <div class="bulk-edit">
                 <div class="row">
@@ -227,12 +215,11 @@
                     </div>
                     <div class="col-md-5 col-sm-5 col-xs-12">
                         <ul class="bulk-edit-toolbar">
-
                             <li class="bulk-edit-toolbar-item work-multiple-selector">
                                 <label><@orcid.msg 'workspace.bulkedit.select'/></label>
                                 <div id="custom-control-x">
                                     <div class="custom-control-x" > 
-                                        <div class="dropdown-custom-menu" id="dropdown-custom-menu" (click)="toggleSelectMenu();$event.stopPropagation()">                   
+                                        <div class="dropdown-custom-menu" id="dropdown-custom-menu" (click)="toggleSelectMenu();$event.stopPropagation()">                  
                                             <span class="custom-checkbox-parent">
                                                 <div class="custom-checkbox" id="custom-checkbox" (click)="swapbulkChangeAll();$event.stopPropagation();" [ngClass]="{'custom-checkbox-active':bulkChecked}"></div>
                                             </span>                   
@@ -258,7 +245,6 @@
                                     limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
                                     privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
                                     -->
-                                  
                                 </div>                      
                             </li>                   
                         </ul>
@@ -279,9 +265,8 @@
                 </div>              
             </div>
         </div>
-    
-
-        <!-- BibTeX Export Layout -->        
+        <!--End bulk edit-->
+        <!-- Bibtex export -->        
         <div *ngIf="showBibtexExport && workspaceSrvc.displayWorks" class="bibtex-box">
             <div class="box-border" *ngIf="canReadFiles" >
                 <h4><@orcid.msg 'workspace.bibtexExporter.export_bibtex'/></h4><span (click)="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
@@ -299,7 +284,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="bottomBuffer" *ngIf="bibtexLoading && !bibtexExportError" >
                 <span class="dotted-bar"></span>
                 <ul class="inline-list">
@@ -317,7 +301,7 @@
             </div>
           
         </div>   
-
+        <!--End bibtex export-->
         <!-- Bibtex Importer Wizard -->
         <div *ngIf="showBibtexImportWizard && workspaceSrvc.displayWorks"  class="bibtex-box">
             <div class="box-border" *ngIf="canReadFiles" >
@@ -342,6 +326,7 @@
                 <strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
             </div>
             <span class="dotted-bar" *ngIf="worksFromBibtex?.length > 0"></span>
+            <!-- Bibtex Import Results List -->
             <div *ngFor="let work of worksFromBibtex; let index = index; let first = first; let last = last;" class="bottomBuffer">             
                 <div class="row full-height-row">   
                     <div class="col-md-9 col-sm-9 col-xs-7">
@@ -353,7 +338,6 @@
 
                         <div class="info-detail">
                             <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate?.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate?.day">-</span><span *ngIf="work.publicationDate?.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
-
                   
                             <span class="capitalize" *ngIf="work.workType?.value?.length > 0">{{work.workType.value}}</span>
                             <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
@@ -389,7 +373,7 @@
                             </div>
                         </div>
                     </div>                          
-                    <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                            
+                    <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                     
                         <ul>
                             <li><a (click)="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
                             <li><a *ngIf="work?.errors?.length == 0" (click)="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
@@ -400,22 +384,19 @@
                 </div>
             </div>
         </div>
-
+        <!--End bibtex import-->
+        <!--Works list-->
         <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
-            include "includes/work/add_work_modal_inc.ftl"
-            include "includes/work/del_work_modal_inc.ftl"
-            
-
             <ul *ngIf="worksService?.groups?.length" class="workspace-publications bottom-margin-medium" id="body-work-list">
                 <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of worksService.groups">
                     <div class="work-list-container">
                         <ul class="sources-edit-list">
+                            <!--Edit sources-->
                             <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}" [(ngModel)]="group.works">
                                 <div class="sources-header">
                                     <div class="row">
                                         <div class="col-md-7 col-sm-7 col-xs-6">
                                             <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" (click)="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
-                            
                                         </div>
                                         
                                         <div class="col-md-2 col-sm-2 hidden-xs">
@@ -461,7 +442,8 @@
                                     </div>
                                 </div>
                             </li>
-
+                            <!--End edit sources-->
+                            <!---Work info-->
                             <li *ngFor="let work of group.works; let index = index; let first = first; let last = last;"><!--  orcid-put-code="{{work.putCode.value}}"*** -->
                                 <div *ngIf="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
 
@@ -478,17 +460,16 @@
 
 
                                         <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
-                                            <ul class="workspace-private-toolbar" *ngIf="editSources[group.groupId] == false">                                 
+                                            <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
+                                                <!--Bulk edit checkbox                                
                                                 <#if !(isPublicProfile??)>
-                             
                                                 <li *ngIf="bulkEditShow" class="bulk-checkbox-item">
                                                     <input type="checkbox" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
                                                 </li>
                                                 </#if> 
-
-                           
-                                                <li class="works-details" *ngIf="editSources[group.groupId] == false">
-                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
+                                                <!--Show details toggle-->
+                                                <li class="works-details" *ngIf="!editSources[group.groupId]">
+                                                    <a (click)="showDetailsMouseClick(group.activePutCode,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
                                                         <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'"></span>
                                                     </a>
                                                     <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails']">
@@ -499,21 +480,15 @@
                                                         </div>
                                                     </div>
                                                 </li>
-
+                                                <!--Visibility selector-->
                                                 <#if !(isPublicProfile??)>
                                                 <li>
-                                                    <!-- ***
-                                                    <@orcid.privacyToggle2 angularModel="work.visibility.visibility"
-                                                    questionClick="toggleClickPrivacyHelp(group.highestVis())"
-                                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
-                                                    publicClick="worksService.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
-                                                    limitedClick="worksService.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
-                                                    privateClick="worksService.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
-                                                    -->
+                                                    <@orcid.privacyToggle2Ng2 angularModel="work.visibility.visibility"
+                                                    elementId="group.groupId" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" publicClick="setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(work.putCode.value, 'LIMITED', $event)" privateClick="setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
                                                 </li>
                                                 </#if>
                                             </ul>
-                                               
+                                            <!--Inconsistent visibility warning-->  
                                             <#if !(isPublicProfile??)>
                                             <div *ngIf="!worksService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
                                                 <div class="popover-help-container">
@@ -529,7 +504,7 @@
                                             </#if>
                                         </div>
                                     </div>
-                               
+                                    <!--Identifiers-->
                                     <div class="row" *ngIf="group.activePutCode == work.putCode.value">
                                         <div class="col-md-12 col-sm-12 bottomBuffer">
                                             <ul class="id-details clearfix">
@@ -540,6 +515,12 @@
                                                             <span [innerHTML]="ie | workExternalIdentifierHtml:first:last:work.workExternalIdentifiers.length:moreInfo[group.groupId]"></span>
                                                             -->
                                                         </li>
+                                                        <li *ngFor='let extID of work?.workExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                                                            
+                                                            <span *ngIf="work?.workExternalIdentifiers[0]?.workExternalIdentifierId?.value?.length > 0">
+                                                                <affiliation-ext-id-popover-ng2 [extID]="extID" [putCode]="work.putCode.value+i" [activityType]="'work'"></affiliation-ext-id-popover-ng2>
+                                                            </span>
+                                                         </li>
                                                     </ul>                                   
                                                 </li>
                                                 <li *ngIf="work.url?.value" class="url-popover url-work">
@@ -887,7 +868,7 @@
 
                                 </div>
                             </li>
-                            
+                            <!--End work info-->
                         </ul>
                     </div>
                 </li>

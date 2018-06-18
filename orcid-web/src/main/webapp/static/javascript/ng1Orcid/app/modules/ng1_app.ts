@@ -13,9 +13,6 @@ import 'angular-route'
 
 //User generated imports
 
-import { AffiliationExtIdPopoverModule } 
-    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
-
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
 
@@ -60,6 +57,9 @@ import { EmailVerificationSentMesssageModule }
 
 import { ExternalIdentifiersModule }
     from './externalIdentifiers/externalIdentifiers.ts';
+
+import { ExtIdPopoverModule } 
+    from './extIdPopover/extIdPopover.ts';
 
 import { FundingModule } 
     from './funding/funding.ts';
@@ -186,7 +186,6 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
-        AffiliationExtIdPopoverModule.name,
         AffiliationModule.name,
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
@@ -202,6 +201,7 @@ export const orcidApp = angular.module(
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
         ExternalIdentifiersModule.name,
+        ExtIdPopoverModule.name,
         FundingModule.name,
         FundingFormModule.name,
         HomeModule.name,

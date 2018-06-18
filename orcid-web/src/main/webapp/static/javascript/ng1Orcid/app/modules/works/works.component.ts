@@ -82,7 +82,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     worksFromBibtex: any;
 
     constructor( 
-        private commonService: CommonService,
+        private commonSrvc: CommonService,
         private emailService: EmailService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
@@ -315,33 +315,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         */      
     };
 
-    getformData(): void {
-        this.worksService.addAbbrWorksToScope( 
-            this.sortState.predicateKey, 
-            !this.sortState.reverseKey[this.sortState.predicateKey]
-        )
-        .takeUntil(this.ngUnsubscribe)
-        .subscribe(
-            data => {
-                this.formData = data;
-
-                //console.log('this.getForm works', this.formData);
-
-                let itemVisibility = null;
-                let len = null;
-
-                this.formData = data;
-                this.worksService.handleWorkGroupData( this.formData );
-                //this.newElementDefaultVisibility = this.formData.visibility.visibility;
-                this.worksService.loading = false;
-            },
-            error => {
-                this.worksService.loading = false;
-                //console.log('getWorksFormError', error);
-            } 
-        );
-    };
-
     hasCombineableEIs(work): boolean {
         if (work.workExternalIdentifiers != null){
             for (var idx in work.workExternalIdentifiers){
@@ -378,9 +351,28 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     loadMore(): void {
-        this.worksService.addAbbrWorksToScope( 
-            this.sortState.predicateKey, 
+        this.worksService.addAbbrWorksToScope(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
             !this.sortState.reverseKey[this.sortState.predicateKey]
+        )
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                this.formData = data;
+
+                console.log('this.getForm works', this.formData);
+
+                //let itemVisibility = null;
+                //let len = null;
+
+                this.formData = data;
+                this.worksService.handleWorkGroupData( this.formData );
+                //this.newElementDefaultVisibility = this.formData.visibility.visibility;
+                this.worksService.loading = false;
+            },
+            error => {
+                this.worksService.loading = false;
+                //console.log('getWorksFormError', error);
+            } 
         );
     };
 
@@ -401,12 +393,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showBibtexImportWizard = false;
                 for(var idx in data) {                            
                     for(var i in data[idx].actTypes) {
-                        if(!this.commonService.contains(this.workType, data[idx].actTypes[i])) {
+                        if(!this.commonSrvc.contains(this.workType, data[idx].actTypes[i])) {
                             this.workType.push(data[idx].actTypes[i]);
                         }                                
                     }
                     for(var j in data[idx].geoAreas) {
-                        if(!this.commonService.contains(this.geoArea, data[idx].geoAreas[j])) {
+                        if(!this.commonSrvc.contains(this.geoArea, data[idx].geoAreas[j])) {
                             this.geoArea.push(data[idx].geoAreas[j]);
                         }                                
                     }                            
@@ -560,6 +552,47 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         */
     };
 
+    setGroupPrivacy(putCode, priv): void {
+        var group = this.worksService.getGroup(putCode);
+        console.log(group);
+        var putCodes = new Array();
+        for (var idx in group.works) {
+            putCodes.push(group.works[idx].putCode.value);
+            group.works[idx].visibility.visibility = priv;
+        }
+        this.worksService.updateVisibility(putCodes, priv)
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+
+                if (putCodes.length > 0) {
+                    this.worksService.updateVisibility(putCodes, priv);
+                }
+
+                group.activeVisibility = priv;
+            },
+            error => {
+                console.log('Error updating group visibility', error);
+            } 
+        );
+    }
+
+    setPrivacy(putCodes, priv): void {
+        //this.worksService.updateVisibility([putCode], priv); 
+        this.worksService.updateVisibility(putCodes, priv)
+        .takeUntil(this.ngUnsubscribe)
+        .subscribe(
+            data => {
+                if (putCodes.length > 0) {
+                    this.worksService.updateVisibility(putCodes, priv);
+                }
+            },
+            error => {
+                console.log('Error updating work visibility', error);
+            } 
+        ); 
+    }
+
     showCombineMatches( work1 ): void {
         this.combineWork = work1;
         /*
@@ -568,7 +601,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             html: $compile($('#combine-work-template').html())($scope),
             onLoad: function() {$('#cboxClose').remove();},
             // start the colorbox off with the correct width
-            width: this.commonService.formColorBoxResize(),
+            width: this.commonSrvc.formColorBoxResize(),
             onComplete: function() {$.colorbox.resize();},
             onClosed: function() {
                 $scope.closeAllMoreInfo();
@@ -709,7 +742,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.worksService.notifyObservable$.subscribe(
             (res) => {
-                this.getformData();
+                this.loadMore();
             }
         );
     };
@@ -720,506 +753,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getformData();
+        this.loadMore();
         this.loadWorkImportWizardList();
     };
 }
-
-/*
-declare var $: any;
-declare var om: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
-declare var colorbox: any;
-declare var orcidVar: any;
-declare var getBaseUri: any;
-declare var logAjaxError: any;
-declare var workIdLinkJs: any;
-
-declare var bibtexParse: any;
-declare var populateWorkAjaxForm: any;
-declare var index: any;
-declare var ajax: any;
-declare var openImportWizardUrl: any;
-declare var blobObject: any;
-
-import * as angular from 'angular';
-import {NgModule} from '@angular/core';
-
-// This is the Angular 1 part of the module
-export const WorkCtrl = angular.module('orcidApp').controller(
-    'WorkCtrl', 
-    [
-        '$scope', 
-        '$rootScope', 
-        '$compile', 
-        '$filter', 
-        '$timeout', 
-        '$q', 
-        'actBulkSrvc', 
-        'commonSrvc', 
-        'emailSrvc', 
-        'initialConfigService', 
-        'this.commonService', 
-        'worksService', 
-        'workspaceSrvc',     
-        function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, initialConfigService, this.commonService, worksService, workspaceSrvc ) {
-
-            var savingBibtex = false;
-            var this.commonService = this.commonService;
-
-            actBulkSrvc.initScope($scope);
-           
-            $scope.badgesRequested = {};
-            
-            $scope.bibtexGenerated = false;
-            
-            $scope.bibtexURL = "";
-            
-            
-            
-            
-            $scope.canReadFiles = false;
-            $scope.combiningWorks = false;
-            
-            $scope.contentCopy = {
-                titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
-                titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
-            };
-            
-            
-            
-            $scope.editTranslatedTitle = false;
-            $scope.emailSrvc = emailSrvc;
-            $scope.externalIDNamesToDescriptions = [];//caches name->description lookup so we can display the description not the name after selection
-            $scope.externalIDTypeCache = [];//cache responses
-            $scope.generatingBibtex = false;
-            
-            
-            
-            
-            $scope.privacyHelp = {};
-            
-            
-            
-            
-            
-            
-            $scope.types = null;
-            
-            
-            
-            $scope.workspaceSrvc = workspaceSrvc;
-            $scope.worksService = worksService;
-
-            /////////////////////// Begin of verified email logic for work
-            var configuration = initialConfigService.getInitialConfiguration();
-            var emailVerified = false;
-            var emails = {};
-
-            var showEmailVerificationModal = function(){
-                $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
-            };
-            
-            // Check for the various File API support.
-            if ((<any>window).File != undefined && (<any>window).FileReader != undefined  && (<any>window).FileList != undefined  && (<any>window).Blob) {
-                $scope.canReadFiles = true;
-            };
-
-            $scope.emailSrvc.getEmails(
-                function(data) {
-                    emails = data.emails;
-                    if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
-                        emailVerified = true;
-                    }
-                }
-            );
-            /////////////////////// End of verified email logic for work
-
-            
-
-            
-
-            
-
-            $scope.applyLabelWorkType = function() {
-                var obj = null;
-                $timeout(
-                    function() {
-                        obj = $scope.worksService.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
-                        $scope.contentCopy = obj;
-                    }, 
-                    100
-                );
-            };
-
-            $scope.bibtextCancel = function(){
-                $scope.worksFromBibtex = null;
-            };
-
-            
-
-            $scope.bulkApply = function(func) {
-                for (var idx in worksService.groups) {
-                    if ($scope.bulkEditMap[worksService.groups[idx].activePutCode]){
-                        func(worksService.groups[idx].activePutCode);
-                    }
-                }
-            };
-
-            
-
-            
-
-            $scope.clearErrors = function() {
-                $scope.editWork.workCategory.errors = [];
-                $scope.editWork.workType.errors = [];
-            };
-
-            $scope.closeAllMoreInfo = function() {
-                for (var idx in $scope.moreInfo){
-                    $scope.moreInfo[idx]=false;
-                }
-            };
-
-            $scope.closeModal = function() {
-                $.colorbox.close();
-            };
-
-            
-
-            $scope.combined = function(work1, work2) {
-                // no duplicate request;
-                var putWork;
-                if ($scope.combiningWorks){
-                    return;
-                }
-                $scope.combiningWorks = true;
-                
-                if ($scope.userIsSource(work1)) {
-                    putWork = worksService.copyEIs(work2, work1);
-                } else if ($scope.userIsSource(work2)) {
-                    putWork = worksService.copyEIs(work1, work2);
-                } else {
-                    putWork = worksService.createNew(work1);
-                    putWork = worksService.copyEIs(work1, work2);
-                }
-                worksService.putWork(
-                    putWork,
-                    function(data){
-                        $scope.combiningWorks = false;
-                        $scope.closeModal();
-                    },
-                    function() {
-                        $scope.combiningWorks = false;
-                    }
-                );
-            };
-
-            $scope.deleteBulk = function () {
-                if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) {
-                    $scope.bulkDeleteSubmit = true;
-                    return;
-                }
-                var delPuts = new Array();
-                for (var idx in worksService.groups){
-                    if ($scope.bulkEditMap[worksService.groups[idx].activePutCode]){
-                        delPuts.push(worksService.groups[idx].activePutCode);
-                    }
-                }
-                worksService.deleteGroupWorks(delPuts, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
-                $.colorbox.close();
-                $scope.bulkEditShow = false;
-            };
-
-            
-
-            $scope.deleteByPutCode = function(putCode, deleteGroup) {
-                $scope.closeAllMoreInfo();
-                if (deleteGroup) {
-                   worksService.deleteGroupWorks(putCode, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
-                }
-                else {
-                   worksService.deleteWork(putCode, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
-                }
-                $.colorbox.close();
-            };
-
-            $scope.deleteContributor = function(obj) {
-                var index = $scope.editWork.contributors.indexOf(obj);
-                
-                $scope.editWork.contributors.splice(index,1);
-            };
-
-            $scope.deleteExternalIdentifier = function(obj) {
-                var index = $scope.editWork.workExternalIdentifiers.indexOf(obj);
-                
-                $scope.editWork.workExternalIdentifiers.splice(index,1);
-            };
-
-            
-
-            
-
-            
-
-            //--typeahead
-            //populates the external id URL based on type and value.
-            $scope.fillUrl = function(extId) {
-                var url;
-                if(extId != null) {
-                    url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
-                    /* Code to fetch from DB...
-                    if (extId.workExternalIdentifierType.value){
-                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
-                        if (url && extId.workExternalIdentifierId.value)
-                            url += extId.workExternalIdentifierId.value;
-                    }* /
-                    if(extId.url == null) {
-                        extId.url = {value:url};
-                    }else{
-                        extId.url.value=url;                        
-                    }
-                }
-            };
-
-            
-            //--typeahead end
-
-            //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
-            
-            $scope.isValidClass = function (cur) {
-                var valid = true;
-                if (cur === undefined || cur == null) {
-                    return '';
-                }
-                if ( ( cur.required && (cur.value == null || cur.value.trim() == '') ) || ( cur.errors !== undefined && cur.errors.length > 0 ) ){
-                    valid = false;
-                }
-                return valid ? '' : 'text-error';
-            };
-
-            $scope.loadBibtexJs = function() {
-                try {
-                    $scope.worksFromBibtex = new Array();
-                    $.each(
-                        $scope.textFiles, 
-                        function (index, bibtex) {
-                            var parsed = bibtexParse.toJSON(bibtex);
-                            if (parsed.length == 0) {
-                                throw "bibtex parse return nothing";
-                            }
-                            worksService.getBlankWork(
-                                function(blankWork) {
-                                    var newWorks = new Array();
-                                    while (parsed.length > 0) {
-                                        var cur = parsed.shift();
-                                        var bibtexEntry = cur.entryType.toLowerCase();
-                                        if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') {    
-                                            //Filtering @PREAMBLE and @COMMENT
-                                            newWorks.push( populateWorkAjaxForm( cur,JSON.parse( JSON.stringify(blankWork) ) ) );
-                                        }
-                                    };
-                                    worksService.worksValidate(
-                                        newWorks, 
-                                        function(data) {
-                                            $timeout(function(){
-                                                for (var i in data) {                           
-                                                    $scope.worksFromBibtex.push(data[i]);
-                                                }   
-                                            });
-                                        }
-                                    );
-                                }
-                            );
-                        }
-                    );
-                    $scope.textFiles.length = 0;
-                    $scope.bibtexParsingError = false;
-                       
-                } catch (err) {
-                    $scope.bibtexParsingError = true;
-                };
-            };
-
-            
-
-            $scope.loadWorkInfo = function(putCode, event) {
-                //Close any open popover
-                $scope.closePopover(event);
-                $scope.moreInfoOpen = true;
-                //Display the popover
-                $(event.target).next().css('display','inline');
-                if($scope.worksService.details[putCode] == null) {
-                    $scope.worksService.getGroupDetails(putCode, worksService.constants.access_type.USER);
-                } else {
-                    $(event.target).next().css('display','inline');
-                }
-            };
-
-            
-
-            // remove once grouping is live
-            $scope.moreInfoClick = function(work, $event) {
-                if (document.documentElement.className.indexOf('no-touch') == -1){
-                    $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
-                }
-            };
-
-            // remove once grouping is live
-            $scope.moreInfoMouseEnter = function(work, $event) {
-                $event.stopPropagation();
-                if (document.documentElement.className.indexOf('no-touch') > -1){
-                    $scope.loadWorkInfo(work.putCode.value, $event);
-                }
-                else{
-                    $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
-                }
-            };
-
-            
-
-            $scope.openEditWork = function(putCode){
-                worksService.getEditable(putCode, function(data) {
-                    $scope.addWorkModal(data);
-                });
-            };
-
-            
-
-            
-    
-            
-
-            
-
-            $scope.renderTranslatedTitleInfo = function(putCode) {
-                var info = null;
-
-                if(putCode != null && $scope.worksService.details[putCode] != null && $scope.worksService.details[putCode].translatedTitle != null) {
-                    info = $scope.worksService.details[putCode].translatedTitle.content + ' - ' + $scope.worksService.details[putCode].translatedTitle.languageName;
-                }
-
-                return info;
-            };
-
-            
-
-     
-           
-
-            
-
-            $scope.setAddWorkPrivacy = function(priv, $event) {
-                $event.preventDefault();
-                $scope.editWork.visibility.visibility = priv;
-            };
-
-            $scope.setBulkGroupPrivacy = function(priv) {
-                var putCodes = new Array();
-                for (var idx in worksService.groups){
-                    if ($scope.bulkEditMap[worksService.groups[idx].activePutCode]){  
-                        for (var idj in worksService.groups[idx].works) {
-                            putCodes.push(worksService.groups[idx].works[idj].putCode.value);
-                            worksService.groups[idx].works[idj].visibility.visibility = priv;
-                        }
-                    }
-                }
-                
-                if(putCodes.length > 0) {
-                    worksService.updateVisibility(putCodes, priv);
-                }                
-            };
-
-            $scope.showAddWorkModal = function(){
-                $scope.editTranslatedTitle = false;
-                $.colorbox({
-                    scrolling: true,
-                    html: $compile($('#add-work-modal').html())($scope),
-                    onLoad: function() {$('#cboxClose').remove();},
-                    // start the colorbox off with the correct width
-                    width: this.commonService.formColorBoxResize(),
-                    onComplete: function() {
-                        //resize to insure content fits
-                    },
-                    onClosed: function() {
-                        $scope.closeAllMoreInfo();
-                        $scope.worksService.refreshWorkGroups($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
-                    }
-                });
-            };
-
-            
-
-
-            $scope.sortOtherLast = function(type) {
-                if (type.key == 'other'){    
-                    return 'ZZZZZ';
-                } 
-                return type.value;
-            };
-
-            $scope.swapbulkChangeAll = function() {
-                $scope.bulkChecked = !$scope.bulkChecked;
-                for (var idx in worksService.groups){
-                    $scope.bulkEditMap[worksService.groups[idx].activePutCode] = $scope.bulkChecked;
-                }
-                $scope.bulkDisplayToggle = false;
-            };
-
-            ;
-
-            
-
-            $scope.toggleClickPrivacyHelp = function(key) {
-                if ( document.documentElement.className.indexOf('no-touch') == -1 ){
-                    $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-                }
-            };
-
-            $scope.toggleTranslatedTitleModal = function(){
-                $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
-                $('#translatedTitle').toggle();
-                $.colorbox.resize();
-            };
-
-            $scope.validateCitation = function() {
-                if ( $scope.editWork.citation ){
-                    if ($scope.editWork.citation.citation
-                            && $scope.editWork.citation.citation.value
-                            && $scope.editWork.citation.citation.value.length > 0
-                            && $scope.editWork.citation.citationType.value == 'bibtex') {
-                        try {
-                            var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
-                            var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
-                            if (parsed.length == 0){
-                                throw "bibtex parse return nothing";
-                            } 
-                            if (index > -1) {
-                                $scope.editWork.citation.citation.errors.splice(index, 1);
-                            }
-                        } catch (err) {
-                            $scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
-                        };
-                    };
-                    
-                }
-            };
-
-            $scope.validCombineSel = function(selectedWork,work) {
-                if ($scope.hasCombineableEIs(selectedWork)){
-                    return $scope.userIsSource(work) || $scope.hasCombineableEIs(work);
-                }
-                else{
-                    return $scope.hasCombineableEIs(work);
-                }
-            };
-
-        }
-    ]
-);
-
-// This is the Angular 2 part of the module
-@NgModule({})
-export class WorkCtrlNg2Module {}
-*/

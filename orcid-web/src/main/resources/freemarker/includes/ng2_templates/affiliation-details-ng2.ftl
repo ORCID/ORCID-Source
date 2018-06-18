@@ -62,7 +62,7 @@
                 <ul class="id-details">
                     <li *ngFor='let extID of group?.activities[group?.activePutCode]?.affiliationExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
                         <span *ngIf="group?.activities[group?.activePutCode]?.affiliationExternalIdentifiers[0]?.value?.value?.length > 0">
-                            <affiliation-ext-id-popover-ng2 [extID]="extID" [putCode]="group?.activities[group?.activePutCode]?.putCode.value+i"></affiliation-ext-id-popover-ng2>
+                            <affiliation-ext-id-popover-ng2 [extID]="extID" [putCode]="group?.activities[group?.activePutCode]?.putCode.value+i" [activityType]="'affiliation'"></affiliation-ext-id-popover-ng2>
                         </span>
                     </li>
                 </ul>                                   

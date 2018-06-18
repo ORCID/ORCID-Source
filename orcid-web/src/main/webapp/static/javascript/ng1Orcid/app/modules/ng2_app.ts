@@ -29,8 +29,6 @@ import { UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated modules imports
-import { AffiliationExtIdPopoverNg2Module } 
-    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
 
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
@@ -76,6 +74,9 @@ import { EmailVerificationSentMesssageNg2Module }
 
 import { ExternalIdentifiersNg2Module }
     from './externalIdentifiers/externalIdentifiers.ts';
+
+import { ExtIdPopoverNg2Module } 
+    from './extIdPopover/extIdPopover.ts';
 
 import { FundingNg2Module } 
     from './funding/funding.ts';
@@ -287,7 +288,6 @@ export class RootCmp {
         JsonpModule,
         UpgradeModule,
         /* User Generated Modules */
-        AffiliationExtIdPopoverNg2Module,
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
@@ -303,6 +303,7 @@ export class RootCmp {
         EmailUnverifiedWarningNg2Module,//Aproved
         EmailVerificationSentMesssageNg2Module,//Aproved
         ExternalIdentifiersNg2Module,
+        ExtIdPopoverNg2Module,
         HeaderNg2Module,
         FundingFormNg2Module,
         FundingNg2Module,
