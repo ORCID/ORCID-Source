@@ -12,15 +12,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
-
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AffiliationService } 
     from '../../shared/affiliation.service.ts';
@@ -39,6 +34,8 @@ import { FeaturesService }
     
 import { CommonService } 
     from '../../shared/common.service.ts';
+
+
 
 @Component({
     selector: 'affiliation-form-ng2',
@@ -175,7 +172,9 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.addingAffiliation = true;
         this.editAffiliation.errors.length = 0;
         this.affiliationService.setData( this.editAffiliation )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.editAffiliation = data;
@@ -261,7 +260,9 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     getDisambiguatedAffiliation = function(id) {
         this.affiliationService.getDisambiguatedAffiliation(id)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if (data != null) {
@@ -394,7 +395,9 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
             }
         }
         this.affiliationService.serverValidate(this.editAffiliation, relativePath)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 console.log('data', data);
@@ -423,7 +426,9 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         $event.preventDefault();
         aff.visibility.visibility = priv;                
         this.affiliationService.updateVisibility(aff)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(data => {});
     };
 
@@ -475,7 +480,9 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
 
     toggleEdit(): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

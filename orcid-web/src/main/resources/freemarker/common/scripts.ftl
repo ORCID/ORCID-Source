@@ -29,7 +29,7 @@
 
 <script type="text/javascript" src="${staticCdn}/javascript/script.js"></script>
 
-<script src="${staticCdn}/javascript/angular_orcid_generated.js"></script>
+<script src="${staticCdn}/javascript/ng1Orcid/angular_orcid_generated.js"></script>
 
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');

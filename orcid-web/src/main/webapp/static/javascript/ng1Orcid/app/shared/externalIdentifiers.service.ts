@@ -7,13 +7,12 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
 
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class ExternalIdentifiersService {
@@ -47,12 +46,7 @@ export class ExternalIdentifiersService {
             getBaseUri() + '/my-orcid/externalIdentifiers.json', 
             encoded_data, 
             { headers: this.headers }
-        )
-        .do(
-            (data) => {                      
-            }
-        )
-        .share();
+        );
     }
 
 
@@ -60,12 +54,7 @@ export class ExternalIdentifiersService {
     getExternalIdentifiersForm(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/my-orcid/externalIdentifiers.json'
-        )
-        .do(
-            (data) => {                                              
-            }
-        )
-        .share();
+        );
     }
 
      removeExternalIdentifier( data ) {
@@ -75,12 +64,7 @@ export class ExternalIdentifiersService {
         
         return this.http.delete( 
             getBaseUri() + '/my-orcid/externalIdentifiers.json?' + encodeURIComponent(data)
-        )
-        .do(
-            (data) => {                   
-            }
-        )
-        .share();
+        );
 
     }
 }

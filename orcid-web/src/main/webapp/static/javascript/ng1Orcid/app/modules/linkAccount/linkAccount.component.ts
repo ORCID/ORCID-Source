@@ -10,14 +10,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { DiscoService } 
     from '../../shared/disco.service.ts'; 
@@ -61,7 +57,9 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
 
     loadDiscoFeed = function() {
         this.discoService.getDiscoFeed()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.feed = data;
@@ -83,7 +81,9 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
 
     loadRequestInfoForm = function() {
         this.oauthService.loadRequestInfoForm()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data){                     

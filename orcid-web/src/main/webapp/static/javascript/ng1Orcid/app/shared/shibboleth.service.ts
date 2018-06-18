@@ -4,18 +4,15 @@ import { Injectable }
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
 
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class ShibbolethService {
@@ -43,14 +40,12 @@ export class ShibbolethService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
     }
 
     init(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/shibboleth/2FA/authenticationCode.json'
         )
-        .share();
     }
 
     notifyOther(): void {

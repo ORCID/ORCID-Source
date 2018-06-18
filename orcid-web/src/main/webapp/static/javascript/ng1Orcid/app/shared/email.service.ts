@@ -7,13 +7,12 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
 
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class EmailService {
@@ -67,47 +66,53 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
-        .share();
+        ;
     }
 
     deleteEmail() {        
         return this.http.delete( 
             getBaseUri() + '/account/deleteEmail.json?email=' + encodeURIComponent(this.delEmail.value), { headers: this.deleteEmailHeaders }
         )
-        .do(
-            (data) => {
-                this.getEmails();                       
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.getEmails();                       
+                }
+            )
         )
-        .share();
+        ;
     }
 
     getEmailFrequencies(): Observable<any> {
         return this.http.get(
             window.location.href + '/email-frequencies.json'
         )
-        .do(
-            (data) => {
-                this.emails = data;
-                
-                for (let i in data['emails']){
-                    console.log('data[i]', data['emails'][i]);
-                    if (data['emails'][i].primary == true){
-                        this.primaryEmail = data['emails'][i];
-                    }
-                }                                                
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.emails = data;
+                    
+                    for (let i in data['emails']){
+                        console.log('data[i]', data['emails'][i]);
+                        if (data['emails'][i].primary == true){
+                            this.primaryEmail = data['emails'][i];
+                        }
+                    }                                                
+                }
+            )
         )
-        .share();
+        ;
     }
 
     getEmailPrimary(): any {
@@ -118,18 +123,20 @@ export class EmailService {
         return this.http.get(
             this.url
         )
-        .do(
-            (data) => {
-                this.emails = data;
-                for (let i in data['emails']){
-                    //console.log('data.emails[i]', data.emails[i]);
-                    if (data['emails'][i].primary == true){
-                        this.primaryEmail = data['emails'][i];
-                    }
-                }                                                
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.emails = data;
+                    for (let i in data['emails']){
+                        //console.log('data.emails[i]', data.emails[i]);
+                        if (data['emails'][i].primary == true){
+                            this.primaryEmail = data['emails'][i];
+                        }
+                    }                                                
+                }
+            )
         )
-        .share();
+        ;
     }
 
     getData = this.getEmails;
@@ -157,16 +164,18 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
-        .share();
+        ;
     }
 
     saveEmailFrequencies( obj ): Observable<any> {
@@ -177,16 +186,18 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
-        .share();
+        ;
     }
 
     setData( obj ): Observable<any> {
@@ -197,16 +208,18 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
-        .share();
+        ;
     }
 
     setEmailPrivacy(email): Observable<any> {
@@ -217,7 +230,7 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     setPrimary(email, callback?): Observable<any> {
@@ -228,16 +241,18 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                this.inputEmail = data;
-                if (this.inputEmail.errors.length == 0) {
-                    this.initInputEmail();
-                    this.getEmails();
-                }                         
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        this.initInputEmail();
+                        this.getEmails();
+                    }                         
+                }
+            )
         )
-        .share();
+        ;
 
         /*
         Old code, behaviour changed with new email functionality
@@ -273,7 +288,7 @@ export class EmailService {
         return this.http.get(
             getBaseUri() + '/account/verifyEmail.json?email=' + encodeURIComponent(_email.value)
         )
-        .share();
+        ;
     }
 
     deleteCustomEmail( obj ): Observable<any> {
@@ -284,7 +299,7 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     editCustomEmail( obj ): Observable<any> {
@@ -295,7 +310,7 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     saveCustomEmail( obj ): Observable<any> {
@@ -306,20 +321,20 @@ export class EmailService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     displayCreateForm( clientId ): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/custom-emails/get-empty.json?clientId=' + clientId
         )
-        .share();
+        ;
     }
 
     getCustomEmails( clientId ): Observable<any> {
         return this.http.get(
             getBaseUri() + '/group/custom-emails/get.json?clientId=' + clientId
         )
-        .share();
+        ;
     }
 }

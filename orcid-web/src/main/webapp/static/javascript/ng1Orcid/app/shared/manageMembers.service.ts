@@ -9,13 +9,12 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
 
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class ManageMembersService {
@@ -44,7 +43,7 @@ export class ManageMembersService {
             encoded_data, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     findConsortium( obj ): Observable<any> {
@@ -52,7 +51,7 @@ export class ManageMembersService {
         return this.http.get(
             getBaseUri()+'/manage-members/find-consortium.json?id=' + encoded_data
         )
-        .share();
+        ;
     }
 
     notifyOther(): void {

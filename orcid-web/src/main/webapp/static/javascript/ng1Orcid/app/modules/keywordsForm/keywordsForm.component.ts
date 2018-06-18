@@ -7,14 +7,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -99,7 +95,9 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getData(): void{
         this.keywordsService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
@@ -129,7 +127,9 @@ export class KeywordsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     setForm( closeAfterAction ): void {
 
         this.keywordsService.setData( this.formData, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;

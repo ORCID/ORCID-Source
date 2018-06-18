@@ -15,14 +15,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AccountService } 
     from '../../shared/account.service.ts'; 
@@ -99,7 +95,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         addDelegate.password = this.password;
 
         this.accountService.addDelegate( addDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -129,7 +127,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         addDelegate.password = this.password;
 
         this.accountService.addDelegateByEmail( addDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -150,7 +150,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
         this.accountService.getDelegates(  )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.delegatesByOrcid = {};
@@ -178,7 +180,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         revokeDelegate.password = this.password;
 
         this.accountService.revoke( revokeDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -204,7 +208,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         revokeDelegate.password = this.password;
 
         this.accountService.searchByEmail( this.input.text )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.confirmAddDelegateByEmail(data);
@@ -224,7 +230,9 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     getResults(): void {
 
         this.accountService.getResults( this.input )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 var bottom = null;

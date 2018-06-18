@@ -4,14 +4,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -191,7 +187,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         if( obj.value ) {
             this.emailService.addEmail( obj )
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     this.getformData();
@@ -213,7 +211,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getPrivacyPreferences(): void {
         this.prefsSrvc.getPrivacyPreferences()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.prefs = data;
@@ -226,7 +226,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getEmailFrequencies(): void {
         this.emailFrequencyService.getEmailFrequencies()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {                
                 this.sendChangeNotifications = data['send_change_notifications']
@@ -242,27 +244,37 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     
     updateChangeNotificationsFrequency(): void {
         this.emailFrequencyService.updateFrequency('send_change_notifications', this.sendChangeNotifications)
-        .takeUntil(this.ngUnsubscribe).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
     }
     
     updateAdministrativeChangeNotificationsFrequency(): void {
         this.emailFrequencyService.updateFrequency('send_administrative_change_notifications', this.sendAdministrativeChangeNotifications)
-        .takeUntil(this.ngUnsubscribe).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
     }
     
     updateMemberUpdateRequestsFrequency(): void {
         this.emailFrequencyService.updateFrequency('send_member_update_requests', this.sendMemberUpdateRequestsNotifications)
-        .takeUntil(this.ngUnsubscribe).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
     }
     
     updateSendQuarterlyTips(): void {
         this.emailFrequencyService.updateFrequency('send_quarterly_tips', this.sendQuarterlyTips)
-        .takeUntil(this.ngUnsubscribe).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(data => {}, error => {console.log('Error changing frequency', error)});
     }
     
     updateEmailFrequency(): void {
         this.prefsSrvc.updateEmailFrequency( this.prefs )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
             },
@@ -288,7 +300,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     confirmDeleteEmail(email): void {
         this.emailService.delEmail = email;        
         this.emailService.deleteEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.getformData();
@@ -306,7 +320,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     deleteEmailInline(): void {
         this.emailService.deleteEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.getformData();
@@ -328,7 +344,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setPrimary( email ): void {
         this.emailService.setPrimary( email )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 let tempData = null;
@@ -350,7 +368,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getformData(): void {
         this.emailService.getData()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
@@ -377,7 +397,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyChange( $event, obj ): any {
 
         this.emailService.setEmailPrivacy( obj )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
             },
@@ -389,7 +411,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     saveEmail( closeAfterAction ): void {
         this.emailService.saveEmail( this.formData )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -420,7 +444,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.verifyEmailObject = email;
         
         this.emailService.verifyEmail( email )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
             },

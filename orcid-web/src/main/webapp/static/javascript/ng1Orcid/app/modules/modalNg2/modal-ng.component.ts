@@ -6,11 +6,8 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, ElementRef, Input, OnInit, OnDestroy, Output } 
     from '@angular/core';
 
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription } 
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
