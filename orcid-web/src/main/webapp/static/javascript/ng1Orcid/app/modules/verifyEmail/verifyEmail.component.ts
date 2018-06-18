@@ -6,14 +6,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AccountService } 
     from '../../shared/account.service.ts';
@@ -50,7 +46,9 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
 
     closeColorBox(): void {
         this.accountService.delayVerifyEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
  
@@ -64,7 +62,9 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
     getEmails(): void {
 
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
 
@@ -90,7 +90,9 @@ export class VerifyEmailComponent implements AfterViewInit, OnDestroy, OnInit {
 
     verifyEmail(): void {
         this.emailService.verifyEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 

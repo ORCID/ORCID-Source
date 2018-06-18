@@ -16,14 +16,10 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChi
 import { ReCaptchaComponent } 
     from 'angular2-recaptcha';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonNg2Module }
     from './../common/common.ts';
@@ -266,7 +262,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         is_authorize = this.authorizationForm.approved;
 
         this.oauthService.authorizeRequest( this.authorizationForm )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(is_authorize) {
@@ -287,7 +285,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     loadAndInitAuthorizationForm(): void{
 
         this.oauthService.loadAndInitAuthorizationForm( )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.authorizationForm = data;
@@ -302,7 +302,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     loadRequestInfoForm(): void{
         this.oauthService.loadRequestInfoForm( )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data){
@@ -331,7 +333,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     oauth2ScreensLoadRegistrationForm(givenName, familyName, email, linkFlag): void{
 
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.registrationForm = data;
@@ -365,7 +369,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     getDuplicates(): void{
         let url = getBaseUri() + '/dupicateResearcher.json?familyNames=' + this.registrationForm.familyNames.value + '&givenNames=' + this.registrationForm.givenNames.value;
         this.oauthService.getDuplicates( url )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 var diffDate = new Date();
@@ -428,7 +434,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     sendReactivationEmail(email): void {
         this.oauthService.sendReactivationEmail(email)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.showDeactivatedError = false;
@@ -446,7 +454,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showEmailsAdditionalReactivationSent.splice(index, 1, true);
 
         this.oauthService.sendReactivationEmail(this.registrationForm.emailsAdditional[index].value)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
             },
@@ -463,7 +473,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
         this.registrationForm.valNumClient = this.registrationForm.valNumServer / 2;
         this.oauthService.oauth2ScreensPostRegisterConfirm(this.registrationForm)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data != null && data.errors != null && data.errors.length > 0) {
@@ -505,7 +517,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.registrationForm.linkType = linkFlag;
 
         this.oauthService.oauth2ScreensRegister(this.registrationForm)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.registrationForm = data;
@@ -558,7 +572,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     serverValidate(field): void {
         this.oauthService.serverValidate(this.registrationForm, field)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.commonSrvc.copyErrorsLeft(this.registrationForm, data);

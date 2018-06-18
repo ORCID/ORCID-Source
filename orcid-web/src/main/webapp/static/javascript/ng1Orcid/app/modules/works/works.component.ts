@@ -9,14 +9,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -161,7 +157,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     addWorkModal(work): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;
@@ -378,7 +376,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     loadWorkImportWizardList(): void {
         this.worksService.loadWorkImportWizardList()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm works loadWorkImportWizardList', data);
@@ -412,7 +412,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openBibTextWizard(): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;
@@ -457,7 +459,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     putWork(): any{
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 /*
@@ -694,7 +698,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleBulkEdit(): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

@@ -215,14 +215,15 @@ export class MetaXSRFStrategy implements XSRFStrategy {
     }
 }
 ///////////////////
-import {Injectable} from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import {Injectable} 
+    from '@angular/core';
+
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } 
+    from '@angular/common/http';
+
+import { Observable } 
+    from 'rxjs';
+
 import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
@@ -360,8 +361,7 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log("begin parent Ng2AppModule constructor");
-        console.log('v0.9.20');
+        console.log('v0.9.21');
     }
 }
 

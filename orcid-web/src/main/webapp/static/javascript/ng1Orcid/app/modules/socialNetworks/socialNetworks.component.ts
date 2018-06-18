@@ -8,14 +8,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { SocialNetworkService } 
     from '../../shared/socialNetwork.service.ts';
@@ -39,7 +35,9 @@ export class SocialNetworksComponent implements AfterViewInit, OnDestroy, OnInit
     checkTwitterStatus(): void {
 
         this.socialNetworkService.checkTwitterStatus()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data == "true"){
@@ -57,7 +55,9 @@ export class SocialNetworksComponent implements AfterViewInit, OnDestroy, OnInit
     updateTwitter(): void {
         if(this.twitter == true) {
             this.socialNetworkService.enableTwitter()
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     window.location.href = data;
@@ -69,7 +69,9 @@ export class SocialNetworksComponent implements AfterViewInit, OnDestroy, OnInit
 
         } else {
             this.socialNetworkService.disableTwitter()
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     if(data == "true"){

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <activities:employments
-	path="http://orcid.org/v2.1/8888-8888-8888-8880/employments"
+	path="/8888-8888-8888-8880/employments"
 	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:employment="http://www.orcid.org/ns/employment"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education"
 	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:work="http://www.orcid.org/ns/work"

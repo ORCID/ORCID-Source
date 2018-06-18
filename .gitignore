@@ -20,8 +20,9 @@ orcid-solr-web/src/main/webapp/solr/fundingSubType/data
 orcid-solr-web/**/_rest_managed.json
 Servers/Pivotal tc Server Developer Edition v3.1-config/
 .metadata/
-orcid-web/src/main/webapp/static/javascript/ng1Orcid/node_modules/
 orcid-web/src/main/webapp/static/javascript/angular_orcid_generated.js
+orcid-web/src/main/webapp/static/javascript/ng1Orcid/angular_orcid_generated.js
+orcid-web/src/main/webapp/static/javascript/ng1Orcid/node_modules/
 orcid-activemq/activemq-data/
 orcid-activemq/logs/
 orcid-message-listener/logs/

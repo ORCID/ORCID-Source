@@ -6,14 +6,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AccountService } 
     from '../../shared/account.service.ts'; 
@@ -36,7 +32,9 @@ export class PasswordEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getChangePassword(): void {
         this.accountService.getChangePassword()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
@@ -53,7 +51,9 @@ export class PasswordEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
     saveChangePassword(): void {
         this.accountService.saveChangePassword( this.changePasswordPojo )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.changePasswordPojo = data;

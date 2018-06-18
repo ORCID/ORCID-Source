@@ -8,14 +8,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonNg2Module }
     from './../common/common.ts';
@@ -98,7 +94,9 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     search(input: any) {
-        this.searchSrvc.getResults(orcidSearchUrlJs.buildUrl(this.input)).takeUntil(this.ngUnsubscribe).subscribe(
+        this.searchSrvc.getResults(orcidSearchUrlJs.buildUrl(this.input)).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(
             searchResults => {
                 this.newResults = searchResults['result'];
                 this.numFound = searchResults['num-found'];
