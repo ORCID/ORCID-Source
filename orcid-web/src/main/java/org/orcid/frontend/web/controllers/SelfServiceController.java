@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.v3.EmailManager;
@@ -94,9 +96,17 @@ public class SelfServiceController extends BaseController {
     }
 
     @RequestMapping("/{accountId}/all-consortium-contacts")
-    public ModelAndView getAllConsortiumContactsPage(@PathVariable(required = false) String accountId) {
+    public ModelAndView getAllConsortiumContactsPage(@PathVariable(required = true) String accountId) {
         ModelAndView mav = new ModelAndView("all_consortium_contacts");
         return mav;
+    }
+    
+    @RequestMapping(value = "/{accountId}/all-consortium-contacts-download", method = RequestMethod.GET, produces = "text/csv")
+    public void getAmbiguousOrgs(HttpServletResponse response, @PathVariable(required = true) String accountId) throws IOException {
+        checkAccess(accountId);
+        response.setContentType("text/csv");
+        response.addHeader("Content-Disposition", "attachment; filename=\"all_consortium_contacts.csv\"");
+        salesForceManager.writeContactsCsv(response.getWriter(), salesForceManager.retrieveSubMemberContactsByConsortiumId(accountId));
     }
     
     @RequestMapping(value = "/validate-member-details-name", method = RequestMethod.POST)

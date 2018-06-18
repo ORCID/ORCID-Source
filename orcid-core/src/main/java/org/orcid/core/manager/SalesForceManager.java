@@ -1,5 +1,6 @@
 package org.orcid.core.manager;
 
+import java.io.Writer;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +46,9 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     List<Contact> retrieveFreshContactsByAccountId(String accountId);
     
     List<Contact> retrieveSubMemberContactsByConsortiumId(String consortiumId);
-
+    
+    void writeContactsCsv(Writer writer, List<Contact> contacts);
+    
     void addOrcidsToContacts(List<Contact> contacts);
 
     void addAccessInfoToContacts(List<Contact> contacts, String accountId);

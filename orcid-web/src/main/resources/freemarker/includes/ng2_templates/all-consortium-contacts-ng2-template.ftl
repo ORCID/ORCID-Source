@@ -1,7 +1,14 @@
 <script type="text/ng-template" id="all-consortium-contacts-ng2-template">
     <div class="col-md-9 col-sm-12 col-xs-12 self-service">
         <h1 id="self-service-lead"><@spring.message "manage_consortium.all_consortium_contacts_heading"/></h1>
-        <a href="<@orcid.rootPath '/self-service'/>"><@spring.message "manage_consortium.back_to_self_service_home"/></a>
+        <div>
+            <a href="<@orcid.rootPath '/self-service'/>"><@spring.message "manage_consortium.back_to_self_service_home"/></a>
+        </div>
+        <div>
+            <a href="all-consortium-contacts-download">
+                <button class="btn btn-primary" id="export-all-contacts"><@orcid.msg 'manage_consortium.all_consortium_contacts_export' /></button>
+            </a>
+        </div>
         <div>
             <table>
                 <thead>

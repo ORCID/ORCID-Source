@@ -1,5 +1,6 @@
 package org.orcid.core.manager.impl;
 
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import org.ehcache.Cache;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SourceManager;
@@ -43,6 +45,8 @@ import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * 
@@ -95,7 +99,13 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Resource
     private SourceManager sourceManager;
-
+    
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    private LocaleManager localeManager;
+    
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private String premiumConsortiumMemberTypeId;
@@ -189,6 +199,27 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
                 return c;
             });
         }).collect(Collectors.toList());
+    }
+    
+    @Override
+    public void writeContactsCsv(Writer writer, List<Contact> contacts) {
+        @SuppressWarnings("resource")
+        CSVWriter csvWriter = new CSVWriter(writer);
+        csvWriter.writeNext(buildHeader());
+        for (Contact contact : contacts) {
+            ContactRoleType roleType = contact.getRole().getRoleType();
+            String orcid = contact.getOrcid() != null ? orcidUrlManager.getBaseUrl() + "/" + contact.getOrcid() : "";
+            String[] line = new String[] { contact.getMember().getPublicDisplayName(), contact.getName(), contact.getEmail(), orcid,
+                    String.valueOf(contact.getRole().isVotingContact()), localeManager.resolveMessage(roleType.getClass().getName() + "." + roleType.name()) };
+            csvWriter.writeNext(line);
+        }
+    }
+
+    private String[] buildHeader() {
+        return new String[] { localeManager.resolveMessage("manage_consortium.contacts_member_name"),
+                localeManager.resolveMessage("manage_consortium.contacts_contact_name"), localeManager.resolveMessage("manage_consortium.contacts_contact_email"),
+                localeManager.resolveMessage("manage_consortium.contacts_contact_orcid"), localeManager.resolveMessage("manage_consortium.contacts_voting_contact"),
+                localeManager.resolveMessage("manage_consortium.contacts_role") };
     }
 
     @Override
