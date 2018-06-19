@@ -27,9 +27,7 @@
                 <version>1.6</version>
                 <configuration>
                     <nodeVersion>v8.11.2</nodeVersion>
-                    <npmVersion>6.1.0</npmVersion>
                     <downloadRoot>https://nodejs.org/dist/</downloadRoot>
-                    <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
                     <workingDirectory>${nodejs.workingDirectory}</workingDirectory>
                     <installDirectory>target</installDirectory>
                     <environmentVariables>
