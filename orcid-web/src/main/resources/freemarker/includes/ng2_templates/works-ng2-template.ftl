@@ -412,8 +412,8 @@
                                                     </li>
                                                     </#if>                
                                                     <li class="works-details">
-                                                        <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
-                                                            <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                        <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                                            <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                             </span>
                                                         </a>
                                                         <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails']">
@@ -469,8 +469,9 @@
                                                 </#if> 
                                                 <!--Show details toggle-->
                                                 <li class="works-details" *ngIf="!editSources[group.groupId]">
-                                                    <a (click)="showDetailsMouseClick(group.activePutCode,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
-                                                        <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'"></span>
+                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                                        <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                        </span>
                                                     </a>
                                                     <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails']">
                                                         <div class="arrow"></div>
@@ -518,7 +519,7 @@
                                                         <li *ngFor='let extID of work?.workExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
                                                             
                                                             <span *ngIf="work?.workExternalIdentifiers[0]?.workExternalIdentifierId?.value?.length > 0">
-                                                                <affiliation-ext-id-popover-ng2 [extID]="extID" [putCode]="work.putCode.value+i" [activityType]="'work'"></affiliation-ext-id-popover-ng2>
+                                                                <ext-id-popover-ng2 [extID]="extID" [putCode]="work.putCode.value+i" [activityType]="'work'"></ext-id-popover-ng2>
                                                             </span>
                                                          </li>
                                                     </ul>                                   
@@ -540,7 +541,7 @@
                                         </div>
                                     </div>
  
-                                    <div class="more-info" *ngIf="moreInfo[group.groupId] && group.activePutCode == work.putCode.value">
+                                    <div class="more-info" *ngIf="moreInfo[group?.groupId] && group.activePutCode == work.putCode.value">
                                         <div id="ajax-loader" *ngIf="workService.details[work.putCode.value] == undefined">
                                             <span id="ajax-loader"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x4 green"></i></span>
                                         </div>

@@ -167,7 +167,7 @@
             <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
             <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
             <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
-            <#include "/includes/ng2_templates/affiliation-ext-id-popover-ng2-template.ftl">
+            <#include "/includes/ng2_templates/ext-id-popover-ng2-template.ftl">
         </#if>
     </@orcid.checkFeatureStatus> 
    

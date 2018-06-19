@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<script type="text/ng-template" id="affiliation-ext-id-popover-ng2-template">
+<script type="text/ng-template" id="ext-id-popover-ng2-template">
     <span *ngIf="relationship && relationship == 'part-of'" class='italic'><@orcid.msg 'common.part_of'/> </span><span>{{type | uppercase}}:</span>
     <a *ngIf="value" href="{{url}}" class="truncate-anchor inline" target="orcid.blank" (mouseenter)="showAffiliationExtIdPopOver(putCode)" (mouseleave)="hideAffiliationExtIdPopOver(putCode)">{{value}}</a> 
     <div *ngIf="url" class="popover-pos">
