@@ -6,11 +6,12 @@ declare var openImportWizardUrl: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
+
 import { takeUntil } 
     from 'rxjs/operators';
 
@@ -79,6 +80,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     constructor( 
         private commonSrvc: CommonService,
+        private cdr: ChangeDetectorRef,
         private emailService: EmailService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
@@ -337,6 +339,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     loadDetails(putCode, event): void {
+        console.log("load details");
         //Close any open popover
         this.closePopover(event);
         this.moreInfoOpen = true;
@@ -352,7 +355,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.worksService.addAbbrWorksToScope(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
             !this.sortState.reverseKey[this.sortState.predicateKey]
         )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -565,7 +570,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             group.works[idx].visibility.visibility = priv;
         }
         this.worksService.updateVisibility(putCodes, priv)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
 
@@ -584,7 +591,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     setPrivacy(putCodes, priv): void {
         //this.worksService.updateVisibility([putCode], priv); 
         this.worksService.updateVisibility(putCodes, priv)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if (putCodes.length > 0) {
@@ -616,10 +625,13 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     showDetailsMouseClick = function(group, $event) {
-        //console.log('showDetailsMouseClick envent', $event);
         $event.stopPropagation();
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        this.cdr.detectChanges();
+        console.log(group);
+        console.log(group.works);
         for (var idx in group.works){
+            console.log(group.works[idx]);
             this.loadDetails(group.works[idx].putCode.value, $event);
         }
     };
@@ -761,5 +773,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.loadMore();
         this.loadWorkImportWizardList();
+        console.log("test");
     };
 }
