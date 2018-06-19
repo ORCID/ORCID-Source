@@ -1,0 +1,4 @@
+"Member","Name","Email","ORCID iD","Voting contact","Role"
+"ORCID","Will Simpson","w.simpson@orcid.org","https://orcid.org/0000-0003-4654-1403","true","Agreement signatory (OFFICIAL)"
+"Test Org","Fname 1 Lname 1","test1@nowhere.org","https://orcid.org/1111-1111-1111-1111","false","Technical contact"
+"Test Org","Fname 2 Lname 2","test2@nowhere.org","","true","Main relationship contact (OFFICIAL)"

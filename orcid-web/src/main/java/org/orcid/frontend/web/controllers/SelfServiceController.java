@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.v3.EmailManager;
@@ -93,6 +95,20 @@ public class SelfServiceController extends BaseController {
         return mav;
     }
 
+    @RequestMapping("/{accountId}/all-consortium-contacts")
+    public ModelAndView getAllConsortiumContactsPage(@PathVariable(required = true) String accountId) {
+        ModelAndView mav = new ModelAndView("all_consortium_contacts");
+        return mav;
+    }
+    
+    @RequestMapping(value = "/{accountId}/all-consortium-contacts-download", method = RequestMethod.GET, produces = "text/csv")
+    public void getAmbiguousOrgs(HttpServletResponse response, @PathVariable(required = true) String accountId) throws IOException {
+        checkAccess(accountId);
+        response.setContentType("text/csv");
+        response.addHeader("Content-Disposition", "attachment; filename=\"all_consortium_contacts.csv\"");
+        salesForceManager.writeContactsCsv(response.getWriter(), salesForceManager.retrieveSubMemberContactsByConsortiumId(accountId));
+    }
+    
     @RequestMapping(value = "/validate-member-details-name", method = RequestMethod.POST)
     public @ResponseBody MemberDetailsForm validateMemberDetailsName(@RequestBody MemberDetailsForm consortium) {
         // validate name isn't blank
@@ -192,6 +208,14 @@ public class SelfServiceController extends BaseController {
         contactsForm.setPermissionsByContactRoleId(ContactPermission.mapByContactRoleId(salesForceManager.calculateContactPermissions(contactsList)));
         contactsForm.setRoleMap(generateSalesForceRoleMap());
         return contactsForm;
+    }
+    
+    @RequestMapping(value = "/get-sub-member-contacts.json", method = RequestMethod.GET)
+    public @ResponseBody List<Contact> getSubMemberContacts(@RequestParam("accountId") String accountId) {
+        checkAccess(accountId);
+        List<Contact> contactsList = salesForceManager.retrieveSubMemberContactsByConsortiumId(accountId);
+        salesForceManager.addOrcidsToContacts(contactsList);
+        return contactsList;
     }
 
     @RequestMapping(value = "/add-contact-by-email.json")

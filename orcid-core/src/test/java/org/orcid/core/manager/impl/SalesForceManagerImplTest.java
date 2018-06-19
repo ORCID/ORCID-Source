@@ -11,6 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,12 +20,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.ehcache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.locale.LocaleManagerImpl;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SourceManager;
@@ -42,6 +46,7 @@ import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 /**
  * 
@@ -83,6 +88,9 @@ public class SalesForceManagerImplTest {
 
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
+    
+    @Mock
+    private OrcidUrlManager orcidUrlManager;
 
     @Before
     public void initMocks() {
@@ -96,10 +104,13 @@ public class SalesForceManagerImplTest {
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceConsortiaListCache", salesForceConsortiaListCache);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceConsortiumCache", salesForceConsortiumCache);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceContactsCache", salesForceContactsCache);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "orcidUrlManager", orcidUrlManager);
 
         setUpUser();
         setUpContact1();
         setUpContact2();
+        setUpOrcidUrlManager();
+        setUpLocalManager();
     }
 
     private void setUpUser() {
@@ -142,6 +153,22 @@ public class SalesForceManagerImplTest {
         when(emailManager.getEmails("0000-0000-0000-0001")).thenReturn(emails);
     }
 
+    private void setUpOrcidUrlManager() {
+        when(orcidUrlManager.getBaseUrl()).thenReturn("https://orcid.org");
+    }
+    
+    private void setUpLocalManager() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasenames(
+                "classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/notranslate"
+                        .split(","));
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setCacheSeconds(5);
+        LocaleManagerImpl localeManager = new LocaleManagerImpl();
+        localeManager.setMessageSource(messageSource);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "localeManager", localeManager);
+    }
+
     private Contact createContact(String contactId, String accountId, String email, String orcid) {
         Contact c = new Contact();
         c.setId(contactId);
@@ -149,6 +176,22 @@ public class SalesForceManagerImplTest {
         c.setEmail(email);
         c.setOrcid(orcid);
         return c;
+    }
+    
+    private Contact createContact(String firstName, String lastName, String email, String orcid, Boolean isVotingContact, ContactRoleType roleType, String memberName) {
+        Contact contact = new Contact();
+        contact.setFirstName(firstName);
+        contact.setLastName(lastName);
+        contact.setEmail(email);
+        contact.setOrcid(orcid);
+        ContactRole role = new ContactRole();
+        role.setRoleType(roleType);
+        role.setVotingContact(isVotingContact);
+        contact.setRole(role);
+        Member member = new Member();
+        member.setPublicDisplayName(memberName);
+        contact.setMember(member);
+        return contact;
     }
 
     private ContactRole createContactRole(String contactId, String roleId, ContactRoleType roleType) {
@@ -339,7 +382,23 @@ public class SalesForceManagerImplTest {
             fail("Should not be able to change voting contact when am not main/signatory contact");
         }
     }
+    
+    @Test
+    public void testSubMemberContacts() throws IOException {
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(createContact("Will", "Simpson", "w.simpson@orcid.org", "0000-0003-4654-1403", true, ContactRoleType.AGREEMENT_SIGNATORY, "ORCID"));
+        contacts.add(createContact("Fname 1", "Lname 1", "test1@nowhere.org", "1111-1111-1111-1111", false, ContactRoleType.TECHNICAL_CONTACT, "Test Org"));
+        contacts.add(createContact("Fname 2", "Lname 2", "test2@nowhere.org", null, true, ContactRoleType.MAIN_CONTACT, "Test Org"));
+        
+        StringWriter writer = new StringWriter();
 
+        salesForceManager.writeContactsCsv(writer, contacts);
+        String result = writer.toString();
+
+        String expected = IOUtils.toString(getClass().getResource("/org/orcid/core/manager/expected_all_contacts.csv"));
+        assertEquals(expected, result);
+    }
+    
     private Member createMember(String accountId, String name, String publicDisplayName, String website) throws MalformedURLException {
         Member member = new Member();
         member.setId(accountId);
