@@ -7,13 +7,13 @@ import { Injectable }
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
 
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
+
 
 @Injectable()
 export class NotificationsService {
@@ -145,24 +145,26 @@ export class NotificationsService {
         return this.http.get(
             url
         )
-        .do(
-            (data: any) => {
-                if(data.length === 0 || data.length < this.maxResults){
-                    this.areMoreFlag = false;
+        .pipe(
+            tap(
+                (data: any) => {
+                    if(data.length === 0 || data.length < this.maxResults){
+                        this.areMoreFlag = false;
+                    }
+                    else{
+                        this.areMoreFlag = true;
+                    }
+                    for(var i = 0; i < data.length; i++){                       
+                        this.notifications.push( data[i] );
+                    }
+                    this.loading = false;
+                    this.loadingMore = false;
+                    this.resizeIframes();
+                    this.retrieveUnreadCount();                                             
                 }
-                else{
-                    this.areMoreFlag = true;
-                }
-                for(var i = 0; i < data.length; i++){                       
-                    this.notifications.push( data[i] );
-                }
-                this.loading = false;
-                this.loadingMore = false;
-                this.resizeIframes();
-                this.retrieveUnreadCount();                                             
-            }
+            )
         )
-        .share();
+        ;
 
         /*
         $.ajax({
@@ -196,13 +198,15 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/notification-alerts.json'
         )
-        .do(
-            (data) => {
-                this.notificationAlerts = data;
-                this.retrieveUnreadCount();                                              
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.notificationAlerts = data;
+                    this.retrieveUnreadCount();                                              
+                }
+            )
         )
-        .share();
+        ;
         /*
         $.ajax({
             url: getBaseUri() + '/inbox/notification-alerts.json',
@@ -225,12 +229,14 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/unreadCount.json'
         )
-        .do(
-            (data) => {
-                this.unreadCount = data;                                             
-            }
+        .pipe(
+            tap(
+                (data) => {
+                    this.unreadCount = data;                                             
+                }
+            )
         )
-        .share();
+        ;
         /*
         $.ajax({
             url: getBaseUri() + '/inbox/unreadCount.json',
@@ -254,19 +260,21 @@ export class NotificationsService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                var updated = data;
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === updated['putCode']){
-                        existing.readDate = updated['readDate'];
+        .pipe(
+            tap(
+                (data) => {
+                    var updated = data;
+                    for(var i = 0;  i < this.notifications.length; i++){
+                        var existing = this.notifications[i];
+                        if(existing.putCode === updated['putCode']){
+                            existing.readDate = updated['readDate'];
+                        }
                     }
+                    this.retrieveUnreadCount();                        
                 }
-                this.retrieveUnreadCount();                        
-            }
+            )
         )
-        .share();
+        ;
         /*
         $.ajax({
             url: getBaseUri() + '/inbox/' + notificationId + '/read.json',
@@ -298,23 +306,25 @@ export class NotificationsService {
             encoded_data, 
             { headers: this.headers }
         )
-        .do(
-            (data) => {
-                var updated = data;
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === updated['putCode']){
-                        this.notifications.splice(i, 1);
-                        if(this.firstResult > 0){
-                            this.firstResult--;
+        .pipe(
+            tap(
+                (data) => {
+                    var updated = data;
+                    for(var i = 0;  i < this.notifications.length; i++){
+                        var existing = this.notifications[i];
+                        if(existing.putCode === updated['putCode']){
+                            this.notifications.splice(i, 1);
+                            if(this.firstResult > 0){
+                                this.firstResult--;
+                            }
+                            break;
                         }
-                        break;
                     }
+                    this.retrieveUnreadCount();                       
                 }
-                this.retrieveUnreadCount();                       
-            }
+            )
         )
-        .share();
+        ;
 
         /*
         $.ajax({
@@ -347,21 +357,23 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
         )
-        .do(
-            (data) => {
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === notificationId){
-                        this.notifications.splice(i, 1);
-                        if(this.firstResult > 0){
-                            this.firstResult--;
+        .pipe(
+            tap(
+                (data) => {
+                    for(var i = 0;  i < this.notifications.length; i++){
+                        var existing = this.notifications[i];
+                        if(existing.putCode === notificationId){
+                            this.notifications.splice(i, 1);
+                            if(this.firstResult > 0){
+                                this.firstResult--;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                }                                            
-            }
-        )
-        .share();
+                    }                                            
+                }
+            )
+
+        );
 
         /*
         $.ajax({
@@ -402,12 +414,7 @@ export class NotificationsService {
             return this.http.get(
                 getBaseUri() + '/inbox/' + notificationId + '/archive.json'
             )
-            .do(
-                (data) => {
-                                                             
-                }
-            )
-            .share();
+            ;
 
             /*
             var defer = $q.defer(notificationId);                

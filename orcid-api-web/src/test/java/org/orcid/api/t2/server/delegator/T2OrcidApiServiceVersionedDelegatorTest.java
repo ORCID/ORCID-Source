@@ -3,6 +3,7 @@ package org.orcid.api.t2.server.delegator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,8 +14,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -36,10 +39,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -138,6 +144,18 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     
     private Unmarshaller unmarshaller;
 
+    @Resource
+    protected EmailFrequencyManager emailFrequencyManager;
+    
+    @Mock
+    protected EmailFrequencyManager mockEmailFrequencyManager;
+        
+    @Resource(name = "notificationManager")
+    private NotificationManager notificationManager;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -159,6 +177,16 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         source.setSourceClient(new ClientDetailsEntity(CLIENT_ID));
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(source);  
         when(mockSourceManager.retrieveSourceOrcid()).thenReturn(CLIENT_ID);  
+            
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
+        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
+        
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
+        TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);
     }
 
     @After
@@ -169,6 +197,8 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(orgManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);
+        TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", emailFrequencyManager);
     }
 
     @AfterClass

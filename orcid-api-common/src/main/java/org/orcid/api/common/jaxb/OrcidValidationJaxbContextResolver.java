@@ -232,6 +232,14 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.summary.Memberships.class, "record_3.0_rc1/activities-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications.class, "record_3.0_rc1/activities-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.summary.Services.class, "record_3.0_rc1/activities-");
+        
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources.class, "record_3.0_rc1/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.ResearchResource.class, "record_3.0_rc1/research-resource-");
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem.class, "record_3.0_rc1/research-resource-");
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceProposal.class, "record_3.0_rc1/research-resource-");
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceHosts.class, "record_3.0_rc1/research-resource-");
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.put(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceTitle.class, "record_3.0_rc1/research-resource-");
+
     }
     
     private JAXBContext jaxbContext_2_0_rc1;

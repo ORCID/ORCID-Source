@@ -136,6 +136,8 @@ These instructions are for Spring Tool Suite for Eclipse.
 
 * Click Finish
 
+* Wait for build to finish then right-click orcid-api-common project and select Build Path->Configure Build path. Click the 'add folder' button and add "orcid-api-common/target/generated-sources/jena".
+
 * For Windows 10 users, if all your projects shows an error "Missing artifact jdk.tools:jdk.tools:jar:1.6", it means your STS Maven plugin is looking for a Java 1.6 tools.jar library, please modify the STS.ini fileto indicate the java executable you want to use to run STS, which should be the JDK one: 
 
         -vm

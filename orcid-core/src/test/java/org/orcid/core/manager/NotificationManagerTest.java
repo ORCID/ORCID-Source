@@ -21,9 +21,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -41,15 +39,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Source;
@@ -57,22 +53,21 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
-import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.impl.NotificationDaoImpl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -158,7 +153,7 @@ public class NotificationManagerTest extends DBUnitTest {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+        
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -239,78 +234,15 @@ public class NotificationManagerTest extends DBUnitTest {
             profileEntityManager.updateLocale(testOrcid, locale);
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
             long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;
-            notificationManager.sendAmendEmail(testOrcid, AmendedSection.UNKNOWN, null);
+            
+            Notification n = notificationManager.sendAmendEmail(testOrcid, AmendedSection.UNKNOWN, null);
+            assertNotNull(n);
+            assertTrue(n.getPutCode() > minNotificationId);
             // New notification entity should have been created
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
-            assertNotNull(latestNotification);
+            assertNotNull(latestNotification);            
             assertTrue(latestNotification.getId() > minNotificationId);
             assertEquals(NotificationType.AMENDED.name(), latestNotification.getNotificationType());
-        }
-    }
-
-    @Test
-    public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", mockProfileDao);        
-        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);        
-        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", mockNotificationAdapter);                       
-        
-        final String orcid = "0000-0000-0000-0003";
-        String delegateOrcid = "1234-5678-1234-5678";
-        
-        ProfileEntity profile = new ProfileEntity();
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setCreditName("My credit name");
-        recordName.setVisibility(Visibility.PUBLIC.name());
-        profile.setRecordNameEntity(recordName);
-        profile.setSendAdministrativeChangeNotifications(true);
-        profile.setSendChangeNotifications(true);
-        profile.setSendMemberUpdateRequests(true);
-        profile.setSendOrcidNews(true);
-        EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setId("test@email.com");
-        emailEntity.setPrimary(true);
-        emailEntity.setCurrent(true);
-        Set<EmailEntity> emails = new HashSet<EmailEntity>();
-        emails.add(emailEntity);
-        profile.setEmails(emails);
-        
-        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
-        when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(new NotificationCustomEntity());
-        
-        Email email = new Email();
-        email.setEmail("test@email.com");
-        
-        Email delegateEmail = new Email();
-        delegateEmail.setEmail("delegate@email.com");
-        
-        when(mockProfileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>(){
-            @Override
-            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
-                profile.setId(invocation.getArgument(0));
-                return profile;
-            }
-            
-        });
-        
-        when(mockProfileDao.find(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>(){
-            @Override
-            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
-                profile.setId(invocation.getArgument(0));
-                return profile;
-            }
-            
-        });
-        
-        when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
-        when(mockEmailManager.findPrimaryEmail(delegateOrcid)).thenReturn(delegateEmail);
-        
-        for(org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
-            profile.setLocale(locale.name());
-            notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", delegateOrcid);
         }
     }
 
@@ -346,17 +278,7 @@ public class NotificationManagerTest extends DBUnitTest {
             profileEntityManager.updateLocale(userOrcid, locale);
             notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
         }
-    }
-    
-    @Test
-    public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
-        String userOrcid = "0000-0000-0000-0003";
-        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
-        for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
-            notificationManager.sendVerificationReminderEmail(userOrcid, primaryEmail);
-        }
-    }
+    }    
 
     @Test
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
@@ -411,24 +333,7 @@ public class NotificationManagerTest extends DBUnitTest {
         for (Locale locale : Locale.values()) {            
             notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
         }
-    }
-
-    @Test
-    public void testCreateCustomNotification() {
-        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
-        String testOrcid = "0000-0000-0000-0003";
-        NotificationCustom notification = new NotificationCustom();
-        notification.setSubject("Test subject");
-        notification.setLang("en-gb");
-        Notification result = notificationManager.createNotification(testOrcid, notification);
-        assertNotNull(result);
-        assertTrue(result instanceof NotificationCustom);
-        NotificationCustom customResult = (NotificationCustom) result;
-        assertEquals("Test subject", customResult.getSubject());
-        assertEquals("en-gb", customResult.getLang());
-    }
+    }    
 
     @Test
     public void deriveEmailFriendlyNameTest() {
@@ -458,26 +363,6 @@ public class NotificationManagerTest extends DBUnitTest {
         notificationManagerImpl.sendAcknowledgeMessage(orcid, clientId);
         verify(mockNotificationDao, times(1)).persist(Matchers.any(NotificationEntity.class));
         verify(mockMailGunManager, never()).sendEmail(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
-
-        // Rollback mocked
-        notificationManagerImpl.setNotificationDao(notificationDao);
-        notificationManagerImpl.setMailGunManager(mailGunManager);
-    }
-
-    /**
-     * 0000-0000-0000-0002 Must have notifications disabled
-     */
-    @Test
-    public void sendAcknowledgeMessageToAccountWithNotificationsDisabledTest() throws Exception {
-        String clientId = "APP-5555555555555555";
-        String orcid = "0000-0000-0000-0002";
-        // Mock the notification DAO
-        NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
-        notificationManagerImpl.setNotificationDao(mockNotificationDao);
-        notificationManagerImpl.setMailGunManager(mockMailGunManager);
-        notificationManagerImpl.sendAcknowledgeMessage(orcid, clientId);
-        verify(mockNotificationDao, never()).persist(Matchers.any(NotificationEntity.class));
-        verify(mockMailGunManager, times(1)).sendEmail(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
 
         // Rollback mocked
         notificationManagerImpl.setNotificationDao(notificationDao);
@@ -538,12 +423,30 @@ public class NotificationManagerTest extends DBUnitTest {
     }
     
     @Test
-    public void testCreateAndDeleteNotification(){
-        NotificationAmended notification = new NotificationAmended();
-        notification.setAmendedSection(AmendedSection.PEER_REVIEW);
-        Notification result = notificationManager.createNotification("4444-4444-4444-4441", notification);
+    public void createPermissionNotificationTest() {
+        String orcid = "0000-0000-0000-0003";
+        NotificationPermission notification = new NotificationPermission();
+        notification.setAuthorizationUrl(new AuthorizationUrl("http://test.orcid.org"));
+        Notification result = notificationManager.createPermissionNotification(orcid, notification);
         assertNotNull(result.getPutCode());
-        notificationManager.removeNotification(result.getPutCode());
     }
     
+    @Test
+    public void sendAcknowledgeMessageTest() throws Exception {
+        String clientId = "APP-5555555555555555";
+        String orcidNever = "0000-0000-0000-0002";
+        String orcidDaily = "0000-0000-0000-0003";
+        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
+        
+        // Should not generate the notification
+        notificationManager.sendAcknowledgeMessage(orcidNever, clientId);
+        verify(mockNotificationDao, never()).persist(Matchers.any());
+        
+        // Should generate the notification
+        notificationManager.sendAcknowledgeMessage(orcidDaily, clientId);
+        verify(mockNotificationDao, times(1)).persist(Matchers.any());
+        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
+    }
 }

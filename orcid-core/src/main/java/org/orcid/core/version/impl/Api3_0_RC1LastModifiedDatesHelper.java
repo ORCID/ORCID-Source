@@ -46,6 +46,7 @@ public class Api3_0_RC1LastModifiedDatesHelper {
             calculateLastModified(activitiesSummary.getFundings());
             calculateLastModified(activitiesSummary.getPeerReviews());
             calculateLastModified(activitiesSummary.getWorks());
+            calculateLastModified(activitiesSummary.getResearchResources());
 
             LastModifiedDate l0 = activitiesSummary.getDistinctions() == null ? null : activitiesSummary.getDistinctions().getLastModifiedDate();
             LastModifiedDate l1 = activitiesSummary.getEducations() == null ? null : activitiesSummary.getEducations().getLastModifiedDate();
@@ -57,8 +58,9 @@ public class Api3_0_RC1LastModifiedDatesHelper {
             LastModifiedDate l7 = activitiesSummary.getFundings() == null ? null : activitiesSummary.getFundings().getLastModifiedDate();
             LastModifiedDate l8 = activitiesSummary.getPeerReviews() == null ? null : activitiesSummary.getPeerReviews().getLastModifiedDate();
             LastModifiedDate l9 = activitiesSummary.getWorks() == null ? null : activitiesSummary.getWorks().getLastModifiedDate();
+            LastModifiedDate l10 = activitiesSummary.getResearchResources() == null ? null : activitiesSummary.getResearchResources().getLastModifiedDate();
 
-            LastModifiedDate globalLatest = calculateLatest(l0, l1, l2, l3, l4, l5, l6, l7, l8, l9);
+            LastModifiedDate globalLatest = calculateLatest(l0, l1, l2, l3, l4, l5, l6, l7, l8, l9,l10);
             activitiesSummary.setLastModifiedDate(globalLatest);
         }
     }

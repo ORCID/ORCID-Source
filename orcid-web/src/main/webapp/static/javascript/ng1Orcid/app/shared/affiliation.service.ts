@@ -7,13 +7,12 @@ import { Injectable }
 import { Headers, Http, RequestOptions, Response, URLSearchParams } 
     from '@angular/http';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
 
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class AffiliationService {
@@ -62,13 +61,15 @@ export class AffiliationService {
         return this.http.delete( 
             this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
-        )      
-        .do(
-            (data) => {
-                this.getData();                       
-            }
         )
-        .share();
+        .pipe(
+            tap(
+                (data) => {
+                    this.getData();                       
+                }
+            )
+        )  
+        ;
     }
     
     getAffiliationsId(): Observable<any> {

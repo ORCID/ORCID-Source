@@ -41,8 +41,10 @@
 <div class="container">
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
-    <header-ng2></header-ng2>
-
+    
+    <div class="header center">
+        <header-ng2></header-ng2>
+    </div><!-- .header -->
         <div id="main" role="main" class="main">
 </#if>
     <#include

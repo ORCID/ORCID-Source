@@ -12,14 +12,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, ChangeDetectorRef, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -57,7 +53,9 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getDelegates(): void {
         this.switchUserService.getDelegates()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.delegators = data.delegators;
@@ -86,7 +84,9 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             else {
                 this.switchUserService.searchDelegates(this.searchTerm)
-                    .takeUntil(this.ngUnsubscribe)
+                    .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
                     .subscribe(
                         data => {
                             this.delegators = data;
@@ -106,7 +106,9 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
 
     switchUser(targetOrcid): void{
         this.switchUserService.switchUser(targetOrcid)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     window.location.reload();

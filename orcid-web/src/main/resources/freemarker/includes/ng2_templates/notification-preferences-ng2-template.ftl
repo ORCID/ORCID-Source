@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="notification-preference-ng2-template">
-    <div *ngIf="gdprEmailNotifications">
+    <div>
         <p>${springMacroRequestContext.getMessage("manage.notification_header")}</p>
         <div class="editTablePadCell35">                                
             <label class="checkbox"> <input type="checkbox"

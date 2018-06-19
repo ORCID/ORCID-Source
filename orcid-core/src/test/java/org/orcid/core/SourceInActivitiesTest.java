@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -16,37 +16,23 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.manager.AffiliationsManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.jaxb.model.common_v2.Organization;
 import org.orcid.jaxb.model.common_v2.OrganizationAddress;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
-import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
-import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.SendChangeNotifications;
-import org.orcid.jaxb.model.message.SendOrcidNews;
-import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.ExternalID;
@@ -65,8 +51,9 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -78,9 +65,6 @@ public class SourceInActivitiesTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-5555555555555555";
     private static final String CLIENT_2_ID = "APP-5555555555555556";
-
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
 
     @Resource
     private WorkManager workManager;
@@ -102,7 +86,16 @@ public class SourceInActivitiesTest extends BaseTest {
     
     @Mock
     private SourceManager mockSourceManager;
-
+    
+    @Resource
+    private RegistrationManager registrationManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
+    
+    @Mock
+    private ProfileHistoryEventManager mockProfileHistoryEventManager;
+    
     static String userOrcid = null;
     static Organization organization = null;
     
@@ -116,12 +109,11 @@ public class SourceInActivitiesTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", mockSourceManager);        
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", mockSourceManager);        
         TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", mockSourceManager);        
-        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", mockSourceManager);        
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", mockSourceManager);                     
+        TargetProxyHelper.injectIntoProxy(emailFrequencyManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
         if (PojoUtil.isEmpty(userOrcid)) {
-            when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-            OrcidProfile newUser = getMinimalOrcidProfile();
-            userOrcid = newUser.getOrcidIdentifier().getPath();
+            userOrcid = register();
+            when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));            
         }                
     }
 
@@ -130,8 +122,7 @@ public class SourceInActivitiesTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", sourceManager);        
-        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", sourceManager);                
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", sourceManager);           
     }
     
     @AfterClass
@@ -425,35 +416,15 @@ public class SourceInActivitiesTest extends BaseTest {
         return affiliationsManager.getEducationAffiliation(userOrcid, education.getPutCode());
     }
 
-    private OrcidProfile getMinimalOrcidProfile() {
-        OrcidProfile profile = new OrcidProfile();
-        OrcidBio bio = new OrcidBio();
-        ContactDetails contactDetails = new ContactDetails();
-        contactDetails.addOrReplacePrimaryEmail(new org.orcid.jaxb.model.message.Email(System.currentTimeMillis() + "@user.com"));
-        Preferences preferences = new Preferences();
-        preferences.setSendChangeNotifications(new SendChangeNotifications(true));
-        preferences.setSendOrcidNews(new SendOrcidNews(true));
-        preferences.setSendMemberUpdateRequests(true);
-        preferences.setSendEmailFrequencyDays("1");
-        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue("public")));
-        PersonalDetails personalDetails = new PersonalDetails();
-        personalDetails.setFamilyName(new FamilyName("First"));
-        personalDetails.setGivenNames(new GivenNames("Last"));
-        bio.setContactDetails(contactDetails);
-        bio.setPersonalDetails(personalDetails);
-        OrcidInternal internal = new OrcidInternal();
-        internal.setPreferences(preferences);
-        profile.setOrcidBio(bio);
-        profile.setOrcidInternal(internal);
-        OrcidHistory orcidHistory = new OrcidHistory();
-        orcidHistory.setClaimed(new Claimed(true));
-        orcidHistory.setCreationMethod(CreationMethod.fromValue("integration-test"));
-        profile.setOrcidHistory(orcidHistory);
-        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        profile.setPassword("password1");
-        return orcidProfileManager.createOrcidProfile(profile, false, false);
+    private String register() {
+        Registration r = new Registration();
+        r.setActivitiesVisibilityDefault(new org.orcid.pojo.ajaxForm.Visibility());
+        r.setEmail(Text.valueOf(System.currentTimeMillis() + "@user.com"));
+        r.setGivenNames(Text.valueOf("First"));
+        r.setFamilyNames(Text.valueOf("Last"));
+        return registrationManager.createMinimalRegistration(r, true, Locale.US, null);
     }
-
+    
     private Work getWork(String userOrcid) {
         Work work = new Work();
         WorkTitle title = new WorkTitle();

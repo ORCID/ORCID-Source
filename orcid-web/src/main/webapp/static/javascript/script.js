@@ -4143,6 +4143,10 @@ this.w3cLatexCharMap = {
    typeMap['authenticusid'] = function (id) {
        return 'https://www.authenticus.pt/' + encodeURIComponent(id);
    };
+   
+   typeMap['dnb'] = function (id) {
+       return 'https://d-nb.info/' + encodeURIComponent(id);
+   };
 
    exports.getLink = function(id, type) {
       if (id == null) id = "";//return null;

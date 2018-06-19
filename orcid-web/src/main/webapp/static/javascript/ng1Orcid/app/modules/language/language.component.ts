@@ -9,14 +9,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { LanguageService } 
     from '../../shared/language.service.ts';
@@ -195,7 +191,9 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
     selectedLanguage(): void {
 
         this.languageService.selectedLanguage( this.language )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.languages.forEach(

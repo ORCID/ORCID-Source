@@ -6,14 +6,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { GenericService } 
     from '../../shared/generic.service.ts'; 
@@ -76,7 +72,9 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getformData(): void {
         this.biographyService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -106,7 +104,9 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
             return; // do nothing if there is a length error
         }
         this.biographyService.setData( this.formData, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;
@@ -122,7 +122,9 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     toggleEdit(): void {
         console.log('edit bio clicked')
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 console.log('email data bio', data, this.emailService.getEmailPrimary());

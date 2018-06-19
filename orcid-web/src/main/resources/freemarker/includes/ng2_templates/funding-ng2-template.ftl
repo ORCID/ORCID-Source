@@ -10,7 +10,7 @@
                     
                     <div class="col-md-4 col-sm-4 col-xs-12">
                         <a href="" (click)="workspaceSrvc.toggleFunding($event)" class="toggle-text" *ngIf="groups?.length > 0">
-                            <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
+                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
                             <@orcid.msg 'workspace.Funding'/> (<span>{{groups.length}}</span>)
                         </a>
                         <#if !(isPublicProfile??)> 
@@ -32,16 +32,16 @@
                         <ul class="workspace-bar-menu">
                             <!-- Link Manually -->
                             <li class="hidden-xs">
-                                <div class="menu-container" id="add-funding-container">
+                                <div class="menu-container" id="add-fundidiv">
                                     <ul class="toggle-menu">
-                                        <li ng-class="{'green-bg' : fundingImportWizard == true}">       
+                                        <li [ngClass]="{'green-bg' : fundingImportWizard == true}">       
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
                                             <ul class="menu-options funding">
                                                 <!-- Search & Link -->
                                                 <#if fundingImportWizards?has_content>
                                                 <li>                                                
-                                                    <a class="action-option manage-button" ng-click="showFundingImportWizard()">
+                                                    <a class="action-option manage-button" (click)="showFundingImportWizard()">
                                                         <span class="glyphicon glyphicon-cloud-upload"></span>
                                                         <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                                     </a>
@@ -49,7 +49,7 @@
                                                 </#if>                      
                                                 <!-- Add Manually -->
                                                 <li>
-                                                    <a id="add-funding" class="action-option manage-button" ng-click="addFundingModal()">
+                                                    <a id="add-funding" class="action-option manage-button" (click)="addFundingModal()">
                                                         <span class="glyphicon glyphicon-plus"></span>
                                                         <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                     </a>
@@ -63,7 +63,7 @@
                             <!-- Search & Link -->
                             <#if fundingImportWizards?has_content>
                             <li class="hidden-md hidden-sm visible-xs-inline">
-                                <a class="action-option manage-button action-funding-mobile" ng-click="showFundingImportWizard()">
+                                <a class="action-option manage-button action-funding-mobile" (click)="showFundingImportWizard()">
                                     <span class="glyphicon glyphicon-cloud-upload"></span>
                                     <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                 </a>
@@ -103,7 +103,7 @@
                             <strong><a (click)="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.id}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.name}</a></strong>
                             <br />
                             <div class="justify">
-                                <p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.id}] == false || wizardDescExpanded[${thirdPartyDetails.id}] == null}">
+                                <p class="wizard-description" [ngClass]="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.id}] == false || wizardDescExpanded[${thirdPartyDetails.id}] == null}">
                                     ${(thirdPartyDetails.description)!}
                                     <a (click)="toggleWizardDesc(${thirdPartyDetails.id})" *ngIf="wizardDescExpanded[${thirdPartyDetails.id}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
                                 </p>                                                
@@ -127,11 +127,11 @@
                         <div class="work-list-container">
                             <ul class="sources-edit-list">
                                 <!-- Header -->
-                                <li *ngIf="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" [ngModel]="group.activities">
+                                <li *ngIf="editSources[group.groupId] == true" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}" [ngModel]="group.activities">
                                     <div class="sources-header">
                                         <div class="row">
                                             <div class="col-md-7 col-sm-7 col-xs-7">
-                                                <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
+                                                <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" (click)="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                                             </div>                            
                                             <div class="col-md-2 col-sm-2 col-xs-2">                                
                                                 <@orcid.msgCapFirst 'groups.common.preferred' />
@@ -141,8 +141,8 @@
                                                 <div class="workspace-toolbar">
                                                     <ul class="workspace-private-toolbar">
                                                          <li class="works-details" *ngIf="editSources[group.groupId]">
-                                                            <a (click)="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                                                <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                            <a (click)="showDetailsMouseClick(group.groupId,$event);" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
+                                                                <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                                 </span>
                                                             </a>                   
                                                             <div class="popover popover-tooltip top show-hide-details-popover ng-hide" *ngIf="showElement[group.groupId+'-showHideDetails']">
@@ -171,7 +171,7 @@
                                     </div>
                                 </li><!--  End of header -->
 
-                                <ng-container *ngIf="group.activePutCode == funding.putCode.value || editSources[group.groupId]">
+                                <div *ngIf="group.activePutCode == funding.putCode.value || editSources[group.groupId]">
                                     <li 
                                     *ngFor="let funding of group.activities" 
                                      
@@ -180,10 +180,10 @@
                                         <div class="row" *ngIf="group.activePutCode == funding.putCode.value">
                                             <div class="col-md-9 col-sm-9 col-xs-7">
                                                 <h3 class="workspace-title">                                
-                                                   <span *ngIf="group.getActive().fundingTitle.title.value" ng-bind="group.getActive().fundingTitle.title.value"></span>                               
+                                                   <span *ngIf="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}</span>                               
                                                 </h3>
                                                 <div class="clear-fix left">
-                                                    <span *ngIf="group.getActive().fundingName.value"><span ng-bind="group.getActive().fundingName.value"></span></span> (<span *ngIf="group.getActive().city.value"><span ng-bind="group.getActive().city.value"></span></span><span *ngIf="group.getActive().region.value">, <span >{{group.getActive().region.value}}</span></span><span *ngIf="group.getActive().countryForDisplay">, <span>{{group.getActive().countryForDisplay}}</span></span>)
+                                                    <span *ngIf="group.getActive().fundingName.value"><span>{{group.getActive().fundingName.value}}</span></span> (<span *ngIf="group.getActive().city.value"><span>{{group.getActive().city.value}}</span></span><span *ngIf="group.getActive().region.value">, <span >{{group.getActive().region.value}}</span></span><span *ngIf="group.getActive().countryForDisplay">, <span>{{group.getActive().countryForDisplay}}</span></span>)
                                                 </div>  
                                                 <div class="info-detail">
                                                     <!-- Funding date -->
@@ -194,7 +194,7 @@
                                                         <#-- ########################### -->
                                                     </span>
                                                     <span class="funding-date" *ngIf="group.getActive().startDate && group.getActive().endDate">
-                                                        <span *ngIf="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span *ngIf="group.getActive().startDate.month">-</span><span *ngIf="group.getActive().startDate.month" ng-bind="group.getActive().startDate.month"></span>
+                                                        <span *ngIf="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span *ngIf="group.getActive().startDate.month">-</span><span *ngIf="group.getActive().startDate.month">{{group.getActive().startDate.month}}</span>
                                                         <@orcid.msg 'workspace_fundings.dateSeparator'/>
                                                         <span *ngIf="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span *ngIf="group.getActive().endDate.month">-</span><span *ngIf="group.getActive().endDate.month">{{group.getActive().endDate.month}}</span>
                                                     </span>
@@ -217,8 +217,8 @@
                                                     </#if>
                                                     <!-- Show/Hide Details -->
                                                     <li class="works-details" *ngIf="editSources[group.groupId] == false">                                        
-                                                        <a (click)="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                                            <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                        <a (click)="showDetailsMouseClick(group.groupId,$event);" (mouseenter)="showTooltip(group.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group.groupId+'-showHideDetails')">
+                                                            <span [ngClass]="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                             </span>
                                                         </a>                                        
                                                         <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails'] == true">
@@ -243,7 +243,7 @@
                                                 <#if !(isPublicProfile??)>
                                                     <div *ngIf="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
                                                          <div class="popover-help-container">
-                                                            <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
+                                                            <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
                                                             <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
                                                                 <div class="arrow"></div>
                                                                 <div class="popover-content">
@@ -269,10 +269,10 @@
                                                         </span>
                                                     </li>
                                                     <li *ngIf="group.getActive().url.value" class="url-popover">
-                                                        <@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="funding.putCode.value" ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>
+                                                        <@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="funding.putCode.value" (mouseenter)='showURLPopOver(funding.putCode.value + "-alternate")' (mouseleave)='hideURLPopOver(funding.putCode.value + "-alternate")'></a>
                                                         <div class="popover-pos">
                                                             <div class="popover-help-container">
-                                                               <div class="popover bottom" ng-class="{'block' : displayURLPopOver[funding.putCode.value + '-alternate'] == true}">
+                                                               <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver[funding.putCode.value + '-alternate'] == true}">
                                                                     <div class="arrow"></div>
                                                                     <div class="popover-content">
                                                                         <a href="{{group.getActive().url.value}}" target="url.value" >{{group.getActive().url.value}}</a>
@@ -355,7 +355,7 @@
                                                 <span class="glyphicon glyphicon-check" *ngIf="funding.putCode.value == group.defaultPutCode"></span><span *ngIf="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                                 <#if !(isPublicProfile??)>
                                                     <div *ngIf="editSources[group.groupId]">
-                                                        <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value);" *ngIf="funding.putCode.value != group.defaultPutCode" class="">
+                                                        <a (click)="fundingSrvc.makeDefault(group, funding.putCode.value);" *ngIf="funding.putCode.value != group.defaultPutCode" class="">
                                                             <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                                         </a>
                                                     </div>
@@ -374,7 +374,7 @@
                                                         />
                                                         </li>
                                                         <li>
-                                                            <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)"  ng-mouseenter="showTooltip(group.groupId+'-deleteActiveSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteActiveSource')">
+                                                            <a (click)="deleteFundingConfirm(group.getActive().putCode.value, false)"  (mouseenter)="showTooltip(group.groupId+'-deleteActiveSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteActiveSource')">
                                                                 <span class="glyphicon glyphicon-trash"></span>
                                                             </a>
 
@@ -394,14 +394,14 @@
                                         <!-- not active row && edit sources -->
                                         <div *ngIf="group.activePutCode != funding.putCode.value" class="row source-line">
                                             <div class="col-md-7 col-sm-7 col-xs-12">
-                                                    <a ng-click="group.activePutCode = funding.putCode.value;">                                
+                                                    <a (click)="group.activePutCode = funding.putCode.value;">                                
                                                     {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                                                 </a>
                                             </div>                        
                                             <div class="col-md-3 col-sm-3 col-xs-6">
                                                  <#if !(isPublicProfile??)>
                                                     <span class="glyphicon glyphicon-check" *ngIf="funding.putCode.value == group.defaultPutCode"></span><span *ngIf="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                                    <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value);" *ngIf="funding.putCode.value != group.defaultPutCode">
+                                                    <a (click)="fundingSrvc.makeDefault(group, funding.putCode.value);" *ngIf="funding.putCode.value != group.defaultPutCode">
                                                        <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                                     </a>
                                                 </#if>
@@ -420,7 +420,7 @@
                                                             />
                                                         </li>
                                                         <li>
-                                                            <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(funding.putCode.value+'-deleteInactiveSource')" ng-mouseleave="hideTooltip(funding.putCode.value+'-deleteInactiveSource')">
+                                                            <a (click)="deleteFundingConfirm(group.getActive().putCode.value, false)" (mouseenter)="showTooltip(funding.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(funding.putCode.value+'-deleteInactiveSource')">
                                                                 <span class="glyphicon glyphicon-trash"></span>
                                                             </a>
                                                             <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[funding.putCode.value+'-deleteInactiveSource']">
@@ -442,7 +442,7 @@
                                                   <@orcid.msg 'groups.common.source'/>: {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                                             </div>                          
                                             <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="group.activePutCode == funding.putCode.value">
-                                                <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+                                                <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a (click)="showSources(group)" ng-hide="group.activitiesCount == 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                                                 
                                                 <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
                                                     <div class="arrow"></div>
@@ -464,7 +464,7 @@
                                                         </li>
                                                         <li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
                         
-                                                            <a ng-click="showSources(group)" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
+                                                            <a (click)="showSources(group)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                                                  <span class="glyphicon glyphicon-trash"></span>
                                                             </a>
                                                             <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteGroup']">
@@ -475,7 +475,7 @@
                                                             </div>  
                                                         </li>
                                                         <li *ngIf="group.activitiesCount == 1">
-                                                           <a id="delete-funding_{{group.getActive().putCode.value}}" ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
+                                                           <a id="delete-funding_{{group.getActive().putCode.value}}" (click)="deleteFundingConfirm(group.getActive().putCode.value, false)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
                                                               <span class="glyphicon glyphicon-trash"></span>
                                                            </a>                                 
                                                           <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteSource']">
@@ -490,7 +490,7 @@
                                             </div>
                                         </div>
                                     </li><!-- End line -->
-                                </ng-container>
+                                </div>
                             </ul>
                         </div>
                     </li>
@@ -503,7 +503,7 @@
                     <strong>
                         <#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' />
                             <#if fundingImportWizards?has_content>
-                                <a ng-click="showTemplateInModal('import-funding-modal')"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
+                                <a (click)="showTemplateInModal('import-funding-modal')"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
                             <#else>
                                 <span><@orcid.msg 'workspace_fundings_body_list.addsomenow'/></span>
                             </#if>

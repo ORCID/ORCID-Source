@@ -6,14 +6,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AccountService } 
     from '../../shared/account.service.ts';
@@ -44,7 +40,9 @@ export class DeactivateAccountComponent implements AfterViewInit, OnDestroy, OnI
 
         
         this.accountService.sendDeactivateEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.modalService.notifyOther({action:'open', moduleId: 'modalDeactivateAccountMessage'});

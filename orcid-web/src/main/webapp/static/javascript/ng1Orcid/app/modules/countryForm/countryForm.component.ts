@@ -6,14 +6,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -108,7 +104,9 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getformData(): void{
         this.countryService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
@@ -180,7 +178,9 @@ export class CountryFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }                                                                
         }
         this.countryService.setData( this.formData, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData = data;

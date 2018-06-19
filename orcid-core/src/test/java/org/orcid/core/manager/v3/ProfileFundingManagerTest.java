@@ -16,13 +16,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
@@ -54,6 +54,9 @@ public class ProfileFundingManagerTest extends BaseTest {
     private String unclaimedOrcid = "0000-0000-0000-0001";
     
     @Mock
+    private SourceManager mockSourceManager;
+    
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
     
     @Resource(name = "profileFundingManagerV3")
@@ -69,6 +72,11 @@ public class ProfileFundingManagerTest extends BaseTest {
 
     @Before
     public void before() {
+        TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", mockSourceManager);
+    }
+    
+    @After
+    public void after() {
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", sourceManager);
     }
     
@@ -81,7 +89,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void testAddFundingToUnclaimedRecordPreserveFundingVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
         Funding funding = getFunding(null);
         
         funding = profileFundingManager.createFunding(unclaimedOrcid, funding, true);
@@ -94,7 +102,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void testAddFundingToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
         Funding funding = getFunding(null);
         
         funding = profileFundingManager.createFunding(claimedOrcid, funding, true);
@@ -107,7 +115,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void testAddMultipleModifiesIndexingStatus() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
         Funding f1 = getFunding("F1");
         f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
         
@@ -134,7 +142,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         
         Funding f1 = getFunding("fromUI-1");
         f1 = profileFundingManager.createFunding(claimedOrcid, f1, false);
@@ -146,7 +154,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         
         Funding f1 = getFunding("fromAPI-1");
         f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);

@@ -13,7 +13,8 @@
 	xmlns:membership="http://www.orcid.org/ns/membership"
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review"
 	xmlns:qualification="http://www.orcid.org/ns/qualification"
-	xmlns:service="http://www.orcid.org/ns/service">
+	xmlns:service="http://www.orcid.org/ns/service"
+	xmlns:research-resource="http://www.orcid.org/ns/research-resource">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -66,12 +67,14 @@
 		schemaLocation="qualification-3.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/service"
 		schemaLocation="service-3.0_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/research-resource"
+		schemaLocation="research-resource-3.0_rc1.xsd" />
 	
 	<xs:element name="activities-summary">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-				
+								
 				<xs:element name="distinctions" type="activities:distinctions" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the list of distinctions associated
@@ -136,6 +139,14 @@
 					</xs:annotation>										
 				</xs:element>
 				
+				<xs:element name="research-resources" type="activities:research-resources" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Container for the list of research resources associated
+							with the researcher or contributor
+						</xs:documentation>
+					</xs:annotation>										
+				</xs:element>
+				
 				<xs:element name="services" type="activities:services" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the list of services associated
@@ -157,6 +168,33 @@
 		</xs:complexType>		
 	</xs:element>
 
+	<xs:complexType name="research-resource-group">
+		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element ref="common:external-ids"></xs:element>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" minOccurs="0"
+					ref="research-resource:research-resource-summary" />
+			</xs:sequence>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="research-resources">
+		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="group" type="activities:research-resource-group" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
+
+	<xs:element name="research-resources">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="activities:research-resources" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
 	<xs:complexType name="distinctions">
 		<xs:sequence>
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />

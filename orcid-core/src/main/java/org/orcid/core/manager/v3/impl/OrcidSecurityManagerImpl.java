@@ -341,6 +341,20 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (activities.getServices() != null) {
             checkAndFilter(orcid, activities.getServices(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
+        
+        // Research resources
+        if (activities.getResearchResources() != null) {
+            Iterator<? extends Group> iterator = activities.getResearchResources().retrieveGroups().iterator();
+            while (iterator.hasNext()) {
+                Group group = iterator.next();
+                checkAndFilter(orcid, group.getActivities(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
+                if (group.getActivities().isEmpty()) {
+                    iterator.remove();
+                }else {
+                    filterExternalIdentifiers(group);
+                }
+            }
+        }
 
         // Funding
         if (activities.getFundings() != null) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<activities:activities-summary  path="http://orcid.org/v2.1/8888-8888-8888-8880/activities"
+<activities:activities-summary  path="/8888-8888-8888-8880/activities"
 	xmlns:activities="http://www.orcid.org/ns/activities" 
 	xmlns:employment="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
@@ -7,7 +7,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.1.xsd ">
 	<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-	<activities:educations path="http://orcid.org/v2.1/8888-8888-8888-8880/educations">
+	<activities:educations path="/8888-8888-8888-8880/educations">
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<education:education-summary put-code="0"
 			visibility="private" display-index="0"> 
@@ -47,7 +47,7 @@
 			</education:organization>
 		</education:education-summary>
 	</activities:educations>
-	<activities:employments path="http://orcid.org/v2.1/8888-8888-8888-8880/employments">
+	<activities:employments path="/8888-8888-8888-8880/employments">
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<employment:employment-summary
 			put-code="0" visibility="private" display-index="0">
@@ -87,7 +87,7 @@
 			</employment:organization>
 		</employment:employment-summary>
 	</activities:employments>
-	<activities:fundings path="http://orcid.org/v2.1/8888-8888-8888-8880/fundings">
+	<activities:fundings path="/8888-8888-8888-8880/fundings">
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<activities:group>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
@@ -148,7 +148,7 @@
 			</funding:funding-summary>
 		</activities:group>
 	</activities:fundings> 
-	<activities:peer-reviews path="http://orcid.org/v2.1/8888-8888-8888-8880/peer-reviews">
+	<activities:peer-reviews path="/8888-8888-8888-8880/peer-reviews">
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<activities:group>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
@@ -200,7 +200,7 @@
 			</peer-review:peer-review-summary>
 		</activities:group>
 	</activities:peer-reviews>
-	<activities:works path="http://orcid.org/v2.1/8888-8888-8888-8880/works">
+	<activities:works path="/8888-8888-8888-8880/works">
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<activities:group>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>

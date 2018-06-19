@@ -22,7 +22,8 @@ public enum ItemType {
     @XmlEnumValue("peer-review") PEER_REVIEW,
     @XmlEnumValue("qualification") QUALIFICATION,
     @XmlEnumValue("service") SERVICE,
-    @XmlEnumValue("work") WORK;
+    @XmlEnumValue("work") WORK, 
+    @XmlEnumValue("research-resource") RESEARCH_RESOURCE;
     //@formatter:on
     
 }

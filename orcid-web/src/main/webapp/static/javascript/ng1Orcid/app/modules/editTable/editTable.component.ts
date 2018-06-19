@@ -8,14 +8,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AdminDelegatesService } 
     from '../../shared/adminDelegates.service.ts'; 
@@ -50,9 +46,8 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     socialNetworksToggleText: string;
     showEdit2FA: boolean;
     twoFAToggleText: string;
+    getMyDataToggleText: string;    
     showEditGetMyData: boolean;
-    getMyDataToggleText: string;
-    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
     
     constructor(
             private featuresService: FeaturesService,
@@ -78,7 +73,8 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     	this.socialNetworksToggleText = "";
     	this.showEdit2FA = (window.location.hash === "#edit2FA");
     	this.twoFAToggleText = "";
-    	this.showEditGetMyData = this.featuresService.isFeatureEnabled('GET_MY_DATA');
+    	this.showEditGetMyData=true;
+    	this.getMyDataToggleText=om.get("manage.editTable.hide");
     }
 
 	deactivateUpdateToggleText(): void {
@@ -119,14 +115,6 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         } 
     };
 
-    getMyDataUpdateToggleText(): void {
-        if (this.showEditGetMyData){
-            this.getMyDataToggleText=om.get("manage.editTable.hide");    
-        } else {
-            this.getMyDataToggleText=om.get("manage.editTable.show"); 
-        }       
-    };
-
     languageUpdateToggleText(): void {
         if (this.showEditLanguage) {
             this.languageToggleText = om.get("manage.editTable.hide");
@@ -136,6 +124,14 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         } 
     };
 
+    getMyDataUpdateToggleText(): void {
+        if (this.showEditGetMyData){
+            this.getMyDataToggleText=om.get("manage.editTable.hide");
+        } else {
+            this.getMyDataToggleText=om.get("manage.editTable.show");
+        }
+    };
+    
     openEmailEdit(): void {
         this.showEditEmail = true;
         this.emailUpdateToggleText();
@@ -188,7 +184,6 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleGetMyDataEdit(): void {
         this.showEditGetMyData = !this.showEditGetMyData;        
-        this.getMyDataUpdateToggleText();      
     };
     
     toggleDeactivateEdit(): void {
@@ -259,7 +254,6 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
     	this.languageUpdateToggleText();
         this.emailUpdateToggleText(); 
-        this.getMyDataUpdateToggleText();
         this.passwordUpdateToggleText();
         this.deactivateUpdateToggleText();
         this.deprecateUpdateToggleText();

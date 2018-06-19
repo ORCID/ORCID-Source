@@ -42,13 +42,13 @@
 				</common:external-id>
 			</common:external-ids>
 			<funding:type>award</funding:type>
-			<funding:organization>
+			<common:organization>
 				<common:name>a</common:name>
 				<common:address>
 					<common:city>a</common:city>
 					<common:country>DZ</common:country>
 				</common:address>
-			</funding:organization>
+			</common:organization>
 		</funding:summary>
 	</activities:group>
 	<activities:group>
@@ -84,13 +84,13 @@
 				</common:external-id>
 			</common:external-ids>
 			<funding:type>award</funding:type>
-			<funding:organization>
+			<common:organization>
 				<common:name>a</common:name>
 				<common:address>
 					<common:city>a</common:city>
 					<common:country>DZ</common:country>
 				</common:address>
-			</funding:organization>
+			</common:organization>
 		</funding:summary>
 	</activities:group>
 	<activities:group>
@@ -126,13 +126,13 @@
 				</common:external-id>
 			</common:external-ids>
 			<funding:type>award</funding:type>
-			<funding:organization>
+			<common:organization>
 				<common:name>funding</common:name>
 				<common:address>
 					<common:city>x</common:city>
 					<common:country>AO</common:country>
 				</common:address>
-			</funding:organization>
+			</common:organization>
 		</funding:summary>
 	</activities:group>
 </activities:fundings>

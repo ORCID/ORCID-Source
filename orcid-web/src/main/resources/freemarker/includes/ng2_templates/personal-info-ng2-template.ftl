@@ -1,3 +1,5 @@
+
+<#include "/includes/ng2_templates/biography-ng2-template.ftl">
 <script type="text/ng-template" id="personal-info-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/print_public_record.ftl -->
     <div class="workspace-right" >

@@ -1,7 +1,6 @@
 <@protected nav="record">
 <#escape x as x?html>
 
-<@orcid.checkFeatureStatus featureName='REG_MULTI_EMAIL'>
 <#if justRegistered?? && justRegistered>
 <div class="alert alert-success">
     <strong>
@@ -10,7 +9,6 @@
     </strong>
 </div>
 </#if>
-</@orcid.checkFeatureStatus>
 
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
@@ -173,6 +171,8 @@
         <#include "workspace_affiliations_body_list_v3.ftl"/>
         <!-- Fundings -->
         <#include "workspace_fundings_body_list_v3.ftl"/>
+
+        
 
         <!-- Works -->
         <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
@@ -664,7 +664,8 @@
 </script>
 
 <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
-
+<#include "/includes/ng2_templates/works-form-ng2-template.ftl">
+<#include "/includes/ng2_templates/works-ng2-template.ftl">
 <modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
@@ -702,6 +703,12 @@
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
+
+<#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
+<modalngcomponent elementHeight="645" elementId="modalFundingForm" elementWidth="700">
+  <funding-form-ng2></funding-form-ng2>
+</modalngcomponent>
+
 
 <#include "/includes/ng2_templates/keywords-form-ng2-template.ftl">
 <modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645" setFocus="true">

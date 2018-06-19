@@ -410,9 +410,7 @@ export const OauthAuthorizationController = angular.module('orcidApp').controlle
                     dataType: 'json',
                     success: function(data) {
                         $scope.registrationForm = data;
-                        if (orcidVar.features['GDPR_UI'] == true){
-                            $scope.registrationForm.activitiesVisibilityDefault.visibility = null;
-                        }
+                        $scope.registrationForm.activitiesVisibilityDefault.visibility = null;
                         if(givenName || familyName || email || linkFlag){
                             $scope.registrationForm.givenNames.value=givenName;
                             $scope.registrationForm.familyNames.value=familyName;

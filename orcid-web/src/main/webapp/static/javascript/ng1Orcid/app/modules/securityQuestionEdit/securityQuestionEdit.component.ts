@@ -8,14 +8,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AccountService } 
     from '../../shared/account.service.ts';
@@ -29,19 +25,23 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     errors: any;
+    initSecurityQuestionFlag: boolean;
     password: any;
     securityQuestions: any;
     securityQuestionPojo: any;
+    showConfirmationWindow: any;
 
     constructor(
         private accountService: AccountService
     ) {
         this.errors = null;
+        this.initSecurityQuestionFlag = false;
         this.password = null;
         this.securityQuestions = [];
         this.securityQuestionPojo = {
             securityQuestionId: null
         };
+        this.showConfirmationWindow = false;
 
     }
 
@@ -50,13 +50,12 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
     };
 
     checkCredentials(): void {
-        this.password = null;
         if( orcidVar.isPasswordConfirmationRequired ){
+            this.showConfirmationWindow = true;
             /*
             $.colorbox({
                 html: $compile($('#check-password-modal').html())($scope)
             });
-            $.colorbox.resize();
             */
         }
         else{
@@ -66,7 +65,9 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
 
     getSecurityQuestion(): void {
         this.accountService.getSecurityQuestion()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.securityQuestionPojo = data;
@@ -77,9 +78,26 @@ export class SecurityQuestionEditComponent implements AfterViewInit, OnDestroy, 
         );
     };
 
+    initSecurityQuestion( obj ): void{
+
+        if( this.initSecurityQuestionFlag == false ){
+            this.initSecurityQuestionFlag = true;
+            let objLastIndex = obj.length - 1;
+
+            if(obj[objLastIndex] == ""){
+                obj = obj.slice(0, -1);
+            }
+
+            this.securityQuestions = obj;
+        }
+    }
+
     submitModal(): void {
+        this.securityQuestionPojo.password=this.password;
         this.accountService.submitModal( this.securityQuestionPojo )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length != 0) {

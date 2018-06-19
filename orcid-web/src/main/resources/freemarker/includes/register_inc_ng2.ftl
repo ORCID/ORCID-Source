@@ -50,7 +50,7 @@
             </span>
         </div>
     </div>
-    <div *ngIf="regMultiEmailFeatureEnabled">
+    <div>
         <!-- Primary email -->
         <div class="form-group clear-fix">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
@@ -105,41 +105,7 @@
             </div>
         </div>
         <button (click)="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>  
-    </div><!--reg multi email feature enabled-->
-    <div *ngIf="!regMultiEmailFeatureEnabled">
-        <!-- Email -->                  
-        <div class="form-group clear-fix">
-            <label class="control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
-            <div class="bottomBuffer">
-                <input id="register-form-email" name="email" type="email" tabindex="3" class="" [(ngModel)]="registrationForm.email.value" (blur)="serverValidate('Email')" />
-                <span class="required" [ngClass]="isValidClass(registrationForm.email)">*</span>
-                <span class="orcid-error" *ngIf="registrationForm.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
-                    <div *ngFor="let error of registrationForm.email.errors" [innerHTML]="error"></div>
-                </span>
-                <span class="orcid-error" *ngIf="showDuplicateEmailError">{{errorEmail}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
-                </span>
-                <span class="orcid-error" *ngIf="showDeactivatedError">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" (click)="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
-                </span>
-                <span class="orcid-error" *ngIf="showReactivationSent">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
-                </span>                                             
-            </div>
-        </div>
-        <!--Re-enter email-->
-        <div class="form-group clear-fix">
-            <label class="control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
-            <div class="bottomBuffer">
-                <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" [(ngModel)]="registrationForm.emailConfirm.value" (blur)="serverValidate('EmailConfirm')" />
-                <span class="required" [ngClass]="isValidClass(registrationForm.emailConfirm)">*</span>                  
-                <span class="orcid-error" *ngIf="registrationForm.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
-                    <div *ngFor="let error of registrationForm.emailConfirm.errors" [innerHTML]="error"></div>
-                </span>
-            </div>
-        </div>
-    </div><!--reg multi email feature disabled-->
+    </div>
     <!--Password-->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
@@ -161,7 +127,7 @@
             <div *ngFor="let error of registrationForm.passwordConfirm.errors" [innerHTML]="error"></div>
         </span>
     </div>
-    <div *ngIf="gdprUiFeatureEnabled">
+    <div>
         <!--Visibility default-->
         <div class="form-group clear-fix popover-registry">  
             <h4>${springMacroRequestContext.getMessage("register.privacy_settings")}</h4>         
@@ -200,7 +166,7 @@
                 <div *ngFor="let error of registrationForm.activitiesVisibilityDefault.errors" [innerHTML]="error"></div>
             </span>
         </div>
-        <div *ngIf="gdprEmailNotifications">
+        <div>
             <!--Notifications settings -->
             <div id="notificationSettings" class="form-group clear-fix">  
                 <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
@@ -212,25 +178,7 @@
                 </div>
                 <p><@orcid.msg 'register.paragraph.3' /></p>
             </div>
-        </div>
-        <div *ngIf="!gdprEmailNotifications">
-            <!--Email frequency-->
-            <div class="form-group clear-fix">              
-                <div>   
-                    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
-                    <p>
-                        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
-                    </p>
-                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-                        class="input-xlarge"
-                        [(ngModel)]="registrationForm.sendEmailFrequencyDays.value">
-                        <#list sendEmailFrequencies?keys as key>
-                            <option value="${key}" [selected]="registrationForm.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-                        </#list>
-                    </select>        
-                </div>
-            </div>
-        </div>
+        </div>        
         <!--Terms and conditions-->
         <div class="clearfix bottomBuffer">
             <h4><@orcid.msg 'register.labelTermsofUse'/>
@@ -252,51 +200,7 @@
                 </span>
             </div>
         </div>
-    </div><!--GDPR UI feature enabled-->
-    <div *ngIf="!gdprUiFeatureEnabled">
-        <!--Visibility default-->
-        <div class="form-group clear-fix popover-registry">
-            <div class="oauth-privacy">                   
-                <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
-                <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
-                <@orcid.privacyToggle3Ng2
-                    angularModel="registrationForm.activitiesVisibilityDefault.visibility"
-                    publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
-                    limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
-                    privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
-                    elementId="workPrivHelp" position="bottom" /> 
-            </div>
-        </div>
-        <!--Email frequency-->
-        <div>
-            <div class="relative">              
-                <@orcid.registrationEmailFrequencySelectorNg2 angularElementName="registrationForm" />
-            </div>
-        </div>
-        <!--Recaptcha-->
-        <div *ngIf="!disableRecaptchaFeatureEnabled">   
-            <div class="bottomBuffer relative recaptcha"  id="recaptcha">
-                <re-captcha (captchaResponse)="handleCaptchaResponse($event)" site_key="{{site_key}}" theme="light" language={{currentLanguage}}></re-captcha>
-                <span class="orcid-error" *ngIf="registrationForm.grecaptcha.errors.length > 0">
-                    <div *ngFor="let error of registrationForm.grecaptcha.errors;trackBy:$index" [innerHTML]="error"></div>
-                </span>
-            </div>
-        </div>
-        <!--Terms and conditions-->
-        <div class="bottomBuffer">
-            <label for="termsConditions">
-                <@orcid.msg 'register.labelTermsofUse'/>
-                <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}">*</span>
-            </label>
-            <p>
-                <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
-                <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
-            </p>
-            <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
-                <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
-            </span>
-        </div>
-    </div><!--GDPR UI feature disabled-->   
+    </div>
     <!--Registration error-->
     <div style="margin-bottom: 15px;" *ngIf="showGeneralRegistrationError">
         <span class="orcid-error" [innerHtml]="generalRegistrationError"></span>

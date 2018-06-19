@@ -18,7 +18,7 @@
             <div class="control-group">
                 <label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.confirmyournewpassword")}</label>
                 <div class="controls">
-                    <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [(ngModel)]="resetPasswordForm.retypedPassword" (onChange)="serverValidate()" />
+                    <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [(ngModel)]="resetPasswordForm.retypedPassword" (onChange)="validatePassword(); serverValidate()" />
                     <span class="required">*</span>
                 </div>        
             </div>
@@ -33,7 +33,7 @@
                     </select>                       
                 </div>
                 <label for="securityQuestionAnswer" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.challengeanswer")}</label>
-                <div class="controls">                                          
+                <div class="controls" [ngClass]="{'error' : displayError == true}">                                          
                     <input [(ngModel)]="resetPasswordForm.securityQuestionAnswer" name="securityQuestionAnswer" class="input-xlarge" />
                 </div>
             </div>

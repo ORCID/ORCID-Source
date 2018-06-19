@@ -76,6 +76,9 @@ import { ExternalIdentifiersModule }
 import { FundingModule } 
     from './funding/funding.ts';
 
+import { FundingFormModule } 
+    from './funding/fundingForm.ts';
+
 import { HomeModule } 
     from './home/home.ts';
 
@@ -225,6 +228,7 @@ export const orcidApp = angular.module(
         EmailVerificationSentMesssageModule.name,
         ExternalIdentifiersModule.name,
         FundingModule.name,
+        FundingFormModule.name,
         HomeModule.name,
         KeywordsFormModule.name,
         KeywordsModule.name,

@@ -9,14 +9,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { OauthService } 
     from '../../shared/oauth.service.ts'; 
@@ -39,8 +35,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     privacyHelp: any;
     registrationForm: any;
-    gdprUiFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('GDPR_UI');
-
+    
     constructor(
         private oauthService: OauthService,
         private commonSrvc: CommonService,
@@ -54,14 +49,14 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getReactivation(resetParams, linkFlag): void{
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.registrationForm = data;
                 this.registrationForm.resetParams = resetParams;
-                if (orcidVar.features['GDPR_UI'] === true){
-                    this.registrationForm.activitiesVisibilityDefault.visibility = null;
-                }
+                this.registrationForm.activitiesVisibilityDefault.visibility = null;
                 this.cdr.detectChanges();              
             },
             error => {
@@ -82,7 +77,9 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             baseUri += '/shibboleth';
         }
         this.reactivationService.postReactivationConfirm(this.registrationForm)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length == 0){
@@ -105,7 +102,9 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             field = '';
         }
         this.reactivationService.serverValidate(this.registrationForm, field)
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.commonSrvc.copyErrorsLeft(this.registrationForm, data);

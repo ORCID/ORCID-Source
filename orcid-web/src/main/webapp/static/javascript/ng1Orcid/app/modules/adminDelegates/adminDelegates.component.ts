@@ -6,17 +6,14 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AdminDelegatesService } 
     from '../../shared/adminDelegates.service.ts'; 
+
 
 
 @Component({
@@ -62,7 +59,9 @@ export class AdminDelegatesComponent implements AfterViewInit, OnDestroy, OnInit
         }
 
         this.adminDelegatesService.getFormData( orcidOrEmail )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
@@ -83,7 +82,9 @@ export class AdminDelegatesComponent implements AfterViewInit, OnDestroy, OnInit
     confirmDelegatesProcess(): void {
         this.success = false;
         this.adminDelegatesService.setFormData( this.request )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.request = data;

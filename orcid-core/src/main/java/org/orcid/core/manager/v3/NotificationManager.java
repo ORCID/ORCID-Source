@@ -9,6 +9,7 @@ import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.v3.rc1.notification.Notification;
 import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -34,7 +35,7 @@ public interface NotificationManager {
 
     void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
 
-    void sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
+    Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(String userOrcid);
 
@@ -72,8 +73,6 @@ public interface NotificationManager {
 
     public Notification findByOrcidAndId(String orcid, Long id);
 
-    public Notification createNotification(String orcid, Notification notification);
-
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
     Notification flagAsArchived(String orcid, Long id, boolean validateForApi) throws OrcidNotificationAlreadyReadException;
@@ -97,5 +96,7 @@ public interface NotificationManager {
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
     
     void processUnverifiedEmails7Days();
+    
+    Notification createPermissionNotification(String orcid, NotificationPermission notification);
 
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
+import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
@@ -20,19 +21,15 @@ public interface NotificationManager {
 
     void sendVerificationEmail(String userOrcid, String email);
 
-    public void sendVerificationReminderEmail(String userOrcid, String email);
-
     void sendPasswordResetEmail(String toEmail, String userOrcid);
     
     void sendReactivationEmail(String submittedEmail, String userOrcid);
 
     public String createVerificationUrl(String email, String baseUri);
 
-    public String deriveEmailFriendlyName(ProfileEntity profileEntity);
+    public String deriveEmailFriendlyName(ProfileEntity profileEntity);    
 
-    void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
-
-    void sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
+    Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(String userOrcid);
 
@@ -68,9 +65,7 @@ public interface NotificationManager {
 
     public Notification findById(Long id);
 
-    public Notification findByOrcidAndId(String orcid, Long id);
-
-    public Notification createNotification(String orcid, Notification notification);
+    public Notification findByOrcidAndId(String orcid, Long id);    
 
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
@@ -102,4 +97,5 @@ public interface NotificationManager {
 
     String createUpdateEmailFrequencyUrl(String email);
     
+    Notification createPermissionNotification(String orcid, NotificationPermission notification);
 }

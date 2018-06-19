@@ -106,11 +106,7 @@ public class ClaimController extends BaseController {
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         Claim c = new Claim();
         c.getSendChangeNotifications().setValue(true);
-        if(Features.GDPR_EMAIL_NOTIFICATIONS.isActive()) {
-            c.getSendOrcidNews().setValue(false);
-        } else {
-            c.getSendOrcidNews().setValue(true);
-        }
+        c.getSendOrcidNews().setValue(false);
         c.getTermsOfUse().setValue(false);
         claimTermsOfUseValidate(c);
         return c;

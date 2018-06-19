@@ -6,14 +6,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { ShibbolethService } 
     from '../../shared/shibboleth.service.ts'; 
@@ -48,7 +44,9 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
         });
 
         this.shibbolethService.init()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.codes = data;
@@ -62,7 +60,9 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
     submitCode(): void {
 
         this.shibbolethService.submitCode( this.codes )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.codes = data;

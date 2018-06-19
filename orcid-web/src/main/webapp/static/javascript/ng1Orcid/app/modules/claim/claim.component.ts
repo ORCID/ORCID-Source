@@ -8,14 +8,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { ClaimService } 
     from '../../shared/claim.service.ts'; 
@@ -31,8 +27,7 @@ import { FeaturesService }
     template:  scriptTmpl("claim-ng2-template")
 })
 export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
-    gdprEmailNotifications: boolean = this.featuresService.isFeatureEnabled('GDPR_EMAIL_NOTIFICATIONS');
+    private ngUnsubscribe: Subject<void> = new Subject<void>();    
 
     postingClaim: boolean;
     register: any;
@@ -48,7 +43,9 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getClaim(): void{
         this.claimService.getClaim()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.register = data;
@@ -82,7 +79,9 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
         this.postingClaim = true;
 
         this.claimService.postClaim( this.register )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.register = data;
@@ -107,7 +106,9 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
             field = '';
         }
         this.claimService.serverValidate( this.register, field )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.commonService.copyErrorsLeft(this.register, data);

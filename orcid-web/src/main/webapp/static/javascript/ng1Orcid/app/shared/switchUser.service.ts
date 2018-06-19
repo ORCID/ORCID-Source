@@ -8,13 +8,12 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 
 
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
 
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class SwitchUserService {
@@ -53,7 +52,7 @@ export class SwitchUserService {
             getBaseUri() + '/switch-user?username=' + targetOrcid, 
             { headers: this.headers }
         )
-        .share();
+        ;
     }
 
     notifyOther(): void {

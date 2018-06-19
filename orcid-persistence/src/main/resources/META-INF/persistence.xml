@@ -57,6 +57,8 @@
         <class>org.orcid.persistence.jpa.entities.IdentifierTypeEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkEntity</class>   
         <class>org.orcid.persistence.jpa.entities.EmailFrequencyEntity</class>     
+        <class>org.orcid.persistence.jpa.entities.ResearchResourceEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ResearchResourceItemEntity</class>
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>

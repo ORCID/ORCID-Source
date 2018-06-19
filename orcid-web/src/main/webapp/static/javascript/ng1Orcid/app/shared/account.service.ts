@@ -6,13 +6,11 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Injectable } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
-
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class AccountService {
@@ -42,7 +40,6 @@ export class AccountService {
 
     notifyOther(): void {
         this.notify.next();
-        console.log('notify');
     }
 
     addDelegate( obj ): Observable<any> {
@@ -136,6 +133,7 @@ export class AccountService {
     }
 
     submitModal( obj ): Observable<any> {
+
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 

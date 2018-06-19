@@ -6,14 +6,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { GenericService } 
     from '../../shared/generic.service.ts'; 
@@ -94,7 +90,9 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getNameForm(): void {
         this.nameService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.nameForm = data;
@@ -123,7 +121,9 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setNameForm( closeAfterAction ): any {
         this.nameService.setData( this.nameForm, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.nameForm = data;

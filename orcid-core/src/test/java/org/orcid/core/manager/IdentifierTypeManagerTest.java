@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -51,9 +52,15 @@ public class IdentifierTypeManagerTest extends BaseTest {
     }
     
     @Mock
+    private SourceManager mockSourceManager;
+    
+    @Resource
     private SourceManager sourceManager;
     
     @Mock
+    private OrcidSecurityManager mockSecurityManager;
+    
+    @Resource
     private OrcidSecurityManager securityManager;
     
     @Resource
@@ -63,10 +70,16 @@ public class IdentifierTypeManagerTest extends BaseTest {
     
     @Before
     public void before() throws Exception {
-    	TargetProxyHelper.injectIntoProxy(idTypeMan, "sourceManager", sourceManager);
-    	TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", securityManager);        
-        doNothing().when(securityManager).checkSource(Matchers.any(IdentifierTypeEntity.class));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+    	TargetProxyHelper.injectIntoProxy(idTypeMan, "sourceManager", mockSourceManager);
+    	TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", mockSecurityManager);        
+        doNothing().when(mockSecurityManager).checkSource(Matchers.any(IdentifierTypeEntity.class));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(idTypeMan, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", securityManager);                
     }
     
     @Test

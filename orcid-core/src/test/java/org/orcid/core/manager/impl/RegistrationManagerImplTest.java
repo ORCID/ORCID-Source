@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,21 +27,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EmailManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -52,7 +39,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.test.context.ContextConfiguration;
@@ -68,10 +54,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     RegistrationManager registrationManager;
 
     @Resource
-    EmailManager emailManager;
-    
-    @Resource
-    OrcidProfileManager orcidProfileManager;
+    EmailManager emailManager;    
     
     @Resource
     SourceManager sourceManager;
@@ -93,7 +76,6 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
         TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);        
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
     }
@@ -192,13 +174,18 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     public void testCreateMinimalRegistrationWithExistingUnclaimedEmailNotAutoDeprecatable() {
         //Create the user, but set it as unclaimed
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
-                
-        //Create a record by a member
-        OrcidProfile orcidProfile = createBasicProfile(email, false, CLIENT_ID_AUTODEPRECATE_DISABLED);
-        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, true, true);
-        assertNotNull(orcidProfile);
-        assertNotNull(orcidProfile.getOrcidIdentifier());
-        assertNotNull(orcidProfile.getOrcidIdentifier().getPath());
+        try {
+            Registration form = createRegistrationForm(email, true);
+            String orcidId = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            ProfileEntity entity = profileDao.find(orcidId);
+            entity.setClaimed(false);
+            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_DISABLED)));
+            profileDao.merge(entity);
+        } catch(InvalidRequestException e) {
+            fail();
+        } catch(Exception e) {
+            fail();
+        } 
         
         try {
             Registration form = createRegistrationForm(email, true);
@@ -217,11 +204,18 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
                 
         //Create a record by a member
-        OrcidProfile orcidProfile = createBasicProfile(email, false, CLIENT_ID_AUTODEPRECATE_DISABLED);
-        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, true, true);
-        assertNotNull(orcidProfile);
-        assertNotNull(orcidProfile.getOrcidIdentifier());
-        assertNotNull(orcidProfile.getOrcidIdentifier().getPath());
+        try {
+            Registration form = createRegistrationForm(email, true);
+            String orcidId = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            ProfileEntity entity = profileDao.find(orcidId);
+            entity.setClaimed(false);
+            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_DISABLED)));
+            profileDao.merge(entity);
+        } catch(InvalidRequestException e) {
+            fail();
+        } catch(Exception e) {
+            fail();
+        } 
         
         try {
             String email2 = "new_user2_" + System.currentTimeMillis() + "@test.orcid.org";
@@ -245,12 +239,19 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
         
         //Create a record by a member
-        OrcidProfile orcidProfile = createBasicProfile(email, false, CLIENT_ID_AUTODEPRECATE_ENABLED);
-        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, true, true);
-        assertNotNull(orcidProfile);
-        assertNotNull(orcidProfile.getOrcidIdentifier());
-        assertNotNull(orcidProfile.getOrcidIdentifier().getPath());
-        String orcidBefore = orcidProfile.getOrcidIdentifier().getPath();
+        String orcidBefore = null;
+        try {
+            Registration form = createRegistrationForm(email, true);
+            orcidBefore = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            ProfileEntity entity = profileDao.find(orcidBefore);
+            entity.setClaimed(false);
+            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
+            profileDao.merge(entity);
+        } catch(InvalidRequestException e) {
+            fail();
+        } catch(Exception e) {
+            fail();
+        } 
         
         Map<String, String> map1 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map1);
@@ -274,12 +275,19 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
         
         //Create a record by a member
-        OrcidProfile orcidProfile = createBasicProfile(email, false, CLIENT_ID_AUTODEPRECATE_ENABLED);
-        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, true, true);
-        assertNotNull(orcidProfile);
-        assertNotNull(orcidProfile.getOrcidIdentifier());
-        assertNotNull(orcidProfile.getOrcidIdentifier().getPath());
-        String orcidBefore = orcidProfile.getOrcidIdentifier().getPath();
+        String orcidBefore = null;
+        try {
+            Registration form = createRegistrationForm(email, true);
+            orcidBefore = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            ProfileEntity entity = profileDao.find(orcidBefore);
+            entity.setClaimed(false);
+            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
+            profileDao.merge(entity);
+        } catch(InvalidRequestException e) {
+            fail();
+        } catch(Exception e) {
+            fail();
+        }
         
         Map<String, String> map1 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map1);
@@ -309,31 +317,45 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
         
         //Create a record by a member
-        OrcidProfile orcidProfile = createBasicProfile(email, false, CLIENT_ID_AUTODEPRECATE_ENABLED);
-        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, true, true);
-        assertNotNull(orcidProfile);
-        assertNotNull(orcidProfile.getOrcidIdentifier());
-        assertNotNull(orcidProfile.getOrcidIdentifier().getPath());
-        String orcidBefore = orcidProfile.getOrcidIdentifier().getPath();
+        String orcid1 = null;
+        try {
+            Registration form = createRegistrationForm(email, true);
+            orcid1 = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            ProfileEntity entity = profileDao.find(orcid1);
+            entity.setClaimed(false);
+            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
+            profileDao.merge(entity);
+        } catch(InvalidRequestException e) {
+            fail();
+        } catch(Exception e) {
+            fail();
+        }
         
         Map<String, String> map1 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map1);
-        assertEquals(orcidBefore, map1.get(email));
+        assertEquals(orcid1, map1.get(email));
         
         //Create another user, but set it as unclaimed
         String email2 = "new_user2_" + System.currentTimeMillis() + "@test.orcid.org";
         
         //Create another record by a member
-        OrcidProfile orcidProfile2 = createBasicProfile(email2, false, CLIENT_ID_AUTODEPRECATE_ENABLED);
-        orcidProfile2 = orcidProfileManager.createOrcidProfile(orcidProfile2, true, true);
-        assertNotNull(orcidProfile2);
-        assertNotNull(orcidProfile.getOrcidIdentifier());
-        assertNotNull(orcidProfile2.getOrcidIdentifier().getPath());
-        String orcidBefore2 = orcidProfile2.getOrcidIdentifier().getPath();
+        String orcid2 = null;
+        try {
+            Registration form = createRegistrationForm(email2, true);
+            orcid2 = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            ProfileEntity entity = profileDao.find(orcid2);
+            entity.setClaimed(false);
+            entity.setSource(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
+            profileDao.merge(entity);
+        } catch(InvalidRequestException e) {
+            fail();
+        } catch(Exception e) {
+            fail();
+        }
         
         Map<String, String> map2 = emailManager.findOricdIdsByCommaSeparatedEmails(email2);
         assertNotNull(map2);
-        assertEquals(orcidBefore2, map2.get(email2)); 
+        assertEquals(orcid2, map2.get(email2)); 
         
         try {
             String email3 = "new_user3_" + System.currentTimeMillis() + "@test.orcid.org";
@@ -374,32 +396,4 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         registration.setCreationType(Text.valueOf(CreationMethod.DIRECT.value()));                       
         return registration;
     }
-        
-    private OrcidProfile createBasicProfile(String email, boolean claimed, String sourceId) {
-        OrcidProfile profile = new OrcidProfile();
-        profile.setPassword("password");
-        profile.setVerificationCode("1234");
-
-        OrcidBio bio = new OrcidBio();
-        ContactDetails contactDetails = new ContactDetails();
-        contactDetails.addOrReplacePrimaryEmail(new Email(email));
-        bio.setContactDetails(contactDetails);
-        profile.setOrcidBio(bio);
-        PersonalDetails personalDetails = new PersonalDetails();
-        bio.setPersonalDetails(personalDetails);
-        personalDetails.setGivenNames(new GivenNames("New"));
-        personalDetails.setFamilyName(new FamilyName("User"));
-
-        OrcidHistory orcidHistory = new OrcidHistory();
-        orcidHistory.setClaimed(new Claimed(claimed));
-        orcidHistory.setCreationMethod(CreationMethod.DIRECT);
-        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        profile.setOrcidHistory(orcidHistory);
-        
-        //Set the source
-        profile.getOrcidHistory().setSource(new Source(sourceId));
-        
-        return profile;
-    }
-    
 }

@@ -8,14 +8,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
@@ -46,7 +42,9 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
         });
 
         this.twoFAStateService.init()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.codes = data;
@@ -59,7 +57,9 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
 
     submitCode(): void {
         this.twoFAStateService.submitCode( this.codes )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.codes = data;

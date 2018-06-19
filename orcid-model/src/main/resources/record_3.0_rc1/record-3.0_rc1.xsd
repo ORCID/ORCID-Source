@@ -7,7 +7,7 @@
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:employment="http://www.orcid.org/ns/employment"
 	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:history="http://www.orcid.org/ns/history"
 	xmlns:record="http://www.orcid.org/ns/record" xmlns:preferences="http://www.orcid.org/ns/preferences"
-	xmlns:peer-review="http://www.orcid.org/ns/peer-review">
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:research-resource="http://www.orcid.org/ns/research-resource">
 	<xs:annotation> 
 		<xs:documentation>
 			=============================================================================
