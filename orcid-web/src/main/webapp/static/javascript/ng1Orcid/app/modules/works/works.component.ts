@@ -351,6 +351,27 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    getGroupDetails(putCode, type, callback?): void {
+        /*console.log("get group details");
+        let group = this.getGroup(putCode);
+        let needsLoading =  new Array();
+        
+        let popFunct = function () {
+            if (needsLoading.length > 0) {
+                this.getDetails(needsLoading.pop(), type, popFunct);
+            }
+            else if (callback != undefined) {
+                callback();
+            }
+        };
+
+        for (var idx in group.works) {
+            needsLoading.push(group.works[idx].putCode.value)
+        }
+
+        popFunct();*/
+    }
+
     loadMore(): void {
         this.worksService.addAbbrWorksToScope(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
             !this.sortState.reverseKey[this.sortState.predicateKey]
@@ -625,14 +646,28 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     showDetailsMouseClick = function(group, $event) {
+        console.log("show details");
         $event.stopPropagation();
-        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
-        this.cdr.detectChanges();
+        //this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        //this.cdr.detectChanges();
         console.log(group);
-        console.log(group.works);
         for (var idx in group.works){
+            console.log("group works i");
             console.log(group.works[idx]);
-            this.loadDetails(group.works[idx].putCode.value, $event);
+            //this.loadDetails(group.works[idx].putCode.value, $event);
+            this.worksService.getDetails(group.works[idx].putCode.value, this.worksService.constants.access_type.USER)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    console.log(data);
+                },
+                error => {
+                    console.log('error getting work details', error);
+                } 
+            );
+
         }
     };
 

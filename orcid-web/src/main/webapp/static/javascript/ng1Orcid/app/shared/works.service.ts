@@ -4,13 +4,8 @@ import { Injectable }
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-
-
 import { Observable, Subject } 
     from 'rxjs';
-
 
 import { catchError, map, tap } 
     from 'rxjs/operators';
@@ -81,6 +76,18 @@ export class WorksService {
         return true;
     }
 
+    getDetails(putCode, type, callback): Observable <any> {
+        let url = getBaseUri();
+        if (type == this.constants.access_type.USER) {
+            url += '/works/getWorkInfo.json?workId=' + putCode;
+        } else {
+            url += '/' + orcidVar.orcidId + '/getWorkInfo.json?workId=' + putCode;
+        }
+        return this.http.get(
+                url
+            ) 
+    }
+
     getGroup(putCode): any {
         for (var idx in this.groups) {
             for (var y in this.groups[idx].works) {
@@ -108,6 +115,7 @@ export class WorksService {
     }
 
     getGroupDetails(putCode, type, callback?): void {
+        console.log("get group details");
         let group = this.getGroup(putCode);
         let needsLoading =  new Array();
         
@@ -222,6 +230,7 @@ export class WorksService {
 
     updateVisibility(putCodes, priv): Observable<any> {
         let url = getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv;
+
         return this.http.get(
             url
         )
