@@ -110,6 +110,20 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
+    
+    /**
+     * Get the list of works specified by the list of put codes
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *            Last modified date used to check the cache
+     * @return the list of works that belongs to this user
+     */
+    @Override
+    public List<WorkSummary> getWorksSummaryList(String orcid, List<Long> putCodes) {
+        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, putCodes, getLastModified(orcid));
+        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+    }
 
     /**
      * Generate a grouped list of works with the given list of works
