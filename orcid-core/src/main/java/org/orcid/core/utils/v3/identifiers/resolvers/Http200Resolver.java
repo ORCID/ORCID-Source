@@ -33,7 +33,6 @@ public class Http200Resolver implements Resolver {
         types.add("rrid");
         types.add("rfc");
         types.add("pdb");
-        types.add("dnb");
         //note url, handles and other types tested etc DO NOT reliably return 200 if found!
     }
 
