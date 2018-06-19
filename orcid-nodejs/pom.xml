@@ -25,18 +25,16 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <!-- Use the latest released version:https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
                 <version>1.6</version>
-                <configuration>
-                    <nodeVersion>v8.11.2</nodeVersion>
-                    <npmVersion>6.1.0</npmVersion>
-                    <downloadRoot>https://nodejs.org/dist/</downloadRoot>
-                    <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
-                    <workingDirectory>${nodejs.workingDirectory}</workingDirectory>
-                    <installDirectory>target</installDirectory>
-                    <environmentVariables>
-                        <eirslett_ver>1.6</eirslett_ver>
-                        <NODE_ENV>production</NODE_ENV>
-                    </environmentVariables>
-                </configuration>
+<configuration>
+                   <nodeVersion>v8.11.2</nodeVersion>
+                   <downloadRoot>https://nodejs.org/dist/</downloadRoot>
+                   <workingDirectory>${nodejs.workingDirectory}</workingDirectory>
+                   <installDirectory>target</installDirectory>
+                   <environmentVariables>
+                       <eirslett_ver>1.6</eirslett_ver>
+                       <NODE_ENV>production</NODE_ENV>
+                   </environmentVariables>
+               </configuration>
                 <executions>
                     <execution>
                         <id>install node and npm</id>
