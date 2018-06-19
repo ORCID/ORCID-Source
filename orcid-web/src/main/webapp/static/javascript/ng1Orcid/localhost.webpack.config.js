@@ -1,26 +1,34 @@
-const webpack = require('webpack');
+var webpack = require('webpack');
 
 module.exports = {
+    context: __dirname + "/",
     entry: "./require.js",
+    mode: 'development',
     module: {
-        loaders: [
-            { 
+        rules: [
+            {
                 test: /\.ts$/, 
-                loader: 'ts-loader' 
+                use: [
+                    {
+                        loader: 'ts-loader'
+                    }
+                ]
             }
         ]
     },
     output: {
-        path: '../.',
+        path: __dirname + '/',
         filename: "angular_orcid_generated.js"
     },
     plugins: [
-        new webpack.DefinePlugin({
-            'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-            'process.env':{
-                'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+        new webpack.DefinePlugin(
+            {
+                'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+                'process.env': {
+                    'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+                }
             }
-        })
+        )
     ],
     resolve: {
         alias: {

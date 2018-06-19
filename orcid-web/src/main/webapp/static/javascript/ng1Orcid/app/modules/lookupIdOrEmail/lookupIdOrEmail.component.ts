@@ -10,14 +10,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AdminDelegatesService } 
     from '../../shared/adminDelegates.service.ts'; 
@@ -48,7 +44,9 @@ export class LookUpIdOrEmailComponent implements AfterViewInit, OnDestroy, OnIni
 
     lookupIdOrEmails = function() {
         this.adminDelegatesService.lookupIdOrEmails( this.idOrEmails )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.result = data;

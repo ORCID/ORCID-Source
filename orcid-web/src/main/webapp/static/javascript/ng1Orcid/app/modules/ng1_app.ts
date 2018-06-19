@@ -28,6 +28,9 @@ import { AffiliationFormModule }
 import { AlertBannerModule } 
     from './alertBanner/alertBanner.ts';
 
+import { AllConsortiumContactsModule } 
+    from './allConsortiumContacts/allConsortiumContacts.ts';
+
 import { BiographyModule } 
     from './biography/biography.ts';
 
@@ -191,6 +194,7 @@ export const orcidApp = angular.module(
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
         AlertBannerModule.name,
+        AllConsortiumContactsModule.name,
         BiographyModule.name,
         ClaimThanksModule.name,
         ClientEditModule.name,

@@ -10,14 +10,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { GenericService } 
     from '../../shared/generic.service.ts';
@@ -43,7 +39,9 @@ export class StaticsComponent implements AfterViewInit, OnDestroy, OnInit {
     getLiveIds(): void {
 
         this.staticsService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.liveIds = data;

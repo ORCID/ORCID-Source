@@ -4,12 +4,12 @@ import { Injectable }
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
+import { Observable, Subject } 
+    from 'rxjs';
 
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class WorkspaceService {

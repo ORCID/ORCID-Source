@@ -44,6 +44,9 @@ import { AffiliationFormNg2Module }
 import { AlertBannerNg2Module } 
     from './alertBanner/alertBanner.ts';
 
+import { AllConsortiumContactsNg2Module } 
+    from './allConsortiumContacts/allConsortiumContacts.ts';
+
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 
@@ -214,14 +217,15 @@ export class MetaXSRFStrategy implements XSRFStrategy {
     }
 }
 ///////////////////
-import {Injectable} from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import {Injectable} 
+    from '@angular/core';
+
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } 
+    from '@angular/common/http';
+
+import { Observable } 
+    from 'rxjs';
+
 import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
@@ -292,6 +296,7 @@ export class RootCmp {
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
         AlertBannerNg2Module,
+        AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
         ClaimThanksNg2Module,
         ClientEditNg2Module,
@@ -359,8 +364,7 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log("begin parent Ng2AppModule constructor");
-        console.log('v0.9.20');
+        console.log('v0.9.21');
     }
 }
 

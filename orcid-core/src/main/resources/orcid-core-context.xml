@@ -212,6 +212,14 @@
 		<property name="biographyManager" ref="biographyManagerReadOnly" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
+	
+	<bean id="groupingSuggestionManager" class="org.orcid.core.manager.impl.GroupingSuggestionManagerImpl">
+	   <property name="groupingSuggestionDao" ref="groupingSuggestionDao" />
+	</bean>
+
+    <bean id="groupingSuggestionManagerReadOnly" class="org.orcid.core.manager.read_only.impl.GroupingSuggestionManagerReadOnlyImpl">
+       <property name="groupingSuggestionDao" ref="groupingSuggestionDaoReadOnly" />
+    </bean>
 
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl">
 		<property name="emailDao" ref="emailDao" />
@@ -427,6 +435,15 @@
     
     <bean id="sourceUtilsReadOnlyV3" class="org.orcid.core.utils.v3.SourceUtils">
         <property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
+    </bean>
+    
+    <bean id="groupingSuggestionManagerV3" class="org.orcid.core.manager.v3.impl.GroupingSuggestionManagerImpl">
+       <property name="groupingSuggestionDao" ref="groupingSuggestionDao" />
+       <property name="workDao" ref="workDaoReadOnly" />
+    </bean>
+
+    <bean id="groupingSuggestionManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.GroupingSuggestionManagerReadOnlyImpl">
+       <property name="groupingSuggestionDao" ref="groupingSuggestionDaoReadOnly" />
     </bean>
 	
 	<bean id="orcidIdentifierUtils" class="org.orcid.core.utils.v3.OrcidIdentifierUtils" />

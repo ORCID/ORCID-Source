@@ -4,14 +4,11 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
 
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonService } 
     from '../../shared/common.service.ts'; 
@@ -167,7 +164,9 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getFormData(sectionName): void {
         this.genericService.getData( this.urlPath[sectionName], sectionName )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formDataBeforeChange[sectionName] = JSON.parse(JSON.stringify(data));
@@ -192,7 +191,9 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     setFormData( closeAfterAction, sectionName, modalId ): void {
         //let sectionToUpdate = this.getSectionData(sectionName);
         this.genericService.setData( this.formData[sectionName], this.urlPath[sectionName] )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.formData[sectionName] = data;
@@ -215,7 +216,9 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openEditModal(modalId): void{      
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

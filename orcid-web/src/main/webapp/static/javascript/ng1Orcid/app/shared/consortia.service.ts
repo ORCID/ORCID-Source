@@ -4,11 +4,8 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Injectable } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject } 
-    from 'rxjs/Subject';
+import { Observable, Subject } 
+    from 'rxjs';
 
 @Injectable()
 export class ConsortiaService {
@@ -16,12 +13,15 @@ export class ConsortiaService {
     private notify = new Subject<any>();
     notifyObservable$ = this.notify.asObservable();
     
+    private accountIdRegExp = new RegExp('/self-service/([^/?]+)');
+    
     private addContactUrl: string;
     private addOrgIdUrl: string;
     private addSubMemberUrl: string;
     private cancelSubMemberAdditionUrl: string;
     private checkExistingSubMemberUrl: string;
     private contactsUrl: string;
+    private subMemberContactsUrl: string;
     private headers: HttpHeaders;
     private memberDetailsUrl: string;
     private removeContactUrl: string;
@@ -51,6 +51,7 @@ export class ConsortiaService {
         this.validateMemberDetailsFieldUrl = getBaseUri()  + '/self-service/validate-member-details-';
         this.updateMemberDetailsUrl = getBaseUri() + '/self-service/update-member-details.json';
         this.contactsUrl = getBaseUri() + '/self-service/get-contacts.json?accountId=';
+        this.subMemberContactsUrl = getBaseUri() + '/self-service/get-sub-member-contacts.json?accountId=';
         this.validateContactsUrl = getBaseUri() + '/self-service/validate-contacts.json';
         this.updateContactsUrl = getBaseUri() + '/self-service/update-contacts.json';
         this.addContactUrl = getBaseUri() + '/self-service/add-contact-by-email.json';
@@ -78,8 +79,8 @@ export class ConsortiaService {
     
     getAccountIdFromPath() {
         let path = window.location.pathname;
-        const basepath = '/self-service/';
-        return path.substring(path.indexOf(basepath) + basepath.length);
+        let results: Array<any> = this.accountIdRegExp.exec(path);
+        return results[1];
     };
 
     getMemberDetails(id: string): Observable<any> {
@@ -121,6 +122,12 @@ export class ConsortiaService {
     
     getContacts(id: string): Observable<any> {
         const url = `${this.contactsUrl}${id}`;
+        return this.http.get(url)
+            
+    }
+    
+    getSubMemberContacts(id: string): Observable<any> {
+        const url = `${this.subMemberContactsUrl}${id}`;
         return this.http.get(url)
             
     }

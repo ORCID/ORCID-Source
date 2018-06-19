@@ -4,14 +4,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -42,7 +38,9 @@ export class EmailUnverifiedWarningComponent implements AfterViewInit, OnDestroy
 
     getEmails(): any {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emailPrimary = this.emailService.getEmailPrimary().value;
@@ -55,7 +53,9 @@ export class EmailUnverifiedWarningComponent implements AfterViewInit, OnDestroy
 
     verifyEmail(): any {
         this.emailService.verifyEmail()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 ////console.log('verifyEmail', data);

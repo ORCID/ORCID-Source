@@ -4,17 +4,15 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
+
+
 
 @Component({
     selector: 'two-fa-state-ng2',
@@ -36,7 +34,9 @@ export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
 
     disable2FA(): void {
         this.twoFAStateService.disable()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);
@@ -61,7 +61,9 @@ export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
 
     check2FAState(): void {
         this.twoFAStateService.checkState()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);

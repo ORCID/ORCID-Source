@@ -8,14 +8,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
     
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -50,7 +46,9 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
     updateActivitiesVisibilityDefault(oldPriv, newPriv, $event: any): void {
         this.errorUpdatingVisibility = false;
         this.prefsSrvc.updateDefaultVisibility(newPriv)
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
                 .subscribe(
                     response => {
                         this.prefs['default_visibility'] = newPriv;
@@ -68,7 +66,9 @@ export class WorksPrivacyPreferencesComponent implements OnInit {
 
     getPreferences(): void {
         this.prefsSrvc.getPrivacyPreferences()
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
                 .subscribe(
                     preferences => {
                         this.prefs = preferences;

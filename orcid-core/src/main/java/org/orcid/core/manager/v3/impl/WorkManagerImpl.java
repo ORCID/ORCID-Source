@@ -16,10 +16,12 @@ import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
@@ -38,10 +40,13 @@ import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,6 +77,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
+    
+    @Resource(name = "groupingSuggestionManagerV3")
+    private GroupingSuggestionManager groupingSuggestionManager;
+    
+    @Resource(name = "groupingSuggestionManagerReadOnlyV3")
+    private GroupingSuggestionManagerReadOnly groupingSuggestionManagerReadOnly;
     
     @Resource
     private MessageSource messageSource;
@@ -175,7 +186,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
-        return jpaJaxbWorkAdapter.toWork(workEntity);
+        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
+        generateGroupingSuggestions(orcid, updatedWork);
+        return updatedWork;
     }
 
     
@@ -249,7 +262,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Update the element in the bulk
                         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-                        
+                        generateGroupingSuggestions(orcid, updatedWork);
                         bulk.set(i, updatedWork);
                         
                         //Add the work extIds to the list of existing external identifiers
@@ -344,7 +357,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
-        return jpaJaxbWorkAdapter.toWork(workEntity);
+        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
+        generateGroupingSuggestions(orcid, updatedWork);
+        return updatedWork;
     }
 
     @Override
@@ -361,6 +376,27 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             result = false;
         }
         return result;
+    }
+    
+    @Override
+    public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid) {
+        List<WorkGroupingSuggestion> suggestions = groupingSuggestionManagerReadOnly.getGroupingSuggestions(orcid);
+        Map<Long, Object> distinctPutCodes = new HashMap<>();
+        for (WorkGroupingSuggestion workGroupingSuggestion : suggestions) {
+            for (Long putCode : workGroupingSuggestion.getPutCodes().getWorkPutCodes()) {
+                distinctPutCodes.put(putCode, null);
+            }
+        }
+        List<WorkSummary> summaries = getWorksSummaryList(orcid, Arrays.asList(distinctPutCodes.keySet().toArray(new Long[0])));
+        Works groupedWorks = groupWorks(summaries, false);
+        suggestions = groupingSuggestionManager.filterSuggestionsNoLongerApplicable(suggestions, groupedWorks);
+        return suggestions;
+    }
+
+    @Override
+    public void acceptGroupingSuggestion(WorkGroupingSuggestion groupingSuggestion) {
+        createNewWorkGroup(Arrays.asList(groupingSuggestion.getPutCodes().getWorkPutCodes()), groupingSuggestion.getOrcid());
+        groupingSuggestionManager.markGroupingSuggestionAsAccepted(groupingSuggestion.getId());
     }
 
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
@@ -442,4 +478,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setWorkUrl(preferredFullData.getWorkUrl());
         return workEntity;
     }
+    
+    private void generateGroupingSuggestions(String orcid, Work updatedWork) {
+        List<WorkSummary> summaries = getWorksSummaryList(orcid);
+        Works groupedWorks = groupWorks(summaries, true);
+        groupingSuggestionManager.generateGroupingSuggestionsForProfile(orcid, updatedWork, groupedWorks);
+    }
+
 }

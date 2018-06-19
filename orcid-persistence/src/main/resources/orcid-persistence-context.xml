@@ -272,6 +272,12 @@
 	<bean id="miscDaoReadOnly" class="org.orcid.persistence.dao.impl.MiscDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />		
 	</bean>
+	
+	<bean id="groupingSuggestionDao" class="org.orcid.persistence.dao.impl.GroupingSuggestionDaoImpl" />
+    
+    <bean id="groupingSuggestionDaoReadOnly" class="org.orcid.persistence.dao.impl.GroupingSuggestionDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
