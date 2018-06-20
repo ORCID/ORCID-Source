@@ -11,12 +11,12 @@ import { downgradeComponent, UpgradeModule }
 import { CommonNg2Module }
     from './../common/common.ts';
 
-import { AlsoKnownAsComponent } 
-    from './alsoKnownAs.component.ts';
+import { PersonComponent } 
+    from './person.component.ts';
 
 // This is the Angular 1 part of the module
-export const AlsoKnownAsModule = angular.module(
-    'AlsoKnownAsModule', 
+export const PersonModule = angular.module(
+    'PersonModule', 
     []
 );
 
@@ -25,10 +25,10 @@ export const AlsoKnownAsModule = angular.module(
 @NgModule(
     {
         declarations: [
-            AlsoKnownAsComponent
+            PersonComponent
         ],
         entryComponents: [ 
-            AlsoKnownAsComponent 
+            PersonComponent 
         ],
         imports: [
             CommonNg2Module
@@ -37,16 +37,16 @@ export const AlsoKnownAsModule = angular.module(
         ]
     }
 )
-export class AlsoKnownAsNg2Module {}
+export class PersonNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
-AlsoKnownAsModule.directive(
-    'alsoKnownAsNg2', 
+PersonModule.directive(
+    'personNg2', 
     <any>downgradeComponent(
         {
-            component: AlsoKnownAsComponent
+            component: PersonComponent
         }
     )
 );

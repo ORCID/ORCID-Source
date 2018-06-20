@@ -88,7 +88,7 @@ export class AffiliationService {
 
     getPublicAffiliationsById( idList ): Observable<any> {
         return this.http.get(
-                getBaseUri() + '/' + orcidVar.orcidId + '/affiliations.json?affiliationIds=' + idList
+            getBaseUri() + '/' + orcidVar.orcidId + '/affiliations.json?affiliationIds=' + idList
         );
     }
     

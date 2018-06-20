@@ -22,6 +22,7 @@ public class Contact implements Serializable {
     private String email;
     private ContactRole role;
     private String orcid;
+    private Member member;
     private boolean selfServiceEnabled;
 
     public String getId() {
@@ -86,6 +87,14 @@ public class Contact implements Serializable {
 
     public void setOrcid(String orcid) {
         this.orcid = orcid;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     public boolean isSelfServiceEnabled() {

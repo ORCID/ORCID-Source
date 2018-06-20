@@ -51,15 +51,15 @@
 		<history:verified-email>true</history:verified-email>
 		<history:verified-primary-email>true</history:verified-primary-email>
 	</history:history>
-	<person:person path="http://orcid.org/8888-8888-8888-8880">
+	<person:person path="/8888-8888-8888-8880">
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-		<person:name visibility="public"  path="http://orcid.org/8888-8888-8888-8880/personal-details"> 	
+		<person:name visibility="public"  path="/8888-8888-8888-8880/personal-details"> 	
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<personal-details:given-names>give-names</personal-details:given-names>
 			<personal-details:family-name>family-name</personal-details:family-name>
 			<personal-details:credit-name>credit-name</personal-details:credit-name>			
 		</person:name>
-		<other-name:other-names path="http://orcid.org/8888-8888-8888-8880/other-names">
+		<other-name:other-names path="/8888-8888-8888-8880/other-names">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<other-name:other-name visibility="public" put-code="1" display-index="0">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -75,12 +75,12 @@
 				<other-name:content>other-name-1</other-name:content>				
 			</other-name:other-name>
 		</other-name:other-names>
-		<person:biography visibility="public" path="http://orcid.org/8888-8888-8888-8880/biography">
+		<person:biography visibility="public" path="/8888-8888-8888-8880/biography">
 			<common:created-date>2001-12-31T12:00:00</common:created-date>						
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<personal-details:content>biography</personal-details:content>
 		</person:biography>
-		<researcher-url:researcher-urls path="http://orcid.org/8888-8888-8888-8880/researcher-urls">
+		<researcher-url:researcher-urls path="/8888-8888-8888-8880/researcher-urls">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<researcher-url:researcher-url put-code="1248" visibility="public" display-index="0">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -97,7 +97,7 @@
 				<researcher-url:url>http://url.com/</researcher-url:url>				
 			</researcher-url:researcher-url>
 		</researcher-url:researcher-urls>
-		<email:emails path="http://orcid.org/8888-8888-8888-8880/email">
+		<email:emails path="/8888-8888-8888-8880/email">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<email:email visibility="public" put-code="0">				
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -113,7 +113,7 @@
 				<email:email>user1@email.com</email:email>
 			</email:email>
 		</email:emails>
-		<address:addresses path="http://orcid.org/8888-8888-8888-8880/address">
+		<address:addresses path="/8888-8888-8888-8880/address">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>			
 			<address:address visibility="public" put-code="1" display-index="0">				
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -129,7 +129,7 @@
 				<address:country>US</address:country>
 			</address:address>
 		</address:addresses>
-		<keyword:keywords path="http://orcid.org/8888-8888-8888-8880/keywords">
+		<keyword:keywords path="/8888-8888-8888-8880/keywords">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<keyword:keyword visibility="public" put-code="1" display-index="0">				
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -146,7 +146,7 @@
 				<keyword:content>keyword1</keyword:content>
 			</keyword:keyword>
 		</keyword:keywords>
-		<external-identifier:external-identifiers path="http://orcid.org/8888-8888-8888-8880/external-identifiers">
+		<external-identifier:external-identifiers path="/8888-8888-8888-8880/external-identifiers">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<external-identifier:external-identifier visibility="public" put-code="1" display-index="0">		
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
