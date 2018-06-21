@@ -113,7 +113,7 @@
 
 ## Post ORCID Independent Tests
 
-59. Visit https://qa.orcid.org/sign-in
+59. Visit https://qa.orcid.org/signin
 
 60. Sign into the account created earlier
 	* Email: ma_test_[DD][month][YYYY]@mailinator.com
