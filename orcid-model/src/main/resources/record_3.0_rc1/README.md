@@ -42,6 +42,8 @@ v3.0_rc1 is the current development release of the ORCID API.
 **stable**
 - [qualification-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/qualification-3.0_rc1.xsd)
 **stable**
+- [research-resource-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/research-resource-3.0_rc1.xsd)
+**stable**
 - [researcher-url-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/researcher-url-3.0_rc1.xsd)
 **stable**
 - [search-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/search-3.0_rc1.xsd)
@@ -54,10 +56,10 @@ v3.0_rc1 is the current development release of the ORCID API.
 ## Changes from Version 2.1:
 
 ### JSON
-- JSON enumerated types are now expressed in lowercase with dashes instead of underscores, matching the existing XML enums (ie *JOURNAL_ARTCILE* is now expressed as *journal-article*). This affects enums for visibility, locale, work types, contributor roles, citation types, external identifier relationship, funding types, peer review types, and peer review role
+- JSON enumerated types are now expressed in lowercase with dashes instead of underscores, matching the existing XML enums (ie *JOURNAL_ARTICLE* is now expressed as *journal-article*). This affects enums for visibility, locale, work types, contributor roles, citation types, external identifier relationship, funding types, peer review types, and peer review role
 
 ### Activities external identifiers
-- Addition of *common:external-id-normalized* for work and peer-review identifiers. The common:external-id-normalized field is a transient, system generated field which expresses the identifier in a standard format that is used for grouping. In general, normalized identifiers trim extraneous text such as the identifier type or the expression of the identifier as a url. Additional normalization is done based on the rules of the identifier type and may include setting all alpha characters to lower case,  or transforming spaces, dashes, periods and other characters that can be treated as equivalent. [See the full normalization rules] (https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/java/org/orcid/core/utils/v3/identifiers). Identifiers which can not be normalzied will return a error message when reading them.
+- Addition of *common:external-id-normalized* for work and peer-review identifiers. The common:external-id-normalized field is a transient, system generated field which expresses the identifier in a standard format that is used for grouping. In general, normalized identifiers trim extraneous text such as the identifier type or the expression of the identifier as a url. Additional normalization is done based on the rules of the identifier type and may include setting all alpha characters to lower case,  or transforming spaces, dashes, periods and other characters that can be treated as equivalent. [See the full normalization rules](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/java/org/orcid/core/utils/v3/identifiers). Identifiers which can not be normalized will return a error message when reading them.
 
 ### Affiliations
 - Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections.
@@ -81,12 +83,14 @@ v3.0_rc1 is the current development release of the ORCID API.
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
 - Addition of *common:external-id-normalized* when reading peer-reviews for normalized peer-review identifiers
 
+### Research-resource
+- This new section of the ORCID record captures information about things that researchers use for their research which require a specific proposal process or credential to access, such as collections, equipment, infrastructure, and services. For more information see the [Research-resource tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/research-resources.md).
+
 ## Sample files:
 
 - [read activities-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/activities-3.0_rc1.xml)
 - [read address-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/address-3.0_rc1.xml)
--
-[write address-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/address-3.0_rc1.xml)
+- [write address-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/address-3.0_rc1.xml)
 - [write bulk-work xml-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/bulk-work-3.0_rc1.xml)
 - [write bulk-work-3.0_rc1.json](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/bulk-work-3.0_rc1.json)
 - [read biography-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/biography-3.0_rc1.xml)
@@ -129,6 +133,9 @@ v3.0_rc1 is the current development release of the ORCID API.
 - [read qualification-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/qualification-3.0_rc1.xml)
 - [write qualification-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/qualification-3.0_rc1.xml)
 - [read qualifications-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/qualification-3.0_rc1.xml)
+- [read research-resource-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/research-resource-3.0_rc1.xml)
+- [write research-resource-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/research-resource-3.0_rc1.xml)
+- [read research-resources-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/research-resource-3.0_rc1.xml)
 - [read researcher-url-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/researcher-url-3.0_rc1.xml)
 - [write researcher-url-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/researcher-url-3.0_rc1.xml)
 - [read researcher-urls-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/researcher-urls-3.0_rc1.xml)
@@ -203,6 +210,7 @@ The swagger interfaces to the API available at:
 - person *
 - personal-details *
 - qualification
+- research-resource
 - researcher-urls
 - service
 - work
@@ -235,6 +243,7 @@ The swagger interfaces to the API available at:
 | Personal details	 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/personal-details'```|
 | Person			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/person'```|
 | Qualification summary			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/qualifications'```|
+| Research-resource summary			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resources'```|
 | Researcher URLs    | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/researcher-urls'```|
 | Service summary             | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/service'```|
 | Works summary             | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/works'```|
@@ -256,6 +265,7 @@ The swagger interfaces to the API available at:
 | Other names     	 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/other-names/15812'```|
 | Peer review        | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/peer-review/1374'```|
 | Qualification        | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/peer-review/29769'```|
+| Research-resource        | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource/1000'```|
 | Researcher URL     | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/researcher-urls/41387'```|
 | Service     		 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/service/29773'```|
 | Work               | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/work/733536'```|
@@ -279,6 +289,7 @@ When reading multiple works the contents of each work is returned or an error co
 | Other names  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/other-names'```|
 | Peer review  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/peer-review'```|
 | Qualification  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/qualification-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/qualification'```|
+| Research-resource  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/qualification-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource'```|
 | Researcher URL  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/researcher-urls'```|
 | Service  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/service-item.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/service'```|
 | Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/work'```|
@@ -301,6 +312,7 @@ When posting multiple works the contents of each work is returned or an error co
 | Other names  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/other-names/[PUT-CODE]'```|
 | Peer review  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/peer-review/[PUT-CODE]'```|
 | Qualification  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/qualification-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/qualification/[PUT-CODE]'```|
+| Research-resource  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/qualification-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource/[PUT-CODE]'```|
 | Researcher URL  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
 | Service  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/service-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/service/[PUT-CODE]'```|
 | Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/work/[PUT-CODE]'```|
@@ -322,6 +334,7 @@ When updating a record item, include the put code as an attribute in the root el
 | Other names  | /person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
 | Peer review  | /activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/peer-review/[PUT-CODE]'```|
 | Qualifiation  | /activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/qualification/[PUT-CODE]'```|
+| Research-resource  | /activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource/[PUT-CODE]'```|
 | Researcher URL  | /person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
 | Service  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/service/[PUT-CODE]'```|
 | Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/work/[PUT-CODE]'```|
