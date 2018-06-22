@@ -1,6 +1,6 @@
-# Get Authenticate iDs
+# Refresh tokens
 
-This tutorial covers how to exchange a refresh token for a new access token. We suggest using refresh tokens to revoke and replace access tokens that have been compromised or to give a third party limited access and/or access for a limited time. For removing your access to a record entirely, we recommend the [revoke token process](/revoke_token).
+This tutorial covers how to exchange a refresh token for a new access token. We suggest using refresh tokens to revoke and replace access tokens that have been compromised or to give a third party limited access and/or access for a limited time. For removing your access to a record entirely, we recommend the [revoke token process](/revoke.md).
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 
