@@ -35,7 +35,7 @@ public class July2018 extends QuarterlyNotificationsManager {
     }
     
     public String getSubject(Locale locale) {
-        return messages.getMessage("", new Object[0], locale);
+        return messages.getMessage("email.july_2018.subject", new Object[0], locale);
     }
     
     public Map<String, Object> generateTemplateParams(ProfileEntity profileEntity, Locale locale) {
