@@ -76,7 +76,7 @@ public abstract class QuarterlyNotificationsManager {
         messages = (MessageSource) context.getBean("messageSource");
     }
     
-    public void execute(String htmlTemplateName, String plainTextTemplateName, Integer chunkSize, Integer poolSize) throws InterruptedException {
+    public void execute(Integer chunkSize, Integer poolSize) throws InterruptedException {
         LOG.info("Start");
         List<String> orcids = new ArrayList<String>();  
         int doneCount = 0;
@@ -97,7 +97,7 @@ public abstract class QuarterlyNotificationsManager {
                     
                 });
             }
-            // Runthem all 
+            // Run them all 
             pool.invokeAll(callables);
             doneCount += callables.size();
             long endTime = System.currentTimeMillis();
