@@ -80,10 +80,13 @@
     <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />      
     
     <bean id="pubDefaultApiVersionFilter" class="org.orcid.api.common.filter.DefaultApiVersionFilter">
-    	<property name="feature" value="PUB_API_2_0_BY_DEFAULT" />
+        <property name="feature" value="PUB_API_2_0_BY_DEFAULT" />
     </bean>  
     
     <bean id="disable12Filter" class="org.orcid.api.common.filter.Disable12ApiFilter">
-    	<property name="feature" value="DISABLE_1_2_ON_PUB_API" />
+        <property name="feature" value="DISABLE_1_2_ON_PUB_API" />
     </bean>
+    
+    <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
+    
 </beans>      
