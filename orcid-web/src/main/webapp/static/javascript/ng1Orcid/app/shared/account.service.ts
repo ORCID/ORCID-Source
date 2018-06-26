@@ -71,6 +71,16 @@ export class AccountService {
         
     }
 
+    deprecateORCID( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+
+        return this.http.post(
+            getBaseUri() + '/account/validate-deprecate-profile.json',
+            encoded_data, 
+            { headers: this.headers }
+        )   
+    }
+
     getChangePassword(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/change-password.json'

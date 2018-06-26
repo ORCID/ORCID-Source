@@ -12,27 +12,23 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.notificationsV3.server.delegator.NotificationsApiServiceDelegator;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidNotFoundException;
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.NotificationValidationManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc1.notification.Notification;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,6 +55,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
 
     @Resource
     private SourceManager sourceManager;
+    
+    @Resource(name = "orcidSecurityManagerV3")
+    private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
     private LocaleManager localeManager;
@@ -77,6 +76,8 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotifications(String orcid) {
+        checkProfileStatus(orcid, true);
+        
         // Get the client profile information
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String clientId = null;
@@ -92,7 +93,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotification(String orcid, Long id) {
-        checkIfProfileDeprecated(orcid);
+        checkProfileStatus(orcid, true);
         Notification notification = notificationManager.findByOrcidAndId(orcid, id);
         if (notification != null) {
             checkSource(notification);
@@ -117,7 +118,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
-        checkIfProfileDeprecated(orcid);
+        checkProfileStatus(orcid, false);
         Notification notification = notificationManager.flagAsArchived(orcid, id);
         if (notification == null) {
             Map<String, String> params = new HashMap<String, String>();
@@ -131,7 +132,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
-        checkIfProfileDeprecated(orcid);
+        checkProfileStatus(orcid, false);
         notificationValidationManager.validateNotificationPermission(notification);
         Notification createdNotification = notificationManager.createPermissionNotification(orcid, notification);
         try {
@@ -144,17 +145,15 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
         }
     }
 
-    private void checkIfProfileDeprecated(String orcid) {
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
-        if (entity != null && profileEntityManager.isProfileDeprecated(orcid)) {
-            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if (entity.getDeprecatedDate() != null) {
-                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
-                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+    private void checkProfileStatus(String orcid, boolean readOperation) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (DeactivatedException e) {
+            // If it is a read operation, ignore the deactivated status since we
+            // are going to return the empty element with the deactivation date
+            if (!readOperation) {
+                throw e;
             }
-            throw new OrcidDeprecatedException(params);
         }
     }
 }

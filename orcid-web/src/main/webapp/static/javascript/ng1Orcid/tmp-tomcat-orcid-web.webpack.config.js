@@ -15,12 +15,18 @@
 var webpack = require('webpack');
 
 module.exports = {
+    context: __dirname + "/",
     entry: "./require.js",
+    mode: 'development',
     module: {
-        loaders: [
-            { 
+        rules: [
+            {
                 test: /\.ts$/, 
-                loader: 'ts-loader' 
+                use: [
+                    {
+                        loader: 'ts-loader'
+                    }
+                ]
             }
         ]
     },
@@ -30,11 +36,11 @@ module.exports = {
     },
     plugins: [
         new webpack.DefinePlugin({
-                        'NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-                        'process.env':{
-                            'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-                        }
-                    })
+            'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+            'process.env':{
+                'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+            }
+        })
     ],
     resolve: {
         alias: {
@@ -42,4 +48,4 @@ module.exports = {
         }
     },
     watch: true
-};
+}
