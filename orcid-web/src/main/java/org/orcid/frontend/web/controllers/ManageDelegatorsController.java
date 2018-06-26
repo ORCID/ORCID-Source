@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -13,7 +12,6 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.stereotype.Controller;
@@ -46,24 +44,11 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     @Resource
     private OrcidIdentifierUtils orcidIdentifierUtils;
     
-    @Resource
-    private ProfileLastModifiedAspect profileLastModifiedAspect;
-
-    private long getLastModified(String orcid) {
-        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }
-    
     @RequestMapping
     public ModelAndView manageDelegators() {
         return new ModelAndView("manage_delegators");
     }
 
-    @RequestMapping(value = { "/delegators" }, method = RequestMethod.GET)
-    public @ResponseBody List<DelegateForm> getListOfAccountsToSwitch() {
-        return givenPermissionToManagerReadOnly.findByReceiver(getCurrentUserOrcid(), getLastModified(getCurrentUserOrcid()));
-    }
-    
     @RequestMapping(value = "/delegators-and-me.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> getDelegatorsPlusMeJson() {
         Map<String, Object> map = new HashMap<>();

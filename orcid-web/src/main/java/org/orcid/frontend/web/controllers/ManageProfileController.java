@@ -3,7 +3,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,7 +41,6 @@ import org.orcid.jaxb.model.v3.rc1.record.Biography;
 import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -132,14 +130,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
     
-    @Resource
-    private ProfileLastModifiedAspect profileLastModifiedAspect;
-    
-    private long getLastModified(String orcid) {
-        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }
-    
     @RequestMapping
     public ModelAndView manageProfile() {
         return new ModelAndView("manage");
@@ -165,6 +155,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         return givenPermissionToManagerReadOnly.findByGiver(currentOrcid, getLastModified(currentOrcid));
     }
 
+    @RequestMapping(value = { "/delegators.json" }, method = RequestMethod.GET)
+    public @ResponseBody List<DelegateForm> getListOfAccountsToSwitch() {
+        String currentOrcid = getCurrentUserOrcid();
+        return givenPermissionToManagerReadOnly.findByReceiver(currentOrcid, getLastModified(currentOrcid));
+    }
+    
     @RequestMapping(value = "/addDelegate.json")
     public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
         // Check password
