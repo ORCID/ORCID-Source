@@ -49,14 +49,19 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     @Resource
     private ProfileLastModifiedAspect profileLastModifiedAspect;
 
+    private long getLastModified(String orcid) {
+        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
     @RequestMapping
     public ModelAndView manageDelegators() {
         return new ModelAndView("manage_delegators");
     }
 
-    private long getLastModified(String orcid) {
-        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
+    @RequestMapping(value = { "/delegators" }, method = RequestMethod.GET)
+    public @ResponseBody List<DelegateForm> getListOfAccountsToSwitch() {
+        return givenPermissionToManagerReadOnly.findByReceiver(getCurrentUserOrcid(), getLastModified(getCurrentUserOrcid()));
     }
     
     @RequestMapping(value = "/delegators-and-me.json", method = RequestMethod.GET)
@@ -75,7 +80,7 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         }
         return map;
     }
-
+    
     /**
      * Search delegators to suggest to user
      */
