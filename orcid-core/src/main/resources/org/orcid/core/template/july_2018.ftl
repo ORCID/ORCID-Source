@@ -6,22 +6,20 @@
 
 <@emailMacros.msg "email.july_2018.paragraph.2.1" /> <@emailMacros.msg "email.july_2018.paragraph.2.text" /> (<@emailMacros.msg "email.july_2018.paragraph.2.url" />) <@emailMacros.msg "email.july_2018.paragraph.2.2" />
 
-
-
-
-
-
-<@emailMacros.msg "email.july_2018.paragraph.3" />
+<@emailMacros.msg "email.july_2018.paragraph.3.1" /> <@emailMacros.msg "email.july_2018.paragraph.3.1.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.3.1.url.link" />)<@emailMacros.msg "email.july_2018.paragraph.3.2" /> <@emailMacros.msg "email.july_2018.paragraph.3.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.3.2.url.link" />)
 
 <@emailMacros.msg "email.july_2018.paragraph.4" />
 
-<@emailMacros.msg "email.july_2018.paragraph.5" />
+<@emailMacros.msg "email.july_2018.paragraph.5.1" /> <@emailMacros.msg "email.july_2018.paragraph.5.1.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.1.url.link" />)<@emailMacros.msg "email.july_2018.paragraph.5.2" /> <@emailMacros.msg "email.july_2018.paragraph.5.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.2.url.link" />)
 
 <@emailMacros.msg "email.july_2018.paragraph.6" />
 
 Laure Haak 
+Executive Director, ORCID
 
 <@emailMacros.msg "email.july_2018.note" />
+
+<#include "tips_disclaimer.ftl"/>
 
 ----
 <#include "email_footer.ftl"/>
