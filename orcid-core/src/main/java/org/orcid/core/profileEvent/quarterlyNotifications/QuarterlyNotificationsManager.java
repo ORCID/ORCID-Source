@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public abstract class QuarterlyNotificationsManager {
 
@@ -41,6 +44,8 @@ public abstract class QuarterlyNotificationsManager {
     private NotificationDao notificationDao;
     
     private OrcidUrlManager orcidUrlManager;
+    
+    private TransactionTemplate transactionTemplate;
     
     protected MessageSource messages;
     
@@ -55,7 +60,8 @@ public abstract class QuarterlyNotificationsManager {
     private final String NOTIFICATION_FAMILY;
     
     private final Boolean LOCALIZED;
-    
+        
+    @SuppressWarnings("unchecked")
     public QuarterlyNotificationsManager(ProfileEventType created, ProfileEventType skipped, ProfileEventType failed, String notificationFamily, Boolean localized, Integer maxThreads) {
         this.CREATED = created;
         this.SKIPPED = skipped;
@@ -69,14 +75,17 @@ public abstract class QuarterlyNotificationsManager {
             pool = Executors.newFixedThreadPool(maxThreads);
         }
         
+        @SuppressWarnings("resource")
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         profileDaoReadOnly = (ProfileDao) context.getBean("profileDaoReadOnly");
         notificationDao = (NotificationDao) context.getBean("notificationDao");        
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
+        profileEventDao = (GenericDao) context.getBean("profileEventDao");
         messages = (MessageSource) context.getBean("messageSource");
+        transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
     
-    public void execute(Integer chunkSize, Integer poolSize) throws InterruptedException {
+    public void execute(Integer chunkSize) throws InterruptedException {
         LOG.info("Start");
         List<String> orcids = new ArrayList<String>();  
         int doneCount = 0;
@@ -85,7 +94,7 @@ public abstract class QuarterlyNotificationsManager {
         
         do {
             long startTime = System.currentTimeMillis();
-            orcids = profileDaoReadOnly.findByMissingEventTypes(chunkSize, eventTypes, null, true);
+            orcids = profileDaoReadOnly.findByMissingEventTypes(chunkSize, eventTypes, null, true, true);
             Set<Callable<Boolean>> callables = new HashSet<Callable<Boolean>>();
             for (String orcid : orcids) {
                 callables.add(new Callable<Boolean>() {
@@ -138,8 +147,14 @@ public abstract class QuarterlyNotificationsManager {
             entity.setNotificationFamily(NOTIFICATION_FAMILY);
             entity.setProfile(new ProfileEntity(orcid));
             entity.setSendable(true);
-            notificationDao.persistIgnoringProfileLastModifiedUpdate(entity);
-            profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, CREATED));
+            
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    notificationDao.persistIgnoringProfileLastModifiedUpdate(entity);
+                    profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, CREATED));
+                }
+            });                         
         } catch (Exception e) {
             LOG.error("Exception for: {}", orcid);
             LOG.error("Error", e);

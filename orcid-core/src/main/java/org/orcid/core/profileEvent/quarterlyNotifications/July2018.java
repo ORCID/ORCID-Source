@@ -27,6 +27,7 @@ public class July2018 extends QuarterlyNotificationsManager {
     @Option(name = "-s", usage = "Chunk size")
     private Integer chunkSize;
     
+    @SuppressWarnings("resource")
     public July2018() {
         super(ProfileEventType.JULY_2018_CREATED, ProfileEventType.JULY_2018_SKIPPED, ProfileEventType.JULY_2018_FAIL, NOTIFICATION_FAMILY, true, 10);
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
@@ -60,8 +61,11 @@ public class July2018 extends QuarterlyNotificationsManager {
             parser.printUsage(System.err);
         }
         try {
-            parser.parseArgument(args);
-            efsa.execute(efsa.chunkSize, efsa.maxThreads);
+            parser.parseArgument(args);   
+            if(efsa.chunkSize == null || efsa.chunkSize > 1000000) {
+                efsa.chunkSize = 1;
+            } 
+            efsa.execute(efsa.chunkSize);
         } catch (CmdLineException | InterruptedException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);

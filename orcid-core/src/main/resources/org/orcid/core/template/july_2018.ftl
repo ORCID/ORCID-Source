@@ -4,7 +4,7 @@
 
 <@emailMacros.msg "email.july_2018.paragraph.1.1" /> <@emailMacros.msg "email.july_2018.paragraph.1.1.name" /> (<@emailMacros.msg "email.july_2018.paragraph.1.1.orcid" />)<@emailMacros.msg "email.july_2018.paragraph.1.2" /> <@emailMacros.msg "email.july_2018.paragraph.1.2.name" /> (<@emailMacros.msg "email.july_2018.paragraph.1.2.orcid" />)<@emailMacros.msg "email.july_2018.paragraph.1.3" /> <@emailMacros.msg "email.july_2018.paragraph.1.3.name" /> (<@emailMacros.msg "email.july_2018.paragraph.1.3.orcid" />)<@emailMacros.msg "email.july_2018.paragraph.1.4" />
 
-<@emailMacros.msg "email.july_2018.paragraph.2.1" /> <@emailMacros.msg "email.july_2018.paragraph.2.text" /> (<@emailMacros.msg "email.july_2018.paragraph.2.url" />) <@emailMacros.msg "email.july_2018.paragraph.2.2" />
+<@emailMacros.msg "email.july_2018.paragraph.2.1" /> <@emailMacros.msg "email.july_2018.paragraph.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.2.url.link" />) <@emailMacros.msg "email.july_2018.paragraph.2.2" />
 
 <@emailMacros.msg "email.july_2018.paragraph.3.1" /> <@emailMacros.msg "email.july_2018.paragraph.3.1.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.3.1.url.link" />)<@emailMacros.msg "email.july_2018.paragraph.3.2" /> <@emailMacros.msg "email.july_2018.paragraph.3.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.3.2.url.link" />)
 
@@ -17,7 +17,7 @@
 Laure Haak 
 Executive Director, ORCID
 
-<@emailMacros.msg "email.july_2018.note" />
+<@emailMacros.msg "email.july_2018.note.1" /> <@emailMacros.msg "email.july_2018.note.1.url.text" /> (<@emailMacros.msg "email.july_2018.note.1.url.link" />)<@emailMacros.msg "email.july_2018.note.2" /> <@emailMacros.msg "email.july_2018.note.2.url.link" /> (<@emailMacros.msg "email.july_2018.note.2.url.text" />)
 
 <#include "tips_disclaimer.ftl"/>
 

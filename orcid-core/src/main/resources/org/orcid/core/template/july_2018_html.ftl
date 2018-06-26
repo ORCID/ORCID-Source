@@ -19,53 +19,29 @@
                 <@emailMacros.msg "email.july_2018.paragraph.2.1" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.2.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.2.url.text" /></a> <@emailMacros.msg "email.july_2018.paragraph.2.2" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                <@emailMacros.msg "email.july_2018.paragraph.3.1" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.3.1.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.3.1.url.text" /></a><@emailMacros.msg "email.july_2018.paragraph.3.2" /> <@emailMacros.msg "email.july_2018.paragraph.3.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.3.2.url.link" />)
+                <@emailMacros.msg "email.july_2018.paragraph.3.1" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.3.1.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.3.1.url.text" /></a><@emailMacros.msg "email.july_2018.paragraph.3.2" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.3.2.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.3.2.url.text" /></a>
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.july_2018.paragraph.4" />
-            </p>
-
-            
+            </p>            
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+                <@emailMacros.msg "email.july_2018.paragraph.5.1" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.5.1.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.5.1.url.text" /></a><@emailMacros.msg "email.july_2018.paragraph.5.2" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.5.2.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.5.2.url.text" /></a>
             </p>
-            
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+                <@emailMacros.msg "email.july_2018.paragraph.6" />
             </p>
-
-
-            <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-                <small>
-                <a href="${baseUri}/account" style="color: #338caf;">email preferences</a> 
-                | <a href="${baseUri}/privacy-policy" style="color: #338caf;">privacy policy</a> 
-                | ORCID, Inc. | 10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA 
-                | <a href="${baseUri}" style="color: #338caf;">ORCID.org</a>
-                </small>            
+            <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
+Laurel L. Haak
+Executive Director, ORCID
+            </p>
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+                <@emailMacros.msg "email.july_2018.note.1" /> <a href="<@emailMacros.msg "email.july_2018.note.1.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.note.1.url.text" /></a><@emailMacros.msg "email.july_2018.note.2" /> <a href="<@emailMacros.msg "email.july_2018.note.2.url.text" />" target="_blank"><@emailMacros.msg "email.july_2018.note.2.url.link" /></a>
+            </p>
+            <#include "tips_disclaimer.ftl"/>
+            <p>
+                <#include "email_footer_html.ftl"/>
             </p> 
         </div>
-        </body>
+    </body>
 </html>
 </#escape>
-        
-        
-        
-
-
-
-
-
-
-
-
-<@emailMacros.msg "email.july_2018.paragraph.5.1" /> <@emailMacros.msg "email.july_2018.paragraph.5.1.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.1.url.link" />)<@emailMacros.msg "email.july_2018.paragraph.5.2" /> <@emailMacros.msg "email.july_2018.paragraph.5.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.2.url.link" />)
-
-<@emailMacros.msg "email.july_2018.paragraph.6" />
-
-Laure Haak 
-Executive Director, ORCID
-
-<@emailMacros.msg "email.july_2018.note" />
-
-<#include "tips_disclaimer_html.ftl"/>
-
-----
-<#include "email_footer.ftl"/>
