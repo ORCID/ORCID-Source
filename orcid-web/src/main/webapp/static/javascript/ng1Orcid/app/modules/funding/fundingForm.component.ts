@@ -52,6 +52,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     emails: any;
     employments: any;
     fixedTitle: string;
+    fundingToAddIds: any;
     fundings: any;
     groups: any;
     moreInfo: any;
@@ -82,6 +83,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
+        this.fundingToAddIds = new Array();
         this.groups = null;
         this.moreInfo = {};
         this.moreInfoCurKey = null;
@@ -101,7 +103,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.addingFunding = true;
         this.editFunding.errors.length = 0;
         
-        /*
+        
         this.fundingService.setData( this.editFunding )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -111,7 +113,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.editFunding = data;
                 //console.log('this.editFunding response', this.editFunding);
                 this.addingFunding = false;
-                this.close();
+                //this.close();
 
                 if (data.errors.length > 0){
 
@@ -121,7 +123,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('setBiographyFormError', error);
             } 
         );
-        */
+        
         
     };
 
@@ -143,6 +145,38 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         );
     };
+
+    addFundingToScope( path ): void {
+        if( this.fundingToAddIds.length != 0 ) {
+            var fundingIds = this.fundingToAddIds.splice(0,20).join();
+
+            this.fundingService.addFundingToScope( this.editFunding, fundingIds )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    for (var i in data) {
+                        var funding = data[i];
+                        groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
+                    }
+                    if (this.fundingToAddIds.length == 0) {
+                        this.loading = false;
+                        
+                    } else {
+                        this.addFundingToScope(path);
+                        
+                    }
+                },
+                error => {
+                    //console.log('setBiographyFormError', error);
+                } 
+            );
+
+        } else {
+            this.loading = false;
+        };
+    }
 
     addFundingModal(type, affiliation): void {
 
@@ -227,10 +261,43 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo[key]=false;
     };
 
+    createNew(work): void {
+        var cloneF = JSON.parse(JSON.stringify(work));
+        cloneF.source = null;
+        cloneF.putCode = null;
+        for (var idx in cloneF.externalIdentifiers){
+            cloneF.externalIdentifiers[idx].putCode = null;
+        }
+        return cloneF;
+    }
+
+    deleteGroupFunding(putCode): void {
+        let idx;
+        let rmWorks;
+        for (var idx in this.fundingService.groups) {
+            if (this.fundingService.groups[idx].hasPut(putCode)) {
+               for (var idj in fundingSrvc.groups[idx].activities) {
+                   this.fundingService.removeFunding(this.fundingService.groups[idx].activities[idj]);
+                }
+                this.fundingService.groups.splice(idx,1);
+                break;
+            }
+        }
+    }
+
     deleteFunding(delFunding): void {
-        //this.fundingService.deleteData(delFunding);
+        let rmFunding;
+        for (var idx in this.fundingService.groups) {
+            if (this.fundingService.groups[idx].hasPut(this.putCode)) {
+                rmFunding = this.fundingService.groups[idx].getByPut(this.putCode);
+                break;
+            };
+        };
+        // remove work on server
+        this.fundingService.removeFunding(rmFunding);
         this.closeModal();
     };
+
 
     deleteFundingByPut(putCode, deleteGroup): void {
         if (deleteGroup){
@@ -276,6 +343,36 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         */
     };
 
+    fundingCount(): void {
+        var count = 0;
+        for (var idx in this.fundingService.groups) {
+            count += this.fundingService.groups[idx].activitiesCount;
+        }
+        return count;
+    }
+
+    getEditable(putCode, callback): void {
+        // first check if they are the current source
+        var funding = this.fundingService.getFunding(putCode);
+        if (funding.source == orcidVar.orcidId){
+            callback(funding);
+        }
+        else {
+            var bestMatch = null;
+            var group = fundingSrvc.getGroup(putCode);
+            for (var idx in group.activitiess) {
+                if (group[idx].source == orcidVar.orcidId) {
+                    bestMatch = callback(group[idx]);
+                    break;
+                }
+            }
+            if (bestMatch == null) {
+                bestMatch = fundingSrvc.createNew(funding);
+            }
+            callback(bestMatch);
+        };
+    }
+
     getEmptyExtId(): any {
         return {
             "errors": [],
@@ -305,6 +402,15 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 "getRequiredMessage": null
             }
         };
+    }
+
+    getFunding(putCode): any {
+        for (var idx in this.fundingService.groups) {
+            if (this.fundingService.groups[idx].hasPut(putCode)){
+                return this.fundingService.groups[idx].getByPut(putCode);
+            }
+        }
+        return null;
     }
 
     getFundingsById( ids ): any {
@@ -361,6 +467,15 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    getGroup(putCode): any {
+        for (var idx in this.fundingService.groups) {
+            if (this.fundingService.groups[idx].hasPut(putCode)){
+                return this.fundingService.groups[idx];
+            }
+        }
+        return null;
+    }
+
 
     hideTooltip(element): void{        
         this.showElement[element] = false;
@@ -412,6 +527,28 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             this.moreInfo[key]=true;
         }
     };
+
+    setGroupPrivacy(putCode, priv): void {
+        /*
+        var group = fundingSrvc.getGroup(putCode);
+        for (var idx in group.activities) {
+            var curPutCode = group.activities[idx].putCode.value;
+            fundingSrvc.setPrivacy(curPutCode, priv);
+        }
+        */
+    }
+
+    setPrivacy(putCode, priv): void {
+        /*
+        var funding = fundingSrvc.getFunding(putCode);
+        funding.visibility.visibility = priv;
+        fundingSrvc.updateProfileFunding(funding);
+        */
+    }
+
+    setIdsToAdd(ids): void {
+        this.fundingToAddIds = ids;
+    }
 
 
     setPrivacy(aff, priv, $event): void {
