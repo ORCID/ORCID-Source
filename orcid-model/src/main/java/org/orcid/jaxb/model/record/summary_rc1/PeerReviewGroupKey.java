@@ -1,6 +1,6 @@
 package org.orcid.jaxb.model.record.summary_rc1;
 
-import org.jsoup.helper.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.record_rc1.GroupAble;
 
 public class PeerReviewGroupKey implements GroupAble {    
@@ -17,7 +17,7 @@ public class PeerReviewGroupKey implements GroupAble {
     
     @Override
     public boolean isGroupAble() {
-        if(StringUtil.isBlank(groupId))
+        if(StringUtils.isBlank(groupId))
             return false;
         return true;
     }
