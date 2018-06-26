@@ -685,6 +685,15 @@ public class MemberV2ApiServiceDelegatorImpl implements
             return Response.ok(record.get()).build();
         return Response.ok(new GroupIdRecord()).build();
     }
+    
+    @Override
+    public Response findGroupIdRecordByGroupId(String groupId) {
+        orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
+        Optional<GroupIdRecord> record = groupIdRecordManager.findByGroupId(groupId);
+        if (record.isPresent())
+            return Response.ok(record.get()).build();
+        return Response.ok(new GroupIdRecord()).build();
+    }
 
     /**
      * BIOGRAPHY ELEMENTS

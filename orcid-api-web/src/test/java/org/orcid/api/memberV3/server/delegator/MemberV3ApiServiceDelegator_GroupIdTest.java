@@ -150,4 +150,24 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
             fail("There are more group ids than the expected, we are expecting between 3 and 5, total: " + total);
         }
     }
+    
+    @Test
+    public void testFindGroupIdByName() {
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        Response response = serviceDelegator.findGroupIdRecordByName("TestGroup1");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecord);
+        assertEquals("TestGroup1", groupIdRecord.getName());
+    }
+    
+    @Test
+    public void testFindGroupIdByGroupId() {
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        Response response = serviceDelegator.findGroupIdRecordByGroupId("issn:0000001");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecord);
+        assertEquals("issn:0000001", groupIdRecord.getGroupId());
+    }
 }
