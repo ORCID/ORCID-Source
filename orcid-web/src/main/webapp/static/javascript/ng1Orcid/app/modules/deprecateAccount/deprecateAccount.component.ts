@@ -11,6 +11,9 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
+import { AccountService }
+    from '../../shared/account.service.ts';
+
 import { GenericService } 
     from '../../shared/generic.service.ts'; 
 
@@ -29,14 +32,85 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
 
     constructor(
         private deprecateProfileService: GenericService,
+        private accountService: AccountService,
         private modalService: ModalService
     ) {
         this.deprecateProfilePojo = {};
         this.url_path = '/account/deprecate-profile.json';
     }
 
-    closeEditModal(): void{
-        this.modalService.notifyOther({action:'close', moduleId: 'modalDeprecateAccountForm'});
+    deprecateORCID = function() {
+        this.accountService.deprecateORCID( this.deprecateProfilePojo )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data.errors.length == 0) {
+                    this.modalService.notifyOther({action:'open', moduleId: 'deprecateAccountModal', edit: false});
+                }
+            },
+            error => {
+                //console.log('getformDataError', error);
+            } 
+        );
+    };
+
+    getDeprecateProfile(): void {
+
+        this.deprecateProfileService.getData( this.url_path )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data) {
+                    this.deprecateProfilePojo = data;
+                }
+            },
+            error => {
+                //console.log('getformDataError', error);
+            } 
+        );
+    };   
+
+    //Default init functions provided by Angular Core
+    ngAfterViewInit() {
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+    };
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
+
+    ngOnInit() {
+        this.getDeprecateProfile();
+    }; 
+}
+
+
+@Component({
+    selector: 'deprecate-account-modal-ng2',
+    template:  scriptTmpl("deprecate-account-modal-ng2-template")
+})
+export class DeprecateAccountModalComponent implements AfterViewInit, OnDestroy, OnInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
+    deprecateProfilePojo: any;
+    url_path: string;
+
+    constructor(
+        private deprecateProfileService: GenericService,
+        private accountService: AccountService,
+        private modalService: ModalService
+    ) {
+        this.deprecateProfilePojo = {};
+        this.url_path = '/account/deprecate-profile.json';
+    }
+
+    closeModal(): void{
+        this.modalService.notifyOther({action:'close', moduleId: 'deprecateAccountModal'});
     };
 
     getDeprecateProfile(): void {
@@ -65,19 +139,10 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
         .subscribe(
             data => {
                 if(data) {
+                    this.closeModal();
                     /*
-                        emailSrvc.getEmails(function(emailData) {
                         $rootScope.$broadcast('rebuildEmails', emailData);
-                    });
-                    $.colorbox({
-                        html : $compile($('#deprecate-account-confirmation-modal').html())($scope),
-                        escKey:false,
-                        overlayClose:true,
-                        close: '',
-                        onClosed: function(){ $scope.deprecateProfilePojo = null; $scope.$apply(); },
-                        });
-                    $scope.$apply();
-                    $.colorbox.resize();
+
                     */
                 }
             },
@@ -86,10 +151,6 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
             } 
         );
     };
-
-
-   
-   
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
