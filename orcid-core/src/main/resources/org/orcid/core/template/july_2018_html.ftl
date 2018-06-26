@@ -14,27 +14,33 @@
             </span>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.july_2018.paragraph.1.1" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.1.1.orcid" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.1.1.name" /></a><@emailMacros.msg "email.july_2018.paragraph.1.2" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.1.2.orcid" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.1.2.name" /></a><@emailMacros.msg "email.july_2018.paragraph.1.3" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.1.3.orcid" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.1.3.name" /></a><@emailMacros.msg "email.july_2018.paragraph.1.4" />
-            </p>
-
-
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+            </p>            
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+                <@emailMacros.msg "email.july_2018.paragraph.2.1" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.2.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.2.url.text" /></a> <@emailMacros.msg "email.july_2018.paragraph.2.2" />
             </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
             </p>
@@ -68,7 +74,6 @@
 
 
 
-<@emailMacros.msg "email.july_2018.paragraph.2.1" /> <@emailMacros.msg "email.july_2018.paragraph.2.text" /> (<@emailMacros.msg "email.july_2018.paragraph.2.url" />) <@emailMacros.msg "email.july_2018.paragraph.2.2" />
 
 <@emailMacros.msg "email.july_2018.paragraph.3.1" /> <@emailMacros.msg "email.july_2018.paragraph.3.1.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.3.1.url.link" />)<@emailMacros.msg "email.july_2018.paragraph.3.2" /> <@emailMacros.msg "email.july_2018.paragraph.3.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.3.2.url.link" />)
 
