@@ -297,6 +297,8 @@ When reading multiple works the contents of each work is returned or an error co
 
 When posting multiple works the contents of each work is returned or an error code is returned if there is an issue with a single work, see [bulk work error sample](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/bulk-work-error.xml).
 
+When posting Funding, Peer-Review or Affiliations, please ensure your XML has the correct identifiers. Identifiers can be either [Fundref](https://www.crossref.org/services/funder-registry/), [Grid](https://www.grid.ac/), or [Ringgold](https://www.ringgold.com/) and can be found on their respective websites.
+
 ### Update Record Items
 |Item  |Scope  | Example cURL Statement  |
 |------|----------------|---------------------|
