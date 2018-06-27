@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -18,20 +17,19 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.admin.LockReason;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -39,22 +37,8 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common_v2.CreditName;
-import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
-import org.orcid.jaxb.model.message.Biography;
-import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
-import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
@@ -83,17 +67,21 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.collect.Sets;
 
@@ -115,8 +103,7 @@ public class SetUpClientsAndUsers {
     private static final String CREDIT_NAME = "creditName";
     private static final String BIO = "bio";
     private static final String ORCID_TYPE = "orcidType";
-    private static final String MEMBER_TYPE = "memberType";
-    private static final String LOCKED = "locked";
+    private static final String MEMBER_TYPE = "memberType";    
     private static final String DEVELOPER_TOOLS = "developerTools";
     
     // Client variables
@@ -240,8 +227,6 @@ public class SetUpClientsAndUsers {
     protected String readPublicAccessToken;
     
     @Resource
-    protected OrcidProfileManager orcidProfileManager;
-    @Resource
     protected EncryptionManager encryptionManager;
     @Resource
     protected OtherNameDao otherNameDao;
@@ -283,28 +268,33 @@ public class SetUpClientsAndUsers {
     protected ClientDetailsDao clientDetailsDao;
     @Resource
     protected SourceManager sourceManager;
+    @Resource
+    protected RegistrationManager registrationManager;
+    @Resource
+    private TransactionTemplate transactionTemplate;
     @Mock 
     protected SourceManager mockSourceManager;
+    @Mock
+    protected OrcidGenerationManager mockOrcidGenerationManager;
     
     @Before
     public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);        
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity());    
-
-        
+        TargetProxyHelper.injectIntoProxy(registrationManager, "orcidGenerationManager", mockOrcidGenerationManager);        
+                
         // Create admin user
         Map<String, String> adminParams = getParams(adminOrcidId);
-        OrcidProfile adminProfile = orcidProfileManager.retrieveOrcidProfile(adminOrcidId);
+        ProfileEntity adminProfile = profileDao.find(adminOrcidId);
         if (adminProfile == null) {
             createUser(adminParams);
+            setAsAdmin(adminOrcidId);
         } else {
             clearRegistry(adminProfile, adminParams);
         }
 
         // Create user 1
         Map<String, String> user1Params = getParams(user1OrcidId);
-        OrcidProfile user1Profile = orcidProfileManager.retrieveOrcidProfile(user1OrcidId);
+        ProfileEntity user1Profile = profileDao.find(user1OrcidId);
         if (user1Profile == null) {
             createUser(user1Params);
         } else {
@@ -313,7 +303,7 @@ public class SetUpClientsAndUsers {
         
         // Create user 2
         Map<String, String> user2Params = getParams(user2OrcidId);
-        OrcidProfile user2Profile = orcidProfileManager.retrieveOrcidProfile(user2OrcidId);
+        ProfileEntity user2Profile = profileDao.find(user2OrcidId);
         if (user2Profile == null) {
             createUser(user2Params);
         } else {
@@ -322,9 +312,10 @@ public class SetUpClientsAndUsers {
 
         // Create member 1
         Map<String, String> member1Params = getParams(member1Orcid);
-        OrcidProfile member1Profile = orcidProfileManager.retrieveOrcidProfile(member1Orcid);
+        ProfileEntity member1Profile = profileDao.find(member1Orcid);
         if (member1Profile == null) {
             createUser(member1Params);
+            setAsMember(member1Orcid);
         } else {
             clearRegistry(member1Profile, member1Params);
         }        
@@ -415,12 +406,7 @@ public class SetUpClientsAndUsers {
         }
         
         setUpDelegates(user1OrcidId, user2OrcidId);
-    }
-    
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);
-    }
+    }      
 
     private Map<String, String> getParams(String userId) {
         Map<String, String> params = new HashMap<String, String>();
@@ -494,82 +480,67 @@ public class SetUpClientsAndUsers {
     }
 
     private void createUser(Map<String, String> params) throws Exception {
-        // Create it
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcidIdentifier(new OrcidIdentifier(params.get(ORCID)));
-        orcidProfile.setType(OrcidType.fromValue(params.get(ORCID_TYPE)));
-        if (params.get(MEMBER_TYPE) != null) {
-            orcidProfile.setGroupType(MemberType.fromValue(params.get(MEMBER_TYPE)));
-        }
-        orcidProfile.setPassword(params.get(PASSWORD));
         
-        OrcidInternal internal = new OrcidInternal();
-        Preferences preferences = new Preferences();
-        ActivitiesVisibilityDefault visibilityDefaults = new ActivitiesVisibilityDefault();
-        visibilityDefaults.setValue(Visibility.PUBLIC);
-        preferences.setActivitiesVisibilityDefault(visibilityDefaults);
-        internal.setPreferences(preferences);
-        orcidProfile.setOrcidInternal(internal);
+        String orcid = params.get(ORCID);
+        when(mockOrcidGenerationManager.createNewOrcid()).thenReturn(orcid);
         
-        Email email = new Email(params.get(EMAIL));
-        email.setCurrent(true);
-        email.setPrimary(true);
-        email.setVerified(true);
-        email.setVisibility(Visibility.PUBLIC);
-        List<Email> emails = new ArrayList<Email>();
-        emails.add(email);
-        ContactDetails contactDetails = new ContactDetails();
-        contactDetails.setEmail(emails);
-
-        org.orcid.jaxb.model.message.PersonalDetails personalDetails = new org.orcid.jaxb.model.message.PersonalDetails();
-        org.orcid.jaxb.model.message.CreditName creditName = new org.orcid.jaxb.model.message.CreditName(params.get(CREDIT_NAME));
-        creditName.setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
-        personalDetails.setCreditName(creditName);
-        personalDetails.setFamilyName(new org.orcid.jaxb.model.message.FamilyName(params.get(FAMILY_NAMES)));
-        personalDetails.setGivenNames(new org.orcid.jaxb.model.message.GivenNames(params.get(GIVEN_NAMES)));
-
-        OrcidBio bio = new OrcidBio();
-        bio.setContactDetails(contactDetails);
-        bio.setPersonalDetails(personalDetails);
-        bio.setBiography(new Biography(params.get(BIO), OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
-        orcidProfile.setOrcidBio(bio);
-
-        OrcidHistory history = new OrcidHistory();
-        history.setClaimed(new Claimed(true));
-        history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        history.setCreationMethod(CreationMethod.DIRECT);
-
-        orcidProfile.setOrcidHistory(history);
-        orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
+        Registration registration = new Registration();
+        org.orcid.pojo.ajaxForm.Visibility v = new org.orcid.pojo.ajaxForm.Visibility();
+        v.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC);
+        registration.setActivitiesVisibilityDefault(v);
+        registration.setEmail(Text.valueOf(params.get(EMAIL)));
+        registration.setFamilyNames(Text.valueOf(params.get(FAMILY_NAMES)));
+        registration.setGivenNames(Text.valueOf(params.get(GIVEN_NAMES)));
+        registration.setPassword(Text.valueOf(params.get(PASSWORD)));
+        registration.setPasswordConfirm(Text.valueOf(params.get(PASSWORD)));
         
-        if(params.containsKey(LOCKED)) {
-            orcidProfileManager.lockProfile(params.get(ORCID), LockReason.SPAM.getLabel(), null);               
-        }        
-        
-        if(params.containsKey(DEVELOPER_TOOLS)) {
-            profileEntityManager.enableDeveloperTools(params.get(ORCID));
-        }
+        String verifyOrcid = registrationManager.createMinimalRegistration(registration, false, null, "");
+        assertEquals(orcid, verifyOrcid);
+        emailDao.verifyEmail(params.get(EMAIL));
+    }
+    
+    private void setAsMember(String orcid) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                ProfileEntity e = profileDao.find(orcid);
+                e.setOrcidType(OrcidType.GROUP.name());
+                e.setGroupType(MemberType.PREMIUM.name());
+                profileDao.merge(e);
+            }
+        });
     }
 
-    private boolean clearRegistry(OrcidProfile existingProfile, Map<String, String> params) {
-        if (existingProfile != null) {
+    private void setAsAdmin(String orcid) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                ProfileEntity e = profileDao.find(orcid);
+                e.setOrcidType(OrcidType.ADMIN.name());
+                profileDao.merge(e);
+            }
+        });
+    }
+    
+    private boolean clearRegistry(ProfileEntity entity, Map<String, String> params) {
+        if (entity != null) {
             String orcid = params.get(ORCID);
             String email = params.get(EMAIL);
             // Check if the profile have the same email, if not, throw an
             // exception
-            if (existingProfile.getOrcidBio() == null || existingProfile.getOrcidBio().getContactDetails() == null
-                    || existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() == null
-                    || !email.equals(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue())) {
+            EmailEntity e = emailDao.findPrimaryEmail(orcid);
+            if (!email.equals(e.getId())) {
                 throw new ApplicationException(
-                        "User with email " + params.get(EMAIL) + " must have orcid id '" + orcid + "' but it is '" + existingProfile.getOrcidId() + "'");
+                        "User with email " + params.get(EMAIL) + " must have orcid id '" + orcid + "' but it is '" + entity.getId() + "'");
             }
 
             // Check if the profile have the same password, if not, update the
             // password
             String encryptedPassword = encryptionManager.hashForInternalUse(params.get(PASSWORD));
-            if (!encryptedPassword.equals(existingProfile.getPassword())) {
-                existingProfile.setPassword(params.get(PASSWORD));
-                orcidProfileManager.updatePasswordInformation(existingProfile);
+            if (!encryptedPassword.equals(entity.getEncryptedPassword())) {                
+                profileDao.updateEncryptedPassword(orcid, encryptedPassword);                
             }
 
             // Set default names
@@ -769,42 +740,26 @@ public class SetUpClientsAndUsers {
     
     @Test
     public void testSetUpIsDone() {
-        OrcidProfile existingProfile = orcidProfileManager.retrieveOrcidProfile(adminOrcidId);
-        assertNotNull(existingProfile);
-        assertNotNull(existingProfile.getOrcidIdentifier());
-        assertEquals(adminOrcidId, existingProfile.getOrcidIdentifier().getPath());
-        assertNotNull(existingProfile.getOrcidBio());
-        assertNotNull(existingProfile.getOrcidBio().getContactDetails());
-        assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
-        assertEquals(adminUserName, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        ProfileEntity p = profileDao.find(adminOrcidId);
+        assertNotNull(p);
+        assertEquals(adminOrcidId, p.getId());
+        assertEquals("ADMIN", p.getOrcidType());
         
-        existingProfile = orcidProfileManager.retrieveOrcidProfile(user1OrcidId);
-        assertNotNull(existingProfile);
-        assertNotNull(existingProfile.getOrcidIdentifier());
-        assertEquals(user1OrcidId, existingProfile.getOrcidIdentifier().getPath());
-        assertNotNull(existingProfile.getOrcidBio());
-        assertNotNull(existingProfile.getOrcidBio().getContactDetails());
-        assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
-        assertEquals(user1UserName, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        p = profileDao.find(user1OrcidId);
+        assertNotNull(p);
+        assertEquals(user1OrcidId, p.getId());
+        assertEquals("USER", p.getOrcidType());
         
-        existingProfile = orcidProfileManager.retrieveOrcidProfile(user2OrcidId);
-        assertNotNull(existingProfile);
-        assertNotNull(existingProfile.getOrcidIdentifier());
-        assertEquals(user2OrcidId, existingProfile.getOrcidIdentifier().getPath());
-        assertNotNull(existingProfile.getOrcidBio());
-        assertNotNull(existingProfile.getOrcidBio().getContactDetails());
-        assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
-        assertEquals(user2UserName, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        p = profileDao.find(user2OrcidId);
+        assertNotNull(p);
+        assertEquals(user2OrcidId, p.getId());
+        assertEquals("USER", p.getOrcidType());
         
-        existingProfile = orcidProfileManager.retrieveOrcidProfile(member1Orcid);
-        assertNotNull(existingProfile);
-        assertNotNull(existingProfile.getOrcidIdentifier());
-        assertEquals(member1Orcid, existingProfile.getOrcidIdentifier().getPath());
-        assertNotNull(existingProfile.getOrcidBio());
-        assertNotNull(existingProfile.getOrcidBio().getContactDetails());
-        assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
-        assertEquals(member1Email, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        
+        p = profileDao.find(member1Orcid);
+        assertNotNull(p);
+        assertEquals(member1Orcid, p.getId());
+        assertEquals("GROUP", p.getOrcidType());
+                
         ClientDetailsEntity existingClient = clientDetailsManager.findByClientId(publicClientId);
         assertNotNull(existingClient);
         assertEquals(user1OrcidId, existingClient.getGroupProfileId());
