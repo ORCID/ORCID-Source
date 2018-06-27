@@ -1587,4 +1587,10 @@
 	   <constructor-arg value="${org.orcid.core.node:1}" />
 	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
 	</bean>
+	
+	<bean id="runtime" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="java.lang.Runtime"/>
+        <property name="targetMethod" value="getRuntime"/>
+    </bean>
+    
 </beans>
