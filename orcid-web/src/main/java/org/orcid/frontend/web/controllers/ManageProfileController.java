@@ -154,12 +154,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         String currentOrcid = getCurrentUserOrcid();
         return givenPermissionToManagerReadOnly.findByGiver(currentOrcid, getLastModified(currentOrcid));
     }
-
-    @RequestMapping(value = { "/delegators.json" }, method = RequestMethod.GET)
-    public @ResponseBody List<DelegateForm> getListOfAccountsToSwitch() {
-        String currentOrcid = getCurrentUserOrcid();
-        return givenPermissionToManagerReadOnly.findByReceiver(currentOrcid, getLastModified(currentOrcid));
-    }
     
     @RequestMapping(value = "/addDelegate.json")
     public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
