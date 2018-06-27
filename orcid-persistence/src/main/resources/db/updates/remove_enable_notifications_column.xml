@@ -6,6 +6,6 @@
         <preConditions onFail="MARK_RAN">
                 <columnExists tableName="profile" columnName="enable_notifications" />
         </preConditions>
-        <sql>ALTER TABLE profile DROP COLUMN enable_notifications;</sql>
+        <sql>ALTER TABLE profile DROP COLUMN IF EXISTS enable_notifications;</sql>
     </changeSet>    
 </databaseChangeLog>                   
