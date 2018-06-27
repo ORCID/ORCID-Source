@@ -550,6 +550,34 @@
                     <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
             </#if>
         </div>
+        
+        
+        
+        
+        
+        <tr><td>----------------------------------------------------</td></tr>
+        
+        <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+            <tr>
+                <td colspan="2">
+                    <#include "/includes/ng2_templates/delegators-ng2-template.ftl">
+                    <delegators-ng2></delegators-ng2>
+                </td>
+            </tr>
+        </@orcid.checkFeatureStatus>
+        
+        <tr><td>----------------------------------------------------</td></tr>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         <div class="section-heading">
             <h1>
                 <@orcid.msg 'manage_signin_title' />

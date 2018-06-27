@@ -181,7 +181,9 @@ import { WorkSpaceSummaryModule }
 import { WorksPrivacyPreferencesModule } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
-
+import { DelegatorsModule } 
+    from './delegators/delegators.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -244,7 +246,8 @@ export const orcidApp = angular.module(
         WorksFormModule.name,
         WorksModule.name,
         WorkSpaceSummaryModule.name,
-        WorksPrivacyPreferencesModule.name
+        WorksPrivacyPreferencesModule.name,
+        DelegatorsModule.name
     ]
 );
 
