@@ -51,16 +51,16 @@ public class ClientsController extends BaseWorkspaceController {
 
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
-    
+
     @Resource(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
-    
+
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource(name = "clientManagerV3")
     private ClientManager clientManager;
-    
+
     @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
 
@@ -72,17 +72,17 @@ public class ClientsController extends BaseWorkspaceController {
         MemberType memberType = MemberType.valueOf(entity.getGroupType());
         mav.addObject("member_id", memberId);
         mav.addObject("member_type", memberType);
-                
+
         Set<org.orcid.jaxb.model.v3.rc1.client.Client> clients = clientManagerReadOnly.getClients(memberId);
-        if(clients.isEmpty()) {
+        if (clients.isEmpty()) {
             mav.addObject("allow_more_clients", true);
-        } else if(MemberType.PREMIUM.equals(memberType) || MemberType.PREMIUM_INSTITUTION.equals(memberType)) {
+        } else if (MemberType.PREMIUM.equals(memberType) || MemberType.PREMIUM_INSTITUTION.equals(memberType)) {
             mav.addObject("is_premium", true);
             mav.addObject("allow_more_clients", true);
         } else {
             mav.addObject("allow_more_clients", false);
-        }                
-        
+        }
+
         return mav;
     }
 
@@ -152,9 +152,9 @@ public class ClientsController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(client.getWebsite())) {
             setError(client.getWebsite(), "manage.developer_tools.group.error.website.empty");
         } else {
-            validateUrl(client.getWebsite(), "common.invalid_url");            
+            validateUrl(client.getWebsite(), "common.invalid_url");
         }
-        
+
         return client;
     }
 
@@ -207,14 +207,14 @@ public class ClientsController extends BaseWorkspaceController {
         Collections.sort(clients);
         return clients;
     }
-    
+
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody Client createClient(@RequestBody Client client) {
         validateIncomingElement(client);
 
         if (client.getErrors().size() == 0) {
-            org.orcid.jaxb.model.v3.rc1.client.Client newClient = client.toModelObject();             
+            org.orcid.jaxb.model.v3.rc1.client.Client newClient = client.toModelObject();
             try {
                 newClient = clientManager.create(newClient);
             } catch (Exception e) {
@@ -233,25 +233,26 @@ public class ClientsController extends BaseWorkspaceController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody Client editClient(@RequestBody Client client) {
         validateIncomingElement(client);
-        
-        if (client.getErrors().size() == 0) {            
-            org.orcid.jaxb.model.v3.rc1.client.Client clientToEdit = client.toModelObject(); 
-            try {                
-                // Updating from the clients edit page should not overwrite configuration values on the DB
+
+        if (client.getErrors().size() == 0) {
+            org.orcid.jaxb.model.v3.rc1.client.Client clientToEdit = client.toModelObject();
+            try {
+                // Updating from the clients edit page should not overwrite
+                // configuration values on the DB
                 clientToEdit = clientManager.edit(clientToEdit, false);
                 clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
                 String errorDesciption = getMessage("manage.developer_tools.group.unable_to_update") + " " + e.getMessage();
                 client.setErrors(new ArrayList<String>());
-                client.getErrors().add(errorDesciption);  
+                client.getErrors().add(errorDesciption);
                 return client;
             }
 
             client = Client.fromModelObject(clientToEdit);
         }
         return client;
-    }    
+    }
 
     @ModelAttribute("redirectUriTypes")
     public Map<String, String> getRedirectUriTypes() {
@@ -266,36 +267,30 @@ public class ClientsController extends BaseWorkspaceController {
     @RequestMapping(value = "/get-available-scopes.json", method = RequestMethod.GET)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody List<String> getAvailableRedirectUriScopes() {
-        List<String> scopes = new ArrayList<String>();
-        // Ignore these scopes
-        List<ScopePathType> ignoreScopes = new ArrayList<ScopePathType>(Arrays.asList(ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
-                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.WEBHOOK, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.READ_PUBLIC));
-        for (ScopePathType t : ScopePathType.values()) {
-            if (!ignoreScopes.contains(t))
-                scopes.add(t.value());
-        }
+        List<String> scopes = new ArrayList<String>(Arrays.asList(ScopePathType.ACTIVITIES_UPDATE.value(), ScopePathType.READ_LIMITED.value(),
+                ScopePathType.PERSON_UPDATE.value(), ScopePathType.AUTHENTICATE.value()));
         Collections.sort(scopes);
         return scopes;
     }
-    
+
     /**
      * Reset client secret
-     * */
+     */
     @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
     public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
-        //Verify this client belongs to the member
+        // Verify this client belongs to the member
         org.orcid.jaxb.model.v3.rc1.client.Client client = clientManagerReadOnly.get(clientId);
-        if(client == null) {
+        if (client == null) {
             return false;
         }
-        
-        if(!client.getGroupProfileId().equals(getCurrentUserOrcid())) {
+
+        if (!client.getGroupProfileId().equals(getCurrentUserOrcid())) {
             return false;
         }
-        
+
         return clientManager.resetClientSecret(clientId);
     }
-    
+
     private void validateIncomingElement(Client client) {
         // Clean the error list
         client.setErrors(new ArrayList<String>());
@@ -311,13 +306,13 @@ public class ClientsController extends BaseWorkspaceController {
 
         for (RedirectUri redirectUri : client.getRedirectUris()) {
             copyErrors(redirectUri, client);
-        }        
+        }
     }
-    
+
     /**
      * Since the groups have changed, the cache version must be updated on
      * database and all caches have to be evicted.
-     * */
+     */
     public void clearCache() {
         // Updates cache database version
         thirdPartyLinkManager.updateDatabaseCacheVersion();
