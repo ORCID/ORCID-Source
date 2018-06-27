@@ -66,7 +66,6 @@ import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.version.impl.Api3_0_RC1LastModifiedDatesHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc1.client.ClientSummary;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords;
@@ -758,6 +757,15 @@ public class MemberV3ApiServiceDelegatorImpl implements
     public Response findGroupIdRecordByName(String name) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
         Optional<GroupIdRecord> record = groupIdRecordManager.findGroupIdRecordByName(name);
+        if (record.isPresent())
+            return Response.ok(record.get()).build();
+        return Response.ok(new GroupIdRecord()).build();
+    }
+    
+    @Override
+    public Response findGroupIdRecordByGroupId(String groupId) {
+        orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
+        Optional<GroupIdRecord> record = groupIdRecordManager.findByGroupId(groupId);
         if (record.isPresent())
             return Response.ok(record.get()).build();
         return Response.ok(new GroupIdRecord()).build();

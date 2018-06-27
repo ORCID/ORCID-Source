@@ -611,7 +611,10 @@ public class MemberV3ApiServiceImplV3_0_rc1 extends MemberApiServiceImplHelper {
     @ApiOperation( nickname="viewGroupIdRecordsV3dev", value = "Fetch Groups", response = GroupIdRecords.class, authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
     public Response viewGroupIdRecords(@QueryParam("page-size") @DefaultValue("100") String pageSize, @QueryParam("page") @DefaultValue("1") String page,
-            @QueryParam("name") String name) {
+            @QueryParam("name") String name, @QueryParam("group-id") String groupId) {
+        if (groupId != null) {
+            return serviceDelegator.findGroupIdRecordByGroupId(groupId);
+        }
         if (name != null) {
             return serviceDelegator.findGroupIdRecordByName(name);
         }

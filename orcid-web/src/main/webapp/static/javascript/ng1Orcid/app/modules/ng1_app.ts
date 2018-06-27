@@ -46,6 +46,9 @@ import { DeactivateAccountModule }
 import { DeactivateAccountMessageModule }
     from './deactivateAccount/deactivateAccountMessage.ts';
 
+import { DeprecateAccountModalModule }
+    from './deprecateAccount/deprecateAccount.ts';
+
 import { DeprecateAccountModule }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -200,6 +203,7 @@ export const orcidApp = angular.module(
         ClientEditModule.name,
         DeactivateAccountModule.name,
         DeactivateAccountMessageModule.name,
+        DeprecateAccountModalModule.name,
         DeprecateAccountModule.name,
         EmailsFormModule.name,
         EmailsModule.name,

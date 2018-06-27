@@ -148,45 +148,6 @@
                     <td colspan="2">
                         <#include "/includes/ng2_templates/security-question-edit-ng2-template.ftl">
                         <security-question-edit-ng2></security-question-edit-ng2>
-
-                        <!--
-                        <div class="editTablePadCell35">
-                            <span class="orcid-error" ng-show="errors.length > 0"> <span
-                                ng-repeat='error in errors' ng-bind-html="error"></span>
-                            </span>
-                            <div class="control-group">
-                                <label for="changeSecurityQuestionForm.securityQuestionAnswer"
-                                    class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>                                    
-                                <div class="relative" ng-init="securityQuestions = [<#list securityQuestions?keys as key>'${securityQuestions[key]?js_string}',</#list>]">
-                                    <select id="securityQuestionId" name="securityQuestionId"
-                                        class="input-xlarge"
-                                        ng-model="securityQuestionPojo.securityQuestionId"
-                                        ng-options="securityQuestions.indexOf(securityOption) as securityOption for securityOption in securityQuestions">
-                                        >                                        
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label for="changeSecurityQuestionForm.securityQuestionAnswer"
-                                    class="">${springMacroRequestContext.getMessage("manage.securityAnswer")}</label>
-                                <div class="relative">
-                                    <input type="text" id="securityQuestionAnswer"
-                                        name="securityQuestionAnswer" class="input-xlarge"
-                                        ng-model="securityQuestionPojo.securityAnswer"
-                                        ng-enter="checkCredentials()">
-                                </div>
-                            </div>
-                            <#if isPasswordConfirmationRequired>
-                                <@orcid.msg 'manage.security_question.not_allowed' />
-                            <#else>
-                                <div class="control-group">
-                                    <button id="bottom-submit-security-question"
-                                        class="btn btn-primary" ng-click="checkCredentials()"><@orcid.msg 'freemarker.btnsavechanges' /></button>                                        
-                                    <a id="bottom-reset-security-question" class="cancel-option inner-row" ng-click="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></a>                                    
-                                </div>
-                            </#if>
-                        </div>
-                        -->
                     </td>
                 </tr>
                 <!-- Deactivate Account -->
@@ -210,54 +171,13 @@
                     <td><a href="" ng-click="toggleDeprecateEdit()"
                         ng-bind="deprecateToggleText"></a></td>
                 </tr>
-                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
                 <tr ng-show="showEditDeprecate" >
                     <td colspan="2">
                         <#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
                         <deprecate-account-ng2></deprecate-account-ng2>
                     </td>
                 </tr>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="DeprecateAccountCtrl"
-                    ng-show="showEditDeprecate" ng-cloak>
-                    <td colspan="2">
-                        <div class="editTablePadCell35 close-account-container">
-                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
-                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}</p>
-                            
-                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have_more")}<br />
-                                <a
-                                    href="${knowledgeBaseUri}/articles/580410"
-                                    target="deprecate_orcid.learn_more_link">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
-                            </p>
-                            <div>
-                                <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
-                                <div class="relative">
-                                    <input id="emailOrId" type="text" name="emailOrId" ng-enter="deprecateORCID()" 
-                                        ng-model="deprecateProfilePojo.deprecatingOrcidOrEmail" class="input-xlarge" />
-                                    <span class="required">*</span>
-                                </div>
-                            </div>
-                            <div>
-                                <label for="password" class="">${springMacroRequestContext.getMessage("deprecate_orcid.password")}</label>
-                                <div class="relative">
-                                    <input id="password" type="password"
-                                        name="password"
-                                        ng-model="deprecateProfilePojo.deprecatingPassword" ng-enter="deprecateORCID()" 
-                                        class="input-xlarge" /> <span class="required">*</span>
-                                </div>
-                            </div>
-                           <span class="orcid-error"
-                                ng-show="deprecateProfilePojo.errors.length > 0">
-                                <div ng-repeat='error in deprecateProfilePojo.errors'
-                                    ng-bind-html="error"></div>
-                            </span>
-                            <button ng-click="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
-                        </div>
-                    </td>
-                </tr>
-                </@orcid.checkFeatureStatus>
+
                 <@orcid.checkFeatureStatus 'TWO_FACTOR_AUTHENTICATION'>
                     <tr>
                         <th><a name="edit2FA"></a>${springMacroRequestContext.getMessage("manage.2FA")}</th>
@@ -316,49 +236,20 @@
                         </p>
                     </td>
                 </tr>
+                <tr>
+                    <th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
+                    <td><a href="" ng-click="toggleSocialNetworksEdit()"
+                        ng-bind="socialNetworksToggleText"></a></td>
+                </tr>
+
                 <#if RequestParameters['OrcidSocial']??>
-                    <tr>
-                        <th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
-                        <td><a href="" ng-click="toggleSocialNetworksEdit()"
-                            ng-bind="socialNetworksToggleText"></a></td>
-                    </tr>
-                    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-                    <tr ng-show="showEditSocialSettings" >
-                        <td colspan="2">
-                            <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
-                            <social-networks-ng2></social-networks-ng2>
-                        </td>
-                    </tr>
-                    </@orcid.checkFeatureStatus>
-                    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                    <tr ng-controller="SocialNetworksCtrl" ng-show="showEditSocialSettings" ng-cloak id="social-networks">
-                        <td colspan="2">
-                            <div class="editTablePadCell35">
-                                <p><@orcid.msg 'manage.social_networks_label_1'/>
-                                    <div class="grey-box">
-                                        <form role="form" id="social-network-options">
-                                          <div class="checkbox-inline">
-                                            <label>
-                                              <input type="checkbox" name="twitter" ng-change="updateTwitter()" ng-model="twitter"><img alt="Twitter" src="${staticCdn}/img/social/twitter.png">
-                                            </label>
-                                          </div>
-                                          <div class="checkbox-inline">
-                                            <label>
-                                              <input type="checkbox" name="facebook" disabled><img src="${staticCdn}/img/social/facebook.png" alt="Facebook" />
-                                            </label>
-                                          </div>
-                                          <div class="checkbox-inline">
-                                            <label>
-                                              <input type="checkbox" name="google-plus"  disabled><img src="${staticCdn}/img/social/google-plus.png" alt="Google+" />
-                                            </label>
-                                          </div>
-                                        </form>
-                                    </div>
-                                </p>
-                            </div>
-                        </td>
-                    </tr>
-                    </@orcid.checkFeatureStatus>
+                <tr ng-show="showEditSocialSettings" >
+                    <td colspan="2">
+                        <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
+                        <social-networks-ng2></social-networks-ng2>
+                    </td>
+                </tr>
+
                 </#if>
             </tbody>
         </table>
