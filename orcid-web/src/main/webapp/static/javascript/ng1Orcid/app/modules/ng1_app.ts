@@ -25,6 +25,9 @@ import { AffiliationFormModule }
 import { AlertBannerModule } 
     from './alertBanner/alertBanner.ts';
 
+import { AllConsortiumContactsModule } 
+    from './allConsortiumContacts/allConsortiumContacts.ts';
+
 import { BiographyModule } 
     from './biography/biography.ts';
 
@@ -39,6 +42,9 @@ import { DeactivateAccountModule }
 
 import { DeactivateAccountMessageModule }
     from './deactivateAccount/deactivateAccountMessage.ts';
+
+import { DeprecateAccountModalModule }
+    from './deprecateAccount/deprecateAccount.ts';
 
 import { DeprecateAccountModule }
     from './deprecateAccount/deprecateAccount.ts';
@@ -190,11 +196,13 @@ export const orcidApp = angular.module(
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
         AlertBannerModule.name,
+        AllConsortiumContactsModule.name,
         BiographyModule.name,
         ClaimThanksModule.name,
         ClientEditModule.name,
         DeactivateAccountModule.name,
         DeactivateAccountMessageModule.name,
+        DeprecateAccountModalModule.name,
         DeprecateAccountModule.name,
         EmailsFormModule.name,
         EmailsModule.name,

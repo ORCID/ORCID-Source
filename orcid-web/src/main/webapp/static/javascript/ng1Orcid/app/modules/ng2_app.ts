@@ -42,6 +42,9 @@ import { AffiliationFormNg2Module }
 import { AlertBannerNg2Module } 
     from './alertBanner/alertBanner.ts';
 
+import { AllConsortiumContactsNg2Module } 
+    from './allConsortiumContacts/allConsortiumContacts.ts';
+
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 
@@ -56,6 +59,9 @@ import { DeactivateAccountNg2Module }
 
 import { DeactivateAccountMessageNg2Module }
     from './deactivateAccount/deactivateAccountMessage.ts';
+
+import { DeprecateAccountModalNg2Module }
+    from './deprecateAccount/deprecateAccount.ts';
 
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
@@ -293,11 +299,13 @@ export class RootCmp {
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
         AlertBannerNg2Module,
+        AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
         ClaimThanksNg2Module,
         ClientEditNg2Module,
         DeactivateAccountNg2Module,
         DeactivateAccountMessageNg2Module,
+        DeprecateAccountModalNg2Module,
         DeprecateAccountNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved

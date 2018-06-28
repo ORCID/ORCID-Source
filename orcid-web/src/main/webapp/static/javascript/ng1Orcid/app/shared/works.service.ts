@@ -127,6 +127,95 @@ export class WorksService {
         }
     }
 
+    formatExternalIDType(model): Observable<any> {
+        /* Move to component
+        if (!model){
+            return "";
+        }
+        if ($scope.externalIDNamesToDescriptions[model]){
+            return $scope.externalIDNamesToDescriptions[model].description;
+        }
+        */
+        
+        return this.http.get( 
+            getBaseUri()+'/works/idTypes.json?query=' + model
+        )
+        .pipe(
+            tap(
+                ()=> {
+                    /*
+                    for (var key in data) {
+                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+                      }
+                  $scope.externalIDTypeCache[model] = ajax;
+                    return $scope.externalIDNamesToDescriptions[model].description; 
+                    */
+                }
+            )
+        ); 
+    };
+
+    getBlankWork(callback?): Observable<any> {
+        let worksSrvc = { //FIX
+            blankWork: null
+        }
+
+        // if cached return clone of blank
+        if (worksSrvc.blankWork != null){
+            callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
+        }
+
+        return this.http.get( 
+            getBaseUri() + '/works/work.json'
+        )
+        .pipe(
+            tap(
+                (data) => {
+                    //blankWork =  data;                      
+                }
+            )
+        )  
+        ;
+    }
+
+    getGroupDetails(putCode, type, callback?): void {
+        let group = this.getGroup(putCode);
+        let needsLoading =  new Array();
+        
+        let popFunct = function () {
+            if (needsLoading.length > 0) {
+                this.getDetails(needsLoading.pop(), type, popFunct);
+            }
+            else if (callback != undefined) {
+                callback();
+            }
+        };
+
+        for (var idx in group.works) {
+            needsLoading.push(group.works[idx].putCode.value)
+        }
+
+        popFunct();
+    }
+
+    getExternalIDTypes(query): Observable<any>{  
+
+        return this.http.get(
+            getBaseUri()+'/works/idTypes.json?query='+query
+        )
+        .pipe(
+            tap(
+                (data) => {
+                    /*
+                    for (var key in data) {
+                      $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+                      }  
+                      */               
+                }
+            )
+        );
+    };
+
     getWork(putCode): any {
         for (let j in this.groups) {
             for (var k in this.groups[j].works) {
@@ -141,61 +230,13 @@ export class WorksService {
     loadAllWorkGroups(sort, sortAsc, callback): any {
         this.details = new Object();
         this.groups = new Array();
-        var url = getBaseUri() + '/works/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
+        
+        let url = getBaseUri() + '/works/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
         this.loading = true;
-        $.ajax({
-            'url': url,
-            'dataType': 'json',
-            'success': function(data) {
-                this.handleWorkGroupData(data, callback);
-            }
-        }).fail(function(e) {
-            this.loading = false;
-            console.log("Error fetching works");
-            logAjaxError(e);
-        });
-    }
-
-    loadWorkImportWizardList(): Observable<any> {
-        let url = getBaseUri() + '/workspace/retrieve-work-import-wizards.json';
 
         return this.http.get(
             url
-        )
-        
-    }
-
-    makeDefault(group, putCode): any {
-        /*
-        $.ajax({
-            url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
-            dataType: 'json',
-            success: function(data) {
-                group.defaultWork = worksSrvc.getWork(putCode);
-                group.activePutCode = group.defaultWork.putCode.value;
-            }
-        }).fail(function(){
-            // something bad is happening!
-            console.log("some bad is hppending");
-        });
-        */
-    }
-
-    putWork(work,sucessFunc,failFunc): any {
-        /*
-        $.ajax({
-            url: getBaseUri() + '/works/work.json',
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            type: 'POST',
-            data: angular.toJson(work),
-            success: function(data) {
-                sucessFunc(data);
-            }
-        }).fail(function(){
-            failFunc();
-        });
-        */
+        )  
     }
 
     removeBadContributors(dw): void {
@@ -220,15 +261,154 @@ export class WorksService {
         }
     }
 
+    loadWorkImportWizardList(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/workspace/retrieve-work-import-wizards.json'
+        )
+        .pipe(
+            tap(
+                () => {
+                    /*
+                    if(data == null || data.length == 0) {
+                        $scope.noLinkFlag = false;
+                    }
+                    $scope.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+                    $scope.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+                    $scope.workImportWizardsOriginal = data;
+                    $scope.bulkEditShow = false;
+                    $scope.showBibtexImportWizard = false;
+                    for(var idx in data) {                            
+                        for(var i in data[idx].actTypes) {
+                            if(!utilsService.contains($scope.workType, data[idx].actTypes[i])) {
+                                $scope.workType.push(data[idx].actTypes[i]);
+                            }                                
+                        }
+                        for(var j in data[idx].geoAreas) {
+                            if(!utilsService.contains($scope.geoArea, data[idx].geoAreas[j])) {
+                                $scope.geoArea.push(data[idx].geoAreas[j]);
+                            }                                
+                        }                            
+                    }
+                    */
+                }
+            )
+        ); 
+    }
+
+    loadWorkTypes( workCategory ): Observable<any>{
+        /* Move to controller
+        var workCategory = "";
+        if(this.editWork != null && this.editWork.workCategory != null && this.editWork.workCategory.value != null && this.editWork.workCategory.value != ""){
+            workCategory = this.editWork.workCategory.value;
+        }
+        else{
+            return; //do nothing if we have not types
+        }
+        */
+        return this.http.get(
+            getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory
+        )
+        .pipe(
+            tap(
+                (data) => {
+                    /*
+                    $scope.types = data;
+                    if($scope.editWork != null && $scope.editWork.workCategory != null) {
+                        // if the edit works doesn't have a value that matches types
+                        var hasType = false;
+                        for (var idx in $scope.types){
+                            if ($scope.types[idx].key == $scope.editWork.workType.value) hasType = true;
+                        }
+                        if(!hasType) {
+                            switch ($scope.editWork.workCategory.value){
+                            case "conference":
+                                $scope.editWork.workType.value="conference-paper";
+                                break;
+                            case "intellectual_property":
+                                $scope.editWork.workType.value="patent";
+                                break;
+                            case "other_output":
+                                $scope.editWork.workType.value="data-set";
+                                break;
+                            case "publication":
+                                $scope.editWork.workType.value="journal-article";
+                                break;
+                            }
+                        }
+                    }
+                    */                   
+                }
+            )
+        );
+
+    };
+
+    makeDefault(group, putCode): any {
+        return this.http.get(
+            getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode
+        )
+        .pipe(
+            tap(
+                (data) => {
+                    //group.defaultWork = worksSrvc.getWork(putCode);
+                    //group.activePutCode = group.defaultWork.putCode.value;                    
+                }
+            )
+        );
+    }
+
+    putWork(work, sucessFunc, failFunc): any {
+        let encoded_data = JSON.stringify(work);
+        return this.http.post( 
+            getBaseUri() + '/works/work.json', 
+            encoded_data, 
+            { headers: this.headers }
+        );
+    }
+
+    removeWorks(putCodes,callback?): Observable<any> {
+
+        return this.http.delete( 
+            getBaseUri() + '/works/' + putCodes.splice(0,150).join(),             
+            { headers: this.headers }
+        )
+        .pipe(
+            tap(
+                (data) => {
+                    /*
+                        if (putCodes.length > 0) {
+                        worksSrvc.removeWorks(putCodes,callback);
+                    }
+                    else if (callback) {
+                        callback(data);
+                    }
+                    */                       
+                }
+            )
+        )  
+    }
+
     resetWorkGroups(): void {
         this.offset = 0;
         this.groups = new Array();
     }
 
-    notifyOther(data: any): void {
-        if (data) {
-            this.notify.next(data);
-        }
+    serverValidate( obj, relativePath ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        return this.http.post( 
+            getBaseUri() + '/' + relativePath, 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .pipe(
+            tap(
+                ()=> {
+                    if ( relativePath == 'works/work/citationValidate.json') {
+                        //this.validateCitation();
+                    }
+                }
+            )
+        );
     }
 
     setData( obj ): Observable<any> {
@@ -249,4 +429,37 @@ export class WorksService {
             url
         )
     }
+
+
+    workCount( worksSrvc ): Number {
+        var count = 0;
+        for (var idx in worksSrvc.groups) {
+            count += worksSrvc.groups[idx].activitiesCount;
+        }
+        return count;
+    }
+
+    worksValidate(obj,sucessFunc?, failFunc?): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        return this.http.post( 
+            getBaseUri() + '/works/worksValidate.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        .pipe(
+            tap(
+                ()=> {
+                    //sucessFunc(data);                    
+                }
+            )
+        );
+
+    }
+     
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
+    }
+    
 }

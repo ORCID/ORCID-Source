@@ -328,6 +328,11 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response findGroupIdRecordByName(String name) {
         return processReponse(memberV2ApiServiceDelegator.findGroupIdRecordByName(name));
     }
+    
+    @Override
+    public Response findGroupIdRecordByGroupId(String groupId) {
+        return processReponse(memberV2ApiServiceDelegator.findGroupIdRecordByGroupId(groupId));
+    }
 
     @Override
     public Response viewResearcherUrls(String orcid) {

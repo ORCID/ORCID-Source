@@ -2,7 +2,7 @@ package org.orcid.core.admin;
 
 public enum LockReason {
     
-    SPAM("Spam"), DISPUTE("Dispute"), UNCLAIMED("Unclaimed"), OTHER("Other");
+    SPAM("Spam"), DISPUTE("Dispute"), UNCLAIMED("Unclaimed"), OTHER("Other"), INSTITUTION("Institution"), TEST("Test");
     
     private String label;
     

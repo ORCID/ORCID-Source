@@ -255,5 +255,8 @@
 	<include file="/db/updates/indexes_2018_05_14.xml" />
 	<include file="/db/updates/add-display-index-to-org-affiliation-relation.xml" />
 	<include file="/db/updates/add_index_oauth2_token_detail_code.xml" />
+	<include file="/db/updates/grouping_suggestion.xml" />
 	<include file="/db/updates/create_research_resource_tables.xml" />
+	<include file="/db/updates/identifier-types/identifier-type-42-dnb.xml" />
+	<include file="/db/updates/remove_enable_notifications_column.xml" />
 </databaseChangeLog>

@@ -20,8 +20,8 @@ This workflow can be used with Member API credentials on sandbox or the producti
   * [reading the peer-review section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-reviews-2.1.xml)
   * [reading a basic peer-review item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-2.1.xml)
   * [reading a detailed peer-review item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-full-2.1.xml)
-  * [writing a peer-reivew item with the mininal information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_samples/peer-review-simple-2.1.xml)
-  * [writing a peer-reivew item with the detailed information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_samples/peer-review-full-2.1.xml)
+  * [writing a peer-reivew item with the mininal information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-simple-2.1.xml)
+  * [writing a peer-reivew item with the detailed information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-full-2.1.xml)
   * [peer-review group id](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
 
 ## Permission to edit the record
