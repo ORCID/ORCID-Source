@@ -3,10 +3,10 @@
         <table class="table table-bordered settings-table normal-width" *ngIf="delegators?.length > 0" >
             <thead>
                 <tr>
-                    <th width="35%" (click)="changeSorting('receiverName.value')"><@orcid.msg 'manage.thproxy' /></th>
-                    <th width="35%" (click)="changeSorting('receiverOrcid.path')"><@orcid.msg 'search_results.thORCIDID' /></th>
-                    <th width="15%" (click)="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-                    <th width="15%" (click)="changeSorting('lastModifiedDate')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
+                    <th class="width-30" (click)="changeSorting('receiverName.value')"><@orcid.msg 'manage.thproxy' /></th>
+                    <th class="width-30" (click)="changeSorting('receiverOrcid.path')"><@orcid.msg 'search_results.thORCIDID' /></th>
+                    <th class="width-15" (click)="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+                    <th class="width-15" (click)="changeSorting('lastModifiedDate')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
                 </tr>
             </thead>
             <tbody>
