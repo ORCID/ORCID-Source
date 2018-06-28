@@ -60,7 +60,6 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.delegators = data.delegators;
-                console.log(this.delegators)
             },
             error => {
                 logAjaxError(error);
@@ -85,7 +84,6 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        console.log("ngOnInit delegators.contponent.ts");
         this.getDelegators();
 
         (<any>$("#delegatorsSearch")).typeahead({
