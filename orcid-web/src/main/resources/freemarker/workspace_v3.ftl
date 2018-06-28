@@ -1,6 +1,5 @@
 <@protected nav="record">
 <#escape x as x?html>
-
 <#if justRegistered?? && justRegistered>
 <div class="alert alert-success">
     <strong>
@@ -54,7 +53,6 @@
     <div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
     </@orcid.checkFeatureStatus> 
     </#if>
-  
     <!-- ID Banner and other account information -->
     <div class="col-md-3 lhs left-aside">
         <div class="workspace-profile">
@@ -79,20 +77,9 @@
                 </a>
             </div>
 
-            <!-- Other Names -->
-            <#include "/includes/ng2_templates/also-known-as-ng2-template.ftl">
-            <also-known-as-ng2></also-known-as-ng2>
-
-            <!-- Country -->
-            <#include "/includes/ng2_templates/country-ng2-template.ftl">  
-            <country-ng2></country-ng2>
-
-            <#include "/includes/ng2_templates/keywords-ng2-template.ftl">
-            <keywords-ng2></keywords-ng2>
-
-            <!-- Websites  -->
-            <#include "/includes/ng2_templates/websites-ng2-template.ftl">
-            <websites-ng2></websites-ng2>
+            <!-- Person -->
+            <#include "/includes/ng2_templates/person-ng2-template.ftl">
+            <person-ng2></person-ng2>
 
             <!-- Emails  -->
             <#include "/includes/ng2_templates/emails-ng2-template.ftl">
@@ -679,16 +666,6 @@
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl"> 
-<modalngcomponent elementHeight="645" elementId="modalAlsoKnownAsForm" elementWidth="645" setFocus="true">
-    <also-known-as-form-ng2></also-known-as-form-ng2>
-</modalngcomponent><!-- Ng2 component --> 
-
-<#include "/includes/ng2_templates/country-form-ng2-template.ftl">
-<modalngcomponent elementHeight="550" elementId="modalCountryForm" elementWidth="616">
-    <country-form-ng2 ></country-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
-
 <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
     <emails-form-ng2 popUp="true"></emails-form-ng2>
@@ -708,17 +685,6 @@
 <modalngcomponent elementHeight="645" elementId="modalFundingForm" elementWidth="700">
   <funding-form-ng2></funding-form-ng2>
 </modalngcomponent>
-
-
-<#include "/includes/ng2_templates/keywords-form-ng2-template.ftl">
-<modalngcomponent elementHeight="645" elementId="modalKeywordsForm" elementWidth="645" setFocus="true">
-    <keywords-form-ng2></keywords-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
-
-<#include "/includes/ng2_templates/websites-form-ng2-template.ftl">
-<modalngcomponent elementHeight="645" elementId="modalWebsitesForm" elementWidth="645" setFocus="true">
-    <websites-form-ng2></websites-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>

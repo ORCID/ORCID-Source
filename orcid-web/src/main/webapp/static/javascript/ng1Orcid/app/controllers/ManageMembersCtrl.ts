@@ -184,18 +184,18 @@ export const manageMembersCtrl = angular.module('orcidApp').controller(
                 rUri.scopes = [];
                 // Fill the scopes with the default scopes
                 if(rUri.type.value == 'grant-read-wizard'){
-                    rUri.scopes.push('/orcid-profile/read-limited');
+                    rUri.scopes.push('/read-limited');
                 } else if (rUri.type.value == 'import-works-wizard'){
-                    rUri.scopes.push('/orcid-profile/read-limited');
-                    rUri.scopes.push('/orcid-works/create');
+                    rUri.scopes.push('/read-limited');
+                    rUri.scopes.push('/activities/update');
                     rUri.actType = {'actType':{'errors':[], 'value':{'import-works-wizard':[]}}};
                     rUri.geoArea = {'geoArea':{'errors':[], 'value':{'import-works-wizard':[]}}};   
                 } else if (rUri.type.value == 'import-funding-wizard'){
-                    rUri.scopes.push('/orcid-profile/read-limited');
-                    rUri.scopes.push('/funding/create');
+                    rUri.scopes.push('/read-limited');
+                    rUri.scopes.push('/activities/update');
                 } else if (rUri.type.value == 'import-peer-review-wizard'){
-                    rUri.scopes.push('/orcid-profile/read-limited');
-                    rUri.scopes.push('/peer-review/create');
+                    rUri.scopes.push('/read-limited');
+                    rUri.scopes.push('/activities/update');
                 } else if(rUri.type.value == 'institutional-sign-in') {
                     rUri.scopes.push('/authenticate');
                 }                

@@ -12,14 +12,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -56,12 +52,15 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     emails: any;
     employments: any;
     fixedTitle: string;
+    fundingToAddIds: any;
     fundings: any;
     groups: any;
+    loading: boolean;
     moreInfo: any;
     moreInfoCurKey: any;
     privacyHelp: any;
     privacyHelpCurKey: any;
+    putCode: any;
     selectOrgDefinedFundingSubType: any;
     showElement: any;
     sortHideOption: boolean;
@@ -86,11 +85,14 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
+        this.fundingToAddIds = new Array();
         this.groups = null;
+        this.loading = false;    
         this.moreInfo = {};
         this.moreInfoCurKey = null;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
+        this.putCode = null;
         this.selectOrgDefinedFundingSubType = {};
         this.showElement = {};
         this.sortHideOption = false;
@@ -106,14 +108,16 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editFunding.errors.length = 0;
         
         /*
-        this.fundingService.setData( this.editFunding )
-        .takeUntil(this.ngUnsubscribe)
+        this.fundingService.addFundingToScope( this.editFunding )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.editFunding = data;
                 //console.log('this.editFunding response', this.editFunding);
                 this.addingFunding = false;
-                this.close();
+                //this.close();
 
                 if (data.errors.length > 0){
 
@@ -145,6 +149,38 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         );
     };
+
+    addFundingToScope( path ): void {
+        if( this.fundingToAddIds.length != 0 ) {
+            var fundingIds = this.fundingToAddIds.splice(0,20).join();
+
+            this.fundingService.addFundingToScope( this.editFunding, fundingIds )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    for (var i in data) {
+                        var funding = data[i];
+                        groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
+                    }
+                    if (this.fundingToAddIds.length == 0) {
+                        this.loading = false;
+                        
+                    } else {
+                        this.addFundingToScope(path);
+                        
+                    }
+                },
+                error => {
+                    //console.log('setBiographyFormError', error);
+                } 
+            );
+
+        } else {
+            this.loading = false;
+        };
+    }
 
     addFundingModal(type, affiliation): void {
 
@@ -229,23 +265,55 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo[key]=false;
     };
 
+    createNew(work): void {
+        var cloneF = JSON.parse(JSON.stringify(work));
+        cloneF.source = null;
+        cloneF.putCode = null;
+        for (var idx in cloneF.externalIdentifiers){
+            cloneF.externalIdentifiers[idx].putCode = null;
+        }
+        return cloneF;
+    }
+
+    deleteGroupFunding(putCode): void {
+        let rmWorks;
+        for (let idx in this.fundingService.groups) {
+            if (this.fundingService.groups[idx].hasPut(putCode)) {
+               for (var idj in this.fundingService.groups[idx].activities) {
+                   this.fundingService.removeFunding(this.fundingService.groups[idx].activities[idj]);
+                }
+                this.fundingService.groups.splice(idx,1);
+                break;
+            }
+        }
+    }
+
     deleteFunding(delFunding): void {
-        //this.fundingService.deleteData(delFunding);
+        let rmFunding;
+        for (var idx in this.fundingService.groups) {
+            if (this.fundingService.groups[idx].hasPut(this.putCode)) {
+                rmFunding = this.fundingService.groups[idx].getByPut(this.putCode);
+                break;
+            };
+        };
+        // remove work on server
+        this.fundingService.removeFunding(rmFunding);
         this.closeModal();
     };
 
+
     deleteFundingByPut(putCode, deleteGroup): void {
         if (deleteGroup){
-            //this.fundingSrvc.deleteGroupFunding(putCode);
+            //this.this.fundingService.deleteGroupFunding(putCode);
         }
         else {
-            //this.fundingSrvc.deleteFunding(putCode);
+            //this.this.fundingService.deleteFunding(putCode);
         }
         //$.colorbox.close();
     };
 
     deleteFundingConfirm(putCode, deleteGroup): void {
-        //var funding = fundingSrvc.getFunding(putCode);
+        //var funding = this.getFunding(putCode);
         var funding = {
             fundingTitle: {
                 title: {
@@ -278,6 +346,36 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         */
     };
 
+    fundingCount(): Number {
+        var count = 0;
+        for (var idx in this.fundingService.groups) {
+            count += this.fundingService.groups[idx].activitiesCount;
+        }
+        return count;
+    }
+
+    getEditable(putCode, callback): void {
+        // first check if they are the current source
+        var funding = this.getFunding(putCode);
+        if (funding.source == orcidVar.orcidId){
+            callback(funding);
+        }
+        else {
+            var bestMatch = null;
+            var group = this.getGroup(putCode);
+            for (var idx in group.activitiess) {
+                if (group[idx].source == orcidVar.orcidId) {
+                    bestMatch = callback(group[idx]);
+                    break;
+                }
+            }
+            if (bestMatch == null) {
+                bestMatch = this.createNew(funding);
+            }
+            callback(bestMatch);
+        };
+    }
+
     getEmptyExtId(): any {
         return {
             "errors": [],
@@ -309,8 +407,19 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
     }
 
+    getFunding(putCode): any {
+        for (var idx in this.fundingService.groups) {
+            if (this.fundingService.groups[idx].hasPut(putCode)){
+                return this.fundingService.groups[idx].getByPut(putCode);
+            }
+        }
+        return null;
+    }
+
     getFundingsById( ids ): any {
-        this.fundingService.getFundingsById( ids ).takeUntil(this.ngUnsubscribe)
+        this.fundingService.getFundingsById( ids ).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
 
@@ -328,7 +437,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getFundingsIds(): any {
         this.fundingService.getFundingsId()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('getFundingsIds', data);
@@ -339,13 +450,13 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 };
                 
                 /*
-                if (fundingSrvc.fundingToAddIds.length == 0) {
+                if (this.fundingService.fundingToAddIds.length == 0) {
                     $timeout(function() {
-                      fundingSrvc.loading = false;
+                      this.fundingService.loading = false;
                     });
                 } else {
                     $timeout(function () {
-                        fundingSrvc.addFundingToScope(path);
+                        this.fundingService.addFundingToScope(path);
                     },50);
                 }
                 
@@ -358,6 +469,15 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
+
+    getGroup(putCode): any {
+        for (var idx in this.fundingService.groups) {
+            if (this.fundingService.groups[idx].hasPut(putCode)){
+                return this.fundingService.groups[idx];
+            }
+        }
+        return null;
+    }
 
 
     hideTooltip(element): void{        
@@ -411,12 +531,28 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    setGroupPrivacy(putCode, priv): void {
+        /*
+        var group = this.getGroup(putCode);
+        for (var idx in group.activities) {
+            var curPutCode = group.activities[idx].putCode.value;
+            this.fundingService.setPrivacy(curPutCode, priv);
+        }
+        */
+    }
 
-    setPrivacy(aff, priv, $event): void {
-        $event.preventDefault();
-        aff.visibility.visibility = priv;
-        //this.affiliationService.updateProfileAffiliation(aff);
-    };
+    setPrivacy(putCode, priv): void {
+        /*
+        var funding = this.getFunding(putCode);
+        funding.visibility.visibility = priv;
+        this.fundingService.updateProfileFunding(funding);
+        */
+    }
+
+    setIdsToAdd(ids): void {
+        this.fundingToAddIds = ids;
+    }
+
 
     showAddModal(): void{
         let numOfResults = 25;
@@ -467,7 +603,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleEdit(): void {
         this.emailService.getEmails()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.emails = data;

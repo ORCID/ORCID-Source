@@ -11,14 +11,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { EmailService } 
     from '../../shared/email.service.ts'; 
@@ -84,7 +80,9 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
 
     deleteCustomEmail(index): void {
         this.emailService.deleteCustomEmail( this.toDelete )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data){
@@ -103,7 +101,9 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
 
     displayCreateForm(): void {
         this.emailService.displayCreateForm( this.clientId )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors == null || data.errors.length == 0){
@@ -124,7 +124,9 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
     editCustomEmail(): void {
 
         this.emailService.editCustomEmail( this.editedCustomEmail )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors != null && data.errors.length > 0){
@@ -142,7 +144,9 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getCustomEmails(): void {
         this.emailService.getCustomEmails( this.clientId )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.customEmailList = [];
@@ -176,7 +180,9 @@ export class CustomEmailComponent implements AfterViewInit, OnDestroy, OnInit {
     saveCustomEmail(): void {
 
         this.emailService.saveCustomEmail( this.customEmail )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors != null && data.errors.length > 0){

@@ -4,10 +4,12 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Injectable } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import 'rxjs/Rx';
+
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class ClientService {

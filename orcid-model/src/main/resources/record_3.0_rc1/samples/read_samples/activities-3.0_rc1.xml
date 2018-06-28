@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <activities:activities-summary
-	path="http://orcid.org/v3.0_rc1/8888-8888-8888-8880/activities"
+	path="/8888-8888-8888-8880/activities"
 	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:employment="http://www.orcid.org/ns/employment"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education"
 	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:work="http://www.orcid.org/ns/work"
@@ -17,7 +17,7 @@
 	</common:last-modified-date>
 	
 	<activities:distinctions
-		path="http://orcid.org/v3.0_rc1/8888-8888-8888-8880/distinctions">
+		path="/8888-8888-8888-8880/distinctions">
 		<common:last-modified-date>2001-12-31T12:00:00
 		</common:last-modified-date>
 		<activities:affiliation-group>
@@ -261,7 +261,7 @@
 		</activities:group>
 	</activities:fundings>
 	<activities:invited-positions
-		path="http://orcid.org/v3.0_rc1/8888-8888-8888-8880/invited-positions">
+		path="/8888-8888-8888-8880/invited-positions">
 		<common:last-modified-date>2001-12-31T12:00:00
 		</common:last-modified-date>
 		<activities:affiliation-group>
@@ -320,7 +320,7 @@
 		</activities:affiliation-group>
 	</activities:invited-positions>
 	<activities:memberships
-		path="http://orcid.org/v3.0_rc1/8888-8888-8888-8880/memberships">
+		path="/8888-8888-8888-8880/memberships">
 		<common:last-modified-date>2001-12-31T12:00:00
 		</common:last-modified-date>
 		<activities:affiliation-group>
@@ -439,7 +439,7 @@
 		</activities:group>
 	</activities:peer-reviews>
 	<activities:qualifications
-		path="http://orcid.org/v3.0_rc1/8888-8888-8888-8880/qualifications">
+		path="/8888-8888-8888-8880/qualifications">
 		<common:last-modified-date>2001-12-31T12:00:00
 		</common:last-modified-date>
 		<activities:affiliation-group>
@@ -564,7 +564,7 @@
 		</activities:group>
 	</activities:research-resources>
 	<activities:services
-		path="http://orcid.org/v3.0_rc1/8888-8888-8888-8880/services">
+		path="/8888-8888-8888-8880/services">
 		<common:last-modified-date>2001-12-31T12:00:00
 		</common:last-modified-date>
 		<activities:affiliation-group>

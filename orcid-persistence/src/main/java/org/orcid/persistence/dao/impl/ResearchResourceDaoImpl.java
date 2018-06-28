@@ -43,4 +43,15 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
         return query.getResultList();
     }
 
+    @Override
+    public void removeResearchResources(String userOrcid) {
+        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity where research_resource_id in (SELECT id from ResearchResourceEntity where profile.id=:userOrcid)");
+        queryItem.setParameter("userOrcid", userOrcid);
+        queryItem.executeUpdate();
+
+        Query query = entityManager.createQuery("delete from ResearchResourceEntity where profile.id = :userOrcid");
+        query.setParameter("userOrcid", userOrcid);
+        query.executeUpdate();
+    }
+
 }

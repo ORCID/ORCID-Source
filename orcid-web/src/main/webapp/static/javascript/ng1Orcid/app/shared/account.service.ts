@@ -6,13 +6,11 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Injectable } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject }
-    from 'rxjs/Subject';
-
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class AccountService {
@@ -71,6 +69,16 @@ export class AccountService {
             getBaseUri() + '/account/delayVerifyEmail.json'
         )
         
+    }
+
+    deprecateORCID( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+
+        return this.http.post(
+            getBaseUri() + '/account/validate-deprecate-profile.json',
+            encoded_data, 
+            { headers: this.headers }
+        )   
     }
 
     getChangePassword(): Observable<any> {

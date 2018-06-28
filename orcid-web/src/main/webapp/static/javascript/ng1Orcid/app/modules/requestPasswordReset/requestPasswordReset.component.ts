@@ -12,14 +12,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, ChangeDetectorRef, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -62,7 +58,9 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
 
     getRequestResetPassword(): void {
         this.requestPasswordResetService.getData( this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.requestResetPassword = data;
@@ -80,7 +78,9 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         this.showDeactivatedError = false;
 
         this.requestPasswordResetService.setData( this.requestResetPassword, this.url_path )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.requestResetPassword = data; 

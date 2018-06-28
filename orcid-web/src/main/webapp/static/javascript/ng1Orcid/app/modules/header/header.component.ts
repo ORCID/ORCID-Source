@@ -12,14 +12,10 @@ import { AfterViewInit, Component, OnDestroy, OnInit }
 import { FormsModule }
     from '@angular/forms';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { NotificationsService } 
     from '../../shared/notifications.service.ts'; 
@@ -104,7 +100,9 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     retrieveUnreadCount(): any {
         if( this.notificationsSrvc.retrieveCountCalled == false ) {
             this.notificationsSrvc.retrieveUnreadCount()
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     this.getUnreadCount = data;

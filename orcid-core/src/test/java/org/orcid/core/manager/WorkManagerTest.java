@@ -21,9 +21,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
+import org.orcid.core.manager.GroupingSuggestionManager;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -63,6 +65,9 @@ public class WorkManagerTest extends BaseTest {
     @Resource
     private WorkDao workDao;
     
+    @Mock
+    private GroupingSuggestionManager groupingSuggestionManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -71,6 +76,7 @@ public class WorkManagerTest extends BaseTest {
     @Before
     public void before() {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManager", groupingSuggestionManager);
     }
     
     @AfterClass
@@ -104,6 +110,61 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(work);
         assertEquals("Work title", work.getWorkTitle().getTitle().getContent());
         assertEquals(Visibility.LIMITED, work.getVisibility());
+    }
+    
+    @Test
+    public void testCreateWork() {
+        String orcid = "0000-0000-0000-0003";
+        Mockito.doNothing().when(groupingSuggestionManager).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        
+        Work work = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID extId1 = new ExternalID();
+        extId1.setRelationship(Relationship.SELF);
+        extId1.setType("isbn");
+        extId1.setUrl(new Url("http://isbn/1/"));
+        extId1.setValue("isbn-1");
+        extIds1.getExternalIdentifier().add(extId1);
+        work.setWorkExternalIdentifiers(extIds1);
+        work.setWorkType(WorkType.BOOK);
+        work = workManager.createWork(orcid, work, true);
+        
+        Mockito.verify(groupingSuggestionManager, Mockito.times(1)).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
+        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
+    }
+    
+    @Test
+    public void testUpdateWork() {
+        String orcid = "0000-0000-0000-0003";
+        Mockito.doNothing().when(groupingSuggestionManager).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        
+        Work work = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID extId1 = new ExternalID();
+        extId1.setRelationship(Relationship.SELF);
+        extId1.setType("isbn");
+        extId1.setUrl(new Url("http://isbn/1/"));
+        extId1.setValue("isbn-1");
+        extIds1.getExternalIdentifier().add(extId1);
+        work.setWorkExternalIdentifiers(extIds1);
+        work.setWorkType(WorkType.BOOK);
+        work = workManager.createWork(orcid, work, true);
+        
+        work.getWorkTitle().getTitle().setContent("updated title");
+        work = workManager.updateWork(orcid, work, true);
+        assertEquals("updated title", work.getWorkTitle().getTitle().getContent());
+        
+        // check grouping suggestion manager called for both creation and updating of works
+        Mockito.verify(groupingSuggestionManager, Mockito.times(2)).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
+        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
     }
     
     @Test
@@ -209,6 +270,7 @@ public class WorkManagerTest extends BaseTest {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        Mockito.doNothing().when(groupingSuggestionManager).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -244,6 +306,7 @@ public class WorkManagerTest extends BaseTest {
         bulk.getBulk().add(work2);
                 
         WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
+        Mockito.verify(groupingSuggestionManager, Mockito.times(2)).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
         
         assertNotNull(updatedBulk);
         assertEquals(2, updatedBulk.getBulk().size());

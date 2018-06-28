@@ -4,15 +4,12 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Injectable, ChangeDetectorRef } 
     from '@angular/core';
 
+import { Observable, Subject } 
+    from 'rxjs';
 
 
-import { Observable } 
-    from 'rxjs/Observable';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class OauthService {
@@ -86,7 +83,7 @@ export class OauthService {
         return this.http.get(
             getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json'
         )
-        .share();
+        ;
     }
 
     oauth2ScreensLoadRegistrationForm( ): Observable<any> {

@@ -23,6 +23,7 @@ import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
+import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.AffiliationType;
@@ -43,6 +44,7 @@ import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.WorkGroupingSuggestion;
 import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
 import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
@@ -81,6 +83,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @Resource(name = "profileKeywordManagerV3")
     private ProfileKeywordManager profileKeywordManager;
+    
+    @Resource(name = "workManagerV3")
+    private WorkManager workManager;
     
     @Resource(name = "otherNameManagerV3")
     private OtherNameManager otherNameManager;
@@ -294,6 +299,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         
         return form;
+    }
+    
+    @RequestMapping(value = "/my-orcid/groupingSuggestions.json", method = RequestMethod.GET)
+    public @ResponseBody List<WorkGroupingSuggestion> getGroupingSuggestions(HttpServletRequest request) {     
+        return workManager.getGroupingSuggestions(getCurrentUserOrcid());
     }
     
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
