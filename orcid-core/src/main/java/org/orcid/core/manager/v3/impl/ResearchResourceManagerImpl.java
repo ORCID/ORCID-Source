@@ -168,8 +168,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
 
     @Override
     public void removeAllResearchResources(String orcid) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();        
+        rrDao.removeResearchResources(orcid);
     }
     
     private void setIncomingPrivacy(ResearchResourceEntity researchResourceEntity, ProfileEntity profile) {

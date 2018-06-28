@@ -10,13 +10,12 @@ import { CookieXSRFStrategy, HttpModule, XSRFStrategy }
 import { Headers, Http, Response, RequestOptions} 
     from '@angular/http';
 
-import { Observable }
-    from 'rxjs/Observable';
+import { Observable, Subject } 
+    from 'rxjs';
 
-import { Subject } 
-    from 'rxjs/Subject';
 
-import 'rxjs/Rx';
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 @Injectable()
 export class BlogService {
@@ -43,7 +42,10 @@ export class BlogService {
     }
 
     getBlogFeed(url): Observable<any> {
-        return this.http.get(url, { responseType: 'text'}).catch(this.handleError);
+        return this.http.get(url, { responseType: 'text'})
+        .pipe(
+            catchError(this.handleError)
+        );
 
     }
 

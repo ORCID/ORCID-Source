@@ -46,12 +46,10 @@ the software.
         <module>orcid-core</module>
         <module>orcid-web</module>
         <module>orcid-persistence</module>
-        <module>orcid-model</module>
         <module>orcid-api-common</module>
         <module>orcid-pub-web</module>
         <module>orcid-api-web</module>
         <module>orcid-scheduler-web</module>
-        <module>orcid-test</module>
         <module>orcid-solr-web</module>
         <module>orcid-integration-test</module>
 		<module>orcid-internal-api</module>
@@ -1081,6 +1079,17 @@ the software.
                <groupId>io.swagger</groupId>
                <artifactId>swagger-jaxrs</artifactId>
                <version>${swagger.version}</version>
+            </dependency>
+            
+            <dependency>
+               <groupId>org.orcid</groupId>
+               <artifactId>orcid-model</artifactId>
+               <version>1.1.5-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+               <groupId>org.orcid</groupId>
+               <artifactId>orcid-test</artifactId>
+               <version>1.1.5-SNAPSHOT</version>
             </dependency>
             
             <!-- AWS -->

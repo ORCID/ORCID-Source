@@ -82,4 +82,6 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * @return a list of Work elements 
      * */
     List<Work> findWorks(String orcid, List<WorkLastModifiedEntity> elements);
+
+    List<WorkSummary> getWorksSummaryList(String orcid, List<Long> putCodes);
 }

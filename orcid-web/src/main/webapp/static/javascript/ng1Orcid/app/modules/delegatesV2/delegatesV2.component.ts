@@ -13,14 +13,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AccountService } 
     from '../../shared/account.service.ts'; 
@@ -96,7 +92,9 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
         addDelegate.password = this.password;
 
         this.accountService.addDelegate( addDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -127,7 +125,9 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
         addDelegate.password = this.password;
 
         this.accountService.addDelegateByEmail( addDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -147,7 +147,9 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
     getDelegates(): void {
 
         this.accountService.getDelegates(  )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.delegatesByOrcid = {};
@@ -176,7 +178,9 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
         revokeDelegate.password = this.password;
 
         this.accountService.revoke( revokeDelegate )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors.length === 0){
@@ -195,7 +199,9 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
 
     searchByEmail(): void {
         this.accountService.searchByEmail( this.input.text )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.confirmAddDelegateByEmail(data);
@@ -209,7 +215,9 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
 
     getResults(): void {
         this.accountService.getResults( this.input )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 var bottom = null;
@@ -340,7 +348,9 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
             var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
             
             this.accountService.getDisplayName( orcid )
-            .takeUntil(this.ngUnsubscribe)
+            .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
             .subscribe(
                 data => {
                     if (data['name']['given-names']){

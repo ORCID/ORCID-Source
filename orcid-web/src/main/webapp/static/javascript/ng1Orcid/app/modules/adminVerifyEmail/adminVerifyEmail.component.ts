@@ -6,18 +6,14 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
 
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { AdminDelegatesService } 
     from '../../shared/adminDelegates.service.ts'; 
-
 
 @Component({
     selector: 'admin-verify-email-ng2',
@@ -41,7 +37,9 @@ export class AdminVerifyEmailComponent implements AfterViewInit, OnDestroy, OnIn
 
     verifyEmail(): void {
         this.adminDelegatesService.verifyEmail( this.email )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.result = data;

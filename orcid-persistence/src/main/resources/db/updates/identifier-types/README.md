@@ -29,6 +29,16 @@ Add a Normalizer in the org.orcid.core.utils.v3.identifiers package if required
 
 Solr indexing will happen automatically.
 
+Add the user entered id link translation (optional). Add a function to the typeMap in /orcid-web/src/main/webapp/static/javascript/script.js 	
+example:	
+	typeMap['kuid'] = function (id) {	
+		return 'http://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);	
+	};	
+	
+
+
+
+
 
 
 

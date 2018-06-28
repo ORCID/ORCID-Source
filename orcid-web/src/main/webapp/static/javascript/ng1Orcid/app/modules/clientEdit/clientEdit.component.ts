@@ -10,14 +10,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { ClientService } 
     from '../../shared/client.service.ts'; 
@@ -112,7 +108,9 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         this.clientService.addClient( this.newClient )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors != null && data.errors.length > 0){
@@ -243,7 +241,9 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         this.clientService.editClient( this.clientToEdit )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors != null && data.errors.length > 0){
@@ -279,7 +279,9 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     getClients(): void{
 
         this.clientService.getClients()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.clients = data;
@@ -338,7 +340,9 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     // Load the list of scopes for client redirect uris
     loadAvailableScopes(): void {
         this.clientService.loadAvailableScopes()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.availableRedirectScopes = data;
@@ -355,19 +359,21 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         rUri.scopes = [];
         // Fill the scopes with the default scopes
         if(rUri.type.value == 'grant-read-wizard'){
-            rUri.scopes.push('/orcid-profile/read-limited');
+            rUri.scopes.push('/read-limited');
         } else if (rUri.type.value == 'import-works-wizard'){
-            rUri.scopes.push('/orcid-profile/read-limited');
-            rUri.scopes.push('/orcid-works/create');
+            rUri.scopes.push('/read-limited');
+            rUri.scopes.push('/activities/update');
         } else if (rUri.type.value == 'import-funding-wizard'){
-            rUri.scopes.push('/orcid-profile/read-limited');
-            rUri.scopes.push('/funding/create');
+            rUri.scopes.push('/read-limited');
+            rUri.scopes.push('/activities/update');
         }
     };
 
     resetClientSecret(): void {
         this.clientService.resetClientSecret( this.resetThisClient.clientId.value )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
@@ -405,7 +411,9 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     // Get an empty modal to add
     showAddClient(): void {
         this.clientService.showAddClient()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 this.newClient = data;
@@ -466,7 +474,9 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         this.clientService.submitEditClient( this.clientToEdit )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data.errors != null && data.errors.length > 0){

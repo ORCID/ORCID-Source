@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jsoup.helper.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 
@@ -92,7 +92,7 @@ public class Identifier {
     public static Identifier fromPeerReviewGroupKey(PeerReviewGroupKey groupKey) {
         Identifier result = new Identifier();
         if(groupKey != null) {
-            if(!StringUtil.isBlank(groupKey.getGroupId())) {
+            if(!StringUtils.isBlank(groupKey.getGroupId())) {
                 result.setExternalIdentifierId(groupKey.getGroupId());
                 result.setExternalIdentifierType(PeerReviewGroupKey.KEY_NAME);
             }

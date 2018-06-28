@@ -6,17 +6,16 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+    
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
+
+
 
 @Component({
     selector: 'two-fa-setup-ng2',
@@ -135,7 +134,9 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
 
     register(): void {
         this.twoFAStateService.register()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);
@@ -151,7 +152,9 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         $('#sendVerificationCode').prop('disabled', true);
 
         this.twoFAStateService.sendVerificationCode( this.twoFactorAuthRegistration )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);
@@ -173,7 +176,9 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
 
     startSetup(): void {
         this.twoFAStateService.startSetup()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 //console.log('this.getForm', data);

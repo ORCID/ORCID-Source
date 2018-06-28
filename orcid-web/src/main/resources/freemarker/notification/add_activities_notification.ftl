@@ -236,7 +236,7 @@
         </div>
     </#if>
     <div class="margin-top">
-    	<small><@orcid.msg 'notifications.agreement_advice'/> <a href="${knowledgeBaseUri}/articles/665437" target="notifications.learn_more"><@orcid.msg 'notifications.learn_more'/></a></small>
+    	<small><@orcid.msg 'notifications.agreement_advice'/> <a href="${knowledgeBaseUri}/articles/1807645-notifications-preferences" target="notifications.learn_more"><@orcid.msg 'notifications.learn_more'/></a></small>
     </div>
 </body>
 </html>

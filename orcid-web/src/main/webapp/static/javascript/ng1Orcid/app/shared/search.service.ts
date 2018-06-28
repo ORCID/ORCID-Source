@@ -1,14 +1,20 @@
 declare var orcidVar: any;
 
-import { Injectable } from '@angular/core';
-import { CookieXSRFStrategy, HttpModule, XSRFStrategy } from '@angular/http';
-import { JsonpModule } from '@angular/http';
-import { Headers, Http, Response, RequestOptions, Jsonp } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Injectable } 
+    from '@angular/core';
+
+import { CookieXSRFStrategy, HttpModule, XSRFStrategy, JsonpModule, Headers, Http, Response, RequestOptions, Jsonp } 
+    from '@angular/http';
+
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
-import 'rxjs/Rx';
+
+import { Observable, Subject } 
+    from 'rxjs';
+
+
+import { catchError, map, tap } 
+    from 'rxjs/operators';
 
 //import { Preferences } from './preferences';
 
@@ -49,14 +55,20 @@ export class SearchService {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
 
 
-        return this.http.get(url, {headers: this.publicApiHeaders}).catch(this.handleError);
+        return this.http.get(url, {headers: this.publicApiHeaders})
+        .pipe(
+            catchError(this.handleError)
+        );
     }
 
     getNames(orcid): Observable<any> {
         var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
 
 
-        return this.http.get(url, {headers: this.publicApiHeaders}).catch(this.handleError);
+        return this.http.get(url, {headers: this.publicApiHeaders})
+        .pipe(
+            catchError(this.handleError)
+        );
     }
 
 

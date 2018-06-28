@@ -6,14 +6,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable } 
-    from 'rxjs/Rx';
-
-import { Subject } 
-    from 'rxjs/Subject';
-
-import { Subscription }
-    from 'rxjs/Subscription';
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+import { takeUntil } 
+    from 'rxjs/operators';
 
 import { EmailService } 
     from '../../shared/email.service.ts'; 
@@ -37,7 +33,9 @@ export class EmailFrecuencyLinkComponent implements AfterViewInit, OnDestroy, On
     getEmailFrequencies(): void {
 
         this.emailSrvc.getEmailFrequencies()
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
@@ -53,7 +51,9 @@ export class EmailFrecuencyLinkComponent implements AfterViewInit, OnDestroy, On
 
     saveEmailFrequencies(): void {
         this.emailSrvc.saveEmailFrequencies( this.emailFrequency.sendEmailFrequencyDays )
-        .takeUntil(this.ngUnsubscribe)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
         .subscribe(
             data => {
                 if(data) {
