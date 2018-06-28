@@ -24,6 +24,7 @@ export class WorksService {
     public details: any;
     public groups: any;
     public groupsLabel: any;
+    public labelsMapping: any;
     public loading: boolean;
     public showLoadMore: boolean;
     
@@ -47,6 +48,219 @@ export class WorksService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
+        this.labelsMapping = {
+            "default": {
+                types: [
+                    {
+                        type: "all",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
+                    }
+                ]
+            }, 
+            "publication": {
+                types: [
+                    {
+                        type: "book",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "book-chapter",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleBookPlaceholder")
+                    },
+                    {
+                        type: "book-review",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "dictionary-entry",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "dissertation",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "edited-book",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "encyclopedia-entry",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "journal-article",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
+                    },
+                    {
+                        type: "journal-issue",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
+                    },
+                    {
+                        type: "magazine-article",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticlePlaceholder")
+                    },
+                    {
+                        type: "manual",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "newsletter-article",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletterPlaceholder")
+                    },
+                    {
+                        type: "newspaper-article",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaper"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaperPlaceholder")
+                    },
+                    {
+                        type: "online-resource",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "report",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "research-tool",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "supervised-student-publication",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "test",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "translation",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "website",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "working-paper",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    }
+                ]
+            },
+            "conference": {
+                types: [
+                    {
+                        type: "conference-abstract",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+                    },
+                    {
+                        type: "conference-paper",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+                    },
+                    {
+                        type: "conference-poster",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+                    }
+                ]
+            },
+            "intellectual_property": {
+                types: [
+                    {
+                        type: "disclosure",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
+                    },
+                    {
+                        type: "license",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
+                    },
+                    {
+                        type: "patent",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
+                    },
+                    {
+                        type: "registered-copyright",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
+                    }
+                ]
+            },
+            "other_output": {
+                types: [
+                    {
+                        type: "artistic-performance",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "data-set",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "invention",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "lecture-speech",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "research-technique",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "spin-off-company",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "standards-and-policy",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "technical-standard",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "other",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleOtherPlaceholder")
+                    }
+                ]
+            }
+        }
+
         this.offset = 0;
         this.showLoadMore = false;
         this.url = getBaseUri() + '/my-orcid/worksForms.json';
@@ -111,6 +325,22 @@ export class WorksService {
         }
         return null;
     }
+
+    getLabelMapping (workCategory, workType): any {
+        var result = this.labelsMapping.default.types[0];
+        var tempI = null;
+
+        if( this.labelsMapping[workCategory] != undefined ){
+            tempI = this.labelsMapping[workCategory].types;
+            for( var i = 0; i < tempI.length; i++) {
+                if( tempI[i].type == workType ) {
+                    result = tempI[i];
+                }
+            }
+        }
+        console.log(result);
+        return result;
+}
 
     handleWorkGroupData(data, callback?): void {
         if (this.groups == undefined) {
@@ -296,51 +526,9 @@ export class WorksService {
     }
 
     loadWorkTypes( workCategory ): Observable<any>{
-        /* Move to controller
-        var workCategory = "";
-        if(this.editWork != null && this.editWork.workCategory != null && this.editWork.workCategory.value != null && this.editWork.workCategory.value != ""){
-            workCategory = this.editWork.workCategory.value;
-        }
-        else{
-            return; //do nothing if we have not types
-        }
-        */
         return this.http.get(
             getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory
         )
-        .pipe(
-            tap(
-                (data) => {
-                    /*
-                    $scope.types = data;
-                    if($scope.editWork != null && $scope.editWork.workCategory != null) {
-                        // if the edit works doesn't have a value that matches types
-                        var hasType = false;
-                        for (var idx in $scope.types){
-                            if ($scope.types[idx].key == $scope.editWork.workType.value) hasType = true;
-                        }
-                        if(!hasType) {
-                            switch ($scope.editWork.workCategory.value){
-                            case "conference":
-                                $scope.editWork.workType.value="conference-paper";
-                                break;
-                            case "intellectual_property":
-                                $scope.editWork.workType.value="patent";
-                                break;
-                            case "other_output":
-                                $scope.editWork.workType.value="data-set";
-                                break;
-                            case "publication":
-                                $scope.editWork.workType.value="journal-article";
-                                break;
-                            }
-                        }
-                    }
-                    */                   
-                }
-            )
-        );
-
     };
 
     makeDefault(group, putCode): any {
