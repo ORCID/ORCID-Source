@@ -13,12 +13,14 @@ import { catchError, map, tap }
 
 @Injectable()
 export class FundingService {
+    
     private fundingToAddIds: any;
-    private groups: any;
     private headers: HttpHeaders;
     private loading: any;
     private urlFundingsById: string;
     private urlFundingsId: string;
+    
+    public groups: any;
 
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -76,7 +78,7 @@ export class FundingService {
         .pipe(
             tap(
                 (data) => {
-                    this.getData();
+                    //this.getData();
                     //groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);                      
                 }
             )
@@ -93,7 +95,7 @@ export class FundingService {
         .pipe(
             tap(
                 (data) => {
-                    this.getData();
+                    //this.getData();
                     //groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);                      
                 }
             )

@@ -55,10 +55,12 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     fundingToAddIds: any;
     fundings: any;
     groups: any;
+    loading: boolean;
     moreInfo: any;
     moreInfoCurKey: any;
     privacyHelp: any;
     privacyHelpCurKey: any;
+    putCode: any;
     selectOrgDefinedFundingSubType: any;
     showElement: any;
     sortHideOption: boolean;
@@ -85,10 +87,12 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.fundings = new Array();
         this.fundingToAddIds = new Array();
         this.groups = null;
+        this.loading = false;    
         this.moreInfo = {};
         this.moreInfoCurKey = null;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
+        this.putCode = null;
         this.selectOrgDefinedFundingSubType = {};
         this.showElement = {};
         this.sortHideOption = false;
@@ -103,8 +107,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.addingFunding = true;
         this.editFunding.errors.length = 0;
         
-        
-        this.fundingService.setData( this.editFunding )
+        /*
+        this.fundingService.addFundingToScope( this.editFunding )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -123,7 +127,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('setBiographyFormError', error);
             } 
         );
-        
+        */
         
     };
 
@@ -272,11 +276,10 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     deleteGroupFunding(putCode): void {
-        let idx;
         let rmWorks;
-        for (var idx in this.fundingService.groups) {
+        for (let idx in this.fundingService.groups) {
             if (this.fundingService.groups[idx].hasPut(putCode)) {
-               for (var idj in fundingSrvc.groups[idx].activities) {
+               for (var idj in this.fundingService.groups[idx].activities) {
                    this.fundingService.removeFunding(this.fundingService.groups[idx].activities[idj]);
                 }
                 this.fundingService.groups.splice(idx,1);
@@ -301,16 +304,16 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     deleteFundingByPut(putCode, deleteGroup): void {
         if (deleteGroup){
-            //this.fundingSrvc.deleteGroupFunding(putCode);
+            //this.this.fundingService.deleteGroupFunding(putCode);
         }
         else {
-            //this.fundingSrvc.deleteFunding(putCode);
+            //this.this.fundingService.deleteFunding(putCode);
         }
         //$.colorbox.close();
     };
 
     deleteFundingConfirm(putCode, deleteGroup): void {
-        //var funding = fundingSrvc.getFunding(putCode);
+        //var funding = this.getFunding(putCode);
         var funding = {
             fundingTitle: {
                 title: {
@@ -343,7 +346,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         */
     };
 
-    fundingCount(): void {
+    fundingCount(): Number {
         var count = 0;
         for (var idx in this.fundingService.groups) {
             count += this.fundingService.groups[idx].activitiesCount;
@@ -353,13 +356,13 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getEditable(putCode, callback): void {
         // first check if they are the current source
-        var funding = this.fundingService.getFunding(putCode);
+        var funding = this.getFunding(putCode);
         if (funding.source == orcidVar.orcidId){
             callback(funding);
         }
         else {
             var bestMatch = null;
-            var group = fundingSrvc.getGroup(putCode);
+            var group = this.getGroup(putCode);
             for (var idx in group.activitiess) {
                 if (group[idx].source == orcidVar.orcidId) {
                     bestMatch = callback(group[idx]);
@@ -367,7 +370,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             }
             if (bestMatch == null) {
-                bestMatch = fundingSrvc.createNew(funding);
+                bestMatch = this.createNew(funding);
             }
             callback(bestMatch);
         };
@@ -447,13 +450,13 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 };
                 
                 /*
-                if (fundingSrvc.fundingToAddIds.length == 0) {
+                if (this.fundingService.fundingToAddIds.length == 0) {
                     $timeout(function() {
-                      fundingSrvc.loading = false;
+                      this.fundingService.loading = false;
                     });
                 } else {
                     $timeout(function () {
-                        fundingSrvc.addFundingToScope(path);
+                        this.fundingService.addFundingToScope(path);
                     },50);
                 }
                 
@@ -530,19 +533,19 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setGroupPrivacy(putCode, priv): void {
         /*
-        var group = fundingSrvc.getGroup(putCode);
+        var group = this.getGroup(putCode);
         for (var idx in group.activities) {
             var curPutCode = group.activities[idx].putCode.value;
-            fundingSrvc.setPrivacy(curPutCode, priv);
+            this.fundingService.setPrivacy(curPutCode, priv);
         }
         */
     }
 
     setPrivacy(putCode, priv): void {
         /*
-        var funding = fundingSrvc.getFunding(putCode);
+        var funding = this.getFunding(putCode);
         funding.visibility.visibility = priv;
-        fundingSrvc.updateProfileFunding(funding);
+        this.fundingService.updateProfileFunding(funding);
         */
     }
 
@@ -550,12 +553,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.fundingToAddIds = ids;
     }
 
-
-    setPrivacy(aff, priv, $event): void {
-        $event.preventDefault();
-        aff.visibility.visibility = priv;
-        //this.affiliationService.updateProfileAffiliation(aff);
-    };
 
     showAddModal(): void{
         let numOfResults = 25;
