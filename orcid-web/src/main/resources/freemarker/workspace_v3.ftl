@@ -401,12 +401,11 @@
   </#if>
 </script>
 
-<@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+
 <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
 <modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
-</@orcid.checkFeatureStatus> 
 
 <modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>

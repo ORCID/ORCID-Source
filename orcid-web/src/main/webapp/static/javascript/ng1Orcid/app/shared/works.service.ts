@@ -1,3 +1,5 @@
+declare var bibtexParse: any;
+
 import { Injectable } 
     from '@angular/core';
 
@@ -66,6 +68,17 @@ export class WorksService {
         )       
     }
 
+    addBibtexJson(dw): void {
+        if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
+            try {
+                this.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+            } catch (err) {
+                this.bibtexJson[dw.putCode.value] = null;
+                console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+            };
+        };
+    }
+
     consistentVis(group): boolean {
         let visibility = group.works[0].visibility.visibility;
         for(let i = 0; i < group.works.length; i++) {
@@ -76,7 +89,7 @@ export class WorksService {
         return true;
     }
 
-    getDetails(putCode, type, callback): Observable <any> {
+    getDetails(putCode, type): Observable <any> {
         let url = getBaseUri();
         if (type == this.constants.access_type.USER) {
             url += '/works/getWorkInfo.json?workId=' + putCode;
@@ -112,27 +125,6 @@ export class WorksService {
         if (callback != undefined) {
             callback();
         }
-    }
-
-    getGroupDetails(putCode, type, callback?): void {
-        console.log("get group details");
-        let group = this.getGroup(putCode);
-        let needsLoading =  new Array();
-        
-        let popFunct = function () {
-            if (needsLoading.length > 0) {
-                this.getDetails(needsLoading.pop(), type, popFunct);
-            }
-            else if (callback != undefined) {
-                callback();
-            }
-        };
-
-        for (var idx in group.works) {
-            needsLoading.push(group.works[idx].putCode.value)
-        }
-
-        popFunct();
     }
 
     getWork(putCode): any {
@@ -204,6 +196,28 @@ export class WorksService {
             failFunc();
         });
         */
+    }
+
+    removeBadContributors(dw): void {
+        for (var idx in dw.contributors) {
+            if (dw.contributors[idx].contributorSequence == null
+                && dw.contributors[idx].email == null
+                && dw.contributors[idx].orcid == null
+                && dw.contributors[idx].creditName == null
+                && dw.contributors[idx].contributorRole == null
+                && dw.contributors[idx].creditNameVisibility == null) {
+                    dw.contributors.splice(idx,1);
+                }
+        }
+    }
+
+    removeBadExternalIdentifiers(dw): void {
+        for(var idx in dw.workExternalIdentifiers) {
+            if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
+                && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+                dw.workExternalIdentifiers.splice(idx,1);
+            }
+        }
     }
 
     resetWorkGroups(): void {

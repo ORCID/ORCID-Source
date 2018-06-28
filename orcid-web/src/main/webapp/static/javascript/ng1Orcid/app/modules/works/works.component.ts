@@ -1,3 +1,4 @@
+declare var $: any;
 declare var ActSortState: any;
 declare var GroupedActivities: any;
 declare var om: any;
@@ -181,6 +182,29 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
+    };
+
+    /*addWorkModal(work): void{      
+        this.emailService.getEmails()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.editWork = work;
+                    this.genericService.open('modalWorksForm');
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                console.log('error getting email data: ', error);
+            } 
+        );
+    };*/
+
         /*
         if(emailVerified === true 
             || configuration.showModalManualEditVerificationEnabled == false
@@ -194,18 +218,17 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     });
                 });
             } else {
-                $scope.editWork = data;
-                if( $scope.editWork.workExternalIdentifiers.length == 0 ){
-                    $scope.addExternalIdentifier();
+                this.editWork = data;
+                if( this.editWork.workExternalIdentifiers.length == 0 ){
+                    this.addExternalIdentifier();
                 }        
-                $scope.loadWorkTypes();
-                $scope.showAddWorkModal();
+                this.loadWorkTypes();
+                this.showAddWorkModal();
             }
         } else {
             showEmailVerificationModal();
         }
         */
-    };
 
     bibtexShowToggle(putCode): void {
         this.showBibtex[putCode] = !(this.showBibtex[putCode]);
@@ -345,31 +368,95 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfoOpen = true;
         //Display the popover
         $(event.target).next().css('display','inline');
-        this.worksService.getGroupDetails(
+        this.getGroupDetails(
             putCode, 
             this.worksService.constants.access_type.USER
         );
     };
 
+    getDetails(putCode, type, callback): void {
+        console.log("get details");
+        if(this.worksService.details[putCode] == undefined) {
+             this.worksService.getDetails(putCode, type)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.worksService.removeBadContributors(data);
+                    this.worksService.removeBadExternalIdentifiers(data);
+                    this.worksService.addBibtexJson(data);
+                    this.worksService.details[putCode] = data;
+                    if (callback != undefined) {
+                        callback(this.worksService.details[putCode]);
+                    } 
+                    console.log("worksService details[]");
+                    console.log(this.worksService.details[putCode]);
+                },
+                error => {
+                    console.log('error getting work details', error);
+                } 
+            );
+        } else {
+            if (callback != undefined){
+                callback(this.worksService.details[putCode]);
+            }
+        };
+    }
+
+    getEditable(putCode, callback): void {
+        // first check if they are the current source
+        var work = this.getDetails(
+            putCode, this.worksService.constants.access_type.USER, 
+            function(data) {
+                if (data.source == orcidVar.orcidId){
+                    callback(data);
+                }
+                else{
+                    this.getGroupDetails(
+                        putCode, 
+                        this.worksService.constants.access_type.USER, 
+                        function () {
+                            // in this case we want to open their version
+                            // if they don't have a version yet then copy
+                            // the current one
+                            var bestMatch = null;
+                            for (var idx in this.worksService.details) {    
+                                if (this.worksService.details[idx].source == orcidVar.orcidId) {
+                                    bestMatch = this.worksService.details[idx];
+                                    break;
+                                }
+                            }
+                            if (bestMatch == null) {
+                                bestMatch = this.worksService.createNew(this.worksService.details[putCode]);
+                            }
+                            
+                            callback(bestMatch);
+                        }
+                    );
+                }
+            }
+        );
+    }
+
     getGroupDetails(putCode, type, callback?): void {
-        /*console.log("get group details");
-        let group = this.getGroup(putCode);
+        console.log("get group details");
+        let group = this.worksService.getGroup(putCode);
         let needsLoading =  new Array();
-        
         let popFunct = function () {
             if (needsLoading.length > 0) {
-                this.getDetails(needsLoading.pop(), type, popFunct);
+                this.getDetails(needsLoading.pop(), type, popFunct); 
             }
             else if (callback != undefined) {
                 callback();
             }
-        };
+        }.bind(this);
 
         for (var idx in group.works) {
             needsLoading.push(group.works[idx].putCode.value)
         }
 
-        popFunct();*/
+        popFunct();
     }
 
     loadMore(): void {
@@ -459,6 +546,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
+    };
+
+    openEditWork(putCode): void{
+        this.getEditable(putCode, function(data) {
+            this.addWorkModal(data);
+        }.bind(this));
     };
 
     openFileDialog(): void{
@@ -564,7 +657,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             
             numToSave = worksToSave.length;
             angular.forEach( worksToSave, function( work, key ) {
-                worksService.putWork(work,function(data) {
+                this.worksService.putWork(work,function(data) {
                     $timeout(function(){
                         var index = $scope.worksFromBibtex.indexOf(work);
                         $scope.worksFromBibtex.splice(index, 1);
@@ -648,26 +741,13 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showDetailsMouseClick = function(group, $event) {
         console.log("show details");
         $event.stopPropagation();
-        //this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
         //this.cdr.detectChanges();
         console.log(group);
         for (var idx in group.works){
             console.log("group works i");
             console.log(group.works[idx]);
-            //this.loadDetails(group.works[idx].putCode.value, $event);
-            this.worksService.getDetails(group.works[idx].putCode.value, this.worksService.constants.access_type.USER)
-            .pipe(    
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe(
-                data => {
-                    console.log(data);
-                },
-                error => {
-                    console.log('error getting work details', error);
-                } 
-            );
-
+            this.loadDetails(group.works[idx].putCode.value, $event);
         }
     };
 

@@ -542,36 +542,36 @@
                                     </div>
  
                                     <div class="more-info" *ngIf="moreInfo[group?.groupId] && group.activePutCode == work.putCode.value">
-                                        <div id="ajax-loader" *ngIf="workService.details[work.putCode.value] == undefined">
+                                        <div id="ajax-loader" *ngIf="worksService.details[work.putCode.value] == undefined">
                                             <span id="ajax-loader"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x4 green"></i></span>
                                         </div>
                                         
-                                        <div class="content" *ngIf="workService.details[work.putCode.value] != undefined">  
+                                        <div class="content" *ngIf="worksService.details[work.putCode.value] != undefined">  
                                             
                                             <span class="dotted-bar"></span>
                                             <div class="row">       
-                                                <div class="col-md-6" *ngIf="workService.details[work.putCode.value].translatedTitle.content" >
+                                                <div class="col-md-6" *ngIf="worksService.details[work.putCode.value].translatedTitle?.content" >
                                                     <div class="bottomBuffer">
                                                         <strong><@orcid.msg
-                                                            'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{workService.details[work.putCode.value].translatedTitle.languageName}})</i></span>
-                                                        <div>{{workService.details[work.putCode.value].translatedTitle.content}}</div>                
+                                                            'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksService.details[work.putCode.value].translatedTitle.languageName}})</i></span>
+                                                        <div>{{worksService.details[work.putCode.value].translatedTitle.content}}</div>                
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6" *ngIf="workService.details[work.putCode.value].languageCode.value" >
+                                                <div class="col-md-6" *ngIf="worksService.details[work.putCode.value].languageCode?.value" >
                                                     <div class="bottomBuffer">                  
                                                         <strong><@orcid.msg
                                                             'manual_work_form_contents.labellanguage'/></strong>
-                                                        <div>{{workService.details[work.putCode.value].languageName.value}}</div>                  
+                                                        <div>{{worksService.details[work.putCode.value].languageName.value}}</div>                  
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6" *ngIf="workService.details[work.putCode.value].subtitle.value" >
+                                                <div class="col-md-6" *ngIf="worksService.details[work.putCode.value].subtitle?.value" >
                                                     <div class="bottomBuffer">
                                                         <strong> <@orcid.msg 'manual_work_form_contents.labelsubtitle'/> </strong>
-                                                        <div>{{workService.details[work.putCode.value].subtitle.value}}</div>
+                                                        <div>{{worksService.details[work.putCode.value].subtitle.value}}</div>
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="col-md-6" *ngIf="workService.details[work.putCode.value].url.value" >
+                                                <div class="col-md-6" *ngIf="worksService.details[work.putCode.value].url?.value" >
 
                                                     <div class="bottomBuffer">
                                                         <strong>
@@ -579,21 +579,21 @@
                                                             'common.url'/>
                                                         </strong>
                                                         <div>
-                                                            <a href="{{workService.details[work.putCode.value].url.value | urlProtocol}}" target="url.value">{{workService.details[work.putCode.value].url.value}}</a>
+                                                            <a href="{{worksService.details[work.putCode.value].url.value | urlProtocol}}" target="url.value">{{worksService.details[work.putCode.value].url.value}}</a>
                                                         </div>              
                                                     </div>
                                                 </div>          
                                             </div>                  
-                                            <div class="row bottomBuffer" *ngIf="workService.details[work.putCode.value].citation.citation.value" >
+                                            <div class="row bottomBuffer" *ngIf="worksService.details[work.putCode.value].citation?.citation?.value" >
                                                 <div class="col-md-12">             
-                                                    <strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong> <span> (<span *ngIf="workService.details[work.putCode.value].citation.citationType.value" ><i>{{workService.details[work.putCode.value].citation.citationType.value}}</i></span>) 
+                                                    <strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong> <span> (<span *ngIf="worksService.details[work.putCode.value].citation?.citationType?.value" ><i>{{worksService.details[work.putCode.value].citation.citationType.value}}</i></span>) 
                                                     </span>
-                                                    <span *ngIf="showBibtex[work.putCode.value] && workService.details[work.putCode.value].citation.citationType.value == 'bibtex'">
+                                                    <span *ngIf="showBibtex[work.putCode.value] && worksService.details[work.putCode.value].citation?.citationType?.value == 'bibtex'">
                                                         <a class="toggle-tag-option" (click)="bibtexShowToggle(work.putCode.value)">
                                                             [<@orcid.msg 'work.switch_view'/>]
                                                         </a>
                                                     </span>
-                                                    <span *ngIf="(showBibtex[work.putCode.value] == null || showBibtex[work.putCode.value] == false) && workService.details[work.putCode.value].citation.citationType.value == 'bibtex'">
+                                                    <span *ngIf="(showBibtex[work.putCode.value] == null || showBibtex[work.putCode.value] == false) && worksService.details[work.putCode.value].citation?.citationType?.value == 'bibtex'">
                                                         <a class="toggle-tag-option" (click)="bibtexShowToggle(work.putCode.value)">
                                                             [<@orcid.msg 'work.switch_view'/>]
                                                         </a>
@@ -602,22 +602,22 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                 
-                                                    <div *ngIf="workService.details[work.putCode.value].citation.citationType.value != 'bibtex'">
+                                                    <div *ngIf="worksService.details[work.putCode.value].citation?.citationType?.value != 'bibtex'">
                                                         <span>
-                                                            {{workService.details[work.putCode.value].citation.citation.value}}
+                                                            {{worksService.details[work.putCode.value].citation.citation.value}}
                                                         </span>
                                                     </div>
                                                     
-                                                    <div *ngIf="(showBibtex[work.putCode.value] == null || showBibtex[work.putCode.value] == false) && workService.details[work.putCode.value].citation.citationType.value == 'bibtex'" 
-                                                         class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw">{{workService.details[work.putCode.value].citation.citation.value}}
+                                                    <div *ngIf="(showBibtex[work.putCode.value] == null || showBibtex[work.putCode.value] == false) && worksService.details[work.putCode.value].citation?.citationType?.value == 'bibtex'" 
+                                                         class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw">{{worksService.details[work.putCode.value].citation.citation.value}}
                                                     </div>
                                                                         
-                                                    <div class="row" *ngIf="showBibtex[work.putCode.value] && (workService.bibtexJson[work.putCode.value]==null || workService.bibtexJson[work.putCode.value].length==0)">
+                                                    <div class="row" *ngIf="showBibtex[work.putCode.value] && (worksService.bibtexJson[work.putCode.value]==null || worksService.bibtexJson[work.putCode.value].length==0)">
                                                         <div class="col-md-offset-1 col-md-6"><@orcid.msg 'work.unavailable_in_html'/></div>
                                                     </div>
                                                     
                                                     
-                                                    <div class="row" *ngFor='let bibJSON of workService.bibtexJson[work.putCode.value]; let index = index; let first = first; let last = last;'>    
+                                                    <div class="row" *ngFor='let bibJSON of worksService.bibtexJson[work.putCode.value]; let index = index; let first = first; let last = last;'>    
                                                         <div *ngIf="showBibtex[work.putCode.value]">
                                                             <div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{bibJSON.entryType}}</div>
                                                             <div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{bibJSON.citationKey}}</div>                               
@@ -633,36 +633,36 @@
                                                     </div>                      
                                                 </div>
                                             </div>
-                                            <div class="row bottomBuffer" *ngIf="workService.details[work.putCode.value].shortDescription.value"
+                                            <div class="row bottomBuffer" *ngIf="worksService.details[work.putCode.value].shortDescription?.value"
                                                 >
                                                 <div class="col-md-12">
                                                     <strong> <@orcid.msg
                                                         'manual_work_form_contents.labeldescription'/> </strong>
-                                                    <div style="white-space: pre-wrap;">{{workService.details[work.putCode.value].shortDescription.value}}</div>
+                                                    <div style="white-space: pre-wrap;">{{worksService.details[work.putCode.value].shortDescription.value}}</div>
                                                 </div>
                                             </div>
                                             
                                             <div class="row bottomBuffer">
-                                                <div class="col-md-6" *ngIf="workService.details[work.putCode.value].countryCode.value" >
+                                                <div class="col-md-6" *ngIf="worksService.details[work.putCode.value].countryCode?.value" >
               
                                                     <div class="bottomBuffer">
                                                         <strong><@orcid.msg
                                                             'manual_work_form_contents.labelcountry'/></strong>
-                                                        <div>{{workService.details[work.putCode.value].countryName.value}}</div>
+                                                        <div>{{worksService.details[work.putCode.value].countryName.value}}</div>
                                                     </div>
                                                 </div>          
-                                                <div class="col-md-6" *ngIf="workService.details[work.putCode.value].contributors.length > 0" >
+                                                <div class="col-md-6" *ngIf="worksService.details[work.putCode.value].contributors?.length > 0" >
                                                     <div class="bottomBuffer">          
                                                         <strong> Contributor </strong>
-                                                        <div *ngFor="let contributor of workService.details[work.putCode.value].contributors; let index = index; let first = first; let last = last;">
-                                                            {{contributor.creditName.value}} <span>{{contributor | contributorFilter}}</span>
+                                                        <div *ngFor="let contributor of worksService.details[work.putCode.value].contributors; let index = index; let first = first; let last = last;">
+                                                            {{contributor.creditName?.value}} <span>{{contributor | contributorFilter}}</span>
                                                         </div>
                                                     </div>                                      
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="bottomBuffer">
                                                         <strong><@orcid.msg 'groups.common.created'/></strong><br />
-                                                        <div>{{workService.details[work.putCode.value].createdDate | ajaxFormDateToISO8601}}</div>
+                                                        <div>{{worksService.details[work.putCode.value].createdDate | ajaxFormDateToISO8601}}</div>
                                                     </div>      
                                                 </div>
                                                 <div class="col-md-12">
@@ -676,11 +676,11 @@
                                     </div>
 
                                     <div class="row source-line" *ngIf="group.activePutCode == work.putCode.value">
+                                        <!--Edit sources-->
                                         <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
                                             {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                                         </div>
                                         <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
-
                                             <div *ngIf="editSources[group.groupId]">
                                                 <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultWork.putCode.value"></span><span *ngIf="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                                 
@@ -690,7 +690,6 @@
                                                 </a>
                                                 </#if>
                                             </div>
-
                                         </div>
                                         <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.groupId]">
                                             <div *ngIf="editSources[group.groupId]">
@@ -699,7 +698,6 @@
                                                     <#if RequestParameters['combine']??>
                                                     <li *ngIf="canBeCombined(work)">
                                                         <a class="glyphicons git_pull_request" (click)="showCombineMatches(group.defaultWork)" (mouseenter)="showTooltip(work.putCode.value+'-combineActiveDuplicates')" (mouseleave)="hideTooltip(work.putCode.value+'-combineActiveDuplicates')"></a>
-
                                                         <div class="popover popover-tooltip top combine-activeDuplicates-popover" *ngIf="showElement[work.putCode.value+'-combineActiveDuplicates']">
                                                             <div class="arrow"></div>
                                                             <div class="popover-content">
@@ -709,7 +707,6 @@
                                                     </li>
                                                     </#if>
                                                     <li> 
-                                                        
                                                         <@orcid.editWorkIconNg2
                                                             activity="work"
                                                             click="openEditWork(work.putCode.value)"
@@ -737,16 +734,15 @@
                                                 </ul>
                                                 </#if>
                                             </div>
-                                      </div>
+                                        </div>
+                                        <!--Edit sources-->
                                     </div>
-
                                     <div *ngIf="group.activePutCode != work.putCode.value" class="row source-line">
                                         <div class="col-md-7 col-sm-7 col-xs-12">
                                             <a (click)="group.activePutCode = work.putCode.value;showMozillaBadges(group.activePutCode);">                                
                                                 {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                                             </a>
-                                        </div>
-                                        
+                                        </div>                                        
                                         <div class="col-md-3 col-sm-3 col-xs-10">
                                             <#if !(isPublicProfile??)>
                                             <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultWork.putCode.value"></span><span *ngIf="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
@@ -794,9 +790,7 @@
                                             </#if>
                                         </div>
                                     </div> 
-
-                                    <div class="row source-line" *ngIf="editSources[group.groupId] == false">                        
-                                        
+                                    <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
                                         <div class="col-md-7 col-sm-7 col-xs-12">
                                             <@orcid.msg 'groups.common.source'/>: {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                                         </div>
@@ -839,7 +833,7 @@
                                                     />
                                                 </li>
 
-                                                <li *ngIf="!(editSources[group.groupId] == true || group?.works?.length == 1)">
+                                                <li *ngIf="!(editSources[group.groupId] || group?.works?.length == 1)">
                                                     <a (click)="showSources(group)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </a>
@@ -866,7 +860,6 @@
                                             </ul>
                                         </div>
                                     </div>
-
                                 </div>
                             </li>
                             <!--End work info-->
