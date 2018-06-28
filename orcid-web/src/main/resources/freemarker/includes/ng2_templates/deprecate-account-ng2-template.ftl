@@ -41,15 +41,32 @@
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">       
             <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>     
-            <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
-            <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
-            <a href="${baseUri}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">${baseUri}/<span [innerHtml]="deprecateProfilePojo.deprecatingOrcid"></span></a><br />
-            <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.deprecatingAccountName"></span><br />
-            <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li *ngFor="let email of deprecateProfilePojo.deprecatingEmails" [innerHtml]="email"></li></ul><br /><br />
-            <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
-            <a href="${baseUri}/{{deprecateProfilePojo.primaryOrcid}}" target="primaryOrcid">${baseUri}/<span [innerHtml]="deprecateProfilePojo.primaryOrcid"></a></span><br />
-            <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.primaryAccountName"></span><br />
-            <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li *ngFor="let email of deprecateProfilePojo.primaryEmails" [innerHtml]="email" ></li></ul><br /><br />
+            <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' />
+                <br />
+                <strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong>
+            </span>
+            <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong>
+            <br />
+            <a href="${baseUri}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">${baseUri}/<span [innerHtml]="deprecateProfilePojo.deprecatingOrcid"></span></a>
+            <br />
+            <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.deprecatingAccountName"></span>
+            <br />
+            <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span>
+            <ul class="inline comma">
+                <li *ngFor="let email of deprecateProfilePojo.deprecatingEmails" [innerHtml]="email"></li>
+            </ul>
+            <br /><br />
+            <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong>
+            <br />
+            <a href="${baseUri}/{{deprecateProfilePojo.primaryOrcid}}" target="primaryOrcid">${baseUri}/<span [innerHtml]="deprecateProfilePojo.primaryOrcid"></span></a>
+            <br />
+            <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.primaryAccountName"></span>
+            <br />
+            <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span>
+            <ul class="inline comma">
+                <li *ngFor="let email of deprecateProfilePojo.primaryEmails" [innerHtml]="email" ></li>
+            </ul>
+            <br /><br />
         </div>          
     </div>
     <div class="row">
@@ -66,15 +83,31 @@
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">       
             <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2> 
-            <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
-            <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
-            ${baseUriHttp}/<span [innerHtml]="deprecateProfilePojo.deprecatingOrcid"></span><br />
-            <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.deprecatingAccountName"></span><br />
-            <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li *ngFor="let email of deprecateProfilePojo.deprecatingEmails" [innerHtml]="email"></li></ul><br /><br />
-            <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
-            ${baseUriHttp}/<span [innerHtml]="deprecateProfilePojo.primaryOrcid"></span><br />
-            <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.primaryAccountName"></span><br />
-            <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li *ngFor="let email of deprecateProfilePojo.primaryEmails" [innerHtml]="email" ></li></ul><br /><br />
+            <span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' />
+                <br />
+                <strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
+            <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong>
+            <br />
+            ${baseUriHttp}/<span [innerHtml]="deprecateProfilePojo.deprecatingOrcid"></span>
+            <br />
+            <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.deprecatingAccountName"></span>
+            <br />
+            <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span>
+            <ul class="inline comma">
+                <li *ngFor="let email of deprecateProfilePojo.deprecatingEmails" [innerHtml]="email"></li>
+            </ul>
+            <br /><br />
+            <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong>
+            <br />
+            ${baseUriHttp}/<span [innerHtml]="deprecateProfilePojo.primaryOrcid"></span>
+            <br />
+            <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.primaryAccountName"></span>
+            <br />
+            <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span>
+            <ul class="inline comma">
+                <li *ngFor="let email of deprecateProfilePojo.primaryEmails" [innerHtml]="email" ></li>
+            </ul>
+            <br /><br />
         </div>          
     </div>
     <div class="row">
