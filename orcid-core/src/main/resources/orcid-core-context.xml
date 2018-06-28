@@ -1064,7 +1064,7 @@
 	<bean id="profileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="profile" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.profileCache.maxMegaBytesInMemory:128}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
 		<property name="maxMegaBytesOnDisk" value="0" />
 	</bean>
