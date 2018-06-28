@@ -1064,7 +1064,7 @@
 	<bean id="profileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="profile" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxMegaBytesInMemory" value="${org.orcid.core.profileCache.maxMegaBytesInMemory:128}" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.profileCache.maxMegaBytesInMemory:1024}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
 		<property name="maxMegaBytesOnDisk" value="0" />
 	</bean>
@@ -1098,7 +1098,7 @@
 		<property name="cacheManager" ref="coreCacheManager" />
 		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:5000}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:3600}" />
-		<property name="maxMegaBytesOnDisk" value="128" />
+		<property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
 	</bean>		
 	
@@ -1131,7 +1131,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="2000" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
     </bean>
     
@@ -1140,7 +1140,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="2000" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
     </bean>
 
