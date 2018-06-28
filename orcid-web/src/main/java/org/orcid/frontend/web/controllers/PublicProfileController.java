@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.ActivitiesSummaryManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.AddressManager;
+import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.ExternalIdentifierManager;
@@ -51,6 +53,7 @@ import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.record.Address;
 import org.orcid.jaxb.model.v3.rc1.record.Addresses;
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc1.record.Biography;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.jaxb.model.v3.rc1.record.Emails;
@@ -67,10 +70,14 @@ import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
+import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
@@ -153,6 +160,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "activitiesSummaryManagerV3")
     private ActivitiesSummaryManager activitiesSummaryManager;
+    
+    @Resource(name = "affiliationsManagerV3")
+    private AffiliationsManager affiliationsManager;
 
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -716,6 +726,25 @@ public class PublicProfileController extends BaseWorkspaceController {
         if(!Visibility.PUBLIC.equals(v)) {
             throw new IllegalArgumentException("Invalid request");
         }
+    }
+    
+    @RequestMapping(value = "/affiliationGroups", method = RequestMethod.GET)
+    public @ResponseBody AffiliationGroupContainer getGroupedAffiliations() {
+        String orcid = getCurrentUserOrcid();        
+        AffiliationGroupContainer result = new AffiliationGroupContainer();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, true);        
+        for(AffiliationType type : AffiliationType.values()) {
+            if(affiliationsMap.containsKey(type)) {
+                List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
+                List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
+                IntStream.range(0, elementsList.size()).forEach(idx -> {                
+                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
+                    elementsFormList.add(groupForm);
+                });
+                result.getAffiliationGroups().put(type, elementsFormList);
+            }
+        }        
+        return result;
     }
 }
 

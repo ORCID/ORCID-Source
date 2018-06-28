@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 
-public class AffiliationFormTest extends AffiliationFormBase {
+public class AffiliationFormTest extends AffiliationFormTestBase {
 
     @Test
     public void equalsTest() {

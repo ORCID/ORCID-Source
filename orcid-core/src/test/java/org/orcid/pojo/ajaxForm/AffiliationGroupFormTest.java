@@ -21,7 +21,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.utils.DateUtils;
 
-public class AffiliationGroupFormTest extends AffiliationFormBase {
+public class AffiliationGroupFormTest extends AffiliationFormTestBase {
 
     XMLGregorianCalendar created;
     XMLGregorianCalendar lastModified;

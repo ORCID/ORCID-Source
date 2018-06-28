@@ -1273,6 +1273,15 @@
         <property name="maxMegaBytesOnDisk" value="256" />
     </bean>
     
+    <bean id="affiliationGroupsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="affiliations-group" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="2000" />
+        <property name="timeToIdleSeconds" value="7200" />
+        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="copyValues" value="false" />
+    </bean>
+    
 	<!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"
 		factory-method="getSocketFactory" />
