@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 public class ArxivNormalizer implements NormalizerWithURLTransform {
 
     private static final List<String> canHandle = Lists.newArrayList("arxiv");
-    private static final Pattern pattern = Pattern.compile("(?:(?i)arXiv:)?(\\d{4}\\.\\d{4}v?\\d?|[\\w-\\.]+\\/\\d{7}v?\\d?)");
+    private static final Pattern pattern = Pattern.compile("(?:(?i)arXiv:)?(\\d{4}\\.\\d{4}v?\\d?|[\\w-\\.]+\\/\\d{7}v?\\d?)\\b");
     
     @Override
     public List<String> canHandle() {
