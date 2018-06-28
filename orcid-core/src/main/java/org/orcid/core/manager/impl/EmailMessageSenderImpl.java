@@ -360,7 +360,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                if(n.getRetryCount() == null || n.getRetryCount() >= MAX_RETRY_COUNT) {
+                if(n.getRetryCount() != null && n.getRetryCount() >= MAX_RETRY_COUNT) {
                     notificationDao.flagAsNonSendable(orcid, n.getId());
                 } else {
                     if(n.getRetryCount() == null) {
