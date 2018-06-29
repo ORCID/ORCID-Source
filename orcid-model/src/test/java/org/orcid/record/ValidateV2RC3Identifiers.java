@@ -38,15 +38,11 @@ import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.Work;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class ValidateV2RC3Identifiers {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2RC3Identifiers.class);
 
     String[] sampleNames = { "funding", "person", "record", "work", "peer-review","activities" };
 
