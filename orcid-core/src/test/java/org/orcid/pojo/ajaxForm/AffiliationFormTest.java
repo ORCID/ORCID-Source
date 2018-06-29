@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.junit.Test;
 import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc1.common.Day;
@@ -29,7 +27,6 @@ import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
-import org.orcid.utils.DateUtils;
 
 public class AffiliationFormTest extends AffiliationFormTestBase {    
     
@@ -101,6 +98,7 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
     
     protected Affiliation getAffiliation() {
         Affiliation aff = new Distinction();
+        aff.setDisplayIndex("0");
         aff.setUrl(new Url("https://test.orcid.org"));
         aff.setCreatedDate(new CreatedDate(created));
         aff.setLastModifiedDate(new LastModifiedDate(lastModified));
@@ -109,8 +107,6 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
         
         aff.setDepartmentName("department-name");
         aff.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));
-        aff.setDisplayIndex("0");
-        
         aff.setRoleTitle("role-title");
         
         aff.setStartDate(new FuzzyDate(new Year(2019), new Month(12), new Day(31)));

@@ -487,7 +487,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         return affiliationForm;
     }
     
-    @RequestMapping(value = "/affiliationGroups", method = RequestMethod.GET)
+    @RequestMapping(value = "/affiliationGroups.json", method = RequestMethod.GET)
     public @ResponseBody AffiliationGroupContainer getGroupedAffiliations() {
         String orcid = getCurrentUserOrcid();        
         AffiliationGroupContainer result = new AffiliationGroupContainer();

@@ -728,7 +728,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
     }
     
-    @RequestMapping(value = "/affiliationGroups", method = RequestMethod.GET)
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)
     public @ResponseBody AffiliationGroupContainer getGroupedAffiliations() {
         String orcid = getCurrentUserOrcid();        
         AffiliationGroupContainer result = new AffiliationGroupContainer();
