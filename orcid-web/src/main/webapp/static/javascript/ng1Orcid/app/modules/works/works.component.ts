@@ -166,7 +166,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                console.log('open add aff modal');
                 if( this.emailService.getEmailPrimary().verified ){
                     this.worksService.notifyOther({ work:work });
                     if(work == undefined) {
@@ -873,9 +872,35 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-        this.subscription = this.worksService.notifyObservable$.subscribe(
+        /*this.subscription = this.worksService.notifyObservable$.subscribe(
             (res) => {
                 this.loadMore();
+            }
+        );*/
+        this.subscription = this.worksService.notifyObservable$.subscribe(
+            (res) => {                
+                if(res.action == 'delete') {
+                    /*if(res.deleteAffiliationObj.affiliationType != null && res.deleteAffiliationObj.affiliationType.value != null) {
+                        if(res.deleteAffiliationObj.affiliationType.value == 'distinction' || res.deleteAffiliationObj.affiliationType.value == 'invited-position') {
+                            this.removeFromArray(this.distinctionsAndInvitedPositions, res.deleteAffiliationObj.putCode.value);
+                        } else if (res.deleteAffiliationObj.affiliationType.value == 'education' || res.deleteAffiliationObj.affiliationType.value == 'qualification'){
+                            this.removeFromArray(this.educationsAndQualifications, res.deleteAffiliationObj.putCode.value);
+                            if(res.deleteAffiliationObj.affiliationType.value == 'education') {
+                                this.removeFromArray(this.educations, res.deleteAffiliationObj.putCode.value);
+                            }                            
+                        } else if (res.deleteAffiliationObj.affiliationType.value == 'employment'){
+                            this.removeFromArray(this.employments, res.deleteAffiliationObj.putCode.value);                            
+                        } else if(res.deleteAffiliationObj.affiliationType.value == 'membership' || res.deleteAffiliationObj.affiliationType.value == 'service') {
+                            this.removeFromArray(this.membershipsAndServices, res.deleteAffiliationObj.putCode.value);                            
+                        } 
+                    } */ 
+                } else if(res.action == 'add') {
+                    if(res.successful == true) {
+                        console.log("Fetching works data");
+                        this.worksService.resetWorkGroups();
+                        this.loadMore();
+                    }
+                }                
             }
         );
     };

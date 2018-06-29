@@ -2937,7 +2937,7 @@ input.error {
     text-align: justify
 }
 
-#translatedTitle,.new-search-result {
+.new-search-result {
     display: none
 }
 

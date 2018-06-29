@@ -545,7 +545,7 @@ export class WorksService {
         );
     }
 
-    putWork(work, sucessFunc, failFunc): any {
+    postWork(work): any {
         let encoded_data = JSON.stringify(work);
         return this.http.post( 
             getBaseUri() + '/works/work.json', 
@@ -645,6 +645,7 @@ export class WorksService {
     }
      
     notifyOther(data: any): void {
+        console.log(data);
         if (data) {
             this.notify.next(data);
         }

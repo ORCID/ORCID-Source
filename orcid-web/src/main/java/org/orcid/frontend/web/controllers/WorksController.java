@@ -33,6 +33,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -255,6 +256,54 @@ public class WorksController extends BaseWorkspaceController {
                 if (workForm.getPublicationDate().getYear() == null) {
                     workForm.getPublicationDate().setYear(new String());
                 }
+            }
+            
+            if (workForm.getShortDescription() == null) {
+                workForm.setShortDescription(new Text());
+            }
+            
+            if (workForm.getUrl() == null) {
+                workForm.setUrl(new Text());
+            }
+            
+            if (workForm.getJournalTitle() == null) {
+                workForm.setJournalTitle(new Text());
+            }
+            
+            if (workForm.getLanguageCode() == null) {
+                workForm.setLanguageCode(new Text());
+            }
+            
+            if (workForm.getLanguageCode() == null) {
+                workForm.setLanguageCode(new Text());
+            }
+            
+            if (workForm.getLanguageName() == null) {
+                workForm.setLanguageName(new Text());
+            }
+            
+            if (workForm.getCitation() == null) {
+                workForm.setCitation(new Citation());
+            }
+            
+            if (workForm.getSubtitle() == null) {
+                workForm.setSubtitle(new Text());
+            }
+            
+            if (workForm.getTranslatedTitle() == null) {
+                workForm.setTranslatedTitle(new TranslatedTitleForm());
+            }
+            
+            if (workForm.getCountryCode() == null) {
+                workForm.setCountryCode(new Text());
+            }
+            
+            if (workForm.getCountryName() == null) {
+                workForm.setCountryName(new Text());
+            }
+            
+            if (workForm.getJournalTitle() == null) {
+                workForm.setJournalTitle(new Text());
             }
 
             // Set country name

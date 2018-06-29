@@ -403,7 +403,7 @@
 
 
 <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
-<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
+<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="820">
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
