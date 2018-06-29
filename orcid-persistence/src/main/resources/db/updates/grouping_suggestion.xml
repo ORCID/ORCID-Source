@@ -1,0 +1,34 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="INSTALL-GROUPING-SUGGESTION-TABLE" author="George Nash">
+         <createTable tableName="grouping_suggestion">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="grouping_suggestion_pkey" />
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="dismissed_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="accepted_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false" />
+            </column>
+            <column name="work_put_codes_json" type="text" />     
+        </createTable>           
+        <createSequence sequenceName="grouping_suggestion_seq"/>
+    </changeSet>
+    
+    <changeSet id="ADD-GROUPING-SUGGESTION-INDEX" author="George Nash">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="grouping_suggestion_orcid_idx" tableName="grouping_suggestion" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX grouping_suggestion_orcid_idx on grouping_suggestion (orcid);</sql>
+    </changeSet>    
+    <changeSet id="CHANGE-GROUPING-SUGGESTION-WORK-PUT-CODES-JSON-TYPE-TO-JSON" author="George Nash" dbms="postgresql">        
+        <sql>ALTER TABLE grouping_suggestion ALTER COLUMN work_put_codes_json TYPE json USING work_put_codes_json::JSON</sql>
+    </changeSet>
+</databaseChangeLog>                   

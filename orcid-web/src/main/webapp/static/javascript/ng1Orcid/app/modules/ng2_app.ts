@@ -41,14 +41,11 @@ import { AffiliationDeleteNg2Module }
 import { AffiliationFormNg2Module } 
     from './affiliation/affiliationForm.ts';
 
-import { AlsoKnownAsNg2Module } 
-    from './alsoKnownAs/alsoKnownAs.ts';
-
 import { AlertBannerNg2Module } 
     from './alertBanner/alertBanner.ts';
 
-import { AlsoKnownAsFormNg2Module } 
-    from './alsoKnownAsForm/alsoKnownAsForm.ts';
+import { AllConsortiumContactsNg2Module } 
+    from './allConsortiumContacts/allConsortiumContacts.ts';
 
 import { BiographyNg2Module } 
     from './biography/biography.ts';
@@ -59,17 +56,14 @@ import { ClaimThanksNg2Module }
 import { ClientEditNg2Module } 
     from './clientEdit/clientEdit.ts';
 
-import { CountryNg2Module } 
-    from './country/country.ts';
-
-import { CountryFormNg2Module } 
-    from './countryForm/countryForm.ts';
-
 import { DeactivateAccountNg2Module }
     from './deactivateAccount/deactivateAccount.ts';
 
 import { DeactivateAccountMessageNg2Module }
     from './deactivateAccount/deactivateAccountMessage.ts';
+
+import { DeprecateAccountModalNg2Module }
+    from './deprecateAccount/deprecateAccount.ts';
 
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
@@ -98,12 +92,6 @@ import { FundingFormNg2Module }
 import { HomeNg2Module } 
     from './home/home.ts';
 
-import { KeywordsNg2Module } 
-    from './keywords/keywords.ts';
-
-import { KeywordsFormNg2Module } 
-    from './keywordsForm/keywordsForm.ts';
-
 import { HeaderNg2Module } 
     from './header/header.ts';
 
@@ -124,6 +112,9 @@ import { NotificationsNg2Module }
 
 import { PasswordEditNg2Module } 
     from './passwordEdit/passwordEdit.ts';
+
+import { PersonNg2Module } 
+    from './person/person.ts';
 
 import { PersonalInfoNg2Module } 
     from './personalInfo/personalInfo.ts';
@@ -193,12 +184,6 @@ import { TwoFAStateNg2Module }
 
 import { VerifyEmailNg2Module }
     from './verifyEmail/verifyEmail.ts';
-
-import { WebsitesNg2Module } 
-    from './websites/websites.ts';
-
-import { WebsitesFormNg2Module } 
-    from './websitesForm/websitesForm.ts';
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
@@ -314,15 +299,13 @@ export class RootCmp {
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
         AlertBannerNg2Module,
-        AlsoKnownAsFormNg2Module,
-        AlsoKnownAsNg2Module,
+        AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
         ClaimThanksNg2Module,
         ClientEditNg2Module,
-        CountryFormNg2Module,//Approved
-        CountryNg2Module,//Approved
         DeactivateAccountNg2Module,
         DeactivateAccountMessageNg2Module,
+        DeprecateAccountModalNg2Module,
         DeprecateAccountNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
@@ -333,14 +316,13 @@ export class RootCmp {
         FundingFormNg2Module,
         FundingNg2Module,
         HomeNg2Module,
-        KeywordsFormNg2Module,//Approved
-        KeywordsNg2Module,//Approved
         LanguageNg2Module,
         LinkAccountNg2Module,
         ModalNg2Module, //Approved
         NameNg2Module, //Approved
         NotificationsNg2Module,
         PasswordEditNg2Module,
+        PersonNg2Module,
         PersonalInfoNg2Module,
         PublicEduAffiliationNg2Module,
         SecurityQuestionEditNg2Module,
@@ -364,8 +346,6 @@ export class RootCmp {
         TwoFAStateNg2Module,
         TwoFASetupNg2Module,
         VerifyEmailNg2Module,
-        WebsitesFormNg2Module, //Approved
-        WebsitesNg2Module, //Approved
         WidgetNg2Module, //Approved
         WorksFormNg2Module,
         WorksNg2Module,

@@ -11,8 +11,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.helper.Utils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,7 +32,9 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.helper.Utils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -144,4 +145,25 @@ public class MemberV2ApiServiceDelegator_GroupIdTest extends DBUnitTest {
             fail("There are more group ids than the expected, we are expecting between 3 and 5, total: " + total);
         }
     }
+    
+    @Test
+    public void testFindGroupIdByName() {
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        Response response = serviceDelegator.findGroupIdRecordByName("TestGroup1");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecord);
+        assertEquals("TestGroup1", groupIdRecord.getName());
+    }
+    
+    @Test
+    public void testFindGroupIdByGroupId() {
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        Response response = serviceDelegator.findGroupIdRecordByGroupId("issn:0000001");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecord);
+        assertEquals("issn:0000001", groupIdRecord.getGroupId());
+    }
+    
 }

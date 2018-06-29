@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+    <changeSet id="CREATE-DNB-IDENTIFIER" author="Tom Demeranville">
+    	<preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="identifier_type"/>
+                <sqlCheck expectedResult="0">select count(*) from identifier_type where id_name='DNB';</sqlCheck>
+            </and>
+        </preConditions>
+		    <insert tableName="identifier_type">
+			<column name="id" value="42"/>
+            <column name="id_name" value="DNB"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+            <column name="id_resolution_prefix" value="https://d-nb.info/"/>
+        </insert>
+    </changeSet>
+    
+</databaseChangeLog>

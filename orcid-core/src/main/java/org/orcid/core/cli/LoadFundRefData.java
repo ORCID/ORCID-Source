@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
@@ -319,11 +320,32 @@ public class LoadFundRefData {
             return cache.get("geoname_json_" + geoNameId);
         } else {
             Client c = Client.create();
-            WebResource r = c.resource(geonamesApiUrl);
             MultivaluedMap<String, String> params = new MultivaluedMapImpl();
             params.add("geonameId", geoNameId);
             params.add("username", apiUser);
-            result = r.queryParams(params).get(String.class);
+            WebResource r = c.resource(geonamesApiUrl).queryParams(params);
+            ClientResponse response = r.get(ClientResponse.class);
+            int status = response.getStatus();
+            if (status == 200) {
+                result = response.getEntity(String.class);
+            } else {
+                LOGGER.warn("Got error status from geonames: {}", status);
+                try {
+                    LOGGER.info("Waiting before retrying geonames...");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                ClientResponse retryResponse = r.get(ClientResponse.class);
+                int retryStatus = retryResponse.getStatus();
+                if (retryStatus == 200) {
+                    result = retryResponse.getEntity(String.class);
+                } else {
+                    String message = "Geonames failed after retry with status: " + retryStatus;
+                    LOGGER.error(message);
+                    throw new RuntimeException(message);
+                }
+            }
             cache.put("geoname_json_" + geoNameId, result);
         }
         return result;

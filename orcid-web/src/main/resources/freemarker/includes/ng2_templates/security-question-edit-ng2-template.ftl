@@ -7,14 +7,12 @@
             <label for="changeSecurityQuestionForm.securityQuestionAnswer"
                 class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>                                    
             <div class="relative" >
-                <!-- ng-init="securityQuestions = [<#list securityQuestions?keys as key>'${securityQuestions[key]?js_string}',</#list>]"-->
                 {{initSecurityQuestion([<#list securityQuestions?keys as key>'${securityQuestions[key]?js_string}',</#list>''])}}
 
                 <select id="securityQuestionId" name="securityQuestionId"
                     class="input-xlarge"
                     [(ngModel)]="securityQuestionPojo.securityQuestionId">
                     >
-                        <!-- ng-options="securityQuestions.indexOf(securityOption) as securityOption for securityOption in securityQuestions" -->
 
                         <option *ngFor="let securityOption of securityQuestions; let i = index" value="{{i}}">{{securityOption}}</option>                                    
 

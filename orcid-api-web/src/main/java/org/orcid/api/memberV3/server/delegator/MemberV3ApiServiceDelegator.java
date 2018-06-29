@@ -152,6 +152,8 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
     Response viewClient(String clientId);
 
     Response findGroupIdRecordByName(String name);
+    
+    Response findGroupIdRecordByGroupId(String groupId);
 
     Response viewBulkWorks(String orcid, String putCodes);
 
@@ -216,4 +218,5 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
     Response updateResearchResource(String orcid, Long putCode, ResearchResource researchResource);
 
     Response deleteResearchResource(String orcid, Long putCode);
+
 }
