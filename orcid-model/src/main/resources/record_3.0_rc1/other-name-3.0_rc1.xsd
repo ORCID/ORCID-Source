@@ -10,7 +10,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -37,11 +37,7 @@
 	<xs:element name="other-names">
 		<xs:complexType>
 			<xs:annotation>
-				<xs:documentation>(Optional) Container that includes other name(s)
-					that the researcher or contributor may be known by. (see element
-					for more details.) The visibility attribute (private, limited or
-					public) can be set at record creation, and indicates who can see
-					this section of information.
+				<xs:documentation>Container for other names.
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
@@ -55,8 +51,7 @@
 
 	<xs:element name="other-name">
 		<xs:annotation>
-			<xs:documentation>(Optional) Other name(s)
-				that the researcher or contributor may be known by.
+			<xs:documentation>Other name(s) that the researcher is or was known by. Max length is 255 characters
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -67,17 +62,12 @@
 	</xs:element>
 
 	<xs:complexType name="other-name">
-		<xs:annotation>
-			<xs:documentation>The display name and URL for one of the researcher
-				or contributor's sites.
-			</xs:documentation>
-		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="common:element-summary">
 				<xs:sequence>
 					<xs:element minOccurs="1" name="content" type="common:string-255">
 						<xs:annotation>
-							<xs:documentation>A short display name describing the URL.
+							<xs:documentation>A name for the researcher.
 							</xs:documentation>
 						</xs:annotation>
 					</xs:element>			

@@ -10,7 +10,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -37,14 +37,10 @@
 
 	<xs:element name="qualification" type="common:affiliation">
 		<xs:annotation>
-			<xs:documentation>A service associated with the researcher or
-				contributor.
-				* The visibility attribute (private, limited or public)
-				can be set at record creation, and indicates who can see this
-				section of information.
-				* The put-code attribute is used only when
-				reading this element. When updating the item, the put-code attribute
-				must be included to indicate the specific record to be updated.
+			<xs:documentation>A qualification associated with the researcher or contributor.
+				Qualification is defined as Professional or vocational accreditation, certification or training undertaken by an individual. May be designated as in progress or unfinished.
+				* The put-code attribute is returned when reading this element. 
+				When updating the item, the put-code attribute must be included to indicate the specific item to be updated.
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>

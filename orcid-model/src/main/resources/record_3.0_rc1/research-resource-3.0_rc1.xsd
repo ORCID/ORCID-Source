@@ -10,7 +10,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -38,7 +38,7 @@
 
 	<xs:element name="research-resource">
 		<xs:annotation>
-			<xs:documentation>research-resource utilized by the researcher or contributor.
+			<xs:documentation>research-resource utilized by the researcher.
 				* The put-code attribute is used only when reading this element. When
 				updating the item, the put-code attribut must be included to
 				indicate the specific record to be updated.
@@ -95,7 +95,7 @@
 	
 	<xs:complexType name="resource-item">
 		<xs:annotation>
-			<xs:documentation>Actual resources used.
+			<xs:documentation>Actual resources used
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
@@ -109,7 +109,7 @@
 	
 	<xs:complexType name="hosts">
 		<xs:annotation>
-			<xs:documentation>Container for multiple organisations
+			<xs:documentation>Container for host and proposal organisations
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
@@ -119,7 +119,15 @@
 
 	<xs:simpleType name="resource-type">
 		<xs:annotation>
-			<xs:documentation>Types of research-resources
+			<xs:documentation>Types of research-resources. Options are:
+    * Collection: An object or group of objects used for research purposes; can be tangible or digital. Examples include ocean mission, field campaign, data sets, rare book collections, museum collections, biological specimen collections
+
+    * Equipment: Hardware used for research purposes. Examples include microscopes, telescopes, computers, glassware, samples, materials
+
+    * Infrastructure: A facility, building, or other physical space used to perform research. Examples incldue a neutron spallation source, animal facility, data enclave, archaeological site, telescope array, ship, plane, farm, laboratory
+
+    * Service: Services used for research purposes. Examples include data analysis, computing services, logistical support, legal services, copyediting, expert or staff advisement.
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
@@ -140,7 +148,4 @@
 			<xs:element ref="common:translated-title" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
-
-
-
 </xs:schema>
