@@ -97,24 +97,24 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
     }
     
     protected Affiliation getAffiliation() {
-        Affiliation aff = new Distinction();
-        aff.setDisplayIndex("0");
-        aff.setUrl(new Url("https://test.orcid.org"));
-        aff.setCreatedDate(new CreatedDate(created));
-        aff.setLastModifiedDate(new LastModifiedDate(lastModified));
-        aff.setPutCode(1L);
-        aff.setPath("/distinction/1");
+        Affiliation affiliation = new Distinction();
+        affiliation.setDisplayIndex("0");
+        affiliation.setUrl(new Url("https://test.orcid.org"));
+        affiliation.setCreatedDate(new CreatedDate(created));
+        affiliation.setLastModifiedDate(new LastModifiedDate(lastModified));
+        affiliation.setPutCode(1L);
+        affiliation.setPath("/distinction/1");
         
-        aff.setDepartmentName("department-name");
-        aff.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));
-        aff.setRoleTitle("role-title");
+        affiliation.setDepartmentName("department-name");
+        affiliation.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));
+        affiliation.setRoleTitle("role-title");
         
-        aff.setStartDate(new FuzzyDate(new Year(2019), new Month(12), new Day(31)));
-        aff.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PRIVATE);
+        affiliation.setStartDate(new FuzzyDate(new Year(2019), new Month(12), new Day(31)));
+        affiliation.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PRIVATE);
         
         Source source = new Source();
         source.setSourceOrcid(new SourceOrcid("0000-0000-0000-0000"));
-        aff.setSource(source);
+        affiliation.setSource(source);
         
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -132,7 +132,7 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
         extIds.getExternalIdentifier().add(e1);
         extIds.getExternalIdentifier().add(e2);
         
-        aff.setExternalIDs(extIds);
+        affiliation.setExternalIDs(extIds);
         
         OrganizationAddress address = new OrganizationAddress();
         address.setCity("city");
@@ -142,29 +142,29 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
         org.setAddress(address);
         org.setName("org-1");
         
-        aff.setOrganization(org);
-        return aff;
+        affiliation.setOrganization(org);
+        return affiliation;
     }
     
     protected AffiliationSummary getAffiliationSummary() {
-        AffiliationSummary aff = new DistinctionSummary();
-        aff.setCreatedDate(new CreatedDate(created));
-        aff.setLastModifiedDate(new LastModifiedDate(lastModified));
-        aff.setPutCode(1L);
-        aff.setPath("/distinction/1");
+        AffiliationSummary affiliationSummary = new DistinctionSummary();
+        affiliationSummary.setCreatedDate(new CreatedDate(created));
+        affiliationSummary.setLastModifiedDate(new LastModifiedDate(lastModified));
+        affiliationSummary.setPutCode(1L);
+        affiliationSummary.setPath("/distinction/1");
         
-        aff.setDepartmentName("department-name");
-        aff.setDisplayIndex("0");
-        aff.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));
+        affiliationSummary.setDepartmentName("department-name");
+        affiliationSummary.setDisplayIndex("0");
+        affiliationSummary.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));
         
-        aff.setRoleTitle("role-title");
+        affiliationSummary.setRoleTitle("role-title");
         
-        aff.setStartDate(new FuzzyDate(new Year(2019), new Month(12), new Day(31)));
-        aff.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PRIVATE);
+        affiliationSummary.setStartDate(new FuzzyDate(new Year(2019), new Month(12), new Day(31)));
+        affiliationSummary.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.PRIVATE);
         
         Source source = new Source();
         source.setSourceOrcid(new SourceOrcid("0000-0000-0000-0000"));
-        aff.setSource(source);
+        affiliationSummary.setSource(source);
         
         ExternalID e1 = new ExternalID();
         e1.setRelationship(Relationship.SELF);
@@ -182,7 +182,7 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
         extIds.getExternalIdentifier().add(e1);
         extIds.getExternalIdentifier().add(e2);
         
-        aff.setExternalIDs(extIds);
+        affiliationSummary.setExternalIDs(extIds);
         
         OrganizationAddress address = new OrganizationAddress();
         address.setCity("city");
@@ -192,9 +192,9 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
         org.setAddress(address);
         org.setName("org-1");
         
-        aff.setOrganization(org);
+        affiliationSummary.setOrganization(org);
         
-        return aff;
+        return affiliationSummary;
     }
     
     @Test
