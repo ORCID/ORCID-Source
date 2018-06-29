@@ -49,32 +49,32 @@ public class ActivitiesSummaryManagerTest extends DBUnitTest {
         assertNotNull(summary);
         assertNotNull(summary.getDistinctions());
         assertNotNull(summary.getDistinctions().retrieveGroups());
-        assertEquals(4, summary.getDistinctions().retrieveGroups().size());
+        assertEquals("Distinctions failed", 4, summary.getDistinctions().retrieveGroups().size());
         
         assertNotNull(summary);
         assertNotNull(summary.getEducations());
         assertNotNull(summary.getEducations().retrieveGroups());
-        assertEquals(4, summary.getEducations().retrieveGroups().size());        
+        assertEquals("Educations failed", 4, summary.getEducations().retrieveGroups().size());        
         
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().retrieveGroups());
-        assertEquals(4, summary.getEmployments().retrieveGroups().size());
+        assertEquals("Employments failed", 4, summary.getEmployments().retrieveGroups().size());
         
         assertNotNull(summary.getInvitedPositions());
         assertNotNull(summary.getInvitedPositions().retrieveGroups());
-        assertEquals(4, summary.getInvitedPositions().retrieveGroups().size());
+        assertEquals("Invited positions failed", 4, summary.getInvitedPositions().retrieveGroups().size());
         
         assertNotNull(summary.getMemberships());
         assertNotNull(summary.getMemberships().retrieveGroups());
-        assertEquals(4, summary.getMemberships().retrieveGroups().size());
+        assertEquals("Membership failed", 4, summary.getMemberships().retrieveGroups().size());
         
         assertNotNull(summary.getQualifications());
         assertNotNull(summary.getQualifications().retrieveGroups());
-        assertEquals(4, summary.getQualifications().retrieveGroups().size());
+        assertEquals("Qualifications failed", 4, summary.getQualifications().retrieveGroups().size());
         
         assertNotNull(summary.getServices());
         assertNotNull(summary.getServices().retrieveGroups());
-        assertEquals(4, summary.getServices().retrieveGroups().size());
+        assertEquals("Services failed", 4, summary.getServices().retrieveGroups().size());
         
         assertNotNull(summary.getFundings());
         assertNotNull(summary.getFundings().getFundingGroup());
