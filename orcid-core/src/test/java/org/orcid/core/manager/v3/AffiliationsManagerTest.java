@@ -619,7 +619,7 @@ public class AffiliationsManagerTest extends BaseTest {
         assertTrue(map.containsKey(AffiliationType.DISTINCTION));
         List<AffiliationGroup<AffiliationSummary>> groups = map.get(AffiliationType.DISTINCTION);
         assertNotNull(groups);
-        assertEquals(4, groups.size());
+        assertEquals(map.toString(), 4, groups.size());
         
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for(AffiliationGroup<AffiliationSummary> g : groups) {
