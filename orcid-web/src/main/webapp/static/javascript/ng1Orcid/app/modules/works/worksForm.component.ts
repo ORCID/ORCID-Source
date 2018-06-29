@@ -6,7 +6,7 @@ declare var openImportWizardUrl: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -91,6 +91,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     types: any;
 
     constructor( 
+        private cdr: ChangeDetectorRef,
         private commonService: CommonService,
         private emailService: EmailService,
         private modalService: ModalService,
@@ -516,15 +517,14 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    loadWorkTypes( workCategory ): Observable<any>{
-        //var workCategory = "";
+    loadWorkTypes(): Observable<any>{
+        var workCategory = "";
         if(this.editWork != null && this.editWork.workCategory != null && this.editWork.workCategory.value != null && this.editWork.workCategory.value != ""){
             workCategory = this.editWork.workCategory.value;
         }
         else{
             return; //do nothing if we have not types
         }
-
         this.worksService.loadWorkTypes(workCategory)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -532,7 +532,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.types = data;
-                console.log(this.types);
                 if(this.editWork != null && this.editWork.workCategory != null) {
                     // if the edit works doesn't have a value that matches types
                     var hasType = false;
@@ -555,7 +554,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             break;
                         }
                     }
-                } 
+                }
             },
             error => {
                 console.log('loadWorkTypesError', error);
@@ -786,7 +785,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.workImportWizard = !this.workImportWizard;
     }; 
 
-    sort = function(key) {
+    sort(key): void {
         this.sortState.sortBy(key);
         this.worksService.resetWorkGroups();
         this.worksService.addAbbrWorksToScope( 
@@ -822,7 +821,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     !this.sortState.reverseKey[this.sortState.predicateKey], 
                     function() {
                         if (!this.bulkEditShow) {
-                            
                             this.bulkChecked = false;
                             for (var idx in this.worksService.groups){
                                 this.bulkEditMap[this.worksService.groups[idx].activePutCode] = false;
@@ -869,6 +867,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 //this.addAffType = res.type;
                 if( res.work != undefined ) {
                     this.editWork = res.work;
+                    this.loadWorkTypes();
                 } else {
                     this.editWork = this.getEmptyWork();
                     //this.editAffiliation.affiliationType.value = this.addAffType;
