@@ -108,8 +108,8 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
         aff.setPath("/distinction/1");
         
         aff.setDepartmentName("department-name");
-        aff.setDisplayIndex("0");
         aff.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));
+        aff.setDisplayIndex("0");
         
         aff.setRoleTitle("role-title");
         
