@@ -2,6 +2,8 @@ declare var ActSortState: any;
 declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
+declare var typeahead: any;
+declare var workIdLinkJs: any;
 
 import { NgForOf, NgIf } 
     from '@angular/common'; 
@@ -9,9 +11,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Observable, of, Subject, Subscription } 
     from 'rxjs';
-import { takeUntil } 
+
+import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } 
     from 'rxjs/operators';
 
 import { CommonService } 
@@ -29,11 +32,35 @@ import { ModalService }
 import { WorkspaceService } 
     from '../../shared/workspace.service.ts'; 
 
+
+
 @Component({
     selector: 'works-form-ng2',
     template:  scriptTmpl("works-form-ng2-template")
 })
+
 export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
+    model: any;
+    searching = false;
+    searchFailed = false;
+
+    /*search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.searching = true),
+      switchMap(term => 
+        this.worksService.getExternalIdTypes(term).pipe(
+          tap(() => this.searchFailed = false),
+          catchError(() => {
+            this.searchFailed = true;
+            return of([]);
+          }))
+      ),
+      tap(() => this.searching = false)
+    );*/
+
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
     private viewSubscription: Subscription;
@@ -156,6 +183,87 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.types = null;
     }
 
+    search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      map(term => term === '' ? []
+        : this.externalIDTypeCache.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+    );
+
+    changeExtIdType(i, event): void {
+        console.log(event.item.name);
+        event.preventDefault();
+        this.editWork.workExternalIdentifiers[i].workExternalIdentifierType.value = event.item.name;
+        /*if ($scope.exIdResolverFeatureEnabled == true){
+            if(extId.url == null) {
+                extId.url = {value:""};
+            }else{
+                extId.url.value="";                        
+            }
+        }*/
+        this.fillUrl(i);
+    }
+
+    fillUrl(i): void {
+        //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
+        /*if ($scope.exIdResolverFeatureEnabled == true){
+            if (extId && extId.workExternalIdentifierId.value && extId.workExternalIdentifierType.value){
+                $timeout(function() {
+                    extId.resolvingId = true;
+                    $.ajax({
+                        url: getBaseUri() + '/works/id/'+extId.workExternalIdentifierType.value,
+                        type: 'GET',
+                        data:{value:extId.workExternalIdentifierId.value},
+                        success: function(data) {
+                            extId.workExternalIdentifierId.errors = [];
+                            if (data.generatedUrl){
+                                if(extId.url == null) {
+                                    extId.url = {value:data.generatedUrl};
+                                }else{
+                                    extId.url.value=data.generatedUrl;                        
+                                }
+                            } else if (!data.validFormat || (data.attemptedResolution && !data.resolved) ){
+                                if(extId.url == null) {
+                                    extId.url = {value:""};
+                                }else{
+                                    extId.url.value="";                        
+                                }
+                                extId.workExternalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
+                            }
+                            extId.resolvingId = false;
+                        }
+                    }).fail(function() {
+                        console.log("id resolve error");
+                        extId.resolvingId = false;
+                    });
+                });
+            }
+        }else{*/
+            var url;
+            if(this.editWork.workExternalIdentifiers[i] != null) {
+                url = workIdLinkJs.getLink(this.editWork.workExternalIdentifiers[i].workExternalIdentifierId.value, this.editWork.workExternalIdentifiers[i].workExternalIdentifierType.value);
+                console.log(url);
+                if(this.editWork.workExternalIdentifiers[i].url == null) {
+                    this.editWork.workExternalIdentifiers[i].url = {value:url};
+                }else{
+                    this.editWork.workExternalIdentifiers[i].url.value=url;                        
+                }
+            }
+        /*}*/
+    };
+
+    formatExtIdTypeInput = function(input) {
+        if (typeof(input)=='object' && input.name){
+           return this.externalIDNamesToDescriptions[input.name].description; 
+        } else if (typeof(input)=='string' && input != "")  {
+            return this.externalIDNamesToDescriptions[input].description;
+        } else {
+            return "";
+        }   
+    }.bind(this);
+
+    formatExtIdTypeResult = (result: {description: string}) => result.description;
+
     getEmptyWork(): any {
         return {
             citation: {
@@ -220,23 +328,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     addExternalIdentifier(): void {
-        this.editWork.workExternalIdentifiers.push(
-            {
-                relationship: {
-                    value: "self"
-                }, 
-                url: {
-                    value: ""
-                },
-                workExternalIdentifierId: {
-                    value: ""
-                }, 
-                workExternalIdentifierType: {
-                    value: ""
-                } 
-            }
-        );
-        console.log(this.editWork.workExternalIdentifiers);
+        this.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
 
     applyLabelWorkType(): void {
@@ -266,9 +358,9 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editWork.contributors.splice(index,1);
     };
 
-    deleteExternalIdentifier(obj): void {
-        var index = this.editWork.workExternalIdentifiers.indexOf(obj);
+    deleteExternalIdentifier(index): void {
         this.editWork.workExternalIdentifiers.splice(index,1);
+        this.cdr.detectChanges();
     };
 
     isValidClass(cur): any {
@@ -447,6 +539,20 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        this.worksService.getExternalIdTypes('')
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.externalIDTypeCache = data;
+                for (var key in data) {
+                  this.externalIDNamesToDescriptions[data[key].name] = data[key];
+                }
+            },
+            error => {
+            } 
+        );
 
     };
 }

@@ -28,6 +28,8 @@ import { RouterModule, UrlHandlingStrategy }
 import { UpgradeModule } 
     from '@angular/upgrade/static';
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+
 //User generated modules imports
 
 import { AffiliationNg2Module } 
@@ -293,6 +295,7 @@ export class RootCmp {
         HttpClientModule, //angular5
         HttpModule, //Angular2
         JsonpModule,
+        NgbModule.forRoot(),
         UpgradeModule,
         /* User Generated Modules */
         AffiliationNg2Module,//Aproved

@@ -162,7 +162,7 @@
                         <div class="form-group">
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcitationtype'/></label>
                             <div class="relative">
-                                <select id="citationType" name="citationType" class="form-control" [ngModel]="editWork?.citation?.citationType?.value" (ngModelChange)="serverValidate('works/work/citationValidate.json')">
+                                <select id="citationType" name="citationType" class="form-control" [(ngModel)]="editWork.citation.citationType.value" (ngModelChange)="serverValidate('works/work/citationValidate.json')">
                                     <option value=""><@orcid.msg 'org.orcid.jaxb.model.message.CitationType.empty' /></option>
                                     <#list citationTypes?keys as key>
                                         <option value="${key}">${citationTypes[key]}</option>
@@ -178,7 +178,7 @@
                             <label><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
                             <div class="relative">
                                 
-                                <textarea name="citation" type="text" class="form-control"  [ngModel]="editWork?.citation?.citation?.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" (ngModelChange)="serverValidate('works/work/citationValidate.json')"></textarea>
+                                <textarea name="citation" type="text" class="form-control"  [(ngModel)]="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" (ngModelChange)="serverValidate('works/work/citationValidate.json')"></textarea>
                                 <span class="orcid-error" *ngIf="editWork?.citation?.citation?.errors?.length > 0">
                                     <div *ngFor='let error of editWork.citation.citation.errors' [innerHtml]="error"></div>
                                 </span>
@@ -229,53 +229,39 @@
                         </div>                                              
                     </div>
                     
-                    <div class="col-md-6 col-sm-6 col-xs-12" *ngIf="editWork?.workExternalIdentifiers">                               
+                    <div class="col-md-6 col-sm-6 col-xs-12" *ngIf="editWork?.workExternalIdentifiers">                        
                         <div class="control-group">
                             <span><strong><@orcid.msg 'manual_work_form_contents.titleexternalidentifier'/></strong></span>
                         </div>
-                        
-                        <div *ngFor="let workExternalIdentifier of editWork.workExternalIdentifiers;let last=last"> 
+                        <div *ngFor="let workExternalIdentifier of editWork.workExternalIdentifiers;let last=last;let i=index;trackBy:trackByIndex"> 
                             <div class="form-group">
                                 <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
                                 <div class="relative">
-                                    
-                                    <input id="worksIdType{{$index}}" name="workExternalIdentifer{{$index}}" class="form-control" type="text" 
-                                    [(ngModel)]="workExternalIdentifier.workExternalIdentifierType.value" 
-                                    placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" 
-                                    uib-typeahead="eid.name as eid.description for eid in getExternalIDTypes($viewValue)" 
-                                    typeahead-loading="loading" 
-                                    typeahead-min-length="0" 
-                                    typeahead-wait-ms="300" 
-                                    typeahead-on-select="fillUrl(workExternalIdentifier);$scope.$apply();"
-                                    typeahead-input-formatter="formatExternalIDType($model)"
-                                    typeahead-show-hint="true"
-                                    typeahead-highlight="false"
-                                    typeahead-editable="false"
-                                    />
-                                    
-                                    <span class="orcid-error" *ngIf="workExternalIdentifier?.workExternalIdentifierType?.errors?.length > 0">
-                                        <div *ngFor='let error of workExternalIdentifier.workExternalIdentifierType.errors' [innerHtml]="error"></div>
+                                    <input id="workIdType{{i}}" name="workIdType{{i}}" type="text" class="form-control" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" [(ngModel)]="editWork.workExternalIdentifiers[i].workExternalIdentifierType.value" [ngbTypeahead]="search" [inputFormatter]="formatExtIdTypeInput" [resultFormatter]="formatExtIdTypeResult" (selectItem)="changeExtIdType(i, $event)" [showHint]=true [editable]=false /> 
+
+                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.errors?.length > 0">
+                                        <div *ngFor='let error of editWork.workExternalIdentifiers[i].workExternalIdentifierType.errors' [innerHtml]="error"></div>
                                     </span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
                                 <div class="relative">
-                                    <input id="worksIdValue{{$index}}" name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  [(ngModel)]="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  (ngModelChange)="fillUrl(workExternalIdentifier)" />
-                                    <span class="orcid-error" *ngIf="workExternalIdentifier?.workExternalIdentifierId?.errors?.length > 0">
-                                        <div *ngFor='let error of workExternalIdentifier.workExternalIdentifierId.errors' [innerHtml]="error"></div>
+                                    <input id="workIdValue{{i}}" name="workIdValue{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].workExternalIdentifierId.value" (change)="fillUrl(i)" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"/>
+                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.errors?.length > 0">
+                                        <div *ngFor='let error of editWork.workExternalIdentifiers[i].workExternalIdentifierId.errors' [innerHtml]="error"></div>
                                     </span>
                                 </div>                      
                             </div>      
                             <div class="form-group">
                                 <label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
                                 <div class="relative">
-                                    <input id="worksIdUrl{{$index}}"name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  [(ngModel)]="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" />
-                                    <span class="orcid-error" *ngIf="workExternalIdentifier?.url?.errors?.length > 0">
-                                        <div *ngFor='let error of workExternalIdentifier.url.errors' [innerHtml]="error"></div>
+                                    <input id="workIdUrl{{i}}" name="workIdUrl{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" />
+                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.url?.errors?.length > 0">
+                                        <div *ngFor='let error of editWork.workExternalIdentifiers[i].url.errors' [innerHtml]="error"></div>
                                     </span>
                                 </div>
-                            </div>                  
+                            </div>              
                             <div class="bottomBuffer">
                                 <label><@orcid.msg 'common.ext_id.relationship'/>
                                     <div class="popover-help-container">
@@ -290,18 +276,18 @@
                                 </label>
                                 <div class="relative">                          
                                     <label class="checkbox-inline">
-                                        <input type="radio" name="relationship{{$index}}" [(ngModel)]="workExternalIdentifier.relationship.value" value="self" />
+                                        <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="self" />
                                         <@orcid.msg "common.self" />
                                     </label>
                                                                                             
                                     <label class="checkbox-inline">
-                                        <input type="radio" name="relationship{{$index}}" [(ngModel)]="workExternalIdentifier.relationship.value" value="part-of" />
+                                        <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="part-of" />
                                         <@orcid.msg "common.part_of" />
                                     </label>                            
                                     <a href *ngIf="editWork.workExternalIdentifiers.length > 1" (click)="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right"></a>                            
                                 </div>
                                 <div *ngIf="last" class="add-item-link clearfix">   
-                                    <span><a href (click)="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
+                                    <span><a href (click)="addExternalIdentifier(i)"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
                                 </div>
                             </div>
                         </div>

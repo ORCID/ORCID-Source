@@ -284,6 +284,8 @@ public class WorksController extends BaseWorkspaceController {
             
             if (workForm.getCitation() == null) {
                 workForm.setCitation(new Citation());
+                workForm.getCitation().setCitationType(new Text());
+                workForm.getCitation().setCitation(new Text());
             }
             
             if (workForm.getSubtitle() == null) {

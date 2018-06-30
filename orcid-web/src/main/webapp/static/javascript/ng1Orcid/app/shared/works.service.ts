@@ -428,23 +428,30 @@ export class WorksService {
         popFunct();
     }
 
-    getExternalIDTypes(query): Observable<any>{  
-
+    getExternalIdTypes(term): any {  
         return this.http.get(
-            getBaseUri()+'/works/idTypes.json?query='+query
+            getBaseUri()+'/works/idTypes.json?query='+term
         )
-        .pipe(
-            tap(
-                (data) => {
-                    /*
-                    for (var key in data) {
-                      $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
-                      }  
-                      */               
-                }
-            )
-        );
     };
+
+    //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
+    /*$scope.getExternalIDTypes = function(query){  
+        var url = getBaseUri()+'/works/idTypes.json?query='+query;
+        var ajax = $scope.externalIDTypeCache[query];
+        if (!ajax){
+            ajax = $.ajax({
+                url: url,
+                dataType: 'json',
+                cache: true,
+              }).done(function(data) {
+                  for (var key in data) {
+                      $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+                  }
+              });   
+            $scope.externalIDTypeCache[query] = ajax;
+        }
+        return ajax;
+    };*/
 
     getWork(putCode): any {
         for (let j in this.groups) {

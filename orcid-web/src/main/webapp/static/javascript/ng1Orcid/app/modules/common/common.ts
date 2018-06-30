@@ -10,6 +10,8 @@ import { Directive, NgModule }
 import { FormsModule }
     from '@angular/forms'; // <-- NgModel lives here
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
 
@@ -191,6 +193,7 @@ import { EmailFrequencyService }
             //Angular Libraries
             CommonModule,
             FormsModule,
+            NgbModule,
             //User Modules
             //DelegatesNg2Module,
             //EditTableNg2Module,
@@ -218,6 +221,7 @@ import { EmailFrequencyService }
             //Angular Libraries
             CommonModule,
             FormsModule,
+            NgbModule,
             //User directives
             FocusMe,
             //User Pipes
