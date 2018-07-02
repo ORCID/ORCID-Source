@@ -73,10 +73,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService
     ) {
-        /*
-        this.emailSrvc = emailSrvc;
-        this.workspaceSrvc = workspaceSrvc;
-        */
+
         this.addingFunding = false;
         this.deleFunding = null;
         this.displayURLPopOver = {};
@@ -85,7 +82,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.fixedTitle = '';
         this.fundings = new Array();
         this.fundingToAddIds = {};
-        this.groups = null;
+        this.groups = new Array();
         this.moreInfo = {};
         this.moreInfoCurKey = null;
         this.privacyHelp = {};
@@ -136,18 +133,19 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                console.log('this.getFundingsById2', data);
                 this.fundings = data;
+                console.log('this.getFundingsById23', data, this.fundings, this.fundings.length);
 
-                for (var i in data) {
-                    var funding = data[i];
-                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING, this.fundings);
+                for (var i in this.fundings) {
+                    var funding = this.fundings[i];
+                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING, this.groups);
                 };
-                if (this.fundingToAddIds.length == 0) {
+                if (this.fundings.length == 0) {
                     this.fundingService.loading = false;
                 } else {
                     //this.getFundingsById( this.fundingToAddIds );//previously addFundingToScope();
                 }
+                console.log('groupedActivitiesUtil', groupedActivitiesUtil);
                         
 
             },
@@ -164,6 +162,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
+                
                 this.fundingToAddIds = data;
                 console.log('getFundingsIds', data, this.fundingToAddIds, this.fundingToAddIds.length);
                 if( this.fundingToAddIds.length != 0 ) {

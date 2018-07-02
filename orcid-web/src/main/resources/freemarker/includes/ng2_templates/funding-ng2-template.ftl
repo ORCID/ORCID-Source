@@ -122,7 +122,7 @@
                 include "includes/funding/body_funding_inc_v3.ftl"
                 -->
                 <ul *ngIf="fundings?.length" class="workspace-fundings workspace-body-list bottom-margin-medium">
-                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of fundings | orderBy:sortState.predicate:sortState.reverse">
+                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of grups"><!-- | orderBy:sortState.predicate:sortState.reverse -->
                         <div class="work-list-container">
                             <ul class="sources-edit-list">
                                 <!-- Header -->
