@@ -3,7 +3,7 @@ declare var bibtexParse: any;
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient, HttpClientModule, HttpHeaders } 
+import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
 import { Observable, Subject } 
@@ -357,56 +357,11 @@ export class WorksService {
         }
     }
 
-    formatExternalIDType(model): Observable<any> {
-        /* Move to component
-        if (!model){
-            return "";
-        }
-        if ($scope.externalIDNamesToDescriptions[model]){
-            return $scope.externalIDNamesToDescriptions[model].description;
-        }
-        */
-        
-        return this.http.get( 
-            getBaseUri()+'/works/idTypes.json?query=' + model
-        )
-        .pipe(
-            tap(
-                ()=> {
-                    /*
-                    for (var key in data) {
-                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
-                      }
-                  $scope.externalIDTypeCache[model] = ajax;
-                    return $scope.externalIDNamesToDescriptions[model].description; 
-                    */
-                }
-            )
-        ); 
-    };
-
     getBlankWork(callback?): Observable<any> {
-        let worksSrvc = { //FIX
-            blankWork: null
-        }
-
-        // if cached return clone of blank
-        if (worksSrvc.blankWork != null){
-            callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
-        }
-
         return this.http.get( 
             getBaseUri() + '/works/work.json'
         )
-        .pipe(
-            tap(
-                (data) => {
-                    //blankWork =  data;                      
-                }
-            )
-        )  
-        ;
-    }
+    };
 
     getGroupDetails(putCode, type, callback?): void {
         let group = this.getGroup(putCode);
@@ -433,25 +388,6 @@ export class WorksService {
             getBaseUri()+'/works/idTypes.json?query='+term
         )
     };
-
-    //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
-    /*$scope.getExternalIDTypes = function(query){  
-        var url = getBaseUri()+'/works/idTypes.json?query='+query;
-        var ajax = $scope.externalIDTypeCache[query];
-        if (!ajax){
-            ajax = $.ajax({
-                url: url,
-                dataType: 'json',
-                cache: true,
-              }).done(function(data) {
-                  for (var key in data) {
-                      $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
-                  }
-              });   
-            $scope.externalIDTypeCache[query] = ajax;
-        }
-        return ajax;
-    };*/
 
     getWork(putCode): any {
         for (let j in this.groups) {
@@ -496,6 +432,14 @@ export class WorksService {
                 dw.workExternalIdentifiers.splice(idx,1);
             }
         }
+    }
+
+    resolveExtId(extId): Observable<any> {
+        let params = new HttpParams().set('value', extId.workExternalIdentifierId.value);
+        return this.http.get( 
+            getBaseUri() + '/works/id/'+ extId.workExternalIdentifierType.value, 
+            { params: params }
+        );
     }
 
     loadWorkImportWizardList(): Observable<any> {

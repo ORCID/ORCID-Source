@@ -173,6 +173,12 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         initializePublicationDate(w);
+        
+        if (w.getCitation() == null) {
+            w.setCitation(new Citation());
+            w.getCitation().setCitationType(new Text());
+            w.getCitation().setCitation(new Text());
+        }
 
         if (w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
             WorkExternalIdentifier wei = new WorkExternalIdentifier();
@@ -180,6 +186,7 @@ public class WorksController extends BaseWorkspaceController {
             wdiType.setValue(new String());
             wei.setWorkExternalIdentifierId(new Text());
             wei.setWorkExternalIdentifierType(wdiType);
+            wei.setUrl(new Text());
             wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
             List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
             wdiL.add(wei);
@@ -218,6 +225,7 @@ public class WorksController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(w.getCountryName())) {
             w.setCountryName(new Text());
         }
+        
     }
 
     private void initializePublicationDate(WorkForm w) {

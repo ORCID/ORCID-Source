@@ -19,7 +19,7 @@
 
 <script type="text/ng-template" id="works-form-ng2-template">
     <div class="add-work colorbox-content">
-        <form ><!-- update-fn="putWork()" -->
+
             <div class="lightbox-container-ie7">        
                 <!-- Title -->
                 <div class="row">           
@@ -43,7 +43,7 @@
                         <div class="form-group">
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
                             <span *ngIf="editWork?.workCategory?.value" class="required" [ngClass]="isValidClass(editWork.workCategory)">*</span>
-                            <div class="relative" *ngIf="editWork?.workCategory?.value">
+                            <div class="relative" *ngIf="editWork?.workCategory">
                                 <select id="workCategory" name="workCategory" class="form-control" [(ngModel)]="editWork.workCategory.value" (ngModelChange)="loadWorkTypes(); clearErrors(); applyLabelWorkType();">
                                     <option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkCategory.empty' /></option>
                                     <#list workCategories?keys as key>
@@ -74,7 +74,7 @@
                             <label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
                             <span class="required" *ngIf="editWork?.title" [ngClass]="isValidClass(editWork?.title)">*</span>
                             <div class="relative">
-                                <input id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="editWork.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" (ngModelChange)="serverValidate('works/work/titleValidate.json')" />
+                                <input id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="editWork.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" (ngModelChange)="serverValidate('works/work/titleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                                 <span class="orcid-error" *ngIf="editWork?.title?.errors?.length > 0">
                                     <div *ngFor='let error of editWork?.title?.errors' [innerHtml]="error"></div>
                                 </span>
@@ -89,7 +89,7 @@
                             <div class="form-group" *ngIf="editWork">
                                 <label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
                                 <div class="relative">
-                                    <input name="translatedTitle" type="text" class="form-control" [(ngModel)]="editWork.translatedTitle.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" (ngModelChange)="serverValidate('works/work/translatedTitleValidate.json')" />                                                     
+                                    <input name="translatedTitle" type="text" class="form-control" [(ngModel)]="editWork.translatedTitle.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" (ngModelChange)="serverValidate('works/work/translatedTitleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>                                                     
                                 </div>                      
                                 <span class="orcid-error" *ngIf="editWork?.translatedTitle?.errors.length > 0">
                                     <div *ngFor='let error of editWork.translatedTitle.errors' [innerHtml]="error"></div>
@@ -98,14 +98,12 @@
 
                             <div class="form-group">
                                 <label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>
-                                <div class="relative">
-                                    <!--               
-                                    <select id="language" class="form-control" name="language" [ngModel]="editWork?.translatedTitle?.languageCode" (ngModelChange)="serverValidate('works/work/translatedTitleValidate.json')">          
+                                <div class="relative">            
+                                    <select id="translatedTitleLanguage" class="form-control" name="translatedTitleLanguage" [(ngModel)]="editWork.translatedTitle.languageCode" (ngModelChange)="serverValidate('works/work/translatedTitleValidate.json')">      
                                         <#list languages?keys as key>
                                             <option value="${languages[key]}">${key}</option>
                                         </#list>
-                                    </select>
-                                    -->            
+                                    </select>         
                                 </div>
                             </div>                  
                         </div>
@@ -113,7 +111,7 @@
                         <div class="form-group">
                             <label><@orcid.msg 'manual_work_form_contents.labelsubtitle'/></label>
                             <div class="relative">
-                                <input name="familyNames" type="text" class="form-control"  [(ngModel)]="editWork.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" (ngModelChange)="serverValidate('works/work/subtitleValidate.json')" />
+                                <input name="familyNames" type="text" class="form-control"  [(ngModel)]="editWork.subtitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_subtitle'/>" (ngModelChange)="serverValidate('works/work/subtitleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }" />
                                 <span class="orcid-error" *ngIf="editWork?.subtitle?.errors.length > 0">
                                     <div *ngFor='let error of editWork.subtitle.errors' [innerHtml]="error"></div>
                                 </span>
@@ -123,7 +121,7 @@
                         <div class="form-group">
                             <label>{{contentCopy?.titleLabel}}</label>
                             <div class="relative">
-                                <input name="journalTitle" type="text" class="form-control"  [(ngModel)]="editWork.journalTitle.value" placeholder="{{contentCopy?.titlePlaceholder}}" (ngModelChange)="serverValidate('works/work/journalTitleValidate.json')"    />
+                                <input name="journalTitle" type="text" class="form-control"  [(ngModel)]="editWork.journalTitle.value" placeholder="{{contentCopy?.titlePlaceholder}}" (ngModelChange)="serverValidate('works/work/journalTitleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }" />
                                 <span class="orcid-error" *ngIf="editWork?.journalTitle?.errors?.length > 0">
                                     <div *ngFor='let error of editWork.journalTitle.errors' [innerHtml]="error"></div>
                                 </span>                     
@@ -178,7 +176,7 @@
                             <label><@orcid.msg 'manual_work_form_contents.labelcitation'/></label>
                             <div class="relative">
                                 
-                                <textarea name="citation" type="text" class="form-control"  [(ngModel)]="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" (ngModelChange)="serverValidate('works/work/citationValidate.json')"></textarea>
+                                <textarea name="citation" type="text" class="form-control"  [(ngModel)]="editWork.citation.citation.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_citation'/>" (ngModelChange)="serverValidate('works/work/citationValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"></textarea>
                                 <span class="orcid-error" *ngIf="editWork?.citation?.citation?.errors?.length > 0">
                                     <div *ngFor='let error of editWork.citation.citation.errors' [innerHtml]="error"></div>
                                 </span>
@@ -188,7 +186,7 @@
                         <div class="form-group">
                             <label><@orcid.msg 'manual_work_form_contents.labeldescription'/></label>
                             <div class="relative">
-                                <textarea name="discription" type="text" class="form-control"  [(ngModel)]="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" (ngModelChange)="serverValidate('works/work/descriptionValidate.json')"></textarea>
+                                <textarea name="discription" type="text" class="form-control"  [(ngModel)]="editWork.shortDescription.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_description'/>" (ngModelChange)="serverValidate('works/work/descriptionValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"></textarea>
                                 <span class="orcid-error" *ngIf="editWork?.shortDescription?.errors?.length > 0">
                                     <div *ngFor='let error of editWork.shortDescription.errors' [innerHtml]="error"></div>
                                 </span>
@@ -234,21 +232,25 @@
                             <span><strong><@orcid.msg 'manual_work_form_contents.titleexternalidentifier'/></strong></span>
                         </div>
                         <div *ngFor="let workExternalIdentifier of editWork.workExternalIdentifiers;let last=last;let i=index;trackBy:trackByIndex"> 
-                            <div class="form-group">
+                            <div class="form-group workExtIdType">
                                 <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
                                 <div class="relative">
-                                    <input id="workIdType{{i}}" name="workIdType{{i}}" type="text" class="form-control" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" [(ngModel)]="editWork.workExternalIdentifiers[i].workExternalIdentifierType.value" [ngbTypeahead]="search" [inputFormatter]="formatExtIdTypeInput" [resultFormatter]="formatExtIdTypeResult" (selectItem)="changeExtIdType(i, $event)" [showHint]=true [editable]=false /> 
+                                    <input id="workIdType{{i}}" name="workIdType{{i}}" type="text" class="form-control" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" [(ngModel)]="editWork.workExternalIdentifiers[i].workExternalIdentifierType.value" [ngbTypeahead]="search" [inputFormatter]="formatExtIdTypeInput" [resultFormatter]="formatExtIdTypeResult" (selectItem)="changeExtIdType(i, $event)" [editable]=false [showHint]=true [focusFirst]=false /> 
 
-                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.errors?.length > 0">
+                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.workExternalIdentifierType?.errors?.length > 0">
                                         <div *ngFor='let error of editWork.workExternalIdentifiers[i].workExternalIdentifierType.errors' [innerHtml]="error"></div>
                                     </span>
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
                                 <div class="relative">
-                                    <input id="workIdValue{{i}}" name="workIdValue{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].workExternalIdentifierId.value" (change)="fillUrl(i)" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"/>
-                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.errors?.length > 0">
+                                    <input id="workIdValue{{i}}" name="workIdValue{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].workExternalIdentifierId.value" (change)="fillUrl(i)" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"[ngModelOptions]="{ updateOn: 'blur' }" />
+                                    <span *ngIf="editWork.workExternalIdentifiers[i].resolvingId">
+                                        <i class="glyphicon glyphicon-refresh spin green"></i>
+                                    </span>
+                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.workExternalIdentifierId?.errors?.length > 0">
                                         <div *ngFor='let error of editWork.workExternalIdentifiers[i].workExternalIdentifierId.errors' [innerHtml]="error"></div>
                                     </span>
                                 </div>                      
@@ -256,7 +258,7 @@
                             <div class="form-group">
                                 <label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
                                 <div class="relative">
-                                    <input id="workIdUrl{{i}}" name="workIdUrl{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" />
+                                    <input id="workIdUrl{{i}}" name="workIdUrl{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" [ngModelOptions]="{ updateOn: 'blur' }" />
                                     <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.url?.errors?.length > 0">
                                         <div *ngFor='let error of editWork.workExternalIdentifiers[i].url.errors' [innerHtml]="error"></div>
                                     </span>
@@ -299,7 +301,7 @@
                         <div class="form-group">
                             <label class="relative"><@orcid.msg 'common.url'/></label>
                             <div class="relative">
-                                <input name="url" type="text" class="form-control"  [(ngModel)]="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" (ngModelChange)="serverValidate('works/work/urlValidate.json')" />
+                                <input name="url" type="text" class="form-control"  [(ngModel)]="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" (ngModelChange)="serverValidate('works/work/urlValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                                 <span class="orcid-error" *ngIf="editWork?.url?.errors?.length > 0">
                                     <div *ngFor='let error of editWork.url.errors' [innerHtml]="error"></div>
                                 </span>
@@ -375,6 +377,6 @@
                     </div>
                 </div>
             </div>    
-        </form>
+
     </div> 
 </script>

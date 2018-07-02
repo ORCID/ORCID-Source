@@ -1459,7 +1459,9 @@ ul.privacyHelp li.private,
     overflow: hidden
 }
 
-.dropdown-menu a,.privacy-dropdown-menu a {
+.dropdown-menu a,
+.privacy-dropdown-menu a,
+.dropdown-menu button {
     display: block;
     clear: both;
     color: #333;
@@ -1467,7 +1469,26 @@ ul.privacyHelp li.private,
     line-height: 20px;
     margin-left: 2px;
     padding: 3px 20px;
-    white-space: nowrap
+    white-space: nowrap;
+    border: none;
+}
+
+/*
+hack for ng-bootstrap ngbtypeahead used in ext id type selector
+ng-bootstrap uses bootstrap css v4, but we are on v3
+remove after upgrading to v4
+*/
+.dropdown-menu button{
+    text-align: left;
+    width: 100%;  
+}
+
+.dropdown-menu button:active,
+.dropdown-menu button:hover {
+    color: #fff;
+    text-decoration: none;
+    background-color: #337ab7;
+    outline: 0;
 }
 
 .dropdown-menu .uib-typeahead-match a {

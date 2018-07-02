@@ -894,7 +894,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             this.removeFromArray(this.membershipsAndServices, res.deleteAffiliationObj.putCode.value);                            
                         } 
                     } */ 
-                } else if(res.action == 'add') {
+                } else if(res.action == 'add' || res.action == 'close') {
                     if(res.successful == true) {
                         console.log("Fetching works data");
                         this.worksService.resetWorkGroups();
@@ -913,6 +913,5 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.loadMore();
         this.loadWorkImportWizardList();
-        console.log("test");
     };
 }
