@@ -150,37 +150,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    addFundingToScope( path ): void {
-        if( this.fundingToAddIds.length != 0 ) {
-            var fundingIds = this.fundingToAddIds.splice(0,20).join();
 
-            this.fundingService.addFundingToScope( this.editFunding, fundingIds )
-            .pipe(    
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe(
-                data => {
-                    for (var i in data) {
-                        var funding = data[i];
-                        groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
-                    }
-                    if (this.fundingToAddIds.length == 0) {
-                        this.loading = false;
-                        
-                    } else {
-                        this.addFundingToScope(path);
-                        
-                    }
-                },
-                error => {
-                    //console.log('setBiographyFormError', error);
-                } 
-            );
-
-        } else {
-            this.loading = false;
-        };
-    }
 
     addFundingModal(type, affiliation): void {
 

@@ -57,6 +57,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     employments: any;
     fixedTitle: string;
     fundings: any;
+    fundingToAddIds: any;
     groups: any;
     moreInfo: any;
     moreInfoCurKey: any;
@@ -83,6 +84,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
+        this.fundingToAddIds = {};
         this.groups = null;
         this.moreInfo = {};
         this.moreInfoCurKey = null;
@@ -128,16 +130,25 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getFundingsById( ids ): any {
+        console.log('getFundingsById', ids);
         this.fundingService.getFundingsById( ids ).pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
+                console.log('this.getFundingsById2', data);
+                this.fundings = data;
 
-                //console.log('this.getFundingsById', data);
-                for (let i in data) {
-                    this.fundings.push(data[i]);
+                for (var i in data) {
+                    var funding = data[i];
+                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING, this.fundings);
                 };
+                if (this.fundingToAddIds.length == 0) {
+                    this.fundingService.loading = false;
+                } else {
+                    //this.getFundingsById( this.fundingToAddIds );//previously addFundingToScope();
+                }
+                        
 
             },
             error => {
@@ -146,20 +157,25 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-    getFundingsIds(): any {
+    getFundings(): any {
         this.fundingService.getFundingsId()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                //console.log('getFundingsIds', data);
+                this.fundingToAddIds = data;
+                console.log('getFundingsIds', data, this.fundingToAddIds, this.fundingToAddIds.length);
+                if( this.fundingToAddIds.length != 0 ) {
+                    var fundingIds = this.fundingToAddIds.splice(0,20).join()
+                    this.getFundingsById( fundingIds );
+                }
+                /*
                 let funding = null;
                 for (let i in data) {
                     funding = data[i];
                     groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
                 };
-                /*
                 if (fundingSrvc.fundingToAddIds.length == 0) {
                     $timeout(function() {
                       fundingSrvc.loading = false;
@@ -171,7 +187,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 
                 let ids = data.splice(0,20).join();
-                this.getFundingsById( ids );
                 */
             },
             error => {
@@ -321,6 +336,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         //console.log('initi funding component');
-        this.getFundingsIds();
+        this.getFundings();
     }; 
 }

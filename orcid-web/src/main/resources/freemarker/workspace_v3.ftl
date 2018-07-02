@@ -158,9 +158,7 @@
         <#include "workspace_affiliations_body_list_v3.ftl"/>
         <!-- Fundings -->
         <#include "workspace_fundings_body_list_v3.ftl"/>
-
         
-
         <!-- Works -->
         <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
         <works-ng2></works-ng2>

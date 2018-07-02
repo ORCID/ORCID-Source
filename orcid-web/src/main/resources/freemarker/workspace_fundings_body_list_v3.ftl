@@ -2,13 +2,9 @@
 
 <#include "includes/funding/add_funding_inc.ftl"/>
 
-<@orcid.checkFeatureStatus 'ANGULAR2_DEV'>
-<!--
 <#include "/includes/ng2_templates/funding-ng2-template.ftl">
 <funding-ng2></funding-ng2>
--->
 
-</@orcid.checkFeatureStatus> 
 <div ng-controller="FundingCtrl">
     <!-- Funding -->
     <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" >

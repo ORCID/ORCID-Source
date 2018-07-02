@@ -2,86 +2,85 @@
     <div>
         <!-- Funding -->
         <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" >
-            <!--
-            include "includes/funding/funding_section_header_inc_v3.ftl" 
-            -->
+            
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     
                     <div class="col-md-4 col-sm-4 col-xs-12">
-                        <a href="" (click)="workspaceSrvc.toggleFunding($event)" class="toggle-text" *ngIf="groups?.length > 0">
+                        <a href="" (click)="workspaceSrvc.toggleFunding()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
-                            <@orcid.msg 'workspace.Funding'/> (<span>{{groups.length}}</span>)
+                            <@orcid.msg 'workspace.Funding'/> (<span>{{fundings.length}}</span>)
                         </a>
                         <#if !(isPublicProfile??)> 
-                        <div class="popover-help-container">
-                            <i class="glyphicon glyphicon-question-sign"></i>
-                            <div id="funding-help" class="popover bottom">
-                                <div class="arrow"></div>
-                                <div class="popover-content">
-                                    <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="${knowledgeBaseUri}/articles/326033" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
+                            <div class="popover-help-container">
+                                <i class="glyphicon glyphicon-question-sign"></i>
+                                <div id="funding-help" class="popover bottom">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="${knowledgeBaseUri}/articles/326033" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
+                                    </div>
                                 </div>
-                            </div>
-                        </div> 
+                            </div> 
                         </#if> 
                     </div>
                     <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayFunding">
                         <!-- Sort -->
                         <#include "../workspace/workspace_act_sort_menu.ftl"/>
                         <#if !(isPublicProfile??)>
-                        <ul class="workspace-bar-menu">
-                            <!-- Link Manually -->
-                            <li class="hidden-xs">
-                                <div class="menu-container" id="add-fundidiv">
-                                    <ul class="toggle-menu">
-                                        <li [ngClass]="{'green-bg' : fundingImportWizard == true}">       
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
-                                            <ul class="menu-options funding">
-                                                <!-- Search & Link -->
-                                                <#if fundingImportWizards?has_content>
-                                                <li>                                                
-                                                    <a class="action-option manage-button" (click)="showFundingImportWizard()">
-                                                        <span class="glyphicon glyphicon-cloud-upload"></span>
-                                                        <@orcid.msg 'manual_orcid_record_contents.search_link'/>
-                                                    </a>
-                                                </li>
-                                                </#if>                      
-                                                <!-- Add Manually -->
-                                                <li>
-                                                    <a id="add-funding" class="action-option manage-button" (click)="addFundingModal()">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </li>                               
-                                    </ul>
-                                </div>
-                            </li>
-                            <!-- Mobile Version Workaround -->
-                            <!-- Search & Link -->
-                            <#if fundingImportWizards?has_content>
-                            <li class="hidden-md hidden-sm visible-xs-inline">
-                                <a class="action-option manage-button action-funding-mobile" (click)="showFundingImportWizard()">
-                                    <span class="glyphicon glyphicon-cloud-upload"></span>
-                                    <@orcid.msg 'manual_orcid_record_contents.search_link'/>
-                                </a>
-                            </li>
-                            </#if>                      
-                            <!-- Add Manually -->
-                            <li class="hidden-md hidden-sm visible-xs-inline">
-                                <a class="action-option manage-button action-funding-mobile" (click)="addFundingModal()">
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                    <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                </a>
-                            </li>
-                        </ul>
+                            <ul class="workspace-bar-menu">
+                                <!-- Link Manually -->
+                                <li class="hidden-xs">
+                                    <div class="menu-container" id="add-funding-container">
+                                        <ul class="toggle-menu">
+                                            <li [ngClass]="{'green-bg' : fundingImportWizard == true}">       
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
+                                                <ul class="menu-options funding">
+                                                    <!-- Search & Link -->
+                                                    <#if fundingImportWizards?has_content>
+                                                        <li>                                                
+                                                            <a class="action-option manage-button" (click)="showFundingImportWizard()">
+                                                                <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                                <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                                                            </a>
+                                                        </li>
+                                                    </#if>                      
+                                                    <!-- Add Manually -->
+                                                    <li>
+                                                        <a id="add-funding" class="action-option manage-button" (click)="addFundingModal()">
+                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </li>                                   
+                                        </ul>
+                                    </div>
+                                </li>
+                                <!-- Mobile Version Workaround -->
+                                <!-- Search & Link -->
+                                <#if fundingImportWizards?has_content>
+                                    <li class="hidden-md hidden-sm visible-xs-inline">                                               
+                                        <a class="action-option manage-button action-funding-mobile" (click)="showFundingImportWizard()">
+                                            <span class="glyphicon glyphicon-cloud-upload"></span>
+                                            <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                                        </a>
+                                    </li>
+                                </#if>                      
+                                <!-- Add Manually -->
+                                <li class="hidden-md hidden-sm visible-xs-inline">
+                                    <a class="action-option manage-button action-funding-mobile" (click)="addFundingModal()">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                    </a>
+                                </li>
+                            </ul>
                         </#if>
                     </div>
                 </div>
             </div>
-            <!-- end of include -->
+
+            <!-- end of header -->
 
             <div *ngIf="fundingImportWizard" class="funding-import-wizard">
                 <#if ((fundingImportWizards)??)>
@@ -122,8 +121,8 @@
                 <!-- 
                 include "includes/funding/body_funding_inc_v3.ftl"
                 -->
-                <ul *ngIf="fundingSrvc?.groups?.length" class="workspace-fundings workspace-body-list bottom-margin-medium">
-                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of fundingSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
+                <ul *ngIf="fundings?.length" class="workspace-fundings workspace-body-list bottom-margin-medium">
+                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of fundings | orderBy:sortState.predicate:sortState.reverse">
                         <div class="work-list-container">
                             <ul class="sources-edit-list">
                                 <!-- Header -->
@@ -154,7 +153,7 @@
                                                             </div>                      
                                                         </li>
                 
-                                                        <li>
+                                                        <li><!--
                                                             <@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
                                                                 questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
                                                                 clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
@@ -162,6 +161,7 @@
                                                                 limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
                                                                 privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"
                                                                 />
+                                                            -->
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -499,7 +499,7 @@
                 <div *ngIf="fundingSrvc?.loading" class="text-center">
                     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                 </div>
-                <div *ngIf="fundingSrvc?.loading == false && fundingSrvc?.groups?.length == 0" class="" >
+                <div *ngIf="fundingSrvc?.loading == false && groups?.length == 0" class="" >
                     <strong>
                         <#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' />
                             <#if fundingImportWizards?has_content>

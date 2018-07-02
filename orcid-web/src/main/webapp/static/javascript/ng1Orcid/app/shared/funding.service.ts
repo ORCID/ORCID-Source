@@ -16,11 +16,11 @@ export class FundingService {
     
     private fundingToAddIds: any;
     private headers: HttpHeaders;
-    private loading: any;
     private urlFundingsById: string;
     private urlFundingsId: string;
     
     public groups: any;
+    public loading: any;
 
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -34,12 +34,6 @@ export class FundingService {
         this.groups = null;
         this.urlFundingsById = getBaseUri() + '/fundings/fundings.json?fundingIds=';
         this.urlFundingsId = getBaseUri() + '/fundings/fundingIds.json';
-    }
-
-    addFundingToScope(path, fundingIds): Observable<any>  {
-        return this.http.get(
-            getBaseUri() + '/' + path + '?fundingIds=' + fundingIds
-        )
     }
 
     getFundingsById( idList ): Observable<any> {
