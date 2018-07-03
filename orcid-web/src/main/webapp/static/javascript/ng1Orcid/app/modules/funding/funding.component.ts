@@ -52,6 +52,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     displayFundingxtIdPopOver: any;
     displayURLPopOver: any;
     editFunding: any;
+    editSources: any;
     educations: any;
     emails: any;
     employments: any;
@@ -78,6 +79,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.deleFunding = null;
         this.displayURLPopOver = {};
         this.editFunding = {};
+        this.editSources = {};
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
@@ -145,7 +147,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 } else {
                     //this.getFundingsById( this.fundingToAddIds );//previously addFundingToScope();
                 }
-                console.log('groupedActivitiesUtil', groupedActivitiesUtil);
+                console.log('groupedActivitiesUtil funding', groupedActivitiesUtil, this.groups);
                         
 
             },
@@ -192,6 +194,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getBiographyFormError', error);
             } 
         );
+    };
+
+    hideSources(group): void {
+        this.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
     };
 
 
@@ -261,6 +268,10 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+    };
+
+    showSources(group): void {
+        this.editSources[group.groupId] = true;
     };
 
     showTooltip(element): void{        

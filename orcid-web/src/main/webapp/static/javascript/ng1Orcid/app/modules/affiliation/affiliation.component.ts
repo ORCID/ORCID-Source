@@ -309,6 +309,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 } else if(data[i].affiliationType.value == 'service') {
                     groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,this.membershipsAndServices);   
                 }
+                console.log('groupedActivitiesUtil affiliation', groupedActivitiesUtil);
             }
         };
         
