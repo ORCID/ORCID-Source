@@ -537,13 +537,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
-        workClassMap.byDefault();
         workClassMap.field("putCode", "id");
         addV2DateFields(workClassMap);
         registerSourceConverters(mapperFactory, workClassMap);
         workClassMap.exclude("workType").customize(new CustomMapper<Work, WorkEntity>() {
             /**
-             * From database to model object, map amended sections for new affiliation types as AFFILIATION
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Work a, WorkEntity b, MappingContext context) {
+                b.setWorkType(a.getWorkType().name());
+            }
+            
+            /**
+             * From database to model object
              */
             @Override
             public void mapBtoA(WorkEntity b, Work a, MappingContext context) {
@@ -566,8 +573,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("languageCode", "languageCode");
         workClassMap.field("country.value", "iso2Country");
         workClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
-        
-        
+        workClassMap.byDefault();
         workClassMap.register();
 
         ClassMapBuilder<WorkSummary, WorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, WorkEntity.class);
@@ -576,9 +582,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.field("title.title.content", "title");
         workSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
-        workSummaryClassMap.field("type", "workType").customize(new CustomMapper<WorkSummary, WorkEntity>() {
+        workSummaryClassMap.customize(new CustomMapper<WorkSummary, WorkEntity>() {
             /**
-             * From database to model object, map amended sections for new affiliation types as AFFILIATION
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(WorkSummary a, WorkEntity b, MappingContext context) {
+                b.setWorkType(a.getType().name());
+            }
+            
+            /**
+             * From database to model object
              */
             @Override
             public void mapBtoA(WorkEntity b, WorkSummary a, MappingContext context) {
@@ -598,9 +612,22 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryMinimizedClassMap.field("title.title.content", "title");
         workSummaryMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
-        workSummaryMinimizedClassMap.field("type", "workType").customize(new CustomMapper<WorkSummary, MinimizedWorkEntity>() {
+        workSummaryMinimizedClassMap.field("publicationDate.year.value", "publicationYear");
+        workSummaryMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
+        workSummaryMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
+        workSummaryMinimizedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workSummaryMinimizedClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        workSummaryMinimizedClassMap.customize(new CustomMapper<WorkSummary, MinimizedWorkEntity>() {
             /**
-             * From database to model object, map amended sections for new affiliation types as AFFILIATION
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(WorkSummary a, MinimizedWorkEntity b, MappingContext context) {
+                b.setWorkType(a.getType().name());
+            }
+            
+            /**
+             * From database to model object
              */
             @Override
             public void mapBtoA(MinimizedWorkEntity b, WorkSummary a, MappingContext context) {
@@ -608,16 +635,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             }
             
         });
-        workSummaryMinimizedClassMap.field("publicationDate.year.value", "publicationYear");
-        workSummaryMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
-        workSummaryMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
-        workSummaryMinimizedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        workSummaryMinimizedClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
         workSummaryMinimizedClassMap.byDefault();
         workSummaryMinimizedClassMap.register();
 
         ClassMapBuilder<Work, MinimizedWorkEntity> minimizedWorkClassMap = mapperFactory.classMap(Work.class, MinimizedWorkEntity.class);
-        minimizedWorkClassMap.byDefault();
         registerSourceConverters(mapperFactory, minimizedWorkClassMap);
         minimizedWorkClassMap.field("putCode", "id");
         minimizedWorkClassMap.field("journalTitle.content", "journalTitle");
@@ -626,22 +647,31 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         minimizedWorkClassMap.field("workTitle.translatedTitle.languageCode", "translatedTitleLanguageCode");
         minimizedWorkClassMap.field("workTitle.subtitle.content", "subtitle");
         minimizedWorkClassMap.field("shortDescription", "description");
-        minimizedWorkClassMap.field("workType", "workType").customize(new CustomMapper<Work, MinimizedWorkEntity>() {
+        minimizedWorkClassMap.exclude("workType").customize(new CustomMapper<Work, MinimizedWorkEntity>() {
             /**
-             * From database to model object, map amended sections for new affiliation types as AFFILIATION
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Work a, MinimizedWorkEntity b, MappingContext context) {
+                b.setWorkType(a.getWorkType().name());
+            }
+            
+            /**
+             * From database to model object
              */
             @Override
             public void mapBtoA(MinimizedWorkEntity b, Work a, MappingContext context) {
                 a.setWorkType(getWorkType(b.getWorkType()));
             }
             
-        });;
+        });
         minimizedWorkClassMap.field("publicationDate.year.value", "publicationYear");
         minimizedWorkClassMap.field("publicationDate.month.value", "publicationMonth");
         minimizedWorkClassMap.field("publicationDate.day.value", "publicationDay");
         minimizedWorkClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         minimizedWorkClassMap.field("url.value", "workUrl");
         minimizedWorkClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        minimizedWorkClassMap.byDefault();
         minimizedWorkClassMap.register();
 
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
