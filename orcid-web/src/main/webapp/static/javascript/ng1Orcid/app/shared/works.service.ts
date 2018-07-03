@@ -340,7 +340,7 @@ export class WorksService {
         }
         console.log(result);
         return result;
-}
+    }
 
     handleWorkGroupData(data, callback?): void {
         if (this.groups == undefined) {
@@ -410,6 +410,16 @@ export class WorksService {
         return this.http.get(
             url
         )  
+    }
+
+    refreshWorkGroups(sort, sortAsc): Observable<any>  {
+        this.details = new Object();
+        this.groups = new Array();
+        let url = getBaseUri() + '/works/refreshWorks.json?limit=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
+        this.loading = true;
+        return this.http.get(
+            url
+        ) 
     }
 
     removeBadContributors(dw): void {
@@ -505,26 +515,12 @@ export class WorksService {
         );
     }
 
-    removeWorks(putCodes,callback?): Observable<any> {
-
+    removeWorks(putCodes): Observable<any> {
+        console.log(putCodes);
         return this.http.delete( 
             getBaseUri() + '/works/' + putCodes.splice(0,150).join(),             
             { headers: this.headers }
-        )
-        .pipe(
-            tap(
-                (data) => {
-                    /*
-                        if (putCodes.length > 0) {
-                        worksSrvc.removeWorks(putCodes,callback);
-                    }
-                    else if (callback) {
-                        callback(data);
-                    }
-                    */                       
-                }
-            )
-        )  
+        ) 
     }
 
     resetWorkGroups(): void {

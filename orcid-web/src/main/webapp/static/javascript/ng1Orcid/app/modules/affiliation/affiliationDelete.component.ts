@@ -72,9 +72,7 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
                 if(data.errors.length == 0) {
                     this.affiliationService.notifyOther({action: 'delete', deleteAffiliationObj: this.deleteAffiliationObj});                  
                 }
-
-                this.closeModal();
-                                            
+                this.closeModal();                               
             });         
         
     };

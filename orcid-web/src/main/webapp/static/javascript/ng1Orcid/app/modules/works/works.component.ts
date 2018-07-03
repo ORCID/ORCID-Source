@@ -53,11 +53,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bulkEditShow: boolean;
     combineWork: any;
     delCountVerify: number;
+    deleteGroup: any;
+    deletePutCode: any;
     displayURLPopOver: any;
     editSources: any;
     editWork: any;
     emails: any;
     emailSrvc: any;
+    fixedTitle: any;
     formData: any;
     geoArea: any;
     loadingScripts: any;
@@ -275,26 +278,37 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     deleteWorkConfirm(putCode, deleteGroup): void {
-        let maxSize = 100;
-        let work = this.worksService.getWork(putCode);
-        /*
-        this.deletePutCode = putCode;
-        this.deleteGroup = deleteGroup;
-        if (work.title){
-            this.fixedTitle = work.title.value;
-        }
-        else {  
-            this.fixedTitle = '';
-        } 
-        if(this.fixedTitle.length > maxSize){
-            this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
-        }
-
-        $.colorbox({
-            html : $compile($('#delete-work-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-        */
+        this.emailService.getEmails()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    let maxSize = 100;
+                    let work = this.worksService.getWork(putCode);
+                    this.deletePutCode = putCode;
+                    this.deleteGroup = deleteGroup;
+                    if (work.title){
+                        this.fixedTitle = work.title.value;
+                    }
+                    else {  
+                        this.fixedTitle = '';
+                    } 
+                    if(this.fixedTitle.length > maxSize){
+                        this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
+                    }
+                    this.worksService.notifyOther({fixedTitle:this.fixedTitle, putCode:putCode, deleteGroup:deleteGroup, sortState:this.sortState});
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalWorksDelete'});
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
     };
 
     editWorkFromBibtex(work): void {
@@ -634,6 +648,27 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    refreshWorkGroups(): void {
+        this.worksService.refreshWorkGroups(this.sortState.predicateKey, 
+            !this.sortState.reverseKey[this.sortState.predicateKey]
+        )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.formData = data;
+                this.formData = data;
+                this.worksService.handleWorkGroupData( this.formData );
+                this.worksService.loading = false;
+            },
+            error => {
+                this.worksService.loading = false;
+                console.log('Error refreshing work groups', error);
+            } 
+        );
+    };
+
     rmWorkFromBibtex(work): void {
         let index = this.worksFromBibtex.indexOf(work);
         
@@ -676,7 +711,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     setGroupPrivacy(putCode, priv): void {
         var group = this.worksService.getGroup(putCode);
-        console.log(group);
         var putCodes = new Array();
         for (var idx in group.works) {
             putCodes.push(group.works[idx].putCode.value);
@@ -702,7 +736,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     setPrivacy(putCodes, priv): void {
-        //this.worksService.updateVisibility([putCode], priv); 
         this.worksService.updateVisibility(putCodes, priv)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -880,24 +913,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.subscription = this.worksService.notifyObservable$.subscribe(
             (res) => {                
                 if(res.action == 'delete') {
-                    /*if(res.deleteAffiliationObj.affiliationType != null && res.deleteAffiliationObj.affiliationType.value != null) {
-                        if(res.deleteAffiliationObj.affiliationType.value == 'distinction' || res.deleteAffiliationObj.affiliationType.value == 'invited-position') {
-                            this.removeFromArray(this.distinctionsAndInvitedPositions, res.deleteAffiliationObj.putCode.value);
-                        } else if (res.deleteAffiliationObj.affiliationType.value == 'education' || res.deleteAffiliationObj.affiliationType.value == 'qualification'){
-                            this.removeFromArray(this.educationsAndQualifications, res.deleteAffiliationObj.putCode.value);
-                            if(res.deleteAffiliationObj.affiliationType.value == 'education') {
-                                this.removeFromArray(this.educations, res.deleteAffiliationObj.putCode.value);
-                            }                            
-                        } else if (res.deleteAffiliationObj.affiliationType.value == 'employment'){
-                            this.removeFromArray(this.employments, res.deleteAffiliationObj.putCode.value);                            
-                        } else if(res.deleteAffiliationObj.affiliationType.value == 'membership' || res.deleteAffiliationObj.affiliationType.value == 'service') {
-                            this.removeFromArray(this.membershipsAndServices, res.deleteAffiliationObj.putCode.value);                            
-                        } 
-                    } */ 
-                } else if(res.action == 'add' || res.action == 'close') {
                     if(res.successful == true) {
-                        console.log("Fetching works data");
-                        this.worksService.resetWorkGroups();
+                        this.refreshWorkGroups();
+                    }
+                } else if(res.action == 'add' || res.action == 'cancel') {
+                    if(res.successful == true) {
+                        this.refreshWorkGroups();
                         this.loadMore();
                     }
                 }                

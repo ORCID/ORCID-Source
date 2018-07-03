@@ -191,6 +191,9 @@ import { VerifyEmailNg2Module }
 import { WidgetNg2Module } 
     from './widget/widget.ts';
 
+import { WorksDeleteNg2Module } 
+    from './works/worksDelete.ts';
+
 import { WorksFormNg2Module } 
     from './works/worksForm.ts';
 
@@ -351,6 +354,7 @@ export class RootCmp {
         TwoFASetupNg2Module,
         VerifyEmailNg2Module,
         WidgetNg2Module, //Approved
+        WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,

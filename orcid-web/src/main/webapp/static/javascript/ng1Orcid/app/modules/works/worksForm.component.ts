@@ -267,9 +267,9 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editWork.workType.errors = [];
     };
 
-    closeModal(): void {
+    cancelEdit(): void {
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
-        this.worksService.notifyOther({action:'close', successful:true});
+        this.worksService.notifyOther({action:'cancel', successful:true});
     };
 
     deleteContributor(obj): void {
@@ -343,37 +343,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    /*addAffiliation(): void {
-        if (this.addingAffiliation == true) {
-            return; // don't process if adding affiliation
-        }
-
-        this.addingAffiliation = true;
-        this.editAffiliation.errors.length = 0;
-        this.affiliationService.setData( this.editAffiliation )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.editAffiliation = data;
-                this.addingAffiliation = false;
-                if (data.errors.length > 0){                    
-                    this.editAffiliation = data;
-                    this.commonService.copyErrorsLeft(this.editAffiliation, data);
-                } else {
-                    this.closeModal();
-                    this.removeDisambiguatedAffiliation();
-                    this.editAffiliation = this.getEmptyAffiliation();
-                    this.affiliationService.notifyOther({action:'add', successful:true});
-                }
-            },
-            error => {
-                console.log('affiliationForm.component.ts addAffiliation Error', error);
-            } 
-        );
-    };*/
-
     addWork(): any{
         this.addingWork = true;
         this.editWork.errors.length = 0;
@@ -384,20 +353,23 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.addingWork= false;
-                if (data.errors.length > 0){                    
-                    this.editWork = data;
+                if (data.errors.length > 0) {
+                    this.editWork = data;                    
                     this.commonService.copyErrorsLeft(this.editWork, data);
+                    //re-populate any id resolution errors.
+                    //do it here because they're by-passable
+                    if (this.exIdResolverFeatureEnabled == true){
+                        for (var extId in this.editWork.workExternalIdentifiers){
+                            this.fillUrl(this.editWork.workExternalIdentifiers[extId]);
+                        }
+                    }
                 } else {
-                    if (this.bibtextWork == false){
-                        this.closeModal();
-                        this.addingWork = false;
-                    } else {
+                    if (this.bibtextWork != false){
                         this.worksFromBibtex.splice(this.bibtextWorkIndex, 1);
                         this.bibtextWork = false;
-                        this.addingWork = false;
-                        this.closeModal();
                     }
-                    this.worksService.notifyOther({action:'add', successful:true});
+                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
+                    this.worksService.notifyOther({action:'add', successful:true}); 
                 }
 
             },
