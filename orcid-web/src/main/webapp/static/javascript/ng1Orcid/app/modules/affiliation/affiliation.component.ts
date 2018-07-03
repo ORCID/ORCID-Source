@@ -8,7 +8,7 @@ declare var typeahead: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -85,6 +85,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     constructor(
         private affiliationService: AffiliationService,
+        private cdr: ChangeDetectorRef,
         private emailService: EmailService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
@@ -191,6 +192,45 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         return this.workspaceSrvc.displayEducationAndQualification;
     };
 
+    getAffiliationGroups(): void {
+        //Be sure all arrays are empty
+        /*this.distinctionsAndInvitedPositions.length = 0;
+        this.educationsAndQualifications.length = 0;
+        this.educations.length = 0;
+        this.employments.length = 0;
+        this.membershipsAndServices.length = 0;*/ 
+        
+        if(this.publicView === "true") {
+            this.affiliationService.getPublicAffiliationGroups().pipe(    
+            takeUntil(this.ngUnsubscribe)
+            )
+                .subscribe(
+                    data => {
+                        this.parseAffiliationGroups(data);
+                        this.cdr.detectChanges();
+                    },
+                    error => {
+                        console.log('getPublicAffiliationGroups error', error);
+                    } 
+            );
+        } else {
+            this.affiliationService.getAffiliationGroups().pipe(    
+            takeUntil(this.ngUnsubscribe)
+            )
+                .subscribe(
+                    data => {
+                        this.parseAffiliationGroups(data);
+                        console.log(data);
+                        this.cdr.detectChanges();
+                    },
+                    error => {
+                        console.log('getAffiliationGroups error', error);
+                    } 
+            );
+        
+        }
+    };
+
     getAffiliationsById( affiliationIds ): void {
         this.affiliationService.getAffiliationsById( affiliationIds ).pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -288,6 +328,53 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.addAffiliationModal(affiliation.affiliationType.value, affiliation);
     };
 
+    /*handleWorkGroupData(data, callback?): void {
+        if (this.groups == undefined) {
+            this.groups = new Array();
+        }
+        this.groups = this.groups.concat(data.workGroups);
+        this.groupsLabel = this.groups.length + " of " + data.totalGroups;
+        this.showLoadMore = this.groups.length < data.totalGroups;
+        this.loading = false;
+        this.offset = data.nextOffset;
+        
+        if (callback != undefined) {
+            callback();
+        }
+    }*/
+
+    parseAffiliationGroups(data): void {
+ 
+        this.distinctionsAndInvitedPositions = this.distinctionsAndInvitedPositions.concat(data.affiliationGroups.DISTINCTION);
+        this.distinctionsAndInvitedPositions = this.distinctionsAndInvitedPositions.concat(data.affiliationGroups.INVITED_POSITION);
+        
+        this.educations = this.educations.concat(data.affiliationGroups.EDUCATION);
+
+        
+        this.educationsAndQualifications = this.educationsAndQualifications.concat(data.affiliationGroups.EDUCATION);
+        this.educationsAndQualifications = this.educationsAndQualifications.concat(data.affiliationGroups.QUALIFICATION);
+
+        this.employments = this.employments.concat(data.affiliationGroups.EMPLOYMENT);
+
+        
+        this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.MEMBERSHIP);
+        this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.SERVICE);
+
+        if(this.displayNewAffiliationTypesFeatureEnabled) {
+            this.sectionOneElements = this.educationsAndQualifications;
+        } else {
+            this.sectionOneElements = this.educations;
+        } 
+
+        console.log(this.distinctionsAndInvitedPositions);
+        console.log(this.educations);
+        console.log(this.educationsAndQualifications);
+        console.log(this.employments);
+        console.log(this.membershipsAndServices);
+        //this.cdr.detectChanges();
+
+    }
+
     parseAffiliations( data ): void {
         for (let i in data) {
             //console.log(JSON.stringify(data[i]));
@@ -372,7 +459,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
-        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        this.moreInfo[group.activePutCode] = !this.moreInfo[group.activePutCode];
     };
 
     showTooltip(element): void{        
@@ -380,6 +467,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     sort(type, displayKey, reverse): void {
+        console.log("sort by: " + type + displayKey + reverse);
         
         var sortKey;
 
@@ -519,6 +607,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getAffiliationsId();
-;    }; 
+        //this.getAffiliationsId();
+        this.getAffiliationGroups();
+    };
 }
