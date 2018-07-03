@@ -207,7 +207,7 @@
                                             </div>
 
                                             <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
-                                                <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
+                                                <ul class="workspace-private-toolbar" *ngIf="!(editSources[group.groupId] == true)">
                                                     <#if !(isPublicProfile??)>
                                                     <!-- Bulk edit tool / for further implementation
                                                     <li *ngIf="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">                                
@@ -260,16 +260,16 @@
                                         <div class="row" *ngIf="group.activePutCode == funding.putCode.value">
                                             <div class="col-md-12 col-sm-12 bottomBuffer">
                                                 <ul class="id-details clearfix">
-                                                    <li>
-                                                        <span ng-repeat='ei in group.getActive().externalIdentifiers | orderBy:["-relationship.value", "type.value"]' class="clearfix">
-                                                            <!-- ***
+                                                    <li><!--
+                                                        <span *ngFor='let ei of group.getActive().externalIdentifiers | orderBy:["-relationship.value", "type.value"]' class="clearfix">
+                                                             ***
                                                             <span bind-html-compile='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId]' class="url-popover"> 
                                                             </span>
-                                                            -->
                                                         </span>
+                                                            -->
                                                     </li>
                                                     <li *ngIf="group.getActive().url.value" class="url-popover">
-                                                        <@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="funding.putCode.value" (mouseenter)='showURLPopOver(funding.putCode.value + "-alternate")' (mouseleave)='hideURLPopOver(funding.putCode.value + "-alternate")'></a>
+                                                        <@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" [innerHtml]="group.getActive().url.value" target="funding.putCode.value" (mouseenter)='showURLPopOver(funding.putCode.value + "-alternate")' (mouseleave)='hideURLPopOver(funding.putCode.value + "-alternate")'></a>
                                                         <div class="popover-pos">
                                                             <div class="popover-help-container">
                                                                <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver[funding.putCode.value + '-alternate'] == true}">
@@ -296,7 +296,7 @@
                                                 <div class="col-md-6" *ngIf="group.getActive().organizationDefinedFundingSubType.subtype.value" >
                                                     <div class="bottomBuffer">                    
                                                         <strong><@orcid.msg 'manual_funding_form_contents.organization_defined_type.label'/></strong>
-                                                        <div ng-bind="group.getActive().organizationDefinedFundingSubType.subtype.value"></div>
+                                                        <div [innerHtml]="group.getActive().organizationDefinedFundingSubType.subtype.value"></div>
                                                     </div>        
                                                 </div> 
                                                 
@@ -305,7 +305,7 @@
                                                     <div class="bottomBuffer">                
                                                         <strong><@orcid.msg
                                                             'manual_funding_form_contents.label_translated_title'/></strong>
-                                                        <div ng-bind="renderTranslatedTitleInfo(funding)"></div>                    
+                                                        <div [innerHtml]="renderTranslatedTitleInfo(funding)"></div>                    
                                                     </div>        
                                                 </div>
                                                 
@@ -332,14 +332,14 @@
                                                 <div class="col-md-6" *ngIf="group.getActive().description.value" >
                                                     <div class="bottomBuffer">                
                                                         <strong><@orcid.msg 'manual_funding_form_contents.label_description'/></strong>
-                                                        <div ng-bind="group.getActive().description.value"></div>                
+                                                        <div [innerHtml]="group.getActive().description.value"></div>                
                                                     </div>
                                                 </div>
                                                 
                                                 <!-- Created Date -->
                                                 <div class="col-md-6">
                                                     <strong><@orcid.msg 'groups.common.created'/></strong>
-                                                    <div ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></div>
+                                                    <div [innerHtml]="group.getActive().createdDate | ajaxFormDateToISO8601"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -437,12 +437,12 @@
 
                                         <!-- Bottom row -->
 
-                                        <div class="row source-line" ng-hide="editSources[group.groupId] == true">
+                                        <div class="row source-line" *ngIf="editSources[group.groupId] == false">
                                             <div class="col-md-7 col-sm-7 col-xs-12">
                                                   <@orcid.msg 'groups.common.source'/>: {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                                             </div>                          
                                             <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="group.activePutCode == funding.putCode.value">
-                                                <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a (click)="showSources(group)" ng-hide="group.activitiesCount == 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+                                                <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group.activitiesCount != 1">(</span><a (click)="showSources(group)" *ngIf="group.activitiesCount != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span *ngIf="group.activitiesCount != 1">)</span>
                                                 
                                                 <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
                                                     <div class="arrow"></div>
@@ -462,7 +462,7 @@
                                                                 toolTipClass="popover popover-tooltip top edit-source-popover"
                                                              />
                                                         </li>
-                                                        <li ng-hide="group.activitiesCount == 1 || editSources[group.groupId] == true">
+                                                        <li *ngIf="!(group.activitiesCount == 1 || editSources[group.groupId] == true)">
                         
                                                             <a (click)="showSources(group)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                                                  <span class="glyphicon glyphicon-trash"></span>

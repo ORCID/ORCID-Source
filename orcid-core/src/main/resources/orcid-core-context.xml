@@ -1273,6 +1273,15 @@
         <property name="maxMegaBytesOnDisk" value="256" />
     </bean>
     
+    <bean id="affiliationGroupsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="affiliations-group" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="2000" />
+        <property name="timeToIdleSeconds" value="7200" />
+        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="copyValues" value="false" />
+    </bean>
+    
 	<!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"
 		factory-method="getSocketFactory" />
@@ -1587,4 +1596,16 @@
 	   <constructor-arg value="${org.orcid.core.node:1}" />
 	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
 	</bean>
+	
+	<bean id="orgAffiliationRelationEntityCacheManager" class="org.orcid.core.manager.v3.impl.OrgAffiliationRelationEntityCacheManagerImpl" />
+	
+	<bean id="affiliationEntitiesGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+        <property name="cache" ref="affiliationGroupsCache" />
+        <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+        <property name="retriever" ref="orgAffiliationRelationEntityRetriver" />
+    </bean>
+    
+	<bean id="orgAffiliationRelationEntityRetriver" class="org.orcid.core.cache.impl.OrgAffiliationRelationEntityRetriver">
+        <property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
+    </bean>
 </beans>

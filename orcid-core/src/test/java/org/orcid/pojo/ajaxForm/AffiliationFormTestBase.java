@@ -27,7 +27,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.utils.DateUtils;
 
-public class AffiliationFormBase {
+public abstract class AffiliationFormTestBase {
     XMLGregorianCalendar created;
     XMLGregorianCalendar lastModified;
         
@@ -113,8 +113,7 @@ public class AffiliationFormBase {
         aff.setPath("/distinction/1");
         
         aff.setDepartmentName("department-name");
-        aff.setDisplayIndex("0");
-        aff.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));
+        aff.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));       
         
         aff.setRoleTitle("role-title");
         
@@ -204,5 +203,5 @@ public class AffiliationFormBase {
         aff.setOrganization(org);
         
         return aff;
-    }
+    }    
 }

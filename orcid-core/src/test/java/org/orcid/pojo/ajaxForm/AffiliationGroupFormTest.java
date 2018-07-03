@@ -2,13 +2,10 @@ package org.orcid.pojo.ajaxForm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
@@ -19,20 +16,9 @@ import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
-import org.orcid.utils.DateUtils;
 
-public class AffiliationGroupFormTest extends AffiliationFormBase {
+public class AffiliationGroupFormTest extends AffiliationFormTestBase {
 
-    XMLGregorianCalendar created;
-    XMLGregorianCalendar lastModified;
-        
-    {
-        Long now = System.currentTimeMillis();
-        Long then = now + 1000;
-        created = DateUtils.convertToXMLGregorianCalendar(now);
-        lastModified = DateUtils.convertToXMLGregorianCalendar(then);               
-    }
-    
     @Test
     public void valueOfTest() {
         AffiliationGroupForm form1 = getAffiliationGroupForm();

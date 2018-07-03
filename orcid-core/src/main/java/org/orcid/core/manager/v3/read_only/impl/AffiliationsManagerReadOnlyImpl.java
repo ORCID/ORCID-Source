@@ -16,6 +16,7 @@ import org.orcid.core.adapter.v3.JpaJaxbMembershipAdapter;
 import org.orcid.core.adapter.v3.JpaJaxbQualificationAdapter;
 import org.orcid.core.adapter.v3.JpaJaxbServiceAdapter;
 import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.OrgAffiliationRelationEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
@@ -67,6 +68,9 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     
     @Resource(name = "jpaJaxbServiceAdapterV3")
     protected JpaJaxbServiceAdapter jpaJaxbServiceAdapter;
+    
+    @Resource(name = "orgAffiliationRelationEntityCacheManager")
+    protected OrgAffiliationRelationEntityCacheManager orgAffiliationRelationEntityCacheManager;
     
     protected OrgAffiliationRelationDao orgAffiliationRelationDao;    
         
@@ -324,7 +328,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     
     @Override
     public List<Affiliation> getAffiliations(String orcid) {
-        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);        
+        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationEntityCacheManager.getAffiliationEntities(orcid);        
         List<Affiliation> result = new ArrayList<Affiliation>();
         
         if(affiliations != null) {
@@ -352,7 +356,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     
     @Override
     public <T extends AffiliationSummary> Map<AffiliationType, List<AffiliationGroup<T>>> getGroupedAffiliations(String orcid, boolean justPublic) {
-        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);        
+        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationEntityCacheManager.getAffiliationEntities(orcid);
         ActivitiesGroupGenerator distinctionsGroupGenerator = new ActivitiesGroupGenerator();
         ActivitiesGroupGenerator educationsGroupGenerator = new ActivitiesGroupGenerator();
         ActivitiesGroupGenerator employmentsGroupGenerator = new ActivitiesGroupGenerator();

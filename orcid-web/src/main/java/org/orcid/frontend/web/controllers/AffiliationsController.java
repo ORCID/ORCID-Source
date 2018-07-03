@@ -28,6 +28,7 @@ import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Errors;
@@ -486,12 +487,11 @@ public class AffiliationsController extends BaseWorkspaceController {
         return affiliationForm;
     }
     
-    @RequestMapping(value = "/grouped", method = RequestMethod.GET)
-    public @ResponseBody Map<AffiliationType, List<AffiliationGroupForm>> getGroupedAffiliations() {
-        String orcid = getCurrentUserOrcid();
-        Map<AffiliationType, List<AffiliationGroupForm>> formsMap = new HashMap<AffiliationType, List<AffiliationGroupForm>>();
-        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, false);
-        
+    @RequestMapping(value = "/affiliationGroups.json", method = RequestMethod.GET)
+    public @ResponseBody AffiliationGroupContainer getGroupedAffiliations() {
+        String orcid = getCurrentUserOrcid();        
+        AffiliationGroupContainer result = new AffiliationGroupContainer();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, false);        
         for(AffiliationType type : AffiliationType.values()) {
             if(affiliationsMap.containsKey(type)) {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
@@ -500,11 +500,10 @@ public class AffiliationsController extends BaseWorkspaceController {
                     AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
                     elementsFormList.add(groupForm);
                 });
-                formsMap.put(type, elementsFormList);
+                result.getAffiliationGroups().put(type, elementsFormList);
             }
-        }
-        
-        return formsMap;
+        }        
+        return result;
     }
 
 }
