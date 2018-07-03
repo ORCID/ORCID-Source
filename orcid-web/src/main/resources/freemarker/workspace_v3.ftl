@@ -282,39 +282,6 @@
     </div> 
 </script>
 
-<script type="text/ng-template" id="bulk-delete-modal">
-  <div class="lightbox-container">
-    <div class="bulk-delete-modal">     
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <h3><@orcid.msg 'groups.bulk_delete.confirm.header'/></h3>
-          <div class="orcid-error">
-            <p>
-              <@orcid.msg 'groups.bulk_delete.confirm.line_1'/>
-            </p>
-            <p>
-              <@orcid.msg 'groups.bulk_delete.confirm.line_2'/>
-            </p>
-            <p ng-class="{'red-error':bulkDeleteSubmit == true}">
-              <@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input ng-class="{'red-border-error':bulkDeleteSubmit == true}" type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12"> 
-          <div class="right">     
-            <button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>&nbsp;&nbsp;
-            <a ng-click="closeModal()">
-              <@orcid.msg 'freemarker.btncancel'/>
-            </a>  
-          </div>        
-        </div>
-      </div>
-    </div>
-  </div>
-</script>
-
 <script type="text/ng-template" id="import-wizard-modal">
   <#if ((workImportWizards)??)>   
   <div id="third-parties">
@@ -400,6 +367,11 @@
   </div>
   </#if>
 </script>
+<#include "/includes/ng2_templates/works-bulk-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="280" elementId="modalWorksBulkDelete" elementWidth="600">
+    <works-bulk-delete-ng2></works-bulk-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">
     <works-delete-ng2></works-delete-ng2>

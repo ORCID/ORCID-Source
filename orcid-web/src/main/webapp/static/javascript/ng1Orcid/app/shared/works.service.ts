@@ -400,7 +400,7 @@ export class WorksService {
         return null;
     }
 
-    loadAllWorkGroups(sort, sortAsc, callback): any {
+    loadAllWorkGroups(sort, sortAsc, callback?): any {
         this.details = new Object();
         this.groups = new Array();
         

@@ -172,6 +172,9 @@ import { VerifyEmailModule }
 import { WidgetModule } 
     from './widget/widget.ts';
 
+import { WorksBulkDeleteModule } 
+    from './works/worksBulkDelete.ts';
+
 import { WorksDeleteModule } 
     from './works/worksDelete.ts';
 
@@ -248,6 +251,7 @@ export const orcidApp = angular.module(
         TwoFAStateModule.name,
         VerifyEmailModule.name,
         WidgetModule.name,
+        WorksBulkDeleteModule.name,
         WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,

@@ -1,6 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var sortState: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 
@@ -21,57 +19,47 @@ import { ModalService }
     from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'works-delete-ng2',
-    template:  scriptTmpl("works-delete-ng2-template")
+    selector: 'works-bulk-delete-ng2',
+    template:  scriptTmpl("works-bulk-delete-ng2-template")
 })
-export class WorksDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
+export class WorksBulkDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    deleteGroup: any;
-    fixedTitle: any;
-    formData: any;
-    putCode: any;
-    sortState: any;
+    bulkDeleteCount: any;
+    bulkDeleteSubmit: boolean;
+    bulkEditMap: any;
+    delCountVerify: number;
 
     constructor(
         private worksService: WorksService,
         private modalService: ModalService
     ) {
-
-
+        this.bulkDeleteSubmit = false;
+        this.delCountVerify = 0;
     }
 
     cancelEdit(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksDelete'});
+        this.delCountVerify = 0;
+        this.bulkDeleteSubmit = false;
+        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksBulkDelete'});
         this.worksService.notifyOther({action:'cancel', successful:true});
     };
 
-    deleteByPutCode(putCode, deleteGroup): void {
-        //this.closeAllMoreInfo();
-        this.deleteWork(putCode);
+    deleteBulk(): void {
+        if (this.delCountVerify != parseInt(this.bulkDeleteCount)) {
+            this.bulkDeleteSubmit = true;
+            return;
+        }
+        var delPuts = new Array();
+        for (var idx in this.worksService.groups){
+            if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){
+                delPuts.push(this.worksService.groups[idx].activePutCode);
+            }
+        }
+        this.deleteGroupWorks(delPuts);
     };
 
-    deleteWork(putCodes): void {
-        this.worksService.removeWorks([putCodes])
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if (putCodes.length > 0) {
-                    this.worksService.removeWorks([putCodes]);
-                }
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksDelete'});
-                this.worksService.notifyOther({action:'delete', successful:true});
-            },
-            error => {
-                console.log('Error deleting work', error);
-            } 
-        ); 
-    }
-
-    //probably not used in editworksform - check and remove if not needed
     deleteGroupWorks(putCodes): void {
         var rmWorks = [];
         var rmGroups = [];
@@ -100,8 +88,10 @@ export class WorksDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
                 if (rmWorks.length > 0) {
                     this.worksService.removeWorks(rmWorks);
                 }
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksDelete'});
-                this.worksService.notifyOther({action:'delete', successful:true});
+                this.delCountVerify = 0;
+                this.bulkDeleteSubmit = false;
+                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksBulkDelete'});
+                this.worksService.notifyOther({action:'deleteBulk', successful:true});
             },
             error => {
                 console.log('Error deleting work', error);
@@ -114,17 +104,11 @@ export class WorksDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.worksService.notifyObservable$.subscribe(
             (res) => {
-                if( res.fixedTitle ) {
-                    this.fixedTitle = res.fixedTitle;
+                if( res.bulkDeleteCount ) {
+                    this.bulkDeleteCount = res.bulkDeleteCount;
                 }
-                if( res.putCode ) {
-                    this.putCode = res.putCode;
-                }
-                if( res.deleteGroup ) {
-                    this.deleteGroup = res.deleteGroup;
-                }
-                if( res.sortState ) {
-                    this.sortState = res.sortState;
+                if( res.bulkEditMap ) {
+                    this.bulkEditMap = res.bulkEditMap;
                 }
             }
         );

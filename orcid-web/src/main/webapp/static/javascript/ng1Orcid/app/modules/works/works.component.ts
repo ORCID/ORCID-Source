@@ -47,12 +47,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bibtextWorkIndex: any;
     bulkChecked: any;
     bulkDeleteCount: number;
-    bulkDeleteSubmit: boolean;
-    bulkDisplayToggle: false;
+    bulkDisplayToggle: boolean;
     bulkEditMap: any;
     bulkEditShow: boolean;
     combineWork: any;
-    delCountVerify: number;
     deleteGroup: any;
     deletePutCode: any;
     displayURLPopOver: any;
@@ -100,12 +98,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.bibtextWorkIndex = null;
         this.bulkChecked = false;
         this.bulkDeleteCount = 0;
-        this.bulkDeleteSubmit = false;
         this.bulkDisplayToggle = false;
         this.bulkEditMap = {};
         this.bulkEditShow = false;
         this.combineWork = null;
-        this.delCountVerify = 0;
         this.displayURLPopOver = {};
         this.editSources = {};
         this.editWork = null;
@@ -258,23 +254,15 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     deleteBulkConfirm(idx): void {
         var idx: any;
-        this.bulkDeleteCount = 0;
-        this.bulkDeleteSubmit = false;        
-        this.delCountVerify = 0;
+        this.bulkDeleteCount = 0;       
         for (idx in this.worksService.groups){
             if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){
                 this.bulkDeleteCount++;
             }
         }
 
-        /*
-        this.bulkDeleteFunction = this.deleteBulk;
-
-        $.colorbox({
-            html: $compile($('#bulk-delete-modal').html())($scope)
-        });
-        $.colorbox.resize();
-        */
+        this.worksService.notifyOther({bulkDeleteCount:this.bulkDeleteCount, bulkEditMap:this.bulkEditMap});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
     };
 
     deleteWorkConfirm(putCode, deleteGroup): void {
@@ -709,6 +697,36 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         */
     };
 
+    setBulkGroupPrivacy(priv): void {
+        var putCodes = new Array();
+        for (var idx in this.worksService.groups){
+            if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){  
+                for (var idj in this.worksService.groups[idx].works) {
+                    putCodes.push(this.worksService.groups[idx].works[idj].putCode.value);
+                    this.worksService.groups[idx].works[idj].visibility.visibility = priv;
+                }
+            }
+        }
+        
+        if(putCodes.length > 0) {
+            this.worksService.updateVisibility(putCodes, priv)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if (putCodes.length > 0) {
+                        this.worksService.updateVisibility(putCodes, priv);
+                    }
+                    //group.activeVisibility = priv;
+                },
+                error => {
+                    console.log('Error updating group visibility', error);
+                } 
+            );
+        }                
+    };
+
     setGroupPrivacy(putCode, priv): void {
         var group = this.worksService.getGroup(putCode);
         var putCodes = new Array();
@@ -843,6 +861,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
        
     };
 
+    swapbulkChangeAll(): void {
+        this.bulkChecked = !this.bulkChecked;
+        for (var idx in this.worksService.groups){
+            this.bulkEditMap[this.worksService.groups[idx].activePutCode] = this.bulkChecked;
+        }
+        this.bulkDisplayToggle = false;
+    };
+
     toggleBibtexExport(): void{
         this.bibtexExportError = false;
         this.bibtexLoading = false;
@@ -856,6 +882,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     toggleBulkEdit(): void {
+        console.log("toggle bulk edit");
         this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -864,23 +891,35 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.worksService.loadAllWorkGroups(
-                    this.sortState.predicateKey, 
-                    !this.sortState.reverseKey[this.sortState.predicateKey], 
-                    function() {
-                        if (!this.bulkEditShow) {
-                            
-                            this.bulkChecked = false;
-                            for (var idx in this.worksService.groups){
-                                this.bulkEditMap[this.worksService.groups[idx].activePutCode] = false;
+                    this.worksService.loadAllWorkGroups(this.sortState.predicateKey, 
+                    !this.sortState.reverseKey[this.sortState.predicateKey])
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            this.formData = data;
+                            this.worksService.handleWorkGroupData( this.formData );
+                            this.worksService.loading = false;
+                            if (!this.bulkEditShow) {
+                                this.bulkEditMap = {};
+                                this.bulkChecked = false;
+                                console.log(this.worksService.groups);
+                                for (var idx in this.worksService.groups){
+                                    this.bulkEditMap[this.worksService.groups[idx].activePutCode] = false;
+                                }
                             }
-                        };
-                        this.bulkEditShow = !this.bulkEditShow;
-                        this.showBibtexImportWizard = false;
-                        this.workImportWizard = false;
-                        this.showBibtexExport = false;
-                    }
-                );
+                            this.bulkEditShow = !this.bulkEditShow;
+                            this.showBibtexImportWizard = false;
+                            this.workImportWizard = false;
+                            this.showBibtexExport = false;
+                            this.cdr.detectChanges();
+                        },
+                        error => {
+                            this.worksService.loading = false;
+                            //console.log('getWorksFormError', error);
+                        } 
+                    );
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
@@ -889,6 +928,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
+    };
+
+    toggleSelectMenu(): void {                   
+        this.bulkDisplayToggle = !this.bulkDisplayToggle;                    
     };
 
     toggleWizardDesc(id): void {
@@ -916,7 +959,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(res.successful == true) {
                         this.refreshWorkGroups();
                     }
-                } else if(res.action == 'add' || res.action == 'cancel') {
+                } 
+                if(res.action == 'deleteBulk') {
+                    if(res.successful == true) {
+                        this.bulkEditShow = false;
+                        this.refreshWorkGroups();
+                    }
+                } 
+                if(res.action == 'add' || res.action == 'cancel') {
                     if(res.successful == true) {
                         this.refreshWorkGroups();
                         this.loadMore();

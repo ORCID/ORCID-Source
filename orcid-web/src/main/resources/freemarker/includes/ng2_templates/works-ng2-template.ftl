@@ -237,15 +237,13 @@
                             <li class="bulk-edit-toolbar-item">
                                 <label><@orcid.msg 'workspace.bulkedit.edit'/></label>
                                 <div class="bulk-edit-privacy-control">
-                                    <!-- ***
-                                    <@orcid.privacyToggle2 angularModel="groupPrivacy()" 
+                                    <@orcid.privacyToggle2Ng2 angularModel="none" elementId="none" 
                                     questionClick=""
                                     clickedClassCheck=""
                                     publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
                                     limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
                                     privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
-                                    -->
-                                </div>                      
+                                </div>                    
                             </li>                   
                         </ul>
                         <div class="bulk-edit-delete">
@@ -461,7 +459,8 @@
 
                                         <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
                                             <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
-                                                <!--Bulk edit checkbox                                
+
+                                                <!--Bulk edit checkbox-->                               
                                                 <#if !(isPublicProfile??)>
                                                 <li *ngIf="bulkEditShow" class="bulk-checkbox-item">
                                                     <input type="checkbox" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
