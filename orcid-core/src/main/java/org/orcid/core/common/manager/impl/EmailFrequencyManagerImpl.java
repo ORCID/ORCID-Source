@@ -71,7 +71,7 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         entity.setSendMemberUpdateRequests(SendEmailFrequency.WEEKLY.floatValue());
         entity.setSendQuarterlyTips(sendQuarterlyTips == null ? false : sendQuarterlyTips);
         emailFrequencyDao.persist(entity);        
-        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.EMAIL_FREQUENCY_CREATED_ON_CLAIM, orcid, "send_quarterly_tips " + false);        
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.EMAIL_FREQUENCY_CREATED_ON_CLAIM, orcid, "send_quarterly_tips " + (sendQuarterlyTips == null ? false : sendQuarterlyTips));        
         return true;
     }
     
