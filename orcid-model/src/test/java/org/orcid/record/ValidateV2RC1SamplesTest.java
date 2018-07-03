@@ -19,20 +19,15 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.notification.custom.MarshallingTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 public class ValidateV2RC1SamplesTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2RC1SamplesTest.class);
 
     String[] sampleNames = { "activities", "deprecated", "education", "employment", "error", "funding", "history", "person", "preferences", "record", "search", "work" };
 
     @Test
     public void Test() throws SAXException, IOException {
         for (String name : sampleNames) {
-            LOGGER.debug("validating sample: " + sampleNames);
             validateSampleXML(name);
         }
     }
