@@ -8,6 +8,7 @@ public enum ProfileHistoryEventType {
     ACCEPTED_TERMS_CONDITIONS("Accepted T&Cs"),
     ACCEPTED_PUBLIC_CLIENT_TERMS_CONDITIONS("Accepted Pub Client T&Cs"),
     EMAIL_FREQUENCY_CREATED_ON_REGISTER("email_frequency on register"),
+    EMAIL_FREQUENCY_CREATED_ON_CLAIM("email_frequency on claim"),
     UPDATE_QUARTERLY_TIPS_NOTIF("send_quarterly_tips"),
     UPDATE_AMEND_NOTIF_FREQ("send_change_notifications"),
     UPDATE_ADMINISTRATIVE_NOTIF_FREQ("send_administrative_change_notifications"),
