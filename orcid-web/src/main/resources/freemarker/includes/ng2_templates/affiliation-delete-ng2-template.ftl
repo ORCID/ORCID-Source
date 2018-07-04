@@ -6,7 +6,7 @@
             <div id="confirm_delete_affiliation" class="btn btn-danger" (click)="deleteAffiliation()">
                 <@orcid.msg 'freemarker.btnDelete' />
             </div>
-            <a href="" (click)="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+            <a href="" (click)="cancelEdit()"><@orcid.msg 'freemarker.btncancel' /></a>
         </div>
     </div>
 </script>

@@ -241,7 +241,7 @@
                                 </button>
                             </li>                       
                             <li>                      
-                                <a class="cancel-option" (click)="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>                  
+                                <a class="cancel-option" (click)="cancelEdit()"><@orcid.msg 'freemarker.btncancel' /></a>                  
                             </li>
                             <li>
                                 <span *ngIf="addingAffiliation">
