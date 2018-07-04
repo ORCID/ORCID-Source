@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
@@ -118,6 +119,8 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         form.setPutCode(Text.valueOf(summary.getPutCode()));
         form.setVisibility(Visibility.valueOf(summary.getVisibility()));
         
+        initDateFields(form, summary.getStartDate(), summary.getEndDate());
+        
         Organization organization = summary.getOrganization();
 
         form.setDateSortString(PojoUtil.createDateSortString(summary));
@@ -155,12 +158,6 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             form.setRoleTitle(new Text());
         }
 
-        if (summary.getStartDate() != null) {
-            form.setStartDate(Date.valueOf(summary.getStartDate()));
-        }
-        if (summary.getEndDate() != null) {
-            form.setEndDate(Date.valueOf(summary.getEndDate()));
-        }
         Source source = summary.getSource();
         if (source != null) {
             form.setSource(source.retrieveSourcePath());
@@ -177,6 +174,9 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             form.setAffiliationExternalIdentifiers(affiliationExternalIdentifiers);
         }
 
+        // Set empty url field
+        form.setUrl(new Text());
+        
         form.setCreatedDate(Date.valueOf(summary.getCreatedDate()));
         form.setLastModified(Date.valueOf(summary.getLastModifiedDate()));
         
@@ -204,6 +204,9 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
 
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
+        
+        initDateFields(form, affiliation.getStartDate(), affiliation.getEndDate());
+        
         Organization organization = affiliation.getOrganization();
 
         form.setDateSortString(PojoUtil.createDateSortString(affiliation));
@@ -241,12 +244,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             form.setRoleTitle(new Text());
         }
 
-        if (affiliation.getStartDate() != null) {
-            form.setStartDate(Date.valueOf(affiliation.getStartDate()));
-        }
-        if (affiliation.getEndDate() != null) {
-            form.setEndDate(Date.valueOf(affiliation.getEndDate()));
-        }
+        
         Source source = affiliation.getSource();
         if (source != null) {
             form.setSource(source.retrieveSourcePath());
@@ -274,6 +272,38 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         return form;
     }
 
+    private static void initDateFields(AffiliationForm form, FuzzyDate startDate, FuzzyDate endDate) {
+        if (startDate != null) {
+            form.setStartDate(Date.valueOf(startDate));
+            if (form.getStartDate().getDay() == null) {
+                form.getStartDate().setDay(new String());
+            }
+            if (form.getStartDate().getMonth() == null) {
+                form.getStartDate().setMonth(new String());
+            }
+            if (form.getStartDate().getYear() == null) {
+                form.getStartDate().setYear(new String());
+            }
+        } else {
+            form.setStartDate(getEmptyDate());
+        }
+        
+        if (endDate != null) {
+            form.setEndDate(Date.valueOf(endDate));
+            if (form.getEndDate().getDay() == null) {
+                form.getEndDate().setDay(new String());
+            }
+            if (form.getEndDate().getMonth() == null) {
+                form.getEndDate().setMonth(new String());
+            }
+            if (form.getEndDate().getYear() == null) {
+                form.getEndDate().setYear(new String());
+            }
+        } else {
+            form.setEndDate(getEmptyDate());
+        }
+    }
+    
     public Affiliation toAffiliation() {
         Affiliation affiliation = null;
 
@@ -776,5 +806,13 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         } else if (!url.equals(other.url))
             return false;
         return true;
-    }        
+    }  
+
+    private static Date getEmptyDate() {
+        Date date = new Date();
+        date.setDay(new String());
+        date.setMonth(new String());
+        date.setYear(new String());
+        return date;
+    }
 }

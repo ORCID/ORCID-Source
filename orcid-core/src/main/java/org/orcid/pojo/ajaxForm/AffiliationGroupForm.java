@@ -138,15 +138,14 @@ public class AffiliationGroupForm implements Serializable {
                 affiliationGroup.setUserVersionPresent(true);
             } 
             
-            if (summary.getExternalIdentifiers() != null) {
-                List<ActivityExternalIdentifier> workExternalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();
-                for (ExternalID extId : summary.getExternalIdentifiers().getExternalIdentifier()) {                    
-                    workExternalIdentifiersList.add(ActivityExternalIdentifier.valueOf(extId));
-                }
-                affiliationGroup.getExternalIdentifiers().addAll(workExternalIdentifiersList);
-            }
-            
             affiliationGroup.getAffiliations().add(AffiliationForm.valueOf(summary));            
+        }
+        
+        if (group.getIdentifiers() != null) {
+            List<ActivityExternalIdentifier> workExternalIdentifiersList = affiliationGroup.getExternalIdentifiers();
+            for (ExternalID extId : group.getIdentifiers().getExternalIdentifier()) {                    
+                workExternalIdentifiersList.add(ActivityExternalIdentifier.valueOf(extId));
+            }            
         }
         
         return affiliationGroup;
