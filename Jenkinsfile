@@ -1,47 +1,37 @@
 node {
-
-    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${env.BRANCH_NAME}"
     
     properties([
         buildDiscarder(
-            logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '3')
-        ), 
-        disableConcurrentBuilds(), 
+            logRotator(
+                artifactDaysToKeepStr: '',
+                artifactNumToKeepStr: '',
+                daysToKeepStr: '3',
+                numToKeepStr: '3'
+            )
+        ),
+        disableConcurrentBuilds(),
         [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
         pipelineTriggers([])
     ])
     
-    stage('Fetch Code and Build') {
-        echo "triggered by modification on ${env.BRANCH_NAME} ---------------------------------------------------------------------------"
-        echo "Lets build the core"
+    stage('Build and Test') {
         try {
-            do_maven("clean install -Dmaven.test.skip=true")
+            build([
+                job: 'orcid-source-build-step1',
+                parameters: [
+                    string(
+                        name: BRANCH_NAME, 
+                        value: env.BRANCH_NAME
+                    )
+                ],
+                wait: true
+            ])
         } catch(Exception err) {
-            orcid_notify("Compilation ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            throw err
-        }
-    }
-    stage('Execute Tests') {
-        try {
-            do_maven("test")
-            junit '**/target/surefire-reports/*.xml'
-        } catch(Exception err) {
-            junit '**/target/surefire-reports/*.xml'            
             orcid_notify("Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
         orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
-        deleteDir()        
-    }
-}
-
-def do_maven(mvn_task){
-    def MAVEN = tool 'ORCID_MAVEN'
-    try{
-        sh "export MAVEN_OPTS='-XX:MaxPermSize=2048m -Xms128m -Xmx4096m -XX:+HeapDumpOnOutOfMemoryError'"
-        sh "$MAVEN/bin/mvn $mvn_task"
-    } catch(Exception err) {
-        throw err
+        deleteDir()
     }
 }
 
