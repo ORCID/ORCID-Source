@@ -68,7 +68,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     sortDisplayKeyEducations: any;
     sortDisplayKeyEmployments: any;
     sortDisplayKeyMemberships: any;
-    sortHideOption: boolean;
     sortKeyDistinctions: any;
     sortKeyEducations: any;
     sortKeyEmployments: any;
@@ -94,7 +93,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.showElement = {};
-        this.sortHideOption = false;
         this.sortAscDistinctions = false;
         this.sortDisplayKeyDistinctions = 'endDate';
         this.sortKeyDistinctions = ['endDate', 'title'];

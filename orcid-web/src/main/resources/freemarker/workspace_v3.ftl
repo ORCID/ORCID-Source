@@ -658,11 +658,11 @@
 </modalngcomponent><!-- Ng2 component -->
 </@orcid.checkFeatureStatus> 
 
-<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
+<modalngcomponent elementHeight="147" elementId="modalAffiliationDelete" elementWidth="364">
     <affiliation-delete-ng2></affiliation-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
+<modalngcomponent elementHeight="495" elementId="modalAffiliationForm" elementWidth="800">
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
