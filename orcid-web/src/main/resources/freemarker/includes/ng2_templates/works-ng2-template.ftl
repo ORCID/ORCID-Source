@@ -266,12 +266,12 @@
         <!--End bulk edit-->
         <!-- Bibtex export -->        
         <div *ngIf="showBibtexExport && workspaceSrvc.displayWorks" class="bibtex-box">
-            <div class="box-border" *ngIf="canReadFiles" >
+            <div *ngIf="canReadFiles" >
                 <h4><@orcid.msg 'workspace.bibtexExporter.export_bibtex'/></h4><span (click)="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
                 <div class="row full-height-row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
                         <p>
-                            <@orcid.msg 'workspace.bibtexExporter.intro'/>
+                            <@orcid.msg 'workspace.bibtexExporter.intro_1'/><a href="https://support.orcid.org/knowledgebase/articles/1807552-exporting-works-into-a-bibtex-file" target="exporting_bibtex" style="word-break\: normal;"><@orcid.msg 'workspace.bibtexExporter.intro_2'/></a><@orcid.msg 'workspace.bibtexExporter.intro_3'/>
                         </p> 
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-4">
@@ -315,7 +315,7 @@
                             <a class="bibtex-cancel" (click)="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>            
                             <span *ngIf="!(worksFromBibtex?.length > 0)" class="import-label" (click)="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
                             <span *ngIf="worksFromBibtex?.length > 0" class="import-label" (click)="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>                                              
-                            <input id="inputBibtex" type="file" class="upload-button" [(ngModel)]="textFiles" accept="*" /><!-- *** update-fn="loadBibtexJs()"  app-file-text-reader multiple  -->
+                            <input id="inputBibtex" name="inputBibtex" type="file" class="upload-button" [(ngModel)]="textFiles" accept="*" /><!-- *** update-fn="loadBibtexJs()"  app-file-text-reader multiple  -->
                         </span>                   
                     </div>
                 </div>
@@ -406,7 +406,7 @@
                                                 <ul class="workspace-private-toolbar">
                                                     <#if !(isPublicProfile??)>
                                                     <li *ngIf="bulkEditShow">
-                                                        <input type="checkbox" [(ngModel)]="bulkEditMap[group.activePutCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
+                                                        <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[group.activePutCode]" class="bulk-edit-input-header">
                                                     </li>
                                                     </#if>                
                                                     <li class="works-details">
@@ -463,7 +463,7 @@
                                                 <!--Bulk edit checkbox-->                               
                                                 <#if !(isPublicProfile??)>
                                                 <li *ngIf="bulkEditShow" class="bulk-checkbox-item">
-                                                    <input type="checkbox" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
+                                                    <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
                                                 </li>
                                                 </#if> 
                                                 <!--Show details toggle-->
@@ -678,7 +678,7 @@
                                                 <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultWork.putCode.value"></span><span *ngIf="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                                 
                                                 <#if !(isPublicProfile??)>
-                                                <a (click)="worksService.makeDefault(group, work.putCode.value); " *ngIf="work.putCode.value != group.defaultWork.putCode.value">
+                                                <a (click)="worksService.makeDefault(group, work.putCode.value)" *ngIf="work.putCode.value != group.defaultWork.putCode.value">
                                                     <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                                 </a>
                                                 </#if>

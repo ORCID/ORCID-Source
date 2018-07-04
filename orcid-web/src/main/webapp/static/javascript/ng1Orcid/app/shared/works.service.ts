@@ -357,6 +357,12 @@ export class WorksService {
         }
     }
 
+    getBibtexExport(): Observable<any> {
+        return this.http.get( 
+            getBaseUri() + '/works/works.bib', { responseType: 'text'}
+        )
+    }
+
     getBlankWork(callback?): Observable<any> {
         return this.http.get( 
             getBaseUri() + '/works/work.json'
@@ -493,6 +499,7 @@ export class WorksService {
     };
 
     makeDefault(group, putCode): any {
+        console.log("makeDefault");
         return this.http.get(
             getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode
         )

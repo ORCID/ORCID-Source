@@ -1,5 +1,6 @@
 declare var $: any;
 declare var ActSortState: any;
+declare var blobObject: any;
 declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
@@ -7,7 +8,7 @@ declare var openImportWizardUrl: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -50,6 +51,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bulkDisplayToggle: boolean;
     bulkEditMap: any;
     bulkEditShow: boolean;
+    canReadFiles: boolean;
     combineWork: any;
     deleteGroup: any;
     deletePutCode: any;
@@ -83,6 +85,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor( 
         private commonSrvc: CommonService,
         private cdr: ChangeDetectorRef,
+        private elementRef: ElementRef,
         private emailService: EmailService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
@@ -101,6 +104,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.bulkDisplayToggle = false;
         this.bulkEditMap = {};
         this.bulkEditShow = false;
+        this.canReadFiles = false;
         this.combineWork = null;
         this.displayURLPopOver = {};
         this.editSources = {};
@@ -309,34 +313,33 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     fetchBibtexExport(){
         this.bibtexLoading = true;
         this.bibtexExportError = false; 
-        
-        /*
-        $.ajax({
-            url: getBaseUri() + '/' + 'works/works.bib',
-            type: 'GET',
-            success: function(data) {
+        this.worksService.getBibtexExport()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
                 this.bibtexLoading = false;
                 if(window.navigator.msSaveOrOpenBlob) {
                     var fileData = [data];
                     blobObject = new Blob(fileData, {type: 'text/plain'});
                     window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                              
                 } else {
-                    var anchor = angular.element('<a/>');
-                    anchor.css({display: 'none'});
-                    angular.element(document.body).append(anchor);
-                    anchor.attr({
-                        href: 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data),
-                        target: '_self',
-                        download: 'works.bib'
-                    })[0].click();
+                    var anchor = document.createElement('a');
+                    anchor.setAttribute('css', "{display: 'none'}");  
+                    this.elementRef.nativeElement.append(anchor);
+                    anchor.setAttribute('href', 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data));
+                    anchor.setAttribute('target', '_self');
+                    anchor.setAttribute('download', 'works.bib');  
+                    anchor[0].click();
                     anchor.remove();
                 }
-            }
-        }).fail(function() {
-            this.bibtexExportError = true;
-            //console.log("bibtex export error");
-        });  
-        */      
+            },
+            error => {
+                this.bibtexExportError = true;
+                console.log("bibtex export error");
+            } 
+        );   
     };
 
     hasCombineableEIs(work): boolean {
@@ -378,7 +381,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     getDetails(putCode, type, callback): void {
         console.log("get details");
         if(this.worksService.details[putCode] == undefined) {
-             this.worksService.getDetails(putCode, type)
+            this.worksService.getDetails(putCode, type)
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
@@ -866,6 +869,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         for (var idx in this.worksService.groups){
             this.bulkEditMap[this.worksService.groups[idx].activePutCode] = this.bulkChecked;
         }
+        console.log(this.bulkEditMap);
         this.bulkDisplayToggle = false;
     };
 
@@ -882,7 +886,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     toggleBulkEdit(): void {
-        console.log("toggle bulk edit");
         this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -918,7 +921,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         error => {
                             this.worksService.loading = false;
                             //console.log('getWorksFormError', error);
-                        } 
+                        }
                     );
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
@@ -982,7 +985,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        // Check for the various File API support.
+        if ((<any>window).File != undefined && (<any>window).FileReader != undefined  && (<any>window).FileList != undefined  && (<any>window).Blob) {
+            this.canReadFiles = true;
+        };
         this.loadMore();
         this.loadWorkImportWizardList();
+
     };
 }
