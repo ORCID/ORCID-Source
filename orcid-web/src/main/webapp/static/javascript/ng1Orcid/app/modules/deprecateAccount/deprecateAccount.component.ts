@@ -47,6 +47,7 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
         .subscribe(
             data => {
                 if(data.errors.length == 0) {
+                    this.deprecateProfileSevice.setStoredData( "deprecateProfile", this.deprecateProfilePojo );
                     this.modalService.notifyOther({action:'open', moduleId: 'deprecateAccountModal', edit: false});
                 }
             },
@@ -115,7 +116,7 @@ export class DeprecateAccountModalComponent implements AfterViewInit, OnDestroy,
 
     getDeprecateProfile(): void {
 
-        this.deprecateProfileService.getData( this.url_path )
+        this.deprecateProfileService.getStoredData( "deprecateProfile" )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
