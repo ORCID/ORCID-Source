@@ -125,17 +125,6 @@
                     </p>
                 </td>
             </tr>
-            <#if RequestParameters['OrcidSocial']??>
-                <tr>
-                    <th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
-                    <td><a href="" (click)="toggleSocialNetworksEdit()">{{socialNetworksToggleText}}</a></td>
-                </tr>
-                <tr *ngIf="showEditSocialSettings"  id="social-networks">
-                    <td colspan="2">
-                        <social-networks-ng2></social-networks-ng2>
-                    </td>
-                </tr>
-            </#if>
         </tbody>
     </table>
 </script>
