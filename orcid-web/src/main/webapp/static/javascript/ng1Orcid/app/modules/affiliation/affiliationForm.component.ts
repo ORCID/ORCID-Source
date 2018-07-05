@@ -182,7 +182,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
             "typeahead:selected", 
             (
                 function(obj, datum) {
-                    //console.log('typeahead', obj, datum, this);
                     this.selectAffiliation(datum);
                 }
             ).bind(this)
@@ -289,7 +288,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     serverValidate(relativePath): void {
-        //console.log('server validate', relativePath, this.editAffiliation);
         if( relativePath == 'affiliations/affiliation/datesValidate.json' ){
             if( this.editAffiliation.startDate.month == "" 
                 || this.editAffiliation.startDate.day == ""
@@ -312,7 +310,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         )
         .subscribe(
             data => {
-                console.log('data', data);
                 if (data != null) {
                     this.commonSrvc.copyErrorsLeft(this.editAffiliation, data);
                 }
@@ -359,7 +356,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
                 (res) => {
-                    console.log(JSON.stringify(res));
                     if(res.moduleId == "modalAffiliationForm") {
                         if(res.action == "open" && res.edit == false) {
                             this.editAffiliation = this.getEmptyAffiliation();
