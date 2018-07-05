@@ -75,17 +75,8 @@ import { PrivacytoggleNg2Module }
 import { RequestPasswordResetNg2Module }
     from './../requestPasswordReset/requestPasswordReset.ts';
 
-/*
-import { RevokeApplicationFormNg2Module }
-    from './../revokeApplicationForm/revokeApplicationForm.ts';
-*/
-
 import { SecurityQuestionEditNg2Module }
     from './../securityQuestionEdit/securityQuestionEdit.ts';
-/*
-import { SocialNg2Module }
-    from './../social/social.ts';
-*/
 
 import { SwitchUserNg2Module }
     from './../switchUser/switchUser.ts';
@@ -160,9 +151,6 @@ import { ReactivationService }
 
 import { SearchService } 
     from '../../shared/search.service.ts';
-
-import { SocialNetworkService }
-    from '../../shared/socialNetwork.service.ts';
 
 import { SwitchUserService } 
     from '../../shared/switchUser.service.ts';
@@ -264,7 +252,6 @@ import { EmailFrequencyService }
             PreferencesService,
             ReactivationService,
             SearchService,
-            SocialNetworkService,
             TwoFAStateService,
             SwitchUserService,
             WidgetService,
