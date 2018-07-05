@@ -408,6 +408,9 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( res.work != undefined ) {
                     this.editWork = res.work;
                     this.loadWorkTypes();
+                    if( this.editWork.workExternalIdentifiers.length == 0 ){
+                        this.addExternalIdentifier();
+                    }  
                 } else {
                     this.worksService.getBlankWork()
                     .pipe(    
@@ -431,7 +434,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
             (res) => {
                 if(res.moduleId == "modalWorksForm'") {
                     if(res.action == "open" && res.edit == false) {
-                        //this.editWork = this.getEmptyWork();
                         this.worksService.getBlankWork()
                         .pipe(    
                             takeUntil(this.ngUnsubscribe)
@@ -471,6 +473,5 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('Error getting external ID types', error);
             } 
         );
-
     };
 }

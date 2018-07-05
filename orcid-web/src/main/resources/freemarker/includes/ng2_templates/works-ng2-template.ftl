@@ -302,7 +302,7 @@
         <!--End bibtex export-->
         <!-- Bibtex Importer Wizard -->
         <div *ngIf="showBibtexImportWizard && workspaceSrvc.displayWorks"  class="bibtex-box">
-            <div class="box-border" *ngIf="canReadFiles" >
+            <div *ngIf="canReadFiles" >
                 <h4><@orcid.msg 'workspace.bibtexImporter.link_bibtex'/></h4><span (click)="openBibTextWizard()" class="hide-importer"><@orcid.msg 'workspace.bibtexImporter.hide_link_bibtex'/></span>
                 <div class="row full-height-row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
@@ -678,7 +678,7 @@
                                                 <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultWork.putCode.value"></span><span *ngIf="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                                 
                                                 <#if !(isPublicProfile??)>
-                                                <a (click)="worksService.makeDefault(group, work.putCode.value)" *ngIf="work.putCode.value != group.defaultWork.putCode.value">
+                                                <a (click)="makeDefault(group, work.putCode.value)" *ngIf="work.putCode.value != group.defaultWork.putCode.value">
                                                     <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                                 </a>
                                                 </#if>
@@ -739,7 +739,7 @@
                                         <div class="col-md-3 col-sm-3 col-xs-10">
                                             <#if !(isPublicProfile??)>
                                             <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultWork.putCode.value"></span><span *ngIf="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                            <a (click)="worksService.makeDefault(group, work.putCode.value); " *ngIf="work.putCode.value != group.defaultWork.putCode.value">
+                                            <a (click)="makeDefault(group, work.putCode.value); " *ngIf="work.putCode.value != group.defaultWork.putCode.value">
                                                 <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                             </a>
                                             </#if>
@@ -789,7 +789,7 @@
                                         </div>
                                         
                                         <div class="col-md-3 col-sm-3 col-xs-9">
-                                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.works?.length != 1">(</span><a (click)="showSources(group)" *ngIf="group?.works?.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.works.length}}</a><span *ngIf="group?.works?.length != 1">)</span>
+                                            <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.works?.length != 1"> (</span><a (click)="showSources(group, $event)" *ngIf="group?.works?.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.works.length}}</a><span *ngIf="group?.works?.length != 1">)</span>
 
                                             <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
                                                 <div class="arrow"></div>

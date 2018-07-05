@@ -498,19 +498,10 @@ export class WorksService {
         )
     };
 
-    makeDefault(group, putCode): any {
-        console.log("makeDefault");
+    updateToMaxDisplay(putCode): Observable<any> {
         return this.http.get(
             getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode
         )
-        .pipe(
-            tap(
-                (data) => {
-                    //group.defaultWork = worksSrvc.getWork(putCode);
-                    //group.activePutCode = group.defaultWork.putCode.value;                    
-                }
-            )
-        );
     }
 
     postWork(work): any {

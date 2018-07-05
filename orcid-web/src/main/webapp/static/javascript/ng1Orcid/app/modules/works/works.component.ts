@@ -251,6 +251,13 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         return this.hasCombineableEIs(work);
     };
 
+    closeAllMoreInfo(): void {
+        for (var idx in this.moreInfo){
+            this.moreInfo[idx]=false;
+        }
+    };
+
+
     closePopover(event): void {
         this.moreInfoOpen = false;
         $('.work-more-info-container').css('display', 'none');
@@ -526,6 +533,22 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
+
+    makeDefault(group, putCode): any {
+        this.worksService.updateToMaxDisplay(putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                group.defaultWork = this.worksService.getWork(putCode);
+                group.activePutCode = group.defaultWork.putCode.value;  
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
+    }
 
     openBibTextWizard(): void {
         this.emailService.getEmails()
@@ -835,7 +858,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         */
     };
 
-    showSources(group): void {
+    showSources(group, $event): void {
+        $event.stopPropagation();
         this.editSources[group.groupId] = true;
     };
 
@@ -960,17 +984,20 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             (res) => {                
                 if(res.action == 'delete') {
                     if(res.successful == true) {
+                        this.closeAllMoreInfo();
                         this.refreshWorkGroups();
                     }
                 } 
                 if(res.action == 'deleteBulk') {
                     if(res.successful == true) {
                         this.bulkEditShow = false;
+                        this.closeAllMoreInfo();
                         this.refreshWorkGroups();
                     }
                 } 
                 if(res.action == 'add' || res.action == 'cancel') {
                     if(res.successful == true) {
+                        this.closeAllMoreInfo();
                         this.refreshWorkGroups();
                         this.loadMore();
                     }
