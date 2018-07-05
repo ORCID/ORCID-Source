@@ -287,5 +287,13 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("email", email);
         query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0;
+    }
+
+    @Override
+    public boolean populateEmailHash(String email, String emailHash) {
+        Query query = entityManager.createQuery("update EmailEntity set emailHash=:hash where email = :email;");        
+        query.setParameter("email", email);
+        query.setParameter("hash", emailHash);
+        return query.executeUpdate() > 0;
     }    
 }
