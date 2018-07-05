@@ -136,18 +136,39 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.fundings = data;
-                console.log('this.getFundingsById23', data, this.fundings, this.fundings.length);
+                console.log('this.getFundingsById', data, this.fundings);
 
-                for (var i in this.fundings) {
+                for (let i in this.fundings) {
                     var funding = this.fundings[i];
                     groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING, this.groups);
                 };
+
+                console.log('this.groups before', this.groups);
+                
+                for (let j in this.groups){
+                    //let evilResponseProps = Object.keys(this.groups[j]);
+                    //console.log('evilResponseProps', this.groups[j], this.groups[j]['activities'], Object.keys(this.groups[j]['activities']).length);
+                    let goodResponse = [];
+                    for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
+                        let tmpObj = new Object();
+                        tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
+                        tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
+
+                        //console.log('bs', Object.keys(this.groups[j]['activities'])[k] );
+                        console.log('tmpObj', tmpObj);
+                        goodResponse.push(tmpObj);
+                    }
+                    this.groups[j]['activitiesObj'] = goodResponse; 
+                    //console.log('good response', goodResponse, this.groups[j]);
+                }
+                console.log('this.groups after2', this.groups);
+                
                 if (this.fundings.length == 0) {
                     this.fundingService.loading = false;
                 } else {
                     //this.getFundingsById( this.fundingToAddIds );//previously addFundingToScope();
                 }
-                console.log('groupedActivitiesUtil funding', groupedActivitiesUtil, this.groups);
+                console.log('groupedActivitiesUtil funding', this.groups);
                         
 
             },

@@ -1,11 +1,13 @@
 <ul ng-hide="!fundingSrvc.groups.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
     <li class="bottom-margin-small workspace-border-box card ng-scope" ng-repeat="group in fundingSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
         <div class="work-list-container">
+            <!--
             <br />**********
             {{group | json}}
             <br />**********
             {{editSources | json}}
             <br />**********
+            -->
             <ul class="sources-edit-list">
                 <!-- Header -->
                 <li ng-if="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
@@ -54,9 +56,6 @@
 
 
                 <li ng-repeat="funding in group.activities" funding-put-code="{{funding.putCode.value}}">
-                    <br />/////
-                    {{funding}}
-                    <br />/////
                     <!-- active row summary info -->
                     <div class="row" ng-if="group.activePutCode == funding.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-7">

@@ -117,11 +117,13 @@
                 <ul *ngIf="groups.length > 0" class="workspace-fundings workspace-body-list bottom-margin-medium" >
                     <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups"><!-- | orderBy:sortState.predicate:sortState.reverse -->
 
+                        <!--
                         <br />**********
                         {{group | json}}
                         <br />**********
                         {{editSources | json}}
                         <br />**********
+                        -->
                         <div class="work-list-container">
                             <ul class="sources-edit-list">
                                 <!-- Header -->
@@ -169,13 +171,19 @@
                                     </div>
                                 </li><!--  End of header -->
 
-                                --------{{group['activities'] | json }}++++
-                                <li *ngFor="let funding of group['activities']" ><!-- funding-put-code="{{funding.putCode.value}}" -->
+                                <!--
+                                --------{{group.activitiesObj | json }}++++
+                                -->
+                                <li *ngFor="let funding of group.activitiesObj" ><!-- funding-put-code="{{funding.putCode.value}}" -->
+                                    <!--
                                     <br />/////+
                                     {{funding | json}}
                                     <br />/////
+                                    -->
                                     <!-- active row summary info -->
-                                    <div class="row" *ngIf="group.activePutCode == funding.putCode.value">
+
+                                    
+                                    <div class="row" *ngIf="group.activePutCode == funding.value.putCode.value">
                                         <div class="col-md-9 col-sm-9 col-xs-7">
                                             <h3 class="workspace-title">                                
                                                <span *ngIf="group.getActive().fundingTitle.title.value" [innerHTML]="group.getActive().fundingTitle.title.value"></span>                               
@@ -187,7 +195,7 @@
                                                 <!-- Funding date -->
                                                 <span class="funding-date" *ngIf="group.getActive().startDate && !group.getActive().endDate">
                                                     <span *ngIf="group.getActive().startDate.year" [innerHTML]="group.getActive().startDate.year"></span><span *ngIf="group.getActive().startDate.month">-</span><span *ngIf="group.getActive().startDate.month" [innerHTML]="group.getActive().startDate.month"></span>
-                                                    <#-- Do not move it to two lines -->
+                                                    <#-- Do not move it to two lines - ->
                                                     <@orcid.msg 'workspace_fundings.dateSeparator'/> <@orcid.msg 'workspace_fundings.present'/>
                                                     <#-- ########################### -->
                                                 </span>
@@ -212,7 +220,7 @@
                                                     <li *ngIf="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">                                
                                                             <input type="checkbox" [ngModel]="bulkEditMap[funding.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">                                                            
                                                     </li>
-                                                    -->
+                                                    - ->
                                                 </#if>
                                                 <!-- Show/Hide Details -->
                                                 <li class="works-details" *ngIf="!(editSources[group.groupId] == true)">                                        
@@ -230,12 +238,14 @@
                                                 </li>
                                                 <#if !(isPublicProfile??)>
                                                     <li>
+                                                        <!--
                                                         <@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
                                                             questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
                                                             clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
                                                             publicClick="setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
                                                             limitedClick="setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
                                                             privateClick="setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
+                                                        -->
                                                     </li>
                                                 </#if>  
                                             </ul>
@@ -254,9 +264,9 @@
                                             </#if>
                                         </div>
                                     </div>
-
+                                    
                                     <!-- Active Row Identifiers / URL / Validations / Versions -->
-                                    <div class="row" *ngIf="group.activePutCode == funding.putCode.value">
+                                    <div class="row" *ngIf="group.activePutCode == funding.value.putCode.value">
                                         <div class="col-md-12 col-sm-12 bottomBuffer">
                                             <ul class="id-details clearfix">
                                                 <li>
@@ -281,9 +291,10 @@
                                             </ul>
                                         </div>
                                     </div>
-
+                                    
+                                    
                                     <!-- more info -->
-                                    <div class="more-info" *ngIf="moreInfo[group.groupId] && group.activePutCode == funding.putCode.value">
+                                    <div class="more-info" *ngIf="moreInfo[group.groupId] && group.activePutCode == funding.value.putCode.value">
                                         <span class="dotted-bar"></span>    
                                         <div class="row">        
                                             <!-- Funding subtype -->
@@ -338,9 +349,10 @@
                                         </div>
                                     </div>
 
+                                    
 
                                     <!-- active row source display -->
-                                    <div class="row source-line" *ngIf="group.activePutCode == funding.putCode.value">
+                                    <div class="row source-line" *ngIf="group.activePutCode == funding.value.putCode.value">
                                         <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId] == true">                              
                                             {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}
                                         </div>                          
@@ -386,7 +398,7 @@
                                     </div>
 
                                     <!-- not active row && edit sources -->
-                                    <div *ngIf="group.activePutCode != funding.putCode.value" class="row source-line">
+                                    <div *ngIf="group.activePutCode != funding.value.putCode.value" class="row source-line">
                                         <div class="col-md-7 col-sm-7 col-xs-12">
                                                 <a (click)="group.activePutCode = funding.putCode.value;">                                
                                                 {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
@@ -433,9 +445,9 @@
 
                                     <div class="row source-line" *ngIf="!(editSources[group.groupId] == true)">
                                         <div class="col-md-7 col-sm-7 col-xs-12">
-                                              <@orcid.msg 'groups.common.source'/>: {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
+                                              <@orcid.msg 'groups.common.source'/>: {{(funding.value.sourceName == null || funding.value.sourceName == '') ? funding.value.source : funding.value.sourceName}}
                                         </div>                          
-                                        <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="group.activePutCode == funding.putCode.value">
+                                        <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="group.activePutCode == funding.value.putCode.value">
                                             <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="!(group.activitiesCount == 1)">(</span><a (click)="showSources(group)" *ngIf="!(group.activitiesCount == 1)" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span *ngIf="!(group.activitiesCount == 1)">)</span>
                                             
                                             <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
@@ -449,12 +461,14 @@
                                             <ul class="sources-options" >
                                                 <#if !(isPublicProfile??)>
                                                     <li>
-                                                         <@orcid.editActivityIcon
+                                                        <!--
+                                                        <@orcid.editActivityIcon
                                                             activity="funding"
                                                             click="openEditFunding(funding.putCode.value)"
                                                             toolTipSuffix="editFundingToolTipSources"
                                                             toolTipClass="popover popover-tooltip top edit-source-popover"
-                                                         />
+                                                        />
+                                                    -->
                                                     </li>
                                                     <li *ngIf="!(group.activitiesCount == 1 || editSources[group.groupId] == true)">
                     
@@ -483,6 +497,7 @@
                                             </ul>
                                         </div>
                                     </div>
+                                
                                 </li><!-- End line -->
                             </ul>
                         </div>
