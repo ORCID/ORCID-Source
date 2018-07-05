@@ -242,15 +242,6 @@
                         ng-bind="socialNetworksToggleText"></a></td>
                 </tr>
 
-                <#if RequestParameters['OrcidSocial']??>
-                <tr ng-show="showEditSocialSettings" >
-                    <td colspan="2">
-                        <#include "/includes/ng2_templates/social-networks-ng2-template.ftl">
-                        <social-networks-ng2></social-networks-ng2>
-                    </td>
-                </tr>
-
-                </#if>
             </tbody>
         </table>
         <div class="section-heading">
