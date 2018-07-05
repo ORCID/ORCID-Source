@@ -251,7 +251,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
         for(Text emailAdditional : registration.getEmailsAdditional()) {
             if(!PojoUtil.isEmpty(emailAdditional)){
                 EmailEntity emailAdditionalEntity = new EmailEntity();
-                emailAdditionalEntity.setId(emailAdditional.getValue().trim());
+                String emailValue = emailAdditional.getValue().trim();
+                emailAdditionalEntity.setId(emailValue);
+                emailAdditionalEntity.setEmailHash(encryptionManager.hashForInternalUse(emailValue));
                 emailAdditionalEntity.setProfile(newRecord);
                 emailAdditionalEntity.setPrimary(false);
                 emailAdditionalEntity.setCurrent(true);
