@@ -15,7 +15,6 @@ import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,29 +138,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 }
             }
         });        
-    }
-
-    @Override
-    @Transactional
-    public void addEmail(HttpServletRequest request, String orcid, Email email) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
-        String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();
-                
-        Email currentPrimaryEmail = findPrimaryEmail(orcid);
-        
-        // Create the new email
-        emailDao.addEmail(orcid, email.getEmail(), email.getVisibility().name(), sourceId, clientSourceId);
-        
-        // if primary email changed send notification.
-        if (email.isPrimary() && !StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
-            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-            notificationManager.sendEmailAddressChangedNotification(orcid, email.getEmail(), currentPrimaryEmail.getEmail());
-        }
-                
-        // send verifcation email for new address
-        notificationManager.sendVerificationEmail(orcid, email.getEmail());
-    }
+    }    
 
     @Override
     public boolean hideAllEmails(String orcid) {
