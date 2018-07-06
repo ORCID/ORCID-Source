@@ -11,7 +11,7 @@ node {
         ),
         disableConcurrentBuilds(),
         [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
-        [$class: 'JobPropertyImpl', throttle: [count: 4, durationName: 'hour', userBoost: false]]
+        [$class: 'JobPropertyImpl', throttle: [count: 4, durationName: 'hour', userBoost: false]],
         pipelineTriggers([
             [$class: "GitHubPushTrigger"]
         ])
