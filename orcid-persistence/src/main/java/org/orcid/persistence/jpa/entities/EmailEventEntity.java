@@ -60,7 +60,7 @@ public class EmailEventEntity extends BaseEntity<Long> {
     }
 
     public void setEmailHash(String emailHash) {
-        this.emailHash = emailHash;x
+        this.emailHash = emailHash;
     }
     
     @Basic
