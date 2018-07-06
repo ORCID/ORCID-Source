@@ -313,9 +313,10 @@
                     <div class="col-md-3 col-sm-3 col-xs-4">
                         <span class="bibtext-options">                                        
                             <a class="bibtex-cancel" (click)="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>            
-                            <span *ngIf="!(worksFromBibtex?.length > 0)" class="import-label" (click)="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
-                            <span *ngIf="worksFromBibtex?.length > 0" class="import-label" (click)="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>                                              
-                            <input id="inputBibtex" name="inputBibtex" type="file" class="upload-button" [(ngModel)]="textFiles" accept="*" /><!-- *** update-fn="loadBibtexJs()"  app-file-text-reader multiple  -->
+                            <label for="inputBibtex" *ngIf="!(worksFromBibtex?.length > 0)" class="import-label" ><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></label>
+                            <span *ngIf="worksFromBibtex?.length > 0" class="import-label" (click)="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>                                     
+                            <input id="inputBibtex" name="inputBibtex" type="file" class="upload-button" [(ngModel)]="textFiles" accept="*" (change)="loadBibtexJs($event)" /><!-- *** update-fn="loadBibtexJs()"  app-file-text-reader multiple  -->
+
                         </span>                   
                     </div>
                 </div>
@@ -424,14 +425,13 @@
                                                     </li>
                                                     <#if !(isPublicProfile??)>
                                                     <li>
-                                                        <!-- ***
-                                                        <@orcid.privacyToggle2 angularModel="group.activeVisibility"
+                                                        <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
+                                                        elementId="group.groupId" 
                                                             questionClick="toggleClickPrivacyHelp(group.activePutCode)"
                                                             clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
                                                             publicClick="worksService.setGroupPrivacy(group.activePutCode, 'PUBLIC', $event)"
                                                             limitedClick="worksService.setGroupPrivacy(group.activePutCode, 'LIMITED', $event)"
                                                             privateClick="worksService.setGroupPrivacy(group.activePutCode, 'PRIVATE', $event)"/>
-                                                        -->
                                                     </li>
                                                     </#if>
                                                 </ul>

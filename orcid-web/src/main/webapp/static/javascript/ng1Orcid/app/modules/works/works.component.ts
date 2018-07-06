@@ -1,9 +1,11 @@
 declare var $: any;
 declare var ActSortState: any;
+declare var bibtexParse: any;
 declare var blobObject: any;
 declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
+declare var populateWorkAjaxForm: any;
 
 import { NgForOf, NgIf } 
     from '@angular/common'; 
@@ -468,7 +470,60 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         popFunct();
-    }
+    };
+
+    loadBibtexJs(): void {
+        console.log("load bibtex js");
+        try {
+            this.worksFromBibtex = new Array();
+            console.log(this.textFiles);
+            for (let bibtex of this.textFiles) {
+                var parsed = bibtexParse.toJSON(bibtex);
+                if (parsed.length == 0) {
+                    throw "bibtex parse return nothing";
+                }
+                this.worksService.getBlankWork()
+                .pipe(    
+                    takeUntil(this.ngUnsubscribe)
+                )
+                .subscribe(
+                    data => {
+                        var blankWork = data;
+                        var newWorks = new Array();
+                        while (parsed.length > 0) {
+                            var cur = parsed.shift();
+                            var bibtexEntry = cur.entryType.toLowerCase();
+                            if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') {    
+                                //Filtering @PREAMBLE and @COMMENT
+                                newWorks.push( populateWorkAjaxForm( cur,JSON.parse( JSON.stringify(blankWork) ) ) );
+                            }
+                        };
+                        this.worksService.worksValidate(newWorks)
+                        .pipe(    
+                            takeUntil(this.ngUnsubscribe)
+                        )
+                        .subscribe(
+                            data => {
+                                for (var i in data) {                           
+                                    this.worksFromBibtex.push(data[i]);
+                                }
+                            },
+                            error => {
+                                console.log('worksValidateError', error);
+                            } 
+                        );
+                    },
+                    error => {
+                        console.log('parseBibtexError', error);
+                    } 
+                );
+            }
+            this.textFiles.length = 0;
+            this.bibtexParsingError = false;     
+        } catch (err) {
+            this.bibtexParsingError = true;
+        }
+    };
 
     loadMore(): void {
         this.worksService.addAbbrWorksToScope(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
@@ -480,20 +535,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.formData = data;
-
-                console.log('this.getForm works', this.formData);
-
-                //let itemVisibility = null;
-                //let len = null;
-
-                this.formData = data;
                 this.worksService.handleWorkGroupData( this.formData );
-                //this.newElementDefaultVisibility = this.formData.visibility.visibility;
                 this.worksService.loading = false;
             },
             error => {
                 this.worksService.loading = false;
-                //console.log('getWorksFormError', error);
+                console.log('worksLoadMore', error);
             } 
         );
     };
@@ -582,6 +629,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openFileDialog(): void{
+        console.log("openFileDialog");
         this.textFiles = [];
         this.bibtexParsingError = false;
         /*
@@ -878,12 +926,27 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.workImportWizard = !this.workImportWizard;
     }; 
 
-    sort = function(key) {
+    sort(key): void {
         this.sortState.sortBy(key);
         this.worksService.resetWorkGroups();
-        this.worksService.addAbbrWorksToScope( 
+        this.worksService.addAbbrWorksToScope(
+            this.worksService.constants.access_type.USER, 
             this.sortState.predicateKey, 
             !this.sortState.reverseKey[key]
+        )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.formData = data;
+                this.worksService.handleWorkGroupData( this.formData );
+                this.worksService.loading = false;
+            },
+            error => {
+                this.worksService.loading = false;
+                console.log('sortError', error);
+            } 
         );
        
     };
@@ -974,12 +1037,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
-        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-        /*this.subscription = this.worksService.notifyObservable$.subscribe(
-            (res) => {
-                this.loadMore();
-            }
-        );*/
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directivesload
         this.subscription = this.worksService.notifyObservable$.subscribe(
             (res) => {                
                 if(res.action == 'delete') {

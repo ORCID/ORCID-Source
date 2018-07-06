@@ -579,14 +579,6 @@ export class WorksService {
             encoded_data, 
             { headers: this.headers }
         )
-        .pipe(
-            tap(
-                ()=> {
-                    //sucessFunc(data);                    
-                }
-            )
-        );
-
     }
      
     notifyOther(data: any): void {
