@@ -8,7 +8,7 @@
          	</not>
          </preConditions>
          <addColumn tableName="email">
-             <column name="email_hash" type="VARCHAR(500)" />
+             <column name="email_hash" type="VARCHAR(256)" />
          </addColumn>
      </changeSet>
 
