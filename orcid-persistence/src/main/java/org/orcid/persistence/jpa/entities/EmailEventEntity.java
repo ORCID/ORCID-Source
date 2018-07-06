@@ -22,8 +22,7 @@ public class EmailEventEntity extends BaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
     private Long id;
-    private String email;
-    private String emailHash;
+    private String email;    
     private EmailEventType type;
 
     public EmailEventEntity() {
@@ -52,15 +51,6 @@ public class EmailEventEntity extends BaseEntity<Long> {
 
     public void setEmail(String orcid) {
         this.email = orcid;
-    }
-
-    @Column(name = "email_hash")
-    public String getEmailHash() {
-        return emailHash;
-    }
-
-    public void setEmailHash(String emailHash) {
-        this.emailHash = emailHash;
     }
     
     @Basic

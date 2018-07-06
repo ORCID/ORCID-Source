@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidGenerationManager;
@@ -129,7 +128,11 @@ public class MembersManagerImpl implements MembersManager {
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
         emailEntity.setId(member.getEmail().getValue());
-        emailEntity.setEmailHash(encryptionManager.hashForInternalUse(member.getEmail().getValue().trim().toLowerCase()));
+        try {
+            emailEntity.setEmailHash(encryptionManager.sha256Hash(member.getEmail().getValue().trim().toLowerCase()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);

@@ -1,5 +1,6 @@
 package org.orcid.core.cli;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class PopulateEmailHash {
 
     private void process() {
         LOG.debug("Starting migration process");
-        long startTime = System.currentTimeMillis();        
+        long startTime = System.currentTimeMillis();
         long doneCount = 0;
         List<String> emailsToHash = Collections.emptyList();
         do {
@@ -66,7 +67,7 @@ public class PopulateEmailHash {
         } while (emailsToHash != null && !emailsToHash.isEmpty());
         long endTime = System.currentTimeMillis();
         String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
-        LOG.info("Finished hashing emails: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);       
+        LOG.info("Finished hashing emails: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
     }
 
     private void migrateList(final List<String> emailsToHash) {
@@ -75,7 +76,12 @@ public class PopulateEmailHash {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 for (String email : emailsToHash) {
                     LOG.info("Migrating " + email);
-                    String emailHash = encryptionManager.hashForInternalUse(email.trim().toLowerCase());
+                    String emailHash;
+                    try {
+                        emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new RuntimeException(e);
+                    }
                     emailDao.populateEmailHash(email, emailHash);
                 }
             }
