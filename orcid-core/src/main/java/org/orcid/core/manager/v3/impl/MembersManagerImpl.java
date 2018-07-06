@@ -127,9 +127,10 @@ public class MembersManagerImpl implements MembersManager {
         
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setId(member.getEmail().getValue());
+        String email = member.getEmail().getValue().trim();
+        emailEntity.setId(email);
         try {
-            emailEntity.setEmailHash(encryptionManager.sha256Hash(member.getEmail().getValue().trim().toLowerCase()));
+            emailEntity.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }

@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -160,7 +161,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
         String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();
-        String emailHash = encryptionManager.hashForInternalUse(email.getEmail().trim().toLowerCase());
+        String emailHash = null;
+        try {
+            emailHash = encryptionManager.sha256Hash(email.getEmail().trim().toLowerCase());
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         
         Email currentPrimaryEmail = findPrimaryEmail(orcid);
         
