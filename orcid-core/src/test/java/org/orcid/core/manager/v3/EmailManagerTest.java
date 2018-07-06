@@ -280,7 +280,6 @@ public class EmailManagerTest extends BaseTest {
         String hashValue = captor.getValue();
         assertTrue(encryptionManager.hashMatches(emailAddress, hashValue));
         
-        TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);     
-        fail();
+        TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);        
     }
 }
