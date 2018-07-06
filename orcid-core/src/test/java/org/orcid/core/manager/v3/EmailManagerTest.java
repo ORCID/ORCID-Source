@@ -266,7 +266,7 @@ public class EmailManagerTest extends BaseTest {
     @Test
     public void addEmailTest() {
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", mockEmailDao);
-        String emailAddress = "test@email.com";
+        String emailAddress = "TeSt@email.com";
         
         Email email = new Email();
         email.setEmail(emailAddress);
@@ -278,8 +278,9 @@ public class EmailManagerTest extends BaseTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(emailAddress), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
         String hashValue = captor.getValue();
-        assertTrue(encryptionManager.hashMatches(emailAddress, hashValue));
-        
+        assertFalse(encryptionManager.hashMatches(emailAddress, hashValue));
+        assertTrue(encryptionManager.hashMatches(emailAddress.toLowerCase(), hashValue));        
+       
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);        
     }
 }
