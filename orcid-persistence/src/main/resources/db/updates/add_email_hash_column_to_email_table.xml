@@ -12,4 +12,15 @@
          </addColumn>
      </changeSet>
 
+	<changeSet id="ADD-EMAIL-HASH-COLUMN-TO-EMAIL-EVENT-TABLE" author="Angel Montenegro">
+         <preConditions onFail="MARK_RAN">
+         	<not>
+         		<columnExists tableName="email_event" columnName="email_hash"/>
+         	</not>
+         </preConditions>
+         <addColumn tableName="email_event">
+             <column name="email_hash" type="VARCHAR(500)" />
+         </addColumn>
+     </changeSet>
+
 </databaseChangeLog>

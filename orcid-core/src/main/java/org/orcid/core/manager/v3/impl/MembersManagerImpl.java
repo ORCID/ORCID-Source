@@ -129,6 +129,7 @@ public class MembersManagerImpl implements MembersManager {
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
         emailEntity.setId(member.getEmail().getValue());
+        emailEntity.setEmailHash(encryptionManager.hashForInternalUse(member.getEmail().getValue().trim().toLowerCase()));
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
