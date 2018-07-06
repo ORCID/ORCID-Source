@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -264,7 +266,7 @@ public class EmailManagerTest extends BaseTest {
     }
     
     @Test
-    public void addEmailTest() {
+    public void addEmailTest() throws NoSuchAlgorithmException {
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", mockEmailDao);
         String emailAddress = "TeSt@email.com";
         
@@ -278,8 +280,9 @@ public class EmailManagerTest extends BaseTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(emailAddress), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
         String hashValue = captor.getValue();
-        assertFalse(encryptionManager.hashMatches(emailAddress, hashValue));
-        assertTrue(encryptionManager.hashMatches(emailAddress.toLowerCase(), hashValue));        
+        
+        assertNotEquals(hashValue, encryptionManager.sha256Hash(emailAddress));
+        assertEquals(hashValue, encryptionManager.sha256Hash(emailAddress.toLowerCase()));
        
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);        
     }
