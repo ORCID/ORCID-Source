@@ -236,12 +236,7 @@
                         </p>
                     </td>
                 </tr>
-                <tr>
-                    <th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
-                    <td><a href="" ng-click="toggleSocialNetworksEdit()"
-                        ng-bind="socialNetworksToggleText"></a></td>
-                </tr>
-
+                
             </tbody>
         </table>
         <div class="section-heading">
