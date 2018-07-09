@@ -1081,7 +1081,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response viewBulkWorks(String orcid, String putCodes) {        
+    public Response viewBulkWorks(String orcid, String putCodes) {
         if (!profileEntityManager.orcidExists(orcid)) {
             throw new OrcidNoResultException("No such record: " + orcid);
         }
