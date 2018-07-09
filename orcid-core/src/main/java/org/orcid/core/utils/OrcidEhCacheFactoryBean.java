@@ -9,7 +9,6 @@ import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
 import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
 import org.slf4j.Logger;
@@ -31,8 +30,6 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
     private String cacheName;
 
     private int maxElementsInMemory = 100;
-    
-    private int maxMegaBytesInMemory = 0;
 
     private int timeToIdleSeconds = 60;
 
@@ -40,7 +37,7 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
 
     private boolean copyValues = true;
 
-    private CacheLoaderWriter<Serializable, Serializable> cacheLoaderWriter;
+    private CacheLoaderWriter<Object, Serializable> cacheLoaderWriter;
 
     private Cache<?, ?> cache;
 
@@ -68,14 +65,6 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
         this.maxElementsInMemory = maxElementsInMemory;
     }
 
-    public int getMaxMegaBytesInMemory() {
-        return maxMegaBytesInMemory;
-    }
-
-    public void setMaxMegaBytesInMemory(int maxMegaBytesInMemory) {
-        this.maxMegaBytesInMemory = maxMegaBytesInMemory;
-    }
-
     public int getTimeToIdleSeconds() {
         return timeToIdleSeconds;
     }
@@ -100,7 +89,7 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
         this.copyValues = copyValues;
     }
 
-    public void setCacheLoaderWriter(CacheLoaderWriter<Serializable, Serializable> cacheLoaderWriter) {
+    public void setCacheLoaderWriter(CacheLoaderWriter<Object, Serializable> cacheLoaderWriter) {
         this.cacheLoaderWriter = cacheLoaderWriter;
     }
 
@@ -121,19 +110,14 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Cache<Serializable, Serializable> existingCache = cacheManager.getCache(cacheName, Serializable.class, Serializable.class);
+        Cache<?, ?> existingCache = cacheManager.getCache(cacheName, Object.class, Serializable.class);
         if (existingCache == null) {
-            ResourcePoolsBuilder resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder();
-            if (this.maxMegaBytesInMemory > 0) {
-                resourcePoolsBuilder = resourcePoolsBuilder.heap(maxMegaBytesInMemory, MemoryUnit.MB);
-            } else {
-                resourcePoolsBuilder = resourcePoolsBuilder.heap(this.maxElementsInMemory, EntryUnit.ENTRIES);
-            }
+            ResourcePoolsBuilder resourcePoolsBuilder = ResourcePoolsBuilder.heap(this.maxElementsInMemory);
             if (this.maxMegaBytesOnDisk > 0) {
-                resourcePoolsBuilder = resourcePoolsBuilder.disk(this.maxMegaBytesOnDisk, MemoryUnit.MB);
+                resourcePoolsBuilder.disk(this.maxMegaBytesOnDisk, MemoryUnit.MB);
             }
-            CacheConfigurationBuilder<Serializable, Serializable> cacheConfigurationBuilder = CacheConfigurationBuilder
-                    .newCacheConfigurationBuilder(Serializable.class, Serializable.class, resourcePoolsBuilder)
+            CacheConfigurationBuilder<Object, Serializable> cacheConfigurationBuilder = CacheConfigurationBuilder
+                    .newCacheConfigurationBuilder(Object.class, Serializable.class, resourcePoolsBuilder)
                     .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(this.timeToIdleSeconds, ChronoUnit.SECONDS)));
             if (this.copyValues) {
                 cacheConfigurationBuilder = cacheConfigurationBuilder.withValueSerializingCopier();
