@@ -3,7 +3,6 @@ package org.orcid.core.utils.v3;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.utils.ContributorUtils;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc1.common.Contributor;
 import org.orcid.jaxb.model.v3.rc1.common.CreditName;
