@@ -560,7 +560,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 if (e instanceof OrcidUnauthorizedException) {
                     throw e;
                 }
-                OrcidError error = orcidCoreExceptionMapper.getOrcidError(e);
+                OrcidError error = orcidCoreExceptionMapper.getV3OrcidError(e);
                 filteredElements.add(error);
             }
         }
@@ -756,6 +756,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         // Check the request have the required scope
         checkScopes(requiredScope);
 
+        // Check element visibility
+        checkVisibility(element, requiredScope);
+    }
+    
+    private void checkVisibility(VisibilityType element, ScopePathType requiredScope) {
         if (requiredScope.isReadOnlyScope()) {
             if (Visibility.PRIVATE.equals(element.getVisibility())) {
                 throw new OrcidVisibilityException();
