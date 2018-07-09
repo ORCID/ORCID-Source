@@ -27,7 +27,8 @@ public class ArxivNormalizerTest {
             "arXiv:physics/9901001v1 [physics.optics] 1 Jan 1999",
             "arXiv:0706.0002v3 [astro-ph] 15 Mar 2008",
             "blah blah blah 0706.0002v3 [astro-ph] 15 Mar 2008",
-            "219812y arxiv:math.CA/0611800v2"
+            "219812y arxiv:math.CA/0611800v2",
+            "https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781119425526.ch8"
             );
 
     List<String> results = Lists.newArrayList(
@@ -44,7 +45,8 @@ public class ArxivNormalizerTest {
             "arXiv:physics/9901001v1",
             "arXiv:0706.0002v3",
             "arXiv:0706.0002v3",
-            "arXiv:math.CA/0611800v2"
+            "arXiv:math.CA/0611800v2",
+            ""
             );
     
     @Test
