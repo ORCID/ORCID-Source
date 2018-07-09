@@ -54,9 +54,11 @@ public class ContributorUtils {
                         // contributor is an ORCID user - visibility of user's
                         // name in record must be taken into account
                         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                        String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
-                        CreditName creditName = new CreditName(publicContributorCreditName != null ? publicContributorCreditName : "");
-                        contributor.setCreditName(creditName);
+                        if(profileEntity != null) {
+                            String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                            CreditName creditName = new CreditName(publicContributorCreditName != null ? publicContributorCreditName : "");
+                            contributor.setCreditName(creditName);
+                        }
                     } catch(Exception e) {
                         //Just ignore adding the contributor name
                         LOGGER.warn("Invalid contributor orcid " + contributorOrcid + " on work with id: " + work.getPutCode());
