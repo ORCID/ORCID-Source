@@ -563,45 +563,6 @@
         </div>
     </script>
 </@orcid.checkFeatureStatus>   
-    
-<@orcid.checkFeatureStatus featureName='HTTPS_IDS'> 
-    <script type="text/ng-template" id="deprecate-account-confirmation-modal">
-        <div class="lightbox-container deprecate-account-confirmation-modal">
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
-                    <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2> 
-                    <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;<a href="${baseUri}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">${baseUri}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span></a>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;<a href="${baseUri}/{{deprecateProfilePojo.primaryOrcid}}">${baseUri}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></a></span></p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                    <div class="pull-left">
-                        <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </script>
-</@orcid.checkFeatureStatus>   
-<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-    <script type="text/ng-template" id="deprecate-account-confirmation-modal">
-        <div class="lightbox-container deprecate-account-confirmation-modal">
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
-                    <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2> 
-                    <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p> 
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                    <div class="pull-left">
-                        <a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </script>
-</@orcid.checkFeatureStatus>  
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
     <div class="lightbox-container confirm-revoke-access-modal">        
