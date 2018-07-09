@@ -3,6 +3,7 @@ package org.orcid.core.utils.v3;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.utils.ContributorUtils;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc1.common.Contributor;
 import org.orcid.jaxb.model.v3.rc1.common.CreditName;
@@ -12,8 +13,12 @@ import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ContributorUtils {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContributorUtils.class);
 
     private ProfileEntityCacheManager profileEntityCacheManager;
 
@@ -46,13 +51,16 @@ public class ContributorUtils {
                 contributor.setContributorEmail(null);
                 if (!PojoUtil.isEmpty(contributor.getContributorOrcid())) {
                     String contributorOrcid = contributor.getContributorOrcid().getPath();
-                    if (profileEntityManager.orcidExists(contributorOrcid)) {
+                    try {
                         // contributor is an ORCID user - visibility of user's
                         // name in record must be taken into account
                         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                         String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
                         CreditName creditName = new CreditName(publicContributorCreditName != null ? publicContributorCreditName : "");
                         contributor.setCreditName(creditName);
+                    } catch(Exception e) {
+                        //Just ignore adding the contributor name
+                        LOGGER.warn("Invalid contributor orcid " + contributorOrcid + " on work with id: " + work.getPutCode());
                     }
                 }
             }
