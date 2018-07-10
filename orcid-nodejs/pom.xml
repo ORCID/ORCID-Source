@@ -14,8 +14,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.parent.basedir}</main.basedir>
-        <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/static/javascript/ng1Orcid</nodejs.workingDirectory>
-        <webpackConfig>webpack.config.js</webpackConfig>
+        <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
+        <webpackConfig>localhost.webpack.config.js</webpackConfig>
     </properties>
     <build>
         <finalName>orcid-nodejs</finalName>
@@ -37,7 +37,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
+                        <id>install-node-and-npm</id>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
@@ -50,7 +50,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>--production=false install</arguments>
+                            <arguments>install</arguments>
                         </configuration>
                     </execution>
                     <!-- ensure watch is set to false, or run webpack manually
@@ -59,7 +59,7 @@
                     $WORKSPACE/orcid-nodejs/target/node/node $WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid/node_modules/webpack/bin/webpack.js  - -config $WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid/qa.webpack.config.js
                     -->
                     <execution>
-                        <id>webpack build</id>
+                        <id>webpack-build</id>
                         <goals>
                             <goal>webpack</goal>
                         </goals>
@@ -74,16 +74,16 @@
     </build>
     <profiles>
         <profile>
-            <id>qa</id>
+            <id>production</id>
             <activation>
                 <property>
                     <name>env</name>
-                    <value>qa-nodejs</value>
+                    <value>production</value>
                 </property>
             </activation>
             <properties>
                 <nodejs.workingDirectory>/home/orcid_tomcat/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
-                <webpackConfig>qa.webpack.config.js</webpackConfig>
+                <webpackConfig>webpack.config.js</webpackConfig>
             </properties>
         </profile>
         <profile>
