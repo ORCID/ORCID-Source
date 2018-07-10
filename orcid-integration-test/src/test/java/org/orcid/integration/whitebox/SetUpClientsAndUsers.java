@@ -555,8 +555,6 @@ public class SetUpClientsAndUsers {
                 recordNameManager.createRecordName(orcid, name);
             }
                                    
-            profileDao.updatePreferences(orcid, true, true, true, true, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), true, 1f);                        
-            
             // Set default bio
             org.orcid.jaxb.model.record_v2.Biography bio = biographyManager.getBiography(orcid);
             if (bio == null || bio.getContent() == null) {
