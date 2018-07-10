@@ -28,6 +28,7 @@ import {EmailService }
     template:  scriptTmpl("deprecate-account-ng2-template")
 })
 export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnInit {
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     deprecateProfilePojo: any;
@@ -89,6 +90,7 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
                 if(data) {
                     this.closeModal('modalDeprecateAccountConfirm');
                     this.openModal('modalDeprecateAccountSuccess', '400', '200');
+                    this.emailService.emailsUpdated(true);
                 }
             },
             error => {
