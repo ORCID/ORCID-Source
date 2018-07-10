@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.dao.GenericDao;
@@ -44,6 +45,8 @@ public abstract class QuarterlyNotificationsManager {
     private NotificationDao notificationDao;
     
     private OrcidUrlManager orcidUrlManager;
+    
+    private EmailFrequencyManager emailFrequencyManager;
     
     private TransactionTemplate transactionTemplate;
     
@@ -80,6 +83,7 @@ public abstract class QuarterlyNotificationsManager {
         profileDaoReadOnly = (ProfileDao) context.getBean("profileDaoReadOnly");
         notificationDao = (NotificationDao) context.getBean("notificationDao");        
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
+        emailFrequencyManager = (EmailFrequencyManager) context.getBean("emailFrequencyManager");
         profileEventDao = (GenericDao) context.getBean("profileEventDao");
         messages = (MessageSource) context.getBean("messageSource");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
@@ -133,6 +137,7 @@ public abstract class QuarterlyNotificationsManager {
             templateParams.put("locale", locale);
             templateParams.put("messages", this.messages);
             templateParams.put("messageArgs", new Object[0]);
+            templateParams.put("unsubscribeLink", getUnsubscribeLink(profileEntity.getId()));
             
             String text = generatePlainTextNotification(templateParams);
             String html = generateHtmlNotification(templateParams);
@@ -178,6 +183,10 @@ public abstract class QuarterlyNotificationsManager {
 
         return LocaleUtils.toLocale("en");
     } 
+    
+    protected String getUnsubscribeLink(String orcidId) {
+        
+    }
     
     public abstract String getSubject(Locale locale);
     

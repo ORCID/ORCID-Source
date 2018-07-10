@@ -203,7 +203,10 @@ import { WorkSpaceSummaryNg2Module }
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
+import { UnsubscribeNg2Module }
+    from './unsubscribe/unsubscribe.ts';
 
+    
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
     }
@@ -341,6 +344,7 @@ export class RootCmp {
         ThanksForVerifyingNg2Module,
         TwoFAStateNg2Module,
         TwoFASetupNg2Module,
+        UnsubscribeNg2Module,
         VerifyEmailNg2Module,
         WidgetNg2Module, //Approved
         WorksFormNg2Module,
