@@ -46,8 +46,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bibtexExportError: boolean;
     bibtexLoading: boolean;
     bibtexParsingError: boolean;
-    bibtextWork: boolean;
-    bibtextWorkIndex: any;
+    bibtexWork: boolean;
+    bibtexWorkIndex: any;
     bulkChecked: any;
     bulkDeleteCount: number;
     bulkDisplayToggle: boolean;
@@ -69,6 +69,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     moreInfo: any;
     moreInfoOpen: boolean;
     noLinkFlag: boolean;
+    savingBibtex: boolean;
     scriptsLoaded: boolean;
     selectedGeoArea: any;
     selectedWorkType: any;
@@ -93,14 +94,13 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private workspaceSrvc: WorkspaceService,
         private worksService: WorksService
     ) {
-        //console.log('works component init');
 
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexLoading = false;
         this.bibtexParsingError = false;
-        this.bibtextWork = false;
-        this.bibtextWorkIndex = null;
+        this.bibtexWork = false;
+        this.bibtexWorkIndex = null;
         this.bulkChecked = false;
         this.bulkDeleteCount = 0;
         this.bulkDisplayToggle = false;
@@ -120,6 +120,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo = {};
         this.moreInfoOpen = false;
         this.noLinkFlag = true;
+        this.savingBibtex = false;
         this.scriptsLoaded = false;
         this.selectedGeoArea = null;
         this.selectedWorkType = null;
@@ -156,12 +157,46 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     addWorkFromBibtex(work): void {
-        this.bibtextWork = true;              
-        this.bibtextWorkIndex = this.worksFromBibtex.indexOf(work);     
-        this.editWork = this.worksFromBibtex[this.bibtextWorkIndex];
+        this.bibtexWork = true;              
+        this.bibtexWorkIndex = this.worksFromBibtex.indexOf(work);     
+        this.editWork = this.worksFromBibtex[this.bibtexWorkIndex];
         
-        this.putWork();        
-    };
+        if ( this.addingWork ) {
+            return; // don't process if adding work
+        }
+        this.addingWork = true;
+        this.editWork.errors.length = 0;
+        this.worksService.postWork( this.editWork)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.addingWork=false;
+                if (data.errors.length > 0) {
+                    this.editWork = data;                    
+                    this.commonSrvc.copyErrorsLeft(this.editWork, data);
+                    //re-populate any id resolution errors.
+                    //do it here because they're by-passable
+                    /*if (this.exIdResolverFeatureEnabled == true){
+                        for (var extId in this.editWork.workExternalIdentifiers){
+                            this.fillUrl(this.editWork.workExternalIdentifiers[extId]);
+                        }
+                    }*/
+                } else {
+                    if (this.bibtexWork != false){
+                        this.worksFromBibtex.splice(this.bibtexWorkIndex, 1);
+                        this.bibtexWork = false;
+                    }
+                    this.refreshWorkGroups();
+                }
+
+            },
+            error => {
+                console.log('worksForm.component.ts addWorkError', error);
+            } 
+        );
+    };      
 
     addWorkModal(work): void {
         this.emailService.getEmails()
@@ -174,9 +209,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( this.emailService.getEmailPrimary().verified ){
                     this.worksService.notifyOther({ work:work });
                     if(work == undefined) {
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false});
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false, bibtexWork: this.bibtexWork});
                     } else {
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: true});
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: true, bibtexWork: this.bibtexWork});
                     }                    
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
@@ -187,52 +222,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
-
-    /*addWorkModal(work): void{      
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    this.editWork = work;
-                    this.genericService.open('modalWorksForm');
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                console.log('error getting email data: ', error);
-            } 
-        );
-    };*/
-
-        /*
-        if(emailVerified === true 
-            || configuration.showModalManualEditVerificationEnabled == false
-        ){
-            if (data == undefined) {
-                worksService.getBlankWork(function(data) {
-                    $scope.editWork = data;
-                    $timeout(function(){
-                        $scope.loadWorkTypes();
-                        $scope.showAddWorkModal();
-                    });
-                });
-            } else {
-                this.editWork = data;
-                if( this.editWork.workExternalIdentifiers.length == 0 ){
-                    this.addExternalIdentifier();
-                }        
-                this.loadWorkTypes();
-                this.showAddWorkModal();
-            }
-        } else {
-            showEmailVerificationModal();
-        }
-        */
 
     bibtexShowToggle(putCode): void {
         this.showBibtex[putCode] = !(this.showBibtex[putCode]);
@@ -259,7 +248,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-
     closePopover(event): void {
         this.moreInfoOpen = false;
         $('.work-more-info-container').css('display', 'none');
@@ -273,7 +261,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.bulkDeleteCount++;
             }
         }
-
         this.worksService.notifyOther({bulkDeleteCount:this.bulkDeleteCount, bulkEditMap:this.bulkEditMap});
         this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
     };
@@ -313,10 +300,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     editWorkFromBibtex(work): void {
-        this.bibtextWork = true;
-        this.bibtextWorkIndex = this.worksFromBibtex.indexOf(work);
-        
-        this.addWorkModal(this.worksFromBibtex[this.bibtextWorkIndex]);        
+        this.bibtexWork = true;
+        this.bibtexWorkIndex = this.worksFromBibtex.indexOf(work);
+        this.addWorkModal(this.worksFromBibtex[this.bibtexWorkIndex]);        
     };
 
     fetchBibtexExport(){
@@ -472,55 +458,62 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         popFunct();
     };
 
-    loadBibtexJs(): void {
-        console.log("load bibtex js");
+    loadBibtexJs($event): void {
+
+        this.textFiles = $event.target.files; 
+
         try {
             this.worksFromBibtex = new Array();
-            console.log(this.textFiles);
             for (let bibtex of this.textFiles) {
-                var parsed = bibtexParse.toJSON(bibtex);
-                if (parsed.length == 0) {
-                    throw "bibtex parse return nothing";
-                }
-                this.worksService.getBlankWork()
-                .pipe(    
-                    takeUntil(this.ngUnsubscribe)
-                )
-                .subscribe(
-                    data => {
-                        var blankWork = data;
-                        var newWorks = new Array();
-                        while (parsed.length > 0) {
-                            var cur = parsed.shift();
-                            var bibtexEntry = cur.entryType.toLowerCase();
-                            if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') {    
-                                //Filtering @PREAMBLE and @COMMENT
-                                newWorks.push( populateWorkAjaxForm( cur,JSON.parse( JSON.stringify(blankWork) ) ) );
-                            }
-                        };
-                        this.worksService.worksValidate(newWorks)
-                        .pipe(    
-                            takeUntil(this.ngUnsubscribe)
-                        )
-                        .subscribe(
-                            data => {
-                                for (var i in data) {                           
-                                    this.worksFromBibtex.push(data[i]);
+                let reader = new FileReader();
+                reader.readAsText(bibtex);
+                reader.onloadend = function(e){
+                    var parsed = bibtexParse.toJSON(reader.result);
+                    if (parsed.length == 0) {
+                        throw "bibtex parse return nothing";
+                    }
+                    this.worksService.getBlankWork()
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            var blankWork = data;
+                            var newWorks = new Array();
+                            while (parsed.length > 0) {
+                                var cur = parsed.shift();
+                                var bibtexEntry = cur.entryType.toLowerCase();
+                                if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') {    
+                                    //Filtering @PREAMBLE and @COMMENT
+                                    newWorks.push( populateWorkAjaxForm( cur,JSON.parse( JSON.stringify(blankWork) ) ) );
                                 }
-                            },
-                            error => {
-                                console.log('worksValidateError', error);
-                            } 
-                        );
-                    },
-                    error => {
-                        console.log('parseBibtexError', error);
-                    } 
-                );
+                            };
+                            this.worksService.worksValidate(newWorks)
+                            .pipe(    
+                                takeUntil(this.ngUnsubscribe)
+                            )
+                            .subscribe(
+                                data => {
+                                    for (var i in data) {                           
+                                        this.worksFromBibtex.push(data[i]);
+                                    }
+                                    console.log(this.worksFromBibtex);
+                                },
+                                error => {
+                                    console.log('worksValidateError', error);
+                                } 
+                            );
+                        },
+                        error => {
+                            console.log('parseBibtexError', error);
+                        } 
+                    );
+                }.bind(this);
             }
-            this.textFiles.length = 0;
+            //this.textFiles.length = 0;
             this.bibtexParsingError = false;     
         } catch (err) {
+            console.log("error parsing bibtex: " + err);
             this.bibtexParsingError = true;
         }
     };
@@ -629,17 +622,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openFileDialog(): void{
-        console.log("openFileDialog");
         this.textFiles = [];
         this.bibtexParsingError = false;
-        /*
-        $timeout(
-            function() { //To avoid '$apply already in progress' error
-                angular.element('#inputBibtex').trigger('click');
-            }, 
-            0
-        );
-        */
     };
 
     openImportWizardUrl(url): void {
@@ -649,65 +633,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     openImportWizardUrlFilter(url, client): void {
         url = url + '?client_id=' + client.id + '&response_type=code&scope=' + client.scopes + '&redirect_uri=' + client.redirectUri;
         openImportWizardUrl(url);
-    };
-
-    putWork(): any{
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                /*
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    if ( this.addingWork ) {
-                        return; // don't process if adding work
-                    }
-                    this.addingWork = true;
-                    this.editWork.errors.length = 0;
-                    this.worksService.putWork(
-                        this.editWork,
-                        function(data){
-                            if (data.errors.length == 0) {
-                                if (this.bibtextWork == false){
-                                    $.colorbox.close();
-                                    $scope.addingWork = false;
-                                } else {
-                                    $timeout(function(){
-                                        $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
-                                        $scope.bibtextWork = false;
-                                        $scope.addingWork = false;
-                                    });
-                                    $.colorbox.close();
-                                    $scope.worksService.addAbbrWorksToScope(worksService.constants.access_type.USER, $scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
-                                }
-                            } else {
-                                $timeout(function(){
-                                    $scope.editWork = data;                    
-                                    commonSrvc.copyErrorsLeft($scope.editWork, data);
-                                    $scope.addingWork = false;
-                                });
-                                // make sure colorbox is shown if there are errors
-                                if (!($("#colorbox").css("display")=="block")) {
-                                    $scope.addWorkModal(data);
-                                }
-                            }
-                        },
-                        function() {
-                            // something bad is happening!
-                            $scope.addingWork = false;
-                        }
-                    );
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-                */
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
     };
 
     refreshWorkGroups(): void {
@@ -740,35 +665,37 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     saveAllFromBibtex(): any{
         var worksToSave = null;
         var numToSave = null;
-        /*
-        if( savingBibtex == false ){
-            savingBibtex = true;
-
+        if( this.savingBibtex == false ){
+            this.savingBibtex = true;
             worksToSave =  new Array();
-            angular.forEach($scope.worksFromBibtex, function( work, key ) {
+            for(let work of this.worksFromBibtex){
                 if (work.errors.length == 0){
                     worksToSave.push(work);
                 } 
-            });
-            
+            }
             numToSave = worksToSave.length;
-            angular.forEach( worksToSave, function( work, key ) {
-                this.worksService.putWork(work,function(data) {
-                    $timeout(function(){
-                        var index = $scope.worksFromBibtex.indexOf(work);
-                        $scope.worksFromBibtex.splice(index, 1);
-                    });
-                    numToSave--;
-                    if (numToSave == 0){
-                        $scope.closeAllMoreInfo();
-                        $scope.worksService.refreshWorkGroups($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
-                        savingBibtex = false;
-                    }
-                });
-            });
-
+            for (let work of worksToSave) {
+                this.worksService.postWork(work)
+                .pipe(    
+                    takeUntil(this.ngUnsubscribe)
+                )
+                .subscribe(
+                    data => {
+                        var index = this.worksFromBibtex.indexOf(work);
+                        this.worksFromBibtex.splice(index, 1);
+                        numToSave--;
+                        if (numToSave == 0){
+                            this.closeAllMoreInfo();
+                            this.refreshWorkGroups();
+                            this.savingBibtex = false;
+                        }
+                    },
+                    error => {
+                        console.log('worksForm.component.ts addWorkError', error);
+                    } 
+                );
+            }
         }
-        */
     };
 
     setBulkGroupPrivacy(priv): void {
@@ -873,37 +800,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             console.log(group.works[idx]);
             this.loadDetails(group.works[idx].putCode.value, $event);
         }
-    };
-
-    showMozillaBadges(putCode): any{
-        /*
-        $scope.$watch(
-            function () { 
-                return document.getElementsByClassName('badge-container-' + putCode).length; 
-            },
-            function (newValue, oldValue) {
-                  if (newValue !== oldValue) {
-                      if ($scope.badgesRequested[putCode] == null){
-                        var dois = worksService.getUniqueDois(putCode);
-                        var c = document.getElementsByClassName('badge-container-' + putCode);
-                        for (var i = 0; i <= dois.length - 1; i++){
-                            var code = 'var conf={"article-doi": "' + dois[i].trim() + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
-                            var s = document.createElement('script');
-                            s.type = 'text/javascript';
-                            try {
-                                s.appendChild(document.createTextNode(code));
-                                c[0].appendChild(s);
-                            } catch (e) {
-                                s.text = code;
-                                c[0].appendChild(s);
-                            }
-                        }
-                        $scope.badgesRequested[putCode] = true;
-                    }
-                }
-            }
-        );
-        */
     };
 
     showSources(group, $event): void {
@@ -1058,6 +954,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
                         this.loadMore();
+                    }
+                    if(res.bibtex==true){
+                        this.worksFromBibtex.splice(this.bibtexWorkIndex, 1);
+                        this.bibtexWork = false;
                     }
                 }                
             }

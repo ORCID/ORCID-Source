@@ -315,7 +315,7 @@
                             <a class="bibtex-cancel" (click)="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>            
                             <label for="inputBibtex" *ngIf="!(worksFromBibtex?.length > 0)" class="import-label" ><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></label>
                             <span *ngIf="worksFromBibtex?.length > 0" class="import-label" (click)="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>                                     
-                            <input id="inputBibtex" name="inputBibtex" type="file" class="upload-button" [(ngModel)]="textFiles" accept="*" (change)="loadBibtexJs($event)" /><!-- *** update-fn="loadBibtexJs()"  app-file-text-reader multiple  -->
+                            <input id="inputBibtex" name="textFiles" type="file" class="upload-button" accept="*" (change)="loadBibtexJs($event)" app-file-text-reader multiple/>
 
                         </span>                   
                     </div>
@@ -342,7 +342,7 @@
                             <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 
                         </div>
-                        <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
+                        <div class="row" *ngIf="work?.workExternalIdentifiers[0]?.workExternalIdentifierId?.value">
                             <div class="col-md-12 col-sm-12 bottomBuffer">
                                 <ul class="id-details">
                                     <li class="url-work">
@@ -356,7 +356,7 @@
                                     </li>
 
                                     <li *ngIf="work.url?.value" class="url-popover url-work">
-                                        <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver(work.putCode.value)" (mouseleave)="hideURLPopOver(work.putCode.value)" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
+                                        <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver(work.putCode.value)" (mouseleave)="hideURLPopOver(work.putCode.value)" [ngClass]="{'truncate-anchor' : moreInfo[group?.groupId] == false || moreInfo[group?.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
                                         <div class="popover-pos">                                   
                                             <div class="popover-help-container">
                                                 <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver[work.putCode.value] == true}">
@@ -411,7 +411,7 @@
                                                     </li>
                                                     </#if>                
                                                     <li class="works-details">
-                                                        <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                                        <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                                             <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                             </span>
                                                         </a>
@@ -468,7 +468,7 @@
                                                 </#if> 
                                                 <!--Show details toggle-->
                                                 <li class="works-details" *ngIf="!editSources[group.groupId]">
-                                                    <a (click)="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                                    <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                                         <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                         </span>
                                                     </a>
@@ -657,12 +657,7 @@
                                                         <strong><@orcid.msg 'groups.common.created'/></strong><br />
                                                         <div>{{worksService.details[work.putCode.value].createdDate | ajaxFormDateToISO8601}}</div>
                                                     </div>      
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="bottomBuffer">
-                                                        <div class="badge-container-{{work.putCode.value}}"></div>
-                                                    </div>                         
-                                                </div>      
+                                                </div>    
                                             </div>
                                             
                                         </div>  
@@ -732,7 +727,7 @@
                                     </div>
                                     <div *ngIf="group.activePutCode != work.putCode.value" class="row source-line">
                                         <div class="col-md-7 col-sm-7 col-xs-12">
-                                            <a (click)="group.activePutCode = work.putCode.value;showMozillaBadges(group.activePutCode);">                                
+                                            <a (click)="group.activePutCode = work.putCode.value">                                
                                                 {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                                             </a>
                                         </div>                                        

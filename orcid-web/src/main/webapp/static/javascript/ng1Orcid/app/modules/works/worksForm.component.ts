@@ -40,8 +40,8 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private viewSubscription: Subscription;
 
     addingWork: boolean;
-    bibtextWork: boolean;
-    bibtextWorkIndex: any;
+    bibtexWork: boolean;
+    bibtexWorkIndex: any;
     editWork: any;
     exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
     worksFromBibtex: any;
@@ -63,8 +63,8 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
             titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
         };
         this.addingWork = false;
-        this.bibtextWork = false;
-        this.bibtextWorkIndex = null;
+        this.bibtexWork = false;
+        this.bibtexWorkIndex = null;
         this.editWork = this.getEmptyWork();
         this.worksFromBibtex = null;  
         this.editTranslatedTitle = false;
@@ -364,12 +364,12 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         }
                     }
                 } else {
-                    if (this.bibtextWork != false){
-                        this.worksFromBibtex.splice(this.bibtextWorkIndex, 1);
-                        this.bibtextWork = false;
+                    if (this.bibtexWork != false){
+                        this.bibtexWork = false;
+                        this.worksService.notifyOther({action:'add', successful:true, bibtex:true}); 
                     }
                     this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
-                    this.worksService.notifyOther({action:'add', successful:true}); 
+                    this.worksService.notifyOther({action:'add', successful:true, bibtex:false}); 
                 }
 
             },
@@ -432,6 +432,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
+                this.bibtexWork = res.bibtexWork;
                 if(res.moduleId == "modalWorksForm'") {
                     if(res.action == "open" && res.edit == false) {
                         this.worksService.getBlankWork()
