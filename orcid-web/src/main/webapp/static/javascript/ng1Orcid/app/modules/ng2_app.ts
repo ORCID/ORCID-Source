@@ -62,9 +62,6 @@ import { DeactivateAccountNg2Module }
 import { DeactivateAccountMessageNg2Module }
     from './deactivateAccount/deactivateAccountMessage.ts';
 
-import { DeprecateAccountModalNg2Module }
-    from './deprecateAccount/deprecateAccount.ts';
-
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -302,7 +299,6 @@ export class RootCmp {
         ClientEditNg2Module,
         DeactivateAccountNg2Module,
         DeactivateAccountMessageNg2Module,
-        DeprecateAccountModalNg2Module,
         DeprecateAccountNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved

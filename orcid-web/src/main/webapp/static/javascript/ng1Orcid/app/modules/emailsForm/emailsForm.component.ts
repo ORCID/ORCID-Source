@@ -491,7 +491,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getPrivacyPreferences();
         this.getformData();          
-        this.getEmailFrequencies();        
+        this.getEmailFrequencies(); 
+
+        //Subscribe to emailChange event and 
+        //update data when emails changed by another component
+        this.emailService.emailsChange.subscribe(emailListUpdated => {
+            if (emailListUpdated == true){
+                this.getformData(); 
+            }
+        });       
     };
 
 }

@@ -1,4 +1,4 @@
-import { Injectable } 
+import { EventEmitter, Injectable, Output } 
     from '@angular/core';
 
 import { HttpClient, HttpClientModule, HttpHeaders } 
@@ -16,9 +16,14 @@ import { catchError, map, tap }
 
 @Injectable()
 export class EmailService {
+
+    //Broadcast events from other components that cause email list to change
+    @Output() emailsChange: EventEmitter<boolean> = new EventEmitter();
+    
     public delEmail: any;
     private deleteEmailHeaders: HttpHeaders;
     private emails: any;
+    public emailListUpdated: boolean
     private headers: HttpHeaders;          
     public inputEmail: any;
     private notify = new Subject<any>();
@@ -31,6 +36,7 @@ export class EmailService {
     constructor( private http: HttpClient ){
         this.delEmail = null;
         this.emails = null;
+        this.emailListUpdated = false;
         this.headers = new HttpHeaders(
             {
                 'Access-Control-Allow-Origin':'*',
@@ -80,6 +86,12 @@ export class EmailService {
         ;
     }
 
+    //Send change event to subscribed components
+    emailsUpdated(status) {
+        this.emailListUpdated = status
+        this.emailsChange.emit(this.emailListUpdated);
+    }
+
     deleteEmail() {        
         return this.http.delete( 
             getBaseUri() + '/account/deleteEmail.json?email=' + encodeURIComponent(this.delEmail.value), { headers: this.deleteEmailHeaders }
@@ -108,7 +120,7 @@ export class EmailService {
                         if (data['emails'][i].primary == true){
                             this.primaryEmail = data['emails'][i];
                         }
-                    }                                                
+                    }                                              
                 }
             )
         )
@@ -128,7 +140,6 @@ export class EmailService {
                 (data) => {
                     this.emails = data;
                     for (let i in data['emails']){
-                        //console.log('data.emails[i]', data.emails[i]);
                         if (data['emails'][i].primary == true){
                             this.primaryEmail = data['emails'][i];
                         }
