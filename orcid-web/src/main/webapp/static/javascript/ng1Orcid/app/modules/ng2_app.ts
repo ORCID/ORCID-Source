@@ -200,6 +200,8 @@ import { WorkSpaceSummaryNg2Module }
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
+import { DelegatorsNg2Module } 
+    from './delegators/delegators.ts';    
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -342,7 +344,8 @@ export class RootCmp {
         WorksFormNg2Module,
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,
-        WorksPrivacyPreferencesNg2Module
+        WorksPrivacyPreferencesNg2Module,
+        DelegatorsNg2Module
     ],
     providers: [
         { 
