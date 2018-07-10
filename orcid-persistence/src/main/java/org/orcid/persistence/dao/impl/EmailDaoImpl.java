@@ -73,23 +73,18 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
-    public void addEmail(String orcid, String email, String visibility, String sourceId, String clientSourceId) {
-        addEmail(orcid, email, visibility, sourceId, clientSourceId, false, true);
-    }
-
-    @Override 
-    @Transactional
-    public void addEmail(String orcid, String email, String visibility, String sourceId, String clientSourceId, boolean isVerified, boolean isCurrent) {
+    public void addEmail(String orcid, String email, String emailHash, String visibility, String sourceId, String clientSourceId) {
         try {
             Query query = entityManager
-                    .createNativeQuery("INSERT INTO email (date_created, last_modified, orcid, email, is_primary, is_verified, is_current, visibility, source_id, client_source_id) VALUES (now(), now(), :orcid, :email, false, :isVerified, :isCurrent, :visibility, :sourceId, :clientSourceId)");
+                    .createNativeQuery("INSERT INTO email (date_created, last_modified, orcid, email, email_hash, is_primary, is_verified, is_current, visibility, source_id, client_source_id) VALUES (now(), now(), :orcid, :email, :hash, false, :isVerified, :isCurrent, :visibility, :sourceId, :clientSourceId)");
             query.setParameter("orcid", orcid);
             query.setParameter("email", email);
+            query.setParameter("hash", emailHash);
             query.setParameter("visibility", visibility);
             query.setParameter("sourceId", sourceId);
             query.setParameter("clientSourceId", clientSourceId);
-            query.setParameter("isVerified", isVerified);
-            query.setParameter("isCurrent", isCurrent);
+            query.setParameter("isVerified", false);
+            query.setParameter("isCurrent", true);
             query.executeUpdate();
         } catch(Exception psqle) {
             throw psqle;
@@ -287,5 +282,20 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("email", email);
         query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0;
-    }    
+    }
+
+    @Override
+    public List<String> getEmailsToHash(Integer batchSize) {
+        TypedQuery<String> query = entityManager.createQuery("select id from EmailEntity where emailHash is null", String.class);
+        query.setMaxResults(batchSize);
+        return query.getResultList();
+    }
+    
+    @Override    
+    public boolean populateEmailHash(String email, String emailHash) {
+        Query query = entityManager.createQuery("update EmailEntity set emailHash=:hash where email = :email");        
+        query.setParameter("email", email);
+        query.setParameter("hash", emailHash);
+        return query.executeUpdate() > 0;
+    }       
 }

@@ -201,6 +201,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
      * @param orcidProfile
      *            The record to create
      * @return the new record
+     * @throws NoSuchAlgorithmException 
      */
     private String createMinimalProfile(Registration registration, boolean usedCaptcha, Locale locale, String ip) {
         Date now = new Date();
@@ -235,7 +236,13 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setId(registration.getEmail().getValue().trim());
+        String email = registration.getEmail().getValue().trim();
+        emailEntity.setId(email);
+        try {
+            emailEntity.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
@@ -250,7 +257,13 @@ public class RegistrationManagerImpl implements RegistrationManager {
         for(Text emailAdditional : registration.getEmailsAdditional()) {
             if(!PojoUtil.isEmpty(emailAdditional)){
                 EmailEntity emailAdditionalEntity = new EmailEntity();
-                emailAdditionalEntity.setId(emailAdditional.getValue().trim());
+                String emailValue = emailAdditional.getValue().trim();
+                emailAdditionalEntity.setId(emailValue);
+                try {
+                    emailAdditionalEntity.setEmailHash(encryptionManager.sha256Hash(emailValue.toLowerCase()));
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
                 emailAdditionalEntity.setProfile(newRecord);
                 emailAdditionalEntity.setPrimary(false);
                 emailAdditionalEntity.setCurrent(true);
