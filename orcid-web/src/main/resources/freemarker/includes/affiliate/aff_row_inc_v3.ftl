@@ -63,8 +63,8 @@
         <ul class="id-details">
             <li class="url-work">
                 <ul class="id-details">
-                    <li ng-repeat='extID in group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "type.value"] track by $index' class="url-popover">
-                        <span ng-if="group.getActive().affiliationExternalIdentifiers[0].value.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
+                    <li ng-repeat='extID in group.getActive().affiliationExternalIdentifiers | orderBy:["-relationship.value", "externalIdentifierType.value"] track by $index' class="url-popover">
+                        <span ng-if="group.getActive().affiliationExternalIdentifiers[0].externalIdentifierId.value.length > 0" bind-html-compile='extID | affiliationExternalIdentifierHtml:group.getActive().putCode.value:$index'></span>
                     </li>
                 </ul>                                   
             </li>

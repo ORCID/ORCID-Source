@@ -12,7 +12,7 @@ public class PeerReviewSubjectForm implements ErrorsInterface, Serializable {
 
     private Text putCode;
 
-    private List<WorkExternalIdentifier> workExternalIdentifiers;
+    private List<ActivityExternalIdentifier> workExternalIdentifiers;
 
     private Text url;
 
@@ -42,11 +42,11 @@ public class PeerReviewSubjectForm implements ErrorsInterface, Serializable {
         this.putCode = putCode;
     }
 
-    public List<WorkExternalIdentifier> getWorkExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {
         return workExternalIdentifiers;
     }
 
-    public void setWorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifiers) {
+    public void setWorkExternalIdentifiers(List<ActivityExternalIdentifier> workExternalIdentifiers) {
         this.workExternalIdentifiers = workExternalIdentifiers;
     }
 

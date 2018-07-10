@@ -374,7 +374,6 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     background-color: #fff;
     border: 0;
     color: #338caf;
-    margin-bottom: 10px;
     padding: 0
 }
 
@@ -4322,7 +4321,8 @@ ul.sources-options {
 }
 
 ul.sources-options li {
-    display: inline-block
+    display: inline-block;
+    margin-right: 4px;
 }
 
 .sources-container table.sources-edit-table {
@@ -4557,7 +4557,8 @@ ul.toggle-menu li ul {
     right: 0;
     display: none;
     opacity: 0;
-    visibility: hidden
+    visibility: hidden;
+    width: 100%;
 }
 
 ul.toggle-menu li ul li {
@@ -4917,7 +4918,8 @@ ul.sources-actions li {
 .workspace-toolbar ul.workspace-private-toolbar li.works-details {
     margin-bottom: 4px;
     display: inline-block;
-    position: relative
+    position: relative;
+    margin-right: 4px;
 }
 
 .workspace-toolbar ul.workspace-private-toolbar li.works-details a {
@@ -5482,7 +5484,11 @@ ul.oauth-scopes li {
 }
 
 .form-group div>select,input.form-control,select.form-control,textarea.form-control {
-    margin-bottom: 0
+    margin-bottom: 0;
+}
+
+.form-group div>select{
+    margin-right: 4px;
 }
 
 #widget-sample {
