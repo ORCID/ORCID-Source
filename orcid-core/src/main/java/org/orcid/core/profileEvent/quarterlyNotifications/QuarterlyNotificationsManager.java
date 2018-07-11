@@ -12,14 +12,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
+import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -46,10 +49,12 @@ public abstract class QuarterlyNotificationsManager {
     
     private OrcidUrlManager orcidUrlManager;
     
-    private EmailFrequencyManager emailFrequencyManager;
+    private EmailFrequencyDao emailFrequencyDao;
     
     private TransactionTemplate transactionTemplate;
     
+    private EncryptionManager encryptionManager;
+        
     protected MessageSource messages;
     
     ExecutorService pool;
@@ -83,8 +88,9 @@ public abstract class QuarterlyNotificationsManager {
         profileDaoReadOnly = (ProfileDao) context.getBean("profileDaoReadOnly");
         notificationDao = (NotificationDao) context.getBean("notificationDao");        
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
-        emailFrequencyManager = (EmailFrequencyManager) context.getBean("emailFrequencyManager");
+        emailFrequencyDao = (EmailFrequencyDao) context.getBean("emailFrequencyDao");
         profileEventDao = (GenericDao) context.getBean("profileEventDao");
+        encryptionManager = (EncryptionManager) context.getBean("encryptionManager");
         messages = (MessageSource) context.getBean("messageSource");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
@@ -185,7 +191,11 @@ public abstract class QuarterlyNotificationsManager {
     } 
     
     protected String getUnsubscribeLink(String orcidId) {
-        
+        EmailFrequencyEntity entity = emailFrequencyDao.findByOrcid(orcidId);
+        String uuid = entity.getId();
+        String encryptedId = encryptionManager.encryptForExternalUse(uuid);
+        String base64EncodedId = Base64.encodeBase64URLSafeString(encryptedId.getBytes());
+        return orcidUrlManager.getBaseUrl() + "/unsubscribe/" + base64EncodedId;
     }
     
     public abstract String getSubject(Locale locale);

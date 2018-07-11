@@ -37,17 +37,32 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     
     @Override
     public Map<String, String> getEmailFrequency(String orcid) {
-        Map<String, String> result = new HashMap<String, String>();
         try {
             EmailFrequencyEntity entity = emailFrequencyDaoReadOnly.findByOrcid(orcid);
-            result.put(ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendAdministrativeChangeNotifications()));
-            result.put(CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendChangeNotifications()));
-            result.put(MEMBER_UPDATE_REQUESTS, String.valueOf(entity.getSendMemberUpdateRequests()));
-            result.put(QUARTERLY_TIPS, String.valueOf(entity.getSendQuarterlyTips()));
-        } catch(Exception e) {
+            return generateFrequencyMap(entity);
+        } catch (Exception e) {
             LOG.error("Couldn't find email_frequency for {}", orcid);
             throw e;
         }
+    }
+
+    @Override
+    public Map<String, String> getEmailFrequencyById(String id) {
+        try {
+            EmailFrequencyEntity entity = emailFrequencyDaoReadOnly.find(id);
+            return generateFrequencyMap(entity);
+        } catch (Exception e) {
+            LOG.error("Couldn't find email_frequency for {}", id);
+            throw e;
+        }
+    }
+
+    private Map<String, String> generateFrequencyMap(EmailFrequencyEntity entity) {
+        Map<String, String> result = new HashMap<String, String>();
+        result.put(ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendAdministrativeChangeNotifications()));
+        result.put(CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendChangeNotifications()));
+        result.put(MEMBER_UPDATE_REQUESTS, String.valueOf(entity.getSendMemberUpdateRequests()));
+        result.put(QUARTERLY_TIPS, String.valueOf(entity.getSendQuarterlyTips()));
         return result;
     }
     
