@@ -207,33 +207,30 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/distinctions", distinctions.getPath());
         Utils.verifyLastModified(distinctions.getLastModifiedDate());
         assertNotNull(distinctions.retrieveGroups());
-        assertEquals(4, distinctions.retrieveGroups().size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        assertEquals(3, distinctions.retrieveGroups().size());
+        boolean found1 = false, found2 = false, found3 = false;
         
         for (AffiliationGroup<DistinctionSummary> group : distinctions.retrieveGroups()) {
-            for (DistinctionSummary summary : group.getActivities()) {
-                Utils.verifyLastModified(summary.getLastModifiedDate());
-                if (Long.valueOf(27).equals(summary.getPutCode())) {
-                    assertEquals("PUBLIC Department", summary.getDepartmentName());
-                    found1 = true;
-                } else if (Long.valueOf(28).equals(summary.getPutCode())) {
-                    assertEquals("LIMITED Department", summary.getDepartmentName());
-                    found2 = true;
-                } else if (Long.valueOf(29).equals(summary.getPutCode())) {
-                    assertEquals("PRIVATE Department", summary.getDepartmentName());
-                    found3 = true;
-                } else if (Long.valueOf(30).equals(summary.getPutCode())) {
-                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                    found4 = true;
-                } else {
-                    fail("Invalid distinction found: " + summary.getPutCode());
-                }
-            }
+            DistinctionSummary element0 = group.getActivities().get(0);
+            Utils.verifyLastModified(element0.getLastModifiedDate());
+            if (Long.valueOf(28).equals(element0.getPutCode())) {
+                assertEquals("LIMITED Department", element0.getDepartmentName());
+                found1 = true;
+            } else if (Long.valueOf(29).equals(element0.getPutCode())) {
+                assertEquals("PRIVATE Department", element0.getDepartmentName());
+                found2 = true;
+            } else if (Long.valueOf(30).equals(element0.getPutCode())) {
+                assertEquals("SELF LIMITED Department", element0.getDepartmentName());
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(27), group.getActivities().get(1).getPutCode());
+                found3 = true;
+            } else {
+                fail("Invalid distinction found: " + element0.getPutCode());
+            }            
         }
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
+        assertTrue(found3);        
     }
 
     @Test
@@ -305,7 +302,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(originalSummary.getDistinctions().retrieveGroups());
         assertNotNull(originalSummary.getDistinctions().retrieveGroups().iterator().next());
         Utils.verifyLastModified(originalSummary.getDistinctions().retrieveGroups().iterator().next().getLastModifiedDate());
-        assertEquals(4, originalSummary.getDistinctions().retrieveGroups().size());
+        assertEquals(3, originalSummary.getDistinctions().retrieveGroups().size());
 
         response = serviceDelegator.createDistinction(ORCID, (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION));
         assertNotNull(response);
@@ -324,7 +321,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getDistinctions());
         Utils.verifyLastModified(summaryWithNewElement.getDistinctions().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getDistinctions().retrieveGroups());
-        assertEquals(5, summaryWithNewElement.getDistinctions().retrieveGroups().size());
+        assertEquals(4, summaryWithNewElement.getDistinctions().retrieveGroups().size());
         
         boolean haveNew = false;
 

@@ -208,33 +208,30 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertEquals("/0000-0000-0000-0003/invited-positions", invitedPositions.getPath());
         Utils.verifyLastModified(invitedPositions.getLastModifiedDate());
         assertNotNull(invitedPositions.retrieveGroups());
-        assertEquals(4, invitedPositions.retrieveGroups().size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        assertEquals(3, invitedPositions.retrieveGroups().size());
+        boolean found1 = false, found2 = false, found3 = false;
         
         for (AffiliationGroup<InvitedPositionSummary> group : invitedPositions.retrieveGroups()) {
-            for (InvitedPositionSummary summary : group.getActivities()) {
-                Utils.verifyLastModified(summary.getLastModifiedDate());
-                if (Long.valueOf(32).equals(summary.getPutCode())) {
-                    assertEquals("PUBLIC Department", summary.getDepartmentName());
-                    found1 = true;
-                } else if (Long.valueOf(33).equals(summary.getPutCode())) {
-                    assertEquals("LIMITED Department", summary.getDepartmentName());
-                    found2 = true;
-                } else if (Long.valueOf(34).equals(summary.getPutCode())) {
-                    assertEquals("PRIVATE Department", summary.getDepartmentName());
-                    found3 = true;
-                } else if (Long.valueOf(35).equals(summary.getPutCode())) {
-                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                    found4 = true;
-                } else {
-                    fail("Invalid invitedPosition found: " + summary.getPutCode());
-                }
-            }
+            InvitedPositionSummary element0 = group.getActivities().get(0);
+            Utils.verifyLastModified(element0.getLastModifiedDate());
+            if (Long.valueOf(33).equals(element0.getPutCode())) {
+                assertEquals("LIMITED Department", element0.getDepartmentName());
+                found1 = true;
+            } else if (Long.valueOf(34).equals(element0.getPutCode())) {
+                assertEquals("PRIVATE Department", element0.getDepartmentName());
+                found2 = true;
+            } else if (Long.valueOf(35).equals(element0.getPutCode())) {
+                assertEquals("SELF LIMITED Department", element0.getDepartmentName());
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(32), group.getActivities().get(1).getPutCode());
+                found3 = true;
+            } else {
+                fail("Invalid invitedPosition found: " + element0.getPutCode());
+            }            
         }
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
+        assertTrue(found3);        
     }
 
     @Test
@@ -306,7 +303,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertNotNull(originalSummary.getInvitedPositions());
         Utils.verifyLastModified(originalSummary.getInvitedPositions().getLastModifiedDate());
         assertNotNull(originalSummary.getInvitedPositions().retrieveGroups());
-        assertEquals(4, originalSummary.getInvitedPositions().retrieveGroups().size());
+        assertEquals(3, originalSummary.getInvitedPositions().retrieveGroups().size());
         
         InvitedPositionSummary invitedPositionSummary = originalSummary.getInvitedPositions().retrieveGroups().iterator().next().getActivities().get(0);
         assertNotNull(invitedPositionSummary);
@@ -329,7 +326,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
         assertNotNull(summaryWithNewElement.getInvitedPositions());
         Utils.verifyLastModified(summaryWithNewElement.getInvitedPositions().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getInvitedPositions().retrieveGroups());
-        assertEquals(5, summaryWithNewElement.getInvitedPositions().retrieveGroups().size());
+        assertEquals(4, summaryWithNewElement.getInvitedPositions().retrieveGroups().size());
 
         boolean haveNew = false;
 

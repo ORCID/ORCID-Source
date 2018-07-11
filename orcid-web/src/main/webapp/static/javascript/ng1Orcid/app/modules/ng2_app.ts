@@ -62,9 +62,6 @@ import { DeactivateAccountNg2Module }
 import { DeactivateAccountMessageNg2Module }
     from './deactivateAccount/deactivateAccountMessage.ts';
 
-import { DeprecateAccountModalNg2Module }
-    from './deprecateAccount/deprecateAccount.ts';
-
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -206,6 +203,8 @@ import { WorksPrivacyPreferencesNg2Module }
 import { UnsubscribeNg2Module }
     from './unsubscribe/unsubscribe.ts';
 
+import { DelegatorsNg2Module } 
+    from './delegators/delegators.ts';    
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -305,7 +304,6 @@ export class RootCmp {
         ClientEditNg2Module,
         DeactivateAccountNg2Module,
         DeactivateAccountMessageNg2Module,
-        DeprecateAccountModalNg2Module,
         DeprecateAccountNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
@@ -350,7 +348,8 @@ export class RootCmp {
         WorksFormNg2Module,
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,
-        WorksPrivacyPreferencesNg2Module
+        WorksPrivacyPreferencesNg2Module,
+        DelegatorsNg2Module
     ],
     providers: [
         { 

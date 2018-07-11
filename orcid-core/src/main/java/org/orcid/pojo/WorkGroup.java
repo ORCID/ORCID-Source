@@ -13,7 +13,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 
 public class WorkGroup implements Serializable {
@@ -32,7 +32,7 @@ public class WorkGroup implements Serializable {
 
     private boolean userVersionPresent;
 
-    private List<WorkExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
+    private List<ActivityExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
     public List<WorkForm> getWorks() {
         return works;
@@ -82,11 +82,11 @@ public class WorkGroup implements Serializable {
         this.activeVisibility = activeVisibility;
     }
 
-    public List<WorkExternalIdentifier> getWorkExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {
         return workExternalIdentifiers;
     }
 
-    public void setWorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifiers) {
+    public void setWorkExternalIdentifiers(List<ActivityExternalIdentifier> workExternalIdentifiers) {
         this.workExternalIdentifiers = workExternalIdentifiers;
     }
 
@@ -118,7 +118,7 @@ public class WorkGroup implements Serializable {
         }
 
         if (workGroup.getIdentifiers() != null) {
-            List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
+            List<ActivityExternalIdentifier> workExternalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();
             for (ExternalID extId : workGroup.getIdentifiers().getExternalIdentifier()) {
                 if (extId.getRelationship() == null) {
                     if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
@@ -137,7 +137,7 @@ public class WorkGroup implements Serializable {
                         extId.setRelationship(Relationship.SELF);
                     }
                 }
-                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
+                workExternalIdentifiersList.add(ActivityExternalIdentifier.valueOf(extId));
             }
             group.setWorkExternalIdentifiers(workExternalIdentifiersList);
         }

@@ -1,8 +1,10 @@
 package org.orcid.core.manager.v3.read_only;
 
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc1.record.Distinction;
 import org.orcid.jaxb.model.v3.rc1.record.Education;
 import org.orcid.jaxb.model.v3.rc1.record.Employment;
@@ -247,6 +249,17 @@ public interface AffiliationsManagerReadOnly {
      */
     List<Affiliation> getAffiliations(String orcid);
 
+    /**
+     * Get all the affiliations that belongs to a user grouped by type and external ids
+     * 
+     * @param justPublic
+     *          Specify if we want to include only the public elements
+     * @param userOrcid
+     * 
+     * @return grouped list of affiliations that belongs to this user
+     */
+    <T extends AffiliationSummary> Map<AffiliationType, List<AffiliationGroup<T>>> getGroupedAffiliations(String orcid, boolean justPublic);
+    
     /**
      * Generate a grouped list of affiliations with the given list of AffiliationSummary objects
      * 

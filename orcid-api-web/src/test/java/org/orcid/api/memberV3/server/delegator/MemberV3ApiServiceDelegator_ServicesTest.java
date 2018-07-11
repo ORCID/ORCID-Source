@@ -207,33 +207,31 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/services", services.getPath());
         Utils.verifyLastModified(services.getLastModifiedDate());
         assertNotNull(services.retrieveGroups());
-        assertEquals(4, services.retrieveGroups().size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        assertEquals(3, services.retrieveGroups().size());
+        boolean found1 = false, found2 = false, found3 = false;
         
         for (AffiliationGroup<ServiceSummary> group : services.retrieveGroups()) {
-            for (ServiceSummary summary : group.getActivities()) {
-                Utils.verifyLastModified(summary.getLastModifiedDate());
-                if (Long.valueOf(47).equals(summary.getPutCode())) {
-                    assertEquals("PUBLIC Department", summary.getDepartmentName());
-                    found1 = true;
-                } else if (Long.valueOf(48).equals(summary.getPutCode())) {
-                    assertEquals("LIMITED Department", summary.getDepartmentName());
-                    found2 = true;
-                } else if (Long.valueOf(49).equals(summary.getPutCode())) {
-                    assertEquals("PRIVATE Department", summary.getDepartmentName());
-                    found3 = true;
-                } else if (Long.valueOf(50).equals(summary.getPutCode())) {
-                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                    found4 = true;
-                } else {
-                    fail("Invalid service found: " + summary.getPutCode());
-                }
-            }
+            ServiceSummary element0 = group.getActivities().get(0);
+            Utils.verifyLastModified(element0.getLastModifiedDate());
+            if (Long.valueOf(48).equals(element0.getPutCode())) {
+                assertEquals("LIMITED Department", element0.getDepartmentName());
+                found1 = true;
+            } else if (Long.valueOf(49).equals(element0.getPutCode())) {
+                assertEquals("PRIVATE Department", element0.getDepartmentName());
+                found2 = true;
+            } else if (Long.valueOf(50).equals(element0.getPutCode())) {
+                assertEquals("SELF LIMITED Department", element0.getDepartmentName());
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(47), group.getActivities().get(1).getPutCode());
+                assertEquals("PUBLIC Department", group.getActivities().get(1).getDepartmentName());
+                found3 = true;
+            } else {
+                fail("Invalid service found: " + element0.getPutCode());
+            }            
         }
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
+        assertTrue(found3);        
     }
 
     @Test
@@ -306,7 +304,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         assertNotNull(originalSummary.getServices());
         Utils.verifyLastModified(originalSummary.getServices().getLastModifiedDate());
         assertNotNull(originalSummary.getServices().retrieveGroups());
-        assertEquals(4, originalSummary.getServices().retrieveGroups().size());
+        assertEquals(3, originalSummary.getServices().retrieveGroups().size());
 
         ServiceSummary serviceSummary = originalSummary.getServices().retrieveGroups().iterator().next().getActivities().get(0);
         assertNotNull(serviceSummary);
@@ -329,7 +327,7 @@ public class MemberV3ApiServiceDelegator_ServicesTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getServices());
         Utils.verifyLastModified(summaryWithNewElement.getServices().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getServices().retrieveGroups());
-        assertEquals(5, summaryWithNewElement.getServices().retrieveGroups().size());
+        assertEquals(4, summaryWithNewElement.getServices().retrieveGroups().size());
         
         boolean haveNew = false;
 

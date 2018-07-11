@@ -46,9 +46,6 @@ import { DeactivateAccountModule }
 import { DeactivateAccountMessageModule }
     from './deactivateAccount/deactivateAccountMessage.ts';
 
-import { DeprecateAccountModalModule }
-    from './deprecateAccount/deprecateAccount.ts';
-
 import { DeprecateAccountModule }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -184,6 +181,9 @@ import { WorksPrivacyPreferencesModule }
 import { UnsubscribeModule }
     from './unsubscribe/unsubscribe.ts'
 
+import { DelegatorsModule } 
+    from './delegators/delegators.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -202,7 +202,6 @@ export const orcidApp = angular.module(
         ClientEditModule.name,
         DeactivateAccountModule.name,
         DeactivateAccountMessageModule.name,
-        DeprecateAccountModalModule.name,
         DeprecateAccountModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
@@ -247,7 +246,8 @@ export const orcidApp = angular.module(
         WorksModule.name,
         WorkSpaceSummaryModule.name,
         WorksPrivacyPreferencesModule.name,
-        UnsubscribeModule.name
+        UnsubscribeModule.name,
+        DelegatorsModule.name
     ]
 );
 
