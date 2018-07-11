@@ -38,3 +38,14 @@ export const UnsubscribeModule = angular.module(
     }
 )
 export class UnsubscribeNg2Module {}
+
+//components migrated to angular 2 should be downgraded here
+//Must convert as much as possible of our code to directives
+UnsubscribeModule.directive(
+  'unsubscribeNg2', 
+  <any>downgradeComponent(
+      {
+          component: UnsubscribeComponent,
+      }
+  )
+);

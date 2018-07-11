@@ -15,6 +15,8 @@ import { catchError, map, tap }
 export class UnsubscribeService {
     private headers: HttpHeaders;    
     private url: string;
+    private notify = new Subject<any>();
+    notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -29,8 +31,7 @@ export class UnsubscribeService {
 
     getNotificationSettingsForm(): Observable<any> {
         var urlParts = window.location.href.split('/');
-        var encryptedId = urlParts[urlParts.length -1];
-        console.log('encrypted id: ' + encryptedId);
+        var encryptedId = urlParts[urlParts.length -1];        
         return this.http.get(
             this.url + '?id=' + encryptedId
         )
@@ -38,10 +39,12 @@ export class UnsubscribeService {
     }
 
     postNotificationSettings( obj ): Observable<any> {
+        var urlParts = window.location.href.split('/');
+        var encryptedId = urlParts[urlParts.length -1];
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
-            this.url, 
+            this.url + '?id=' + encryptedId, 
             encoded_data, 
             { headers: this.headers }
         )

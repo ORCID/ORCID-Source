@@ -17,7 +17,6 @@ import { CommonService }
 import { UnsubscribeService } 
     from '../../shared/unsubscribe.service.ts'; 
 
-
 @Component({
     selector: 'unsubscribe-ng2',
     template:  scriptTmpl("unsubscribe-ng2-template")
@@ -27,12 +26,12 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
 
     displayError: boolean;
     notificationSettingsForm: any;
+    sendQuarterlyTips: boolean;
 
     constructor(
         private commonSrvc: CommonService,
         private unsubscribeService: UnsubscribeService
-    ) {
-        console.log('Constructor');               
+    ) {              
         this.displayError = false;
         this.notificationSettingsForm = {};
     }
@@ -45,6 +44,7 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.notificationSettingsForm = data;
+                this.sendQuarterlyTips = (data['send_quarterly_tips'] == "true");
             },
             error => {
                 console.log('error fetching notification settings');
@@ -53,6 +53,28 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
  
     };
     
+    submitChanges(): void {
+        this.notificationSettingsForm['send_quarterly_tips'] = (this.sendQuarterlyTips ?  "true" : "false")
+        
+        this.unsubscribeService.postNotificationSettings( this.notificationSettingsForm )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if (data['redirect_uri'] != null) {
+                    window.location.href = data['redirect_uri'];
+                } else {
+                    console.log("Unexpected error");
+                }
+
+            },
+            error => {
+                console.log('error posting to reset-password-email.json');
+            } 
+        );
+        
+    };
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
@@ -64,9 +86,7 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
         this.ngUnsubscribe.complete();
     };
 
-    ngOnInit() {
-        console.log('Init')
+    ngOnInit() {        
         this.getNotificationSettingsForm();
-        console.log('Done')       
     };
 }
