@@ -37,12 +37,12 @@ public class WorksPaginator {
         return publicWorks.getWorkGroup().size();
     }
 
-    public WorksPage getWorksPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {
+    public Page<WorkGroup> getWorksPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
         List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
         filteredGroups = sort(filteredGroups, sort, sortAsc);
         
-        WorksPage worksPage = new WorksPage();
+        Page<WorkGroup> worksPage = new Page<WorkGroup>();
         worksPage.setTotalGroups(filteredGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
@@ -50,16 +50,16 @@ public class WorksPaginator {
             org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup group = filteredGroups.get(i);
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
-        worksPage.setWorkGroups(workGroups);
+        worksPage.setGroups(workGroups);
         worksPage.setNextOffset(offset + PAGE_SIZE);
         return worksPage;
     }
 
-    public WorksPage refreshWorks(String orcid, int limit, String sort, boolean sortAsc) {
+    public Page<WorkGroup> refreshWorks(String orcid, int limit, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
         List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
 
-        WorksPage worksPage = new WorksPage();
+        Page<WorkGroup> worksPage = new Page<WorkGroup>();
         worksPage.setTotalGroups(sortedGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
@@ -68,16 +68,16 @@ public class WorksPaginator {
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
-        worksPage.setWorkGroups(workGroups);
+        worksPage.setGroups(workGroups);
         worksPage.setNextOffset(limit);
         return worksPage;
     }
     
-    public WorksPage getAllWorks(String orcid, String sort, boolean sortAsc) {
+    public Page<WorkGroup> getAllWorks(String orcid, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
         List<org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
 
-        WorksPage worksPage = new WorksPage();
+        Page<WorkGroup> worksPage = new Page<WorkGroup>();
         worksPage.setTotalGroups(sortedGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
@@ -86,7 +86,7 @@ public class WorksPaginator {
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
-        worksPage.setWorkGroups(workGroups);
+        worksPage.setGroups(workGroups);
         worksPage.setNextOffset(sortedGroups.size());
         return worksPage;
     }

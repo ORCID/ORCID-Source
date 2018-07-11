@@ -42,7 +42,7 @@ import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.v3.SourceUtils;
-import org.orcid.frontend.web.pagination.WorksPage;
+import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -599,7 +599,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody WorksPage getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         return worksPaginator.getWorksPage(orcid, offset, true, sort, sortAsc);
     }
 

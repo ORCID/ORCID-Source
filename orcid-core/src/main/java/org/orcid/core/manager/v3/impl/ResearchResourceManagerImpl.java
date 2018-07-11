@@ -191,8 +191,13 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
 
     @Override
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, Visibility visibility) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();  
+        return rrDao.updateVisibilities(orcid,researchResourceIds,visibility.name());
+    }
+
+    @Override
+    public void removeResearchResources(String effectiveUserOrcid, ArrayList<Long> rrIds) {
+        for (long id: rrIds)
+            rrDao.removeResearchResource(effectiveUserOrcid, id);
     }
 
 }

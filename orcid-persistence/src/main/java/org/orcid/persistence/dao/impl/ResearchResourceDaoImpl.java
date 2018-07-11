@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -52,6 +53,16 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
         Query query = entityManager.createQuery("delete from ResearchResourceEntity where profile.id = :userOrcid");
         query.setParameter("userOrcid", userOrcid);
         query.executeUpdate();
+    }
+
+    @Override
+    public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, String visibility) {
+        Query query = entityManager
+                .createQuery("update ResearchResourceEntity set visibility=:visibility, lastModified=now() where id in (:researchResourceIds) and  profile.id=:orcid");
+        query.setParameter("peerReviewIds", researchResourceIds);
+        query.setParameter("visibility", visibility);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0 ? true : false;
     }
 
 }
