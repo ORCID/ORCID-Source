@@ -6,16 +6,10 @@ import java.util.List;
 import org.orcid.jaxb.model.v3.rc1.record.Activity;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Group;
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
-import org.orcid.pojo.ajaxForm.WorkForm;
-
-import com.google.common.collect.Lists;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 
 /** Generic pojo for representing groups of activity summaries.
  * Subclasses must implment a getter for their activities so that serialization has correct name
@@ -40,7 +34,7 @@ public class GroupPojo <T extends GroupableActivity & Activity & SourceAware>{
     
     private boolean userVersionPresent;
     
-    private List<WorkExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
+    private List<ActivityExternalIdentifier> externalIdentifiers = new ArrayList<>();
     
     public GroupPojo(List<T> summaries, int id, String orcid, ExternalIDs ids){
         setGroupId(id);
@@ -63,14 +57,12 @@ public class GroupPojo <T extends GroupableActivity & Activity & SourceAware>{
         }
 
         if (ids != null) {
-            List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
             for (ExternalID extId : ids.getExternalIdentifier()) {
                 if (extId.getRelationship() == null) {
                         extId.setRelationship(Relationship.SELF);
                 }
-                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
+                externalIdentifiers.add(ActivityExternalIdentifier.valueOf(extId));
             }
-            setWorkExternalIdentifiers(workExternalIdentifiersList);
         }
     }
     
@@ -122,12 +114,12 @@ public class GroupPojo <T extends GroupableActivity & Activity & SourceAware>{
         this.activeVisibility = activeVisibility;
     }
 
-    public List<WorkExternalIdentifier> getWorkExternalIdentifiers() {
-        return workExternalIdentifiers;
+    public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {
+        return externalIdentifiers;
     }
 
-    public void setWorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifiers) {
-        this.workExternalIdentifiers = workExternalIdentifiers;
+    public void setWorkExternalIdentifiers(List<ActivityExternalIdentifier> workExternalIdentifiers) {
+        this.externalIdentifiers = workExternalIdentifiers;
     }
     
 }
