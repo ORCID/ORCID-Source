@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.OrderColumn;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
@@ -161,9 +162,9 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     }
 
     @Override
+    @Transactional
     public boolean updateToMaxDisplay(String orcid, Long researchResourceId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        return rrDao.updateToMaxDisplay(orcid,researchResourceId);
     }
 
     @Override
@@ -190,11 +191,13 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     }
 
     @Override
+    @Transactional
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, Visibility visibility) {
         return rrDao.updateVisibilities(orcid,researchResourceIds,visibility.name());
     }
 
     @Override
+    @Transactional
     public void removeResearchResources(String effectiveUserOrcid, ArrayList<Long> rrIds) {
         for (long id: rrIds)
             rrDao.removeResearchResource(effectiveUserOrcid, id);

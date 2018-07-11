@@ -1,18 +1,17 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
-import org.orcid.pojo.ResearchResourceGroup;
-import org.orcid.pojo.ajaxForm.ResearchResourceForm;
+import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,37 +25,35 @@ public class ResearchResourcesController extends BaseWorkspaceController {
     
     static final int PAGE_SIZE = 50;
     
-    @Resource
+    @Resource(name = "researchResourceManagerV3")
     ResearchResourceManager researchResourceManager;
     
     /**
      * List research resources associated with a profile
      * */
     @RequestMapping(value = "/researchResourcePage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<ResearchResourceGroup> getresearchResourcePage(@RequestParam("offset") int offset) {
+    public @ResponseBody Page<ResearchResourceGroupPojo> getresearchResourcePage(@RequestParam("offset") int offset) {
         String orcid = getCurrentUserOrcid();
         
         List<ResearchResourceSummary> r = researchResourceManager.getResearchResourceSummaryList(orcid);
         ResearchResources rr = researchResourceManager.groupResearchResources(r, false);
-        Page<ResearchResourceGroup> page = new Page<ResearchResourceGroup>();
-        page.setGroups(new ArrayList<ResearchResourceGroup>());
+        Page<ResearchResourceGroupPojo> page = new Page<ResearchResourceGroupPojo>();
+        page.setWorkGroups(new ArrayList<ResearchResourceGroupPojo>());
         
         for (int i = offset; i < Math.min(offset + PAGE_SIZE, rr.getResearchResourceGroup().size()); i++) {
             org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup group = rr.getResearchResourceGroup().get(i);
-            page.getGroups().add(ResearchResourceGroup.valueOf(group, i, orcid));
+            page.getWorkGroups().add(new ResearchResourceGroupPojo(group, i, orcid));
         }
         page.setTotalGroups(rr.getResearchResourceGroup().size());
         page.setNextOffset(offset+PAGE_SIZE);
-        //TODO: translation stuff
         return page;
     }
     
     @RequestMapping(value = "/researchResource.json", method = RequestMethod.GET)
-    public @ResponseBody ResearchResourceForm getResearchResource(@RequestParam("id") long id) {
+    public @ResponseBody ResearchResource getResearchResource(@RequestParam("id") long id) {
         String orcid = getCurrentUserOrcid();
         ResearchResource r = researchResourceManager.getResearchResource(orcid, id);
-        //TODO: translation stuff
-        return ResearchResourceForm.valueOf(r);
+        return r;
     }
     
     @RequestMapping(value = "/{researchResourceIdsStr}", method = RequestMethod.DELETE)
@@ -79,6 +76,12 @@ public class ResearchResourcesController extends BaseWorkspaceController {
             rrIds.add(new Long(workId));
         researchResourceManager.updateVisibilities(orcid, rrIds, org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibilityStr));
         return rrIds;
+    }
+    
+    @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
+    public @ResponseBody boolean updateToMaxDisplay(@RequestParam(value = "putCode") Long putCode) {
+        String orcid = getEffectiveUserOrcid();
+        return researchResourceManager.updateToMaxDisplay(orcid, putCode);
     }
     
     //what does it need to do?

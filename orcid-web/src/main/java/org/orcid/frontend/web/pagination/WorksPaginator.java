@@ -50,7 +50,7 @@ public class WorksPaginator {
             org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup group = filteredGroups.get(i);
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
-        worksPage.setGroups(workGroups);
+        worksPage.setWorkGroups(workGroups);
         worksPage.setNextOffset(offset + PAGE_SIZE);
         return worksPage;
     }
@@ -68,7 +68,7 @@ public class WorksPaginator {
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
-        worksPage.setGroups(workGroups);
+        worksPage.setWorkGroups(workGroups);
         worksPage.setNextOffset(limit);
         return worksPage;
     }
@@ -86,7 +86,7 @@ public class WorksPaginator {
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
-        worksPage.setGroups(workGroups);
+        worksPage.setWorkGroups(workGroups);
         worksPage.setNextOffset(sortedGroups.size());
         return worksPage;
     }

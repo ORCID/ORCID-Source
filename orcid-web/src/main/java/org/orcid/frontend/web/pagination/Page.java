@@ -13,14 +13,14 @@ public class Page<T> implements Serializable {
     
     private int totalGroups;
     
-    private List<T> groups;
+    private List<T> workGroups;
 
-    public List<T> getGroups() {
-        return groups;
+    public List<T> getWorkGroups() {
+        return workGroups;
     }
 
-    public void setGroups(List<T> workGroups) {
-        this.groups = workGroups;
+    public void setWorkGroups(List<T> workGroups) {
+        this.workGroups = workGroups;
     }
 
     public int getNextOffset() {

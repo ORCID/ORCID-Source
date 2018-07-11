@@ -59,10 +59,28 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, String visibility) {
         Query query = entityManager
                 .createQuery("update ResearchResourceEntity set visibility=:visibility, lastModified=now() where id in (:researchResourceIds) and  profile.id=:orcid");
-        query.setParameter("peerReviewIds", researchResourceIds);
+        query.setParameter("researchResourceIds", researchResourceIds);
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    /**
+     * Sets the display index of a research resource
+     * @param researchResourceId
+     *          The rr id
+     * @param orcid
+     *          The rr owner 
+     * @return true if the rr index was correctly set                  
+     * */
+    @Override
+    @Transactional
+    public boolean updateToMaxDisplay(String orcid, Long researchResourceId) {
+        Query query = entityManager.createNativeQuery("UPDATE research_resource SET display_index=(select coalesce(MAX(display_index) + 1, 0) from work where orcid=:orcid and id != :researchResourceId ), last_modified=now() WHERE id=:researchResourceId");        
+        query.setParameter("researchResourceId", researchResourceId);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
+    }
+    
+    
 }

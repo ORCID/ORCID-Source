@@ -17,4 +17,6 @@ public interface ResearchResourceDao extends GenericDao<ResearchResourceEntity, 
 
     boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, String visibility);
 
+    boolean updateToMaxDisplay(String orcid, Long researchResourceId);
+
 }

@@ -56,28 +56,28 @@ public class WorksPaginatorTest {
     public void testGetWorksPage() {
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(get1000PublicWorkGroups());
         Page page = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.DATE_SORT_KEY, true);
-        assertEquals(WorksPaginator.PAGE_SIZE, page.getGroups().size());
-        org.orcid.pojo.WorkGroup workGroupPage1 = page.getGroups().get(0);
+        assertEquals(WorksPaginator.PAGE_SIZE, page.getWorkGroups().size());
+        org.orcid.pojo.WorkGroup workGroupPage1 = page.getWorkGroups().get(0);
 
         Page page2 = worksPaginator.getWorksPage("orcid", page.getNextOffset(), false, WorksPaginator.DATE_SORT_KEY, true);
-        org.orcid.pojo.WorkGroup workGroupPage2 = page2.getGroups().get(0);
+        org.orcid.pojo.WorkGroup workGroupPage2 = page2.getWorkGroups().get(0);
 
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
         Page sortedByTitle = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.TITLE_SORT_KEY, false);
-        workGroupPage1 = sortedByTitle.getGroups().get(0);
+        workGroupPage1 = sortedByTitle.getWorkGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
         Page sortedByTitlePage2 = worksPaginator.getWorksPage("orcid", sortedByTitle.getNextOffset(), false, WorksPaginator.TITLE_SORT_KEY, false);
-        workGroupPage2 = sortedByTitlePage2.getGroups().get(0);
+        workGroupPage2 = sortedByTitlePage2.getWorkGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
         Page reversedSortedByTitle = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.TITLE_SORT_KEY, true);
-        workGroupPage1 = sortedByTitle.getGroups().get(0);
+        workGroupPage1 = sortedByTitle.getWorkGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
         Page reversedSortedByTitlePage2 = worksPaginator.getWorksPage("orcid", reversedSortedByTitle.getNextOffset(), false, WorksPaginator.TITLE_SORT_KEY, true);
-        workGroupPage2 = reversedSortedByTitlePage2.getGroups().get(0);
+        workGroupPage2 = reversedSortedByTitlePage2.getWorkGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
     }
 
@@ -85,10 +85,10 @@ public class WorksPaginatorTest {
     public void testGetPublicWorksPage() {
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroups());
         Page page = worksPaginator.getWorksPage("orcid", 0, true, WorksPaginator.DATE_SORT_KEY, true);
-        assertFalse(WorksPaginator.PAGE_SIZE == page.getGroups().size());
-        assertTrue((WorksPaginator.PAGE_SIZE / 2) == page.getGroups().size());
+        assertFalse(WorksPaginator.PAGE_SIZE == page.getWorkGroups().size());
+        assertTrue((WorksPaginator.PAGE_SIZE / 2) == page.getWorkGroups().size());
 
-        for (org.orcid.pojo.WorkGroup workGroup : page.getGroups()) {
+        for (org.orcid.pojo.WorkGroup workGroup : page.getWorkGroups()) {
             for (WorkForm workForm : workGroup.getWorks()) {
                 assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
             }
@@ -116,9 +116,9 @@ public class WorksPaginatorTest {
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
         Page page = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.TITLE_SORT_KEY, true);
 
-        org.orcid.pojo.WorkGroup previous = page.getGroups().remove(0);
-        while (!page.getGroups().isEmpty()) {
-            org.orcid.pojo.WorkGroup next = page.getGroups().remove(0);
+        org.orcid.pojo.WorkGroup previous = page.getWorkGroups().remove(0);
+        while (!page.getWorkGroups().isEmpty()) {
+            org.orcid.pojo.WorkGroup next = page.getWorkGroups().remove(0);
             String previousTitle = previous.getWorks().get(0).getTitle().getValue();
             String nextTitle = next.getWorks().get(0).getTitle().getValue();
             assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) <= 0);
@@ -132,9 +132,9 @@ public class WorksPaginatorTest {
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
         Page page = worksPaginator.getWorksPage("orcid", 0, false, WorksPaginator.DATE_SORT_KEY, true);
 
-        org.orcid.pojo.WorkGroup previous = page.getGroups().remove(0);
-        while (!page.getGroups().isEmpty()) {
-            org.orcid.pojo.WorkGroup next = page.getGroups().remove(0);
+        org.orcid.pojo.WorkGroup previous = page.getWorkGroups().remove(0);
+        while (!page.getWorkGroups().isEmpty()) {
+            org.orcid.pojo.WorkGroup next = page.getWorkGroups().remove(0);
             String previousTitle = previous.getWorks().get(0).getTitle().getValue();
             String nextTitle = next.getWorks().get(0).getTitle().getValue();
             assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) >= 0);
@@ -148,7 +148,7 @@ public class WorksPaginatorTest {
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
         Page page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
         assertEquals(1000, page.getTotalGroups());
-        assertEquals(1000, page.getGroups().size());
+        assertEquals(1000, page.getWorkGroups().size());
     }
     
     /**
@@ -166,7 +166,7 @@ public class WorksPaginatorTest {
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
         Page page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
         
-        for (org.orcid.pojo.WorkGroup group : page.getGroups()) {
+        for (org.orcid.pojo.WorkGroup group : page.getWorkGroups()) {
             for (WorkForm work : group.getWorks()) {
                 assertEquals("", work.getTitle().getValue());
             }

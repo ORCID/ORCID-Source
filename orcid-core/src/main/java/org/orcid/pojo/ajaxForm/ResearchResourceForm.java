@@ -6,6 +6,7 @@ import java.util.List;
 import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.pojo.OrgDisambiguated;
 
+@Deprecated
 public class ResearchResourceForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
