@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
-import javax.xml.transform.Result;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -179,4 +178,17 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         return true;
     }
     
+    @Override
+    @Transactional
+    public boolean updateById(String id, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
+            SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
+        EmailFrequencyEntity entity = emailFrequencyDao.find(id);
+        entity.setLastModified(new Date());
+        entity.setSendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications.floatValue());
+        entity.setSendChangeNotifications(sendChangeNotifications.floatValue());
+        entity.setSendMemberUpdateRequests(sendMemberUpdateRequests.floatValue());
+        entity.setSendQuarterlyTips(sendQuarterlyTips);
+        emailFrequencyDao.merge(entity);
+        return true;
+    }
 }
