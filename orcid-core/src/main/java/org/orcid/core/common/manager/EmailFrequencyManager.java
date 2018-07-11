@@ -12,7 +12,9 @@ public interface EmailFrequencyManager {
     public static final String QUARTERLY_TIPS = "send_quarterly_tips";
 
     Map<String, String> getEmailFrequency(String orcid);
-    
+
+    boolean createOnClaim(String orcid, Boolean sendQuarterlyTips);
+
     boolean createOnRegister(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips);
 
@@ -23,9 +25,9 @@ public interface EmailFrequencyManager {
     boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency);
 
     boolean updateSendQuarterlyTips(String orcid, Boolean enabled);
-    
+
     boolean emailFrequencyExists(String orcid);
-    
+
     boolean update(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips);
 

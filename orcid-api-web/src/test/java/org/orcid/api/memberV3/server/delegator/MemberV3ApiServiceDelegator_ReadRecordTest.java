@@ -58,12 +58,17 @@ import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.test.DBUnitTest;
@@ -413,10 +418,47 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(activities);
         assertEquals("/0000-0000-0000-0003/activities", activities.getPath());
         Utils.verifyLastModified(activities.getLastModifiedDate());
-
+        
+        assertNotNull(activities.getDistinctions());
+        Utils.verifyLastModified(activities.getDistinctions().getLastModifiedDate());
+        assertEquals(3, activities.getDistinctions().retrieveGroups().size());
+        
+        for (AffiliationGroup<DistinctionSummary> group : activities.getDistinctions().retrieveGroups()) {
+            for (DistinctionSummary element : group.getActivities()) {
+                Utils.verifyLastModified(element.getLastModifiedDate());
+                if (element.getPutCode().equals(Long.valueOf(27))) {
+                    assertEquals("PUBLIC Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/distinction/27", element.getPath());
+                    assertEquals("PUBLIC", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PUBLIC.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(28))) {
+                    assertEquals("LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/distinction/28", element.getPath());
+                    assertEquals("LIMITED", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(29))) {
+                    assertEquals("PRIVATE Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/distinction/29", element.getPath());
+                    assertEquals("PRIVATE", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PRIVATE.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(30))) {
+                    assertEquals("SELF LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/distinction/30", element.getPath());
+                    assertEquals("SELF LIMITED", element.getRoleTitle());
+                    assertEquals("0000-0000-0000-0003", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else {
+                    fail("Invalid distinction found: " + element.getPutCode());
+                }
+            }
+        }
+        
         assertNotNull(activities.getEducations());
         Utils.verifyLastModified(activities.getEducations().getLastModifiedDate());
-        assertEquals(4, activities.getEducations().retrieveGroups().size());
+        assertEquals(3, activities.getEducations().retrieveGroups().size());
         
         for (AffiliationGroup<EducationSummary> group : activities.getEducations().retrieveGroups()) {
             for (EducationSummary education : group.getActivities()) {
@@ -461,7 +503,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
 
         assertNotNull(activities.getEmployments());
         Utils.verifyLastModified(activities.getEmployments().getLastModifiedDate());
-        assertEquals(4, activities.getEmployments().retrieveGroups().size());
+        assertEquals(3, activities.getEmployments().retrieveGroups().size());
         
         for (AffiliationGroup<EmploymentSummary> group : activities.getEmployments().retrieveGroups()) {
             for (EmploymentSummary employment : group.getActivities()) {
@@ -496,6 +538,155 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
             }
         }
 
+        assertNotNull(activities.getInvitedPositions());
+        Utils.verifyLastModified(activities.getInvitedPositions().getLastModifiedDate());
+        assertEquals(3, activities.getInvitedPositions().retrieveGroups().size());
+        
+        for (AffiliationGroup<InvitedPositionSummary> group : activities.getInvitedPositions().retrieveGroups()) {
+            for (InvitedPositionSummary element : group.getActivities()) {
+                Utils.verifyLastModified(element.getLastModifiedDate());
+                if (element.getPutCode().equals(Long.valueOf(32))) {
+                    assertEquals("PUBLIC Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/invited-position/32", element.getPath());
+                    assertEquals("PUBLIC", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PUBLIC.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(33))) {
+                    assertEquals("LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/invited-position/33", element.getPath());
+                    assertEquals("LIMITED", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(34))) {
+                    assertEquals("PRIVATE Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/invited-position/34", element.getPath());
+                    assertEquals("PRIVATE", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PRIVATE.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(35))) {
+                    assertEquals("SELF LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/invited-position/35", element.getPath());
+                    assertEquals("SELF LIMITED", element.getRoleTitle());
+                    assertEquals("0000-0000-0000-0003", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else {
+                    fail("Invalid invited position found: " + element.getPutCode());
+                }
+            }
+        }
+        
+        assertNotNull(activities.getMemberships());
+        Utils.verifyLastModified(activities.getMemberships().getLastModifiedDate());
+        assertEquals(3, activities.getMemberships().retrieveGroups().size());
+        
+        for (AffiliationGroup<MembershipSummary> group : activities.getMemberships().retrieveGroups()) {
+            for (MembershipSummary element : group.getActivities()) {
+                Utils.verifyLastModified(element.getLastModifiedDate());
+                if (element.getPutCode().equals(Long.valueOf(37))) {
+                    assertEquals("PUBLIC Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/membership/37", element.getPath());
+                    assertEquals("PUBLIC", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PUBLIC.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(38))) {
+                    assertEquals("LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/membership/38", element.getPath());
+                    assertEquals("LIMITED", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(39))) {
+                    assertEquals("PRIVATE Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/membership/39", element.getPath());
+                    assertEquals("PRIVATE", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PRIVATE.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(40))) {
+                    assertEquals("SELF LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/membership/40", element.getPath());
+                    assertEquals("SELF LIMITED", element.getRoleTitle());
+                    assertEquals("0000-0000-0000-0003", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else {
+                    fail("Invalid invited position found: " + element.getPutCode());
+                }
+            }
+        }
+        
+        assertNotNull(activities.getQualifications());
+        Utils.verifyLastModified(activities.getQualifications().getLastModifiedDate());
+        assertEquals(3, activities.getQualifications().retrieveGroups().size());
+        
+        for (AffiliationGroup<QualificationSummary> group : activities.getQualifications().retrieveGroups()) {
+            for (QualificationSummary element : group.getActivities()) {
+                Utils.verifyLastModified(element.getLastModifiedDate());
+                if (element.getPutCode().equals(Long.valueOf(42))) {
+                    assertEquals("PUBLIC Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/qualification/42", element.getPath());
+                    assertEquals("PUBLIC", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PUBLIC.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(43))) {
+                    assertEquals("LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/qualification/43", element.getPath());
+                    assertEquals("LIMITED", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(44))) {
+                    assertEquals("PRIVATE Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/qualification/44", element.getPath());
+                    assertEquals("PRIVATE", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PRIVATE.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(45))) {
+                    assertEquals("SELF LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/qualification/45", element.getPath());
+                    assertEquals("SELF LIMITED", element.getRoleTitle());
+                    assertEquals("0000-0000-0000-0003", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else {
+                    fail("Invalid invited position found: " + element.getPutCode());
+                }
+            }
+        }
+        
+        
+        assertNotNull(activities.getServices());
+        Utils.verifyLastModified(activities.getServices().getLastModifiedDate());
+        assertEquals(3, activities.getServices().retrieveGroups().size());
+        
+        for (AffiliationGroup<ServiceSummary> group : activities.getServices().retrieveGroups()) {
+            for (ServiceSummary element : group.getActivities()) {
+                Utils.verifyLastModified(element.getLastModifiedDate());
+                if (element.getPutCode().equals(Long.valueOf(47))) {
+                    assertEquals("PUBLIC Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/service/47", element.getPath());
+                    assertEquals("PUBLIC", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PUBLIC.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(48))) {
+                    assertEquals("LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/service/48", element.getPath());
+                    assertEquals("LIMITED", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(49))) {
+                    assertEquals("PRIVATE Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/service/49", element.getPath());
+                    assertEquals("PRIVATE", element.getRoleTitle());
+                    assertEquals("APP-5555555555555555", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.PRIVATE.value(), element.getVisibility().value());
+                } else if (element.getPutCode().equals(Long.valueOf(50))) {
+                    assertEquals("SELF LIMITED Department", element.getDepartmentName());
+                    assertEquals("/0000-0000-0000-0003/service/50", element.getPath());
+                    assertEquals("SELF LIMITED", element.getRoleTitle());
+                    assertEquals("0000-0000-0000-0003", element.getSource().retrieveSourcePath());
+                    assertEquals(Visibility.LIMITED.value(), element.getVisibility().value());
+                } else {
+                    fail("Invalid invited position found: " + element.getPutCode());
+                }
+            }
+        }
+        
         assertNotNull(activities.getFundings());
         Utils.verifyLastModified(activities.getFundings().getLastModifiedDate());
         assertEquals(4, activities.getFundings().getFundingGroup().size());

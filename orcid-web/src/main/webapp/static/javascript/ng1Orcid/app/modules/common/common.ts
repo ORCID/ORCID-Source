@@ -29,7 +29,10 @@ import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
 import { LatexPipe }
-    from '../../pipes/latexNg2.ts';  
+    from '../../pipes/latexNg2.ts'; 
+
+import { OrderByAffiliationsPipe }
+    from '../../pipes/orderByAffiliationsNg2.ts'; 
     
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts';
@@ -75,17 +78,8 @@ import { PrivacytoggleNg2Module }
 import { RequestPasswordResetNg2Module }
     from './../requestPasswordReset/requestPasswordReset.ts';
 
-/*
-import { RevokeApplicationFormNg2Module }
-    from './../revokeApplicationForm/revokeApplicationForm.ts';
-*/
-
 import { SecurityQuestionEditNg2Module }
     from './../securityQuestionEdit/securityQuestionEdit.ts';
-/*
-import { SocialNg2Module }
-    from './../social/social.ts';
-*/
 
 import { SwitchUserNg2Module }
     from './../switchUser/switchUser.ts';
@@ -161,9 +155,6 @@ import { ReactivationService }
 import { SearchService } 
     from '../../shared/search.service.ts';
 
-import { SocialNetworkService }
-    from '../../shared/socialNetwork.service.ts';
-
 import { SwitchUserService } 
     from '../../shared/switchUser.service.ts';
 
@@ -207,6 +198,7 @@ import { EmailFrequencyService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrderByAffiliationsPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
@@ -224,6 +216,7 @@ import { EmailFrequencyService }
             ContributorFilterPipe,
             FilterImportWizardsPipe,
             LatexPipe,
+            OrderByAffiliationsPipe,
             OrderByPipe,
             OrderObjectByPipe,
             UrlProtocolPipe,
@@ -264,7 +257,6 @@ import { EmailFrequencyService }
             PreferencesService,
             ReactivationService,
             SearchService,
-            SocialNetworkService,
             TwoFAStateService,
             SwitchUserService,
             WidgetService,

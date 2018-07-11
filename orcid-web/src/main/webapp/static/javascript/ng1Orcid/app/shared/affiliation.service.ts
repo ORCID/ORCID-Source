@@ -71,6 +71,18 @@ export class AffiliationService {
         )  
         ;
     }
+
+    getAffiliationGroups(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/affiliations/affiliationGroups.json'
+        );
+    }
+
+    getPublicAffiliationGroups(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/' + orcidVar.orcidId + '/affiliationGroups.json'
+        );
+    }
     
     getAffiliationsId(): Observable<any> {
         this.loading = true;

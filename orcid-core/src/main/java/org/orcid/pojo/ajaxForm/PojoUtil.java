@@ -373,9 +373,9 @@ public class PojoUtil {
         return isEmpty(contributorOrcid.getPath());
     }
     
-    public static boolean isEmpty(WorkExternalIdentifier workExternalId) {
+    public static boolean isEmpty(ActivityExternalIdentifier workExternalId) {
         if(workExternalId == null) return true;
-        return areAllEmtpy(workExternalId.getRelationship(), workExternalId.getUrl(), workExternalId.getWorkExternalIdentifierId(), workExternalId.getWorkExternalIdentifierType());
+        return areAllEmtpy(workExternalId.getRelationship(), workExternalId.getUrl(), workExternalId.getExternalIdentifierId(), workExternalId.getExternalIdentifierType());
     }
     
     public static boolean isEmpty(TranslatedTitleForm translatedTitle) {

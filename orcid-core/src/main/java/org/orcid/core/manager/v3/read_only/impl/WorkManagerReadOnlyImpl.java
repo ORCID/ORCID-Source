@@ -185,10 +185,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
         List<BulkElement> works = new ArrayList<>();
         String[] putCodes = getPutCodeArray(putCodesAsString);
+        long lastModifiedTime = getLastModified(orcid);
         for (String putCode : putCodes) {
             try {
                 Long id = Long.valueOf(putCode);
-                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, getLastModified(orcid));
+                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, lastModifiedTime);
                 works.add(jpaJaxbWorkAdapter.toWork(workEntity));
             } catch (Exception e) {
                 works.add(orcidCoreExceptionMapper.getV3OrcidError(new PutCodeFormatException("'" + putCode + "' is not a valid put code")));

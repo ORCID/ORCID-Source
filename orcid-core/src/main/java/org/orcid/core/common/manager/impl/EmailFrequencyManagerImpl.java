@@ -58,6 +58,23 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
                 sendMemberUpdateRequests, sendQuarterlyTips, true);
     }
     
+    @Override
+    public boolean createOnClaim(String orcid, Boolean sendQuarterlyTips) {
+        EmailFrequencyEntity entity = new EmailFrequencyEntity();
+        Date now = new Date();
+        entity.setId(UUID.randomUUID().toString());
+        entity.setDateCreated(now);
+        entity.setLastModified(now);
+        entity.setOrcid(orcid);
+        entity.setSendAdministrativeChangeNotifications(SendEmailFrequency.WEEKLY.floatValue());
+        entity.setSendChangeNotifications(SendEmailFrequency.WEEKLY.floatValue());
+        entity.setSendMemberUpdateRequests(SendEmailFrequency.WEEKLY.floatValue());
+        entity.setSendQuarterlyTips(sendQuarterlyTips == null ? false : sendQuarterlyTips);
+        emailFrequencyDao.persist(entity);        
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.EMAIL_FREQUENCY_CREATED_ON_CLAIM, orcid, "send_quarterly_tips " + (sendQuarterlyTips == null ? false : sendQuarterlyTips));        
+        return true;
+    }
+    
     private boolean createEmailFrequency(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips, boolean trackEvent) {
         EmailFrequencyEntity entity = new EmailFrequencyEntity();
@@ -160,5 +177,4 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         emailFrequencyDao.merge(entity);
         return true;
     }
-    
 }

@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
@@ -42,6 +44,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
+    
+    @Resource(name = "encryptionManager")
+    private EncryptionManager encryptionManager;
 
     @Override
     @Transactional
@@ -156,11 +161,17 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
         String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();
-                
+        String emailHash = null;
+        try {
+            emailHash = encryptionManager.sha256Hash(email.getEmail().trim().toLowerCase());
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        
         Email currentPrimaryEmail = findPrimaryEmail(orcid);
         
         // Create the new email
-        emailDao.addEmail(orcid, email.getEmail(), email.getVisibility().name(), sourceId, clientSourceId);
+        emailDao.addEmail(orcid, email.getEmail(), emailHash, email.getVisibility().name(), sourceId, clientSourceId);
         
         // if primary email changed send notification.
         if (email.isPrimary() && !StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
