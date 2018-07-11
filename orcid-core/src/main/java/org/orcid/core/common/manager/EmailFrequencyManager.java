@@ -28,6 +28,8 @@ public interface EmailFrequencyManager {
     
     boolean emailFrequencyExists(String orcid);
     
+    String findOrcidId(String id);
+    
     boolean update(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips);
 

@@ -40,9 +40,12 @@ public class UnsubscribeController extends BaseController {
         result.addObject("noIndex", true);
         
         String decryptedId = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedId), "UTF-8"));
-        Map<String, String> map = emailFrequencyManager.getEmailFrequencyById(decryptedId);
-        String orcidId = map.get("orcid");
-        Email email = emailManagerReadOnly.findPrimaryEmail(orcidId);
+        String orcid = emailFrequencyManager.findOrcidId(decryptedId);
+        
+        // Disable quarterly notifications
+        emailFrequencyManager.updateSendQuarterlyTips(orcid, false);
+        
+        Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
         
         result.addObject("email_address", email.getEmail());
         return result;

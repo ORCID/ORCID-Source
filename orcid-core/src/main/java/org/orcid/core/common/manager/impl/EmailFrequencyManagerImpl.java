@@ -191,4 +191,10 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         emailFrequencyDao.merge(entity);
         return true;
     }
+
+    @Override
+    public String findOrcidId(String id) {
+        EmailFrequencyEntity entity = emailFrequencyDao.find(id);
+        return entity.getOrcid();
+    }
 }
