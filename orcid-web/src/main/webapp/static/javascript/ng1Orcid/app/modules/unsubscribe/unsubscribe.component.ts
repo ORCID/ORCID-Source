@@ -33,7 +33,7 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
         private unsubscribeService: UnsubscribeService
     ) {
         this.displayError = false;
-        this.resetPasswordForm = {};
+        this.notificationSettingsForm = {};
     }
 
 
@@ -48,6 +48,6 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.notificationSettingsForm = unsubscribeService.getNotificationSettingsForm();
+        this.notificationSettingsForm = this.unsubscribeService.getNotificationSettingsForm();
     }; 
 }
