@@ -18,6 +18,7 @@ export class FundingService {
     private headers: HttpHeaders;
     private urlFundingsById: string;
     private urlFundingsId: string;
+    private fundingToEdit: any;
     
     public groups: any;
     public loading: any;
@@ -34,6 +35,7 @@ export class FundingService {
         this.groups = null;
         this.urlFundingsById = getBaseUri() + '/fundings/fundings.json?fundingIds=';
         this.urlFundingsId = getBaseUri() + '/fundings/fundingIds.json';
+        this.fundingToEdit = {};
     }
 
     getFundingsById( idList ): Observable<any> {
@@ -53,6 +55,10 @@ export class FundingService {
             this.urlFundingsId
         )
         
+    }
+
+    getFundingToEdit(): any {
+        return this.fundingToEdit;
     }
 
     makeDefault(group, putCode): Observable<any> {
@@ -78,6 +84,10 @@ export class FundingService {
             )
         )  
         ;
+    }
+
+    setFundingToEdit(obj): void {
+        this.fundingToEdit = obj;
     }
 
     updateProfileFunding(obj) {

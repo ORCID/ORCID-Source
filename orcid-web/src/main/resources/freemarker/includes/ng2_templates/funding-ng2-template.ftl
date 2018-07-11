@@ -155,6 +155,7 @@
                                                             </li>
                     
                                                             <li>
+                                                                <!--
                                                                 <@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
                                                                     questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
                                                                     clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
@@ -162,6 +163,7 @@
                                                                     limitedClick="setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
                                                                     privateClick="setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"
                                                                     />
+                                                                -->
                                                             </li>
                                                         </ul>
                                                     </div>

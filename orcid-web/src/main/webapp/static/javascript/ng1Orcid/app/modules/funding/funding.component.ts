@@ -18,11 +18,6 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
-
-
-//import { FundingService } 
-//    from '../../shared/funding.service.ts';
-
 import { EmailService } 
     from '../../shared/email.service.ts';
 
@@ -47,6 +42,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     workspaceSrvc: any;
     */
     addingFunding: boolean;
+    defaultFunding: any;
     deleFunding: any;
     disambiguatedFunding: any;
     displayFundingxtIdPopOver: any;
@@ -76,6 +72,68 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
 
         this.addingFunding = false;
+        this.defaultFunding = {
+            amount: {
+                errors: {},
+                value: null
+            },
+            city: {
+                errors: {},
+                value: null
+            },
+            country: {
+                errors: {},
+                value: null
+            },
+            currencyCode: {
+                errors: {}
+            },
+            description: {
+                errors: {},
+                value: null
+            },
+            endDate: {
+                errors: {},
+            },
+            errors: {},
+            fundingName: {
+                errors: {},
+                value: null
+            },
+            fundingTitle: {
+                title: {
+                    errors: {},
+                    value: null
+                },
+                translatedTitle: {
+                    errors: {}
+                }
+            },
+            fundingType: {
+                errors: {},
+                value: null
+            },
+            organizationDefinedFundingSubType: {
+                subtype: {
+                    errors: {},
+                    value: null
+                }
+            },
+            putCode: {
+                value: null
+            },
+            region: {
+                errors: {},
+                value: null
+            },
+            startDate: {
+                errors: {},
+            },
+            url: {
+                errors: {},
+                value: null
+            }
+        };
         this.deleFunding = null;
         this.displayURLPopOver = {};
         this.editFunding = {};
@@ -96,15 +154,32 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     addFunding(): void {
         if (this.addingFunding == true) {
-            return; // don't process if adding affiliation
+            return; 
         }
 
         this.addingFunding = true;
         this.editFunding.errors.length = 0;
     };
 
-    addFundingModal(type, affiliation): void {
-
+    addFundingModal(): void {
+        this.emailService.getEmails()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.fundingService.setFundingToEdit(this.defaultFunding);
+                //console.log('open add aff modal');
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: true});                  
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
     };
 
     bindTypeahead(): void {

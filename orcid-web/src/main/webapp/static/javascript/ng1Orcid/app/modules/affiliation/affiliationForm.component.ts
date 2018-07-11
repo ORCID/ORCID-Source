@@ -535,7 +535,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
                 (res) => {
-                    console.log(JSON.stringify(res));
+                    //console.log(JSON.stringify(res));
                     if(res.moduleId == "modalAffiliationForm") {
                         if(res.action == "open" && res.edit == false) {
                             this.editAffiliation = this.getEmptyAffiliation();

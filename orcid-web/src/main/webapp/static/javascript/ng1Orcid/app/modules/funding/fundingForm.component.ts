@@ -48,6 +48,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     displayFundingxtIdPopOver: any;
     displayURLPopOver: any;
     editFunding: any;
+    editSources: any;
     educations: any;
     emails: any;
     employments: any;
@@ -80,13 +81,76 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.deleFunding = null;
         this.deleteGroup = null;
         this.deletePutCode = null;
+        this.disambiguatedFunding = {};
         this.displayURLPopOver = {};
-        this.editFunding = {};
+        this.editFunding = {
+            amount: {
+                errors: {},
+                value: null
+            },
+            city: {
+                errors: {},
+                value: null
+            },
+            country: {
+                errors: {},
+                value: null
+            },
+            currencyCode: {
+                errors: {}
+            },
+            description: {
+                errors: {},
+                value: null
+            },
+            endDate: {
+                errors: {},
+            },
+            errors: {},
+            fundingName: {
+                errors: {},
+                value: null
+            },
+            fundingTitle: {
+                title: {
+                    errors: {},
+                    value: null
+                },
+                translatedTitle: {
+                    errors: {}
+                }
+            },
+            fundingType: {
+                errors: {},
+                value: null
+            },
+            organizationDefinedFundingSubType: {
+                subtype: {
+                    errors: {},
+                    value: null
+                }
+            },
+            putCode: {
+                value: null
+            },
+            region: {
+                errors: {},
+                value: null
+            },
+            startDate: {
+                errors: {},
+            },
+            url: {
+                errors: {},
+                value: null
+            }
+        };
+        this.editSources = {};
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
-        this.fundingToAddIds = new Array();
-        this.groups = null;
+        this.fundingToAddIds = {};
+        this.groups = new Array();
         this.loading = false;    
         this.moreInfo = {};
         this.moreInfoCurKey = null;
