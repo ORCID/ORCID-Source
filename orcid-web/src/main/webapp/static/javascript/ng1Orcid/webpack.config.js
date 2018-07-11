@@ -5,29 +5,25 @@ module.exports = {
     entry: "./require.js",
     mode: 'production',
     module: {
-        rules: [
-        {
+        rules: [{
             test: /\.ts$/, 
-            use: [
-            {
+            use: [{
                 loader: 'ts-loader'
-            }
-            ]
-        }
-        ]
+            }]
+        }]
     },
     output: {
         path: __dirname + '/',
         filename: "angular_orcid_generated.js"
     },
-    /*plugins: [
+    plugins: [
     new webpack.DefinePlugin({
         'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
-                             'process.env':{
-                                 'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
-                             }
+        'process.env':{
+            'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+        }
     })
-    ],*/
+    ],
     resolve: {
         alias: {
             "@angular/upgrade/static": "@angular/upgrade/bundles/upgrade-static.umd.js"
