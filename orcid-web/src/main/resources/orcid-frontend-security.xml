@@ -356,16 +356,10 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
 		<sec:intercept-url pattern="/about/trust/integrity/record-corrections"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		
-		
-		
 		<sec:intercept-url pattern="/unsubscribe/(.+)"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/unsubscribe/preferences.json?encryptedId=(.+)"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		
-		
-		
 		<sec:intercept-url pattern="/orgs/.*" 
 			access="ROLE_USER"/>
         <sec:intercept-url pattern="/reactivation/.*?"
