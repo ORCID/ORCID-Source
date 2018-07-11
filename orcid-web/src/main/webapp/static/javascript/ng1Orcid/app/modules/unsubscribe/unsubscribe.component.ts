@@ -32,11 +32,28 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
         private commonSrvc: CommonService,
         private unsubscribeService: UnsubscribeService
     ) {
+        console.log('Constructor');               
         this.displayError = false;
         this.notificationSettingsForm = {};
     }
 
-
+    getNotificationSettingsForm(): void {
+        this.unsubscribeService.getNotificationSettingsForm()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.notificationSettingsForm = data;
+            },
+            error => {
+                console.log('error fetching notification settings');
+            } 
+        );
+ 
+    };
+    
+    
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
@@ -48,6 +65,8 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.notificationSettingsForm = this.unsubscribeService.getNotificationSettingsForm();
-    }; 
+        console.log('Init')
+        this.getNotificationSettingsForm();
+        console.log('Done')       
+    };
 }

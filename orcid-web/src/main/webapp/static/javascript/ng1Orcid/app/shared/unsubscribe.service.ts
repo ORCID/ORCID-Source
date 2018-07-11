@@ -30,6 +30,7 @@ export class UnsubscribeService {
     getNotificationSettingsForm(): Observable<any> {
         var urlParts = window.location.href.split('/');
         var encryptedId = urlParts[urlParts.length -1];
+        console.log('encrypted id: ' + encryptedId);
         return this.http.get(
             this.url + '?id=' + encryptedId
         )
