@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +27,20 @@ public class UnsubscribeController extends BaseController {
     @Resource
     private EncryptionManager encryptionManager;
     
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
     @RequestMapping(value="/{encryptedId}", method = RequestMethod.GET)
-    public ModelAndView unsubscribeView(@PathVariable("encryptedId") String encryptedId) {
+    public ModelAndView unsubscribeView(@PathVariable("encryptedId") String encryptedId) throws UnsupportedEncodingException {
         ModelAndView result = new ModelAndView("unsubscribe");
         result.addObject("noIndex", true);
+        
+        String decryptedId = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedId), "UTF-8"));
+        Map<String, String> map = emailFrequencyManager.getEmailFrequencyById(decryptedId);
+        String orcidId = map.get("orcid");
+        Email email = emailManagerReadOnly.findPrimaryEmail(orcidId);
+        
+        result.addObject("email_address", email.getEmail());
         return result;
     }
     

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
+import javax.xml.transform.Result;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -49,8 +50,10 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     @Override
     public Map<String, String> getEmailFrequencyById(String id) {
         try {
-            EmailFrequencyEntity entity = emailFrequencyDaoReadOnly.find(id);
-            return generateFrequencyMap(entity);
+            EmailFrequencyEntity entity = emailFrequencyDaoReadOnly.find(id);            
+            Map<String, String> map = generateFrequencyMap(entity);
+            map.put("orcid", entity.getOrcid());
+            return map;
         } catch (Exception e) {
             LOG.error("Couldn't find email_frequency for {}", id);
             throw e;
