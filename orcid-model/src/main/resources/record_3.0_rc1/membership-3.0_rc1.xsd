@@ -38,7 +38,7 @@
 	<xs:element name="membership" type="common:affiliation">
 		<xs:annotation>
 			<xs:documentation>A membership associated with the researcher.
-				Membership is defined as Paid or gratis membership of a society or association (i.e. does not include honorary memberships and fellowships as defined under Invited Position and Distinctions)
+				Membership is defined as paid or gratis membership of a society or association (i.e. does not include honorary memberships and fellowships as defined under Invited Position and Distinctions)
 				* The put-code attribute is returned when reading this element. 
 				When updating the item, the put-code attribute must be included to indicate the specific item to be updated.
 				

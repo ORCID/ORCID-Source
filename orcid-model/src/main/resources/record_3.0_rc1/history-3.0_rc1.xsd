@@ -47,8 +47,7 @@
 					minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>The method used to create the ORCID Record
-							* API
-							method - Institution created the record on behalf of the
+							* API method - Institution created the record on behalf of the
 							individual
 							* Direct/website methods - Individual registered directly at
 							orcid.org
@@ -78,8 +77,7 @@
 				<xs:element name="verified-primary-email" type="xs:boolean"
 					minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>True if the user's current primary email is
-							verified
+						<xs:documentation>True if the user's current primary email is verified
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
@@ -90,8 +88,7 @@
 	
 	<xs:complexType name="completion-date">
 		<xs:annotation>
-			<xs:documentation>The date and time when the ORCID Record set up was
-				completed.
+			<xs:documentation>Only returned on records with a creation method of API, this date is when the user took control of the record and set a password
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
@@ -101,8 +98,7 @@
 	
 	<xs:complexType name="submission-date">
 		<xs:annotation>
-			<xs:documentation>The date time when the ORCID Record and iD was
-				first created. This will be the same as completion-date except on records with an API creation method
+			<xs:documentation>The date time when the ORCID record was first created.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
@@ -155,33 +151,31 @@
 	
 	<xs:simpleType name="creation-method">
 		<xs:annotation>
-			<xs:documentation>Indicates how the ORCID record and iD were created.
+			<xs:documentation>Indicates how the ORCID record was created.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="common:non-empty-string">
 			<xs:enumeration value="API">
 				<xs:annotation>
-					<xs:documentation>The ORCID Record was created using the ORCID
-						Member API.
+					<xs:documentation>The ORCID Record was created using the ORCID Member API.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="Direct">
 				<xs:annotation>
-					<xs:documentation>The user registered on the /register page.
+					<xs:documentation>The user registered on the ORCID website.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="Member-referred">
 				<xs:annotation>
-					<xs:documentation>The registered on the /oauth/signin.
+					<xs:documentation>The user registered as part of the OAuth process.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="website">
 				<xs:annotation>
-					<xs:documentation>DEPRECATED use Direct
-						instead.
+					<xs:documentation>DEPRECATED use Direct instead.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
