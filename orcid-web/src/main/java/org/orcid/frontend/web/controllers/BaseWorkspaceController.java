@@ -22,6 +22,7 @@ import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -50,7 +51,15 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource(name = "visibilityFilter")
     protected VisibilityFilter visibilityFilter;
-
+    
+    @Resource
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
+    
+    protected long getLastModified(String orcid) {
+        java.util.Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
     @ModelAttribute("years")
     public Map<String, String> retrieveYearsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();

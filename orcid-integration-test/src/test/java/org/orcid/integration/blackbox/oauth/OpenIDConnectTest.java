@@ -149,8 +149,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     private SignedJWT checkJWT(String id) throws ParseException, JOSEException, InvalidHashException {
         SignedJWT signedJWT = SignedJWT.parse(id);  
         Assert.assertEquals(baseUri,signedJWT.getJWTClaimsSet().getIssuer());
-        Assert.assertEquals("https://orcid.org/9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getSubject());
-        Assert.assertEquals("9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getClaim("id_path"));
+        Assert.assertEquals("9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getSubject());
         Assert.assertEquals("APP-9999999999999901",signedJWT.getJWTClaimsSet().getAudience().get(0));
         Assert.assertEquals("yesMate",signedJWT.getJWTClaimsSet().getClaim("nonce"));   
         Assert.assertEquals("User One Credit name",signedJWT.getJWTClaimsSet().getClaim("name"));

@@ -20,23 +20,28 @@ import { GenericService }
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 
+import {EmailService } 
+    from '../../shared/email.service.ts'; 
+
 @Component({
     selector: 'deprecate-account-ng2',
     template:  scriptTmpl("deprecate-account-ng2-template")
 })
 export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnInit {
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     deprecateProfilePojo: any;
-    url_path: string;
+    elementHeight: any;
+    elementWidth: any;
 
     constructor(
         private deprecateProfileService: GenericService,
+        private emailService: EmailService,
         private accountService: AccountService,
         private modalService: ModalService
     ) {
         this.deprecateProfilePojo = {};
-        this.url_path = '/account/deprecate-profile.json';
     }
 
     deprecateORCID = function() {
@@ -46,19 +51,20 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
         )
         .subscribe(
             data => {
+                this.deprecateProfilePojo = data;
                 if(data.errors.length == 0) {
-                    this.modalService.notifyOther({action:'open', moduleId: 'deprecateAccountModal', edit: false});
-                }
+                    this.openModal('modalDeprecateAccountConfirm', '645', '645');
+                } 
             },
             error => {
-                //console.log('getformDataError', error);
+                console.log('deprecateORCIDerror', error);
             } 
         );
     };
 
     getDeprecateProfile(): void {
 
-        this.deprecateProfileService.getData( this.url_path )
+        this.deprecateProfileService.getData( '/account/deprecate-profile.json' )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -69,88 +75,44 @@ export class DeprecateAccountComponent implements AfterViewInit, OnDestroy, OnIn
                 }
             },
             error => {
-                //console.log('getformDataError', error);
+                console.log('getDeprecateAccountError', error);
             } 
         );
-    };   
-
-    //Default init functions provided by Angular Core
-    ngAfterViewInit() {
-        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-    };
-
-    ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
-    };
-
-    ngOnInit() {
-        this.getDeprecateProfile();
     }; 
-}
-
-
-@Component({
-    selector: 'deprecate-account-modal-ng2',
-    template:  scriptTmpl("deprecate-account-modal-ng2-template")
-})
-export class DeprecateAccountModalComponent implements AfterViewInit, OnDestroy, OnInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
-
-    deprecateProfilePojo: any;
-    url_path: string;
-
-    constructor(
-        private deprecateProfileService: GenericService,
-        private accountService: AccountService,
-        private modalService: ModalService
-    ) {
-        this.deprecateProfilePojo = {};
-        this.url_path = '/account/deprecate-profile.json';
-    }
-
-    closeModal(): void{
-        this.modalService.notifyOther({action:'close', moduleId: 'deprecateAccountModal'});
-    };
-
-    getDeprecateProfile(): void {
-
-        this.deprecateProfileService.getData( this.url_path )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data) {
-                    this.deprecateProfilePojo = data;
-                }
-            },
-            error => {
-                //console.log('getformDataError', error);
-            } 
-        );
-    };
 
     submitModal(): void {
-        this.deprecateProfileService.setData( this.deprecateProfilePojo, this.url_path )
+        this.deprecateProfileService.setData( this.deprecateProfilePojo, '/account/confirm-deprecate-profile.json' )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
                 if(data) {
-                    this.closeModal();
-                    /*
-                        $rootScope.$broadcast('rebuildEmails', emailData);
-
-                    */
+                    this.closeModal('modalDeprecateAccountConfirm');
+                    this.openModal('modalDeprecateAccountSuccess', '400', '200');
+                    this.emailService.emailsUpdated(true);
                 }
             },
             error => {
-                //console.log('getformDataError', error);
+                console.log('submitDeprecateAccountError', error);
             } 
         );
     };
+            
+    openModal(id: string, width: string, height: string){
+        this.elementWidth = width;
+        this.elementHeight = height;
+        this.deprecateProfileService.open(id);
+    }
+
+    cancelEditModal(id: string){
+        this.deprecateProfilePojo = {};
+        this.deprecateProfileService.close(id);
+    } 
+
+    closeModal(id: string){
+        this.deprecateProfileService.close(id);
+    } 
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

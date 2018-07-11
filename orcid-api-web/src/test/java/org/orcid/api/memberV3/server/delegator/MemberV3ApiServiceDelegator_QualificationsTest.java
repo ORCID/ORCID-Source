@@ -208,33 +208,30 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/qualifications", qualifications.getPath());
         Utils.verifyLastModified(qualifications.getLastModifiedDate());
         assertNotNull(qualifications.retrieveGroups());
-        assertEquals(4, qualifications.retrieveGroups().size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        assertEquals(3, qualifications.retrieveGroups().size());
+        boolean found1 = false, found2 = false, found3 = false;
         
         for (AffiliationGroup<QualificationSummary> group : qualifications.retrieveGroups()) {
-            for (QualificationSummary summary : group.getActivities() ) {
-                Utils.verifyLastModified(summary.getLastModifiedDate());
-                if (Long.valueOf(42).equals(summary.getPutCode())) {
-                    assertEquals("PUBLIC Department", summary.getDepartmentName());
-                    found1 = true;
-                } else if (Long.valueOf(43).equals(summary.getPutCode())) {
-                    assertEquals("LIMITED Department", summary.getDepartmentName());
-                    found2 = true;
-                } else if (Long.valueOf(44).equals(summary.getPutCode())) {
-                    assertEquals("PRIVATE Department", summary.getDepartmentName());
-                    found3 = true;
-                } else if (Long.valueOf(45).equals(summary.getPutCode())) {
-                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                    found4 = true;
-                } else {
-                    fail("Invalid qualification found: " + summary.getPutCode());
-                }
+            QualificationSummary element0 = group.getActivities().get(0);
+            Utils.verifyLastModified(element0.getLastModifiedDate());
+            if (Long.valueOf(43).equals(element0.getPutCode())) {
+                assertEquals("LIMITED Department", element0.getDepartmentName());
+                found1 = true;
+            } else if (Long.valueOf(44).equals(element0.getPutCode())) {
+                assertEquals("PRIVATE Department", element0.getDepartmentName());
+                found2 = true;
+            } else if (Long.valueOf(45).equals(element0.getPutCode())) {
+                assertEquals("SELF LIMITED Department", element0.getDepartmentName());
+                assertEquals(2, group.getActivities().size());
+                assertEquals("PUBLIC Department", group.getActivities().get(1).getDepartmentName());
+                found3 = true;
+            } else {
+                fail("Invalid qualification found: " + element0.getPutCode());
             }
         }
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
-        assertTrue(found4);
     }
 
     @Test
@@ -307,7 +304,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertNotNull(originalSummary.getQualifications());
         Utils.verifyLastModified(originalSummary.getQualifications().getLastModifiedDate());
         assertNotNull(originalSummary.getQualifications().retrieveGroups());
-        assertEquals(4, originalSummary.getQualifications().retrieveGroups().size());
+        assertEquals(3, originalSummary.getQualifications().retrieveGroups().size());
         
         QualificationSummary qualificationSummary = originalSummary.getQualifications().retrieveGroups().iterator().next().getActivities().get(0);
         assertNotNull(qualificationSummary);
@@ -330,7 +327,7 @@ public class MemberV3ApiServiceDelegator_QualificationsTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getQualifications());
         Utils.verifyLastModified(summaryWithNewElement.getQualifications().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getQualifications().retrieveGroups());
-        assertEquals(5, summaryWithNewElement.getQualifications().retrieveGroups().size());
+        assertEquals(4, summaryWithNewElement.getQualifications().retrieveGroups().size());
         
         boolean haveNew = false;
 

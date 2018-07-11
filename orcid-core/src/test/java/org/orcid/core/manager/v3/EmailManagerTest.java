@@ -2,10 +2,15 @@ package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,17 +19,32 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 public class EmailManagerTest extends BaseTest {
+    private static final String ORCID = "0000-0000-0000-0003";
+    
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
@@ -33,10 +53,39 @@ public class EmailManagerTest extends BaseTest {
     
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource(name = "sourceManagerV3")
+    private SourceManager sourceManager;
 
+    @Resource
+    private EmailDao emailDao;
+    
+    @Resource(name = "encryptionManager")
+    private EncryptionManager encryptionManager;
+    
+    @Mock
+    private SourceManager mockSourceManager;
+    
+    @Mock
+    private EmailDao mockEmailDao;
+    
+    @Before
+    public void before() throws JAXBException {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(emailManager, "sourceManager", mockSourceManager);
+        SourceEntity source = new SourceEntity();
+        source.setSourceProfile(new ProfileEntity(ORCID));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(source);
+    }
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
+    }
+    
+    @After
+    public void after() throws JAXBException {
+        TargetProxyHelper.injectIntoProxy(emailManager, "sourceManager", sourceManager);
     }
     
     @AfterClass
@@ -214,5 +263,27 @@ public class EmailManagerTest extends BaseTest {
         assertFalse(emailManager.isPrimaryEmailVerified("0000-0000-0000-0004"));
         emailManager.verifyPrimaryEmail("0000-0000-0000-0004");
         assertTrue(emailManager.isPrimaryEmailVerified("0000-0000-0000-0004"));
+    }
+    
+    @Test
+    public void addEmailTest() throws NoSuchAlgorithmException {
+        TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", mockEmailDao);
+        String emailAddress = "TeSt@email.com";
+        
+        Email email = new Email();
+        email.setEmail(emailAddress);
+        email.setPrimary(false);
+        email.setVisibility(Visibility.PUBLIC);
+        
+        emailManager.addEmail(new MockHttpServletRequest(), ORCID, email);
+        
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(emailAddress), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
+        String hashValue = captor.getValue();
+        
+        assertNotEquals(hashValue, encryptionManager.sha256Hash(emailAddress));
+        assertEquals(hashValue, encryptionManager.sha256Hash(emailAddress.toLowerCase()));
+       
+        TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);        
     }
 }

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<distinction:distinction 
+<?xml version="1.0" encoding="UTF-8"?>
+<distinction:distinction
 	xmlns:distinction="http://www.orcid.org/ns/distinction" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/distinction ../distinction-3.0_rc1.xsd ">	
+	xsi:schemaLocation="http://www.orcid.org/ns/distinction ../distinction-3.0_rc1.xsd ">
 	<common:department-name>department-name</common:department-name>
 	<common:role-title>role-title</common:role-title>
 	<common:start-date>
@@ -22,24 +22,25 @@
 			<common:region>common:region</common:region>
 			<common:country>AF</common:country>
 		</common:address>
+		<!--The disambiguated-organization-identifier is required, this example has a real identifier but please replace it with the correct one for your organization   -->
 		<common:disambiguated-organization>
             <common:disambiguated-organization-identifier>http://dx.doi.org/10.13039/100000001</common:disambiguated-organization-identifier>
 			<common:disambiguation-source>FUNDREF</common:disambiguation-source>
         </common:disambiguated-organization>
-	</common:organization>		
-	<common:url>http://tempuri.org</common:url>  
+	</common:organization>
+	<common:url>http://tempuri.org</common:url>
 	<common:external-ids>
         <common:external-id>
             <common:external-id-type>grant_number</common:external-id-type>
-            <common:external-id-value>external-identifier-value</common:external-id-value>          
+            <common:external-id-value>external-identifier-value</common:external-id-value>
             <common:external-id-url>http://tempuri.org</common:external-id-url>
             <common:external-id-relationship>self</common:external-id-relationship>
         </common:external-id>
         <common:external-id>
             <common:external-id-type>grant_number</common:external-id-type>
-            <common:external-id-value>external-identifier-value2</common:external-id-value>         
+            <common:external-id-value>external-identifier-value2</common:external-id-value>
             <common:external-id-url>http://tempuri.org/2</common:external-id-url>
             <common:external-id-relationship>self</common:external-id-relationship>
         </common:external-id>
-    </common:external-ids>   	
+    </common:external-ids>
 </distinction:distinction>

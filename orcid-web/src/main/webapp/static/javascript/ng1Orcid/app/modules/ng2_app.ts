@@ -62,9 +62,6 @@ import { DeactivateAccountNg2Module }
 import { DeactivateAccountMessageNg2Module }
     from './deactivateAccount/deactivateAccountMessage.ts';
 
-import { DeprecateAccountModalNg2Module }
-    from './deprecateAccount/deprecateAccount.ts';
-
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -164,9 +161,6 @@ import { SelfServiceRemoveSubMemberNg2Module }
 import { Social2FANg2Module }
     from './social2FA/social2FA.ts';
 
-import { SocialNetworksNg2Module }
-    from './socialNetworks/socialNetworks.ts';
-
 import { SwitchUserNg2Module }
     from './switchUser/switchUser.ts';
 
@@ -206,6 +200,8 @@ import { WorkSpaceSummaryNg2Module }
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
+import { DelegatorsNg2Module } 
+    from './delegators/delegators.ts';    
 
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -305,7 +301,6 @@ export class RootCmp {
         ClientEditNg2Module,
         DeactivateAccountNg2Module,
         DeactivateAccountMessageNg2Module,
-        DeprecateAccountModalNg2Module,
         DeprecateAccountNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
@@ -339,7 +334,6 @@ export class RootCmp {
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
-        SocialNetworksNg2Module,
         SwitchUserNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
@@ -350,7 +344,8 @@ export class RootCmp {
         WorksFormNg2Module,
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,
-        WorksPrivacyPreferencesNg2Module
+        WorksPrivacyPreferencesNg2Module,
+        DelegatorsNg2Module
     ],
     providers: [
         { 

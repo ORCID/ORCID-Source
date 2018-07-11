@@ -822,7 +822,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             orcidWork.setCountry(country);
         }
         if(work.getWorkType() != null) {
-            orcidWork.setWorkType(WorkType.valueOf(work.getWorkType()));
+            if(org.orcid.jaxb.model.v3.rc1.record.WorkType.SOFTWARE.name().equals(work.getWorkType())) {
+                orcidWork.setWorkType(WorkType.valueOf(org.orcid.jaxb.model.v3.rc1.record.WorkType.SOFTWARE.name()));
+            } else {
+                orcidWork.setWorkType(WorkType.valueOf(work.getWorkType()));
+            }            
         }
         orcidWork.setVisibility(Visibility.valueOf(work.getVisibility()));
 
