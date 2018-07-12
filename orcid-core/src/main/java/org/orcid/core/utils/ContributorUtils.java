@@ -96,13 +96,16 @@ public class ContributorUtils {
             // Populate missing names
             for(Contributor contributor : contributorsToPopulateName) {
                 String orcid = contributor.getContributorOrcid().getPath();
-                String name = contributorNames.get(orcid);
-                if(!PojoUtil.isEmpty(name)) {
-                    CreditName creditName = new CreditName(name);
-                    contributor.setCreditName(creditName);
-                } else if(contributor.getCreditName() == null || PojoUtil.isEmpty(contributor.getCreditName().getContent())) {
-                    CreditName creditName = new CreditName(StringUtils.EMPTY);
-                    contributor.setCreditName(creditName);
+                // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
+                if(contributorNames.containsKey(orcid)) {
+                    String name = contributorNames.get(orcid);
+                    if(!PojoUtil.isEmpty(name)) {
+                        CreditName creditName = new CreditName(name);
+                        contributor.setCreditName(creditName);
+                    } else if(contributor.getCreditName() == null || PojoUtil.isEmpty(contributor.getCreditName().getContent())) {
+                        CreditName creditName = new CreditName(StringUtils.EMPTY);
+                        contributor.setCreditName(creditName);
+                    }
                 }
             }
         }

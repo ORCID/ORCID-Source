@@ -7,7 +7,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +33,7 @@ import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 public class ContributorUtilsTest {
     
@@ -270,6 +273,10 @@ public class ContributorUtilsTest {
         FundingContributors fundingContributors = new FundingContributors();
         fundingContributors.getContributor().add(contributor);
         return fundingContributors;
+    }
+    
+    private List<RecordNameEntity> getRecordNameEntities(){
+        List<RecordNameEntity> records = new ArrayList<RecordNameEntity>();
     }
     
 }
