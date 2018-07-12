@@ -20,8 +20,8 @@ node {
         try {
             do_maven("clean")
             parallel(
-                model:       {do_maven("install test  -f orcid-model/pom.xml")},
-                test:        {do_maven("install test  -f orcid-test/pom.xml")},
+                model:       {do_maven("clean install test  -f orcid-model/pom.xml")},
+                test:        {do_maven("clean install test  -f orcid-test/pom.xml")},
                 utils:       {do_maven("clean install test  -f orcid-utils/pom.xml")},
                 solrweb:     {do_maven("clean install test  -f orcid-solr-web/pom.xml")}
             )
@@ -34,7 +34,7 @@ node {
     stage('Creating Persistence Package') {
         try {
             parallel(
-                persistence: {do_maven("install test  -f orcid-persistence/pom.xml")},
+                persistence: {do_maven("clean install test  -f orcid-persistence/pom.xml")},
                 mq:          {do_maven("clean install test  -f orcid-activemq/pom.xml")}
             )
         } catch(Exception err) {
