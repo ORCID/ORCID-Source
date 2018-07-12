@@ -1,12 +1,12 @@
 <ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" id="peer-review-header" ng-cloak>
     <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse" >
         <ul class="sources-edit-list">
-            <li class="peer-review-group" ng-repeat="peerReview in group.activities | orderObjectBy: ['groupName']" ng-if="group.activePutCode == peerReview.putCode.value" orcid-put-code="peerReview.putCode.value" class="group-details">
+            <li class="peer-review-group">
                 <!-- active row summary info -->
                 <div class="row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
-                        <div ng-init="peerReviewSrvc.getPeerReviewGroupDetails(peerReview.groupIdPutCode.value, peerReview.putCode.value)">
-                            <span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span><@orcid.msg 'peer_review.review_activity_for' /> </span><span class="peer-review-title"><span ng-bind="group.groupName"></span>(<span ng-bind="group.activitiesCount"></span>)</span></span>
+                        <div>
+                            <span class="title" ng-click="showDetailsMouseClick(group.id,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.id] == false || showDetails[group.id] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.id] == true}"></span> <span><@orcid.msg 'peer_review.review_activity_for' /> </span><span class="peer-review-title"><span ng-bind="group.name"></span>(<span ng-bind="group.peerReviews.length"></span>)</span></span>
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
@@ -14,18 +14,18 @@
                             <#if !(isPublicProfile??)>
                             <!-- Privacy -->
                             <li>
-                            <@orcid.privacyToggle2 angularModel="peerReview.visibility.visibility"
+                            <@orcid.privacyToggle2 angularModel="group.peerReviews[0].visibility.visibility"
                             questionClick=""
-                            clickedClassCheck="{'popover-help-container-show':privacyHelp[peerReview.putCode.value]==true}"
-                            publicClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'PUBLIC', $event)"
-                            limitedClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'LIMITED', $event)"
-                            privateClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'PRIVATE', $event)"/>
+                            clickedClassCheck="{'popover-help-container-show':privacyHelp[group.peerReviews[0].putCode.value]==true}"
+                            publicClick="peerReviewSrvc.setGroupPrivacy(group.id, 'PUBLIC', $event)"
+                            limitedClick="peerReviewSrvc.setGroupPrivacy(group.id, 'LIMITED', $event)"
+                            privateClick="peerReviewSrvc.setGroupPrivacy(group.id, 'PRIVATE', $event)"/>
                             </li>
                             </#if>
                         </ul>
 
                         <#if !(isPublicProfile??)>
-                        <div ng-if="!group.consistentVis()" class="vis-issue">
+                        <div ng-if="!peerReviewSrvc.consistentVis(group)" class="vis-issue">
                             <div class="popover-help-container">
                                 <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
                                 <div class="popover vis-popover bottom" ng-if="showElement['vis-issue'] == true">

@@ -1,6 +1,5 @@
-package org.orcid.pojo;
+package org.orcid.pojo.grouping;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,29 +9,19 @@ import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 
-public class WorkGroup implements Serializable {
+public class WorkGroup extends ActivityGroup {
 
     private static final long serialVersionUID = 1L;
 
     private List<WorkForm> works;
 
-    private Long activePutCode;
-
     private WorkForm defaultWork;
-
-    private int groupId;
-
-    public String activeVisibility;
-
-    private boolean userVersionPresent;
-
-    private List<ActivityExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
     public List<WorkForm> getWorks() {
         return works;
@@ -42,52 +31,12 @@ public class WorkGroup implements Serializable {
         this.works = works;
     }
 
-    public Long getActivePutCode() {
-        return activePutCode;
-    }
-
-    public void setActivePutCode(Long activePutCode) {
-        this.activePutCode = activePutCode;
-    }
-
     public WorkForm getDefaultWork() {
         return defaultWork;
     }
 
     public void setDefaultWork(WorkForm defaultWork) {
         this.defaultWork = defaultWork;
-    }
-
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
-
-    public boolean isUserVersionPresent() {
-        return userVersionPresent;
-    }
-
-    public void setUserVersionPresent(boolean userVersionPresent) {
-        this.userVersionPresent = userVersionPresent;
-    }
-
-    public String getActiveVisibility() {
-        return activeVisibility;
-    }
-
-    public void setActiveVisibility(String activeVisibility) {
-        this.activeVisibility = activeVisibility;
-    }
-
-    public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {
-        return workExternalIdentifiers;
-    }
-
-    public void setWorkExternalIdentifiers(List<ActivityExternalIdentifier> workExternalIdentifiers) {
-        this.workExternalIdentifiers = workExternalIdentifiers;
     }
 
     public static WorkGroup valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup workGroup, int id, String orcid) {
@@ -139,7 +88,7 @@ public class WorkGroup implements Serializable {
                 }
                 workExternalIdentifiersList.add(ActivityExternalIdentifier.valueOf(extId));
             }
-            group.setWorkExternalIdentifiers(workExternalIdentifiersList);
+            group.setExternalIdentifiers(workExternalIdentifiersList);
         }
 
         return group;

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.IntStream;
 
@@ -25,22 +26,23 @@ import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivitiesSummaryManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.GroupIdRecordManager;
-import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.PersonalDetailsManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -63,7 +65,6 @@ import org.orcid.jaxb.model.v3.rc1.record.Keywords;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
@@ -72,6 +73,8 @@ import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -84,6 +87,7 @@ import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
+import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -106,6 +110,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
+    
+    @Resource(name = "peerReviewManagerReadOnlyV3")
+    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
     
     @Resource
     private WorksPaginator worksPaginator;
@@ -354,7 +361,6 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-        LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         
         if (worksPaginator.getPublicWorksCount(orcid) > 0) {
             isProfileEmtpy = false;
@@ -374,22 +380,13 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("fundingEmpty", true);
         }
 
-        peerReviewMap = activityManager.pubPeerReviewsMap(orcid);
-        if (peerReviewMap.size() > 0) {
-            isProfileEmtpy = false;
-        } else {
-            mav.addObject("peerReviewsEmpty", true);
-        }
-
         ObjectMapper mapper = new ObjectMapper();
 
         try {
             String affiliationIdsJson = mapper.writeValueAsString(affiliationMap.keySet());
             String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
-            String peerReviewIdsJson = mapper.writeValueAsString(peerReviewMap.keySet());
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
-            mav.addObject("peerReviewIdsJson", StringEscapeUtils.escapeEcmaScript(peerReviewIdsJson));
             mav.addObject("isProfileEmpty", isProfileEmtpy);
         } catch (JsonGenerationException e) {
             e.printStackTrace();
@@ -666,38 +663,21 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
-    public @ResponseBody List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
-            @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
-        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        List<PeerReviewForm> peerReviews = new ArrayList<PeerReviewForm>();
-        Map<Long, PeerReview> peerReviewMap = activityManager.pubPeerReviewsMap(orcid);
-        String[] peerReviewIds = peerReviewIdsStr.split(",");
-        for (String id : peerReviewIds) {
-            PeerReview peerReview = peerReviewMap.get(Long.valueOf(id));            
-            validateVisibility(peerReview.getVisibility());            
-            sourceUtils.setSourceName(peerReview);
-            PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
-            // Set language name
-            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
-
-            if (!PojoUtil.isEmpty(form.getTranslatedSubjectName())) {
-                // Set translated title language name
-                if (!StringUtils.isEmpty(form.getTranslatedSubjectName().getLanguageCode())) {
-                    String languageName = languages.get(form.getTranslatedSubjectName().getLanguageCode());
-                    form.getTranslatedSubjectName().setLanguageName(languageName);
+    public @ResponseBody List<PeerReviewGroup> getPeerReviewsJson(@PathVariable("orcid") String orcid) {
+        List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
+        List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
+        PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, true);
+        for (org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewSummary().get(0).getGroupId());
+            PeerReviewGroup peerReviewGroup = PeerReviewGroup.valueOf(group, groupIdRecord.get());
+            peerReviewGroups.add(peerReviewGroup);
+            for (PeerReviewForm peerReviewForm : peerReviewGroup.getPeerReviews()) {
+                if (peerReviewForm.getCountry() != null) {
+                    peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
                 }
             }
-
-            // Set the numeric id (the table id in the group_id_record table) of
-            // the group id
-            if (form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
-                GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue()).get();
-                form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
-            }
-
-            peerReviews.add(form);
         }
-        return peerReviews;
+        return peerReviewGroups;
     }
 
     /**

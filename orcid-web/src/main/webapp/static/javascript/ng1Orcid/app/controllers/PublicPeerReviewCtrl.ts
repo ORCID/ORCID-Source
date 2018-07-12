@@ -58,7 +58,7 @@ export const PublicPeerReviewCtrl = angular.module('orcidApp').controller(
             };
             
             // Init
-            $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);       
+            $scope.peerReviewSrvc.getPublicPeerReviews();       
         }
     ]
 );

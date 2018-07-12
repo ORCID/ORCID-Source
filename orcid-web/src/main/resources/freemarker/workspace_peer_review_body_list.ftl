@@ -1,6 +1,4 @@
 <#include "includes/peer_review/del_peer_review_inc.ftl"/>
-
-<#include "includes/peer_review/add_peer_review_inc.ftl"/>
 <div>
     <div class="workspace-accordion accordion-peer-review clearfix" id="workspace-accordion">
         <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active">

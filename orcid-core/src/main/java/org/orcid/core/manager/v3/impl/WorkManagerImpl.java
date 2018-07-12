@@ -46,7 +46,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.WorkGroupingSuggestion;
+import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

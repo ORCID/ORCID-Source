@@ -3,7 +3,7 @@ package org.orcid.frontend.web.pagination;
 import java.io.Serializable;
 import java.util.List;
 
-import org.orcid.pojo.WorkGroup;
+import org.orcid.pojo.grouping.WorkGroup;
 
 public class WorksPage implements Serializable {
     

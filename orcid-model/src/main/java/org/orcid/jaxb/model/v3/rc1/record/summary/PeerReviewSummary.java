@@ -15,14 +15,17 @@ import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.Activity;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc1.record.Role;
 import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "externalIdentifiers", "completionDate", "groupId", "organization" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "externalIdentifiers", "completionDate", "groupId", "organization", "role", "type", "url" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable, SourceAware {
     
@@ -49,6 +52,12 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     protected String displayIndex;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
     protected String groupId;    
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")
+    protected Role role;
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-type")
+    protected PeerReviewType type;
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-url")
+    protected Url url;
 
     public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
@@ -129,6 +138,22 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     public void setOrganization(Organization organization) {
         this.organization = organization;
     }
+    
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public PeerReviewType getType() {
+        return type;
+    }
+
+    public void setType(PeerReviewType type) {
+        this.type = type;
+    }
 
     @Override
     public String retrieveSourcePath() {
@@ -146,6 +171,14 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
         this.groupId = groupId;
     }    
     
+    public Url getUrl() {
+        return url;
+    }
+
+    public void setUrl(Url url) {
+        this.url = url;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
