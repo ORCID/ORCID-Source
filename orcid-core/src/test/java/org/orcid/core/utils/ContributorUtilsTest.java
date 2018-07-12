@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.FundingContributors;
 import org.orcid.jaxb.model.record_v2.FundingTitle;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.persistence.dao.RecordNameDao;
@@ -135,6 +136,48 @@ public class ContributorUtilsTest {
         contributorUtils.filterContributorPrivateData(work);
         assertNotNull(work); // test no failures
         assertEquals(getWorkWithoutContributors(), work);
+    }
+    
+    @Test
+    public void testFilterContributorPrivateDataForBulkWork() {
+        when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
+        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).then(new Answer<String>(){
+
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                RecordNameEntity e = (RecordNameEntity) args[0];
+                return (e.getProfile().getId() + "_name");
+            }
+            
+        });
+        
+        when(recordNameDao.getRecordNames(any(List.class))).then(new Answer<List<RecordNameEntity>>(){
+
+            @Override
+            public List<RecordNameEntity> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return getRecordNameEntities((List) args[0]);
+            }
+            
+        });
+        
+        WorkBulk b = new WorkBulk();
+        Work w1 = getWorkWithOrcidContributor();
+        Work w2 = getWorkWithOrcidContributor();
+        // Change the orcid id in contributor 2
+        w2.getWorkContributors().getContributor().get(0).getContributorOrcid().setPath("0000-0000-0000-0000");
+        w2.getWorkContributors().getContributor().get(0).getContributorOrcid().setUri("http://orcid.org/0000-0000-0000-0000");        
+    
+        b.getBulk().add(w1);
+        b.getBulk().add(w2);
+        
+        contributorUtils.filterContributorPrivateData(b);
+        
+        assertNotNull(b);
+        assertEquals(2, b.getBulk().size());
+        assertEquals("0000-0003-4902-6327_name", ((Work)b.getBulk().get(0)).getWorkContributors().getContributor().get(0).getCreditName().getContent());
+        assertEquals("0000-0000-0000-0000_name", ((Work)b.getBulk().get(1)).getWorkContributors().getContributor().get(0).getCreditName().getContent());        
     }
     
     @Test
