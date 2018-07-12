@@ -146,6 +146,7 @@ public class AffiliationGroupForm implements Serializable {
             for (ExternalID extId : group.getIdentifiers().getExternalIdentifier()) {                    
                 workExternalIdentifiersList.add(ActivityExternalIdentifier.valueOf(extId));
             }            
+            affiliationGroup.setExternalIdentifiers(workExternalIdentifiersList);
         }
         
         return affiliationGroup;

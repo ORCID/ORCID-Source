@@ -512,9 +512,9 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             var group = worksSrvc.getGroup(putCode);
             for (var idx in group.works) {                 
                 for (var i = 0; i <= group.works[idx].workExternalIdentifiers.length - 1; i++) {
-                    if (group.works[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
-                        if (isIndexOf.call(dois, group.works[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
-                            dois.push(group.works[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+                    if (group.works[idx].workExternalIdentifiers[i].externalIdentifierType.value == 'doi'){
+                        if (isIndexOf.call(dois, group.works[idx].workExternalIdentifiers[i].externalIdentifierId.value) == -1){
+                            dois.push(group.works[idx].workExternalIdentifiers[i].externalIdentifierId.value);
                         }
                     }
                 }

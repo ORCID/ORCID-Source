@@ -164,6 +164,8 @@
         <!-- Works -->
         <#include "/includes/ng2_templates/works-ng2-template.ftl">
         <works-ng2></works-ng2>
+
+        <!--Peer review-->
         <div ng-controller="PeerReviewCtrl">
           <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
             <#include "workspace_peer_review_body_list.ftl"/>
@@ -382,15 +384,13 @@
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-  <modalngcomponent elementHeight="147" elementId="modalAffiliationDelete" elementWidth="364">
-      <affiliation-delete-ng2></affiliation-delete-ng2>
-  </modalngcomponent><!-- Ng2 component -->
+<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
+    <affiliation-delete-ng2></affiliation-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
-  <modalngcomponent elementHeight="495" elementId="modalAffiliationForm" elementWidth="800">
-      <affiliation-form-ng2></affiliation-form-ng2>
-  </modalngcomponent><!-- Ng2 component -->
-</@orcid.checkFeatureStatus> 
+<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
+    <affiliation-form-ng2></affiliation-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
