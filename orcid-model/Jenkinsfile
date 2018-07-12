@@ -30,18 +30,19 @@ node {
             )
         } catch(Exception err) {
             orcid_notify("Fetch Code and Build MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
             throw err
         }
     }
     stage('Creating Persistence Package') {
         try {
-            do_maven("clean -Dmaven.test.skip=true")
             parallel(
                 persistence: {do_maven("install -f orcid-persistence/pom.xml -Dmaven.test.skip=true")},
                 mq:          {do_maven("install -f orcid-activemq/pom.xml -Dmaven.test.skip=true")}
             )
         } catch(Exception err) {
             orcid_notify("Creating Persistence Package MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
             throw err
         }
     }
@@ -50,6 +51,7 @@ node {
             do_maven("install -f orcid-core/pom.xml -Dmaven.test.skip=true")
         } catch(Exception err) {
             orcid_notify("Building Core MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
             throw err
         }
     }
@@ -58,7 +60,7 @@ node {
             parallel(
                 web:        {do_maven("install -f orcid-web/pom.xml -Dmaven.test.skip=true")},
                 apiweb:     {do_maven("install -f orcid-api-web/pom.xml -Dmaven.test.skip=true")},
-                pubweb:     {do_maven("install -f orcid-api-web/pom.xml -Dmaven.test.skip=true")},
+                pubweb:     {do_maven("install -f orcid-pub-web/pom.xml -Dmaven.test.skip=true")},
                 scheduler:  {do_maven("install -f orcid-scheduler-web/pom.xml -Dmaven.test.skip=true")},
                 intapi:     {do_maven("install -f orcid-internal-api/pom.xml -Dmaven.test.skip=true")},
                 listener:   {do_maven("install -f orcid-message-listener/pom.xml -Dmaven.test.skip=true")},
@@ -69,6 +71,7 @@ node {
             //archive '**/target/**/*.war'
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
             throw err
         }
     }
@@ -84,7 +87,7 @@ node {
                 solrweb:     {do_maven("test -f orcid-solr-web/pom.xml")},
                 web:         {do_maven("test -f orcid-web/pom.xml")},
                 apiweb:      {do_maven("test -f orcid-api-web/pom.xml")},
-                pubweb:      {do_maven("test -f orcid-api-web/pom.xml")},
+                pubweb:      {do_maven("test -f orcid-pub-web/pom.xml")},
                 scheduler:   {do_maven("test -f orcid-scheduler-web/pom.xml")},
                 intapi:      {do_maven("test -f orcid-internal-api/pom.xml")},
                 listener:    {do_maven("test -f orcid-message-listener/pom.xml")},
@@ -96,9 +99,9 @@ node {
             throw err
         } finally {
             junit '**/target/surefire-reports/*.xml'
+            deleteDir()
         }
         orcid_notify("Pipeline MASTER#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
-        deleteDir()
     }
 }
 
