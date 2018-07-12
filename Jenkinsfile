@@ -16,7 +16,7 @@ node {
 
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: env.BRANCH_NAME
 
-    stage('Fetch Code and Build') {
+    stage('MODEL') {
         try {
             do_maven("clean")
             parallel(
@@ -27,11 +27,12 @@ node {
             )
         } catch(Exception err) {
             orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            junit '**/target/surefire-reports/*.xml'
             deleteDir()
             throw err
         }
     }
-    stage('Creating Persistence Package') {
+    stage('PERSISTENCE') {
         try {
             parallel(
                 persistence: {do_maven("clean install test  -f orcid-persistence/pom.xml")},
@@ -39,20 +40,22 @@ node {
             )
         } catch(Exception err) {
             orcid_notify("Creating Persistence Package ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            junit '**/target/surefire-reports/*.xml'
             deleteDir()
             throw err
         }
     }
-    stage('Building Core') {
+    stage('CORE') {
         try {
             do_maven("clean install test  -f orcid-core/pom.xml")
         } catch(Exception err) {
             orcid_notify("Building Core ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            junit '**/target/surefire-reports/*.xml'
             deleteDir()
             throw err
         }
     }
-    stage('Packaging ORCID web') {
+    stage('WEB and API') {
         try {
             parallel(
                 web:        {do_maven("clean install test  -f orcid-web/pom.xml")},
@@ -68,18 +71,9 @@ node {
             //archive '**/target/**/*.war'
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            deleteDir()
-            throw err
-        }
-    }
-    stage('Collect Tests Reports') {
-        try {
             junit '**/target/surefire-reports/*.xml'
-        } catch(Exception err) {
-            orcid_notify("Collect Tests Reports ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            throw err
-        } finally {
             deleteDir()
+            throw err
         }
         orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
     }
