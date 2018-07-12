@@ -66,7 +66,6 @@ export class EmailVerificationSentMesssageComponent implements AfterViewInit, On
 
         this.subscription = this.modalService.notifyObservable$.subscribe(
             (res: any) => {
-                console.log('res.value',res);
                 if ( res.moduleId == "emailSentConfirmation" ) {
                     if ( res.data != undefined) {
                         this.emailPrimary = res.data.email;

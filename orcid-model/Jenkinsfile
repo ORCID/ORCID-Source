@@ -5,16 +5,19 @@ node {
             logRotator(
                 artifactDaysToKeepStr: '',
                 artifactNumToKeepStr: '',
-                daysToKeepStr: '3',
-                numToKeepStr: '3'
+                daysToKeepStr: '15',
+                numToKeepStr: '30'
             )
         ),
         disableConcurrentBuilds(),
-        [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
-        pipelineTriggers([])
+        [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
+        [$class: 'JobPropertyImpl', throttle: [count: 4, durationName: 'hour', userBoost: false]],
+        pipelineTriggers([
+            [$class: "GitHubPushTrigger"]
+        ])
     ])
 
-    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: env.BRANCH_NAME
+    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: 'master'
 
     stage('Fetch Code and Build') {
         try {
@@ -26,7 +29,7 @@ node {
                 solrweb:     {do_maven("install -f orcid-solr-web/pom.xml -Dmaven.test.skip=true")}
             )
         } catch(Exception err) {
-            orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Fetch Code and Build MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
     }
@@ -38,7 +41,7 @@ node {
                 mq:          {do_maven("install -f orcid-activemq/pom.xml -Dmaven.test.skip=true")}
             )
         } catch(Exception err) {
-            orcid_notify("Creating Persistence Package ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Creating Persistence Package MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
     }
@@ -46,7 +49,7 @@ node {
         try {
             do_maven("install -f orcid-core/pom.xml -Dmaven.test.skip=true")
         } catch(Exception err) {
-            orcid_notify("Building Core ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Building Core MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
     }
@@ -65,7 +68,7 @@ node {
             // Push to Artifact storage
             //archive '**/target/**/*.war'
         } catch(Exception err) {
-            orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Packaging ORCID web MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
     }
@@ -89,12 +92,12 @@ node {
                 indeptests:  {do_maven("test -f orcid-integration-test/pom.xml")}
             )
         } catch(Exception err) {
-            orcid_notify("Run Unit Tests ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Run Unit Tests MASTER#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         } finally {
             junit '**/target/surefire-reports/*.xml'
         }
-        orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
+        orcid_notify("Pipeline MASTER#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
         deleteDir()
     }
 }

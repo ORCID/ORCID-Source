@@ -146,6 +146,7 @@
 			<xs:enumeration value="report" />
 			<xs:enumeration value="research-technique" />
 			<xs:enumeration value="research-tool" />
+			<xs:enumeration value="software" />
 			<xs:enumeration value="spin-off-company" />
 			<xs:enumeration value="standards-and-policy" />
 			<xs:enumeration value="supervised-student-publication" />

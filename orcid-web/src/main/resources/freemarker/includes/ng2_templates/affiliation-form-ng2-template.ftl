@@ -203,7 +203,7 @@
                                 
                     </div>
 
-                    <div class="control-group">
+                    <div class="form-group">
                         <label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDateLeave'/></label>
                         <div class="relative">
                             
@@ -218,11 +218,9 @@
                                 </#list>
                             </select>
                             <select id="endDay" name="endDay" [(ngModel)]="editAffiliation.endDate.day">
-                                
                                 <#list days?keys as key>
                                     <option value="${key}">${days[key]}</option>
                                 </#list>
-                                
                             </select>
                         </div>
                         
@@ -241,7 +239,7 @@
                                 </button>
                             </li>                       
                             <li>                      
-                                <a class="cancel-option" (click)="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>                  
+                                <a class="cancel-option" (click)="cancelEdit()"><@orcid.msg 'freemarker.btncancel' /></a>                  
                             </li>
                             <li>
                                 <span *ngIf="addingAffiliation">

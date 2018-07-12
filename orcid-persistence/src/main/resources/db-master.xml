@@ -259,4 +259,5 @@
 	<include file="/db/updates/create_research_resource_tables.xml" />
 	<include file="/db/updates/identifier-types/identifier-type-42-dnb.xml" />
 	<include file="/db/updates/remove_enable_notifications_column.xml" />
+	<include file="/db/updates/add_email_hash_column_to_email_table.xml" />
 </databaseChangeLog>
