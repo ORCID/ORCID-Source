@@ -182,8 +182,8 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
     var idTypePath;
     var relationship = 'relationship';
     if (this.type == GroupedActivities.ABBR_WORK) {
-        idPath = 'workExternalIdentifierId';
-        idTypePath = 'workExternalIdentifierType';
+        idPath = 'externalIdentifierId';
+        idTypePath = 'externalIdentifierType';
     } else if (this.type == GroupedActivities.FUNDING) {
         idPath = 'value';
         idTypePath = 'type';
