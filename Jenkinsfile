@@ -14,7 +14,7 @@ node {
         pipelineTriggers([])
     ])
 
-    def EHCACHE_LOCATION="/temp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
+    def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
 
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: env.BRANCH_NAME
 
@@ -47,7 +47,7 @@ node {
     }
     stage('CORE') {
         try {
-            sh "mkdir $EHCACHE_LOCATION"
+            sh "mkdir -p $EHCACHE_LOCATION"
             do_maven("clean install test -f orcid-core/pom.xml -Djava.io.tmpdir=$EHCACHE_LOCATION")
         } catch(Exception err) {
             orcid_notify("Building Core ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
