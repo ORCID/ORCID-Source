@@ -266,10 +266,10 @@ export class WorksService {
         this.url = getBaseUri() + '/my-orcid/worksForms.json';
     }
 
-    addAbbrWorksToScope( type, sort, sortAsc): Observable<any> {
+    getWorksPage( accessType, sort, sortAsc): Observable<any> {
         this.details = new Object();
         let url = getBaseUri();
-        if (type == this.constants.access_type.USER) {
+        if (accessType == this.constants.access_type.USER) {
             url += '/works/worksPage.json';
         } else {
             url += '/' + orcidVar.orcidId +'/worksPage.json';

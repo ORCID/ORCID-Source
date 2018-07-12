@@ -10,7 +10,7 @@ declare var populateWorkAjaxForm: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -39,6 +39,7 @@ import { WorkspaceService }
     template:  scriptTmpl("works-ng2-template")
 })
 export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
+    @Input() publicView: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -120,6 +121,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo = {};
         this.moreInfoOpen = false;
         this.noLinkFlag = true;
+        this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.savingBibtex = false;
         this.scriptsLoaded = false;
         this.selectedGeoArea = null;
@@ -362,16 +364,20 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     loadDetails(putCode, event): void {
-        console.log("load details");
-        //Close any open popover
         this.closePopover(event);
         this.moreInfoOpen = true;
-        //Display the popover
         $(event.target).next().css('display','inline');
-        this.getGroupDetails(
-            putCode, 
-            this.worksService.constants.access_type.USER
-        );
+        if(this.publicView === "true"){
+            this.getGroupDetails(
+                putCode, 
+                this.worksService.constants.access_type.ANONYMOUS
+            );
+        } else {
+            this.getGroupDetails(
+                putCode, 
+                this.worksService.constants.access_type.USER
+            );
+        }
     };
 
     getDetails(putCode, type, callback): void {
@@ -520,23 +526,43 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     loadMore(): void {
-        this.worksService.addAbbrWorksToScope(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
-            !this.sortState.reverseKey[this.sortState.predicateKey]
-        )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.formData = data;
-                this.worksService.handleWorkGroupData( this.formData );
-                this.worksService.loading = false;
-            },
-            error => {
-                this.worksService.loading = false;
-                console.log('worksLoadMore', error);
-            } 
-        );
+        if(this.publicView === "true") {
+            this.worksService.getWorksPage(this.worksService.constants.access_type.ANONYMOUS, this.sortState.predicateKey, 
+                !this.sortState.reverseKey[this.sortState.predicateKey]
+            )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.formData = data;
+                    this.worksService.handleWorkGroupData( this.formData );
+                    this.worksService.loading = false;
+                },
+                error => {
+                    this.worksService.loading = false;
+                    console.log('worksLoadMore', error);
+                } 
+            );
+        } else {
+            this.worksService.getWorksPage(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
+                !this.sortState.reverseKey[this.sortState.predicateKey]
+            )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.formData = data;
+                    this.worksService.handleWorkGroupData( this.formData );
+                    this.worksService.loading = false;
+                },
+                error => {
+                    this.worksService.loading = false;
+                    console.log('worksLoadMore', error);
+                } 
+            );
+        }
     };
 
     loadWorkImportWizardList(): void {
@@ -826,25 +852,48 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     sort(key): void {
         this.sortState.sortBy(key);
         this.worksService.resetWorkGroups();
-        this.worksService.addAbbrWorksToScope(
-            this.worksService.constants.access_type.USER, 
-            this.sortState.predicateKey, 
-            !this.sortState.reverseKey[key]
-        )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.formData = data;
-                this.worksService.handleWorkGroupData( this.formData );
-                this.worksService.loading = false;
-            },
-            error => {
-                this.worksService.loading = false;
-                console.log('sortError', error);
-            } 
-        );
+        if(this.publicView === "true"){
+            this.worksService.getWorksPage(
+                this.worksService.constants.access_type.ANONYMOUS, 
+                this.sortState.predicateKey, 
+                !this.sortState.reverseKey[key]
+            )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.formData = data;
+                    this.worksService.handleWorkGroupData( this.formData );
+                    this.worksService.loading = false;
+                },
+                error => {
+                    this.worksService.loading = false;
+                    console.log('sortError', error);
+                } 
+            );
+
+        } else {
+            this.worksService.getWorksPage(
+                this.worksService.constants.access_type.USER, 
+                this.sortState.predicateKey, 
+                !this.sortState.reverseKey[key]
+            )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.formData = data;
+                    this.worksService.handleWorkGroupData( this.formData );
+                    this.worksService.loading = false;
+                },
+                error => {
+                    this.worksService.loading = false;
+                    console.log('sortError', error);
+                } 
+            );
+        }
        
     };
 
