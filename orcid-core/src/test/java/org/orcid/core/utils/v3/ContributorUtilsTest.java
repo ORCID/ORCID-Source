@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -64,8 +66,16 @@ public class ContributorUtilsTest {
     @Test
     public void testFilterContributorPrivateDataForWorkWithPrivateName() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
-        when(profileEntityCacheManager.retrieve(anyString())).thenReturn(new ProfileEntity());
-        when(cacheManager.getPublicCreditName(any(ProfileEntity.class))).thenReturn(null);
+        when(recordNameDao.getRecordNames(any(List.class))).then(new Answer<List<RecordNameEntity>>(){
+
+            @Override
+            public List<RecordNameEntity> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return getRecordNameEntities((List) args[0]);
+            }
+            
+        });
+        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).thenReturn(null);        
         
         Work work = getWorkWithOrcidContributor();
         contributorUtils.filterContributorPrivateData(work);
@@ -78,8 +88,16 @@ public class ContributorUtilsTest {
     @Test
     public void testFilterContributorPrivateDataForWorkWithPublicName() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
-        when(profileEntityCacheManager.retrieve(anyString())).thenReturn(new ProfileEntity());
-        when(cacheManager.getPublicCreditName(any(ProfileEntity.class))).thenReturn("a public name");
+        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).thenReturn("a public name");
+        when(recordNameDao.getRecordNames(any(List.class))).then(new Answer<List<RecordNameEntity>>(){
+
+            @Override
+            public List<RecordNameEntity> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return getRecordNameEntities((List) args[0]);
+            }
+            
+        });
         
         Work work = getWorkWithOrcidContributor();
         contributorUtils.filterContributorPrivateData(work);
@@ -116,6 +134,7 @@ public class ContributorUtilsTest {
         Work work = getWorkWithoutContributors();
         contributorUtils.filterContributorPrivateData(work);
         assertNotNull(work); // test no failures
+        assertEquals(getWorkWithoutContributors(), work);
     }
     
     @Test
@@ -275,8 +294,14 @@ public class ContributorUtilsTest {
         return fundingContributors;
     }
     
-    private List<RecordNameEntity> getRecordNameEntities(){
+    private List<RecordNameEntity> getRecordNameEntities(List<String> orcidIds){
         List<RecordNameEntity> records = new ArrayList<RecordNameEntity>();
+        for(String orcid : orcidIds) {
+            RecordNameEntity e = new RecordNameEntity();
+            e.setProfile(new ProfileEntity(orcid));
+            records.add(e);
+        }
+        return records;
     }
     
 }

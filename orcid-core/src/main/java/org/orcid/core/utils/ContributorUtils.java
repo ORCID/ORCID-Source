@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -29,19 +28,19 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.google.common.collect.Iterables;
 
 public class ContributorUtils {
-
+    
     private final Integer BATCH_SIZE;
     
-    private static final String RECORD_NAME_KEY_POSTFIX = "_record_name";
-    
+    private static final String RECORD_NAME_KEY_POSTFIX = "_record_name";      
+
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     private ActivityManager cacheManager;
 
     private ProfileEntityManager profileEntityManager;
-    
-    private RecordNameDao recordNameDao;
 
+    private RecordNameDao recordNameDao;    
+    
     public ContributorUtils(@Value("${org.orcid.contributor.names.batch_size:2500}") Integer batchSize) {
         if(batchSize == null) {
             BATCH_SIZE = 2500;
@@ -98,14 +97,9 @@ public class ContributorUtils {
                 String orcid = contributor.getContributorOrcid().getPath();
                 // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
                 if(contributorNames.containsKey(orcid)) {
-                    String name = contributorNames.get(orcid);
-                    if(!PojoUtil.isEmpty(name)) {
-                        CreditName creditName = new CreditName(name);
-                        contributor.setCreditName(creditName);
-                    } else if(contributor.getCreditName() == null || PojoUtil.isEmpty(contributor.getCreditName().getContent())) {
-                        CreditName creditName = new CreditName(StringUtils.EMPTY);
-                        contributor.setCreditName(creditName);
-                    }
+                    String name = contributorNames.get(orcid);                    
+                    CreditName creditName = new CreditName(name);
+                    contributor.setCreditName(creditName);                    
                 }
             }
         }
@@ -131,7 +125,7 @@ public class ContributorUtils {
             for(RecordNameEntity entity : entities) {
                 String orcid = entity.getProfile().getId();
                 String publicCreditName = cacheManager.getPublicCreditName(entity);
-                contributorNames.put(orcid, publicCreditName);
+                contributorNames.put(orcid, (publicCreditName == null ? "" : publicCreditName));
                 // Store in the request, to use as a cache
                 ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                 if (sra != null) {
@@ -141,8 +135,7 @@ public class ContributorUtils {
         });
         return contributorNames;
     }
-    
-    
+
     public void filterContributorPrivateData(WorkBulk works) {
         if(works != null) {
             for(BulkElement element : works.getBulk()) {
@@ -168,5 +161,4 @@ public class ContributorUtils {
     public void setRecordNameDao(RecordNameDao recordNameDao) {
         this.recordNameDao = recordNameDao;
     }
-
 }
