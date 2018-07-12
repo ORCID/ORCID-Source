@@ -39,12 +39,14 @@ import org.orcid.core.manager.v3.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
+import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.frontend.web.pagination.Page;
+import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -67,6 +69,7 @@ import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
@@ -75,6 +78,8 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.ResearchResourceGroupPojo;
+import org.orcid.pojo.WorkGroup;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
@@ -163,6 +168,12 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
+
+    @Resource
+    ResearchResourcePaginator researchResourcePaginator;
+
+    @Resource(name = "researchResourceManagerV3")
+    ResearchResourceManager researchResourceManager;
 
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -356,9 +367,15 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         
+        //TODO: DO we need this?  It's reads ALL works from the DB, groups and counts them!
         if (worksPaginator.getPublicWorksCount(orcid) > 0) {
             isProfileEmtpy = false;
         }
+        if (researchResourcePaginator.getPublicCount(orcid) > 0) {
+            isProfileEmtpy = false;
+        }
+
+        
 
         affiliationMap = activityManager.affiliationMap(orcid);
         if (affiliationMap.size() > 0) {
@@ -609,8 +626,21 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody Page getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         return worksPaginator.getWorksPage(orcid, offset, true, sort, sortAsc);
+    }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
+    public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset) {
+        return researchResourcePaginator.getPage(orcid, offset,true);
+    }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResource.json", method = RequestMethod.GET)
+    public @ResponseBody ResearchResource getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
+        ResearchResource r = this.researchResourceManager.getResearchResource(orcid, Long.valueOf(id));
+        validateVisibility(r.getVisibility());            
+        sourceUtils.setSourceName(r);
+        return r;
     }
 
     /**
