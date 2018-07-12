@@ -80,7 +80,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest{
     
     //Get the index of the group with 2 resources in it.
     public int getBigGroupIndex(Page<ResearchResourceGroupPojo> page){
-        if (page.getWorkGroups().get(0).getResearchResources().size() == 2)
+        if (page.getGroups().get(0).getResearchResources().size() == 2)
             return 0;
         else 
             return 1;
@@ -88,7 +88,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest{
 
     //Get the index of the group with 1 resources in it.
     public int getSmallGroupIndex(Page<ResearchResourceGroupPojo> page){
-        if (page.getWorkGroups().get(0).getResearchResources().size() == 2)
+        if (page.getGroups().get(0).getResearchResources().size() == 2)
             return 1;
         else 
             return 0;
@@ -101,36 +101,36 @@ public class ResearchResourceControllerTest extends BaseControllerTest{
         Page<ResearchResourceGroupPojo> page = controller.getresearchResourcePage(0);
         assertNotNull(page);
         assertEquals(2, page.getTotalGroups());
-        assertEquals(2, page.getWorkGroups().size());
+        assertEquals(2, page.getGroups().size());
         
         //check we have one group of one and one group of two.
         Set<Integer> setI = new HashSet<Integer>();
-        setI.add(page.getWorkGroups().get(0).getResearchResources().size());
-        setI.add(page.getWorkGroups().get(1).getResearchResources().size());
+        setI.add(page.getGroups().get(0).getResearchResources().size());
+        setI.add(page.getGroups().get(1).getResearchResources().size());
         assertEquals(setI, Sets.newHashSet(1,2));
         
         int bg = getBigGroupIndex(page); //has 2 rr
         int sg = getSmallGroupIndex(page); // has 1 rr
         
         //grouped dude
-        assertEquals("work:external-identifier-id#1",page.getWorkGroups().get(bg).getWorkExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
+        assertEquals("work:external-identifier-id#1",page.getGroups().get(bg).getWorkExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
         Set<String> titles = new HashSet<String>();
-        titles.add(page.getWorkGroups().get(bg).getResearchResources().get(0).getProposal().getTitle().getTitle().getContent());
-        titles.add(page.getWorkGroups().get(bg).getResearchResources().get(1).getProposal().getTitle().getTitle().getContent());
+        titles.add(page.getGroups().get(bg).getResearchResources().get(0).getProposal().getTitle().getTitle().getContent());
+        titles.add(page.getGroups().get(bg).getResearchResources().get(1).getProposal().getTitle().getTitle().getContent());
         assertEquals(titles, Sets.newHashSet("the title","the title2"));
         
         //in the big group, rr 1 has an org, 2 has higher display index (so is the default and should be first in the list).
-        assertEquals(Long.valueOf(2l), page.getWorkGroups().get(bg).getResearchResources().get(0).getPutCode());
-        assertEquals("An institution",page.getWorkGroups().get(bg).getResearchResources().get(1).getProposal().getHosts().getOrganization().get(0).getName());            
-        assertEquals(page.getWorkGroups().get(bg).getResearchResources().get(0),page.getWorkGroups().get(bg).getDefaultActivity());
+        assertEquals(Long.valueOf(2l), page.getGroups().get(bg).getResearchResources().get(0).getPutCode());
+        assertEquals("An institution",page.getGroups().get(bg).getResearchResources().get(1).getProposal().getHosts().getOrganization().get(0).getName());            
+        assertEquals(page.getGroups().get(bg).getResearchResources().get(0),page.getGroups().get(bg).getDefaultActivity());
         
         //ungrouped dude
-        assertEquals("work:external-identifier-id#2",page.getWorkGroups().get(sg).getWorkExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
-        assertEquals("the title3",page.getWorkGroups().get(sg).getResearchResources().get(0).getProposal().getTitle().getTitle().getContent());
-        assertEquals("the title3",page.getWorkGroups().get(sg).getDefaultActivity().getProposal().getTitle().getTitle().getContent());        
-        assertEquals(Long.valueOf(3),page.getWorkGroups().get(sg).getDefaultActivity().getPutCode());
-        assertEquals("PUBLIC",page.getWorkGroups().get(sg).getDefaultActivity().getVisibility().name());
-        assertEquals("3",page.getWorkGroups().get(sg).getDefaultActivity().getDisplayIndex());
+        assertEquals("work:external-identifier-id#2",page.getGroups().get(sg).getWorkExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
+        assertEquals("the title3",page.getGroups().get(sg).getResearchResources().get(0).getProposal().getTitle().getTitle().getContent());
+        assertEquals("the title3",page.getGroups().get(sg).getDefaultActivity().getProposal().getTitle().getTitle().getContent());        
+        assertEquals(Long.valueOf(3),page.getGroups().get(sg).getDefaultActivity().getPutCode());
+        assertEquals("PUBLIC",page.getGroups().get(sg).getDefaultActivity().getVisibility().name());
+        assertEquals("3",page.getGroups().get(sg).getDefaultActivity().getDisplayIndex());
         
         this.testDeleteOne();
     }
@@ -172,20 +172,20 @@ public class ResearchResourceControllerTest extends BaseControllerTest{
         
         Page<ResearchResourceGroupPojo> pageBefore = controller.getresearchResourcePage(0);
         int bgBefore = getBigGroupIndex(pageBefore);
-        assertEquals(Long.valueOf(2l),pageBefore.getWorkGroups().get(bgBefore).getDefaultActivity().getPutCode());
-        assertEquals("2",pageBefore.getWorkGroups().get(bgBefore).getDefaultActivity().getDisplayIndex());
+        assertEquals(Long.valueOf(2l),pageBefore.getGroups().get(bgBefore).getDefaultActivity().getPutCode());
+        assertEquals("2",pageBefore.getGroups().get(bgBefore).getDefaultActivity().getDisplayIndex());
         
         controller.updateToMaxDisplay(1l);
         Page<ResearchResourceGroupPojo> pageAfter = controller.getresearchResourcePage(0);
         int bgAfter = getBigGroupIndex(pageAfter);
-        assertEquals("4",pageAfter.getWorkGroups().get(bgAfter).getDefaultActivity().getDisplayIndex());
-        assertEquals(Long.valueOf(1l),pageAfter.getWorkGroups().get(bgAfter).getDefaultActivity().getPutCode());
+        assertEquals("4",pageAfter.getGroups().get(bgAfter).getDefaultActivity().getDisplayIndex());
+        assertEquals(Long.valueOf(1l),pageAfter.getGroups().get(bgAfter).getDefaultActivity().getPutCode());
 
         //set back
         controller.updateToMaxDisplay(2l);
         Page<ResearchResourceGroupPojo> pageLast = controller.getresearchResourcePage(0);
         int bgLast = getBigGroupIndex(pageLast);
-        assertEquals(Long.valueOf(2l),pageLast.getWorkGroups().get(bgLast).getDefaultActivity().getPutCode());
+        assertEquals(Long.valueOf(2l),pageLast.getGroups().get(bgLast).getDefaultActivity().getPutCode());
     }
 
    

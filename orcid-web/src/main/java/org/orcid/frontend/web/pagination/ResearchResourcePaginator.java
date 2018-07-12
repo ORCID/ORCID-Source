@@ -21,11 +21,11 @@ public class ResearchResourcePaginator {
         List<ResearchResourceSummary> r = researchResourceManager.getResearchResourceSummaryList(orcid);
         ResearchResources rr = researchResourceManager.groupResearchResources(r, justPublic);
         Page<ResearchResourceGroupPojo> page = new Page<ResearchResourceGroupPojo>();
-        page.setWorkGroups(new ArrayList<ResearchResourceGroupPojo>());
+        page.setGroups(new ArrayList<ResearchResourceGroupPojo>());
         
         for (int i = offset; i < Math.min(offset + PAGE_SIZE, rr.getResearchResourceGroup().size()); i++) {
             org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup group = rr.getResearchResourceGroup().get(i);
-            page.getWorkGroups().add(new ResearchResourceGroupPojo(group, i, orcid));
+            page.getGroups().add(new ResearchResourceGroupPojo(group, i, orcid));
         }
         page.setTotalGroups(rr.getResearchResourceGroup().size());
         page.setNextOffset(offset+PAGE_SIZE);
