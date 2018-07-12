@@ -27,6 +27,7 @@ node {
             )
         } catch(Exception err) {
             orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
             throw err
         }
     }
@@ -39,6 +40,7 @@ node {
             )
         } catch(Exception err) {
             orcid_notify("Creating Persistence Package ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
             throw err
         }
     }
@@ -47,6 +49,7 @@ node {
             do_maven("install -f orcid-core/pom.xml -Dmaven.test.skip=true")
         } catch(Exception err) {
             orcid_notify("Building Core ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
             throw err
         }
     }
@@ -66,6 +69,7 @@ node {
             //archive '**/target/**/*.war'
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
             throw err
         }
     }
@@ -93,9 +97,9 @@ node {
             throw err
         } finally {
             junit '**/target/surefire-reports/*.xml'
+            deleteDir()
         }
         orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
-        deleteDir()
     }
 }
 
