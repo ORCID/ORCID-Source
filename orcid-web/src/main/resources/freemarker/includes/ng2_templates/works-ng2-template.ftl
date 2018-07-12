@@ -342,14 +342,14 @@
                             <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 
                         </div>
-                        <div class="row" *ngIf="work?.workExternalIdentifiers[0]?.workExternalIdentifierId?.value">
+                        <div class="row" *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value">
                             <div class="col-md-12 col-sm-12 bottomBuffer">
                                 <ul class="id-details">
                                     <li class="url-work">
                                         <ul class="id-details">
-                                            <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
+                                            <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "externalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
                                                 <!-- ***
-                                                <span *ngIf="work.workExternalIdentifiers[0].workExternalIdentifierId.value.length > 0" >{{ie | workExternalIdentifierHtml:first:last:work.workExternalIdentifiers.length:moreInfo[group.groupId]}}</span>
+                                                <span *ngIf="work.workExternalIdentifiers[0].externalIdentifierId.value.length > 0" >{{ie | workExternalIdentifierHtml:first:last:work.workExternalIdentifiers.length:moreInfo[group.groupId]}}</span>
                                                 -->
                                             </li>
                                         </ul>                                   

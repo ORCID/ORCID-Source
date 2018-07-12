@@ -341,7 +341,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     hasCombineableEIs(work): boolean {
         if (work.workExternalIdentifiers != null){
             for (var idx in work.workExternalIdentifiers){
-                if (work.workExternalIdentifiers[idx].workExternalIdentifierType.value != 'issn'){
+                if (work.workExternalIdentifiers[idx].externalIdentifierType.value != 'issn'){
                     return true;
                 }
             }

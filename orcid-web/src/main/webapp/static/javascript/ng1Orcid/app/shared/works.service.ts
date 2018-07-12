@@ -454,9 +454,9 @@ export class WorksService {
     }
 
     resolveExtId(extId): Observable<any> {
-        let params = new HttpParams().set('value', extId.workExternalIdentifierId.value);
+        let params = new HttpParams().set('value', extId.externalIdentifierId.value);
         return this.http.get( 
-            getBaseUri() + '/works/id/'+ extId.workExternalIdentifierType.value, 
+            getBaseUri() + '/works/id/'+ extId.externalIdentifierType.value, 
             { params: params }
         );
     }

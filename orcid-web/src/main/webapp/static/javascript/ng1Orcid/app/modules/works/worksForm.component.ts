@@ -117,7 +117,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             }else{
                                 this.editWork.workExternalIdentifiers[i].url.value="";                        
                             }
-                            this.editWork.workExternalIdentifiers[i].workExternalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
+                            this.editWork.workExternalIdentifiers[i].externalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
                         }
                         this.editWork.workExternalIdentifiers[i].resolvingId = false;
                     },
