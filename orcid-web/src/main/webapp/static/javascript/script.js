@@ -145,9 +145,12 @@ function removeBadContributors(dw) {
 //Needs refactor for dw object
 function removeBadExternalIdentifiers(dw) {
     for(var idx in dw.workExternalIdentifiers) {
-        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
-            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
-            dw.workExternalIdentifiers.splice(idx,1);
+        if(dw.workExternalIdentifiers[idx].url == null){
+            dw.workExternalIdentifiers[idx].url = "";
+        }
+        if(dw.workExternalIdentifiers[idx].externalIdentifierType == null
+            && dw.workExternalIdentifiers[idx].externalIdentifierId == null) {
+            dw.externalIdentifiers.splice(idx,1);
         }
     }
 }
@@ -952,10 +955,10 @@ function workExternalIdentifierId(work, idType, value) {
 	} 
 
     var ident = {
-        workExternalIdentifierId : {
+        externalIdentifierId : {
             'value' : value
         },
-        workExternalIdentifierType : {
+        externalIdentifierType : {
             'value' : idType
         }, 
         relationship : {
@@ -963,7 +966,7 @@ function workExternalIdentifierId(work, idType, value) {
         }
     };
     
-    if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null)
+    if (work.workExternalIdentifiers[0].externalIdentifierId.value == null)
         work.workExternalIdentifiers[0] = ident;
     else
         work.workExternalIdentifiers.push(ident);
