@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.record_v2.FundingTitle;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class ContributorUtilsTest {
@@ -42,12 +43,19 @@ public class ContributorUtilsTest {
     @Mock
     private ProfileEntityManager profileEntityManager;
 
+    @Mock
+    private RecordNameDao recordNameDao;
+    
     @InjectMocks
     private ContributorUtils contributorUtils;
     
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        contributorUtils.setCacheManager(cacheManager);
+        contributorUtils.setProfileEntityCacheManager(profileEntityCacheManager);
+        contributorUtils.setProfileEntityManager(profileEntityManager);
+        contributorUtils.setRecordNameDao(recordNameDao);
     }
     
     @Test

@@ -3,8 +3,8 @@ package org.orcid.core.utils.v3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -14,8 +14,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.jaxb.model.v3.rc1.common.Contributor;
 import org.orcid.jaxb.model.v3.rc1.common.ContributorEmail;
@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class ContributorUtilsTest {
@@ -41,6 +42,9 @@ public class ContributorUtilsTest {
     
     @Mock
     private ProfileEntityManager profileEntityManager;
+    
+    @Mock
+    private RecordNameDao recordNameDao;
 
     @InjectMocks
     private ContributorUtils contributorUtils;
@@ -48,6 +52,10 @@ public class ContributorUtilsTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        contributorUtils.setCacheManager(cacheManager);
+        contributorUtils.setProfileEntityCacheManager(profileEntityCacheManager);
+        contributorUtils.setProfileEntityManager(profileEntityManager);
+        contributorUtils.setRecordNameDao(recordNameDao);
     }
     
     @Test

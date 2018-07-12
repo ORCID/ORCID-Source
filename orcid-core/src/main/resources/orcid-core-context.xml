@@ -401,6 +401,7 @@
 		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
+		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
 	</bean>
 	
 	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
@@ -421,6 +422,7 @@
         <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
+    	<property name="recordNameDao" ref="recordNameDaoReadOnly" />
     </bean>
     
     <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
