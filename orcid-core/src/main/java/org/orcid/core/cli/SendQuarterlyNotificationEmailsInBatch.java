@@ -17,6 +17,9 @@ public class SendQuarterlyNotificationEmailsInBatch {
     @Option(name = "-bs", usage = "Batch size: how many service announcements we want to send this time?")
     private Integer batchSize;
     
+    @Option(name = "-from", usage = "From address")
+    private String fromAddress;
+    
     EmailMessageSender emailMessageSender;
     
     public static void main(String... args) {
@@ -52,7 +55,7 @@ public class SendQuarterlyNotificationEmailsInBatch {
     
     private void execute() {
         long startTime = System.currentTimeMillis();
-        emailMessageSender.sendTips(batchSize);
+        emailMessageSender.sendTips(batchSize, fromAddress);
         long endTime = System.currentTimeMillis();
         String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
         LOG.info("TimeTaken={} (H:m:s.S)", timeTaken);

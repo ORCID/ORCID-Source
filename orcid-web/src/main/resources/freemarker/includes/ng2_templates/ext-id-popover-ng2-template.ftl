@@ -17,14 +17,15 @@
 
 -->
 <script type="text/ng-template" id="ext-id-popover-ng2-template">
-    <span *ngIf="relationship && relationship == 'part-of'" class='italic'><@orcid.msg 'common.part_of'/> </span><span>{{type | uppercase}}: </span>
-    <a *ngIf="value" href="{{url}}" class="truncate-anchor inline" target="orcid.blank" (mouseenter)="showAffiliationExtIdPopOver(putCode)" (mouseleave)="hideAffiliationExtIdPopOver(putCode)">{{value}}</a> 
-    <div *ngIf="url" class="popover-pos">
+    <span *ngIf="extID?.relationship && extID?.relationship?.value == 'part-of'" class='italic'><@orcid.msg 'common.part_of'/> </span><span>{{extID?.externalIdentifierType?.value | uppercase}}: </span>
+    <span *ngIf="extID?.externalIdentifierId && !extID?.url?.value">{{extID.externalIdentifierId.value}}</span> 
+    <a *ngIf="extID?.externalIdentifierId && extID?.url?.value" href="{{extID.url.value}}" class="truncate-anchor inline" target="orcid.blank" (mouseenter)="showAffiliationExtIdPopOver(putCode)" (mouseleave)="hideAffiliationExtIdPopOver(putCode)">{{extID.externalIdentifierId.value}}</a> 
+    <div *ngIf="extID?.url" class="popover-pos">
         <div class="popover-help-container">
             <div class="popover bottom" [ngClass]="{'block' : displayAffiliationExtIdPopOver[putCode] == true}">
                 <div class="arrow"></div>
                 <div class="popover-content">
-                    <a href="{{url}}" target="orcid.blank" class="ng-binding">{{url}}</a>
+                    <a href="{{extID.url.value}}" target="orcid.blank" class="ng-binding">{{extID.url.value}}</a>
                 </div>
             </div>
         </div>

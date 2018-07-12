@@ -22,6 +22,7 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
     private static final long serialVersionUID = 1;
 
     private String email;
+    private String emailHash;
     private ProfileEntity profile;
     private Boolean primary;
     private Boolean current;
@@ -39,6 +40,15 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
         this.email = email;
     }
 
+    @Column(name = "email_hash")
+    public String getEmailHash() {
+        return emailHash;
+    }
+
+    public void setEmailHash(String emailHash) {
+        this.emailHash = emailHash;
+    }
+    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getProfile() {

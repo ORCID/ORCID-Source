@@ -146,10 +146,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 url: {
                     value: ""
                 },
-                workExternalIdentifierId: {
+                externalIdentifierId: {
                     value: ""
                 }, 
-                workExternalIdentifierType: {
+                externalIdentifierType: {
                     value: ""
                 } 
             }
@@ -199,6 +199,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };      
 
     addWorkModal(work): void {
+        console.log(work);
         this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)

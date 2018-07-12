@@ -443,8 +443,11 @@ export class WorksService {
 
     removeBadExternalIdentifiers(dw): void {
         for(var idx in dw.workExternalIdentifiers) {
-            if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
-                && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+            if(dw.workExternalIdentifiers[idx].url == null) {
+                dw.workExternalIdentifiers[idx].url = "";
+            }
+            if(dw.workExternalIdentifiers[idx].externalIdentifierType == null
+                && dw.workExternalIdentifiers[idx].externalIdentifierId == null) {
                 dw.workExternalIdentifiers.splice(idx,1);
             }
         }

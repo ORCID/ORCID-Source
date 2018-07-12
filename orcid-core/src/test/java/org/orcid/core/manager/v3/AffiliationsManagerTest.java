@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -29,6 +30,7 @@ import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc1.record.Distinction;
 import org.orcid.jaxb.model.v3.rc1.record.Education;
 import org.orcid.jaxb.model.v3.rc1.record.Employment;
@@ -605,6 +607,252 @@ public class AffiliationsManagerTest extends BaseTest {
         
         assertEquals(5, group1.getActivities().size());
         assertEquals(5, group2.getActivities().size());
+    }
+    
+    @Test
+    public void testGetGroupedAffiliations() {
+        String orcid = "0000-0000-0000-0003";
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> map = affiliationsManager.getGroupedAffiliations(orcid, false);
+        assertNotNull(map);
+        
+        // Check distinctions
+        assertTrue(map.containsKey(AffiliationType.DISTINCTION));
+        List<AffiliationGroup<AffiliationSummary>> groups = map.get(AffiliationType.DISTINCTION);
+        assertNotNull(groups);
+        assertEquals(map.toString(), 4, groups.size());
+        
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(30L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(27), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(28L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(29L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(31L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+            
+        // Check educations
+        assertTrue(map.containsKey(AffiliationType.EDUCATION));
+        groups = map.get(AffiliationType.EDUCATION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(25L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(20), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(21L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(22L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(26L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
+        // Check employments
+        assertTrue(map.containsKey(AffiliationType.EMPLOYMENT));
+        groups = map.get(AffiliationType.EMPLOYMENT);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(23L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(17), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(18L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(19L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(24L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
+        // Check invited positions
+        assertTrue(map.containsKey(AffiliationType.INVITED_POSITION));
+        groups = map.get(AffiliationType.INVITED_POSITION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(35L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(32), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(33L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(34L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(36L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
+        // Check memberships
+        assertTrue(map.containsKey(AffiliationType.MEMBERSHIP));
+        groups = map.get(AffiliationType.MEMBERSHIP);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(40L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(37), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(38L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(39L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(41L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;        
+        
+        // Check qualifications
+        assertTrue(map.containsKey(AffiliationType.QUALIFICATION));
+        groups = map.get(AffiliationType.QUALIFICATION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(45L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(42), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(43L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(44L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(46L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
+        // Check services
+        assertTrue(map.containsKey(AffiliationType.SERVICE));
+        groups = map.get(AffiliationType.SERVICE);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(50L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(47), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(48L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(49L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(51L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
     }
     
     private ExternalID getExternalID(String type, String value) {

@@ -235,10 +235,10 @@
                             <div class="form-group workExtIdType">
                                 <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
                                 <div class="relative">
-                                    <input id="workIdType{{i}}" name="workIdType{{i}}" type="text" class="form-control" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" [(ngModel)]="editWork.workExternalIdentifiers[i].workExternalIdentifierType.value" [ngbTypeahead]="search" [inputFormatter]="formatExtIdTypeInput" [resultFormatter]="formatExtIdTypeResult" (selectItem)="changeExtIdType(i, $event)" [editable]=false [showHint]=true [focusFirst]=false /> 
+                                    <input id="workIdType{{i}}" name="workIdType{{i}}" type="text" class="form-control" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" [(ngModel)]="editWork.workExternalIdentifiers[i].externalIdentifierType.value" [ngbTypeahead]="search" [inputFormatter]="formatExtIdTypeInput" [resultFormatter]="formatExtIdTypeResult" (selectItem)="changeExtIdType(i, $event)" [editable]=false [showHint]=true [focusFirst]=false /> 
 
-                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.workExternalIdentifierType?.errors?.length > 0">
-                                        <div *ngFor='let error of editWork.workExternalIdentifiers[i].workExternalIdentifierType.errors' [innerHtml]="error"></div>
+                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.externalIdentifierType?.errors?.length > 0">
+                                        <div *ngFor='let error of editWork.workExternalIdentifiers[i].externalIdentifierType.errors' [innerHtml]="error"></div>
                                     </span>
                                 </div>
                             </div>
@@ -246,12 +246,12 @@
                             <div class="form-group">
                                 <label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
                                 <div class="relative">
-                                    <input id="workIdValue{{i}}" name="workIdValue{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].workExternalIdentifierId.value" (change)="fillUrl(i)" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"[ngModelOptions]="{ updateOn: 'blur' }" />
+                                    <input id="workIdValue{{i}}" name="workIdValue{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].externalIdentifierId.value" (change)="fillUrl(i)" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"[ngModelOptions]="{ updateOn: 'blur' }" />
                                     <span *ngIf="editWork.workExternalIdentifiers[i].resolvingId">
                                         <i class="glyphicon glyphicon-refresh spin green"></i>
                                     </span>
-                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.workExternalIdentifierId?.errors?.length > 0">
-                                        <div *ngFor='let error of editWork.workExternalIdentifiers[i].workExternalIdentifierId.errors' [innerHtml]="error"></div>
+                                    <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.externalIdentifierId?.errors?.length > 0">
+                                        <div *ngFor='let error of editWork.workExternalIdentifiers[i].externalIdentifierId.errors' [innerHtml]="error"></div>
                                     </span>
                                 </div>                      
                             </div>      

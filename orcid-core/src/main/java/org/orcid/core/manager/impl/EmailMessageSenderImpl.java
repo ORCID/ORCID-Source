@@ -41,6 +41,7 @@ import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
 import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.DigestEmail;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -283,7 +284,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     }
     
     @Override
-    public void sendTips(Integer customBatchSize) {
+    public void sendTips(Integer customBatchSize, String fromAddress) {
         LOGGER.info("About to send Tips messages");
         
         List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
@@ -314,6 +315,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     }
     
     private void processServiceAnnouncementOrNotification(NotificationEntity n) {
+        processServiceAnnouncementOrNotification(n, null);
+    }
+    
+    private void processServiceAnnouncementOrNotification(NotificationEntity n, String fromAddress) {
         String orcid = n.getProfile().getId();
         EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
         if (primaryEmail == null) {
@@ -323,17 +328,21 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
         try {
             boolean successfullySent = false;
+            String fromAddressParam = DIGEST_FROM_ADDRESS;
+            if(!PojoUtil.isEmpty(fromAddress)) {
+                fromAddressParam = fromAddress;
+            }
             if (n instanceof NotificationServiceAnnouncementEntity) {
                 NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                successfullySent = mailGunManager.sendEmail(fromAddressParam, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
                         nc.getBodyHtml());            
             } else if (n instanceof NotificationTipEntity) {
                 NotificationTipEntity nc = (NotificationTipEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                successfullySent = mailGunManager.sendEmail(fromAddressParam, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
                         nc.getBodyHtml());            
             }
             

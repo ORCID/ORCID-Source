@@ -382,13 +382,15 @@
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
-    <affiliation-delete-ng2></affiliation-delete-ng2>
-</modalngcomponent><!-- Ng2 component -->
+<@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
+  <modalngcomponent elementHeight="147" elementId="modalAffiliationDelete" elementWidth="364">
+      <affiliation-delete-ng2></affiliation-delete-ng2>
+  </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
-    <affiliation-form-ng2></affiliation-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
+  <modalngcomponent elementHeight="495" elementId="modalAffiliationForm" elementWidth="800">
+      <affiliation-form-ng2></affiliation-form-ng2>
+  </modalngcomponent><!-- Ng2 component -->
+</@orcid.checkFeatureStatus> 
 
 <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">

@@ -11,6 +11,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 
 public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityCacheManager {
 
@@ -37,7 +38,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
             if (needsFresh(dbDate, clientDetails)) {
                 clientDetails = clientDetailsManager.findByClientId(clientId);
                 if (clientDetails == null)
-                    throw new IllegalArgumentException("Invalid client id " + clientId);
+                    throw new InvalidClientException("Client not found: " + clientId);
                 clientDetailsCache.put(key, clientDetails);
             }
         }

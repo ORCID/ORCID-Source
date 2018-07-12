@@ -15,16 +15,16 @@ angular.module('orcidApp').filter('affiliationExternalIdentifierHtml', ['$filter
             isPartOf = true;     
         }
 
-        if(externalIdentifier.value != null){
-            value = externalIdentifier.value.value;
+        if(externalIdentifier.externalIdentifierId != null){
+            value = externalIdentifier.externalIdentifierId.value;
         }
         
         if(externalIdentifier.url != null) {
             link = externalIdentifier.url.value;
         }
 
-        if (externalIdentifier.type != null) {
-            type = externalIdentifier.type.value;        
+        if (externalIdentifier.externalIdentifierType != null) {
+            type = externalIdentifier.externalIdentifierType.value;        
         }
 
         if (type != null && typeof type != 'undefined') {

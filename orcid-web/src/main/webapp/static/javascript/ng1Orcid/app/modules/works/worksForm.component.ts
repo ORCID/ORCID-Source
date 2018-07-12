@@ -82,7 +82,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     changeExtIdType(i, event): void {
         event.preventDefault();
-        this.editWork.workExternalIdentifiers[i].workExternalIdentifierType.value = event.item.name;
+        this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = event.item.name;
         if (this.exIdResolverFeatureEnabled == true){
             if(this.editWork.workExternalIdentifiers[i].url == null) {
                 this.editWork.workExternalIdentifiers[i].url = {value:""};
@@ -96,7 +96,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     fillUrl(i): void {
         //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
         if (this.exIdResolverFeatureEnabled == true){
-            if (this.editWork.workExternalIdentifiers[i] && this.editWork.workExternalIdentifiers[i].workExternalIdentifierId.value && this.editWork.workExternalIdentifiers[i].workExternalIdentifierType.value){
+            if (this.editWork.workExternalIdentifiers[i] && this.editWork.workExternalIdentifiers[i].externalIdentifierId.value && this.editWork.workExternalIdentifiers[i].externalIdentifierType.value){
                 this.editWork.workExternalIdentifiers[i].resolvingId = true;
                 this.worksService.resolveExtId(this.editWork.workExternalIdentifiers[i])
                 .pipe(    
@@ -104,7 +104,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 )
                 .subscribe(
                     data => {
-                        this.editWork.workExternalIdentifiers[i].workExternalIdentifierId.errors = [];
+                        this.editWork.workExternalIdentifiers[i].externalIdentifierId.errors = [];
                         if (data.generatedUrl){
                             if(this.editWork.workExternalIdentifiers[i].url == null) {
                                 this.editWork.workExternalIdentifiers[i].url = {value:data.generatedUrl};
@@ -130,7 +130,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         } else{
             var url;
             if(this.editWork.workExternalIdentifiers[i] != null) {
-                url = workIdLinkJs.getLink(this.editWork.workExternalIdentifiers[i].workExternalIdentifierId.value, this.editWork.workExternalIdentifiers[i].workExternalIdentifierType.value);
+                url = workIdLinkJs.getLink(this.editWork.workExternalIdentifiers[i].externalIdentifierId.value, this.editWork.workExternalIdentifiers[i].externalIdentifierType.value);
                 if(this.editWork.workExternalIdentifiers[i].url == null) {
                     this.editWork.workExternalIdentifiers[i].url = {value:url};
                 }else{
@@ -222,11 +222,11 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
             workExternalIdentifiers: [
                 {
                     errors: {},
-                    workExternalIdentifierId: {
+                    externalIdentifierId: {
                         errors: {},
                         value: null
                     },
-                    workExternalIdentifierType: {
+                    externalIdentifierType: {
                         errors: {},
                         value: null
                     },
@@ -246,7 +246,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     addExternalIdentifier(): void {
-        this.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
+        this.editWork.workExternalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
 
     applyLabelWorkType(): void {
@@ -424,9 +424,8 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             console.log('Error getting blankwork', error);
                         } 
                     );
-
-                    
                 }
+                console.log(this.editWork.workExternalIdentifiers);
             }
         );
         

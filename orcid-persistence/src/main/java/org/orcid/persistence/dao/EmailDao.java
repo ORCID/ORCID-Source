@@ -21,9 +21,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
 
     void updatePrimary(String orcid, String primaryEmail);
 
-    void addEmail(String orcid, String email, String visibility, String sourceId, String clientSourceId);
-    
-    void addEmail(String orcid, String email, String visibility, String sourceId, String clientSourceId, boolean isVerified, boolean isCurrent);
+    void addEmail(String orcid, String email, String emailHash, String visibility, String sourceId, String clientSourceId);      
 
     void removeEmail(String orcid, String email);
     
@@ -71,5 +69,9 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
 
     List<EmailEntity> findPublicEmails(String orcid, long lastModified);
     
-    boolean updateVisibility(String orcid, String email, String visibility);        
+    boolean updateVisibility(String orcid, String email, String visibility);   
+    
+    List<String> getEmailsToHash(Integer batchSize); 
+    
+    boolean populateEmailHash(String email, String emailHash);   
 }

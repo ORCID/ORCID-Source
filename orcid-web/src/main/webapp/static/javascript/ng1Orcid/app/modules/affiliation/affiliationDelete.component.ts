@@ -57,8 +57,9 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
 
     }
 
-    closeModal(): void {
+    cancelEdit(): void {
         this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationDelete'});
+        this.affiliationService.notifyOther({action:'cancel', successful:true});
     };
 
 
@@ -70,9 +71,9 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
             .subscribe(data => {       
                 
                 if(data.errors.length == 0) {
-                    this.affiliationService.notifyOther({action: 'delete', deleteAffiliationObj: this.deleteAffiliationObj});                  
+                    this.affiliationService.notifyOther({action: 'delete', successful:true});                  
                 }
-                this.closeModal();                               
+                this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationDelete'});
             });         
         
     };
@@ -84,7 +85,6 @@ export class AffiliationDeleteComponent implements AfterViewInit, OnDestroy, OnI
             (res) => {
                 if( res.affiliation != undefined ) {
                     this.deleteAffiliationObj = res.affiliation;
-                    console.log('res.affiliation',this.deleteAffiliationObj);
                 }
             }
         );

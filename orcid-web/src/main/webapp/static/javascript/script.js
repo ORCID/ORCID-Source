@@ -1005,11 +1005,11 @@ function populateWorkAjaxForm(bibJson, work) {
         
         if (lowerKeyTags.hasOwnProperty('pmid'))
             workExternalIdentifierId(work, 'pmid', lowerKeyTags['pmid']);
-
+        
         if (lowerKeyTags.hasOwnProperty('eprint')
-                && lowerKeyTags.hasOwnProperty('eprint'))
+                && lowerKeyTags.hasOwnProperty('eprinttype') && lowerKeyTags['eprinttype']=='arxiv')
             workExternalIdentifierId(work, 'arxiv', tags['eprint']);
-
+        
         if (lowerKeyTags.hasOwnProperty('isbn'))
             workExternalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
 
