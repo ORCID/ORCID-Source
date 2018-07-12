@@ -65,7 +65,7 @@
                          
                         <!-- Details row -->
                         <div class="row" ng-if="showPeerReviewDetails[peerReview.putCode.value] == true && group.activePutCode == peerReview.putCode.value;">
-                            <div class="col-md-12 info-detail" ng-if="peerReview.externalIdentifiers[0].workExternalIdentifierId.value != null" ng-cloak>
+                            <div class="col-md-12 info-detail" ng-if="peerReview.externalIdentifiers[0].externalIdentifierId.value != null" ng-cloak>
                                 <span class="workspace-title"><@orcid.msg 'peer_review.review_identifiers' />&nbsp;</span> 
                                 <span ng-repeat='ie in peerReview.externalIdentifiers'><span
                                     ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.externalIdentifiers.length:showDetails[group.groupId]:false'></span>                            
@@ -83,7 +83,7 @@
                                 <span ng-if="peerReview.subjectContainerName != null">
                                     {{peerReview.subjectContainerName.value}}.
                                 </span>
-                                <span ng-if="peerReview.subjectExternalIdentifier.workExternalIdentifierId.value != null" ng-cloak>
+                                <span ng-if="peerReview.subjectExternalIdentifier.externalIdentifierId.value != null" ng-cloak>
                                     <span ng-repeat='ie in peerReview'><span
                                         ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.subjectExternalIdentifier.length:showDetails[group.groupId]:true'></span>                           
                                     </span>                             

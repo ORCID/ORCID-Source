@@ -14,11 +14,11 @@ angular.module('orcidApp').filter('peerReviewExternalIdentifierHtml', function($
         if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
             isPartOf = true;
         
-        if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
-        id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
+        if (peerReviewExternalIdentifier.externalIdentifierId == null) return output;
+        id = peerReviewExternalIdentifier.externalIdentifierId.value;        
         
-        if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
-            type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
+        if (peerReviewExternalIdentifier.externalIdentifierType != null)
+            type = peerReviewExternalIdentifier.externalIdentifierType.value;
             if (type != null) {
                 if(isPartOf)
                     output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";
