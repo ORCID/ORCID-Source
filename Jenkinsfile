@@ -55,7 +55,7 @@ node {
             parallel(
                 web:        {do_maven("install -f orcid-web/pom.xml -Dmaven.test.skip=true")},
                 apiweb:     {do_maven("install -f orcid-api-web/pom.xml -Dmaven.test.skip=true")},
-                pubweb:     {do_maven("install -f orcid-api-web/pom.xml -Dmaven.test.skip=true")},
+                pubweb:     {do_maven("install -f orcid-pub-web/pom.xml -Dmaven.test.skip=true")},
                 scheduler:  {do_maven("install -f orcid-scheduler-web/pom.xml -Dmaven.test.skip=true")},
                 intapi:     {do_maven("install -f orcid-internal-api/pom.xml -Dmaven.test.skip=true")},
                 listener:   {do_maven("install -f orcid-message-listener/pom.xml -Dmaven.test.skip=true")},
@@ -81,7 +81,7 @@ node {
                 solrweb:     {do_maven("test -f orcid-solr-web/pom.xml")},
                 web:         {do_maven("test -f orcid-web/pom.xml")},
                 apiweb:      {do_maven("test -f orcid-api-web/pom.xml")},
-                pubweb:      {do_maven("test -f orcid-api-web/pom.xml")},
+                pubweb:      {do_maven("test -f orcid-pub-web/pom.xml")},
                 scheduler:   {do_maven("test -f orcid-scheduler-web/pom.xml")},
                 intapi:      {do_maven("test -f orcid-internal-api/pom.xml")},
                 listener:    {do_maven("test -f orcid-message-listener/pom.xml")},
