@@ -14,44 +14,44 @@ node {
         pipelineTriggers([])
     ])
 
+    def EHCACHE_LOCATION="/temp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
+
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: env.BRANCH_NAME
 
     stage('MODEL') {
         try {
             do_maven("clean")
             parallel(
-                model:       {do_maven("install test  -f orcid-model/pom.xml")},
-                test:        {do_maven("install test  -f orcid-test/pom.xml")},
-                utils:       {do_maven("install test  -f orcid-utils/pom.xml")},
+                model:       {do_maven("clean install test  -f orcid-model/pom.xml")},
+                test:        {do_maven("clean install test  -f orcid-test/pom.xml")},
+                utils:       {do_maven("clean install test  -f orcid-utils/pom.xml")},
                 solrweb:     {do_maven("clean install test  -f orcid-solr-web/pom.xml")}
             )
         } catch(Exception err) {
             orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            junit '**/target/surefire-reports/*.xml'
-            deleteDir()
+            report_and_clean()
             throw err
         }
     }
     stage('PERSISTENCE') {
         try {
             parallel(
-                persistence: {do_maven("install test  -f orcid-persistence/pom.xml")},
+                persistence: {do_maven("clean install test  -f orcid-persistence/pom.xml")},
                 mq:          {do_maven("clean install test  -f orcid-activemq/pom.xml")}
             )
         } catch(Exception err) {
             orcid_notify("Creating Persistence Package ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            junit '**/target/surefire-reports/*.xml'
-            deleteDir()
+            report_and_clean()
             throw err
         }
     }
     stage('CORE') {
         try {
-            do_maven("clean install test  -f orcid-core/pom.xml")
+            sh "mkdir $EHCACHE_LOCATION"
+            do_maven("clean install test -f orcid-core/pom.xml -Djava.io.tmpdir=$EHCACHE_LOCATION")
         } catch(Exception err) {
             orcid_notify("Building Core ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            junit '**/target/surefire-reports/*.xml'
-            deleteDir()
+            report_and_clean()
             throw err
         }
     }
@@ -71,12 +71,16 @@ node {
             //archive '**/target/**/*.war'
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            junit '**/target/surefire-reports/*.xml'
-            deleteDir()
+            report_and_clean()
             throw err
         }
         orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
     }
+}
+
+def report_and_clean(){
+    junit '**/target/surefire-reports/*.xml'
+    deleteDir()
 }
 
 def orcid_notify(message, level){
