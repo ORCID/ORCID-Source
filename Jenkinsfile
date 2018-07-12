@@ -18,12 +18,12 @@ node {
 
     stage('Fetch Code and Build') {
         try {
-            do_maven("clean -Dmaven.test.skip=true")
+            do_maven("clean")
             parallel(
-                model:       {do_maven("install -f orcid-model/pom.xml -Dmaven.test.skip=true")},
-                utils:       {do_maven("install -f orcid-utils/pom.xml -Dmaven.test.skip=true")},
-                test:        {do_maven("install -f orcid-test/pom.xml -Dmaven.test.skip=true")},
-                solrweb:     {do_maven("install -f orcid-solr-web/pom.xml -Dmaven.test.skip=true")}
+                model:       {do_maven("clean install test  -f orcid-model/pom.xml")},
+                utils:       {do_maven("clean install test  -f orcid-utils/pom.xml")},
+                test:        {do_maven("clean install test  -f orcid-test/pom.xml")},
+                solrweb:     {do_maven("clean install test  -f orcid-solr-web/pom.xml")}
             )
         } catch(Exception err) {
             orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
@@ -34,8 +34,8 @@ node {
     stage('Creating Persistence Package') {
         try {
             parallel(
-                persistence: {do_maven("install -f orcid-persistence/pom.xml -Dmaven.test.skip=true")},
-                mq:          {do_maven("install -f orcid-activemq/pom.xml -Dmaven.test.skip=true")}
+                persistence: {do_maven("clean install test  -f orcid-persistence/pom.xml")},
+                mq:          {do_maven("clean install test  -f orcid-activemq/pom.xml")}
             )
         } catch(Exception err) {
             orcid_notify("Creating Persistence Package ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
@@ -45,7 +45,7 @@ node {
     }
     stage('Building Core') {
         try {
-            do_maven("install -f orcid-core/pom.xml -Dmaven.test.skip=true")
+            do_maven("clean install test  -f orcid-core/pom.xml")
         } catch(Exception err) {
             orcid_notify("Building Core ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             deleteDir()
@@ -55,14 +55,14 @@ node {
     stage('Packaging ORCID web') {
         try {
             parallel(
-                web:        {do_maven("install -f orcid-web/pom.xml -Dmaven.test.skip=true")},
-                apiweb:     {do_maven("install -f orcid-api-web/pom.xml -Dmaven.test.skip=true")},
-                pubweb:     {do_maven("install -f orcid-pub-web/pom.xml -Dmaven.test.skip=true")},
-                scheduler:  {do_maven("install -f orcid-scheduler-web/pom.xml -Dmaven.test.skip=true")},
-                intapi:     {do_maven("install -f orcid-internal-api/pom.xml -Dmaven.test.skip=true")},
-                listener:   {do_maven("install -f orcid-message-listener/pom.xml -Dmaven.test.skip=true")},
-                apicommon:  {do_maven("install -f orcid-api-common/pom.xml -Dmaven.test.skip=true")},
-                indeptests: {do_maven("install -f orcid-integration-test/pom.xml -Dmaven.test.skip=true")}
+                web:        {do_maven("clean install test  -f orcid-web/pom.xml")},
+                apiweb:     {do_maven("clean install test  -f orcid-api-web/pom.xml")},
+                pubweb:     {do_maven("clean install test  -f orcid-pub-web/pom.xml")},
+                scheduler:  {do_maven("clean install test  -f orcid-scheduler-web/pom.xml")},
+                intapi:     {do_maven("clean install test  -f orcid-internal-api/pom.xml")},
+                listener:   {do_maven("clean install test  -f orcid-message-listener/pom.xml")},
+                apicommon:  {do_maven("clean install test  -f orcid-api-common/pom.xml")},
+                indeptests: {do_maven("clean install test  -f orcid-integration-test/pom.xml")}
             )
             // Push to Artifact storage
             //archive '**/target/**/*.war'
@@ -72,30 +72,13 @@ node {
             throw err
         }
     }
-    stage('Run Unit Tests') {
+    stage('Collect Tests Reports') {
         try {
-            parallel(
-                model:       {do_maven("test -f orcid-model/pom.xml")},
-                utils:       {do_maven("test -f orcid-utils/pom.xml")},
-                test:        {do_maven("test -f orcid-test/pom.xml")},
-                persistence: {do_maven("test -f orcid-persistence/pom.xml")},
-                core:        {do_maven("test -f orcid-core/pom.xml")},
-                mq:          {do_maven("test -f orcid-activemq/pom.xml")},
-                solrweb:     {do_maven("test -f orcid-solr-web/pom.xml")},
-                web:         {do_maven("test -f orcid-web/pom.xml")},
-                apiweb:      {do_maven("test -f orcid-api-web/pom.xml")},
-                pubweb:      {do_maven("test -f orcid-pub-web/pom.xml")},
-                scheduler:   {do_maven("test -f orcid-scheduler-web/pom.xml")},
-                intapi:      {do_maven("test -f orcid-internal-api/pom.xml")},
-                listener:    {do_maven("test -f orcid-message-listener/pom.xml")},
-                apicommon:   {do_maven("test -f orcid-api-common/pom.xml")},
-                indeptests:  {do_maven("test -f orcid-integration-test/pom.xml")}
-            )
+            junit '**/target/surefire-reports/*.xml'
         } catch(Exception err) {
-            orcid_notify("Run Unit Tests ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Collect Tests Reports ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         } finally {
-            junit '**/target/surefire-reports/*.xml'
             deleteDir()
         }
         orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
