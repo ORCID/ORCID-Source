@@ -1009,21 +1009,22 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         securityDetails.setEncryptedVerificationCode(profileEntity.getEncryptedVerificationCode() != null ? new EncryptedVerificationCode(profileEntity
                 .getEncryptedVerificationCode()) : null);
 
-        Map<String, String> emailFrequencies = emailFrequencyManager.getEmailFrequency(profileEntity.getId());
-        
-        SendEmailFrequency admin = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS));
-        SendEmailFrequency change = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.CHANGE_NOTIFICATIONS));
-        SendEmailFrequency member = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS));
-        Boolean tips = Boolean.valueOf(emailFrequencies.get(EmailFrequencyManager.QUARTERLY_TIPS));
-        
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);
-        preferences.setSendEmailFrequencyDays(String.valueOf(0));
-        preferences.setSendChangeNotifications(new SendChangeNotifications(SendEmailFrequency.NEVER.equals(change)));
-        preferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(SendEmailFrequency.NEVER.equals(admin)));
-        preferences.setSendOrcidNews(new SendOrcidNews(tips));
-        preferences.setSendMemberUpdateRequests(SendEmailFrequency.NEVER.equals(member));
-        preferences.setNotificationsEnabled(true);
+        
+        Map<String, String> emailFrequencies = emailFrequencyManager.getEmailFrequency(profileEntity.getId());
+        if (emailFrequencies != null) {
+            SendEmailFrequency admin = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS));
+            SendEmailFrequency change = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.CHANGE_NOTIFICATIONS));
+            SendEmailFrequency member = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS));
+            Boolean tips = Boolean.valueOf(emailFrequencies.get(EmailFrequencyManager.QUARTERLY_TIPS));
+            preferences.setSendEmailFrequencyDays(String.valueOf(0));
+            preferences.setSendChangeNotifications(new SendChangeNotifications(SendEmailFrequency.NEVER.equals(change)));
+            preferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(SendEmailFrequency.NEVER.equals(admin)));
+            preferences.setSendOrcidNews(new SendOrcidNews(tips));
+            preferences.setSendMemberUpdateRequests(SendEmailFrequency.NEVER.equals(member));
+            preferences.setNotificationsEnabled(true);
+        }
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.valueOf(profileEntity.getActivitiesVisibilityDefault())));

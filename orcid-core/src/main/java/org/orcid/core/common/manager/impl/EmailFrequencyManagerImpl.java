@@ -45,8 +45,8 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
             result.put(MEMBER_UPDATE_REQUESTS, String.valueOf(entity.getSendMemberUpdateRequests()));
             result.put(QUARTERLY_TIPS, String.valueOf(entity.getSendQuarterlyTips()));
         } catch(Exception e) {
-            LOG.error("Couldn't find email_frequency for {}", orcid);
-            throw e;
+            LOG.debug("Couldn't find email_frequency for {}", orcid);
+            return null;
         }
         return result;
     }
