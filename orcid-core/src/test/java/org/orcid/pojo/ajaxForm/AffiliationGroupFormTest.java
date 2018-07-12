@@ -53,8 +53,20 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
         groupForm.setAffiliations(Arrays.asList(form1, form2));
         
         List<ActivityExternalIdentifier> extIds = new ArrayList<ActivityExternalIdentifier>();
-        extIds.addAll(form1.getAffiliationExternalIdentifiers());
-        extIds.addAll(form2.getAffiliationExternalIdentifiers());
+        
+        ActivityExternalIdentifier e1 = new ActivityExternalIdentifier();
+        e1.setExternalIdentifierId(Text.valueOf("00001"));
+        e1.setExternalIdentifierType(Text.valueOf("t1"));
+        e1.setRelationship(Text.valueOf("self"));
+        e1.setUrl(Text.valueOf("https://test.orcid.org"));
+        extIds.add(e1);
+        
+        ActivityExternalIdentifier e2 = new ActivityExternalIdentifier();
+        e2.setExternalIdentifierId(Text.valueOf("00002"));
+        e2.setExternalIdentifierType(Text.valueOf("t2"));
+        e2.setRelationship(Text.valueOf("self"));
+        e2.setUrl(Text.valueOf("https://test.orcid.org"));
+        extIds.add(e2);
         
         groupForm.setExternalIdentifiers(extIds);
         
@@ -108,7 +120,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
     
     private AffiliationForm getForm1() {
         AffiliationForm affForm = getAffiliationForm();
-        affForm.setUrl(null);
+        affForm.setUrl(new Text());
         affForm.setPutCode(Text.valueOf(2L));
         
         Visibility v = new Visibility();
@@ -127,7 +139,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
     
     private AffiliationForm getForm2() {
         AffiliationForm affForm = getAffiliationForm();
-        affForm.setUrl(null);
+        affForm.setUrl(new Text());
         affForm.setPutCode(Text.valueOf(1L));
         
         Visibility v = new Visibility();
