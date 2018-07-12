@@ -38,6 +38,12 @@ export class FundingService {
         this.fundingToEdit = {};
     }
 
+    getFunding(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/fundings/funding.json'
+        )
+    }
+
     getFundingsById( idList ): Observable<any> {
         this.loading = true;
         this.fundingToAddIds = null;
@@ -88,6 +94,7 @@ export class FundingService {
 
     setFundingToEdit(obj): void {
         this.fundingToEdit = obj;
+        console.log('setFundingToEdit service', obj);
     }
 
     updateProfileFunding(obj) {

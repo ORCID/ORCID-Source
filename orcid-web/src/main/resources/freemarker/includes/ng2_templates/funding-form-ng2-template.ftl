@@ -5,10 +5,10 @@
         <div class="row">
             <div class="col-md-9 col-sm-8 col-xs-9">
                 <h1 class="lightbox-title pull-left">
-                    <div *ngIf="editFunding.putCode.value == null">
+                    <div *ngIf="editFunding?.putCode?.value == null">
                         <@orcid.msg 'manual_funding_eactivateAccountMessage_contents.add_grant'/>
                     </div>
-                    <div *ngIf="editFunding.putCode.value != null">
+                    <div *ngIf="editFunding?.putCode?.value != null">
                         <@orcid.msg 'manual_funding_eactivateAccountMessage_contents.edit_grant'/>
                     </div>
                 </h1>
@@ -27,7 +27,7 @@
                         <option value="${key}">${fundingTypes[key]}</option>
                         </#list>
                     </select>
-                    <span class="orcid-error" *ngIf="editFunding.fundingType.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.fundingType?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.fundingType.errors'>{{error}}</div>
                     </span>
                 </div>
@@ -35,7 +35,7 @@
                 <div class="eactivateAccountMessage-group">
                     <label><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.organization_defined_type.label'/></label>                    
                     <input id="organizationDefinedType" class="eactivateAccountMessage-control" name="organizationDefinedTitle" type="text" [(ngModel)]="editFunding.organizationDefinedFundingSubType.subtype.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.organization_defined_type.placeholder'/>" (onChange)="serverValidate('fundings/funding/organizationDefinedTypeValidate.json'); setSubTypeAsNotIndexed()" />
-                    <span class="orcid-error" *ngIf="editFunding.organizationDefinedFundingSubType.subtype.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.organizationDefinedFundingSubType?.subtype?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.organizationDefinedFundingSubType.subtype.errors'>{{error}}</div>
                     </span>                    
                 </div>
@@ -44,7 +44,7 @@
                     <label><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.label_title'/></label>
                     <span class="required" [ngClass]="isValidClass(editFunding.fundingTitle.title)">*</span>                    
                     <input id="fundingTitle" class="eactivateAccountMessage-control" name="fundingTitle" type="text" [(ngModel)]="editFunding.fundingTitle.title.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.add_title'/>" (onChange)="serverValidate('fundings/funding/titleValidate.json')" />
-                    <span class="orcid-error" *ngIf="editFunding.fundingTitle.title.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.fundingTitle?.title?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.fundingTitle.title.errors'>{{error}}</div>
                     </span>
                     <div class="add-item-link">
@@ -55,7 +55,7 @@
 
                 <!-- Translated title -->
                 <div id="translatedTitle">
-                    <span class="orcid-error" *ngIf="editFunding.fundingTitle.translatedTitle.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.fundingTitle?.translatedTitle?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.fundingTitle.translatedTitle.errors' [innerHtml]="error"></div>
                     </span>
                     <div class="eactivateAccountMessage-group">
@@ -84,7 +84,7 @@
                     </span>
                     <div class="relative">
                         <textarea id="fundingDescription" class="eactivateAccountMessage-control" name="fundingDescription" type="text" [(ngModel)]="editFunding.description.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.add_description'/>" (onChange)="serverValidate('fundings/funding/descriptionValidate.json')"></textarea>
-                        <span class="orcid-error" *ngIf="editFunding.description.errors.length > 0">
+                        <span class="orcid-error" *ngIf="editFunding?.description?.errors?.length > 0">
                             <div *ngFor='let error of editFunding.description.errors' [innerHtml]="error"></div>
                         </span>
                     </div>
@@ -105,10 +105,10 @@
                         <input id="fundingAmount" name="fundingAmount" type="text" [(ngModel)]="editFunding.amount.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.add_amount'/>" (onChange)="serverValidate('fundings/funding/amountValidate.json')" [ngClass]="eactivateAccountMessage-control" />
                     </div>
 
-                    <span class="orcid-error" *ngIf="editFunding.currencyCode.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.currencyCode?.errors?.length > 0">
                          <div *ngFor='let error of editFunding.currencyCode.errors' [innerHtml]="error"></div>
                     </span>
-                    <span class="orcid-error" *ngIf="editFunding.amount.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.amount?.errors?.length > 0">
                          <div *ngFor='let error of editFunding.amount.errors' [innerHtml]="error"></div>
                     </span>                     
                 </div>
@@ -127,7 +127,7 @@
                             </#list>
                         </select>
                     </div>                    
-                    <span class="orcid-error" *ngIf="editFunding.startDate.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.startDate?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.startDate.errors' [innerHtml]="error"></div>
                     </span>
                 </div>
@@ -146,7 +146,7 @@
                             </#list>
                         </select>
                     </div>                    
-                    <span class="orcid-error" *ngIf="editFunding.endDate.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.endDate?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.endDate.errors' [innerHtml]="error"></div>
                     </span>
                 </div>
@@ -159,7 +159,7 @@
                         <option value="${key}">${fundingRoles[key]}</option>
                         </#list>
                     </select>
-                    <span class="orcid-error" *ngIf="contributor.contributorRole.errors.length > 0">
+                    <span class="orcid-error" *ngIf="contributor?.contributorRole?.errors?.length > 0">
                         <div *ngFor='let error of contributor.contributorRole.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
@@ -170,7 +170,7 @@
                 <div class="control-group no-margin-bottom">
                     <strong><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.title_funding_agency'/></strong>
                 </div>
-                <div class="control-group" *ngIf="editFunding.disambiguatedFundingSourceId">
+                <div class="control-group" *ngIf="editFunding?.disambiguatedFundingSourceId">
                     <label><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.label_funding_agency'/></label>
                     <span id="remove-disambiguated" class="pull-right">
                         <a (click)="removeDisambiguatedFunding()">
@@ -190,7 +190,7 @@
                     </span>
                     <span class="required" [ngClass]="isValidClass(editFunding.fundingName)">*</span>                    
                     <input id="fundingName" class="eactivateAccountMessage-control" name="fundingName" type="text" [(ngModel)]="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.add_name'/>" (onChange)="serverValidate('fundings/funding/orgNameValidate.json')" />
-                    <span class="orcid-error" *ngIf="editFunding.fundingName.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.fundingName?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.fundingName.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
@@ -200,7 +200,7 @@
                     <label *ngIf="disambiguatedFunding"><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.label_display_city'/></label>
                     <span class="required" [ngClass]="isValidClass(editFunding.city)">*</span>                    
                     <input id="city" name="city" type="text" class="eactivateAccountMessage-control"  [(ngModel)]="editFunding.city.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.add_city'/>" (onChange)="serverValidate('fundings/funding/cityValidate.json')" />                        
-                    <span class="orcid-error" *ngIf="editFunding.city.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.city?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.city.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
@@ -209,7 +209,7 @@
                     <label *ngIf="!disambiguatedFunding"><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.label_region'/></label>
                     <label *ngIf="disambiguatedFunding"><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.label_display_region'/></label>
                     <input name="region" type="text" class="eactivateAccountMessage-control"  [(ngModel)]="editFunding.region.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.add_region'/>" (onChange)="serverValidate('fundings/funding/regionValidate.json')" />
-                    <span class="orcid-error" *ngIf="editFunding.region.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.region?.errors?.length > 0">
                          <div *ngFor='let error of editFunding.region.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
@@ -224,7 +224,7 @@
                             <option value="${key}">${isoCountries[key]}</option>
                         </#list>
                     </select>                        
-                    <span class="orcid-error" *ngIf="editFunding.country.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.country?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.country.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
@@ -237,7 +237,7 @@
                     <div class="eactivateAccountMessage-group">
                         <label id="funding-ext-ids-value-label"><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.external_identifier.label_value'/></label>                        
                         <input name="currentFundingExternalIdentifierValue" id="funding-ext-ids-value-input" type="text" class="eactivateAccountMessage-control" [(ngModel)]="externalIdentifier.value.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.external_identifier.value'/>" />
-                        <span class="orcid-error" *ngIf="externalIdentifier.value.errors.length > 0">
+                        <span class="orcid-error" *ngIf="externalIdentifier?.value?.errors?.length > 0">
                             <div *ngFor='let error of externalIdentifier.value.errors' [innerHtml]="error"></div>
                         </span>
                     </div>
@@ -245,7 +245,7 @@
                     <div class="eactivateAccountMessage-group">
                         <label id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.external_identifier.label_url'/></label>                            
                         <input name="currentFundingExternalIdentifierUrl" id="funding-ext-ids-url-input" type="text" class="eactivateAccountMessage-control action-icon-inside" [(ngModel)]="externalIdentifier.url.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.external_identifier.url'/>" />                        
-                        <span class="orcid-error" *ngIf="externalIdentifier.url.errors.length > 0">
+                        <span class="orcid-error" *ngIf="externalIdentifier?.url?.errors?.length > 0">
                             <div *ngFor='let error of externalIdentifier.url.errors' [innerHtml]="error"></div>
                         </span>                        
                     </div>
@@ -273,7 +273,7 @@
                 <div class="eactivateAccountMessage-group">                    
                     <label><@orcid.msg 'manual_funding_eactivateAccountMessage_contents.label_url'/></label>                                        
                     <input id="fundingUrl" class="eactivateAccountMessage-control" name="fundingUrl" type="text" [(ngModel)]="editFunding.url.value" placeholder="<@orcid.msg 'manual_funding_eactivateAccountMessage_contents.add_url'/>" (onChange)="serverValidate('fundings/funding/urlValidate.json')" />
-                    <span class="orcid-error" *ngIf="editFunding.url.errors.length > 0">
+                    <span class="orcid-error" *ngIf="editFunding?.url?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.url.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
@@ -281,7 +281,7 @@
                 <div class="control-group">
                     
 
-                    <div class="control-group" *ngIf="editFunding.putCode.value != null">
+                    <div class="control-group" *ngIf="editFunding?.putCode?.value != null">
                         <ul class="inline-list margin-separator pull-left">
                             <li>
                                 <button class="btn btn-primary" (click)="putFunding()" [disabled]="addingFunding" [ngClass]="{disabled:addingFunding}">
@@ -299,7 +299,7 @@
                         </ul>
                     </div>
 
-                    <div class="control-group" *ngIf="editFunding.putCode.value == null">   
+                    <div class="control-group" *ngIf="editFunding?.putCode?.value == null">   
                         <ul class="inline-list margin-separator pull-left">
                             <li>
                                 <button id="save-funding" class="btn btn-primary" (click)="putFunding()" [disabled]="addingFunding" [ngClass]="{disabled:addingFunding}">
@@ -318,7 +318,7 @@
                     </div>
 
                     <div class="control-group errors">
-                        <span *ngIf="editFunding.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
+                        <span *ngIf="editFunding?.errors?.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
                     </div>
 
                 </div>

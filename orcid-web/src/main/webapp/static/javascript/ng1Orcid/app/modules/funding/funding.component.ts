@@ -161,17 +161,31 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editFunding.errors.length = 0;
     };
 
-    addFundingModal(): void {
+    addFundingModal(obj?): void {
         this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.fundingService.setFundingToEdit(this.defaultFunding);
-                //console.log('open add aff modal');
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: true});                  
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: true}); 
+
+                    if(obj == undefined){
+                        this.removeDisambiguatedFunding();
+                        this.fundingService.getFunding().pipe(    
+                            takeUntil(this.ngUnsubscribe)
+                        )
+                        .subscribe(
+                            data => {
+                                this.fundingService.setFundingToEdit(data);
+                                console.log('this.editFunding', this.editFunding);
+                            }
+                        );
+                    } else {
+                        this.fundingService.setFundingToEdit(obj);
+                    }
+
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
@@ -182,8 +196,13 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+
     bindTypeahead(): void {
 
+    };
+
+    bindTypeaheadForOrgs(): void {
+        (<any>$('#fundingName')).typeahead('destroy');
     };
 
     close(): void {
@@ -348,6 +367,16 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             this.moreInfo[key]=true;
         }
     };
+
+    removeDisambiguatedFunding(): void {
+        this.bindTypeaheadForOrgs();
+        if (this.disambiguatedFunding != undefined) {
+            delete this.disambiguatedFunding;
+        }
+        if (this.editFunding != undefined && this.editFunding.disambiguatedFundingSourceId != undefined) {
+            delete this.editFunding.disambiguatedFundingSourceId;
+        }
+    }
 
 
     setPrivacy(aff, priv, $event): void {

@@ -214,12 +214,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-
-
-    addFundingModal(type, affiliation): void {
-
-    };
-
     bindTypeaheadForOrgs(): void {
         var numOfResults = 100;
         (<any>$("#fundingName")).typeahead({
@@ -469,41 +463,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-    getFundingsIds(): any {
-        this.fundingService.getFundingsId()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                //console.log('getFundingsIds', data);
-                let funding = null;
-                for (let i in data) {
-                    funding = data[i];
-                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
-                };
-                
-                /*
-                if (this.fundingService.fundingToAddIds.length == 0) {
-                    $timeout(function() {
-                      this.fundingService.loading = false;
-                    });
-                } else {
-                    $timeout(function () {
-                        this.fundingService.addFundingToScope(path);
-                    },50);
-                }
-                
-                let ids = data.splice(0,20).join();
-                this.getFundingsById( ids );
-                */
-            },
-            error => {
-                //console.log('getBiographyFormError', error);
-            } 
-        );
-    };
-
     getGroup(putCode): any {
         for (var idx in this.fundingService.groups) {
             if (this.fundingService.groups[idx].hasPut(putCode)){
@@ -712,8 +671,39 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //console.log('initi funding component');
-        this.getFundingsIds();
+        //console.log('initi funding component')
+
+        this.modalService.notifyObservable$.subscribe(
+            (res) => {
+                //console.log('res.value',res, this.elementId);
+                if ( res.moduleId == 'modalFundingForm' ) {
+
+                    if ( res.action === "open") {
+                        this.editFunding = this.fundingService.getFundingToEdit();
+                        console.log('form aff', this.editFunding);
+                    }
+
+                }
+            }
+        );
+
+        
+
+        /*
+        this.fundingService.getFundingToEdit()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.editFunding = data;
+                console.log('form aff', this.editFunding);
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
+        */
     }; 
 }
 
