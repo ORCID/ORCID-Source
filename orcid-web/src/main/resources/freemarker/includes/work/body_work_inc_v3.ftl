@@ -129,7 +129,7 @@
                              <ul class="id-details clearfix">
                                  <li class="url-work clearfix">
                                     <ul class="id-details clearfix">
-                                        <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
+                                        <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "externalIdentifierType.value"]' class="url-popover">
                                             <span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
                                         </li>
                                     </ul>                                   
