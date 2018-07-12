@@ -33,7 +33,6 @@ node {
     }
     stage('Creating Persistence Package') {
         try {
-            do_maven("clean -Dmaven.test.skip=true")
             parallel(
                 persistence: {do_maven("install -f orcid-persistence/pom.xml -Dmaven.test.skip=true")},
                 mq:          {do_maven("install -f orcid-activemq/pom.xml -Dmaven.test.skip=true")}
