@@ -1,12 +1,14 @@
 package org.orcid.core.utils.v3;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ehcache.Cache;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -17,6 +19,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Funding;
 import org.orcid.jaxb.model.v3.rc1.record.FundingContributor;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
@@ -39,7 +42,11 @@ public class ContributorUtils {
 
     private ProfileEntityManager profileEntityManager;
 
-    private RecordNameDao recordNameDao;    
+    private RecordNameDao recordNameDao;  
+    
+    private Cache<String, String> contributorsNameCache;
+    
+    protected ProfileLastModifiedAspect profileLastModifiedAspect;
     
     public ContributorUtils(@Value("${org.orcid.contributor.names.batch_size:2500}") Integer batchSize) {
         if(batchSize == null) {
@@ -104,16 +111,13 @@ public class ContributorUtils {
             }
         }
     }
-
     
     private String getCachedContributorName(String orcid) {
-        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (sra != null) {
-            Object requestAttribute = sra.getAttribute(orcid + RECORD_NAME_KEY_POSTFIX, ServletRequestAttributes.SCOPE_REQUEST);
-            if (requestAttribute != null) {
-                return (String) requestAttribute;
-            }
-        }
+        String cacheKey = getCacheKey(orcid);
+        if(contributorsNameCache.containsKey(cacheKey)){
+            return contributorsNameCache.get(cacheKey);
+        }        
+        
         return null;
     }
     
@@ -146,6 +150,11 @@ public class ContributorUtils {
         }
     }
     
+    private String getCacheKey(String orcid) {
+        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
+        return orcid + "_" + lastModified.getTime();
+    }
+    
     public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
         this.profileEntityCacheManager = profileEntityCacheManager;
     }
@@ -161,4 +170,12 @@ public class ContributorUtils {
     public void setRecordNameDao(RecordNameDao recordNameDao) {
         this.recordNameDao = recordNameDao;
     }
+    
+    public void setContributorsNameCache(Cache<String, String> contributorsNameCache) {
+        this.contributorsNameCache = contributorsNameCache;
+    }
+
+    public void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect) {
+        this.profileLastModifiedAspect = profileLastModifiedAspect;
+    } 
 }

@@ -1,12 +1,14 @@
 package org.orcid.core.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ehcache.Cache;
 import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -17,21 +19,18 @@ import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.common.collect.Iterables;
 
 public class ContributorUtils {
     
-    private final Integer BATCH_SIZE;
-    
-    private static final String RECORD_NAME_KEY_POSTFIX = "_record_name";      
+    private final Integer BATCH_SIZE;           
 
     private ProfileEntityCacheManager profileEntityCacheManager;
 
@@ -39,7 +38,11 @@ public class ContributorUtils {
 
     private ProfileEntityManager profileEntityManager;
 
-    private RecordNameDao recordNameDao;    
+    private RecordNameDao recordNameDao; 
+    
+    private Cache<String, String> contributorsNameCache;
+    
+    protected ProfileLastModifiedAspect profileLastModifiedAspect;
     
     public ContributorUtils(@Value("${org.orcid.contributor.names.batch_size:2500}") Integer batchSize) {
         if(batchSize == null) {
@@ -104,16 +107,13 @@ public class ContributorUtils {
             }
         }
     }
-
     
     private String getCachedContributorName(String orcid) {
-        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (sra != null) {
-            Object requestAttribute = sra.getAttribute(orcid + RECORD_NAME_KEY_POSTFIX, ServletRequestAttributes.SCOPE_REQUEST);
-            if (requestAttribute != null) {
-                return (String) requestAttribute;
-            }
-        }
+        String cacheKey = getCacheKey(orcid);
+        if(contributorsNameCache.containsKey(cacheKey)){
+            return contributorsNameCache.get(cacheKey);
+        }        
+        
         return null;
     }
     
@@ -125,12 +125,10 @@ public class ContributorUtils {
             for(RecordNameEntity entity : entities) {
                 String orcid = entity.getProfile().getId();
                 String publicCreditName = cacheManager.getPublicCreditName(entity);
-                contributorNames.put(orcid, (publicCreditName == null ? "" : publicCreditName));
-                // Store in the request, to use as a cache
-                ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-                if (sra != null) {
-                    sra.setAttribute(orcid + RECORD_NAME_KEY_POSTFIX, (publicCreditName == null ? "" : publicCreditName), ServletRequestAttributes.SCOPE_REQUEST);
-                }
+                publicCreditName = (publicCreditName == null ? "" : publicCreditName);
+                contributorNames.put(orcid, publicCreditName);
+                // Store in the cache
+                contributorsNameCache.put(getCacheKey(orcid), publicCreditName);
             }
         });
         return contributorNames;
@@ -144,6 +142,11 @@ public class ContributorUtils {
                 }
             }
         }
+    }
+    
+    private String getCacheKey(String orcid) {
+        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
+        return orcid + "_" + lastModified.getTime();
     }
     
     public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
@@ -161,4 +164,12 @@ public class ContributorUtils {
     public void setRecordNameDao(RecordNameDao recordNameDao) {
         this.recordNameDao = recordNameDao;
     }
+
+    public void setContributorsNameCache(Cache<String, String> contributorsNameCache) {
+        this.contributorsNameCache = contributorsNameCache;
+    }
+
+    public void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect) {
+        this.profileLastModifiedAspect = profileLastModifiedAspect;
+    }        
 }

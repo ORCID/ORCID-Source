@@ -402,6 +402,8 @@
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
 		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
+		<property name="contributorsNameCache" ref="contributorsNameCache" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
 	</bean>
 	
 	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
@@ -423,6 +425,8 @@
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
     	<property name="recordNameDao" ref="recordNameDaoReadOnly" />
+    	<property name="contributorsNameCache" ref="contributorsNameCache" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     
     <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
@@ -1284,7 +1288,16 @@
         <property name="copyValues" value="false" />
     </bean>
     
-	<!-- HTTP client connection beans -->
+    <bean id="contributorsNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="contributors-name" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="25000" />
+        <property name="timeToIdleSeconds" value="7200" />
+        <property name="maxMegaBytesOnDisk" value="128" />
+        <property name="copyValues" value="false" />
+    </bean>
+    
+    <!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"
 		factory-method="getSocketFactory" />
 

@@ -9,8 +9,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import org.ehcache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -24,8 +26,8 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.ContributorEmail;
 import org.orcid.jaxb.model.common_v2.ContributorOrcid;
-import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.FundingContributors;
@@ -34,6 +36,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
@@ -51,6 +54,12 @@ public class ContributorUtilsTest {
     
     @Mock
     private RecordNameDao recordNameDao;
+    
+    @Mock
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
+    
+    @Mock
+    private Cache<String, String> contributorsNameCache;
 
     @InjectMocks
     private ContributorUtils contributorUtils;
@@ -62,6 +71,10 @@ public class ContributorUtilsTest {
         contributorUtils.setProfileEntityCacheManager(profileEntityCacheManager);
         contributorUtils.setProfileEntityManager(profileEntityManager);
         contributorUtils.setRecordNameDao(recordNameDao);
+        contributorUtils.setProfileLastModifiedAspect(profileLastModifiedAspect);
+        contributorUtils.setContributorsNameCache(contributorsNameCache);
+        when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
+        when(contributorsNameCache.containsKey(anyString())).thenReturn(false);
     }
     
     @Test
