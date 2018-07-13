@@ -15,7 +15,7 @@ public class PeerReviewGroupComparator implements Comparator<PeerReviewGroup> {
     @Override
     public int compare(PeerReviewGroup x, PeerReviewGroup y) {
         if (reverse) {
-            return x.getName().toLowerCase().compareTo(y.getName().toLowerCase());
+            return y.getName().toLowerCase().compareTo(x.getName().toLowerCase());
         }
         return x.getName().toLowerCase().compareTo(y.getName().toLowerCase());
     }
