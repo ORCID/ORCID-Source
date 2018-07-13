@@ -10,50 +10,6 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
             peerReviewsToAddIds: null,
             quickRef: {},            
 
-            addPeerReviewsToScope: function(type) {
-                var peerReviewIds = "";
-                var url = getBaseUri();
-                if (type == peerReviewSrvc.constants.access_type.USER) {
-                    url += '/peer-reviews/get-peer-reviews.json?peerReviewIds=';
-                }
-                else { // use the anonymous url 
-                    url += '/' + orcidVar.orcidId +'/peer-reviews.json?peerReviewIds=';
-                }
-                if(peerReviewSrvc.peerReviewsToAddIds.length != 0 ) {
-                    peerReviewSrvc.loading = true;
-                    peerReviewIds = peerReviewSrvc.peerReviewsToAddIds.splice(0,20).join();
-                    $.ajax({
-                        'url': url + peerReviewIds,
-                        'dataType': 'json',
-                        'success': function(data) {
-                            $timeout(function(){
-                                var dw = null;
-                                for (var i in data) {
-                                    dw = data[i];                                    
-                                    removeBadExternalIdentifiers(dw);                                       
-                                    groupedActivitiesUtil.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
-                                };
-                            });
-                            if(peerReviewSrvc.peerReviewsToAddIds.length == 0 ) {
-                                $timeout(function() {
-                                  peerReviewSrvc.loading = false;
-                                });
-                            } else {
-                                $timeout(function(){
-                                    peerReviewSrvc.addPeerReviewsToScope(type);
-                                },50);
-                            }
-                        }
-                    }).fail(function(e) {
-                            peerReviewSrvc.loading = false;
-                        console.log("Error fetching Peer Review: " + peerReviewIds);
-                        logAjaxError(e);
-                    });
-                } else {
-                    peerReviewSrvc.loading = false;
-                };
-            },
-
             createNew: function(peerReview) {
                 var cloneF = JSON.parse(JSON.stringify(peerReview));
                 cloneF.source = null;
@@ -108,9 +64,9 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                 return null;
             },
 
-            getPeerReviews: function() {
+            getPeerReviews: function(sortAsc) {
                 $.ajax({
-                    url: getBaseUri() + '/peer-reviews/peer-reviews.json',
+                    url: getBaseUri() + '/peer-reviews/peer-reviews.json?sortAsc=' + sortAsc,
                     dataType: 'json',
                     success: function(data) {
                         peerReviewSrvc.groups = data;
@@ -122,9 +78,9 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                 });
             },   
             
-            getPublicPeerReviews: function() {
+            getPublicPeerReviews: function(sortAsc) {
                 $.ajax({
-                    url: getBaseUri() + '/' + orcidVar.orcidId +'/peer-reviews.json',
+                    url: getBaseUri() + '/' + orcidVar.orcidId +'/peer-reviews.json?sortAsc=' + sortAsc,
                     dataType: 'json',
                     success: function(data) {
                         peerReviewSrvc.groups = data;

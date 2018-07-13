@@ -1,5 +1,5 @@
 <ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" id="peer-review-header" ng-cloak>
-    <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse" >
+    <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups" >
         <ul class="sources-edit-list">
             <li class="peer-review-group">
                 <!-- active row summary info -->

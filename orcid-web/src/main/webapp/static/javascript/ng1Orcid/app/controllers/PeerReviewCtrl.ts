@@ -7,6 +7,7 @@ declare var logAjaxError: any;
 declare var openImportWizardUrl: any;
 declare var orcidVar: any;
 declare var workIdLinkJs: any;
+declare var GroupedActivities: any;
 
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
@@ -47,6 +48,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
             $scope.showPeerReviewDetails = new Array();
             $scope.wizardDescExpanded = {};
             $scope.workspaceSrvc = workspaceSrvc;
+            $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
             
             $scope.addExternalIdentifier = function () {
                 $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
@@ -267,6 +269,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
 
             $scope.sort = function(key) {
                 $scope.sortState.sortBy(key);
+                peerReviewSrvc.getPeerReviews(!$scope.sortState.reverseKey[key]);
             };
 
             $scope.toggleTranslatedTitleModal = function(){
@@ -312,7 +315,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
             }
             
             // Init
-            $scope.peerReviewSrvc.getPeerReviews();
+            $scope.peerReviewSrvc.getPeerReviews(true);
             loadPeerReviewLinks();
         }
     ]

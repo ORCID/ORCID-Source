@@ -26,11 +26,11 @@ export const PublicPeerReviewCtrl = angular.module('orcidApp').controller(
             $scope.showElement = {};
             $scope.showPeerReviewDetails = new Array();
             $scope.sortHideOption = true;
-            
             $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
              
             $scope.sort = function(key) {
                 $scope.sortState.sortBy(key);
+                peerReviewSrvc.getPublicPeerReviews(!$scope.sortState.reverseKey[key]);       
             };
              
             $scope.showDetailsMouseClick = function(groupId, $event){
@@ -58,7 +58,7 @@ export const PublicPeerReviewCtrl = angular.module('orcidApp').controller(
             };
             
             // Init
-            $scope.peerReviewSrvc.getPublicPeerReviews();       
+            $scope.peerReviewSrvc.getPublicPeerReviews(true);       
         }
     ]
 );

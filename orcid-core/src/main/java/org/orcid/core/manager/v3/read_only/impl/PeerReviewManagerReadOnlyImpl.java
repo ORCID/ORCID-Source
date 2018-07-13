@@ -10,7 +10,7 @@ import org.orcid.core.adapter.v3.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
-import org.orcid.core.utils.v3.activities.GroupableActivityComparator;
+import org.orcid.core.utils.v3.activities.PeerReviewSummaryComparator;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
@@ -114,7 +114,7 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
             }
 
             // Sort the peer reviews
-            Collections.sort(peerReviewGroup.getPeerReviewSummary(), new GroupableActivityComparator());
+            Collections.sort(peerReviewGroup.getPeerReviewSummary(), new PeerReviewSummaryComparator());
 
             result.getPeerReviewGroup().add(peerReviewGroup);
         }
