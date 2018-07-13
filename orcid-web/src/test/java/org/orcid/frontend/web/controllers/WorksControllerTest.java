@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -253,7 +254,10 @@ public class WorksControllerTest extends BaseControllerTest {
         }
 
         if (work.getCitation() != null && work.getCitation().getCitation() != null && PojoUtil.isEmpty(work.getCitation().getCitation())) {
-            work.getCitation().getCitation().setValue("test");
+            work.getCitation().setCitation(Text.valueOf("test"));
+        }
+        if (work.getCitation() != null && work.getCitation().getCitation() != null && PojoUtil.isEmpty(work.getCitation().getCitationType())) {
+            work.getCitation().setCitationType(Text.valueOf("formatted-unspecified"));
         }
 
         work = worksController.postWork(null, work);
