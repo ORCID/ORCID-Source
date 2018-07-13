@@ -67,8 +67,6 @@ node {
                 intapi:     {do_maven("clean compile test -f orcid-internal-api/pom.xml")},
                 indeptests: {do_maven("clean compile test -f orcid-integration-test/pom.xml")}
             )
-            // Push to Artifact storage
-            //archive '**/target/**/*.war'
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             report_and_clean()
@@ -101,6 +99,8 @@ def do_maven(mvn_task){
     try{
         sh "export MAVEN_OPTS='-Xms2048m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError'"
         sh "$MAVEN/bin/mvn -Djava.io.tmpdir=$EHCACHE_LOCATION $mvn_task"
+        // Push to Artifact storage
+        //archive '**/target/**/*.war'
     } catch(Exception err) {
         throw err
     }
