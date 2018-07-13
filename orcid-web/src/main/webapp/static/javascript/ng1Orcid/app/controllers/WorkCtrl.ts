@@ -116,7 +116,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             /////////////////////// End of verified email logic for work
 
             $scope.addExternalIdentifier = function () {
-                $scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
+                $scope.editWork.workExternalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
             };
 
             $scope.addWorkFromBibtex = function(work) {
@@ -374,15 +374,15 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.fillUrl = function(extId) {
                 //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
                 if ($scope.exIdResolverFeatureEnabled == true){
-                    if (extId && extId.workExternalIdentifierId.value && extId.workExternalIdentifierType.value){
+                    if (extId && extId.externalIdentifierId.value && extId.externalIdentifierType.value){
                         $timeout(function() {
                             extId.resolvingId = true;
                             $.ajax({
-                                url: getBaseUri() + '/works/id/'+extId.workExternalIdentifierType.value,
+                                url: getBaseUri() + '/works/id/'+extId.externalIdentifierType.value,
                                 type: 'GET',
-                                data:{value:extId.workExternalIdentifierId.value},
+                                data:{value:extId.externalIdentifierId.value},
                                 success: function(data) {
-                                    extId.workExternalIdentifierId.errors = [];
+                                    extId.externalIdentifierId.errors = [];
                                     if (data.generatedUrl){
                                         if(extId.url == null) {
                                             extId.url = {value:data.generatedUrl};
@@ -395,7 +395,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                                         }else{
                                             extId.url.value="";                        
                                         }
-                                        extId.workExternalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
+                                        extId.externalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
                                     }
                                     extId.resolvingId = false;
                                 }
@@ -408,7 +408,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 }else{
                     var url;
                     if(extId != null) {
-                        url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+                        url = workIdLinkJs.getLink(extId.externalIdentifierId.value, extId.externalIdentifierType.value);
                         if(extId.url == null) {
                             extId.url = {value:url};
                         }else{
@@ -464,7 +464,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             $scope.hasCombineableEIs = function(work) {
                 if (work.workExternalIdentifiers != null){
                     for (var idx in work.workExternalIdentifiers){
-                        if (work.workExternalIdentifiers[idx].workExternalIdentifierType.value != 'issn'){
+                        if (work.workExternalIdentifiers[idx].externalIdentifierType.value != 'issn'){
                             return true;
                         }
                     }
