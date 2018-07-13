@@ -371,9 +371,9 @@
                       <ul class="id-details">
                         <li class="url-work">
                           <ul class="id-details">
-                            <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
+                            <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "externalIdentifierType.value"]' class="url-popover">
                          
-                              <span ng-if="work.workExternalIdentifiers[0].workExternalIdentifierId.value.length > 0" bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                              <span ng-if="work.workExternalIdentifiers[0].externalIdentifierId.value.length > 0" bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
                             </li>
                           </ul>                                   
                         </li>
@@ -658,15 +658,13 @@
 </modalngcomponent><!-- Ng2 component -->
 </@orcid.checkFeatureStatus> 
 
-<@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-  <modalngcomponent elementHeight="147" elementId="modalAffiliationDelete" elementWidth="364">
-      <affiliation-delete-ng2></affiliation-delete-ng2>
-  </modalngcomponent><!-- Ng2 component -->
+<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
+    <affiliation-delete-ng2></affiliation-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
-  <modalngcomponent elementHeight="495" elementId="modalAffiliationForm" elementWidth="800">
-      <affiliation-form-ng2></affiliation-form-ng2>
-  </modalngcomponent><!-- Ng2 component -->
-</@orcid.checkFeatureStatus> 
+<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
+    <affiliation-form-ng2></affiliation-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
 <modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
