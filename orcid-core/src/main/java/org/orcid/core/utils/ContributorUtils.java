@@ -122,14 +122,16 @@ public class ContributorUtils {
         Map<String, String> contributorNames = new HashMap<String, String>();
         it.forEach(idsList -> {
             List<RecordNameEntity> entities = recordNameDao.getRecordNames(idsList);
-            for(RecordNameEntity entity : entities) {
-                String orcid = entity.getProfile().getId();
-                String publicCreditName = cacheManager.getPublicCreditName(entity);
-                publicCreditName = (publicCreditName == null ? "" : publicCreditName);
-                contributorNames.put(orcid, publicCreditName);
-                // Store in the cache
-                contributorsNameCache.put(getCacheKey(orcid), publicCreditName);
-            }
+            if(entities != null) {
+                for(RecordNameEntity entity : entities) {
+                    String orcid = entity.getProfile().getId();
+                    String publicCreditName = cacheManager.getPublicCreditName(entity);
+                    publicCreditName = (publicCreditName == null ? "" : publicCreditName);
+                    contributorNames.put(orcid, publicCreditName);
+                    // Store in the cache
+                    contributorsNameCache.put(getCacheKey(orcid), publicCreditName);
+                }
+            }            
         });
         return contributorNames;
     }
@@ -146,7 +148,7 @@ public class ContributorUtils {
     
     private String getCacheKey(String orcid) {
         Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-        return orcid + "_" + lastModified.getTime();
+        return orcid + "_" + (lastModified == null ? 0 : lastModified.getTime());
     }
     
     public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {

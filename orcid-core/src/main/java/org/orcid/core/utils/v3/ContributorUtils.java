@@ -126,14 +126,16 @@ public class ContributorUtils {
         Map<String, String> contributorNames = new HashMap<String, String>();
         it.forEach(idsList -> {
             List<RecordNameEntity> entities = recordNameDao.getRecordNames(idsList);
-            for(RecordNameEntity entity : entities) {
-                String orcid = entity.getProfile().getId();
-                String publicCreditName = cacheManager.getPublicCreditName(entity);
-                contributorNames.put(orcid, (publicCreditName == null ? "" : publicCreditName));
-                // Store in the request, to use as a cache
-                ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-                if (sra != null) {
-                    sra.setAttribute(orcid + RECORD_NAME_KEY_POSTFIX, (publicCreditName == null ? "" : publicCreditName), ServletRequestAttributes.SCOPE_REQUEST);
+            if(entities != null) {
+                for(RecordNameEntity entity : entities) {
+                    String orcid = entity.getProfile().getId();
+                    String publicCreditName = cacheManager.getPublicCreditName(entity);
+                    contributorNames.put(orcid, (publicCreditName == null ? "" : publicCreditName));
+                    // Store in the request, to use as a cache
+                    ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                    if (sra != null) {
+                        sra.setAttribute(orcid + RECORD_NAME_KEY_POSTFIX, (publicCreditName == null ? "" : publicCreditName), ServletRequestAttributes.SCOPE_REQUEST);
+                    }
                 }
             }
         });
@@ -152,7 +154,7 @@ public class ContributorUtils {
     
     private String getCacheKey(String orcid) {
         Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-        return orcid + "_" + lastModified.getTime();
+        return orcid + "_" + (lastModified == null ? 0 : lastModified.getTime());
     }
     
     public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {

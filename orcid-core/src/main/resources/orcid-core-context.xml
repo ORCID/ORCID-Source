@@ -410,6 +410,9 @@
 		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
+		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
+		<property name="contributorsNameCache" ref="contributorsNameCache" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
 	</bean>
 	
 	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils">
@@ -433,6 +436,9 @@
         <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
+        <property name="recordNameDao" ref="recordNameDaoReadOnly" />
+		<property name="contributorsNameCache" ref="contributorsNameCache" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
 	
 	   <bean id="sourceUtilsV3" class="org.orcid.core.utils.v3.SourceUtils">
