@@ -1,0 +1,108 @@
+node {
+
+    properties([
+        buildDiscarder(
+            logRotator(
+                artifactDaysToKeepStr: '',
+                artifactNumToKeepStr: '',
+                daysToKeepStr: '15',
+                numToKeepStr: '30'
+            )
+        ),
+        disableConcurrentBuilds(),
+        [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
+        [$class: 'JobPropertyImpl', throttle: [count: 4, durationName: 'hour', userBoost: false]],
+        pipelineTriggers([
+            [$class: "GitHubPushTrigger"]
+        ])
+    ])
+
+    def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_master_$BUILD_NUMBER"
+
+    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: 'master'
+
+    stage('MASTERMODEL') {
+        try {
+            sh "mkdir -p $EHCACHE_LOCATION"
+            do_maven("clean")
+            parallel(
+                model:       {do_maven("clean compile test -f orcid-model/pom.xml")},
+                test:        {do_maven("clean compile test -f orcid-test/pom.xml")},
+                utils:       {do_maven("clean compile test -f orcid-utils/pom.xml")},
+                solrweb:     {do_maven("clean compile test -f orcid-solr-web/pom.xml")}
+            )
+        } catch(Exception err) {
+            orcid_notify("Fetch Code and Build master#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            report_and_clean()
+            throw err
+        }
+    }
+    stage('MASTERPERSISTENCE') {
+        try {
+            parallel(
+                persistence: {do_maven("clean compile test -f orcid-persistence/pom.xml")},
+                scheduler:   {do_maven("clean compile test -f orcid-scheduler-web/pom.xml")},
+                listener:    {do_maven("clean compile test -f orcid-message-listener/pom.xml")},
+                mq:          {do_maven("clean compile test -f orcid-activemq/pom.xml")}
+            )
+        } catch(Exception err) {
+            orcid_notify("Creating Persistence Package master#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            report_and_clean()
+            throw err
+        }
+    }
+    stage('MASTERCORECOMMON') {
+        try {
+            do_maven("clean compile test -f orcid-core/pom.xml")
+            do_maven("clean compile test -f orcid-api-common/pom.xml")
+        } catch(Exception err) {
+            orcid_notify("Building Core master#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            report_and_clean()
+            throw err
+        }
+    }
+    stage('MASTERWEBandAPI') {
+        try {
+            parallel(
+                web:        {do_maven("clean compile test -f orcid-web/pom.xml")},
+                apiweb:     {do_maven("clean compile test -f orcid-api-web/pom.xml")},
+                pubweb:     {do_maven("clean compile test -f orcid-pub-web/pom.xml")},
+                intapi:     {do_maven("clean compile test -f orcid-internal-api/pom.xml")},
+                indeptests: {do_maven("clean compile test -f orcid-integration-test/pom.xml")}
+            )
+        } catch(Exception err) {
+            orcid_notify("Packaging ORCID web master#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            report_and_clean()
+            throw err
+        }
+        orcid_notify("Pipeline master#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
+    }
+}
+
+def report_and_clean(){
+    junit '**/target/surefire-reports/*.xml'
+    deleteDir()
+}
+
+def orcid_notify(message, level){
+    def color = "#d00000"
+    if(level == 'SUCCESS'){
+        color = "#36a64f"
+    }
+    try{
+        slackSend color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid'
+    } catch(Exception err) {
+        echo err.toString()
+    }
+}
+
+def do_maven(mvn_task){
+    def MAVEN = tool 'ORCID_MAVEN'
+    def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
+    try{
+        sh "export MAVEN_OPTS='-Xms2048m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError'"
+        sh "$MAVEN/bin/mvn -Djava.io.tmpdir=$EHCACHE_LOCATION $mvn_task"
+    } catch(Exception err) {
+        throw err
+    }
+}

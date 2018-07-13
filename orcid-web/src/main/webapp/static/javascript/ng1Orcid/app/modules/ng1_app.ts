@@ -46,9 +46,6 @@ import { DeactivateAccountModule }
 import { DeactivateAccountMessageModule }
     from './deactivateAccount/deactivateAccountMessage.ts';
 
-import { DeprecateAccountModalModule }
-    from './deprecateAccount/deprecateAccount.ts';
-
 import { DeprecateAccountModule }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -148,9 +145,6 @@ import { SelfServiceRemoveSubMemberModule }
 import { Social2FAModule }
     from './social2FA/social2FA.ts';
 
-import { SocialNetworksModule }
-    from './socialNetworks/socialNetworks.ts';
-
 import { SwitchUserModule }
     from './switchUser/switchUser.ts';
 
@@ -184,7 +178,9 @@ import { WorkSpaceSummaryModule }
 import { WorksPrivacyPreferencesModule } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
-
+import { DelegatorsModule } 
+    from './delegators/delegators.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -203,7 +199,6 @@ export const orcidApp = angular.module(
         ClientEditModule.name,
         DeactivateAccountModule.name,
         DeactivateAccountMessageModule.name,
-        DeprecateAccountModalModule.name,
         DeprecateAccountModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
@@ -237,7 +232,6 @@ export const orcidApp = angular.module(
         SelfServiceRemoveContactModule.name,
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
-        SocialNetworksModule.name,
         SwitchUserModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
@@ -248,7 +242,8 @@ export const orcidApp = angular.module(
         WorksFormModule.name,
         WorksModule.name,
         WorkSpaceSummaryModule.name,
-        WorksPrivacyPreferencesModule.name
+        WorksPrivacyPreferencesModule.name,
+        DelegatorsModule.name
     ]
 );
 

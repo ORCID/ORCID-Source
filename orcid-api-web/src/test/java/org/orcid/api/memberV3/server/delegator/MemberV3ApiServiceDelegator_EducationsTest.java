@@ -207,33 +207,30 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/educations", educations.getPath());
         Utils.verifyLastModified(educations.getLastModifiedDate());
         assertNotNull(educations.retrieveGroups());
-        assertEquals(4, educations.retrieveGroups().size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        assertEquals(3, educations.retrieveGroups().size());
+        boolean found1 = false, found2 = false, found3 = false;
         
         for (AffiliationGroup<EducationSummary> group : educations.retrieveGroups()) {
-            for (EducationSummary summary : group.getActivities()) {
-                Utils.verifyLastModified(summary.getLastModifiedDate());
-                if (Long.valueOf(20).equals(summary.getPutCode())) {
-                    assertEquals("PUBLIC Department", summary.getDepartmentName());
-                    found1 = true;
-                } else if (Long.valueOf(21).equals(summary.getPutCode())) {
-                    assertEquals("LIMITED Department", summary.getDepartmentName());
-                    found2 = true;
-                } else if (Long.valueOf(22).equals(summary.getPutCode())) {
-                    assertEquals("PRIVATE Department", summary.getDepartmentName());
-                    found3 = true;
-                } else if (Long.valueOf(25).equals(summary.getPutCode())) {
-                    assertEquals("SELF LIMITED Department", summary.getDepartmentName());
-                    found4 = true;
-                } else {
-                    fail("Invalid education found: " + summary.getPutCode());
-                }
-            }
+            EducationSummary element0 = group.getActivities().get(0);
+            Utils.verifyLastModified(element0.getLastModifiedDate());
+            if (Long.valueOf(21).equals(element0.getPutCode())) {
+                assertEquals("LIMITED Department", element0.getDepartmentName());
+                found1 = true;
+            } else if (Long.valueOf(22).equals(element0.getPutCode())) {
+                assertEquals("PRIVATE Department", element0.getDepartmentName());
+                found2 = true;
+            } else if (Long.valueOf(25).equals(element0.getPutCode())) {
+                assertEquals("SELF LIMITED Department", element0.getDepartmentName());
+                assertEquals(2, group.getActivities().size());
+                assertEquals("PUBLIC Department", group.getActivities().get(1).getDepartmentName());
+                found3 = true;
+            } else {
+                fail("Invalid education found: " + element0.getPutCode());
+            }            
         }
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
+        assertTrue(found3);        
     }
 
     @Test
@@ -303,7 +300,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(summary.getEducations());
         Utils.verifyLastModified(summary.getEducations().getLastModifiedDate());
         assertNotNull(summary.getEducations().retrieveGroups());
-        assertEquals(4, summary.getEducations().retrieveGroups().size());
+        assertEquals(3, summary.getEducations().retrieveGroups().size());
         
         EducationSummary educationSummary = summary.getEducations().retrieveGroups().iterator().next().getActivities().get(0);
         assertNotNull(educationSummary);
@@ -326,7 +323,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(summaryWithNewElement.getEducations());
         Utils.verifyLastModified(summaryWithNewElement.getEducations().getLastModifiedDate());
         assertNotNull(summaryWithNewElement.getEducations().retrieveGroups());
-        assertEquals(5, summaryWithNewElement.getEducations().retrieveGroups().size());
+        assertEquals(4, summaryWithNewElement.getEducations().retrieveGroups().size());
 
         boolean haveNew = true;
         

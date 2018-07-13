@@ -145,8 +145,11 @@ function removeBadContributors(dw) {
 //Needs refactor for dw object
 function removeBadExternalIdentifiers(dw) {
     for(var idx in dw.workExternalIdentifiers) {
-        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
-            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+        if(dw.workExternalIdentifiers[idx].url == null){
+            dw.workExternalIdentifiers[idx].url = "";
+        }
+        if(dw.workExternalIdentifiers[idx].externalIdentifierType == null
+            && dw.workExternalIdentifiers[idx].externalIdentifierId == null) {
             dw.workExternalIdentifiers.splice(idx,1);
         }
     }
@@ -907,8 +910,8 @@ $(function() {
  * "countryName":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
  * "contributors":[{"errors":[],"contributorSequence":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"email":null,"orcid":null,"uri":null,"creditName":null,"contributorRole":{"errors":[],"value":"","required":true,"getRequiredMessage":null}}],
  * "workExternalIdentifiers":[ { "errors":[],
- * "workExternalIdentifierId":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
- * "workExternalIdentifierType":{"errors":[],"value":"","required":true,"getRequiredMessage":null}
+ * "externalIdentifierId":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
+ * "externalIdentifierType":{"errors":[],"value":"","required":true,"getRequiredMessage":null}
  * }], "source":null, "sourceName":null,
  * "title":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
  * "subtitle":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
@@ -936,7 +939,7 @@ bibToWorkTypeMap['proceedings'] = [ 'conference', 'conference-paper' ];
 bibToWorkTypeMap['techreport'] = [ 'publication', 'report' ];
 bibToWorkTypeMap['unpublished'] = [ 'other_output', 'other' ];
 
-function workExternalIdentifierId(work, idType, value) {
+function externalIdentifierId(work, idType, value) {
 	
 	//Define relationship type based on work type
 	var relationship = 'self';
@@ -952,10 +955,10 @@ function workExternalIdentifierId(work, idType, value) {
 	} 
 
     var ident = {
-        workExternalIdentifierId : {
+        externalIdentifierId : {
             'value' : value
         },
-        workExternalIdentifierType : {
+        externalIdentifierType : {
             'value' : idType
         }, 
         relationship : {
@@ -963,7 +966,7 @@ function workExternalIdentifierId(work, idType, value) {
         }
     };
     
-    if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null)
+    if (work.workExternalIdentifiers[0].externalIdentifierId.value == null)
         work.workExternalIdentifiers[0] = ident;
     else
         work.workExternalIdentifiers.push(ident);
@@ -1001,17 +1004,17 @@ function populateWorkAjaxForm(bibJson, work) {
                 work.journalTitle.value = latexParseJs.decodeLatex(lowerKeyTags['booktitle']);
 
         if (lowerKeyTags.hasOwnProperty('doi'))
-            workExternalIdentifierId(work, 'doi', lowerKeyTags['doi']);
+            externalIdentifierId(work, 'doi', lowerKeyTags['doi']);
         
         if (lowerKeyTags.hasOwnProperty('pmid'))
-            workExternalIdentifierId(work, 'pmid', lowerKeyTags['pmid']);
-
+            externalIdentifierId(work, 'pmid', lowerKeyTags['pmid']);
+        
         if (lowerKeyTags.hasOwnProperty('eprint')
-                && lowerKeyTags.hasOwnProperty('eprint'))
-            workExternalIdentifierId(work, 'arxiv', tags['eprint']);
-
+                && lowerKeyTags.hasOwnProperty('eprinttype') && lowerKeyTags['eprinttype']=='arxiv')
+            externalIdentifierId(work, 'arxiv', tags['eprint']);
+        
         if (lowerKeyTags.hasOwnProperty('isbn'))
-            workExternalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
+            externalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
 
         if (lowerKeyTags.hasOwnProperty('journal'))
             work.journalTitle.value = latexParseJs.decodeLatex(lowerKeyTags['journal']);

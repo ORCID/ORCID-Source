@@ -15,7 +15,7 @@ public interface EmailMessageSender {
 
     void sendServiceAnnouncements(Integer customBatchSize);
     
-    void sendTips(Integer customBatchSize);
+    void sendTips(Integer customBatchSize, String fromAddress);
     
     void sendEmailMessages();
 

@@ -47,7 +47,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     private List<Contributor> contributors;
 
-    private List<WorkExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
+    private List<ActivityExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
     private String source;
 
@@ -202,7 +202,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     
     public static void populateExternalIdentifiers(ExternalIDs extIds, WorkForm workForm, WorkType workType) {
         if (extIds != null) {
-            List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
+            List<ActivityExternalIdentifier> workExternalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();
             for (ExternalID extId : extIds.getExternalIdentifier()) {
                 if(extId.getRelationship() == null) {
                     if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
@@ -221,7 +221,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                         extId.setRelationship(Relationship.SELF);
                     }
                 }
-                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
+                workExternalIdentifiersList.add(ActivityExternalIdentifier.valueOf(extId));
             }
             workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
         }
@@ -230,14 +230,14 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     private static void populateExternalIdentifiers(WorkForm workForm, Work work) {
         ExternalIDs workExternalIds = new ExternalIDs();
         if(workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
-            for(WorkExternalIdentifier wfExtId : workForm.getWorkExternalIdentifiers()) {
+            for(ActivityExternalIdentifier wfExtId : workForm.getWorkExternalIdentifiers()) {
                 ExternalID wExtId = new ExternalID();
-                if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierId())) {
-                    wExtId.setValue(wfExtId.getWorkExternalIdentifierId().getValue());
+                if(!PojoUtil.isEmpty(wfExtId.getExternalIdentifierId())) {
+                    wExtId.setValue(wfExtId.getExternalIdentifierId().getValue());
                 }
                 
-                if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierType())) {
-                    wExtId.setType(wfExtId.getWorkExternalIdentifierType().getValue());
+                if(!PojoUtil.isEmpty(wfExtId.getExternalIdentifierType())) {
+                    wExtId.setType(wfExtId.getExternalIdentifierType().getValue());
                 }
                 
                 if(!PojoUtil.isEmpty(wfExtId.getRelationship())) {
@@ -502,11 +502,11 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         this.contributors = contributors;
     }
 
-    public List<WorkExternalIdentifier> getWorkExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {
         return workExternalIdentifiers;
     }
 
-    public void setWorkExternalIdentifiers(List<WorkExternalIdentifier> workExternalIdentifiers) {
+    public void setWorkExternalIdentifiers(List<ActivityExternalIdentifier> workExternalIdentifiers) {
         this.workExternalIdentifiers = workExternalIdentifiers;
     }
 

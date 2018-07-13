@@ -17,6 +17,7 @@ export class GenericService {
     private notify = new Subject<any>();
     private objAlsoKnownAs: any;
     private url: string;
+    private storedData: any;
     
     notifyObservable$ = this.notify.asObservable();
 
@@ -32,6 +33,7 @@ export class GenericService {
             data: null,
             hasNewData: true
         };
+        this.storedData = new Array();
         this.url = getBaseUri();
     }
 
@@ -72,6 +74,10 @@ export class GenericService {
         
     }
 
+    getStoredData(objName): Observable<any> {
+        return this.storedData[objName];
+    }
+
     setData( obj, url_path ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         
@@ -88,6 +94,10 @@ export class GenericService {
             )
         )
         
+    }
+
+    setStoredData(objName, objValue): void {
+        this.storedData[objName] = objValue;
     }
 
     open(id: string) {

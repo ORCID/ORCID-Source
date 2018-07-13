@@ -446,21 +446,60 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     
     @Override
     public void checkAndFilter(String orcid, WorkBulk workBulk, ScopePathType scopePathType) {
+        // Check the token belongs to the user
         isMyToken(orcid);
+        // Check you have the required scopes or if only public elements should be allowed
+        boolean publicElementsOnly = false;
+        try {
+            checkScopes(scopePathType);
+        } catch(OrcidAccessControlException e) {
+            try {
+                checkScopes(ScopePathType.READ_PUBLIC);
+                publicElementsOnly = true;
+            } catch(OrcidAccessControlException e2) {
+                throw e;
+            }            
+        }
         
-        List<BulkElement> bulkElements = workBulk.getBulk();
+        
+        String clientId = null;
+        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+        if(oAuth2Authentication != null) {
+            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+            clientId = authorizationRequest.getClientId();            
+        }                 
+                
         List<BulkElement> filteredElements = new ArrayList<>();
         
-        for (int i = 0; i < bulkElements.size(); i++) {
-            BulkElement element = bulkElements.get(i);
+        for (BulkElement element : workBulk.getBulk()) {
             if (element instanceof OrcidError) {
                 filteredElements.add(element);
                 continue;
             }
             
+            Work work = (Work) element;
+            
             try {
-                checkAndFilter(orcid, (Work) element, scopePathType, true);
-                filteredElements.add(element);
+                // Check if the element is public
+                if (Visibility.PUBLIC.equals(work.getVisibility())) {                    
+                    filteredElements.add(element);                    
+                    continue;
+                }
+                
+                if(publicElementsOnly) {
+                    throw new OrcidVisibilityException();
+                } else {
+                    // Check if the client is the source of the element
+                    if (work.retrieveSourcePath().equals(clientId)) {
+                        // The client doing the request is the source of the element
+                        filteredElements.add(element);
+                        continue;
+                    }                    
+                    
+                    // Filter
+                    checkVisibility(work, scopePathType);
+                    filteredElements.add(element);
+                }                
             } catch (Exception e) {
                 if (e instanceof OrcidUnauthorizedException) {
                     throw e;
@@ -660,7 +699,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private void filter(VisibilityType element, ScopePathType requiredScope) {
         // Check the request have the required scope
         checkScopes(requiredScope);
+        
+        // Check element visibility
+        checkVisibility(element, requiredScope);
+    }
 
+    private void checkVisibility(VisibilityType element, ScopePathType requiredScope) {
         if (requiredScope.isReadOnlyScope()) {
             if (Visibility.PRIVATE.equals(element.getVisibility())) {
                 throw new OrcidVisibilityException();
@@ -669,7 +713,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new IllegalArgumentException("Only 'read-only' scopes are allowed");
         }
     }
-
+    
     private boolean isNonClientCredentialScope(OAuth2Authentication oAuth2Authentication) {
         OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());

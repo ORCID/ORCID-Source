@@ -138,23 +138,23 @@
                             <div class="control-group">
                                 <label class="relative"><@orcid.msg 'peer_review.identifier_type' /></label>
                                 <div class="relative">
-                                    <select id="extIdType" class="form-control" name="extIdType" ng-model="extId.workExternalIdentifierType.value" ng-change="fillUrl(extId)">                                                                                   
+                                    <select id="extIdType" class="form-control" name="extIdType" ng-model="extId.externalIdentifierType.value" ng-change="fillUrl(extId)">                                                                                   
                                         <option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
                                         <#list idTypes?keys as key>
                                             <option value="${idTypes[key]}">${key}</option>
                                         </#list>
                                     </select>                                   
-                                    <span class="orcid-error" ng-show="extId.workExternalIdentifierType.errors.length > 0">
-                                        <div ng-repeat='error in extId.workExternalIdentifierType.errors' ng-bind-html="error"></div>
+                                    <span class="orcid-error" ng-show="extId.externalIdentifierType.errors.length > 0">
+                                        <div ng-repeat='error in extId.externalIdentifierType.errors' ng-bind-html="error"></div>
                                     </span>
                                 </div>  
                             </div>                                                          
                             <div class="control-group">
                                 <label class="relative"><@orcid.msg 'peer_review.identifier_value'/></label>
                                 <div class="relative">
-                                    <input id="extIdValue" name="extIdValue" type="text" class="form-control"  ng-model="extId.workExternalIdentifierId.value" ng-change="fillUrl(extId)"/>
-                                    <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
-                                        <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
+                                    <input id="extIdValue" name="extIdValue" type="text" class="form-control"  ng-model="extId.externalIdentifierId.value" ng-change="fillUrl(extId)"/>
+                                    <span class="orcid-error" ng-show="workExternalIdentifier.externalIdentifierId.errors.length > 0">
+                                        <div ng-repeat='error in workExternalIdentifier.externalIdentifierId.errors' ng-bind-html="error"></div>
                                     </span>
                                 </div>
                             </div>
@@ -209,14 +209,14 @@
                             <div class="control-group">
                                 <label class="relative"><@orcid.msg 'peer_review.subject.identifier_type'/></label>
                                 <div class="relative">
-                                    <select id="extIdType" class="form-control" name="extIdType" ng-model="editPeerReview.subjectExternalIdentifier.workExternalIdentifierType.value" ng-change="fillUrl(extId)">                                                                                    
+                                    <select id="extIdType" class="form-control" name="extIdType" ng-model="editPeerReview.subjectExternalIdentifier.externalIdentifierType.value" ng-change="fillUrl(extId)">                                                                                    
                                         <option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
                                         <#list idTypes?keys as key>
                                             <option value="${idTypes[key]}">${key}</option>
                                         </#list>
                                     </select>                                   
-                                    <span class="orcid-error" ng-show="editPeerReview.subjectExternalIdentifier.workExternalIdentifierType.errors.length > 0">
-                                        <div ng-repeat='error in editPeerReview.subjectExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
+                                    <span class="orcid-error" ng-show="editPeerReview.subjectExternalIdentifier.externalIdentifierType.errors.length > 0">
+                                        <div ng-repeat='error in editPeerReview.subjectExternalIdentifier.externalIdentifierType.errors' ng-bind-html="error"></div>
                                     </span>
                                 </div>  
                             </div>                          
@@ -224,9 +224,9 @@
                             <div class="control-group">
                                 <label class="relative"><@orcid.msg 'peer_review.subject.identifier_value'/></label>
                                 <div class="relative">
-                                    <input id="extIdValue" name="extIdValue" type="text" class="form-control"  ng-model="editPeerReview.subjectExternalIdentifier.workExternalIdentifierId.value" ng-change="fillUrl(extId)"/>
-                                    <span class="orcid-error" ng-show="editPeerReview.subjectExternalIdentifier.workExternalIdentifierId.errors.length > 0">
-                                        <div ng-repeat='error in editPeerReview.subjectExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
+                                    <input id="extIdValue" name="extIdValue" type="text" class="form-control"  ng-model="editPeerReview.subjectExternalIdentifier.externalIdentifierId.value" ng-change="fillUrl(extId)"/>
+                                    <span class="orcid-error" ng-show="editPeerReview.subjectExternalIdentifier.externalIdentifierId.errors.length > 0">
+                                        <div ng-repeat='error in editPeerReview.subjectExternalIdentifier.externalIdentifierId.errors' ng-bind-html="error"></div>
                                     </span>
                                 </div>                              
                             </div>

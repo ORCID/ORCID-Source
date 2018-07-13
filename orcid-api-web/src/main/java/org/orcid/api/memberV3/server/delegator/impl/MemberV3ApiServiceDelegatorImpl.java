@@ -1189,11 +1189,11 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Override
     public Response viewBulkWorks(String orcid, String putCodes) {
         checkProfileStatus(orcid, true);
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
-        if (profileEntity == null) {
-            throw new OrcidNoResultException("No such profile: " + orcid);
+        
+        if (!profileEntityManager.orcidExists(orcid)) {
+            throw new OrcidNoResultException("No such record: " + orcid);
         }
-
+        
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
         contributorUtils.filterContributorPrivateData(workBulk);

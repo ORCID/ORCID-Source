@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc1.record.Distinction;
 import org.orcid.jaxb.model.v3.rc1.record.Education;
 import org.orcid.jaxb.model.v3.rc1.record.Employment;
@@ -20,10 +22,14 @@ import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.rc1.record.Membership;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
+import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -82,7 +88,6 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliations.json", method = RequestMethod.GET)
     public @ResponseBody List<AffiliationForm> getAffiliationJson(HttpServletRequest request, @RequestParam(value = "affiliationIds") String affiliationIdsStr) {
         List<AffiliationForm> affiliationList = new ArrayList<>();
-        AffiliationForm affiliation = null;
         String[] affiliationIds = affiliationIdsStr.split(",");
 
         if (affiliationIds != null) {
@@ -93,65 +98,12 @@ public class AffiliationsController extends BaseWorkspaceController {
                 affiliationsMap = (HashMap<String, AffiliationForm>) request.getSession().getAttribute(AFFILIATIONS_MAP);
             }
             for (String affiliationId : affiliationIds) {
-                affiliation = affiliationsMap.get(affiliationId);
-
-                if (affiliation.getStartDate() == null) {
-                    initializeStartDate(affiliation);
-                } else {
-                    if (affiliation.getStartDate().getDay() == null) {
-                        affiliation.getStartDate().setDay(new String());
-                    }
-                    if (affiliation.getStartDate().getMonth() == null) {
-                        affiliation.getStartDate().setMonth(new String());
-                    }
-                    if (affiliation.getStartDate().getYear() == null) {
-                        affiliation.getStartDate().setYear(new String());
-                    }
-                }
-
-                if (affiliation.getEndDate() == null) {
-                    initializeEndDate(affiliation);
-                } else {
-                    if (affiliation.getEndDate().getDay() == null) {
-                        affiliation.getEndDate().setDay(new String());
-                    }
-                    if (affiliation.getEndDate().getMonth() == null) {
-                        affiliation.getEndDate().setMonth(new String());
-                    }
-                    if (affiliation.getEndDate().getYear() == null) {
-                        affiliation.getEndDate().setYear(new String());
-                    }
-                }
-                
-                if (affiliation.getUrl() == null) {
-                    affiliation.setUrl(new Text());
-                }
-                affiliationList.add(affiliation);
+                affiliationList.add(affiliationsMap.get(affiliationId));
             }
         }
 
         return affiliationList;
-    }
-
-    private void initializeStartDate(AffiliationForm affiliation) {
-        if (affiliation.getStartDate() == null) {
-            affiliation.setStartDate(getEmptyDate());
-        }
-    }
-
-    private void initializeEndDate(AffiliationForm affiliation) {
-        if (affiliation.getEndDate() == null) {
-            affiliation.setEndDate(getEmptyDate());
-        }
-    }
-
-    private Date getEmptyDate() {
-        Date date = new Date();
-        date.setDay(new String());
-        date.setMonth(new String());
-        date.setYear(new String());
-        return date;
-    }
+    }    
 
     /**
      * Returns a blank affiliation form
@@ -311,8 +263,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliationIds.json", method = RequestMethod.GET)
     public @ResponseBody List<String> getAffiliationsJson(HttpServletRequest request) {
         // Get cached profile
-        List<String> affiliationIds = createAffiliationsIdList(request);
-        return affiliationIds;
+        return createAffiliationsIdList(request);
     }
 
     /**
@@ -451,7 +402,11 @@ public class AffiliationsController extends BaseWorkspaceController {
     public @ResponseBody AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
         boolean primaryValidation = true;
         if(affiliationForm.getStartDate() == null) {
-            affiliationForm.setStartDate(getEmptyDate());
+            Date date = new Date();
+            date.setDay(new String());
+            date.setMonth(new String());
+            date.setYear(new String());
+            affiliationForm.setStartDate(date);
         }
         
         affiliationForm.getStartDate().setErrors(new ArrayList<String>());
@@ -480,6 +435,25 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
 
         return affiliationForm;
+    }
+    
+    @RequestMapping(value = "/affiliationGroups.json", method = RequestMethod.GET)
+    public @ResponseBody AffiliationGroupContainer getGroupedAffiliations() {
+        String orcid = getCurrentUserOrcid();        
+        AffiliationGroupContainer result = new AffiliationGroupContainer();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, false);        
+        for(AffiliationType type : AffiliationType.values()) {
+            if(affiliationsMap.containsKey(type)) {
+                List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
+                List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
+                IntStream.range(0, elementsList.size()).forEach(idx -> {                
+                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
+                    elementsFormList.add(groupForm);
+                });
+                result.getAffiliationGroups().put(type, elementsFormList);
+            }
+        }        
+        return result;
     }
 
 }

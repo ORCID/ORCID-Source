@@ -82,7 +82,10 @@ public enum Features implements Feature {
     OPENID_SIMPLE_SUBJECT,
     
     @Label("Disable 1.1 version from any API")
-    DISABLE_1_1;
+    DISABLE_1_1,
+    
+    @Label("Enable group affiliations")
+    GROUP_AFFILIATIONS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

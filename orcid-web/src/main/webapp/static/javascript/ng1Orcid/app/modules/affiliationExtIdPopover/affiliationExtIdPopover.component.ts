@@ -27,7 +27,8 @@ export class AffiliationExtIdPopoverComponent implements OnInit {
         private elementRef: ElementRef,
         private urlProtocol: UrlProtocolPipe
     ) {
-        this.extID = elementRef.nativeElement.getAttribute('extID');
+        
+        this.extID = elementRef.nativeElement.getAttribute('extID');        
         this.putCode = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].putCode.value+i');
 
         this.displayAffiliationExtIdPopOver = {};
@@ -42,6 +43,8 @@ export class AffiliationExtIdPopoverComponent implements OnInit {
     };
 
     ngOnInit() {
-        this.urlProtocol.transform(this.extID.url.value); 
+        if(this.extID.url != null) {
+            this.urlProtocol.transform(this.extID.url.value); 
+        }        
     }; 
 }

@@ -1064,7 +1064,7 @@
 	<bean id="profileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="profile" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.profileCache.maxMegaBytesInMemory:1024}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
 		<property name="maxMegaBytesOnDisk" value="0" />
 	</bean>
@@ -1098,7 +1098,7 @@
 		<property name="cacheManager" ref="coreCacheManager" />
 		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:5000}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:3600}" />
-		<property name="maxMegaBytesOnDisk" value="128" />
+		<property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
 	</bean>		
 	
@@ -1131,7 +1131,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="2000" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
     </bean>
     
@@ -1140,7 +1140,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="2000" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
     </bean>
 
@@ -1271,6 +1271,15 @@
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToIdleSeconds" value="3600" />
         <property name="maxMegaBytesOnDisk" value="256" />
+    </bean>
+    
+    <bean id="affiliationGroupsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="affiliations-group" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="2000" />
+        <property name="timeToIdleSeconds" value="7200" />
+        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="copyValues" value="false" />
     </bean>
     
 	<!-- HTTP client connection beans -->
@@ -1587,4 +1596,16 @@
 	   <constructor-arg value="${org.orcid.core.node:1}" />
 	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
 	</bean>
+	
+	<bean id="orgAffiliationRelationEntityCacheManager" class="org.orcid.core.manager.v3.impl.OrgAffiliationRelationEntityCacheManagerImpl" />
+	
+	<bean id="affiliationEntitiesGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+        <property name="cache" ref="affiliationGroupsCache" />
+        <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+        <property name="retriever" ref="orgAffiliationRelationEntityRetriver" />
+    </bean>
+    
+	<bean id="orgAffiliationRelationEntityRetriver" class="org.orcid.core.cache.impl.OrgAffiliationRelationEntityRetriver">
+        <property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
+    </bean>
 </beans>

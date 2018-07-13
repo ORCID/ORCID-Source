@@ -96,7 +96,6 @@ import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -1083,11 +1082,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewBulkWorks(String orcid, String putCodes) {
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
-        if (profileEntity == null) {
-            throw new OrcidNoResultException("No such profile: " + orcid);
+        if (!profileEntityManager.orcidExists(orcid)) {
+            throw new OrcidNoResultException("No such record: " + orcid);
         }
-
+        
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
         contributorUtils.filterContributorPrivateData(workBulk);
