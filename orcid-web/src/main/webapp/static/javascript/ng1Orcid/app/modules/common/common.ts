@@ -30,6 +30,10 @@ import { ContributorFilterPipe }
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
+import { KeysPipe }
+    from '../../pipes/keysNg2.ts'; 
+
+
 import { LatexPipe }
     from '../../pipes/latexNg2.ts'; 
 
@@ -201,6 +205,7 @@ import { EmailFrequencyService }
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
+            KeysPipe,
             LatexPipe,
             OrderByAffiliationsPipe,
             OrderByPipe,
@@ -220,6 +225,7 @@ import { EmailFrequencyService }
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
+            KeysPipe,
             LatexPipe,
             OrderByAffiliationsPipe,
             OrderByPipe,

@@ -614,14 +614,12 @@
                                                         <div *ngIf="showBibtex[work.putCode.value]">
                                                             <div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{bibJSON.entryType}}</div>
                                                             <div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{bibJSON.citationKey}}</div>                               
-                                                            <div *ngFor="let bibEntry of bibJSON.entryTags; let index = index; let first = first; let last = last;">
-                                                                {{bibEntry | json}}
-                                                                <!--****(entKey,entVal)
-                                                                <div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{entKey}}</div>
-                                                                <div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{entVal | latex}}</div>
-                                                                -->
-                                                            </div>
-                                                            
+                                                            <div *ngFor="let bibEntry of bibJSON.entryTags">
+                                                                <div *ngFor="let tag of bibEntry | keys">
+                                                                <div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{tag.key}}</div>
+                                                                <div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{tag.value | latex}}</div>
+                                                                </div>
+                                                            </div>   
                                                         </div>                 
                                                     </div>                      
                                                 </div>
