@@ -51,11 +51,11 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
             $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
             
             $scope.addExternalIdentifier = function () {
-                $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
+                $scope.editPeerReview.externalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
             };
 
             $scope.addSubjectExternalIdentifier = function () {
-                $scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
+                $scope.editPeerReview.subjectForm.workExternalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
             };
 
             $scope.bindTypeaheadForOrgs = function () {
@@ -137,7 +137,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
             $scope.fillUrl = function(extId) {
                 var url = null;
                 if(extId != null) {
-                    url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);           
+                    url = workIdLinkJs.getLink(extId.externalIdentifierId.value, extId.externalIdentifierType.value);           
                     if(extId.url == null) {
                         extId.url = {value:""};
                     }
