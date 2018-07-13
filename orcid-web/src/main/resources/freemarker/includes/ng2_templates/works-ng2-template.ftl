@@ -162,20 +162,17 @@
                             <div class="col-md-5 col-sm-5 col-xs-12">
                                 <div class="form-group">
                                     <label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label> 
-                                    
-                                    <!-- ***
-                                    <select id="work-type" ng-options="wt as wt for wt in workType | orderBy: 'toString()'" [(ngModel)]="selectedWorkType"></select>  
-                                    -->  
-                                                   
+                                    <select id="work-type" name="work-type" [(ngModel)]="selectedWorkType">
+                                        <option *ngFor="let wt of workType">{{wt}}</option>
+                                    </select> 
                                 </div> 
                             </div>
                             <div class="col-md-7 col-sm-7 col-xs-12">
                                 <div class="form-group geo-area-group">
-                                    <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>  
-                                    
-                                    <!-- ***
-                                    <select ng-options="ga as ga for ga in geoArea | orderBy: 'toString()'" [(ngModel)]="selectedGeoArea"></select>  
-                                    -->
+                                    <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>
+                                    <select id="geo-area" name="geo-area" [(ngModel)]="selectedGeoArea">
+                                        <option *ngFor="let ga of geoArea">{{ga}}</option>
+                                    </select>   
                                 </div>
                             </div>  
                         </form>
@@ -347,19 +344,19 @@
                                 <ul class="id-details">
                                     <li class="url-work">
                                         <ul class="id-details">
-                                            <li *ngFor='let ie of work.workExternalIdentifiers | orderBy:["-relationship.value", "externalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
-                                                <!-- ***
-                                                <span *ngIf="work.workExternalIdentifiers[0].externalIdentifierId.value.length > 0" >{{ie | workExternalIdentifierHtml:first:last:work.workExternalIdentifiers.length:moreInfo[group.groupId]}}</span>
-                                                -->
+                                            <li *ngFor='let extID of work.workExternalIdentifiers | orderBy:["-relationship.value", "externalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
+                                                <span *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
+                                                    <ext-id-popover-ng2 [extID]="extID" [putCode]="'bibtexWork'+i" [activityType]="'work'"></ext-id-popover-ng2>
+                                                </span>
                                             </li>
                                         </ul>                                   
                                     </li>
 
                                     <li *ngIf="work.url?.value" class="url-popover url-work">
-                                        <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver(work.putCode.value)" (mouseleave)="hideURLPopOver(work.putCode.value)" [ngClass]="{'truncate-anchor' : moreInfo[group?.groupId] == false || moreInfo[group?.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
+                                        <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver('bibtexWork'+index)" (mouseleave)="hideURLPopOver('bibtexWork'+index)" [ngClass]="{'truncate-anchor' : moreInfo[group?.groupId] == false || moreInfo[group?.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
                                         <div class="popover-pos">                                   
                                             <div class="popover-help-container">
-                                                <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver[work.putCode.value] == true}">
+                                                <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver['bibtexWork'+index] == true}">
                                                     <div class="arrow"></div>
                                                     <div class="popover-content">
                                                         <a href="{{work.url.value}}" target="work.url.value">{{work.url.value}}</a>
@@ -372,7 +369,7 @@
                             </div>
                         </div>
                     </div>                          
-                    <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                     
+                    <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                   
                         <ul>
                             <li><a (click)="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
                             <li><a *ngIf="work?.errors?.length == 0" (click)="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>

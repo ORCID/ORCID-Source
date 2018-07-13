@@ -31,7 +31,7 @@ export class ExtIdPopoverComponent implements OnInit {
         private urlProtocol: UrlProtocolPipe
     ) {
         this.extID = elementRef.nativeElement.getAttribute('extID');
-        this.putCode = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].putCode.value+i');
+        this.putCode = elementRef.nativeElement.getAttribute('putCode');
         this.activityType = elementRef.nativeElement.getAttribute('activityType');
         this.displayAffiliationExtIdPopOver = {};
     }
