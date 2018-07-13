@@ -46,6 +46,7 @@ import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.v3.SourceUtils;
+import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
 import org.orcid.frontend.web.pagination.WorksPage;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -663,20 +664,21 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
-    public @ResponseBody List<PeerReviewGroup> getPeerReviewsJson(@PathVariable("orcid") String orcid) {
+    public @ResponseBody List<PeerReviewGroup> getPeerReviewsJson(@PathVariable("orcid") String orcid, @RequestParam("sortAsc") boolean sortAsc) {
         List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
         List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, true);
         for (org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewSummary().get(0).getGroupId());
             PeerReviewGroup peerReviewGroup = PeerReviewGroup.valueOf(group, groupIdRecord.get());
-            peerReviewGroups.add(peerReviewGroup);
             for (PeerReviewForm peerReviewForm : peerReviewGroup.getPeerReviews()) {
                 if (peerReviewForm.getCountry() != null) {
                     peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
                 }
             }
+            peerReviewGroups.add(peerReviewGroup);
         }
+        peerReviewGroups.sort(new PeerReviewGroupComparator(!sortAsc));
         return peerReviewGroups;
     }
 
