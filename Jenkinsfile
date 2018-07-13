@@ -97,6 +97,7 @@ def orcid_notify(message, level){
 
 def do_maven(mvn_task){
     def MAVEN = tool 'ORCID_MAVEN'
+    def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
     try{
         sh "export MAVEN_OPTS='-Xms2048m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError'"
         sh "$MAVEN/bin/mvn -Djava.io.tmpdir=$EHCACHE_LOCATION $mvn_task"
