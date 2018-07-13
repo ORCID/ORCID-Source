@@ -266,22 +266,6 @@ export class WorksService {
         this.url = getBaseUri() + '/my-orcid/worksForms.json';
     }
 
-    getWorksPage( accessType, sort, sortAsc): Observable<any> {
-        this.details = new Object();
-        let url = getBaseUri();
-        if (accessType == this.constants.access_type.USER) {
-            url += '/works/worksPage.json';
-        } else {
-            url += '/' + orcidVar.orcidId +'/worksPage.json';
-        }
-        url += '?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
-        this.loading = true;
-
-        return this.http.get(
-            url
-        )       
-    }
-
     addBibtexJson(dw): void {
         if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
             try {
@@ -309,6 +293,18 @@ export class WorksService {
         return true;
     }
 
+    getBibtexExport(): Observable<any> {
+        return this.http.get( 
+            getBaseUri() + '/works/works.bib', { responseType: 'text'}
+        )
+    }
+
+    getBlankWork(callback?): Observable<any> {
+        return this.http.get( 
+            getBaseUri() + '/works/work.json'
+        )
+    };
+
     getDetails(putCode, type): Observable <any> {
         let url = getBaseUri();
         if (type == this.constants.access_type.USER) {
@@ -321,6 +317,12 @@ export class WorksService {
             ) 
     }
 
+    getExternalIdTypes(term): any {  
+        return this.http.get(
+            getBaseUri()+'/works/idTypes.json?query='+term
+        )
+    };
+
     getGroup(putCode): any {
         for (var idx in this.groups) {
             for (var y in this.groups[idx].works) {
@@ -331,49 +333,6 @@ export class WorksService {
         }
         return null;
     }
-
-    getLabelMapping (workCategory, workType): any {
-        var result = this.labelsMapping.default.types[0];
-        var tempI = null;
-
-        if( this.labelsMapping[workCategory] != undefined ){
-            tempI = this.labelsMapping[workCategory].types;
-            for( var i = 0; i < tempI.length; i++) {
-                if( tempI[i].type == workType ) {
-                    result = tempI[i];
-                }
-            }
-        }
-        console.log(result);
-        return result;
-    }
-
-    handleWorkGroupData(data, callback?): void {
-        if (this.groups == undefined) {
-            this.groups = new Array();
-        }
-        this.groups = this.groups.concat(data.workGroups);
-        this.groupsLabel = this.groups.length + " of " + data.totalGroups;
-        this.showLoadMore = this.groups.length < data.totalGroups;
-        this.loading = false;
-        this.offset = data.nextOffset;
-        
-        if (callback != undefined) {
-            callback();
-        }
-    }
-
-    getBibtexExport(): Observable<any> {
-        return this.http.get( 
-            getBaseUri() + '/works/works.bib', { responseType: 'text'}
-        )
-    }
-
-    getBlankWork(callback?): Observable<any> {
-        return this.http.get( 
-            getBaseUri() + '/works/work.json'
-        )
-    };
 
     getGroupDetails(putCode, type, callback?): void {
         let group = this.getGroup(putCode);
@@ -395,11 +354,20 @@ export class WorksService {
         popFunct();
     }
 
-    getExternalIdTypes(term): any {  
-        return this.http.get(
-            getBaseUri()+'/works/idTypes.json?query='+term
-        )
-    };
+    getLabelMapping (workCategory, workType): any {
+        var result = this.labelsMapping.default.types[0];
+        var tempI = null;
+
+        if( this.labelsMapping[workCategory] != undefined ){
+            tempI = this.labelsMapping[workCategory].types;
+            for( var i = 0; i < tempI.length; i++) {
+                if( tempI[i].type == workType ) {
+                    result = tempI[i];
+                }
+            }
+        }
+        return result;
+    }
 
     getWork(putCode): any {
         for (let j in this.groups) {
@@ -412,6 +380,37 @@ export class WorksService {
         return null;
     }
 
+    getWorksPage( accessType, sort, sortAsc): Observable<any> {
+        this.details = new Object();
+        let url = getBaseUri();
+        if (accessType == this.constants.access_type.USER) {
+            url += '/works/worksPage.json';
+        } else {
+            url += '/' + orcidVar.orcidId +'/worksPage.json';
+        }
+        url += '?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
+        this.loading = true;
+
+        return this.http.get(
+            url
+        )       
+    }
+
+    handleWorkGroupData(data, callback?): void {
+        if (this.groups == undefined) {
+            this.groups = new Array();
+        }
+        this.groups = this.groups.concat(data.workGroups);
+        this.groupsLabel = this.groups.length + " of " + data.totalGroups;
+        this.showLoadMore = this.groups.length < data.totalGroups;
+        this.loading = false;
+        this.offset = data.nextOffset;
+        
+        if (callback != undefined) {
+            callback();
+        }
+    }
+
     loadAllWorkGroups(sort, sortAsc, callback?): any {
         this.details = new Object();
         this.groups = new Array();
@@ -422,49 +421,6 @@ export class WorksService {
         return this.http.get(
             url
         )  
-    }
-
-    refreshWorkGroups(sort, sortAsc): Observable<any>  {
-        this.details = new Object();
-        this.groups = new Array();
-        let url = getBaseUri() + '/works/refreshWorks.json?limit=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
-        this.loading = true;
-        return this.http.get(
-            url
-        ) 
-    }
-
-    removeBadContributors(dw): void {
-        for (var idx in dw.contributors) {
-            if (dw.contributors[idx].contributorSequence == null
-                && dw.contributors[idx].email == null
-                && dw.contributors[idx].orcid == null
-                && dw.contributors[idx].creditName == null
-                && dw.contributors[idx].contributorRole == null
-                && dw.contributors[idx].creditNameVisibility == null) {
-                    dw.contributors.splice(idx,1);
-                }
-        }
-    }
-
-    removeBadExternalIdentifiers(dw): void {
-        for(var idx in dw.workExternalIdentifiers) {
-            if(dw.workExternalIdentifiers[idx].url == null) {
-                dw.workExternalIdentifiers[idx].url = "";
-            }
-            if(dw.workExternalIdentifiers[idx].externalIdentifierType == null
-                && dw.workExternalIdentifiers[idx].externalIdentifierId == null) {
-                dw.workExternalIdentifiers.splice(idx,1);
-            }
-        }
-    }
-
-    resolveExtId(extId): Observable<any> {
-        let params = new HttpParams().set('value', extId.externalIdentifierId.value);
-        return this.http.get( 
-            getBaseUri() + '/works/id/'+ extId.externalIdentifierType.value, 
-            { params: params }
-        );
     }
 
     loadWorkImportWizardList(): Observable<any> {
@@ -507,10 +463,10 @@ export class WorksService {
         )
     };
 
-    updateToMaxDisplay(putCode): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode
-        )
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
     }
 
     postWork(work): any {
@@ -522,17 +478,59 @@ export class WorksService {
         );
     }
 
+    resetWorkGroups(): void {
+        this.offset = 0;
+        this.groups = new Array();
+    }
+
+    refreshWorkGroups(sort, sortAsc): Observable<any>  {
+        this.details = new Object();
+        this.groups = new Array();
+        let url = getBaseUri() + '/works/refreshWorks.json?limit=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc;
+        this.loading = true;
+        return this.http.get(
+            url
+        ) 
+    }
+
+    removeBadContributors(dw): void {
+        for (var idx in dw.contributors) {
+            if (dw.contributors[idx].contributorSequence == null
+                && dw.contributors[idx].email == null
+                && dw.contributors[idx].orcid == null
+                && dw.contributors[idx].creditName == null
+                && dw.contributors[idx].contributorRole == null
+                && dw.contributors[idx].creditNameVisibility == null) {
+                    dw.contributors.splice(idx,1);
+                }
+        }
+    }
+
+    removeBadExternalIdentifiers(dw): void {
+        for(var idx in dw.workExternalIdentifiers) {
+            if(dw.workExternalIdentifiers[idx].url == null) {
+                dw.workExternalIdentifiers[idx].url = {value:""};
+            }
+            if(dw.workExternalIdentifiers[idx].externalIdentifierType == null
+                && dw.workExternalIdentifiers[idx].externalIdentifierId == null) {
+                dw.workExternalIdentifiers.splice(idx,1);
+            }
+        }
+    }
+
     removeWorks(putCodes): Observable<any> {
-        console.log(putCodes);
         return this.http.delete( 
             getBaseUri() + '/works/' + putCodes.splice(0,150).join(),             
             { headers: this.headers }
         ) 
     }
 
-    resetWorkGroups(): void {
-        this.offset = 0;
-        this.groups = new Array();
+    resolveExtId(extId): Observable<any> {
+        let params = new HttpParams().set('value', extId.externalIdentifierId.value);
+        return this.http.get( 
+            getBaseUri() + '/works/id/'+ extId.externalIdentifierType.value, 
+            { params: params }
+        );
     }
 
     serverValidate( obj, relativePath ): Observable<any> {
@@ -564,21 +562,18 @@ export class WorksService {
         
     }
 
+    updateToMaxDisplay(putCode): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode
+        )
+    }
+
     updateVisibility(putCodes, priv): Observable<any> {
         let url = getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv;
 
         return this.http.get(
             url
         )
-    }
-
-
-    workCount( worksSrvc ): Number {
-        var count = 0;
-        for (var idx in worksSrvc.groups) {
-            count += worksSrvc.groups[idx].activitiesCount;
-        }
-        return count;
     }
 
     worksValidate(obj,sucessFunc?, failFunc?): Observable<any> {
@@ -588,13 +583,6 @@ export class WorksService {
             encoded_data, 
             { headers: this.headers }
         )
-    }
-     
-    notifyOther(data: any): void {
-        console.log(data);
-        if (data) {
-            this.notify.next(data);
-        }
     }
     
 }

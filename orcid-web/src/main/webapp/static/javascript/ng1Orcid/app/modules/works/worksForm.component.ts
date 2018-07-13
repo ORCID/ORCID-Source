@@ -24,7 +24,7 @@ import { WorksService }
     from '../../shared/works.service.ts';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts'
+    from '../../shared/features.service.ts';
 
 import { ModalService } 
     from '../../shared/modal.service.ts';
@@ -80,6 +80,69 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         : this.externalIDTypeCache.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     );
 
+    addExternalIdentifier(): void {
+        this.editWork.workExternalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
+    };
+
+    addWork(): any{
+        this.addingWork = true;
+        this.editWork.errors.length = 0;
+        this.worksService.postWork( this.editWork)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.addingWork= false;
+                if (data.errors.length > 0) {
+                    this.editWork = data;                    
+                    this.commonService.copyErrorsLeft(this.editWork, data);
+                    //re-populate any id resolution errors.
+                    //do it here because they're by-passable
+                    if (this.exIdResolverFeatureEnabled == true){
+                        for (var extId in this.editWork.workExternalIdentifiers){
+                            this.fillUrl(this.editWork.workExternalIdentifiers[extId]);
+                        }
+                    }
+                } else {
+                    if (this.bibtexWork != false){
+                        this.bibtexWork = false;
+                        this.worksService.notifyOther({action:'add', successful:true, bibtex:true}); 
+                    }
+                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
+                    this.worksService.notifyOther({action:'add', successful:true, bibtex:false}); 
+                }
+
+            },
+            error => {
+                console.log('worksForm.component.ts addWorkError', error);
+            } 
+        );
+    };
+
+    applyLabelWorkType(): void {
+        var obj = null;
+        var that = this;
+        setTimeout(
+            function() {
+                obj = that.worksService.getLabelMapping(that.editWork.workCategory.value, that.editWork.workType.value)
+                that.contentCopy = obj;
+            }, 
+            100
+        );
+
+    };
+
+    clearErrors(): void {
+        this.editWork.workCategory.errors = [];
+        this.editWork.workType.errors = [];
+    };
+
+    cancelEdit(): void {
+        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
+        this.worksService.notifyOther({action:'cancel', successful:true});
+    };
+
     changeExtIdType(i, event): void {
         event.preventDefault();
         this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = event.item.name;
@@ -92,6 +155,16 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         this.fillUrl(i);
     }
+
+    deleteContributor(obj): void {
+        var index = this.editWork.contributors.indexOf(obj);
+        this.editWork.contributors.splice(index,1);
+    };
+
+    deleteExternalIdentifier(index): void {
+        this.editWork.workExternalIdentifiers.splice(index,1);
+        this.cdr.detectChanges();
+    };
 
     fillUrl(i): void {
         //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
@@ -122,7 +195,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.editWork.workExternalIdentifiers[i].resolvingId = false;
                     },
                     error => {
-                        console.log("id resolve error");
+                        console.log("id resolver error");
                         this.editWork.workExternalIdentifiers[i].resolvingId = false;
                     } 
                 );
@@ -245,43 +318,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     }
 
-    addExternalIdentifier(): void {
-        this.editWork.workExternalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
-    };
-
-    applyLabelWorkType(): void {
-        var obj = null;
-        var that = this;
-        setTimeout(
-            function() {
-                obj = that.worksService.getLabelMapping(that.editWork.workCategory.value, that.editWork.workType.value)
-                that.contentCopy = obj;
-            }, 
-            100
-        );
-
-    };
-
-    clearErrors(): void {
-        this.editWork.workCategory.errors = [];
-        this.editWork.workType.errors = [];
-    };
-
-    cancelEdit(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
-        this.worksService.notifyOther({action:'cancel', successful:true});
-    };
-
-    deleteContributor(obj): void {
-        var index = this.editWork.contributors.indexOf(obj);
-        this.editWork.contributors.splice(index,1);
-    };
-
-    deleteExternalIdentifier(index): void {
-        this.editWork.workExternalIdentifiers.splice(index,1);
-        this.cdr.detectChanges();
-    };
-
     isValidClass(cur): any {
         var valid = true;
         if (cur === undefined || cur == null) {
@@ -343,42 +379,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    addWork(): any{
-        this.addingWork = true;
-        this.editWork.errors.length = 0;
-        this.worksService.postWork( this.editWork)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.addingWork= false;
-                if (data.errors.length > 0) {
-                    this.editWork = data;                    
-                    this.commonService.copyErrorsLeft(this.editWork, data);
-                    //re-populate any id resolution errors.
-                    //do it here because they're by-passable
-                    if (this.exIdResolverFeatureEnabled == true){
-                        for (var extId in this.editWork.workExternalIdentifiers){
-                            this.fillUrl(this.editWork.workExternalIdentifiers[extId]);
-                        }
-                    }
-                } else {
-                    if (this.bibtexWork != false){
-                        this.bibtexWork = false;
-                        this.worksService.notifyOther({action:'add', successful:true, bibtex:true}); 
-                    }
-                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
-                    this.worksService.notifyOther({action:'add', successful:true, bibtex:false}); 
-                }
-
-            },
-            error => {
-                console.log('worksForm.component.ts addWorkError', error);
-            } 
-        );
-    };
-
     serverValidate(relativePath): void {
         this.worksService.serverValidate(this.editWork, relativePath)
         .pipe(    
@@ -425,7 +425,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         } 
                     );
                 }
-                console.log(this.editWork.workExternalIdentifiers);
             }
         );
         

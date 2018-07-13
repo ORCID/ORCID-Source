@@ -678,17 +678,6 @@
                                             <div *ngIf="editSources[group.groupId]">
                                                 <#if !(isPublicProfile??)>
                                                 <ul class="sources-actions">
-                                                    <#if RequestParameters['combine']??>
-                                                    <li *ngIf="canBeCombined(work)">
-                                                        <a class="glyphicons git_pull_request" (click)="showCombineMatches(group.defaultWork)" (mouseenter)="showTooltip(work.putCode.value+'-combineActiveDuplicates')" (mouseleave)="hideTooltip(work.putCode.value+'-combineActiveDuplicates')"></a>
-                                                        <div class="popover popover-tooltip top combine-activeDuplicates-popover" *ngIf="showElement[work.putCode.value+'-combineActiveDuplicates']">
-                                                            <div class="arrow"></div>
-                                                            <div class="popover-content">
-                                                                <@orcid.msg 'groups.common.combine_duplicates' />
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    </#if>
                                                     <li> 
                                                         <@orcid.editWorkIconNg2
                                                             activity="work"
@@ -737,18 +726,6 @@
                                         <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
                                             <#if !(isPublicProfile??)>
                                             <ul class="sources-actions">
-                                                <#if RequestParameters['combine']??>
-                                                <li *ngIf="canBeCombined(work)">
-                                                    <a class="glyphicons git_pull_request" (click)="showCombineMatches(group.defaultWork)" (mouseenter)="showTooltip(work.putCode.value+'-combineInactiveDuplicates')" (mouseleave)="hideTooltip(work.putCode.value+'-combineInactiveDuplicates')"></a>
-
-                                                    <div class="popover popover-tooltip top combine-inactiveDuplicates-popover" *ngIf="showElement[work.putCode.value+'-combineInactiveDuplicates'] == true">
-                                                        <div class="arrow"></div>
-                                                        <div class="popover-content">
-                                                            <@orcid.msg 'groups.common.combine_duplicates' />
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                </#if>
                                                 <li> 
                                                     <@orcid.editWorkIconNg2
                                                         activity="work"
@@ -792,21 +769,6 @@
                                         <div class="col-md-2 col-sm-2 col-xs-3" *ngIf="group.activePutCode == work.putCode.value">
                                             <ul class="sources-options" >
                                                 <#if !(isPublicProfile??)>
-                                                <#if RequestParameters['combine']??>
-                                                <li *ngIf="canBeCombined(work)">
-                                                    <a (click)="showCombineMatches(group.defaultWork)" title="<@orcid.msg 'groups.common.combine_duplicates' />" (mouseenter)="showTooltip(group.groupId+'-combineDuplicates')" (mouseleave)="hideTooltip(group.groupId+'-combineDuplicates')">
-                                                        <span class="glyphicons git_pull_request"></span>
-                                                    </a>
-
-                                                    <div class="popover popover-tooltip top combine-duplicates-popover" *ngIf="showElement[group.groupId+'-combineDuplicates']">
-                                                        <div class="arrow"></div>
-                                                        <div class="popover-content">
-                                                            <@orcid.msg 'groups.common.combine_duplicates' />
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                </#if>
-
                                                 <li>
                                                     <@orcid.editWorkIconNg2
                                                         activity="work"

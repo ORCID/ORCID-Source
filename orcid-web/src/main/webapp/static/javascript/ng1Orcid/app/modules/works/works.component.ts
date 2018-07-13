@@ -6,6 +6,7 @@ declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
 declare var populateWorkAjaxForm: any;
+declare var workIdLinkJs: any;
 
 import { NgForOf, NgIf } 
     from '@angular/common'; 
@@ -22,14 +23,17 @@ import { takeUntil }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
-import { WorksService } 
-    from '../../shared/works.service.ts';
-
 import { EmailService } 
     from '../../shared/email.service.ts';
 
+import { FeaturesService }
+    from '../../shared/features.service.ts';
+
 import { ModalService } 
     from '../../shared/modal.service.ts';
+
+import { WorksService } 
+    from '../../shared/works.service.ts';
 
 import { WorkspaceService } 
     from '../../shared/workspace.service.ts'; 
@@ -55,14 +59,13 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bulkEditMap: any;
     bulkEditShow: boolean;
     canReadFiles: boolean;
-    combineWork: any;
     deleteGroup: any;
     deletePutCode: any;
     displayURLPopOver: any;
     editSources: any;
     editWork: any;
     emails: any;
-    emailSrvc: any;
+    exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
     fixedTitle: any;
     formData: any;
     geoArea: any;
@@ -91,6 +94,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private cdr: ChangeDetectorRef,
         private elementRef: ElementRef,
         private emailService: EmailService,
+        private featuresService: FeaturesService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
         private worksService: WorksService
@@ -108,7 +112,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.bulkEditMap = {};
         this.bulkEditShow = false;
         this.canReadFiles = false;
-        this.combineWork = null;
         this.displayURLPopOver = {};
         this.editSources = {};
         this.editWork = null;
@@ -178,13 +181,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 if (data.errors.length > 0) {
                     this.editWork = data;                    
                     this.commonSrvc.copyErrorsLeft(this.editWork, data);
-                    //re-populate any id resolution errors.
-                    //do it here because they're by-passable
-                    /*if (this.exIdResolverFeatureEnabled == true){
-                        for (var extId in this.editWork.workExternalIdentifiers){
-                            this.fillUrl(this.editWork.workExternalIdentifiers[extId]);
-                        }
-                    }*/
+                    //TODO: resolve ext ids added via bibtex
                 } else {
                     if (this.bibtexWork != false){
                         this.worksFromBibtex.splice(this.bibtexWorkIndex, 1);
@@ -201,7 +198,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };      
 
     addWorkModal(work): void {
-        console.log(work);
         this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -221,7 +217,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                //console.log('getEmails', error);
+                console.log('getEmails', error);
             } 
         );
     };
@@ -297,7 +293,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                //console.log('getEmails', error);
+                console.log('getEmails', error);
             } 
         );
     };
@@ -340,48 +336,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         );   
     };
 
-    hasCombineableEIs(work): boolean {
-        if (work.workExternalIdentifiers != null){
-            for (var idx in work.workExternalIdentifiers){
-                if (work.workExternalIdentifiers[idx].externalIdentifierType.value != 'issn'){
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-
-    hideSources(group): void {
-        this.editSources[group.groupId] = false;
-    };
-
-    hideTooltip(key): void {        
-        this.showElement[key] = false;
-    };
-
-    hideURLPopOver(id): void {       
-        this.displayURLPopOver[id] = false;
-    };
-
-    loadDetails(putCode, event): void {
-        this.closePopover(event);
-        this.moreInfoOpen = true;
-        $(event.target).next().css('display','inline');
-        if(this.publicView === "true"){
-            this.getGroupDetails(
-                putCode, 
-                this.worksService.constants.access_type.ANONYMOUS
-            );
-        } else {
-            this.getGroupDetails(
-                putCode, 
-                this.worksService.constants.access_type.USER
-            );
-        }
-    };
-
     getDetails(putCode, type, callback): void {
-        console.log("get details");
         if(this.worksService.details[putCode] == undefined) {
             this.worksService.getDetails(putCode, type)
             .pipe(    
@@ -396,11 +351,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if (callback != undefined) {
                         callback(this.worksService.details[putCode]);
                     } 
-                    console.log("worksService details[]");
-                    console.log(this.worksService.details[putCode]);
                 },
                 error => {
-                    console.log('error getting work details', error);
+                    console.log('getDetailsError', error);
                 } 
             );
         } else {
@@ -446,7 +399,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     getGroupDetails(putCode, type, callback?): void {
-        console.log("get group details");
         let group = this.worksService.getGroup(putCode);
         let needsLoading =  new Array();
         let popFunct = function () {
@@ -463,6 +415,29 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         popFunct();
+    };
+
+    hasCombineableEIs(work): boolean {
+        if (work.workExternalIdentifiers != null){
+            for (var idx in work.workExternalIdentifiers){
+                if (work.workExternalIdentifiers[idx].externalIdentifierType.value != 'issn'){
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    hideSources(group): void {
+        this.editSources[group.groupId] = false;
+    };
+
+    hideTooltip(key): void {        
+        this.showElement[key] = false;
+    };
+
+    hideURLPopOver(id): void {       
+        this.displayURLPopOver[id] = false;
     };
 
     loadBibtexJs($event): void {
@@ -504,7 +479,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                     for (var i in data) {                           
                                         this.worksFromBibtex.push(data[i]);
                                     }
-                                    console.log(this.worksFromBibtex);
                                 },
                                 error => {
                                     console.log('worksValidateError', error);
@@ -517,11 +491,27 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     );
                 }.bind(this);
             }
-            //this.textFiles.length = 0;
             this.bibtexParsingError = false;     
         } catch (err) {
             console.log("error parsing bibtex: " + err);
             this.bibtexParsingError = true;
+        }
+    };
+
+    loadDetails(putCode, event): void {
+        this.closePopover(event);
+        this.moreInfoOpen = true;
+        $(event.target).next().css('display','inline');
+        if(this.publicView === "true"){
+            this.getGroupDetails(
+                putCode, 
+                this.worksService.constants.access_type.ANONYMOUS
+            );
+        } else {
+            this.getGroupDetails(
+                putCode, 
+                this.worksService.constants.access_type.USER
+            );
         }
     };
 
@@ -572,8 +562,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                //console.log('this.getForm works loadWorkImportWizardList', data);
-
                 if(data == null || data.length == 0) {
                     this.noLinkFlag = false;
                 }
@@ -596,7 +584,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                //console.log('WorkImportWizardError', error);
+                console.log('WorkImportWizardError', error);
             } 
         );
     };
@@ -612,7 +600,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 group.activePutCode = group.defaultWork.putCode.value;  
             },
             error => {
-                //console.log('getEmails', error);
+                console.log('makeDefault', error);
             } 
         );
     }
@@ -637,7 +625,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                //console.log('getEmails', error);
+                console.log('getEmails', error);
             } 
         );
     };
@@ -798,33 +786,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         ); 
     }
 
-    showCombineMatches( work1 ): void {
-        this.combineWork = work1;
-        /*
-        $.colorbox({
-            scrolling: true,
-            html: $compile($('#combine-work-template').html())($scope),
-            onLoad: function() {$('#cboxClose').remove();},
-            // start the colorbox off with the correct width
-            width: this.commonSrvc.formColorBoxResize(),
-            onComplete: function() {$.colorbox.resize();},
-            onClosed: function() {
-                $scope.closeAllMoreInfo();
-                $scope.worksService.refreshWorkGroups($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
-            }
-        });
-        */
-    };
-
     showDetailsMouseClick = function(group, $event) {
-        console.log("show details");
         $event.stopPropagation();
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
-        //this.cdr.detectChanges();
-        console.log(group);
         for (var idx in group.works){
-            console.log("group works i");
-            console.log(group.works[idx]);
             this.loadDetails(group.works[idx].putCode.value, $event);
         }
     };
@@ -902,7 +867,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         for (var idx in this.worksService.groups){
             this.bulkEditMap[this.worksService.groups[idx].activePutCode] = this.bulkChecked;
         }
-        console.log(this.bulkEditMap);
         this.bulkDisplayToggle = false;
     };
 
@@ -940,7 +904,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             if (!this.bulkEditShow) {
                                 this.bulkEditMap = {};
                                 this.bulkChecked = false;
-                                console.log(this.worksService.groups);
                                 for (var idx in this.worksService.groups){
                                     this.bulkEditMap[this.worksService.groups[idx].activePutCode] = false;
                                 }
@@ -953,7 +916,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         },
                         error => {
                             this.worksService.loading = false;
-                            //console.log('getWorksFormError', error);
+                            console.log('toggleBulkEditError', error);
                         }
                     );
                 }else{
@@ -961,7 +924,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                //console.log('getEmails', error);
+                console.log('getEmails', error);
             } 
         );
     };
