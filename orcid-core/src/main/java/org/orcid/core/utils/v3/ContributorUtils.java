@@ -79,7 +79,7 @@ public class ContributorUtils {
                 if (!PojoUtil.isEmpty(contributor.getContributorOrcid())) {
                     String orcid = contributor.getContributorOrcid().getPath();
                     String cachedName = getCachedContributorName(orcid);
-                    if(PojoUtil.isEmpty(cachedName)) {
+                    if(cachedName == null) {
                         idsToPopulateName.add(orcid);
                         contributorsToPopulateName.add(contributor);
                     } else {
@@ -129,7 +129,7 @@ public class ContributorUtils {
                 // Store in the request, to use as a cache
                 ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                 if (sra != null) {
-                    sra.setAttribute(orcid + RECORD_NAME_KEY_POSTFIX, publicCreditName, ServletRequestAttributes.SCOPE_REQUEST);
+                    sra.setAttribute(orcid + RECORD_NAME_KEY_POSTFIX, (publicCreditName == null ? "" : publicCreditName), ServletRequestAttributes.SCOPE_REQUEST);
                 }
             }
         });
