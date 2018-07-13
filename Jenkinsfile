@@ -98,7 +98,7 @@ def orcid_notify(message, level){
 def do_maven(mvn_task){
     def MAVEN = tool 'ORCID_MAVEN'
     try{
-        sh "export MAVEN_OPTS='-Xms2048m -Xmx2048m -XX:MaxPermSize=2048m -XX:+HeapDumpOnOutOfMemoryError'"
+        sh "export MAVEN_OPTS='-Xms2048m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError'"
         sh "$MAVEN/bin/mvn $mvn_task"
     } catch(Exception err) {
         throw err

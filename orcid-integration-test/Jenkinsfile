@@ -2,12 +2,7 @@ node {
 
     properties([
         buildDiscarder(
-            logRotator(
-                artifactDaysToKeepStr: '10', 
-                artifactNumToKeepStr: '20', 
-                daysToKeepStr: '8', 
-                numToKeepStr: '15'
-            )
+            logRotator(artifactDaysToKeepStr: '10', artifactNumToKeepStr: '20', daysToKeepStr: '8', numToKeepStr: '15')
         ),
         [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
         parameters([
@@ -16,7 +11,7 @@ node {
                 description: 'Branch or Tag to checkout and build', 
                 name: 'release_name'),
             string(
-                defaultValue: "file://${WORKSPACE}/orcid-persistence/src/main/resources/staging-persistence.properties", 
+                defaultValue: "file:///var/lib/jenkins/workspace/orcid-integration-test/orcid-persistence/src/main/resources/staging-persistence.properties,classpath:test-client.properties,classpath:test-web.properties", 
                 description: 'Persistence properties file', 
                 name: 'org_orcid_config_file'),
             string(
@@ -27,23 +22,21 @@ node {
                 name: 'test_class_name',
                 defaultValue: 'org.orcid.integration.blackbox.BlackBoxTestSuite',
                 description: '')
-
         ]),
         disableConcurrentBuilds(),
         pipelineTriggers([cron('0 H/4 * * 1-5')])
     ])
-    
+
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${release_name}"
-    
-    //def firefox_home = '/usr/bin/firefox'
+
     def firefox_home = '/opt/firefox/firefox'
-    
+
     def gecko_home = '/usr/local/bin/geckodriver'
-    
+
     stage('Rebuild core release'){
-        do_maven("clean install -T8 -Dmaven.test.skip=true -DskipTest -Dlicense.skip=true")
+        do_maven("clean install -Dmaven.test.skip=true -DskipTest -Dlicense.skip=true")
     }
-    
+
     stage('Setup database'){
         sh "whoami"
         sh "psql -U jenkins -d orcid -f /var/lib/jenkins/clean_all_tables.sql"
@@ -66,7 +59,7 @@ node {
             sh "psql  -U jenkins -d orcid -f /var/lib/jenkins/add_indexing_token.sql"
         }
     }
-    
+
     stage('Deploy release') {
         echo "Installing CF txt file"
         orcid_tomcat_sh "cp ~/cdn_url_cf.txt ~/git/ORCID-Source/orcid-web/src/main/resources/cdn_url_cf.txt"
@@ -75,7 +68,7 @@ node {
         //.Catalina.start Server startup in 369134 ms
         sh "sleep 400"
     }
-    
+
     stage('Prepare indexed data'){
         try {
             echo "Including disambiguated orgs for indexing"
@@ -85,7 +78,7 @@ node {
             echo err.toString()
         }
     }
-    
+
     stage('Execute blackbox tests') {
         try {
             echo "Creating xvfb..."
@@ -98,7 +91,7 @@ node {
         } catch(Exception err) {
             def err_msg = err.getMessage()
             echo "Tests problem: $err_msg"
-            orcid_notify("BlackBoxTest ${release_name}#$BUILD_NUMBER FAILED [ ${JOB_URL}/${BUILD_NUMBER}/testReport/ ]", 'ERROR')
+            orcid_notify("BlackBoxTest ${release_name}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         } finally {
             echo "Saving tests results"
@@ -112,7 +105,7 @@ def test_cleanup(){
     echo "Stoping tomcat..."
     orcid_tomcat_sh "sh /home/orcid_tomcat/bin/tomcat/bin/shutdown.sh"
     echo "Destroying xvfb..."
-    sh "XVFB_PID=\$(cat /tmp/xvfb_jenkins.pid) ; kill \$XVFB_PID"    
+    sh "XVFB_PID=\$(cat /tmp/xvfb_jenkins.pid) ; kill \$XVFB_PID"
 }
 
 def orcid_tomcat_sh(cmd){
@@ -126,7 +119,7 @@ def do_maven(mvn_task){
     } catch(Exception err) {
         throw err
     }
-} 
+}
 
 def orcid_notify(message, level){
     def color = "#d00000"
