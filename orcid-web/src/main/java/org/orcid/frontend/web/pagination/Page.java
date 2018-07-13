@@ -3,8 +3,6 @@ package org.orcid.frontend.web.pagination;
 import java.io.Serializable;
 import java.util.List;
 
-import org.orcid.pojo.WorkGroup;
-
 public class Page<T> implements Serializable {
     
     private static final long serialVersionUID = 1L;

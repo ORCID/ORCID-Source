@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;
+import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup;
@@ -98,7 +99,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest{
     public void testReadPage(){
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        Page<ResearchResourceGroupPojo> page = controller.getresearchResourcePage(0);
+        Page<ResearchResourceGroupPojo> page = controller.getresearchResourcePage(0,"title",true);
         assertNotNull(page);
         assertEquals(2, page.getTotalGroups());
         assertEquals(2, page.getGroups().size());
@@ -170,24 +171,54 @@ public class ResearchResourceControllerTest extends BaseControllerTest{
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         
-        Page<ResearchResourceGroupPojo> pageBefore = controller.getresearchResourcePage(0);
+        Page<ResearchResourceGroupPojo> pageBefore = controller.getresearchResourcePage(0,"title",true);
         int bgBefore = getBigGroupIndex(pageBefore);
         assertEquals(Long.valueOf(2l),pageBefore.getGroups().get(bgBefore).getDefaultActivity().getPutCode());
         assertEquals("2",pageBefore.getGroups().get(bgBefore).getDefaultActivity().getDisplayIndex());
         
         controller.updateToMaxDisplay(1l);
-        Page<ResearchResourceGroupPojo> pageAfter = controller.getresearchResourcePage(0);
+        Page<ResearchResourceGroupPojo> pageAfter = controller.getresearchResourcePage(0,"title",true);
         int bgAfter = getBigGroupIndex(pageAfter);
         assertEquals("4",pageAfter.getGroups().get(bgAfter).getDefaultActivity().getDisplayIndex());
         assertEquals(Long.valueOf(1l),pageAfter.getGroups().get(bgAfter).getDefaultActivity().getPutCode());
 
         //set back
         controller.updateToMaxDisplay(2l);
-        Page<ResearchResourceGroupPojo> pageLast = controller.getresearchResourcePage(0);
+        Page<ResearchResourceGroupPojo> pageLast = controller.getresearchResourcePage(0,"title",true);
         int bgLast = getBigGroupIndex(pageLast);
         assertEquals(Long.valueOf(2l),pageLast.getGroups().get(bgLast).getDefaultActivity().getPutCode());
     }
 
+    @Test
+    public void testSort(){
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        
+        Page<ResearchResourceGroupPojo> page1 = controller.getresearchResourcePage(0,ResearchResourcePaginator.TITLE_SORT_KEY,true);
+        assertEquals("the title2",page1.getGroups().get(0).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+        assertEquals("the title3",page1.getGroups().get(1).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+        
+        page1 = controller.getresearchResourcePage(0,ResearchResourcePaginator.TITLE_SORT_KEY,false);
+        assertEquals("the title3",page1.getGroups().get(0).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+        assertEquals("the title2",page1.getGroups().get(1).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+
+        page1 = controller.getresearchResourcePage(0,ResearchResourcePaginator.START_DATE_SORT_KEY,true);
+        assertEquals("the title3",page1.getGroups().get(0).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+        assertEquals("the title2",page1.getGroups().get(1).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+        
+        page1 = controller.getresearchResourcePage(0,ResearchResourcePaginator.START_DATE_SORT_KEY,false);
+        assertEquals("the title2",page1.getGroups().get(0).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+        assertEquals("the title3",page1.getGroups().get(1).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+
+        page1 = controller.getresearchResourcePage(0,ResearchResourcePaginator.END_DATE_SORT_KEY,true);
+        assertEquals("the title2",page1.getGroups().get(0).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+        assertEquals("the title3",page1.getGroups().get(1).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+
+        page1 = controller.getresearchResourcePage(0,ResearchResourcePaginator.END_DATE_SORT_KEY,false);
+        assertEquals("the title3",page1.getGroups().get(0).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+        assertEquals("the title2",page1.getGroups().get(1).getDefaultActivity().getProposal().getTitle().getTitle().getContent());
+
+    }
    
     //note, invoked by testReadPage to prevent ordering issues
     public void testDeleteOne(){

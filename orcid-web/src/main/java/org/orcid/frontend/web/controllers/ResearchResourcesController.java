@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -9,8 +8,6 @@ import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,9 +32,9 @@ public class ResearchResourcesController extends BaseWorkspaceController {
      * List research resources associated with a profile
      * */
     @RequestMapping(value = "/researchResourcePage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<ResearchResourceGroupPojo> getresearchResourcePage(@RequestParam("offset") int offset) {
+    public @ResponseBody Page<ResearchResourceGroupPojo> getresearchResourcePage(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getCurrentUserOrcid();        
-        return paginator.getPage(orcid, offset,false);
+        return paginator.getPage(orcid, offset,false, sort, sortAsc);
     }
     
     @RequestMapping(value = "/researchResource.json", method = RequestMethod.GET)
