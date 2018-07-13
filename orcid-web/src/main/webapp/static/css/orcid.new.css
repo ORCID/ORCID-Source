@@ -4558,7 +4558,7 @@ ul.toggle-menu li ul {
     display: none;
     opacity: 0;
     visibility: hidden;
-    width: 100%;
+    min-width: 100%;
 }
 
 ul.toggle-menu li ul li {
