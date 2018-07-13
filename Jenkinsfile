@@ -48,7 +48,7 @@ node {
             throw err
         }
     }
-    stage('CORE') {
+    stage('CORE and COMMON') {
         try {
             do_maven("clean compile test -f orcid-core/pom.xml")
             do_maven("clean compile test -f orcid-api-common/pom.xml")
