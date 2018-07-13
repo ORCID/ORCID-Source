@@ -67,7 +67,6 @@ node {
                 intapi:     {do_maven("clean compile test -f orcid-internal-api/pom.xml")},
                 indeptests: {do_maven("clean compile test -f orcid-integration-test/pom.xml")}
             )
-            do_maven("clean compile test")
             // Push to Artifact storage
             //archive '**/target/**/*.war'
         } catch(Exception err) {
