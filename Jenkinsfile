@@ -20,6 +20,7 @@ node {
 
     stage('MODEL') {
         try {
+            sh "mkdir -p $EHCACHE_LOCATION"
             do_maven("clean")
             parallel(
                 model:       {do_maven("clean install test  -f orcid-model/pom.xml")},
@@ -47,8 +48,7 @@ node {
     }
     stage('CORE') {
         try {
-            sh "mkdir -p $EHCACHE_LOCATION"
-            do_maven("clean install test -f orcid-core/pom.xml -Djava.io.tmpdir=$EHCACHE_LOCATION")
+            do_maven("clean install test -f orcid-core/pom.xml")
         } catch(Exception err) {
             orcid_notify("Building Core ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             report_and_clean()
@@ -99,7 +99,7 @@ def do_maven(mvn_task){
     def MAVEN = tool 'ORCID_MAVEN'
     try{
         sh "export MAVEN_OPTS='-Xms2048m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError'"
-        sh "$MAVEN/bin/mvn $mvn_task"
+        sh "$MAVEN/bin/mvn -Djava.io.tmpdir=$EHCACHE_LOCATION $mvn_task"
     } catch(Exception err) {
         throw err
     }
