@@ -14,19 +14,15 @@ node {
         pipelineTriggers([])
     ])
 
-    def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
-
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: env.BRANCH_NAME
 
-    stage('MODEL') {
+    stage('MODEL AND TEST') {
         try {
             sh "mkdir -p $EHCACHE_LOCATION"
             do_maven("clean")
             parallel(
                 model:       {do_maven("clean compile test -f orcid-model/pom.xml")},
-                test:        {do_maven("clean compile test -f orcid-test/pom.xml")},
-                utils:       {do_maven("clean compile test -f orcid-utils/pom.xml")},
-                solrweb:     {do_maven("clean compile test -f orcid-solr-web/pom.xml")}
+                test:        {do_maven("clean compile test -f orcid-test/pom.xml")}
             )
         } catch(Exception err) {
             orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
@@ -34,39 +30,8 @@ node {
             throw err
         }
     }
-    stage('PERSISTENCE') {
-        try {
-            parallel(
-                persistence: {do_maven("clean compile test -f orcid-persistence/pom.xml")},
-                scheduler:   {do_maven("clean compile test -f orcid-scheduler-web/pom.xml")},
-                listener:    {do_maven("clean compile test -f orcid-message-listener/pom.xml")},
-                mq:          {do_maven("clean compile test -f orcid-activemq/pom.xml")}
-            )
-        } catch(Exception err) {
-            orcid_notify("Creating Persistence Package ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            report_and_clean()
-            throw err
-        }
-    }
-    stage('CORE and COMMON') {
-        try {
-            do_maven("clean compile test -f orcid-core/pom.xml")
-            do_maven("clean compile test -f orcid-api-common/pom.xml")
-        } catch(Exception err) {
-            orcid_notify("Building Core ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            report_and_clean()
-            throw err
-        }
-    }
     stage('ALL FROM PARENT') {
         try {
-            /*parallel(
-                web:        {do_maven("clean compile test -f orcid-web/pom.xml")},
-                apiweb:     {do_maven("clean compile test -f orcid-api-web/pom.xml")},
-                pubweb:     {do_maven("clean compile test -f orcid-pub-web/pom.xml")},
-                intapi:     {do_maven("clean compile test -f orcid-internal-api/pom.xml")},
-                indeptests: {do_maven("clean compile test -f orcid-integration-test/pom.xml")}
-            )*/
             do_maven("clean compile test")
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
