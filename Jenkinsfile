@@ -61,11 +61,11 @@ node {
     stage('WEB and API') {
         try {
             parallel(
-                web:        {do_maven("clean compile test -f orcid-web/pom.xml -D org.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidweb;sql.syntax_pgs=true")},
-                apiweb:     {do_maven("clean compile test -f orcid-api-web/pom.xml -D org.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidapi;sql.syntax_pgs=true")},
-                pubweb:     {do_maven("clean compile test -f orcid-pub-web/pom.xml -D org.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidpub;sql.syntax_pgs=true")},
-                intapi:     {do_maven("clean compile test -f orcid-internal-api/pom.xml -D org.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidintapi;sql.syntax_pgs=true")},
-                indeptests: {do_maven("clean compile test -f orcid-integration-test/pom.xml -D org.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidinttest;sql.syntax_pgs=true")}
+                web:        {do_maven("clean compile test -f orcid-web/pom.xml -Dorg.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidweb;sql.syntax_pgs=true")},
+                apiweb:     {do_maven("clean compile test -f orcid-api-web/pom.xml -Dorg.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidapi;sql.syntax_pgs=true")},
+                pubweb:     {do_maven("clean compile test -f orcid-pub-web/pom.xml -Dorg.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidpub;sql.syntax_pgs=true")},
+                intapi:     {do_maven("clean compile test -f orcid-internal-api/pom.xml -Dorg.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidintapi;sql.syntax_pgs=true")},
+                indeptests: {do_maven("clean compile test -f orcid-integration-test/pom.xml -Dorg.orcid.persistence.db.url=jdbc:hsqldb:mem:orcidinttest;sql.syntax_pgs=true")}
             )
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
