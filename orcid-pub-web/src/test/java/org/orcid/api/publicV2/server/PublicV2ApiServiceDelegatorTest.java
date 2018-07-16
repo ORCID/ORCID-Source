@@ -137,11 +137,6 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testIShouldFail() {
-        fail();
-    }
-    
-    @Test
     public void testViewWork() {
         Response response = serviceDelegator.viewWork(ORCID, 11L);
         assertNotNull(response);

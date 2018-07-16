@@ -119,9 +119,10 @@ public class ContributorUtils {
     
     private Map<String, String> getContributorNamesFromDB(Set<String> ids) {
         Iterable<List<String>> it = Iterables.partition(ids, BATCH_SIZE);
-        System.out.println("----->Is the dao null???? " + (recordNameDao == null));
         Map<String, String> contributorNames = new HashMap<String, String>();
-        it.forEach(idsList -> {
+        System.out.println("----->Is the dao null???? " + (recordNameDao == null));
+        for(List<String> idsList : it) {
+            System.out.println(idsList);
             List<RecordNameEntity> entities = recordNameDao.getRecordNames(idsList);
             if(entities != null) {
                 for(RecordNameEntity entity : entities) {
@@ -132,8 +133,8 @@ public class ContributorUtils {
                     // Store in the cache
                     contributorsNameCache.put(getCacheKey(orcid), publicCreditName);
                 }
-            }            
-        });
+            }
+        }
         return contributorNames;
     }
 
