@@ -428,20 +428,9 @@
             </#if>
         </div>
         
-        <#if !inDelegationMode>
-             <div class="section-heading">
-                <h1>
-                    <@orcid.msg 'manage_delegators.title' />
-                </h1>            
-            </div>        
-            <div>
-                <tr> 
-                    <td colspan="2">
-                        <#include "/includes/ng2_templates/delegators-ng2-template.ftl">
-                        <delegators-ng2></delegators-ng2>
-                    </td>
-                </tr>
-            </div>        
+        <#if !inDelegationMode>             
+            <#include "/includes/ng2_templates/delegators-ng2-template.ftl">
+            <delegators-ng2></delegators-ng2>             
         </#if>
         
         <div class="section-heading">
