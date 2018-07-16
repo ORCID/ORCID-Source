@@ -75,9 +75,11 @@ v3.0_rc1 is the current development release of the ORCID API.
 
 ### Works
 - Addition of *common:external-id-normalized* when reading works for normalized work identifiers
+- Addition of *software* to the list of [supported work types](https://members.orcid.org/api/resources/work-types)
 
 ### Fundings
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
+- Use of common namespace for *common:organization*, replacing *funding:organization*
 
 ### Peer-review
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
@@ -296,8 +298,6 @@ When reading multiple works the contents of each work is returned or an error co
 | Multiple works |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/works.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/works'```|
 
 When posting multiple works the contents of each work is returned or an error code is returned if there is an issue with a single work, see [bulk work error sample](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/bulk-work-error.xml).
-
-When posting Funding, Peer-Review or Affiliations, please ensure your XML has the correct identifiers. Identifiers can be either [Fundref](https://www.crossref.org/services/funder-registry/), [Grid](https://www.grid.ac/), or [Ringgold](https://www.ringgold.com/) and can be found on their respective websites.
 
 ### Update Record Items
 |Item  |Scope  | Example cURL Statement  |
