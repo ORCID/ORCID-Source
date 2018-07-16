@@ -25,7 +25,7 @@ node {
                 test:        {do_maven("clean compile test -f orcid-test/pom.xml")}
             )
         } catch(Exception err) {
-            orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]: $err", 'ERROR')
             report_and_clean()
             throw err
         }
@@ -34,7 +34,7 @@ node {
         try {
             do_maven("clean compile test")
         } catch(Exception err) {
-            orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]: $err", 'ERROR')
             report_and_clean()
             throw err
         }
