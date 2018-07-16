@@ -448,6 +448,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                 List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
                 IntStream.range(0, elementsList.size()).forEach(idx -> {                
                     AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
+                    // Fill country and org disambiguated data on the default affiliation
                     AffiliationForm defaultAffiliation = groupForm.getDefaultAffiliation();
                     if(defaultAffiliation != null) {
                         // Set country name
