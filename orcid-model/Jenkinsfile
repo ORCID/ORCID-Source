@@ -18,6 +18,7 @@ node {
     ])
 
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: 'master'
+    def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
 
     stage('MASTERMODEL') {
         try {
