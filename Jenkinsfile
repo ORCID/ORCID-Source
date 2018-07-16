@@ -58,15 +58,16 @@ node {
             throw err
         }
     }
-    stage('WEB and API') {
+    stage('ALL FROM PARENT') {
         try {
-            parallel(
+            /*parallel(
                 web:        {do_maven("clean compile test -f orcid-web/pom.xml")},
                 apiweb:     {do_maven("clean compile test -f orcid-api-web/pom.xml")},
                 pubweb:     {do_maven("clean compile test -f orcid-pub-web/pom.xml")},
                 intapi:     {do_maven("clean compile test -f orcid-internal-api/pom.xml")},
                 indeptests: {do_maven("clean compile test -f orcid-integration-test/pom.xml")}
-            )
+            )*/
+            do_maven("clean compile test")
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             report_and_clean()
