@@ -53,7 +53,14 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     public @ResponseBody Map<String, Object> getDelegatorsPlusMeJson() {
         Map<String, Object> map = new HashMap<>();
         String realUserOrcid = getRealUserOrcid();
-        List<DelegateForm> delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid, getLastModified(realUserOrcid));
+        
+        List<DelegateForm> delegates = new ArrayList<DelegateForm>();
+        
+        // Don't fetch the delegates if it is in delegation mode
+        if(!isInDelegationMode()) {
+            delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid, getLastModified(realUserOrcid));            
+        }
+        
         map.put("delegators", delegates);
 
         if (sourceManager.isInDelegationMode()) {
