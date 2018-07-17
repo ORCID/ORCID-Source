@@ -242,16 +242,16 @@ export class TokenInterceptor implements HttpInterceptor {
     return next.handle(request);*/
     let _request = request.clone();
     //_request.headers.append(header, token);
-    console.log('headers', header, 'token', token);
+    //console.log('headers', header, 'token', token);
     _request.headers.set(header, token);
 
 
     let headers2 = new HttpHeaders();
-    console.log('headers2a', headers2);
+    //console.log('headers2a', headers2);
     headers2 = headers2.append(header, token);
-    console.log('headers2b', headers2);
+    //console.log('headers2b', headers2);
 
-    console.log('interceptor', _request, _request.headers, _request.headers.get(header));
+    //console.log('interceptor', _request, _request.headers, _request.headers.get(header));
     return next.handle(_request);
   }
 }
@@ -363,7 +363,7 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.9.21');
+        console.log('v0.9.23');
     }
 }
 

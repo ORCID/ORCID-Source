@@ -132,6 +132,7 @@
         </div>
       </div>                
       </#if>
+
       <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
       <work-summary-ng2></work-summary-ng2>
       </@orcid.checkFeatureStatus>         
