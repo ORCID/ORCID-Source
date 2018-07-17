@@ -13,7 +13,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -48,8 +48,8 @@
 					<xs:sequence>
 						<xs:element name="reviewer-role" type="peer-review:role" minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The role played by a person in their
-									contribution to a review.
+								<xs:documentation>The role played by a person in their contribution to a review. 
+								Options for this field are: chair, editor, member, organizer, reviewer
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -57,6 +57,7 @@
 							minOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Unique identifier(s) of the review. <i>This identifier refers to the review itself, NOT to the item that was reviewed.</i> At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity.
+								Identifier types must be selected from the list at https://pub.orcid.org/v2.0/identifiers
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -69,8 +70,7 @@
 						<xs:element name="review-type" type="peer-review:type"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The kind of review applied to the subject type
-									reviewed
+								<xs:documentation>The kind of review. Options for this field are: evaluation, review
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -90,8 +90,8 @@
 						<xs:element name="subject-external-identifier" type="common:external-id"
 							minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>The unique identifier of the subject being
-								reviewed.
+								<xs:documentation>The unique identifier of the subject being reviewed. 
+								Identifier types must be selected from the list at https://pub.orcid.org/v2.0/identifiers
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>						
@@ -111,13 +111,13 @@
 						<xs:element name="subject-name" type="work:work-title"
 							minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The name/title of the subject object that was reviewed.
+								<xs:documentation>The name/title of the object that was reviewed.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="subject-url" type="common:url" minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The URL of the subject object that was reviewed.
+								<xs:documentation>The URL of the object that was reviewed.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -125,7 +125,7 @@
 						<xs:element name="convening-organization" type="common:organization"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc). Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
+								<xs:documentation>Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc). A valid organizational identifier (Ringgold ID, GRID ID or FundRef ID is required).
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>																																	
@@ -144,7 +144,7 @@
 						<xs:element ref="common:external-ids"
 							minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>The unique generated identifier of the review.
+								<xs:documentation>The unique identifier of the review.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>						
@@ -176,7 +176,7 @@
 
 	<xs:simpleType name="role">
 		<xs:annotation>
-			<xs:documentation>The role performed reviewer
+			<xs:documentation>The role performed by the reviewer
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
@@ -222,7 +222,7 @@
 
 	<xs:simpleType name="type">
 		<xs:annotation>
-			<xs:documentation>The role performed reviewer
+			<xs:documentation>The type of review this is
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">

@@ -11,7 +11,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -37,7 +37,7 @@
 
 	<xs:element name="external-identifiers">
 		<xs:annotation>
-			<xs:documentation>External identifier's container</xs:documentation>
+			<xs:documentation>Container for identifiers that apply to the researcher themselves.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>

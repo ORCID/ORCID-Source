@@ -3,17 +3,23 @@ package org.orcid.core.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
+import org.ehcache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -27,9 +33,13 @@ import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.FundingContributors;
 import org.orcid.jaxb.model.record_v2.FundingTitle;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 public class ContributorUtilsTest {
     
@@ -41,6 +51,15 @@ public class ContributorUtilsTest {
     
     @Mock
     private ProfileEntityManager profileEntityManager;
+    
+    @Mock
+    private RecordNameDao recordNameDao;
+    
+    @Mock
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
+    
+    @Mock
+    private Cache<String, String> contributorsNameCache;
 
     @InjectMocks
     private ContributorUtils contributorUtils;
@@ -48,13 +67,29 @@ public class ContributorUtilsTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        contributorUtils.setCacheManager(cacheManager);
+        contributorUtils.setProfileEntityCacheManager(profileEntityCacheManager);
+        contributorUtils.setProfileEntityManager(profileEntityManager);
+        contributorUtils.setRecordNameDao(recordNameDao);
+        contributorUtils.setProfileLastModifiedAspect(profileLastModifiedAspect);
+        contributorUtils.setContributorsNameCache(contributorsNameCache);
+        when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
+        when(contributorsNameCache.containsKey(anyString())).thenReturn(false);
     }
     
     @Test
     public void testFilterContributorPrivateDataForWorkWithPrivateName() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
-        when(profileEntityCacheManager.retrieve(anyString())).thenReturn(new ProfileEntity());
-        when(cacheManager.getPublicCreditName(any(ProfileEntity.class))).thenReturn(null);
+        when(recordNameDao.getRecordNames(any(List.class))).then(new Answer<List<RecordNameEntity>>(){
+
+            @Override
+            public List<RecordNameEntity> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return getRecordNameEntities((List) args[0]);
+            }
+            
+        });
+        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).thenReturn(null);        
         
         Work work = getWorkWithOrcidContributor();
         contributorUtils.filterContributorPrivateData(work);
@@ -67,8 +102,16 @@ public class ContributorUtilsTest {
     @Test
     public void testFilterContributorPrivateDataForWorkWithPublicName() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
-        when(profileEntityCacheManager.retrieve(anyString())).thenReturn(new ProfileEntity());
-        when(cacheManager.getPublicCreditName(any(ProfileEntity.class))).thenReturn("a public name");
+        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).thenReturn("a public name");
+        when(recordNameDao.getRecordNames(any(List.class))).then(new Answer<List<RecordNameEntity>>(){
+
+            @Override
+            public List<RecordNameEntity> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return getRecordNameEntities((List) args[0]);
+            }
+            
+        });
         
         Work work = getWorkWithOrcidContributor();
         contributorUtils.filterContributorPrivateData(work);
@@ -105,6 +148,49 @@ public class ContributorUtilsTest {
         Work work = getWorkWithoutContributors();
         contributorUtils.filterContributorPrivateData(work);
         assertNotNull(work); // test no failures
+        assertEquals(getWorkWithoutContributors(), work);
+    }
+    
+    @Test
+    public void testFilterContributorPrivateDataForBulkWork() {
+        when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
+        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).then(new Answer<String>(){
+
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                RecordNameEntity e = (RecordNameEntity) args[0];
+                return (e.getProfile().getId() + "_name");
+            }
+            
+        });
+        
+        when(recordNameDao.getRecordNames(any(List.class))).then(new Answer<List<RecordNameEntity>>(){
+
+            @Override
+            public List<RecordNameEntity> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return getRecordNameEntities((List) args[0]);
+            }
+            
+        });
+        
+        WorkBulk b = new WorkBulk();
+        Work w1 = getWorkWithOrcidContributor();
+        Work w2 = getWorkWithOrcidContributor();
+        // Change the orcid id in contributor 2
+        w2.getWorkContributors().getContributor().get(0).getContributorOrcid().setPath("0000-0000-0000-0000");
+        w2.getWorkContributors().getContributor().get(0).getContributorOrcid().setUri("http://orcid.org/0000-0000-0000-0000");        
+    
+        b.getBulk().add(w1);
+        b.getBulk().add(w2);
+        
+        contributorUtils.filterContributorPrivateData(b);
+        
+        assertNotNull(b);
+        assertEquals(2, b.getBulk().size());
+        assertEquals("0000-0003-4902-6327_name", ((Work)b.getBulk().get(0)).getWorkContributors().getContributor().get(0).getCreditName().getContent());
+        assertEquals("0000-0000-0000-0000_name", ((Work)b.getBulk().get(1)).getWorkContributors().getContributor().get(0).getCreditName().getContent());        
     }
     
     @Test
@@ -262,6 +348,16 @@ public class ContributorUtilsTest {
         FundingContributors fundingContributors = new FundingContributors();
         fundingContributors.getContributor().add(contributor);
         return fundingContributors;
+    }
+    
+    private List<RecordNameEntity> getRecordNameEntities(List<String> orcidIds){
+        List<RecordNameEntity> records = new ArrayList<RecordNameEntity>();
+        for(String orcid : orcidIds) {
+            RecordNameEntity e = new RecordNameEntity();
+            e.setProfile(new ProfileEntity(orcid));
+            records.add(e);
+        }
+        return records;
     }
     
 }
