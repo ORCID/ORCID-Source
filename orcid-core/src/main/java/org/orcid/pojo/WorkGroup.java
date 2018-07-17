@@ -172,22 +172,7 @@ public class WorkGroup implements Serializable {
     }
 
     private static Date getPublicationDate(PublicationDate publicationDate) {
-        if (publicationDate != null) {
-            Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
-            Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
-            Integer day = PojoUtil.isEmpty(publicationDate.getDay()) ? null : Integer.valueOf(publicationDate.getDay().getValue());
-            if (year != null && year == 0) {
-                year = null;
-            }
-            if (month != null && month == 0) {
-                month = null;
-            }
-            if (day != null && day == 0) {
-                day = null;
-            }
-            return Date.valueOf(FuzzyDate.valueOf(year, month, day));
-        }
-        return null;
+        return PojoUtil.convertDate(publicationDate);
     }
 
 }

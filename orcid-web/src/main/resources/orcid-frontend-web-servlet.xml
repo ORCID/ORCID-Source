@@ -90,5 +90,7 @@
     <bean id="worksPaginator" class="org.orcid.frontend.web.pagination.WorksPaginator" >
         <property name="worksCacheManager" ref="worksCacheManager" />
     </bean>
+    
+    <bean id="researchResourcePaginator" class="org.orcid.frontend.web.pagination.ResearchResourcePaginator" />
 
 </beans>
