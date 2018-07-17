@@ -243,11 +243,7 @@ public class BaseController {
     public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (SendEmailFrequency freq : SendEmailFrequency.values()) {
-            if(freq.equals(SendEmailFrequency.NEVER)) {
-                map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
-            } else {
-                map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
-            }            
+            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
         }
         return map;
     }

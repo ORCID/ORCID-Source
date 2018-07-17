@@ -173,7 +173,9 @@ import { WorksService }
 import { EmailFrequencyService }
     from '../../shared/emailFrequency.service.ts';
 
-
+import { UnsubscribeService }
+    from '../../shared/unsubscribe.service.ts';
+    
 // This is the Angular 2 part of the module
 @NgModule(
     {
@@ -261,7 +263,8 @@ import { EmailFrequencyService }
             SwitchUserService,
             WidgetService,
             WorksService,
-            WorkspaceService
+            WorkspaceService,
+            UnsubscribeService
         ]
     }
 )
