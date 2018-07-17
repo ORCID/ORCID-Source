@@ -47,7 +47,7 @@
                         }"
                     >
                         <div class="lightbox-container">
-                            <!--Edit country-->      
+                            <!--Begin modal content-->      
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">       
                                     <h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>     
@@ -82,11 +82,12 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                     <div class="pull-left">
-                                        <button id="bottom-submit" class="btn btn-primary" (click)="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" (click)="cancelEditModal('modalDeprecateAccountConfirm')"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+                                        <button id="bottom-submit" class="btn btn-primary" (click)="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button>
+                                        <button class="btn btn-white-no-border cancel-right" (click)="cancelEditModal('modalDeprecateAccountConfirm')"><@orcid.msg 'freemarker.btncancel' /></button>
                                     </div>
                                 </div>
                             </div>
-                            <!--End edit country-->
+                            <!--End modal content-->
                         </div>
                     </div>
                 </div>
