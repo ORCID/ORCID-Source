@@ -41,8 +41,8 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
             EmailFrequencyEntity entity = emailFrequencyDaoReadOnly.findByOrcid(orcid);
             return generateFrequencyMap(entity);
         } catch (Exception e) {
-            LOG.error("Couldn't find email_frequency for {}", orcid);
-            throw e;
+            LOG.debug("Couldn't find email_frequency for {}", orcid);
+            return null;
         }
     }
 
