@@ -158,8 +158,10 @@
         <#include "workspace_affiliations_body_list_v3.ftl"/>
         <!-- Fundings -->
         <#include "workspace_fundings_body_list_v3.ftl"/>
-
         
+        <!--Research resources-->
+        <#include "/includes/ng2_templates/research-resource-ng2-template.ftl">
+        <research-resource-ng2 publicView="false"></research-resource-ng2>
 
         <!-- Works -->
         <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 

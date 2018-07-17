@@ -154,6 +154,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             )
                 .subscribe(
                     data => {
+                        console.log(data);
                         this.researchResourceService.handleGroupData(data);
                         this.cdr.detectChanges();
                     },
@@ -168,6 +169,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             )
                 .subscribe(
                     data => {
+                        console.log(data);
                         this.researchResourceService.handleGroupData(data);
                         this.cdr.detectChanges();
                     },

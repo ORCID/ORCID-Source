@@ -152,6 +152,9 @@ import { PreferencesService }
 import { ReactivationService }
     from '../../shared/reactivation.service.ts';
 
+import { ResearchResourceService }
+    from '../../shared/researchResource.service.ts';
+
 import { SearchService } 
     from '../../shared/search.service.ts';
 
@@ -256,6 +259,7 @@ import { EmailFrequencyService }
             PasswordService,
             PreferencesService,
             ReactivationService,
+            ResearchResourceService,
             SearchService,
             TwoFAStateService,
             SwitchUserService,
