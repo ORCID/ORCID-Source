@@ -28,9 +28,9 @@ import { RouterModule, UrlHandlingStrategy }
 import { UpgradeModule } 
     from '@angular/upgrade/static';
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+
 //User generated modules imports
-import { AffiliationExtIdPopoverNg2Module } 
-    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
 
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
@@ -79,6 +79,9 @@ import { EmailVerificationSentMesssageNg2Module }
 
 import { ExternalIdentifiersNg2Module }
     from './externalIdentifiers/externalIdentifiers.ts';
+
+import { ExtIdPopoverNg2Module } 
+    from './extIdPopover/extIdPopover.ts';
 
 import { FundingNg2Module } 
     from './funding/funding.ts';
@@ -181,6 +184,12 @@ import { VerifyEmailNg2Module }
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
+
+import { WorksBulkDeleteNg2Module } 
+    from './works/worksBulkDelete.ts';
+
+import { WorksDeleteNg2Module } 
+    from './works/worksDelete.ts';
 
 import { WorksFormNg2Module } 
     from './works/worksForm.ts';
@@ -288,9 +297,9 @@ export class RootCmp {
         HttpClientModule, //angular5
         HttpModule, //Angular2
         JsonpModule,
+        NgbModule.forRoot(),
         UpgradeModule,
         /* User Generated Modules */
-        AffiliationExtIdPopoverNg2Module,
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
@@ -307,6 +316,7 @@ export class RootCmp {
         EmailUnverifiedWarningNg2Module,//Aproved
         EmailVerificationSentMesssageNg2Module,//Aproved
         ExternalIdentifiersNg2Module,
+        ExtIdPopoverNg2Module,
         HeaderNg2Module,
         FundingFormNg2Module,
         FundingNg2Module,
@@ -341,6 +351,8 @@ export class RootCmp {
         TwoFASetupNg2Module,
         VerifyEmailNg2Module,
         WidgetNg2Module, //Approved
+        WorksBulkDeleteNg2Module,
+        WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,

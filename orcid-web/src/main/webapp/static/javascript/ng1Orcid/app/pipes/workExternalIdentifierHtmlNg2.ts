@@ -24,15 +24,15 @@ export class WorkExternalIdentifierHtmlPipe implements PipeTransform {
         if (workExternalIdentifier == null){
             return output;
         } 
-        if (workExternalIdentifier.workExternalIdentifierId == null) {
+        if (workExternalIdentifier.externalIdentifierId == null) {
             return output;        
         }
         
-        id = workExternalIdentifier.workExternalIdentifierId.value;
+        id = workExternalIdentifier.externalIdentifierId.value;
         type;
         
-        if (workExternalIdentifier.workExternalIdentifierType != null) {
-            type = workExternalIdentifier.workExternalIdentifierType.value;        
+        if (workExternalIdentifier.externalIdentifierType != null) {
+            type = workExternalIdentifier.externalIdentifierType.value;        
         }
         if (type != null && typeof type != 'undefined') {
             type.escapeHtml();

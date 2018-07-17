@@ -306,40 +306,21 @@ kind of variable. This temp value is only used in this macro lib -->
     </div>
 </#macro>
 
-<#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass> 
-    <!--  
-    <a 
-        *ngIf="userIsSource(${activity})" 
-        (click)="${click}" 
-        (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" 
-        (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
+<#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass>  
+    <a *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
-    <a 
-        *ngIf"!userIsSource(${activity}) && group.userVersionPresent" 
-        (click)="showSources(group)" 
-        (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" 
-        (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
+    <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group)" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
         <span class="glyphicons git_create grey"></span>
     </a>
-    <a 
-        *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0" 
-        (click)="${click}" 
-        (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" 
-        (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicons git_create"></span>
     </a>
-    -->
-    <a 
-        *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0" 
-        (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" 
-        (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+
+    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicons git_create grey"></span>
     </a>
-    <div 
-        class="${toolTipClass}" 
-        *ngIf="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" 
-        [ngClass]="{'two-lines' : (!userIsSource(${activity}) && group.userVersionPresent) || (!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0)}">
+    <div class="${toolTipClass}" *ngIf="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" [ngClass]="{'two-lines' : (!userIsSource(${activity}) && group.userVersionPresent) || (!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0)}">
         <div class="arrow"></div>
         <div class="popover-content">              
             <span *ngIf="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            

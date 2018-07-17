@@ -33,6 +33,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -172,11 +173,18 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         initializePublicationDate(w);
+        
+        if (w.getCitation() == null) {
+            w.setCitation(new Citation());
+            w.getCitation().setCitationType(new Text());
+            w.getCitation().setCitation(new Text());
+        }
 
         if (w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
             ActivityExternalIdentifier wei = new ActivityExternalIdentifier();
             Text wdiType = new Text();
             wdiType.setValue(new String());
+            wei.setUrl(new Text());
             wei.setExternalIdentifierId(new Text());
             wei.setExternalIdentifierType(wdiType);
             wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
@@ -217,6 +225,7 @@ public class WorksController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(w.getCountryName())) {
             w.setCountryName(new Text());
         }
+        
     }
 
     private void initializePublicationDate(WorkForm w) {
@@ -255,6 +264,56 @@ public class WorksController extends BaseWorkspaceController {
                 if (workForm.getPublicationDate().getYear() == null) {
                     workForm.getPublicationDate().setYear(new String());
                 }
+            }
+            
+            if (workForm.getShortDescription() == null) {
+                workForm.setShortDescription(new Text());
+            }
+            
+            if (workForm.getUrl() == null) {
+                workForm.setUrl(new Text());
+            }
+            
+            if (workForm.getJournalTitle() == null) {
+                workForm.setJournalTitle(new Text());
+            }
+            
+            if (workForm.getLanguageCode() == null) {
+                workForm.setLanguageCode(new Text());
+            }
+            
+            if (workForm.getLanguageCode() == null) {
+                workForm.setLanguageCode(new Text());
+            }
+            
+            if (workForm.getLanguageName() == null) {
+                workForm.setLanguageName(new Text());
+            }
+            
+            if (workForm.getCitation() == null) {
+                workForm.setCitation(new Citation());
+                workForm.getCitation().setCitationType(new Text());
+                workForm.getCitation().setCitation(new Text());
+            }
+            
+            if (workForm.getSubtitle() == null) {
+                workForm.setSubtitle(new Text());
+            }
+            
+            if (workForm.getTranslatedTitle() == null) {
+                workForm.setTranslatedTitle(new TranslatedTitleForm());
+            }
+            
+            if (workForm.getCountryCode() == null) {
+                workForm.setCountryCode(new Text());
+            }
+            
+            if (workForm.getCountryName() == null) {
+                workForm.setCountryName(new Text());
+            }
+            
+            if (workForm.getJournalTitle() == null) {
+                workForm.setJournalTitle(new Text());
             }
 
             // Set country name

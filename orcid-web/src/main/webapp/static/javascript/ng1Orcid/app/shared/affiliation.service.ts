@@ -62,14 +62,6 @@ export class AffiliationService {
             this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
         )
-        .pipe(
-            tap(
-                (data) => {
-                    this.getData();                       
-                }
-            )
-        )  
-        ;
     }
 
     getAffiliationGroups(): Observable<any> {
