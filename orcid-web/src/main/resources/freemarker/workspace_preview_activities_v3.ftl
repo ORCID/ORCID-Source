@@ -34,12 +34,8 @@
 </#if>
 
 <!-- Works -->
-<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-hide="!worksSrvc.groups.length" ng-cloak>
-    <#include "includes/work/work_section_header_inc_v3.ftl"/>
-    <div ng-if="workspaceSrvc.displayWorks" class="workspace-accordion-content">
-        <#include "includes/work/public_works_body_list.ftl" />
-    </div>
-</div>
+<#include "/includes/ng2_templates/works-ng2-template.ftl">
+<works-ng2  publicView="true"></works-ng2>
 
 <!-- Peer Review -->
 
