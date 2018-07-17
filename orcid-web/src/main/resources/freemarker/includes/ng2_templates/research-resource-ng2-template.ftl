@@ -60,7 +60,7 @@
             </div>                        
             <div *ngIf="workspaceSrvc.displayResearchResource" class="workspace-accordion-content">
                 <ul id="groups-list" *ngIf="researchResourceService.groups?.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                    <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of researchResourceService.groups">
+                    <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of researchResourceService.groups">
                         <#include "research-resource-details-ng2.ftl"/>                     
                     </li>
                 </ul>

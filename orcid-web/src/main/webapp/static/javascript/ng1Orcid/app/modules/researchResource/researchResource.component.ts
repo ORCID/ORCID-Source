@@ -213,7 +213,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
 
     getDetails(putCode): void {
         if(this.publicView === "true"){
-            this.researchResourceService.getResearchResourceById(putCode)
+            this.researchResourceService.getPublicResearchResourceById(putCode)
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
@@ -229,7 +229,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                 } 
             );
         } else {
-            this.researchResourceService.getPublicResearchResourceById(putCode)
+            this.researchResourceService.getResearchResourceById(putCode)
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
@@ -237,6 +237,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                 data => {
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
                     this.researchResourceService.details[putCode] = data;
+                    console.log(this.researchResourceService.details[putCode]);
                 },
                 error => {
                     console.log('getDetailsError', error);
