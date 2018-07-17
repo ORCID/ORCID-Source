@@ -447,7 +447,7 @@ public class LoadFundRefData {
         String orgType = getOrgType(org);
         
         if(StringUtils.isNotBlank(org.type)) {
-            if(entity.getOrgType() == null || !entity.getOrgs().equals(orgType)) {
+            if(entity.getOrgType() == null || !entity.getOrgType().equals(orgType)) {
                 return true;
             }
         } 
