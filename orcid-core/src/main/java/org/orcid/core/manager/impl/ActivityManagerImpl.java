@@ -16,10 +16,9 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.WorkForm;
 
 public class ActivityManagerImpl extends Object implements ActivityManager {
     
@@ -98,6 +97,11 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
         }
         
         return publicCreditName;
+    }
+
+    @Override
+    public String getPublicCreditName(RecordNameEntity recordName) {
+        return RecordNameUtils.getPublicName(recordName);
     }
     
 }

@@ -6,6 +6,7 @@ import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 public interface ActivityManager {
 
@@ -18,4 +19,6 @@ public interface ActivityManager {
     public String getCreditName(ProfileEntity profile);
     
     public String getPublicCreditName(ProfileEntity profile);
+    
+    public String getPublicCreditName(RecordNameEntity recordName);
 }

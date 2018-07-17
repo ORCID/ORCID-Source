@@ -9,14 +9,34 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.v3.rc1.record.Education;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 
 public class JSONExternalIdentifiersConverterV3Test {
 
-    private JSONExternalIdentifiersConverterV3 converter = new JSONExternalIdentifiersConverterV3();
+    @Mock
+    private PIDNormalizationService norm;
+    
+    @Mock
+    private LocaleManager localeManager;
+    
+    private JSONExternalIdentifiersConverterV3 converter;
+    
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        Mockito.when(norm.normalise(Mockito.anyString(), Mockito.anyString())).thenReturn("blah");
+        Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("blah");
+        converter  = new JSONExternalIdentifiersConverterV3(norm, localeManager);
+    }
 
     @Test
     public void testConvertTo() throws JAXBException {
