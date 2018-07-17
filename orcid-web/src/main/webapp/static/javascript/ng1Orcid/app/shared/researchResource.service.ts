@@ -19,6 +19,7 @@ export class ResearchResourceService {
     private headers: HttpHeaders;
     private notify = new Subject<any>();
 
+    public details: any;
     public groups: any;
     public groupsLabel: any;
     public loading: boolean;
@@ -38,7 +39,8 @@ export class ResearchResourceService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
-
+        
+        this.details = new Array();
         this.groups = new Array();
         this.groupsLabel = null;
         this.loading = true;
@@ -48,15 +50,14 @@ export class ResearchResourceService {
 
     }
 
-    /*consistentVis(group): boolean {
-        let visibility = group.works[0].visibility.visibility;
-        for(let i = 0; i < group.works.length; i++) {
-            if (group.works[i].visibility.visibility != visibility) {
+    consistentVis(group): boolean {
+        for(let i = 0; i < group.researchResources.length; i++) {
+            if (group.researchResources[i].visibility != group.activeVisibility) {
                 return false;
             }
         }
         return true;
-    }*/
+    }
 
     deleteResearchResources(putCodes): Observable<any> {
         return this.http.delete( 
@@ -78,7 +79,7 @@ export class ResearchResourceService {
         );
     }
 
-    getPublicResearchResourcesById( putCode ): Observable<any> {
+    getPublicResearchResourceById( putCode ): Observable<any> {
         return this.http.get(
             getBaseUri() + '/' + orcidVar.orcidId + '/researchResource.json?id=' + putCode
         );

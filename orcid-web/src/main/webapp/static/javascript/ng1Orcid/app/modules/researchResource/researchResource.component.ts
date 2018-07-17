@@ -46,12 +46,14 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     displayNewResearchResourceTypesFeatureEnabled: boolean;
     distinctionsAndInvitedPositions: any;
     editResearchResource: any;
+    editSources: any;
     educations: any;
     educationsAndQualifications: any;
     emails: any;
     employments: any;
     membershipsAndServices: any;
     moreInfo: any;
+    moreInfoOpen: boolean;
     moreInfoCurKey: any;
     orgIdsFeatureEnabled: boolean;
     privacyHelp: any;
@@ -72,11 +74,13 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     ) {
         this.disambiguatedResearchResource = null;
         this.editResearchResource = {};
+        this.editSources = {};
         this.educations = [];
         this.emails = {};
         this.employments = [];
         this.moreInfo = {};
         this.moreInfoCurKey = null;
+        this.moreInfoOpen = false;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.showElement = {};
@@ -116,6 +120,12 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     closeMoreInfo(key): void {
         this.moreInfo[key]=false;
     };
+
+    closePopover(event): void {
+        this.moreInfoOpen = false;
+        $('.work-more-info-container').css('display', 'none');
+    };
+
 
     deleteResearchResource(researchResource): void {
         this.emailService.getEmails()
@@ -201,9 +211,55 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         );
     };
 
+    getDetails(putCode): void {
+        if(this.publicView === "true"){
+            this.researchResourceService.getResearchResourceById(putCode)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    //this.researchResourceService.removeBadExternalIdentifiers(data);
+                    this.researchResourceService.details[putCode] = data;
+                    console.log(putCode);
+                    console.log(this.researchResourceService.details[putCode]);
+                },
+                error => {
+                    console.log('getDetailsError', error);
+                } 
+            );
+        } else {
+            this.researchResourceService.getPublicResearchResourceById(putCode)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    //this.researchResourceService.removeBadExternalIdentifiers(data);
+                    this.researchResourceService.details[putCode] = data;
+                },
+                error => {
+                    console.log('getDetailsError', error);
+                } 
+            );
+        }
+    }
+
+    hideSources(group): void {
+        this.editSources[group.groupId] = false;
+    };
 
     hideTooltip(element): void{        
         this.showElement[element] = false;
+    };
+
+    loadDetails(putCode, event): void {
+        this.closePopover(event);
+        this.moreInfoOpen = true;
+        $(event.target).next().css('display','inline');
+        if(this.researchResourceService.details[putCode] == undefined){
+            this.getDetails(putCode);
+        }
     };
 
     moreInfoMouseEnter(key, $event): void {
@@ -265,7 +321,15 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
 
     showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
-        this.moreInfo[group.activePutCode] = !this.moreInfo[group.activePutCode];
+        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        for (var idx in group.researchResources){
+            this.loadDetails(group.researchResources[idx].putCode, $event);
+        }
+    };
+
+    showSources(group, $event): void {
+        $event.stopPropagation();
+        this.editSources[group.groupId] = true;
     };
 
     showTooltip(element): void{        
