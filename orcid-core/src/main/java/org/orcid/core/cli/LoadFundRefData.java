@@ -490,7 +490,7 @@ public class LoadFundRefData {
         Iso3166Country country = StringUtils.isNotBlank(organization.country) ? Iso3166Country.fromValue(organization.country) : null;
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
         orgDisambiguatedEntity.setName(organization.name);
-        orgDisambiguatedEntity.setCountry(country.name());       
+        orgDisambiguatedEntity.setCountry(country == null ? null : country.name());       
         orgDisambiguatedEntity.setCity(organization.city);
         orgDisambiguatedEntity.setRegion(organization.stateCode);        
         orgDisambiguatedEntity.setOrgType(orgType);
