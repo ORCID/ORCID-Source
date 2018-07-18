@@ -170,10 +170,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
-        List<BulkElement> works = new ArrayList<>();
-        
-        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());
-        
+        List<BulkElement> works = new ArrayList<>();        
+        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());        
         List<WorkEntity> entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
         
         for(WorkEntity entity : entities) {

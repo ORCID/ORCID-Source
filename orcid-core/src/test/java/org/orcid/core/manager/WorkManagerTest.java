@@ -25,7 +25,6 @@ import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
-import org.orcid.core.manager.GroupingSuggestionManager;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -881,7 +880,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testFindWorkBulkInvalidPutCodes() {
-        String putCodes = "11,12,13,invalid";
+        String putCodes = "11,12,13,99999";
         WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes);
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());

@@ -20,7 +20,6 @@ import javax.annotation.Resource;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -955,7 +954,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testFindWorkBulkInvalidPutCodes() {
-        String putCodes = "11,12,13,invalid";
+        String putCodes = "11,12,13,99999";
         WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes);
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
