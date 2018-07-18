@@ -62,6 +62,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -90,6 +91,9 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     
     @Resource    
     private V2VersionConverterChain v2VersionConverterChain;
+    
+    @Value("${org.orcid.core.works.bulk.max:100}")
+    private Long maxBulkSize;
 
     private String nonExistingUser = "0000-0000-0000-000X";
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
@@ -1575,7 +1579,7 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testViewBulkWorksWithTooManyPutCodes() {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= WorkManagerReadOnlyImpl.MAX_BULK_PUT_CODES; i++) {
+        for (int i = 1; i <= maxBulkSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         serviceDelegator.viewBulkWorks("0000-0000-0000-0003", tooManyPutCodes.toString());

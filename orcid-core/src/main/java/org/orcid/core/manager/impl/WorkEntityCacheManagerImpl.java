@@ -24,6 +24,7 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 
@@ -31,9 +32,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorkEntityCacheManagerImpl.class);
-
-    private static final Integer BATCH_SIZE = 10;
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkEntityCacheManagerImpl.class);   
     
     @Resource(name = "workLastModifiedCache")
     private Cache<ProfileCacheKey, List<WorkLastModifiedEntity>> workLastModifiedCache;
@@ -47,6 +46,8 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Resource(name = "fullWorkEntityCache")
     private Cache<WorkCacheKey, WorkEntity> fullWorkEntityCache;
 
+    private final Integer batchSize;    
+    
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private WorkDao workDao;
@@ -54,6 +55,10 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Resource
     private SlackManager slackManager;
 
+    public WorkEntityCacheManagerImpl(@Value("${org.orcid.works.db.batch_size:10}") Integer batchSize, @Value("${org.orcid.core.works.bulk.max:100}") Integer bulkSize) {
+        this.batchSize = (batchSize == null || batchSize < 1 || batchSize > bulkSize) ? (bulkSize == null ? 100 : bulkSize) : batchSize;
+    }
+    
     public void setWorkDao(WorkDao workDao) {
         this.workDao = workDao;
     }
@@ -261,7 +266,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             }
         }
         
-        List<List<Long>> lists = ListUtils.partition(worksToFetchFromDB, BATCH_SIZE);
+        List<List<Long>> lists = ListUtils.partition(worksToFetchFromDB, batchSize);
         for(List<Long> idsList : lists) {
             List<WorkEntity> workList = workDao.getWorkEntities(orcid, idsList);
             for(WorkEntity work : workList) {

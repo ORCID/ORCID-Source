@@ -45,6 +45,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.beans.factory.annotation.Value;
 
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -63,6 +64,9 @@ public class WorkManagerTest extends BaseTest {
     
     @Resource
     private WorkDao workDao;
+    
+    @Value("${org.orcid.core.works.bulk.max:100}")
+    private Long maxBulkSize;
     
     @Mock
     private GroupingSuggestionManager groupingSuggestionManager;
@@ -894,7 +898,7 @@ public class WorkManagerTest extends BaseTest {
     @Test(expected = ExceedMaxNumberOfPutCodesException.class)
     public void testFindWorkBulkTooManyPutCodes() {
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= WorkManagerReadOnlyImpl.MAX_BULK_PUT_CODES; i++) {
+        for (int i = 1; i <= maxBulkSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         

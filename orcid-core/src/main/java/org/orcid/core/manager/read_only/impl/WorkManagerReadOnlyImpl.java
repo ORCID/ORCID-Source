@@ -29,12 +29,11 @@ import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.springframework.beans.factory.annotation.Value;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
 
     public static final String BULK_PUT_CODES_DELIMITER = ",";
-
-    public static final Integer MAX_BULK_PUT_CODES = 50;
 
     @Resource
     protected JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
@@ -46,6 +45,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     protected WorkEntityCacheManager workEntityCacheManager;
 
+    private final Integer maxBulkSize;
+    
+    public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.max:100}") Integer bulkSize) {
+        this.maxBulkSize = (bulkSize == null || bulkSize > 100) ? 100 : bulkSize;
+    }
+    
     public void setWorkDao(WorkDao workDao) {
         this.workDao = workDao;
     }
@@ -191,8 +196,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private String[] getPutCodeArray(String putCodesAsString) {
         String[] putCodeArray = putCodesAsString.split(BULK_PUT_CODES_DELIMITER);
-        if (putCodeArray.length > MAX_BULK_PUT_CODES) {
-            throw new ExceedMaxNumberOfPutCodesException(MAX_BULK_PUT_CODES);
+        if (putCodeArray.length > maxBulkSize) {
+            throw new ExceedMaxNumberOfPutCodesException(maxBulkSize);
         }
         return putCodeArray;
     }
