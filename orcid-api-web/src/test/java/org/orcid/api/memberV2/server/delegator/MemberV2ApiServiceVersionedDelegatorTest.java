@@ -31,7 +31,6 @@ import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.core.version.V2VersionConverterChain;
@@ -1564,7 +1563,7 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Test
     public void testViewBulkWorksWithBadPutCode() {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13,bad");
+        Response response = serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13,9999");
         WorkBulk workBulk = (WorkBulk) response.getEntity();
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());

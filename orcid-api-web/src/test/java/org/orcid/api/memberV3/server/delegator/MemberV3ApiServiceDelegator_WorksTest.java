@@ -742,7 +742,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     @Test
     public void testViewBulkWorksWithBadPutCode() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,bad");
+        Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,9999");
         WorkBulk workBulk = (WorkBulk) response.getEntity();
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
