@@ -18,7 +18,7 @@
   ```
   export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
   ```
-  
+
 * Install [Tomcat](http://tomcat.apache.org/) and ensure it starts
 
 * Ensure a git client is installed
@@ -49,34 +49,31 @@ psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE message_listener to orcid;
 
 * Verify user login and database exist
 
-```
-psql -U orcid -d orcid -c "\list" -h localhost
-psql -U statistics -d statistics -c "\list" -h localhost
-```
+    psql -U orcid -d orcid -c "\list" -h localhost
+    psql -U statistics -d statistics -c "\list" -h localhost
 
 ## Clone the git repositories
 
 * Clone the repository
 
-```
-git clone https://github.com/ORCID/ORCID-Source.git
-```
+    git clone https://github.com/ORCID/ORCID-Source.git
 
 ## Run Maven build
 
 * Skip test the first time you run this
 
-```
-cd ORCID-Source
-mvn clean install -Dmaven.test.skip=true
-```
+    cd ORCID-Source
+    mvn clean install test -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-test/pom.xml && \
+    mvn clean install test -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-model/pom.xml && \
+    mvn clean package test -Dmaven.test.skip=true -Dlicense.skip=true
 
-* If you experience the below error you can find the solution [here](http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy)
+>If you experience the below error you can find the solution [here](http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy)
 
-```
-Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
-```
+
+    Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+
 ## Verify you have the DigiCertGlobalRootG2.crt
+
 This is an annoying issue where Java's cacerts file lags behind listing common Certificate Authorities. Mailgun uses DigiCertGlobalRootG2 and you'll need verify the cert is installed.
 
 Run the following with administrator privileges(windows users will have have to use an admin account and remove sudo command) while in the project root.
@@ -86,25 +83,27 @@ Run the following with administrator privileges(windows users will have have to 
         mvn compile;
 
 2. Run command as adminstrator  
-   Linux: 
- 
-        sudo mvn exec:java -pl orcid-utils -Dexec.mainClass="org.orcid.utils.AddCacertsUtil" -Dexec.args="--keystore_password changeit" 
-   Windows:
-  
-       	mvn exec:java -pl orcid-utils -Dexec.mainClass="org.orcid.utils.AddCacertsUtil" -Dexec.args="--keystore_password changeit"
-   Note: the java keystore password is usefully 'changeit' this can be different if you've changed it.  
+
+Linux:
+
+    sudo mvn exec:java -pl orcid-utils -Dexec.mainClass="org.orcid.utils.AddCacertsUtil" -Dexec.args="--keystore_password changeit" 
+
+Windows:
+
+    mvn exec:java -pl orcid-utils -Dexec.mainClass="org.orcid.utils.AddCacertsUtil" -Dexec.args="--keystore_password changeit"
+
+>Note: the java keystore password is usefully 'changeit' this can be different if you've changed it.
 
 
 ## Create the Database Schema
 
-```
-cd ORCID-Source/orcid-core
-mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
 
-cd ..
-psql -U postgres -d orcid -f orcid-persistence/src/main/resources/db/updates/json-setup.sql
+    cd ORCID-Source/orcid-core
+    mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
 
-```
+    cd ..
+    psql -U postgres -d orcid -f orcid-persistence/src/main/resources/db/updates/json-setup.sql
+
 
 ## Eclipse Setup (Spring Tool Suite Eclipse)
 
