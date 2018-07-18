@@ -312,15 +312,30 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         this.editResearchResource.visibility.visibility = priv;
     };
 
-    setPrivacy(obj, priv, $event): void {
+    setGroupPrivacy = function(group, priv, $event): void {
+        console.log($event);
         $event.preventDefault();
-        obj.visibility.visibility = priv;                
-        this.researchResourceService.updateVisibility(obj.putCode, priv)
-            .pipe(    
+        var putCodes = new Array();
+        for (var idx in group.researchResources) {
+            putCodes.push(group.researchResources[idx].putCode);
+            group.researchResources[idx].visibility = priv;
+        }
+        group.activeVisibility = priv;
+        this.researchResourceService.updateVisibility(putCodes, priv)
+        .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
-            .subscribe(data => {});
-    };
+        .subscribe(
+            data => {
+                if (putCodes.length > 0) {
+                    this.researchReourceService.updateVisibility(putCodes, priv);   
+                }   
+            },
+            error => {
+                console.log('Error updating group visibility', error);
+            } 
+        );
+    }
 
     showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();

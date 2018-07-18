@@ -39,9 +39,9 @@
                                     elementId="group.groupId" 
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
                                         clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
-                                        publicClick="researchResourceService.setGroupPrivacy(group.activePutCode, 'PUBLIC', $event)"
-                                        limitedClick="researchResourceService.setGroupPrivacy(group.activePutCode, 'LIMITED', $event)"
-                                        privateClick="researchResourceService.setGroupPrivacy(group.activePutCode, 'PRIVATE', $event)"/>
+                                        publicClick="researchResourceService.setGroupPrivacy(group, 'PUBLIC', $event)"
+                                        limitedClick="researchResourceService.setGroupPrivacy(group, 'LIMITED', $event)"
+                                        privateClick="researchResourceService.setGroupPrivacy(group, 'PRIVATE', $event)"/>
                                 </li>s
                                 </#if>
                             </ul>
@@ -120,7 +120,7 @@
                             <#if !(isPublicProfile??)>
                             <li>
                                 <@orcid.privacyToggle2Ng2 angularModel="researchResource.visibility"
-                                elementId="group.groupId" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[researchResource.putCode.value]==true}" publicClick="setGroupPrivacy(group.activePutCode.value, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(group.activePutCode, 'LIMITED', $event)" privateClick="setGroupPrivacy(group.activePutCode, 'PRIVATE', $event)" />
+                                elementId="group.groupId" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[researchResource.putCode.value]==true}" publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
                             </li>
                             </#if>
                         </ul>
