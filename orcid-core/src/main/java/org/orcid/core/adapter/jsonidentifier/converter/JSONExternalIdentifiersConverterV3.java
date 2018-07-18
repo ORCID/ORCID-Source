@@ -1,10 +1,15 @@
 package org.orcid.core.adapter.jsonidentifier.converter;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.jsonidentifier.JSONExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONExternalIdentifiers;
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.v3.rc1.common.TransientError;
+import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
@@ -17,6 +22,15 @@ import ma.glasnost.orika.metadata.Type;
 public class JSONExternalIdentifiersConverterV3 extends BidirectionalConverter<ExternalIDs, String> {
     
     private ExternalIdentifierTypeConverter conv = new ExternalIdentifierTypeConverter();
+    
+    private PIDNormalizationService norm;
+
+    private LocaleManager localeManager;
+    
+    public JSONExternalIdentifiersConverterV3(PIDNormalizationService norm, LocaleManager localeManager) {
+        this.norm = norm;
+        this.localeManager = localeManager;
+    }
 
     @Override
     public String convertTo(ExternalIDs source, Type<String> destinationType) {
@@ -61,6 +75,10 @@ public class JSONExternalIdentifiersConverterV3 extends BidirectionalConverter<E
 
             if (!PojoUtil.isEmpty(externalIdentifier.getValue())) {
                 id.setValue(externalIdentifier.getValue());
+                id.setNormalized(new TransientNonEmptyString(norm.normalise(id.getType(), externalIdentifier.getValue())));
+                if (StringUtils.isEmpty(id.getNormalized().getValue())){
+                    id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message", id.getType(), externalIdentifier.getValue())));
+                }
             }
 
             if (externalIdentifier.getRelationship() != null) {

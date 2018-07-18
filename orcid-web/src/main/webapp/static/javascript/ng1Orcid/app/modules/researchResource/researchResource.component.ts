@@ -60,6 +60,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     privacyHelpCurKey: any;
     sectionOneElements: any;
     showElement: any;
+    showResourceItemDetails: any;
     sortState: any;
 
     constructor(
@@ -84,6 +85,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.showElement = {};
+        this.showResourceItemDetails = {};
         this.sortState = this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
         /*this.sortAsc = false;
         this.sortDisplayKey = 'endDate';
@@ -326,6 +328,11 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         for (var idx in group.researchResources){
             this.loadDetails(group.researchResources[idx].putCode, $event);
         }
+    };
+
+    toggleResourceItemDetails = function(id, $event) {
+        $event.stopPropagation();
+        this.showResourceItemDetails[id] = !this.showResourceItemDetails[id];
     };
 
     showSources(group, $event): void {

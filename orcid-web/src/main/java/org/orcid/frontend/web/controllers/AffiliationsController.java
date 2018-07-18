@@ -448,6 +448,45 @@ public class AffiliationsController extends BaseWorkspaceController {
                 List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
                 IntStream.range(0, elementsList.size()).forEach(idx -> {                
                     AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
+                    // Fill country and org disambiguated data on the default affiliation
+                    AffiliationForm defaultAffiliation = groupForm.getDefaultAffiliation();
+                    if(defaultAffiliation != null) {
+                        // Set country name
+                        defaultAffiliation.setCountryForDisplay(groupForm.getDefaultAffiliation().getCountry().getValue());
+                        // Set org disambiguated data
+                        if(!PojoUtil.isEmpty(defaultAffiliation.getOrgDisambiguatedId())) {
+                            OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(defaultAffiliation.getOrgDisambiguatedId().getValue()));
+                            defaultAffiliation.setOrgDisambiguatedName(orgDisambiguated.getValue());
+                            defaultAffiliation.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
+                            defaultAffiliation.setOrgDisambiguatedCity(orgDisambiguated.getCity());
+                            defaultAffiliation.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
+                            defaultAffiliation.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
+                            if(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                                defaultAffiliation.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
+                            }
+                        }
+                    }
+                    
+                    // Fill country and org disambiguated data for each affiliation
+                    for(AffiliationForm aff : groupForm.getAffiliations()) {
+                        // Set country name
+                        aff.setCountryForDisplay(aff.getCountry().getValue());
+                        // Set org disambiguated data
+                        if(!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {
+                            if(!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {
+                                OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(aff.getOrgDisambiguatedId().getValue()));
+                                aff.setOrgDisambiguatedName(orgDisambiguated.getValue());
+                                aff.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
+                                aff.setOrgDisambiguatedCity(orgDisambiguated.getCity());
+                                aff.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
+                                aff.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
+                                if(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                                    aff.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
+                                }
+                            }
+                        }
+                    }
+                    
                     elementsFormList.add(groupForm);
                 });
                 result.getAffiliationGroups().put(type, elementsFormList);

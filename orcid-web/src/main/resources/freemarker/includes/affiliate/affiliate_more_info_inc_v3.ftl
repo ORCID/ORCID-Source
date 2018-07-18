@@ -19,7 +19,21 @@
                 <div ng-if="group.getActive().orgDisambiguatedExternalIdentifiers">
                     <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group.getActive().disambiguationSource.value}}</strong><br>
                     <ul class="reset">
-                        <li ng-repeat="orgDisambiguatedExternalIdentifier in group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">{{orgDisambiguatedExternalIdentifier.identifierType}}:  <span ng-if="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>, </span> <span ng-if="orgDisambiguatedExternalIdentifier.all"><span ng-repeat="orgDisambiguatedExternalIdentifierAll in orgDisambiguatedExternalIdentifier.all">{{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}</span></span></li>
+                        <li ng-repeat="orgDisambiguatedExternalIdentifier in group.getActive().orgDisambiguatedExternalIdentifiers | orderBy:orgDisambiguatedExternalIdentifier.identifierType">
+                            {{orgDisambiguatedExternalIdentifier.identifierType}}:  
+                            <span ng-if="orgDisambiguatedExternalIdentifier.preferred">
+                                {{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/>
+                                <!-- Put the ',' only if there is more than one ext id or if the only one is not the same as the preferred one -->
+                                <span ng-if="orgDisambiguatedExternalIdentifier.all && (orgDisambiguatedExternalIdentifier.all.length > 1 || orgDisambiguatedExternalIdentifier.all[0] != orgDisambiguatedExternalIdentifier.preferred)">,</span>
+                            </span>
+                            <span ng-if="orgDisambiguatedExternalIdentifier.all">
+                                <span ng-repeat="orgDisambiguatedExternalIdentifierAll in orgDisambiguatedExternalIdentifier.all">
+                                    <div ng-if="orgDisambiguatedExternalIdentifierAll != orgDisambiguatedExternalIdentifier.preferred">
+                                        {{orgDisambiguatedExternalIdentifierAll}}{{$last ? '' : ', '}}
+                                    </div>
+                                </span>
+                            </span>
+                        </li>
                     </ul>
                 </div>
             </div>

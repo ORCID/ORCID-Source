@@ -13,9 +13,6 @@ import 'angular-route'
 
 //User generated imports
 
-import { AffiliationExtIdPopoverModule } 
-    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
-
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
 
@@ -63,6 +60,9 @@ import { EmailVerificationSentMesssageModule }
 
 import { ExternalIdentifiersModule }
     from './externalIdentifiers/externalIdentifiers.ts';
+
+import { ExtIdPopoverModule } 
+    from './extIdPopover/extIdPopover.ts';
 
 import { FundingModule } 
     from './funding/funding.ts';
@@ -172,6 +172,12 @@ import { VerifyEmailModule }
 import { WidgetModule } 
     from './widget/widget.ts';
 
+import { WorksBulkDeleteModule } 
+    from './works/worksBulkDelete.ts';
+
+import { WorksDeleteModule } 
+    from './works/worksDelete.ts';
+
 import { WorksFormModule } 
     from './works/worksForm.ts';
 
@@ -184,6 +190,9 @@ import { WorkSpaceSummaryModule }
 import { WorksPrivacyPreferencesModule } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
+import { UnsubscribeModule }
+    from './unsubscribe/unsubscribe.ts'
+
 import { DelegatorsModule } 
     from './delegators/delegators.ts';
     
@@ -194,7 +203,6 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
-        AffiliationExtIdPopoverModule.name,
         AffiliationModule.name,
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
@@ -211,6 +219,7 @@ export const orcidApp = angular.module(
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
         ExternalIdentifiersModule.name,
+        ExtIdPopoverModule.name,
         FundingModule.name,
         FundingFormModule.name,
         HomeModule.name,
@@ -247,10 +256,13 @@ export const orcidApp = angular.module(
         TwoFAStateModule.name,
         VerifyEmailModule.name,
         WidgetModule.name,
+        WorksBulkDeleteModule.name,
+        WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
         WorkSpaceSummaryModule.name,
         WorksPrivacyPreferencesModule.name,
+        UnsubscribeModule.name,
         DelegatorsModule.name
     ]
 );

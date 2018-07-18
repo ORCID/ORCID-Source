@@ -10,6 +10,8 @@ import { Directive, NgModule }
 import { FormsModule }
     from '@angular/forms'; // <-- NgModel lives here
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
 
@@ -27,6 +29,10 @@ import { ContributorFilterPipe }
 
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
+
+import { KeysPipe }
+    from '../../pipes/keysNg2.ts'; 
+
 
 import { LatexPipe }
     from '../../pipes/latexNg2.ts'; 
@@ -47,8 +53,7 @@ import { WorkExternalIdentifierHtmlPipe }
     from '../../pipes/workExternalIdentifierHtmlNg2.ts';
 
 //User generated modules
-import { AffiliationExtIdPopoverNg2Module }
-    from './../affiliationExtIdPopover/affiliationExtIdPopover.ts';
+
 /*
 import { DelegatesNg2Module }
     from './../delegates/delegates.ts';
@@ -56,6 +61,8 @@ import { DelegatesNg2Module }
 import { EditTableNg2Module }
     from './../editTable/editTable.ts';
 */
+import { ExtIdPopoverNg2Module }
+    from './../extIdPopover/extIdPopover.ts';
 
 import { HeaderNg2Module }
     from './../header/header.ts';
@@ -176,7 +183,9 @@ import { WorksService }
 import { EmailFrequencyService }
     from '../../shared/emailFrequency.service.ts';
 
-
+import { UnsubscribeService }
+    from '../../shared/unsubscribe.service.ts';
+    
 // This is the Angular 2 part of the module
 @NgModule(
     {
@@ -184,10 +193,11 @@ import { EmailFrequencyService }
             //Angular Libraries
             CommonModule,
             FormsModule,
+            NgbModule,
             //User Modules
-            AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
+            ExtIdPopoverNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
@@ -200,6 +210,7 @@ import { EmailFrequencyService }
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
+            KeysPipe,
             LatexPipe,
             OrderByAffiliationsPipe,
             OrderByPipe,
@@ -212,12 +223,14 @@ import { EmailFrequencyService }
             //Angular Libraries
             CommonModule,
             FormsModule,
+            NgbModule,
             //User directives
             FocusMe,
             //User Pipes
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             FilterImportWizardsPipe,
+            KeysPipe,
             LatexPipe,
             OrderByAffiliationsPipe,
             OrderByPipe,
@@ -225,9 +238,9 @@ import { EmailFrequencyService }
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
-            AffiliationExtIdPopoverNg2Module,
             //DelegatesNg2Module,
             //EditTableNg2Module,
+            ExtIdPopoverNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
@@ -265,7 +278,8 @@ import { EmailFrequencyService }
             SwitchUserService,
             WidgetService,
             WorksService,
-            WorkspaceService
+            WorkspaceService,
+            UnsubscribeService
         ]
     }
 )

@@ -143,7 +143,7 @@ public class LoadFundRefData {
                         Iso3166Country country = StringUtils.isNotBlank(rdfOrganization.country) ? Iso3166Country.fromValue(rdfOrganization.country) : null;
                         existingEntity.setCountry(country.name());
                         existingEntity.setName(rdfOrganization.name);                        
-                        String orgType = rdfOrganization.type + (StringUtils.isNotBlank(rdfOrganization.subtype) ? ('/' + rdfOrganization.subtype) : "");
+                        String orgType = getOrgType(rdfOrganization);
                         existingEntity.setOrgType(orgType);                        
                         existingEntity.setRegion(rdfOrganization.stateCode);
                         existingEntity.setSourceId(rdfOrganization.doi);
@@ -443,7 +443,20 @@ public class LoadFundRefData {
             return true;
         }
         
+        // Check org type
+        String orgType = getOrgType(org);
+        
+        if(StringUtils.isNotBlank(org.type)) {
+            if(entity.getOrgType() == null || !entity.getOrgType().equals(orgType)) {
+                return true;
+            }
+        } 
+        
         return false;
+    }
+    
+    private String getOrgType(RDFOrganization org) {        
+        return org.type + (StringUtils.isEmpty(org.subtype) ? "" : '/' + org.subtype);
     }
     
     /**
@@ -473,11 +486,11 @@ public class LoadFundRefData {
      * */
     private OrgDisambiguatedEntity createDisambiguatedOrg(RDFOrganization organization) {
         LOGGER.info("Creating disambiguated org {}", organization.name);
-        String orgType = organization.type + (StringUtils.isEmpty(organization.subtype) ? "" : "/" + organization.subtype);
+        String orgType = getOrgType(organization);
         Iso3166Country country = StringUtils.isNotBlank(organization.country) ? Iso3166Country.fromValue(organization.country) : null;
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
         orgDisambiguatedEntity.setName(organization.name);
-        orgDisambiguatedEntity.setCountry(country.name());       
+        orgDisambiguatedEntity.setCountry(country == null ? null : country.name());       
         orgDisambiguatedEntity.setCity(organization.city);
         orgDisambiguatedEntity.setRegion(organization.stateCode);        
         orgDisambiguatedEntity.setOrgType(orgType);

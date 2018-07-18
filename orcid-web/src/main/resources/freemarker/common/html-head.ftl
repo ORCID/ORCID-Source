@@ -167,12 +167,11 @@
             <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
             <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
             <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
-            <#include "/includes/ng2_templates/affiliation-ext-id-popover-ng2-template.ftl">
         </#if>
     </@orcid.checkFeatureStatus> 
    
     <#include "/includes/ng2_templates/modal-ng2-template.ftl">
-
+    <#include "/includes/ng2_templates/ext-id-popover-ng2-template.ftl">
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/developer-tools") || springMacroRequestContext.requestUri?contains("/inbox") || springMacroRequestContext.requestUri?contains("/my-orcid")>
         
         <#include "/includes/ng2_templates/privacy-toggle-ng2-template.ftl">

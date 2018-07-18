@@ -164,257 +164,10 @@
         <research-resource-ng2 publicView="false"></research-resource-ng2>
 
         <!-- Works -->
-        <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+        <#include "/includes/ng2_templates/works-ng2-template.ftl">
         <works-ng2></works-ng2>
-        </@orcid.checkFeatureStatus>         
-        <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.loading != true}}">
-          <#include "includes/work/work_section_header_inc_v3.ftl"/>
-          <!-- Work Import Wizard -->
-          <div ng-if="workImportWizard" class="work-import-wizard" ng-cloak>
-            <div class="ie7fix-inner">
-              <div class="row"> 
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                  <h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_works'/></h1>
-                  <span ng-click="showWorkImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_works'/></span>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                  <p class="wizard-content">
-                    <@orcid.msg 'workspace.LinkResearchActivities.description'/> <a href="https://support.orcid.org/knowledgebase/articles/188278-import-works-website-user" target="more_information"><@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/></a>
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div id="workFilters">
-                  <form class="form-inline">
-                    <div class="col-md-5 col-sm-5 col-xs-12">
-                      <div class="form-group">
-                        <label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label>   
-                        <select id="work-type" ng-options="wt as wt for wt in workType | orderBy: 'toString()'" ng-model="selectedWorkType"></select>                    
-                      </div> 
-                    </div>
-                    <div class="col-md-7 col-sm-7 col-xs-12">
-                      <div class="form-group geo-area-group">
-                        <label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>  
-                        <select ng-options="ga as ga for ga in geoArea | orderBy: 'toString()'" ng-model="selectedGeoArea"></select>                      
-                      </div>
-                    </div>  
-                  </form>
-                  <hr />
-                </div>
-              </div>         
-              <div class="row wizards">               
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                  <div ng-repeat="wtw in workImportWizardsOriginal | orderBy: 'name' | filterImportWizards : selectedWorkType : selectedGeoArea">
-                    <strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong><br />                                                                                    
-                    <div class="justify">                       
-                      <p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null}">
-                        {{wtw.description}}
-                        <a ng-click="toggleWizardDesc(wtw.id)" ng-if="wizardDescExpanded[wtw.id]"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
-                      </p>                        
-                      <a ng-click="toggleWizardDesc(wtw.id)" ng-if="wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
-                    </div>
-                    <hr/>
-                  </div>
-                </div>
-              </div>
-            </div>            
-          </div>
-          <!-- Bulk Edit -->          
-          <div ng-if="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>           
-            <div class="bulk-edit">
-              <div class="row">
-                <div class="col-md-7 col-sm-7 col-xs-12">
-                  <h4><@orcid.msg 'workspace.bulkedit.title'/></h4><span class="hide-bulk" ng-click="toggleBulkEdit()"><@orcid.msg 'workspace.bulkedit.hide'/></span>
-                  <ol>
-                    <li><@orcid.msg 'workspace.bulkedit.selectWorks'/></li>
-                    <li><@orcid.msg 'workspace.bulkedit.selectAction'/></li>
-                  </ol>
-                </div>
-                <div class="col-md-5 col-sm-5 col-xs-12">
-                  <ul class="bulk-edit-toolbar">
 
-                    <li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
-                      <label><@orcid.msg 'workspace.bulkedit.select'/></label>
-                      <div id="custom-control-x">
-                        <div class="custom-control-x" > 
-                          <div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu();$event.stopPropagation()">                   
-                            <span class="custom-checkbox-parent">
-                              <div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':bulkChecked}"></div>
-                            </span>                   
-                            <div class="custom-control-arrow" ng-click="toggleSelectMenu(); $event.stopPropagation()"></div>                            
-                          </div>
-                          <div>
-                            <ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle}">
-                              <li><a ng-click="bulkChangeAll(true)"><@orcid.msg 'workspace.bulkedit.selected.all'/></a></li>
-                              <li><a ng-click="bulkChangeAll(false)"><@orcid.msg 'workspace.bulkedit.selected.none'/></a></li>                                                
-                            </ul>     
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="bulk-edit-toolbar-item"><!-- Privacy control -->
-                      <label><@orcid.msg 'workspace.bulkedit.edit'/></label>
-                      <div class="bulk-edit-privacy-control">
-                        <@orcid.privacyToggle2 angularModel="groupPrivacy()" 
-                        questionClick=""
-                        clickedClassCheck=""
-                        publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
-                        limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
-                        privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
-                      </div>                      
-                    </li>                   
-                  </ul>
-                  <div class="bulk-edit-delete">
-                    <div class="centered">
-                      <a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" ng-mouseenter="showTooltip('Bulk-Edit')" ng-mouseleave="hideTooltip('Bulk-Edit')">
-                        <span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
-                      </a>
-                      <div class="popover popover-tooltip top bulk-edit-popover" ng-if="showElement['Bulk-Edit']">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                          <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>              
-              </div>              
-            </div>
-          </div>
-
-          <!-- BibTeX Export Layout -->         
-          <div ng-if="showBibtexExport && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
-            <div class=box-border" ng-if="canReadFiles" ng-cloak>
-              <h4><@orcid.msg 'workspace.bibtexExporter.export_bibtex'/></h4><span ng-click="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
-              <div class="row full-height-row">
-                <div class="col-md-9 col-sm-9 col-xs-8">
-                  <p>
-                    <@orcid.msg 'workspace.bibtexExporter.intro_1'/><a href="https://support.orcid.org/knowledgebase/articles/1807552-exporting-works-into-a-bibtex-file" target="exporting_bibtex" style="word-break\: normal;"><@orcid.msg 'workspace.bibtexExporter.intro_2'/></a><@orcid.msg 'workspace.bibtexExporter.intro_3'/>
-                  </p> 
-                </div>
-                <div class="col-md-3 col-sm-3 col-xs-4">
-                  <span class="bibtext-options">                                        
-                    <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.cancel'/></a>             
-                    <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
-                  </span>                   
-                </div>
-              </div>
-            </div>
-            <div class="bottomBuffer" ng-if="bibtexLoading && !bibtexExportError" ng-cloak>
-              <span class="dotted-bar"></span>
-              <ul class="inline-list">
-                <li>
-                  <@orcid.msg 'workspace.bibtexExporter.generating'/>
-                </li>
-                <li>
-                  &nbsp;<span><i id="" class="glyphicon glyphicon-refresh spin x1 green"></i></span>    
-                </li>
-              </ul>
-            </div>
-            <div class="alert alert-block" ng-if="bibtexExportError">
-              <strong><@orcid.msg 'workspace.bibtexExporter.error'/></strong>
-            </div>
-          </div>    
-
-          <!-- Bibtex Importer Wizard -->
-          <div ng-if="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
-            <div class=box-border" ng-if="canReadFiles" ng-cloak>
-              <h4><@orcid.msg 'workspace.bibtexImporter.link_bibtex'/></h4><span ng-click="openBibTextWizard()" class="hide-importer"><@orcid.msg 'workspace.bibtexImporter.hide_link_bibtex'/></span>
-              <div class="row full-height-row">
-                <div class="col-md-9 col-sm-9 col-xs-8">
-                  <p>
-                  <@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="${knowledgeBaseUri}/articles/390530#2import" target="workspace.bibtexImporter.learnMore"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
-                  </p> 
-                </div>
-                <div class="col-md-3 col-sm-3 col-xs-4">
-                  <span class="bibtext-options">                                        
-                    <a class="bibtex-cancel" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>            
-                    <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
-                    <span ng-if="worksFromBibtex.length > 0" class="import-label" ng-click="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>                                              
-                    <input id="inputBibtex" type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
-                  </span>                   
-                </div>
-              </div>
-            </div>            
-            <div class="alert alert-block" ng-if="bibtexParsingError">
-              <strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
-            </div>
-            <span class="dotted-bar" ng-if="worksFromBibtex.length > 0"></span>
-
-            <!-- Bibtex Import Results List -->
-            <div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">             
-              <div class="row full-height-row">   
-                <div class="col-md-9 col-sm-9 col-xs-7">
-                  <h3 class="workspace-title" ng-class="work.title.value == null ? 'bibtex-content-missing' :  ''">
-                    <span ng-if="work.title.value != null">{{work.title.value}}</span>
-                    <span ng-if="work.title.value == null">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</span>
-                    <span class="journaltitle" ng-if="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>
-                  </h3>
-
-                  <div class="info-detail">
-                    <span ng-if="work.publicationDate.year" ng-bind="work.publicationDate.year"></span><span ng-if="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-if="work.publicationDate.day">-</span><span ng-if="work.publicationDate.day" ng-bind="work.publicationDate.day"></span><span ng-if="work.publicationDate.year"> | </span>
-                    <!-- Work Category --> 
-                    <!--
-                    <span class="capitalize" ng-if="work.workCategory.value.length > 0">{{work.workCategory.value}}</span>
-                    <span class="bibtex-content-missing small-missing-info" ng-if="work.workCategory.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.category_missing' />&gt;</span>
-                    -->
-
-                    <!-- Work Type -->
-                    <span class="capitalize" ng-if="work.workType.value.length > 0">{{work.workType.value}}</span>
-                    <span class="bibtex-content-missing small-missing-info" ng-if="work.workType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
-
-                    <!-- Active Row Identifiers / URL / Validations / Versions -->
-                    
-                  </div>
-                  <div class="row" ng-if="group.activePutCode == work.putCode.value">
-                    <div class="col-md-12 col-sm-12 bottomBuffer">
-                      <ul class="id-details">
-                        <li class="url-work">
-                          <ul class="id-details">
-                            <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "externalIdentifierType.value"]' class="url-popover">
-                         
-                              <span ng-if="work.workExternalIdentifiers[0].externalIdentifierId.value.length > 0" bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
-                            </li>
-                          </ul>                                   
-                        </li>
-
-                        <li ng-if="work.url.value" class="url-popover url-work">
-                          <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
-                          <div class="popover-pos">                                   
-                            <div class="popover-help-container">
-                              <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
-                                <div class="arrow"></div>
-                                <div class="popover-content">
-                                  <a href="{{work.url.value}}" target="work.url.value">{{work.url.value}}</a>
-                                </div>                
-                              </div>                              
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                   </div>
-                </div>                          
-                <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                            
-                  <ul>
-                    <li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
-                    <li><a ng-if="work.errors.length == 0" ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
-                    <li><a ng-if="work.errors.length > 0" ng-click="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
-                    <li><span ng-if="work.errors.length > 0"><a ng-click="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div ng-if="workspaceSrvc.displayWorks" class="workspace-accordion-content">
-            <#include "includes/work/add_work_modal_inc.ftl"/>
-            <#include "includes/work/del_work_modal_inc.ftl"/>
-            <#include "includes/work/body_work_inc_v3.ftl"/>            
-          </div>
-        </div>
-
+        <!--Peer review-->
         <div ng-controller="PeerReviewCtrl">
           <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
             <#include "workspace_peer_review_body_list.ftl"/>
@@ -533,39 +286,6 @@
     </div> 
 </script>
 
-<script type="text/ng-template" id="bulk-delete-modal">
-  <div class="lightbox-container">
-    <div class="bulk-delete-modal">     
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <h3><@orcid.msg 'groups.bulk_delete.confirm.header'/></h3>
-          <div class="orcid-error">
-            <p>
-              <@orcid.msg 'groups.bulk_delete.confirm.line_1'/>
-            </p>
-            <p>
-              <@orcid.msg 'groups.bulk_delete.confirm.line_2'/>
-            </p>
-            <p ng-class="{'red-error':bulkDeleteSubmit == true}">
-              <@orcid.msg 'groups.bulk_delete.confirm.line_3'/> <input ng-class="{'red-border-error':bulkDeleteSubmit == true}" type="text" size="3" ng-init="delCountVerify=0" ng-model="delCountVerify"/>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12"> 
-          <div class="right">     
-            <button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>&nbsp;&nbsp;
-            <a ng-click="closeModal()">
-              <@orcid.msg 'freemarker.btncancel'/>
-            </a>  
-          </div>        
-        </div>
-      </div>
-    </div>
-  </div>
-</script>
-
 <script type="text/ng-template" id="import-wizard-modal">
   <#if ((workImportWizards)??)>   
   <div id="third-parties">
@@ -651,14 +371,20 @@
   </div>
   </#if>
 </script>
+<#include "/includes/ng2_templates/works-bulk-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="280" elementId="modalWorksBulkDelete" elementWidth="600">
+    <works-bulk-delete-ng2></works-bulk-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
-<@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
+<#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">
+    <works-delete-ng2></works-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
-<#include "/includes/ng2_templates/works-ng2-template.ftl">
-<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="700">
+<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="820">
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
-</@orcid.checkFeatureStatus> 
 
 <modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>
