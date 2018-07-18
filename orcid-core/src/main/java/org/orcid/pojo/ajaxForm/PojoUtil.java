@@ -8,6 +8,7 @@ import org.orcid.jaxb.model.message.Month;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Year;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 
 public class PojoUtil {
@@ -380,5 +381,24 @@ public class PojoUtil {
     public static boolean isEmpty(TranslatedTitleForm translatedTitle) {
         if(translatedTitle == null) return true;
         return areAllEmpty(translatedTitle.getContent(), translatedTitle.getLanguageCode());
+    }
+    
+    public static Date convertDate(org.orcid.jaxb.model.v3.rc1.common.FuzzyDate fuzzyDate) {
+        if (fuzzyDate != null) {
+            Integer year = PojoUtil.isEmpty(fuzzyDate.getYear()) ? null : Integer.valueOf(fuzzyDate.getYear().getValue());
+            Integer month = PojoUtil.isEmpty(fuzzyDate.getMonth()) ? null : Integer.valueOf(fuzzyDate.getMonth().getValue());
+            Integer day = PojoUtil.isEmpty(fuzzyDate.getDay()) ? null : Integer.valueOf(fuzzyDate.getDay().getValue());
+            if (year != null && year == 0) {
+                year = null;
+            }
+            if (month != null && month == 0) {
+                month = null;
+            }
+            if (day != null && day == 0) {
+                day = null;
+            }
+            return Date.valueOf(org.orcid.jaxb.model.v3.rc1.common.FuzzyDate.valueOf(year, month, day));
+        }
+        return null;
     }
 }

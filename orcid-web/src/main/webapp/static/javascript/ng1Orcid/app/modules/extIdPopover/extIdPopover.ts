@@ -14,12 +14,12 @@ import { downgradeComponent, UpgradeModule }
 import { CommonModule } 
     from '@angular/common'; 
 
-import { AffiliationExtIdPopoverComponent } 
-    from './affiliationExtIdPopover.component.ts';
+import { ExtIdPopoverComponent } 
+    from './extIdPopover.component.ts';
 
 // This is the Angular 1 part of the module
-export const AffiliationExtIdPopoverModule = angular.module(
-    'AffiliationExtIdPopoverModule', 
+export const ExtIdPopoverModule = angular.module(
+    'ExtIdPopoverModule', 
     []
 );
 
@@ -28,13 +28,13 @@ export const AffiliationExtIdPopoverModule = angular.module(
 @NgModule(
     {
         declarations: [
-            AffiliationExtIdPopoverComponent
+            ExtIdPopoverComponent
         ],
         entryComponents: [ 
-            AffiliationExtIdPopoverComponent 
+            ExtIdPopoverComponent 
         ],
         exports: [
-            AffiliationExtIdPopoverComponent
+            ExtIdPopoverComponent
         ],
         imports: [
             CommonModule,
@@ -44,16 +44,16 @@ export const AffiliationExtIdPopoverModule = angular.module(
         ]
     }
 )
-export class AffiliationExtIdPopoverNg2Module {}
+export class ExtIdPopoverNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
-AffiliationExtIdPopoverModule.directive(
-    'affiliationExtIdPopoverNg2', 
+ExtIdPopoverModule.directive(
+    'extIdPopoverNg2', 
     <any>downgradeComponent(
         {
-            component: AffiliationExtIdPopoverComponent
+            component: ExtIdPopoverComponent
         }
     )
 );

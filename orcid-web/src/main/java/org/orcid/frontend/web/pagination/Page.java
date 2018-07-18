@@ -3,9 +3,7 @@ package org.orcid.frontend.web.pagination;
 import java.io.Serializable;
 import java.util.List;
 
-import org.orcid.pojo.grouping.WorkGroup;
-
-public class WorksPage implements Serializable {
+public class Page<T> implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
@@ -13,14 +11,14 @@ public class WorksPage implements Serializable {
     
     private int totalGroups;
     
-    private List<WorkGroup> workGroups;
+    private List<T> groups;
 
-    public List<WorkGroup> getWorkGroups() {
-        return workGroups;
+    public List<T> getGroups() {
+        return groups;
     }
 
-    public void setWorkGroups(List<WorkGroup> workGroups) {
-        this.workGroups = workGroups;
+    public void setGroups(List<T> workGroups) {
+        this.groups = workGroups;
     }
 
     public int getNextOffset() {

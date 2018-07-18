@@ -22,7 +22,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -157,7 +157,7 @@
 				
 				<xs:element name="works" type="activities:works" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Container for the Works published by the
+						<xs:documentation>Container for the research outputs of the
 							researcher
 							or contributor.
 						</xs:documentation>

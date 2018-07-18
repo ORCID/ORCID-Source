@@ -10,7 +10,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -41,16 +41,8 @@
 			<xs:documentation>Funding received by the researcher or contributor.
 				* REQUIRED FIELDS: Funding-type, Funding-title, Funding Agency
 				(organization)
-				* Funding-type definitions:
-				    Award: Peer-reviewed funding providing direct research costs through competitions.
-    				    Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria.
-   				    Grant: Peer-reviewed funding providing direct research costs through competitions.
-				    Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member.
-				* The put-code attribute is used only when
-				reading this element. When
-				updating the item, the put-code attribute
-				must be included to
-				indicate the specific record to be updated.
+				* The put-code attribute is returned when reading this element. 
+				When updating the item, the put-code attribute must be included to indicate the specific item to be updated.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -140,8 +132,11 @@
 
 	<xs:simpleType name="funding-type">
 		<xs:annotation>
-			<xs:documentation>The type of funding, it could be grant, contract,
-				award or salary-award.
+			<xs:documentation>The type of funding, selected from the following options:
+    * Award: Peer-reviewed funding providing direct research costs through competitions
+    * Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria
+    * Grant: Peer-reviewed funding providing direct research costs through competitions
+    * Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
 			</xs:documentation>
 		</xs:annotation>
 
@@ -166,8 +161,7 @@
 
 	<xs:complexType name="contributor">
 		<xs:annotation>
-			<xs:documentation>A collaborator or other contributor to a work or
-				other orcid-activity
+			<xs:documentation>A collaborator or other contributor to the funding.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>

@@ -9,13 +9,13 @@
     <artifactId>orcid-nodejs</artifactId>
     <name>ORCID - NodeJS</name>
     <description>NodeJS Environment Setup and Webpack Conf</description>
-    <dependencies>     
+    <dependencies>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.parent.basedir}</main.basedir>
-        <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/static/javascript/ng1Orcid</nodejs.workingDirectory>
-        <webpackConfig>localhost</webpackConfig>
+        <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
+        <webpackConfig>localhost.webpack.config.js</webpackConfig>
     </properties>
     <build>
         <finalName>orcid-nodejs</finalName>
@@ -25,7 +25,7 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <!-- Use the latest released version:https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
                 <version>1.6</version>
-<configuration>
+                <configuration>
                    <nodeVersion>v8.11.2</nodeVersion>
                    <downloadRoot>https://nodejs.org/dist/</downloadRoot>
                    <workingDirectory>${nodejs.workingDirectory}</workingDirectory>
@@ -34,10 +34,10 @@
                        <eirslett_ver>1.6</eirslett_ver>
                        <NODE_ENV>production</NODE_ENV>
                    </environmentVariables>
-               </configuration>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
+                        <id>install-node-and-npm</id>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
@@ -50,7 +50,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>--production=false install</arguments>
+                            <arguments>install</arguments>
                         </configuration>
                     </execution>
                     <!-- ensure watch is set to false, or run webpack manually
@@ -59,13 +59,13 @@
                     $WORKSPACE/orcid-nodejs/target/node/node $WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid/node_modules/webpack/bin/webpack.js  - -config $WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid/qa.webpack.config.js
                     -->
                     <execution>
-                        <id>webpack build</id>
+                        <id>webpack-build</id>
                         <goals>
                             <goal>webpack</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>--config ${nodejs.workingDirectory}/${webpackConfig}.webpack.config.js</arguments>
+                            <arguments>--config ${nodejs.workingDirectory}/${webpackConfig}</arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -74,16 +74,16 @@
     </build>
     <profiles>
         <profile>
-            <id>qa</id>
+            <id>production</id>
             <activation>
                 <property>
                     <name>env</name>
-                    <value>qa-nodejs</value>
+                    <value>production</value>
                 </property>
             </activation>
             <properties>
                 <nodejs.workingDirectory>/home/orcid_tomcat/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
-                <webpackConfig>qa</webpackConfig>
+                <webpackConfig>webpack.config.js</webpackConfig>
             </properties>
         </profile>
         <profile>
@@ -96,7 +96,7 @@
             </activation>
             <properties>
                 <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
-                <webpackConfig>tmp-tomcat-orcid-web</webpackConfig>
+                <webpackConfig>tmp-tomcat-orcid-web.webpack.config.js</webpackConfig>
             </properties>
         </profile>
         <profile>
@@ -109,7 +109,7 @@
             </activation>
             <properties>
                 <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
-                <webpackConfig>localhost</webpackConfig>
+                <webpackConfig>localhost.webpack.config.js</webpackConfig>
             </properties>
         </profile>
         <profile>
@@ -122,7 +122,7 @@
             </activation>
             <properties>
                 <nodejs.workingDirectory>/home/orcid_tomcat/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
-                <webpackConfig>ci</webpackConfig>
+                <webpackConfig>ci.webpack.config.js</webpackConfig>
             </properties>
         </profile>
     </profiles>

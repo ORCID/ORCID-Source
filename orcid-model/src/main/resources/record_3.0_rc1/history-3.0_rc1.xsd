@@ -10,7 +10,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -39,11 +39,7 @@
 	<xs:element name="history">
 		<xs:complexType>
 			<xs:annotation>
-				<xs:documentation>A simple history of the researcher or
-					contributor's
-					ORCID Record. The visibility attribute (private, limited or public)
-					can be set at record creation, and indicates who can see this
-					section of information.
+				<xs:documentation>The history of the researcher's ORCID record
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
@@ -51,16 +47,12 @@
 					minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>The method used to create the ORCID Record
-							* API
-							method - Institution created the record on behalf of the
+							* API method - Institution created the record on behalf of the
 							individual
-							* Direct method - Individual registered directly at
+							* Direct/website methods - Individual registered directly at
 							orcid.org
-							* Member-referrred method - Individual registered as
-							part
-							of a workflow such as submitting a manuscript or applying
-							for a
-							grant
+							* Member-referred method - Individual registered as
+							part of the OAuth workflow
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
@@ -85,8 +77,7 @@
 				<xs:element name="verified-primary-email" type="xs:boolean"
 					minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>True if the user's current primary email is
-							verified
+						<xs:documentation>True if the user's current primary email is verified
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
@@ -97,8 +88,7 @@
 	
 	<xs:complexType name="completion-date">
 		<xs:annotation>
-			<xs:documentation>The date and time when the ORCID Record set up was
-				completed.
+			<xs:documentation>Only returned on records with a creation method of API, this date is when the user took control of the record and set a password
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
@@ -108,8 +98,7 @@
 	
 	<xs:complexType name="submission-date">
 		<xs:annotation>
-			<xs:documentation>The date time when the ORCID Record and iD was
-				first created.
+			<xs:documentation>The date time when the ORCID record was first created.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
@@ -119,11 +108,8 @@
 	
 	<xs:complexType name="claimed">
 		<xs:annotation>
-			<xs:documentation>True if the researcher or contributor has added a
-				password
-				to assume ownership of their ORCID Record after bulk
-				creation
-				by their institution.
+			<xs:documentation>True for all records created via direct/website or member-referred. 
+			If the record was created via the API this will be set to True when the user takes control of the record and sets a password.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
@@ -165,35 +151,31 @@
 	
 	<xs:simpleType name="creation-method">
 		<xs:annotation>
-			<xs:documentation>Indicates how the ORCID record and iD were created.
+			<xs:documentation>Indicates how the ORCID record was created.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="common:non-empty-string">
 			<xs:enumeration value="API">
 				<xs:annotation>
-					<xs:documentation>The ORCID Record was created using the ORCID
-						Member API.
+					<xs:documentation>The ORCID Record was created using the ORCID Member API.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="Direct">
 				<xs:annotation>
-					<xs:documentation>The user registered on the /register page.
+					<xs:documentation>The user registered on the ORCID website.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="Member-referred">
 				<xs:annotation>
-					<xs:documentation>The registered on the /oauth/signin.
+					<xs:documentation>The user registered as part of the OAuth process.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="website">
 				<xs:annotation>
-					<xs:documentation>DEPRECATED use Direct or Member-referred
-						instead.
-						The method used to create the ORCID Record (Website or
-						API).
+					<xs:documentation>DEPRECATED use Direct instead.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>

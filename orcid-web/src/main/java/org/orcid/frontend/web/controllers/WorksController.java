@@ -22,7 +22,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
-import org.orcid.frontend.web.pagination.WorksPage;
+import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
@@ -33,6 +33,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.ajaxForm.Citation;
+import org.orcid.pojo.WorkGroup;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -172,11 +174,18 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         initializePublicationDate(w);
+        
+        if (w.getCitation() == null) {
+            w.setCitation(new Citation());
+            w.getCitation().setCitationType(new Text());
+            w.getCitation().setCitation(new Text());
+        }
 
         if (w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
             ActivityExternalIdentifier wei = new ActivityExternalIdentifier();
             Text wdiType = new Text();
             wdiType.setValue(new String());
+            wei.setUrl(new Text());
             wei.setExternalIdentifierId(new Text());
             wei.setExternalIdentifierType(wdiType);
             wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
@@ -217,6 +226,7 @@ public class WorksController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(w.getCountryName())) {
             w.setCountryName(new Text());
         }
+        
     }
 
     private void initializePublicationDate(WorkForm w) {
@@ -255,6 +265,56 @@ public class WorksController extends BaseWorkspaceController {
                 if (workForm.getPublicationDate().getYear() == null) {
                     workForm.getPublicationDate().setYear(new String());
                 }
+            }
+            
+            if (workForm.getShortDescription() == null) {
+                workForm.setShortDescription(new Text());
+            }
+            
+            if (workForm.getUrl() == null) {
+                workForm.setUrl(new Text());
+            }
+            
+            if (workForm.getJournalTitle() == null) {
+                workForm.setJournalTitle(new Text());
+            }
+            
+            if (workForm.getLanguageCode() == null) {
+                workForm.setLanguageCode(new Text());
+            }
+            
+            if (workForm.getLanguageCode() == null) {
+                workForm.setLanguageCode(new Text());
+            }
+            
+            if (workForm.getLanguageName() == null) {
+                workForm.setLanguageName(new Text());
+            }
+            
+            if (workForm.getCitation() == null) {
+                workForm.setCitation(new Citation());
+                workForm.getCitation().setCitationType(new Text());
+                workForm.getCitation().setCitation(new Text());
+            }
+            
+            if (workForm.getSubtitle() == null) {
+                workForm.setSubtitle(new Text());
+            }
+            
+            if (workForm.getTranslatedTitle() == null) {
+                workForm.setTranslatedTitle(new TranslatedTitleForm());
+            }
+            
+            if (workForm.getCountryCode() == null) {
+                workForm.setCountryCode(new Text());
+            }
+            
+            if (workForm.getCountryName() == null) {
+                workForm.setCountryName(new Text());
+            }
+            
+            if (workForm.getJournalTitle() == null) {
+                workForm.setJournalTitle(new Text());
             }
 
             // Set country name
@@ -623,19 +683,19 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody WorksPage getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.getWorksPage(orcid, offset, false, sort, sortAsc);
     }
     
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
-    public @ResponseBody WorksPage getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.getAllWorks(orcid, sort, sortAsc);
     }
     
     @RequestMapping(value = "/refreshWorks.json", method = RequestMethod.GET)
-    public @ResponseBody WorksPage refreshWorkGroupsJson(@RequestParam("limit") int limit, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<WorkGroup> refreshWorkGroupsJson(@RequestParam("limit") int limit, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.refreshWorks(orcid, limit, sort, sortAsc);
     }
