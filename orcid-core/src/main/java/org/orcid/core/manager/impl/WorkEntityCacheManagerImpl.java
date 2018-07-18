@@ -227,7 +227,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
         // now fetch all the others that are *not* in the cache
         if (fetchList.size() > 0) {
-            List<WorkEntity> refreshedWorks = workDao.getWorkEntities(fetchList);
+            List<WorkEntity> refreshedWorks = workDao.getWorkEntities(orcid, fetchList);
             for (WorkEntity mWorkRefreshedFromDB : refreshedWorks) {
                 WorkCacheKey key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
                     WorkEntity cachedWork =fullWorkEntityCache.get(key);                        
@@ -263,7 +263,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         
         List<List<Long>> lists = ListUtils.partition(worksToFetchFromDB, BATCH_SIZE);
         for(List<Long> idsList : lists) {
-            List<WorkEntity> workList = workDao.getWorkEntities(idsList);
+            List<WorkEntity> workList = workDao.getWorkEntities(orcid, idsList);
             for(WorkEntity work : workList) {
                 WorkCacheKey key = new WorkCacheKey(work.getId(), releaseName);
                 fullWorkEntityCache.put(key, work);

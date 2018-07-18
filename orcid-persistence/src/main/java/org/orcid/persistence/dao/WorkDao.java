@@ -106,7 +106,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
     
-    List<WorkEntity> getWorkEntities(List<Long> ids);        
+    List<WorkEntity> getWorkEntities(String orcid, List<Long> ids);        
 
     @Deprecated
     List<WorkEntity> getWorksByOrcidId(String orcid);
