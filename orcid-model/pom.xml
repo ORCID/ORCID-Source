@@ -11,6 +11,7 @@
     	<main.basedir>${project.basedir}</main.basedir>
 		<swagger.version>1.5.16</swagger.version>
 		<jena.version>3.0.0</jena.version>
+        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
     
     <!-- BUILD -->
