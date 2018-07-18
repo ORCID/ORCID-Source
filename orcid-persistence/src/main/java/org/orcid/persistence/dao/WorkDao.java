@@ -97,6 +97,8 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid);
 
     List<WorkLastModifiedEntity> getPublicWorkLastModifiedList(String orcid);
+    
+    List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid, List<Long> ids);
 
     void detach(WorkBaseEntity workBaseEntity);
     

@@ -1,8 +1,10 @@
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -169,17 +171,21 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
         List<BulkElement> works = new ArrayList<>();
-        String[] putCodes = getPutCodeArray(putCodesAsString);
-        long lastModifiedTime = getLastModified(orcid);
-        for (String putCode : putCodes) {
-            try {
-                Long id = Long.valueOf(putCode);
-                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, lastModifiedTime);
-                works.add(jpaJaxbWorkAdapter.toWork(workEntity));
-            } catch (Exception e) {
-                works.add(orcidCoreExceptionMapper.getOrcidError(new PutCodeFormatException("'" + putCode + "' is not a valid put code")));
-            }
+        
+        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());
+        
+        List<WorkEntity> entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
+        
+        for(WorkEntity entity : entities) {
+            works.add(jpaJaxbWorkAdapter.toWork(entity));
+            putCodes.remove(entity.getId());
         }
+        
+        // Put codes still in this list doesn't exists on the database
+        for(Long invalidPutCode : putCodes) {
+            works.add(orcidCoreExceptionMapper.getOrcidError(new PutCodeFormatException("'" + invalidPutCode + "' is not a valid put code")));
+        }
+        
         WorkBulk bulk = new WorkBulk();
         bulk.setBulk(works);
         return bulk;

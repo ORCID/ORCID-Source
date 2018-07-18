@@ -202,6 +202,15 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid, List<Long> ids) {
+        Query query = entityManager.createQuery("from WorkLastModifiedEntity w where w.orcid=:orcid and id in (:ids) order by w.displayIndex desc, w.dateCreated asc");
+        query.setParameter("orcid", orcid);
+        query.setParameter("ids", ids);        
+        return query.getResultList();
+    }
+    
     @Override
     @Transactional
     public boolean increaseDisplayIndexOnAllElements(String orcid) {

@@ -103,7 +103,7 @@ public class ContributorUtils {
                     String name = contributorNames.get(orcid);                    
                     CreditName creditName = new CreditName(name);
                     contributor.setCreditName(creditName);                    
-                }
+                } 
             }
         }
     }
@@ -119,10 +119,8 @@ public class ContributorUtils {
     
     private Map<String, String> getContributorNamesFromDB(Set<String> ids) {
         Iterable<List<String>> it = Iterables.partition(ids, BATCH_SIZE);
-        Map<String, String> contributorNames = new HashMap<String, String>();
-        System.out.println("----->Is the dao null???? " + (recordNameDao == null));
-        for(List<String> idsList : it) {
-            System.out.println(idsList);
+        Map<String, String> contributorNames = new HashMap<String, String>();        
+        for(List<String> idsList : it) {            
             List<RecordNameEntity> entities = recordNameDao.getRecordNames(idsList);
             if(entities != null) {
                 for(RecordNameEntity entity : entities) {

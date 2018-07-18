@@ -214,7 +214,11 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @ApiOperation( nickname="viewSpecifiedWorksV21", value = "Fetch specified works", response = WorkBulk.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @PathParam("putCodes") String putCodes) {
-        return serviceDelegator.viewBulkWorks(orcid, putCodes);
+        long start = System.currentTimeMillis();
+        Response r = serviceDelegator.viewBulkWorks(orcid, putCodes);
+        long end = System.currentTimeMillis();
+        System.out.println("Time taken: " + (end - start));
+        return r;
     }
 
     @GET

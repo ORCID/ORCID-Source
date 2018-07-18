@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.ListUtils;
 import org.ehcache.Cache;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
@@ -32,6 +33,8 @@ import org.slf4j.LoggerFactory;
 public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkEntityCacheManagerImpl.class);
 
+    private static final Integer BATCH_SIZE = 10;
+    
     @Resource(name = "workLastModifiedCache")
     private Cache<ProfileCacheKey, List<WorkLastModifiedEntity>> workLastModifiedCache;
 
@@ -238,5 +241,44 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             }
         }
         return (List<WorkEntity>) Arrays.asList(returnArray);
+    }
+
+    @Override
+    public List<WorkEntity> retrieveFullWorks(String orcid, List<Long> workIds) {
+        List<Long> worksToFetchFromDB = new ArrayList<Long>();
+        List<WorkEntity> works = new ArrayList<WorkEntity>();
+        
+        List<WorkLastModifiedEntity> lastModifiedList = workDao.getWorkLastModifiedList(orcid, workIds);
+        Map<Long, Long> lastModifiedMap = toIdsLastModifiedMap(lastModifiedList);
+        
+        for(Long workId : workIds) {
+            WorkCacheKey key = new WorkCacheKey(workId, releaseName);
+            WorkEntity workEntity = fullWorkEntityCache.get(key);
+            if (workEntity == null || !lastModifiedMap.containsKey(workEntity.getId()) || workEntity.getLastModified().getTime() < lastModifiedMap.get(workEntity.getId())) {
+                worksToFetchFromDB.add(workId);
+            } else {
+                works.add(workEntity);
+            }
+        }
+        
+        List<List<Long>> lists = ListUtils.partition(worksToFetchFromDB, BATCH_SIZE);
+        for(List<Long> idsList : lists) {
+            List<WorkEntity> workList = workDao.getWorkEntities(idsList);
+            for(WorkEntity work : workList) {
+                WorkCacheKey key = new WorkCacheKey(work.getId(), releaseName);
+                fullWorkEntityCache.put(key, work);
+                works.add(work);
+            }
+        }
+        
+        return works;
+    }
+    
+    private Map<Long, Long> toIdsLastModifiedMap(List<WorkLastModifiedEntity> entities) {
+        Map<Long, Long> map = new HashMap<Long, Long>();
+        for(WorkLastModifiedEntity entity : entities) {
+            map.put(entity.getId(), entity.getLastModified().getTime());
+        }
+        return map;
     }
 }
