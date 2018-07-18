@@ -22,8 +22,8 @@ node {
             sh "mkdir -p $EHCACHE_LOCATION"
             do_maven("clean")
             parallel(
-                model:       {do_maven("clean install test -f orcid-test/pom.xml")},
-                test:        {do_maven("clean install test -f orcid-model/pom.xml")}
+                model:       {do_maven("clean install test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-test/pom.xml")},
+                test:        {do_maven("clean install test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-model/pom.xml")}
             )
         } catch(Exception err) {
             orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]: $err", 'ERROR')
@@ -33,7 +33,7 @@ node {
     }
     stage('ALL FROM PARENT') {
         try {
-            do_maven("clean compile test")
+            do_maven("clean compile test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME}")
         } catch(Exception err) {
             orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]: $err", 'ERROR')
             report_and_clean()
