@@ -193,9 +193,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertTrue(model.containsKey("fundingIdsJson"));
         assertEquals("[10]", model.get("fundingIdsJson"));
         
-        assertTrue(model.containsKey("peerReviewIdsJson"));
-        assertEquals("[9]", model.get("peerReviewIdsJson"));
-        
         assertTrue(model.containsKey("isProfileEmpty"));
         Boolean isProfileEmpty = (Boolean) model.get("isProfileEmpty");
         assertFalse(isProfileEmpty);

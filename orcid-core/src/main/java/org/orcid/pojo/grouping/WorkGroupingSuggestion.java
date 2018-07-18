@@ -1,4 +1,4 @@
-package org.orcid.pojo;
+package org.orcid.pojo.grouping;
 
 import java.io.Serializable;
 
