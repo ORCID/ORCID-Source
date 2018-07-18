@@ -8,7 +8,7 @@ import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.GroupingSuggestionDao;
 import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;
-import org.orcid.pojo.WorkGroupingSuggestion;
+import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
 public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestionManagerReadOnly {
 

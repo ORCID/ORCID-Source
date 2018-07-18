@@ -17,7 +17,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.WorkGroupingSuggestion;
+import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
 public class GroupingSuggestionManagerImpl extends GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestionManager {
 

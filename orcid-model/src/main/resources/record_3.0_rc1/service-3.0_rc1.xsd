@@ -10,7 +10,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -37,11 +37,8 @@
 
 	<xs:element name="service" type="common:affiliation">
 		<xs:annotation>
-			<xs:documentation>A service associated with the researcher or
-				contributor.
-				* The visibility attribute (private, limited or public)
-				can be set at record creation, and indicates who can see this
-				section of information.
+			<xs:documentation>A service associated with the researcher.
+			Service is defined as significant donations of time, money, or other resources to an organization or community
 				* The put-code attribute is used only when
 				reading this element. When updating the item, the put-code attribute
 				must be included to indicate the specific record to be updated.

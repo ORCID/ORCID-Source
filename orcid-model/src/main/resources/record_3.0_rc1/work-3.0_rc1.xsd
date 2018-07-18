@@ -10,7 +10,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -41,10 +41,7 @@
 	<xs:element name="work">
 		<xs:complexType>
 			<xs:annotation>
-				<xs:documentation>A work published by the researcher or contributor.
-					* The visibility attribute (private, limited or public) can be set
-					at record creation, and indicates who can see this section of
-					information.
+				<xs:documentation>A work is any research output that the researcher produced or contributed to
 					* The put-code attribute is used only when reading this
 					element. When updating the item, the put-code attribute must be
 					included to indicate the specific record to be updated.
@@ -67,13 +64,17 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="type" type="work:work-type" />
+						<xs:element name="type" type="work:work-type">
+							<xs:annotation>
+								<xs:documentation>Required. The type of work
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element ref="common:publication-date" minOccurs="0" />
 						<xs:element ref="common:external-ids"
 							minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>Element containing the type and content of the
-									citation for this work
+								<xs:documentation>Required when writing work items. The list of supported identifier types is at https://pub.qa.orcid.org/v2.0/identifiers
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -81,7 +82,12 @@
 						<xs:element name="contributors" type="work:work-contributors"
 							minOccurs="0" />
 						<xs:element ref="common:language-code" minOccurs="0"
-							maxOccurs="1" />
+							maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The language used for the metadata provided about the work
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
 						<xs:element ref="common:country" minOccurs="0" />
 					</xs:sequence>
 				</xs:extension>
@@ -112,8 +118,7 @@
 		<xs:annotation>
 			<xs:documentation>The types of works accepted accepted by the ORCID
 				Registry. Please refer to the CASRAI dictionary for definitions of
-				each work type.
-				http://dictionary.casrai.org/research-personnel-profile/contributions/outputs
+				each work type. http://dictionary.casrai.org/research-personnel-profile/contributions/outputs
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
@@ -179,7 +184,7 @@
 			<xs:element ref="common:contributor-orcid" minOccurs="0"
 				maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>ORCID iD for the contributor</xs:documentation>
+					<xs:documentation>ORCID iD for the contributor - only add if you have collected an authenticated iD for the contributor</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="credit-name" type="common:credit-name"
@@ -192,9 +197,7 @@
 	</xs:complexType>
 	<xs:complexType name="contributor-email">
 		<xs:annotation>
-			<xs:documentation>Email of the collaborator or other contributor.
-				When provided during creation or update, the email address is used
-				to look up and add the contributor's ORCID iD.
+			<xs:documentation>Email of the contributor. This field is not returned when reading a work
 			</xs:documentation>
 		</xs:annotation>
 
@@ -270,16 +273,11 @@
 		<xs:annotation>
 			<xs:documentation>The title of the publication or group under which
 				the work was published.
-				* If a jounal, include the journal title of
-				the work.
+				* If a jounal, include the journal title of the work.
 				* If a book chapter, use the book title.
-				* If a translation
-				or a
-				manual, use the series title.
-				* If a dictionary entry, use the
-				dictionary title.
-				* If a conference poster, abstract or paper, use
-				the conference name.
+				* If a translation or a manual, use the series title.
+				* If a dictionary entry, use the dictionary title.
+				* If a conference poster, abstract or paper, use the conference name.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">

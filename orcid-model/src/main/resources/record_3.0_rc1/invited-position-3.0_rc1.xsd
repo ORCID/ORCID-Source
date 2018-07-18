@@ -10,7 +10,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -37,14 +37,10 @@
 
 	<xs:element name="invited-position" type="common:affiliation">
 		<xs:annotation>
-			<xs:documentation>A service associated with the researcher or
-				contributor.
-				* The visibility attribute (private, limited or public)
-				can be set at record creation, and indicates who can see this
-				section of information.
-				* The put-code attribute is used only when
-				reading this element. When updating the item, the put-code attribute
-				must be included to indicate the specific record to be updated.
+			<xs:documentation>An invited position the researcher served.
+				Invited Position is defined as an invited non-employment affiliation. This includes formal acknowledgements of an individual’s academic efforts through honorary titles and/or positions which require no specific service. May be paid or unpaid.
+				* The put-code attribute is returned when reading this element. 
+				When updating the item, the put-code attribute must be included to indicate the specific item to be updated.
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>

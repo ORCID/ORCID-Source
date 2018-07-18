@@ -345,6 +345,9 @@
 							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</peer-review:convening-organization>
+					<peer-review:reviewer-role>reviewer</peer-review:reviewer-role>
+                    <peer-review:review-type>review</peer-review:review-type>
+                    <peer-review:review-url>http://orcid.org</peer-review:review-url>
 				</peer-review:summary>
 			</activities:group>
 		</activities:peer-reviews>

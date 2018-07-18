@@ -27,3 +27,5 @@ orcid-activemq/activemq-data/
 orcid-activemq/logs/
 orcid-message-listener/logs/
 *.md.html
+orcid-web/src/main/resources/cdn_active_url.txt
+

@@ -101,7 +101,20 @@ public class ResearchResourceManagerTest extends BaseTest {
     public void testViewSummary(){
         ResearchResourceSummary r = researchResourceManagerReadOnly.getResearchResourceSummary(OTHER_USER_ORCID, 2l);
         assertEquals("the title2",r.getProposal().getTitle().getTitle().getContent());
+        assertEquals("2",r.getDisplayIndex());
         assertEquals(Long.valueOf(2l),r.getPutCode());
+    }
+    
+    @Test
+    public void testUpdateToMaxDisplay(){
+        ResearchResourceSummary r = researchResourceManagerReadOnly.getResearchResourceSummary(OTHER_USER_ORCID, 1l);
+        assertEquals("the title",r.getProposal().getTitle().getTitle().getContent());
+        assertEquals("1",r.getDisplayIndex());
+        assertEquals(Long.valueOf(1l),r.getPutCode());
+        
+        researchResourceManager.updateToMaxDisplay(OTHER_USER_ORCID, 1l);
+        r = researchResourceManagerReadOnly.getResearchResourceSummary(OTHER_USER_ORCID, 1l);
+        assertEquals("4",r.getDisplayIndex());
     }
     
     @Test

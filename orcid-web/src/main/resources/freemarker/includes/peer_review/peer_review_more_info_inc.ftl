@@ -1,9 +1,9 @@
-<div class="more-info" ng-if="group.activePutCode == peerReview.putCode.value && showDetails[group.groupId] == true">
+<div class="more-info" ng-if="showDetails[group.id] == true">
     <div class="content">       
         <div class="row">
             <div class="col-md-12">
                 <div class="group-summary-details">
-                    <span class="italic" ng-if="group.groupType" ng-bind="group.groupType"></span><span ng-if="group.groupDescription">, </span><span ng-if="group.groupDescription" ng-bind="group.groupDescription"></span>
+                    <span class="italic" ng-if="group.type" ng-bind="group.type"></span><span ng-if="group.description">, </span><span ng-if="group.description" ng-bind="group.description"></span>
                 </div>              
             </div>
             <div class="peer-review-list-container">
@@ -29,7 +29,7 @@
                         <!-- End of Header -->
                     </li>
                     
-                    <li ng-repeat="peerReview in group.activities">
+                    <li ng-repeat="peerReview in group.peerReviews">
                         <!-- Active row -->
                         <div class="row source-line-peer-review">
                             <div class="col-md-3 col-sm-3 col-xs-3">
@@ -39,17 +39,17 @@
                             <div class="col-md-3 col-sm-3 col-xs-3" ng-bind="peerReview.role.value" ng-cloak></div>
                             <div class="col-md-4 col-sm-4 col-xs-4">                                
                                 <span class="pull-right"> 
-                                    <a ng-click="showMoreDetails(peerReview.putCode.value); group.activePutCode = peerReview.putCode.value;" ng-hide="showPeerReviewDetails[peerReview.putCode.value]" ng-show="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
+                                    <a ng-click="showMoreDetails(peerReview.putCode.value)" ng-hide="showPeerReviewDetails[peerReview.putCode.value]" ng-show="showPeerReviewDetails[peerReview.putCode.value] == null">
                                         <span class="glyphicons expand"></span>
                                         <span class="hidden-xs"><@orcid.msg 'common.details.show_details_lc' /></span>
                                     </a> 
-                                    <a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value]" ng-hide="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
+                                    <a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value]" ng-hide="showPeerReviewDetails[peerReview.putCode.value] == null">
                                         <span class="glyphicons collapse_top"></span>                                       
                                         <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                     </a> | 
                                     <a href="{{peerReview.url.value}}" ng-if="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span ng-if="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
                                      <#if !(isPublicProfile??)>
-                                        <div ng-click="deletePeerReviewConfirm(group.getActive().putCode.value, false)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
+                                        <div ng-click="deletePeerReviewConfirm(peerReview.putCode.value, false)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
                                             <div class="popover popover-tooltip top">
                                                 <div class="arrow"></div>
                                                 <div class="popover-content">
@@ -94,10 +94,10 @@
                             <div class="col-md-12 sources-container-header">          
                                 <div class="row">
                                     <div class="col-md-7 col-sm-7 col-xs-12">
-                                        <@orcid.msg 'groups.common.source'/>: {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}    
+                                        <@orcid.msg 'groups.common.source'/>: {{peerReview.source}}    
                                     </div>
                                     <div class="col-md-3 col-sm-3 col-xs-6">
-                                        <@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
+                                        <@orcid.msg 'groups.common.created'/>: <span ng-bind="peerReview.createdDate | ajaxFormDateToISO8601"></span>
                                     </div>              
                                 </div>
                             </div>
