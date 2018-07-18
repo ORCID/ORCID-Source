@@ -393,7 +393,7 @@
                             </li>
 
                             <li *ngIf="!(editSources[group.groupId] || group?.works?.length == 1)">
-                                <a (click)="showSources(group)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
+                                <a (click)="showSources(group,$event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
                                 <div class="popover popover-tooltip top delete-group-popover" *ngIf="showElement[group.groupId+'-deleteGroup']">
