@@ -16,6 +16,7 @@
     <properties>
         <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
+        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
 
     <build>

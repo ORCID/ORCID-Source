@@ -11,6 +11,7 @@
 
   <properties>
   	  <main.basedir>${project.parent.basedir}</main.basedir>
+    <branchVersion>1.1.5-SNAPSHOT</branchVersion>
   </properties>
   
   <dependencies>

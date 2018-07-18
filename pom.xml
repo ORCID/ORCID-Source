@@ -39,6 +39,7 @@ the software.
         <ajp.port>9438</ajp.port>
         <aws.version>1.11.32</aws.version>
         <main.basedir>${project.basedir}</main.basedir>
+        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
 
     <modules>

@@ -15,7 +15,6 @@
 
     <artifactId>orcid-web</artifactId>
     <packaging>war</packaging>
-
     <name>ORCID - Web</name>
     <description>The web application that serves the HTML and allows the invitation, confirmation and registration of ORCID owners.</description>
 
