@@ -69,7 +69,6 @@ psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE message_listener to orcid;
 
 >If you experience the below error you can find the solution [here](http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy)
 
-
     Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 
 ## Verify you have the DigiCertGlobalRootG2.crt
