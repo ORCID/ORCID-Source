@@ -19,40 +19,24 @@ import { takeUntil }
 import { ResearchResourceService } 
     from '../../shared/researchResource.service.ts';
 
-import { EmailService } 
-    from '../../shared/email.service.ts';
-
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 
-import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
-
-import { FeaturesService }
-    from '../../shared/features.service.ts' 
-    
-import { CommonService } 
-    from '../../shared/common.service.ts';
-
 @Component({
     selector: 'research-resource-delete-ng2',
-    template:  scriptTmpl("esearch-resource-delete-ng2-template")
+    template:  scriptTmpl("research-resource-delete-ng2-template")
 })
 export class ResearchResourceDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    deleteResearchResourceObj: any;
+    researchResource: any;
+
     constructor(
         private researchResourceService: ResearchResourceService,
         private modalService: ModalService
     ) {
 
-        this.deleteResearchResourceObj = {
-            affiliationName: {
-                value: null
-            }
-        };
 
     }
 
@@ -61,31 +45,29 @@ export class ResearchResourceDeleteComponent implements AfterViewInit, OnDestroy
         this.researchResourceService.notifyOther({action:'cancel', successful:true});
     };
 
-
-    deleteResearchResource(): void {        
-        this.researchResourceService.deleteResearchResources(this.deleteResearchResourceObj.putCode)
-            .pipe(    
+    deleteResearchResource(putCode): void {
+        this.researchResourceService.deleteResearchResources([putCode])
+        .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
-            .subscribe(data => {       
-                
-                if(data.errors.length == 0) {
-                    this.researchResourceService.notifyOther({action: 'delete', successful:true});                  
-                }
-
+        .subscribe(
+            data => {
                 this.modalService.notifyOther({action:'close', moduleId: 'modalResearchResourceDelete'});
-                                            
-            });         
-        
-    };
- 
+                this.researchResourceService.notifyOther({action:'delete', successful:true});
+            },
+            error => {
+                console.log('Error deleting work', error);
+            } 
+        ); 
+    }
+
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.researchResourceService.notifyObservable$.subscribe(
             (res) => {
-                if( res.researchResource != undefined ) {
-                    this.deleteResearchResourceObj = res.researchResource;
+                if( res.researchResource ) {
+                    this.researchResource = res.researchResource;
                 }
             }
         );
@@ -98,4 +80,4 @@ export class ResearchResourceDeleteComponent implements AfterViewInit, OnDestroy
 
     ngOnInit() {
     }; 
-}
+} 

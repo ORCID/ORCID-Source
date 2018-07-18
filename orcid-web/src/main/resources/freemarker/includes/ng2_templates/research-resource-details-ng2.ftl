@@ -323,8 +323,8 @@
                             <ul class="sources-actions">
                                 <li>
                                     <a 
-                                        (click)="deleteResearchResourceConfirm(researchResource.putCode, false)"  
-                                        title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}" 
+                                        (click)="deleteResearchResourceConfirm(researchResource)"  
+                                        title="<@orcid.msg 'freemarker.btnDelete' /> {{researchResource?.proposal?.title?.title?.content}}" 
                                         (mouseenter)="showTooltip(researchResource.putCode+'-deleteActiveSource')" 
                                         (mouseleave)="hideTooltip(researchResource.putCode+'-deleteActiveSource')">
                                         <span class="glyphicon glyphicon-trash"></span>
@@ -362,8 +362,8 @@
                         <#if !(isPublicProfile??)>
                         <ul class="sources-actions">
                             <li>
-                                <a (click)="deleteWorkConfirm(researchResource.putCode, false)" (mouseenter)="showTooltip(researchResource.putCode+'-deleteInactiveSource')" (mouseleave)="hideTooltip(researchResource.putCode+'-deleteInactiveSource')">
-                                    <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{work.title.value}}"></span>
+                                <a (click)="deleteResearchResourceConfirm(researchResource)" (mouseenter)="showTooltip(researchResource.putCode+'-deleteInactiveSource')" (mouseleave)="hideTooltip(researchResource.putCode+'-deleteInactiveSource')">
+                                    <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{researchResource?.proposal?.title?.title?.content}}"></span>
                                 </a>
 
                                 <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[researchResource.putCode+'-deleteInactiveSource'] == true">
@@ -397,7 +397,7 @@
                         <ul class="sources-options" >
                             <#if !(isPublicProfile??)>
                             <li *ngIf="!(editSources[group.groupId] || group?.researchResources?.length == 1)">
-                                <a (click)="showSources(group)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
+                                <a (click)="showSources(group, $event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
                                 <div class="popover popover-tooltip top delete-group-popover" *ngIf="showElement[group.groupId+'-deleteGroup']">
@@ -409,7 +409,7 @@
                             </li>
 
                             <li *ngIf="group?.researchResources?.length == 1">
-                                <a (click)="deleteWorkConfirm(group.activePutCode, false)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
+                                <a (click)="deleteResearchResourceConfirm(group.defaultActivity)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
                                 <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteSource']">

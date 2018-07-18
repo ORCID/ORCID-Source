@@ -30,7 +30,10 @@ export class ResearchResourceService {
     
     notifyObservable$ = this.notify.asObservable();
 	
-    constructor( private http: HttpClient ){
+    constructor( 
+        private http: HttpClient,
+
+    ){
         this.researchResource = null;
         this.headers = new HttpHeaders(
             {
@@ -93,15 +96,14 @@ export class ResearchResourceService {
     }
 
     handleGroupData(data, callback?): void {
-        if (this.groups == undefined) {
-            this.groups = new Array();
-        }
+        console.log("handle group data");
+        this.groups = new Array();
         this.groups = this.groups.concat(data.groups);
+        console.log(this.groups);
         this.groupsLabel = this.groups.length + " of " + data.totalGroups;
         this.showLoadMore = this.groups.length < data.totalGroups;
         this.loading = false;
         this.offset = data.nextOffset;
-        
         if (callback != undefined) {
             callback();
         }

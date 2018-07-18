@@ -128,8 +128,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         $('.work-more-info-container').css('display', 'none');
     };
 
-
-    deleteResearchResource(researchResource): void {
+    deleteResearchResourceConfirm(researchResource): void {
         this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -166,11 +165,13 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             )
                 .subscribe(
                     data => {
+                        this.researchResourceService.loading = false;
                         console.log(data);
                         this.researchResourceService.handleGroupData(data);
                         this.cdr.detectChanges();
                     },
                     error => {
+                        this.researchResourceService.loading = false;
                         console.log('getPublicResearchPageError', error);
                     } 
             );
@@ -181,11 +182,13 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             )
                 .subscribe(
                     data => {
+                        this.researchResourceService.loading = false;
                         console.log(data);
                         this.researchResourceService.handleGroupData(data);
                         this.cdr.detectChanges();
                     },
                     error => {
+                        this.researchResourceService.loading = false;
                         console.log('getResearchResourceGroups error', error);
                     } 
             );
@@ -313,7 +316,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     };
 
     setGroupPrivacy = function(group, priv, $event): void {
-        console.log($event);
         $event.preventDefault();
         var putCodes = new Array();
         for (var idx in group.researchResources) {
@@ -329,7 +331,8 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             data => {
                 if (putCodes.length > 0) {
                     this.researchReourceService.updateVisibility(putCodes, priv);   
-                }   
+                }
+                
             },
             error => {
                 console.log('Error updating group visibility', error);
@@ -466,6 +469,25 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             (res) => {                
                 if (res.action == 'cancel' || res.action == 'delete') {
                     if(res.successful == true) {
+                        this.getResearchResourceGroups();
+                    }
+                }                
+            }
+        );
+
+        this.subscription = this.researchResourceService.notifyObservable$.subscribe(
+            (res) => {                
+                if(res.action == 'delete') {
+                    console.log("delete");
+                    if(res.successful == true) {
+                        //this.closeAllMoreInfo();
+                        this.getResearchResourceGroups();
+                    }
+                } 
+                if(res.action == 'cancel') {
+                    console.log("cancel");
+                    if(res.successful == true) {
+                        //this.closeAllMoreInfo();
                         this.getResearchResourceGroups();
                     }
                 }                

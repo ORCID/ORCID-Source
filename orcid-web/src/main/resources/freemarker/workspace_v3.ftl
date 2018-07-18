@@ -371,6 +371,11 @@
   </div>
   </#if>
 </script>
+<#include "/includes/ng2_templates/research-resource-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalResearchResourceDelete" elementWidth="300">
+    <research-resource-delete-ng2></research-resource-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <#include "/includes/ng2_templates/works-bulk-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="280" elementId="modalWorksBulkDelete" elementWidth="600">
     <works-bulk-delete-ng2></works-bulk-delete-ng2>
