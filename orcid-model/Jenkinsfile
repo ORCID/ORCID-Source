@@ -25,8 +25,8 @@ node {
             sh "mkdir -p $EHCACHE_LOCATION"
             do_maven("clean")
             parallel(
-                model:       {do_maven("clean compile test -f orcid-model/pom.xml")},
-                test:        {do_maven("clean compile test -f orcid-test/pom.xml")}
+                model:       {do_maven("clean install test -f orcid-test/pom.xml")},
+                test:        {do_maven("clean install test -f orcid-model/pom.xml")}
             )
         } catch(Exception err) {
             orcid_notify("Fetch Code and Build master#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
