@@ -47,20 +47,20 @@ psql -U postgres -c "CREATE DATABASE message_listener;"
 psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE message_listener to orcid;"
 ```
 
-* Verify user login and database exist
+Verify user login and database exist
 
     psql -U orcid -d orcid -c "\list" -h localhost
     psql -U statistics -d statistics -c "\list" -h localhost
 
 ## Clone the git repositories
 
-* Clone the repository
+Clone the repository
 
     git clone https://github.com/ORCID/ORCID-Source.git
 
 ## Run Maven build
 
-* Skip test the first time you run this
+Skip test the first time you run this
 
     cd ORCID-Source
     mvn clean install test -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-test/pom.xml && \
@@ -93,9 +93,7 @@ Windows:
 
 >Note: the java keystore password is usefully 'changeit' this can be different if you've changed it.
 
-
 ## Create the Database Schema
-
 
     cd ORCID-Source/orcid-core
     mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
