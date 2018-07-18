@@ -16,24 +16,59 @@ node {
 
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: env.BRANCH_NAME
     def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
+    def BUILD_PROPS=""
+
+    stage('TEST') {
+        try {
+            sh "mkdir -p $EHCACHE_LOCATION"
+            do_maven("clean")
+            do_maven("-D maven.test.skip=true -D license.skip=true -D branchVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-test/pom.xml clean install")
+        } catch(Exception err) {
+            orcid_notify("test compile failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
+            throw err
+        }
+    }
+    stage('MODEL') {
+        try {
+            do_maven("-D maven.test.skip=true -D license.skip=true -D branchVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-model/pom.xml clean install")
+        } catch(Exception err) {
+            orcid_notify("model compile failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
+            throw err
+        }
+    }
+
+    stage('PARENT') {
+        try {
+            do_maven("-D maven.test.skip=true -D license.skip=true -D branchVersion=${BUILD_NUMBER}-${BRANCH_NAME} clean install")
+        } catch(Exception err) {
+            orcid_notify("parent compile failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
+            throw err
+        }
+    }
 
     stage('MODEL AND TEST') {
         try {
             sh "mkdir -p $EHCACHE_LOCATION"
             do_maven("clean")
-            do_maven("clean install test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-test/pom.xml")
-            do_maven("clean install test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-model/pom.xml")
+            parallel(
+                model:       {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-test/pom.xml")},
+                test:        {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-model/pom.xml")}
+            )
         } catch(Exception err) {
-            orcid_notify("Fetch Code and Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]: $err", 'ERROR')
+            orcid_notify("running tests on model and test modules failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             report_and_clean()
             throw err
         }
     }
+
     stage('ALL FROM PARENT') {
         try {
-            do_maven("clean compile test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME}")
+            do_maven(" test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME}")
         } catch(Exception err) {
-            orcid_notify("Packaging ORCID web ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]: $err", 'ERROR')
+            orcid_notify("runnins tests on parent failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]: $err", 'ERROR')
             report_and_clean()
             throw err
         }
@@ -64,8 +99,6 @@ def do_maven(mvn_task){
     try{
         sh "export MAVEN_OPTS='-Xms2048m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError'"
         sh "$MAVEN/bin/mvn -Djava.io.tmpdir=$EHCACHE_LOCATION $mvn_task"
-        // Push to Artifact storage
-        //archive '**/target/**/*.war'
     } catch(Exception err) {
         throw err
     }
