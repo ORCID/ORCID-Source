@@ -400,7 +400,7 @@ export class WorksService {
         if (this.groups == undefined) {
             this.groups = new Array();
         }
-        this.groups = this.groups.concat(data.workGroups);
+        this.groups = this.groups.concat(data.groups);
         this.groupsLabel = this.groups.length + " of " + data.totalGroups;
         this.showLoadMore = this.groups.length < data.totalGroups;
         this.loading = false;
