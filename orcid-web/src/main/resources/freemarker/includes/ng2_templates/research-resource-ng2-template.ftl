@@ -64,6 +64,10 @@
                         <#include "research-resource-details-ng2.ftl"/>                     
                     </li>
                 </ul>
+                <button *ngIf="researchResourceService.showLoadMore" (click)="getResearchResourceGroups(true)" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace.works.load_more")}</button>
+                <div *ngIf="researchResourceService?.loading" class="text-center" id="workSpinner">
+                    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+                </div>
             </div>                                                   
         </div>      
     </div>

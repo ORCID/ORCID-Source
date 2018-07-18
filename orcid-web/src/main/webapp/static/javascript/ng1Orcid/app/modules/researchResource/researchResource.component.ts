@@ -37,10 +37,13 @@ import { CommonService }
     template:  scriptTmpl("research-resource-ng2-template"),
     providers: [CommonService]
 })
+
 export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() publicView: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+
+    
 
     disambiguatedResearchResource: any;
     displayNewResearchResourceTypesFeatureEnabled: boolean;
@@ -51,6 +54,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     educationsAndQualifications: any;
     emails: any;
     employments: any;
+    initialOffset = "0";
     membershipsAndServices: any;
     moreInfo: any;
     moreInfoOpen: boolean;
@@ -157,16 +161,15 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         return this.workspaceSrvc.displayEducationAndQualification;
     };
 
-    getResearchResourceGroups(): void {
+    getResearchResourceGroups(loadMore): void {
         if(this.publicView === "true") {
             this.researchResourceService.getPublicResearchResourcePage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+                !this.sortState.reverseKey[this.sortState.predicateKey], loadMore).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
                     data => {
                         this.researchResourceService.loading = false;
-                        console.log(data);
                         this.researchResourceService.handleGroupData(data);
                         this.cdr.detectChanges();
                     },
@@ -177,13 +180,12 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             );
         } else {
             this.researchResourceService.getResearchResourcePage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+                !this.sortState.reverseKey[this.sortState.predicateKey], loadMore).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
                     data => {
                         this.researchResourceService.loading = false;
-                        console.log(data);
                         this.researchResourceService.handleGroupData(data);
                         this.cdr.detectChanges();
                     },
@@ -226,7 +228,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                 data => {
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
                     this.researchResourceService.details[putCode] = data;
-                    console.log(putCode);
                     console.log(this.researchResourceService.details[putCode]);
                 },
                 error => {
@@ -242,7 +243,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                 data => {
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
                     this.researchResourceService.details[putCode] = data;
-                    console.log(this.researchResourceService.details[putCode]);
                 },
                 error => {
                     console.log('getDetailsError', error);
@@ -469,26 +469,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             (res) => {                
                 if (res.action == 'cancel' || res.action == 'delete') {
                     if(res.successful == true) {
-                        this.getResearchResourceGroups();
-                    }
-                }                
-            }
-        );
-
-        this.subscription = this.researchResourceService.notifyObservable$.subscribe(
-            (res) => {                
-                if(res.action == 'delete') {
-                    console.log("delete");
-                    if(res.successful == true) {
-                        //this.closeAllMoreInfo();
-                        this.getResearchResourceGroups();
-                    }
-                } 
-                if(res.action == 'cancel') {
-                    console.log("cancel");
-                    if(res.successful == true) {
-                        //this.closeAllMoreInfo();
-                        this.getResearchResourceGroups();
+                        this.getResearchResourceGroups(false);
                     }
                 }                
             }
@@ -501,6 +482,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     };
 
     ngOnInit() {
-        this.getResearchResourceGroups();
+        this.getResearchResourceGroups(false);
     };
 }

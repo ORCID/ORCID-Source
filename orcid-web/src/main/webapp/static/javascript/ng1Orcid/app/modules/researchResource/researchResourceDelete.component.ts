@@ -1,8 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
-declare var sortState: any;
-declare var typeahead: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 

@@ -69,7 +69,11 @@ export class ResearchResourceService {
         ) 
     }
 
-    getResearchResourcePage(sort, sortAsc): Observable<any> {
+    getResearchResourcePage(sort, sortAsc, loadMore): Observable<any> {
+        if(!loadMore){
+            this.offset = 0;
+        }
+
         this.loading = true;
         return this.http.get(
             getBaseUri() + '/research-resources/researchResourcePage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc
@@ -88,18 +92,20 @@ export class ResearchResourceService {
         );
     }
 
-    getPublicResearchResourcePage(sort, sortAsc): Observable<any> {
+    getPublicResearchResourcePage(sort, sortAsc, loadMore): Observable<any> {
+        if(!loadMore){
+            this.offset = 0;
+        }
         this.loading = true;
         return this.http.get(
             getBaseUri() + '/' + orcidVar.orcidId + '/researchResourcePage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc
         );
     }
 
+    //remove callback if not needed
     handleGroupData(data, callback?): void {
-        console.log("handle group data");
         this.groups = new Array();
         this.groups = this.groups.concat(data.groups);
-        console.log(this.groups);
         this.groupsLabel = this.groups.length + " of " + data.totalGroups;
         this.showLoadMore = this.groups.length < data.totalGroups;
         this.loading = false;
