@@ -292,7 +292,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', '$timeout', funct
             if (worksSrvc.groups == undefined) {
                 worksSrvc.groups = new Array();
             }
-            worksSrvc.groups = worksSrvc.groups.concat(data.workGroups);
+            worksSrvc.groups = worksSrvc.groups.concat(data.groups);
             worksSrvc.groupsLabel = worksSrvc.groups.length + " of " + data.totalGroups;
             worksSrvc.showLoadMore = worksSrvc.groups.length < data.totalGroups;
             worksSrvc.loading = false;
