@@ -1,17 +1,14 @@
 package org.orcid.frontend.web.controllers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,6 +19,7 @@ import org.mockito.Mock;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -63,21 +61,40 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES));
     }
-
+    
     @Test
-    public void testGetPeerReview() {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
-        List<String> ids = peerReviewsController.getPeerReviewIdsJson(servletRequest);
-        List<String> existingIds = new ArrayList<String>();
-        existingIds.add("1");
-        existingIds.add("3");
-        existingIds.add("4");
-        existingIds.add("5");
-
-        assertNotNull(ids);
-
-        assertTrue(ids.containsAll(existingIds));
+    public void testGetPeerReviews() {
+        List<PeerReviewGroup> groups = peerReviewsController.getPeerReviewsJson(true);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        assertNotNull(groups.get(0).getPeerReviews());
+        assertNotNull(groups.get(1).getPeerReviews());
+        assertNotNull(groups.get(2).getPeerReviews());
+        assertNotNull(groups.get(3).getPeerReviews());
+        assertEquals(1, groups.get(0).getPeerReviews().size());
+        assertEquals(1, groups.get(1).getPeerReviews().size());
+        assertEquals(1, groups.get(2).getPeerReviews().size());
+        assertEquals(1, groups.get(3).getPeerReviews().size());
+        
+        assertTrue(groups.get(0).getName().compareTo(groups.get(1).getName()) < 0);
+        assertTrue(groups.get(1).getName().compareTo(groups.get(2).getName()) < 0);
+        assertTrue(groups.get(2).getName().compareTo(groups.get(3).getName()) < 0);
+        
+        groups = peerReviewsController.getPeerReviewsJson(false);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        assertNotNull(groups.get(0).getPeerReviews());
+        assertNotNull(groups.get(1).getPeerReviews());
+        assertNotNull(groups.get(2).getPeerReviews());
+        assertNotNull(groups.get(3).getPeerReviews());
+        assertEquals(1, groups.get(0).getPeerReviews().size());
+        assertEquals(1, groups.get(1).getPeerReviews().size());
+        assertEquals(1, groups.get(2).getPeerReviews().size());
+        assertEquals(1, groups.get(3).getPeerReviews().size());
+        
+        assertTrue(groups.get(0).getName().compareTo(groups.get(1).getName()) > 0);
+        assertTrue(groups.get(1).getName().compareTo(groups.get(2).getName()) > 0);
+        assertTrue(groups.get(2).getName().compareTo(groups.get(3).getName()) > 0);
     }
 
 }

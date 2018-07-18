@@ -2,7 +2,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
@@ -33,16 +31,16 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Citation;
-import org.orcid.pojo.WorkGroup;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
+import org.orcid.pojo.grouping.WorkGroup;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
