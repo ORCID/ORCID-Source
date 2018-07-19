@@ -199,7 +199,7 @@ public class OrcidUserDetailsServiceTest {
         }
 
         email = new EmailEntity();
-        email.setId(EMAIL);
+        email.setEmail(EMAIL);
         email.setProfile(profile);
         email.setVerified(true);
         return email;

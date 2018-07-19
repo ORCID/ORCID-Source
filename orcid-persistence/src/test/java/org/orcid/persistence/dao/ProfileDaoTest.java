@@ -497,7 +497,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_1.setVisibility("PUBLIC");
         unverified_1.setPrimary(false);
         unverified_1.setCurrent(true);
-        unverified_1.setId("unverified_1@test.orcid.org");
+        unverified_1.setEmail("unverified_1@test.orcid.org");
         
         // Created a week ago
         EmailEntity unverified_2 = new EmailEntity();
@@ -508,7 +508,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_2.setVisibility("PUBLIC");
         unverified_2.setPrimary(false);
         unverified_2.setCurrent(true);
-        unverified_2.setId("unverified_2@test.orcid.org");
+        unverified_2.setEmail("unverified_2@test.orcid.org");
         
         // Created 15 days ago
         EmailEntity unverified_3 = new EmailEntity();
@@ -519,7 +519,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_3.setVisibility("PUBLIC");
         unverified_3.setPrimary(false);
         unverified_3.setCurrent(true);
-        unverified_3.setId("unverified_3@test.orcid.org");
+        unverified_3.setEmail("unverified_3@test.orcid.org");
         
         // Created 7 days ago and verified
         EmailEntity verified_1 = new EmailEntity();
@@ -530,7 +530,7 @@ public class ProfileDaoTest extends DBUnitTest {
         verified_1.setVisibility("PUBLIC");
         verified_1.setPrimary(false);
         verified_1.setCurrent(true);
-        verified_1.setId("verified_1@test.orcid.org");
+        verified_1.setEmail("verified_1@test.orcid.org");
         
         // Created 15 days ago and verified
         EmailEntity verified_2 = new EmailEntity();
@@ -541,7 +541,7 @@ public class ProfileDaoTest extends DBUnitTest {
         verified_2.setVisibility("PUBLIC");
         verified_2.setPrimary(false);
         verified_2.setCurrent(true);
-        verified_2.setId("verified_2@test.orcid.org");
+        verified_2.setEmail("verified_2@test.orcid.org");
         
         emailDao.removeAll();
         emailDao.persist(unverified_1);

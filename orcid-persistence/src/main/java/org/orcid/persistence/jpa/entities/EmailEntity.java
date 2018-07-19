@@ -29,6 +29,13 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
     private Boolean verified;
     private String visibility;    
     
+    @Id
+    @Override
+    @Column(name = "email_hash")
+    public String getId() {
+        return emailHash;
+    }
+    
     @Column(name = "email", length = 350)
     public String getEmail() {
         return email;
@@ -38,7 +45,6 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
         this.email = email;
     }
 
-    @Id
     @Column(name = "email_hash")
     public String getEmailHash() {
         return emailHash;
@@ -112,6 +118,5 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
         visibility= null;
         verified = null;
         visibility = null;
-    }  
-
+    }     
 }

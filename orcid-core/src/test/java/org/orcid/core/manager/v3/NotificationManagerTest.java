@@ -328,7 +328,7 @@ public class NotificationManagerTest extends DBUnitTest {
         recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setId("test@email.com");
+        emailEntity.setEmail("test@email.com");
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
         Set<EmailEntity> emails = new HashSet<EmailEntity>();
