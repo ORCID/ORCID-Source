@@ -16,7 +16,6 @@ node {
 
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: env.BRANCH_NAME
     def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
-    def BUILD_PROPS=""
 
     stage('TEST') {
         try {
@@ -49,30 +48,20 @@ node {
         }
     }
 
-    stage('MODEL AND TEST') {
+    stage('TESTS') {
         try {
-            sh "mkdir -p $EHCACHE_LOCATION"
-            do_maven("clean")
             parallel(
-                model:       {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-test/pom.xml")},
-                test:        {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-model/pom.xml")}
+                model:   {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-test/pom.xml")},
+                test:    {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-model/pom.xml")},
+                parent:  {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME}")}
             )
         } catch(Exception err) {
             orcid_notify("running tests on model and test modules failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            report_and_clean()
             throw err
-        }
-    }
-
-    stage('ALL FROM PARENT') {
-        try {
-            do_maven(" test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME}")
-        } catch(Exception err) {
-            orcid_notify("runnins tests on parent failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]: $err", 'ERROR')
+        } finally {
+            orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
             report_and_clean()
-            throw err
         }
-        orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
     }
 }
 
