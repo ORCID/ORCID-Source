@@ -129,11 +129,12 @@ public class MembersManagerImpl implements MembersManager {
         
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setId(member.getEmail().getValue());
+        emailEntity.setEmail(member.getEmail().getValue());
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
         emailEntity.setVerified(true);
+        
         // Email is private by default
         emailEntity.setVisibility(Visibility.PRIVATE.name());
         

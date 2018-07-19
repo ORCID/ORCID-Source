@@ -24,6 +24,7 @@ import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdenti
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV1;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -149,6 +150,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     @Resource
     protected WorkDao workDao;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
     
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -911,7 +915,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             EmailEntity existingEmailEntity = existingEmailEntitiesMap.get(emailId);
             if (existingEmailEntity == null) {
                 emailEntity = new EmailEntity();
-                emailEntity.setId(emailId);
+                emailEntity.setEmail(emailId);
+                try {
+                    emailEntity.setEmailHash(encryptionManager.sha256Hash(emailId.toLowerCase()));
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
                 emailEntity.setProfile(profileEntity);
                 
                 emailEntity.setSourceId(email.getSource());

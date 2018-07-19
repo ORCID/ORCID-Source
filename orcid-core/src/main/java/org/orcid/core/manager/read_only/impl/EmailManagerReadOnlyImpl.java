@@ -40,9 +40,8 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public boolean emailExists(String email) {
-        try {
-            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-            return emailDao.emailExists(emailHash);
+        try {            
+            return emailDao.emailExists(encryptionManager.sha256Hash(email.trim().toLowerCase()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }

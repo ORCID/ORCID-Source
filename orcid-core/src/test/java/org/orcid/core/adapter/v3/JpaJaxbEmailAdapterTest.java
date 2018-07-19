@@ -73,7 +73,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
     
     private EmailEntity getEmailEntity() {
         EmailEntity result = new EmailEntity();
-        result.setId("email@test.orcid.org");
+        result.setEmail("email@test.orcid.org");
         result.setCurrent(true);
         result.setPrimary(true);
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
