@@ -33,6 +33,11 @@
     </div>
 </#if>
 
+<!-- Research resources -->
+<#include "/includes/ng2_templates/research-resource-ng2-template.ftl">
+<research-resource-ng2  publicView="true"></research-resource-ng2>
+
+
 <!-- Works -->
 <#include "/includes/ng2_templates/works-ng2-template.ftl">
 <works-ng2  publicView="true"></works-ng2>
