@@ -24,7 +24,39 @@
                     </div>
                     <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayFunding">
                         <!-- Sort -->
-                        <!-- #include "../workspace/workspace_act_sort_menu.ftl"/ -->
+                        <#escape x as x?html>                        
+                        <div class="menu-container">                                     
+                            <ul class="toggle-menu">
+                                <li>
+                                    <span class="glyphicon glyphicon-sort"></span>                          
+                                    <@orcid.msg 'manual_orcid_record_contents.sort'/>
+                                    <ul class="menu-options sort">
+                                        <li [ngClass]="{'checked':sortDisplayKeyFundings=='startDate'}">                                         
+                                            <a (click)="sort('funding', 'startDate', true);" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
+                                                <span *ngIf="sortDisplayKeyFundings=='startDate' && sortAscFundings==false" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortDisplayKeyFundings=='startDate'}"></span>
+                                                <span *ngIf="sortDisplayKeyFundings=='startDate' && sortAscFundings==true" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortDisplayKeyFundings=='startDate'}"></span>
+                                            </a>                                                                                    
+                                        </li>
+                                        <li [ngClass]="{'checked':sortDisplayKeyFundings=='endDate'}">
+                                            <a (click)="sort('funding', 'endDate', true);" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
+                                                <span *ngIf="sortDisplayKeyFundings=='endDate' && sortAscFundings==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortDisplayKeyFundings=='endDate'}" ></span>
+                                                <span *ngIf="sortDisplayKeyFundings=='endDate' && sortAscFundings==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortDisplayKeyFundings=='endDate'}" ></span>
+                                            </a>                                            
+                                        </li>
+                                        <li [ngClass]="{'checked':sortDisplayKeyFundings=='title'}">                                            
+                                            <a (click)="sort('funding', 'title', true);" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+                                                <span *ngIf="sortDisplayKeyFundings=='title' && sortAscFundings==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortDisplayKeyFundings=='title'}" ></span>
+                                                <span *ngIf="sortDisplayKeyFundings=='title' && sortAscFundings==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortDisplayKeyFundings=='title'}" ></span>
+                                            </a>                                            
+                                        </li>                                            
+                                    </ul>                                        
+                                </li>
+                            </ul>                                   
+                        </div>
+                        </#escape>
                         <#if !(isPublicProfile??)>
                             <ul class="workspace-bar-menu">
                                 <!-- Link Manually -->
@@ -163,6 +195,14 @@
                                                                     limitedClick="setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
                                                                     privateClick="setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"
                                                                     />
+                                                                
+                                                                <@orcid.privacyToggle2Ng2  angularModel="group?.defaultFunding?.visibility?.visibility"
+                                                                elementId="group?.defaultFunding?.putCode?.value"
+                                                                questionClick="toggleClickPrivacyHelp(group?.defaultFunding?.putCode?.value)"
+                                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group?.defaultFunding?.putCode?.value]==true}" 
+                                                                publicClick="setPrivacy(group?.defaultFunding, 'PUBLIC', $event)" 
+                                                                limitedClick="setPrivacy(group?.defaultFunding, 'LIMITED', $event)" 
+                                                                privateClick="setPrivacy(group?.defaultFunding, 'PRIVATE', $event)" />
                                                                 -->
                                                             </li>
                                                         </ul>
@@ -218,11 +258,11 @@
                                         <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
                                             <ul class="workspace-private-toolbar" *ngIf="!(editSources[group.groupId] == true)">
                                                 <#if !(isPublicProfile??)>
-                                                    <!-- Bulk edit tool / for further implementation
+                                                    <!-- Bulk edit tool / for further implementation -->
                                                     <li *ngIf="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">                                
                                                             <input type="checkbox" [ngModel]="bulkEditMap[funding.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">                                                            
                                                     </li>
-                                                    - ->
+                                                    
                                                 </#if>
                                                 <!-- Show/Hide Details -->
                                                 <li class="works-details" *ngIf="!(editSources[group.groupId] == true)">                                        
@@ -247,6 +287,14 @@
                                                             publicClick="setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
                                                             limitedClick="setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
                                                             privateClick="setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
+                                                        
+                                                        <@orcid.privacyToggle2Ng2  angularModel="group?.defaultFunding?.visibility?.visibility"
+                                                        elementId="group?.defaultFunding?.putCode?.value"
+                                                        questionClick="toggleClickPrivacyHelp(group?.defaultFunding?.putCode?.value)"
+                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group?.defaultFunding?.putCode?.value]==true}" 
+                                                        publicClick="setPrivacy(group?.defaultFunding, 'PUBLIC', $event)" 
+                                                        limitedClick="setPrivacy(group?.defaultFunding, 'LIMITED', $event)" 
+                                                        privateClick="setPrivacy(group?.defaultFunding, 'PRIVATE', $event)" />
                                                         -->
                                                     </li>
                                                 </#if>  
@@ -272,9 +320,14 @@
                                         <div class="col-md-12 col-sm-12 bottomBuffer">
                                             <ul class="id-details clearfix">
                                                 <li>
-                                                    <span *ngFor='let ei of group.getActive().externalIdentifiers ' class="clearfix"><!-- | orderBy:["-relationship.value", "type.value"] -->
-                                                        <span [innerHTML]='ei ' class="url-popover"><!-- | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId] -->
+                                                    <!--
+                                                    <span *ngFor='let ei of group.getActive().externalIdentifiers' class="clearfix"><!-- | orderBy:["-relationship.value", "type.value"] 
+                                                        <span [innerHTML]='ei ' class="url-popover"><!-- | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId] - ->
                                                         </span>
+                                                    </span>
+                                                    -->
+                                                    <span *ngIf="group?.defaultFunding?.funding[0]?.externalIdentifierId?.value?.length > 0">
+                                                        <ext-id-popover-ng2 [extID]="extID" [putCode]="group?.defaultFunding?.putCode?.value+i" [activityType]="'funding'"></ext-id-popover-ng2>
                                                     </span>
                                                 </li>
                                                 <li *ngIf="group.getActive().url.value" class="url-popover">
@@ -508,9 +561,6 @@
 
                 <div *ngIf="loading" class="text-center">
                     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
-                    <!--[if lt IE 8]>
-                        <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
-                    <![endif]-->
                 </div>
                 <div *ngIf="loading == false && groups.length == 0" class="" >
                     <strong>

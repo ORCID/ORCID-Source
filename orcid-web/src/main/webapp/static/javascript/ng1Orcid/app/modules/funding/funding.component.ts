@@ -169,7 +169,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: true}); 
 
                     if(obj == undefined){
                         this.removeDisambiguatedFunding();
@@ -178,12 +177,15 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                         )
                         .subscribe(
                             data => {
+                                this.editFunding = data;
                                 this.fundingService.setFundingToEdit(data);
-                                console.log('this.editFunding', this.editFunding);
+                                this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: false});
+                                console.log('this.editFunding3', this.editFunding);
                             }
                         );
                     } else {
                         this.fundingService.setFundingToEdit(obj);
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: true}); 
                     }
 
                 }else{
