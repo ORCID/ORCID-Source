@@ -11,7 +11,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
  */
 public interface EmailDao extends GenericDao<EmailEntity, String> {
 
-    boolean emailExists(String email);
+    boolean emailExists(String emailHash);
 
     EmailEntity findCaseInsensitive(String email);
     

@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.jaxb.model.v3.rc1.record.Emails;
@@ -26,6 +28,9 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     @Resource(name = "jpaJaxbEmailAdapterV3")
     protected JpaJaxbEmailAdapter jpaJaxbEmailAdapter;
     
+    @Resource
+    private EncryptionManager encryptionManager;
+    
     protected EmailDao emailDao;
     
     public void setEmailDao(EmailDao emailDao) {
@@ -34,7 +39,12 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public boolean emailExists(String email) {
-        return emailDao.emailExists(email);
+        try {
+            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
+            return emailDao.emailExists(emailHash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }          
     }
 
     @Override

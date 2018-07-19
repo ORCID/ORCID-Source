@@ -1288,17 +1288,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     /**
-     * Checks that the email is not already being used
-     * 
-     * @param email
-     *            the value to be used to check for an existing record
-     */
-    @Override
-    public boolean emailExists(String email) {
-        return emailDao.emailExists(email);
-    }
-
-    /**
      * Adds a new {@link List&lt;org.orcid.jaxb.model.message.Affiliation&lt;}
      * to the {@link} OrcidProfile} and returns the updated values
      * 

@@ -1622,6 +1622,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="spike@milligan.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1634,6 +1635,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="public@email.com"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1646,6 +1648,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="limited@email.com"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1658,6 +1661,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="1@deprecate.com"
+        email_hash=""
         is_primary="false"
         is_current="false"
         is_verified="true"
@@ -1670,6 +1674,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="2@deprecate.com"
+        email_hash=""
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -1682,6 +1687,7 @@
     <email
         orcid="4444-4444-4444-4499"
         email="4441-10@milligan.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1694,6 +1700,7 @@
     <email
         orcid="4444-4444-4444-4498"
         email="4444-4444-4444-4498@milligan.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1706,6 +1713,7 @@
      <email
         orcid="4444-4444-4444-4442"
         email="michael@bentine.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1718,6 +1726,7 @@
     <email
         orcid="4444-4444-4444-4442"
         email="MiXeD@cASe.com"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1730,6 +1739,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="peter@sellers.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="false"
@@ -1742,6 +1752,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass@semantico.com"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="false"
@@ -1754,6 +1765,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass2@semantico.com"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="false"
@@ -1766,6 +1778,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass3public@semantico.com"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="false"
@@ -1778,6 +1791,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass3private@semantico.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1790,6 +1804,7 @@
     <email
         orcid="4444-4444-4444-4444"
         email="harry@secombe.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1802,6 +1817,7 @@
     <email
         orcid="4444-4444-4444-4445"
         email="andrew@timothy.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="false"
@@ -1814,6 +1830,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="angel2@montenegro.com"
+        email_hash=""
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -1826,6 +1843,7 @@
     <email
         orcid="4444-4444-4444-4444"
         email="angel1@montenegro.com"
+        email_hash=""
         is_primary="true"
         is_current="false"
         is_verified="true"
@@ -1838,6 +1856,7 @@
 	<email
         orcid="4444-4444-4444-4445"
         email="andrew2@timothy.com"
+        email_hash=""
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -1850,6 +1869,7 @@
     <email
         orcid="4444-4444-4444-4446"
         email="billie@holiday.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1862,6 +1882,7 @@
     <email
         orcid="4444-4444-4444-4446"
         email="test@test.com"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1874,6 +1895,7 @@
     <email
         orcid="4444-4444-4444-4446"
         email="user@user.com"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1886,6 +1908,7 @@
     <email
         orcid="4444-4444-4444-4447"
         email="otis@reading.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1898,6 +1921,7 @@
 	<email
         orcid="4444-4444-4444-444X"
         email="user@email.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1910,6 +1934,7 @@
     <email
         orcid="4444-4444-4444-4440"
         email="admin@user.com"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1922,6 +1947,7 @@
 	<email
         orcid="0000-0000-0000-0001"
         email="public_0000-0000-0000-0001@test.orcid.org"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="false"
@@ -1934,6 +1960,7 @@
 	<email
         orcid="0000-0000-0000-0002"
         email="public_0000-0000-0000-0002@test.orcid.org"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="false"
@@ -1946,6 +1973,7 @@
 	<email
         orcid="0000-0000-0000-0003"
         email="public_0000-0000-0000-0003@test.orcid.org"
+        email_hash=""
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1958,6 +1986,7 @@
 	<email
         orcid="0000-0000-0000-0003"
         email="limited_0000-0000-0000-0003@test.orcid.org"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1970,6 +1999,7 @@
 	<email
         orcid="0000-0000-0000-0003"
         email="private_0000-0000-0000-0003@test.orcid.org"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1982,6 +2012,7 @@
 	<email
         orcid="0000-0000-0000-0003"
         email="self_limited_0000-0000-0000-0003@test.orcid.org"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1994,6 +2025,7 @@
     <email
         orcid="0000-0000-0000-0003"
         email="self_private_0000-0000-0000-0003@test.orcid.org"
+        email_hash=""
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -2006,6 +2038,7 @@
     <email
         orcid="0000-0000-0000-0006"
         email="public_0000-0000-0000-0006@test.orcid.org"
+        email_hash=""
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -2017,6 +2050,7 @@
     <email
         orcid="0000-0000-0000-0004"
         email="public_0000-0000-0000-0004@test.orcid.org"
+        email_hash=""
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -2029,6 +2063,7 @@
     <email
         orcid="0000-0000-0000-0004"
         email="limited_0000-0000-0000-0004@test.orcid.org"
+        email_hash=""
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -2041,6 +2076,7 @@
     <email
         orcid="0000-0000-0000-0004"
         email="private_0000-0000-0000-0004@test.orcid.org"
+        email_hash=""
         is_primary="true"
         is_current="false"
         is_verified="false"
@@ -2053,6 +2089,7 @@
     <email
         orcid="4444-4444-4444-4497"
         email="public_4444-4444-4444-4497@test.orcid.org"
+        email_hash=""
         is_primary="true"
         is_current="false"
         is_verified="false"
@@ -2065,6 +2102,7 @@
     <email
         orcid="4444-4444-4444-4497"
         email="limited_4444-4444-4444-4497@test.orcid.org"
+        email_hash=""
         is_primary="true"
         is_current="false"
         is_verified="false"
@@ -2077,6 +2115,7 @@
     <email
         orcid="4444-4444-4444-4497"
         email="private_4444-4444-4444-4497@test.orcid.org"
+        email_hash=""
         is_primary="true"
         is_current="false"
         is_verified="false"

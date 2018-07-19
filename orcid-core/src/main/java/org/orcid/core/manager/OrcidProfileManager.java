@@ -11,6 +11,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 /**
  * @author Will Simpson
  */
+@Deprecated
 public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     /**
@@ -112,14 +113,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * 
      */
     OrcidProfile deleteProfile(String orcid);
-
-    /**
-     * Checks that the email is not already being used
-     * 
-     * @param email
-     *            the value to be used to check for an existing record
-     */
-    boolean emailExists(String email);
 
     /**
      * Adds a new {@link org.orcid.jaxb.model.message.Affiliation} to the
