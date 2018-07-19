@@ -63,8 +63,8 @@
                         </h3>
                         <div class="info-detail">
                             <!--Hosts-->
-                            <div *ngIf="researchResource?.proposal?.hosts?.organization">
-                                <div *ngFor="let host of researchResource?.proposal?.hosts?.organization;let i = index;trackBy:trackByIndex">
+                            <div *ngIf="researchResource?.proposal?.hosts?.organization && !moreInfo[group?.groupId]">
+                                <div *ngFor="let host of researchResource?.proposal?.hosts?.organization;let i = index;trackBy:trackByIndex" class="journaltitle">
                                     <span>{{host?.name}}</span>
                                     <span *ngIf="host?.address"> (</span>
                                     <span *ngIf="host?.address?.city">{{host?.address?.city}}</span><span *ngIf="host?.address?.region">, </span><span>{{host?.address?.region}}</span><span *ngIf="host?.address?.country">, </span><span>{{host?.address?.country}}</span>
@@ -160,18 +160,19 @@
                 <div class="more-info" *ngIf="moreInfo[group?.groupId] && group.activePutCode == researchResource.putCode">
                     <div id="ajax-loader" *ngIf="researchResourceService.details[researchResource.putCode] == undefined">
                         <span id="ajax-loader"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x4 green"></i></span>
-                    </div>
-                    
+                    </div> 
                     <div class="content" *ngIf="researchResourceService.details[researchResource.putCode] != undefined">
                         <span class="dotted-bar"></span>
                         <div class="row">
                             <!--Hosts-->
                             <div class="col-md-12" *ngIf="researchResource?.proposal?.hosts?.organization">
                                 <div *ngFor="let host of researchResource?.proposal?.hosts?.organization;let i = index;trackBy:trackByIndex">
-                                    <span>{{host?.name}}</span>
-                                    <span *ngIf="host?.address"> (</span>
-                                    <span *ngIf="host?.address?.city">{{host?.address?.city}}</span><span *ngIf="host?.address?.region">, </span><span>{{host?.address?.region}}</span><span *ngIf="host?.address?.country">, </span><span>{{host?.address?.country}}</span>
-                                    <span *ngIf="host?.address">)</span>
+                                    <div class="journaltitle">
+                                        <span>{{host?.name}}</span>
+                                        <span *ngIf="host?.address"> (</span>
+                                        <span *ngIf="host?.address?.city">{{host?.address?.city}}</span><span *ngIf="host?.address?.region">, </span><span>{{host?.address?.region}}</span><span *ngIf="host?.address?.country">, </span><span>{{host?.address?.country}}</span>
+                                        <span *ngIf="host?.address">)</span>
+                                    </div>
                                     <!--Org ids-->
                                     <div class="org-ids" *ngIf="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier">
                                         <div class="col-md-12">   
@@ -219,69 +220,36 @@
                             </div>    
                         </div>
                         <div class="row bottomBuffer">         
-                            <div class="col-md-12" *ngIf="researchResourceService.details[researchResource.putCode].resourceItems?.length > 0" >
-                                <table class="table table-bordered settings-table normal-width">
-                                    <thead>
-                                        <tr>
-                                            <th>Resource name</th><th>Type</th><th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let resourceItem of researchResourceService.details[researchResource.putCode].resourceItems; let index = index; let first = first; let last = last;">
-                                            <td>{{resourceItem.resourceName}}
-                                                <!--Resource details-->
-                                                <div *ngIf="showResourceItemDetails[researchResource.putCode+index]" class="research-resource-details">
-                                                    <!--Ext ids-->
-                                                    <div *ngIf="resourceItem?.externalIdentifiers?.externalIdentifier.length > 0">
-                                                        <ul class="id-details clearfix">
-                                                            <li *ngFor='let extID of resourceItem?.externalIdentifiers?.externalIdentifier;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
-                                                                <span *ngIf="resourceItem?.externalIdentifiers?.externalIdentifier[0].value?.length > 0">
-                                                                    <ext-id-popover-ng2 [extID]="extID" [putCode]="researchResource.putCode+'resourceItem'+index" [activityType]="'researchResource'"></ext-id-popover-ng2>
-                                                                </span>
-                                                             </li>
-                                                        </ul> 
+                            
+                                <div class="research-resource-list-container col-md-12" *ngIf="researchResourceService.details[researchResource.putCode].resourceItems?.length > 0">
+                                    <ul class="sources-edit-list">
+                                        <li class="source-active">
+                                            <!-- Header -->
+                                            <div class="sources-header">
+                                                <div class="row">
+                                                    <div class="col-md-5 col-sm-5 col-xs-5">
+                                                        Resource name
                                                     </div>
-                                                    <!--Hosts-->
-                                                    <div *ngIf="resourceItem?.hosts?.organization.length > 0">
-                                                        <div *ngFor="let host of resourceItem?.hosts?.organization">
-                                                            <span>{{host?.name}}</span>
-                                                            <span *ngIf="host?.address"> (</span>
-                                                            <span *ngIf="host?.address?.city">{{host?.address?.city}}</span><span *ngIf="host?.address?.region">, </span><span>{{host?.address?.region}}</span><span *ngIf="host?.address?.country">, </span><span>{{host?.address?.country}}</span>
-                                                            <span *ngIf="host?.address">)</span>
-                                                            <!--Org ids-->
-                                                            <div class="org-ids" *ngIf="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier">
-                                                                <div class="col-md-12">   
-                                                                    <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
-                                                                    <org-identifier-popover-ng2 [value]="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier" [putCode]="researchResource.putCode+i" [type]="host?.disambiguatedOrganization?.disambiguationSource"></org-identifier-popover-ng2>
-                                                                </div>
-                                                                <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">              
-                                                                    <div *ngIf="host?.disambiguatedOrganization?.externalIdentifiers">
-                                                                        <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{host?.disambiguatedOrganization?.disambiguationSource}}</strong><br>
-                                                                        <ul class="reset">
-                                                                            <li *ngFor="let addlExtId of host?.disambiguatedOrganization?.externalIdentifiers?.externalIdentifier">
-                                                                                {{addlExtId?.disambiguationSource}}:  {{addlExtId?.disambiguatedOrganizationIdentifier}}</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div><!--org-ids-->
-                                                        </div>
+                                                    <div class="col-md-2 col-sm-2 col-xs-2">
+                                                        <@orcid.msg 'peer_review.type' />
                                                     </div>
-                                                    <div *ngIf="resourceItem?.url?.value">
-                                                        <strong>
-                                                            <@orcid.msg
-                                                            'common.url'/>
-                                                        </strong>
-                                                        <div>
-                                                            <a href="{{resourceItem.url.value | urlProtocol}}" target="url.value">{{resourceItem.url.value}}</a>
-                                                        </div>              
+                                                    <div class="col-md-2 col-sm-2 col-xs-2 pull-right">
+                                                        <span><@orcid.msg 'peer_review.actions' /></span>
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td>{{resourceItem.resourceType}}</td>
-                                            <!--Show details-->
-                                            <td>
-                                                <div class="col-md-4 col-sm-4 col-xs-4">
-                                                    <span class="pull-right"> 
+                                            </div>
+                                            <!-- End of Header -->
+                                        </li>
+                                        <li *ngFor="let resourceItem of researchResourceService.details[researchResource.putCode].resourceItems; let index = index; let first = first; let last = last;">
+                                            <!-- Active row -->
+                                            <div class="row source-line-peer-review">
+                                                <!--Resource item name-->
+                                                <div class="col-md-5 col-sm-5 col-xs-5">{{resourceItem.resourceName}}</div>
+                                                <!--Resource item type-->
+                                                <div class="col-md-2 col-sm-2 col-xs-2">{{resourceItem.resourceType}}</div>
+                                                <!--Action buttons-->
+                                                <div class="col-md-2 col-sm-2 col-xs-2 pull-right">                              
+                                                    <span> 
                                                         <a (click)="toggleResourceItemDetails(researchResource.putCode+index,$event)" *ngIf="!showResourceItemDetails[researchResource.putCode+index]">
                                                         <span class="glyphicons expand"></span>
                                                         <span class="hidden-xs"><@orcid.msg 'common.details.show_details_lc' /></span>
@@ -292,15 +260,64 @@
                                                         </a>
                                                     </span>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>                                     
-                            </div>   
+                                            </div>                      
+                                             
+                                            <!-- Details row -->
+                                            <div class="row" *ngIf="showResourceItemDetails[researchResource.putCode+index]" >
+                                                <!--Ext ids-->
+                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.externalIdentifiers?.externalIdentifier.length > 0">
+                                                    <ul class="id-details clearfix">
+                                                        <li *ngFor='let extID of resourceItem?.externalIdentifiers?.externalIdentifier;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                                                            <span *ngIf="resourceItem?.externalIdentifiers?.externalIdentifier[0].value?.length > 0">
+                                                                <ext-id-popover-ng2 [extID]="extID" [putCode]="researchResource.putCode+'resourceItem'+index" [activityType]="'researchResource'"></ext-id-popover-ng2>
+                                                            </span>
+                                                         </li>
+                                                    </ul> 
+                                                </div>
+
+                                                <!--Hosts-->
+                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.hosts?.organization.length > 0">
+                                                    <div *ngFor="let host of resourceItem?.hosts?.organization">
+                                                        <span>{{host?.name}}</span>
+                                                        <span *ngIf="host?.address"> (</span>
+                                                        <span *ngIf="host?.address?.city">{{host?.address?.city}}</span><span *ngIf="host?.address?.region">, </span><span>{{host?.address?.region}}</span><span *ngIf="host?.address?.country">, </span><span>{{host?.address?.country}}</span>
+                                                        <span *ngIf="host?.address">)</span>
+                                                        <!--Org ids-->
+                                                        <div class="org-ids" *ngIf="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier">
+                                                            <div class="col-md-12">   
+                                                                <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+                                                                <org-identifier-popover-ng2 [value]="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier" [putCode]="researchResource.putCode+i" [type]="host?.disambiguatedOrganization?.disambiguationSource"></org-identifier-popover-ng2>
+                                                            </div>
+                                                            <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">              
+                                                                <div *ngIf="host?.disambiguatedOrganization?.externalIdentifiers">
+                                                                    <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{host?.disambiguatedOrganization?.disambiguationSource}}</strong><br>
+                                                                    <ul class="reset">
+                                                                        <li *ngFor="let addlExtId of host?.disambiguatedOrganization?.externalIdentifiers?.externalIdentifier">
+                                                                            {{addlExtId?.disambiguationSource}}:  {{addlExtId?.disambiguatedOrganizationIdentifier}}</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div><!--org-ids-->
+                                                    </div>
+                                                </div>
+                                                <!--Url-->
+                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.url?.value">
+                                                    <strong>
+                                                        <@orcid.msg
+                                                        'common.url'/>
+                                                    </strong>
+                                                    <div>
+                                                        <a href="{{resourceItem.url.value | urlProtocol}}" target="url.value">{{resourceItem.url.value}}</a>
+                                                    </div>              
+                                                </div> 
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>                                       
                         </div>
                     </div>  
                 </div>
-
+                <!--SOURCE-->
                 <div class="row source-line" *ngIf="group.activePutCode == researchResource.putCode">
                     <!--Edit sources-->
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
@@ -308,10 +325,10 @@
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
                         <div *ngIf="editSources[group.groupId]">
-                            <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultActivity.putCode.value"></span><span *ngIf="researchResource.putCode == group.defaultActivity.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                            <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultActivity.putCode"></span><span *ngIf="researchResource.putCode == group.defaultActivity.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                             
                             <#if !(isPublicProfile??)>
-                            <a (click)="makeDefault(group, researchResource.putCode)" *ngIf="researchResource.putCode != group.defaultActivity.putCode.value">
+                            <a (click)="makeDefault(group, researchResource, researchResource.putCode)" *ngIf="researchResource.putCode != group.defaultActivity.putCode">
                                 <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
                             </#if>
@@ -352,7 +369,7 @@
                     <div class="col-md-3 col-sm-3 col-xs-10">
                         <#if !(isPublicProfile??)>
                         <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultActivity.putCode.value"></span><span *ngIf="researchResource.putCode == group.defaultActivity.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                        <a (click)="makeDefault(group, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultActivity.putCode.value">
+                        <a (click)="makeDefault(group, researchResource, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultActivity.putCode.value">
                             <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
                         </#if>

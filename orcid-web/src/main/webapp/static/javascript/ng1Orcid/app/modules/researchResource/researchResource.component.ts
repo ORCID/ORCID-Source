@@ -161,10 +161,10 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         return this.workspaceSrvc.displayEducationAndQualification;
     };
 
-    getResearchResourceGroups(loadMore): void {
+    getResearchResourceGroups(): void {
         if(this.publicView === "true") {
             this.researchResourceService.getPublicResearchResourcePage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey], loadMore).pipe(    
+                !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -180,7 +180,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             );
         } else {
             this.researchResourceService.getResearchResourcePage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey], loadMore).pipe(    
+                !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -267,6 +267,22 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             this.getDetails(putCode);
         }
     };
+
+    makeDefault(group, researchResource, putCode): any {
+        this.researchResourceService.updateToMaxDisplay(putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                group.defaultActivity = researchResource;
+                group.activePutCode = group.defaultActivity.putCode;  
+            },
+            error => {
+                console.log('makeDefault', error);
+            } 
+        );
+    }
 
     moreInfoMouseEnter(key, $event): void {
         $event.stopPropagation();
@@ -361,61 +377,49 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     showTooltip(element): void{        
         this.showElement[element] = true;
     };
-
-    sort(type, displayKey, reverse): void {
-        /*var sortKey;
-
-        switch(displayKey) {
-            case 'endDate':
-                sortKey = ['endDate', 'title'];
-                break;
-            case 'startDate':
-                sortKey = ['startDate', 'title'];
-                break;
-            case 'title':
-                sortKey = ['title', 'endDate'];
-                break;
-        }
         
-        switch (type) {
-            case 'distinction_invited_position':
-                if (this.sortDisplayKeyDistinctions == displayKey) {
-                    this.sortAscDistinctions = !this.sortAscDistinctions;
-                } else {
-                    this.sortAscDistinctions = reverse;
-                }
-                this.sortKeyDistinctions = sortKey;
-                this.sortDisplayKeyDistinctions = displayKey;
-                break;
-            case 'education':
-                if (this.sortDisplayKeyEducations == displayKey) {
-                    this.sortAscEducations = !this.sortAscEducations;
-                } else {
-                    this.sortAscEducations = reverse;
-                }
-                this.sortKeyEducations = sortKey;
-                this.sortDisplayKeyEducations = displayKey;
-                break;
-            case 'employment':
-                if (this.sortDisplayKeyEmployments == displayKey) {
-                    this.sortAscEmployments = !this.sortAscEmployments;
-                } else {
-                    this.sortAscEmployments = reverse;
-                }
-                this.sortKeyEmployments = sortKey;
-                this.sortDisplayKeyEmployments = displayKey;
-                break;
-            case 'membership_service':
-                if (this.sortDisplayKeyMemberships == displayKey) {
-                    this.sortAscMemberships = !this.sortAscMemberships;
-                } else {
-                    this.sortAscMemberships = reverse;
-                }
-                this.sortKeyMemberships = sortKey;
-                this.sortDisplayKeyMemberships = displayKey;
-                break;
-        }*/ 
+    sort(key): void {
+        this.sortState.sortBy(key);
+        this.researchResourceService.resetGroups();
+        if(this.publicView === "true") {
+            this.researchResourceService.getPublicResearchResourcePage(this.sortState.predicateKey, 
+                !this.sortState.reverseKey[key]).pipe(    
+            takeUntil(this.ngUnsubscribe)
+            )
+                .subscribe(
+                    data => {
+                        this.researchResourceService.loading = false;
+                        this.researchResourceService.handleGroupData(data);
+                        this.cdr.detectChanges();
+                    },
+                    error => {
+                        this.researchResourceService.loading = false;
+                        console.log('getPublicResearchPageError', error);
+                    } 
+            );
+        } else {
+            this.researchResourceService.getResearchResourcePage(this.sortState.predicateKey, 
+                !this.sortState.reverseKey[key]).pipe(    
+            takeUntil(this.ngUnsubscribe)
+            )
+                .subscribe(
+                    data => {
+                        this.researchResourceService.loading = false;
+                        this.researchResourceService.handleGroupData(data);
+                        this.cdr.detectChanges();
+                    },
+                    error => {
+                        this.researchResourceService.loading = false;
+                        console.log('getResearchResourceGroups error', error);
+                    } 
+            );
+        
+        }
+
+       
     };
+
+
 
     toggleClickMoreInfo(key): void {
         if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
@@ -469,7 +473,8 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             (res) => {                
                 if (res.action == 'cancel' || res.action == 'delete') {
                     if(res.successful == true) {
-                        this.getResearchResourceGroups(false);
+                        this.researchResourceService.resetGroups();
+                        this.getResearchResourceGroups();
                     }
                 }                
             }
@@ -482,6 +487,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     };
 
     ngOnInit() {
-        this.getResearchResourceGroups(false);
+        this.getResearchResourceGroups();
     };
 }

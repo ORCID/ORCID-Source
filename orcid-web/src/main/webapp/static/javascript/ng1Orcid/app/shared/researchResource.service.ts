@@ -69,11 +69,7 @@ export class ResearchResourceService {
         ) 
     }
 
-    getResearchResourcePage(sort, sortAsc, loadMore): Observable<any> {
-        if(!loadMore){
-            this.offset = 0;
-        }
-
+    getResearchResourcePage(sort, sortAsc): Observable<any> {
         this.loading = true;
         return this.http.get(
             getBaseUri() + '/research-resources/researchResourcePage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc
@@ -92,10 +88,7 @@ export class ResearchResourceService {
         );
     }
 
-    getPublicResearchResourcePage(sort, sortAsc, loadMore): Observable<any> {
-        if(!loadMore){
-            this.offset = 0;
-        }
+    getPublicResearchResourcePage(sort, sortAsc): Observable<any> {
         this.loading = true;
         return this.http.get(
             getBaseUri() + '/' + orcidVar.orcidId + '/researchResourcePage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc
@@ -119,6 +112,17 @@ export class ResearchResourceService {
         if (data) {
             this.notify.next(data);
         }
+    }
+
+    resetGroups(): void {
+        this.offset = 0;
+        this.groups = new Array();
+    }
+
+    updateToMaxDisplay(putCode): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/research-resources/updateToMaxDisplay.json?putCode=' + putCode
+        )
     }
 
     updateVisibility(putCodes, priv): Observable<any> {
