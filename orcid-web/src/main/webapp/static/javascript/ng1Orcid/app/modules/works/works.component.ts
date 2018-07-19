@@ -391,10 +391,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             }
                             
                             callback(bestMatch);
-                        }
-                    );
+                        }.bind(this)
+                    )
                 }
-            }
+            }.bind(this)
         );
     }
 
@@ -631,6 +631,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openEditWork(putCode): void{
+        console.log(putCode);
         this.getEditable(putCode, function(data) {
             this.addWorkModal(data);
         }.bind(this));
@@ -799,7 +800,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editSources[group.groupId] = true;
     };
 
-    showTooltip(key): void{        
+    showTooltip(key): void{       
         this.showElement[key] = true;     
     };
 
