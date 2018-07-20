@@ -1,6 +1,1 @@
-cd orcid-model
-mvn clean install
-cd ../orcid-test
-mvn clean install
-cd ..
-mvn clean install
+mvn clean install -f orcid-model/pom.xml && mvn clean install -f orcid-test/pom.xml && mvn clean install
