@@ -14,12 +14,7 @@
                     
                     <div class="col-md-3 col-sm-3 col-xs-6 right padding-left-fix">
                         <div class="workspace-toolbar">
-                            <ul class="workspace-private-toolbar">
-                                <#if !(isPublicProfile??)>
-                                <li *ngIf="bulkEditShow">
-                                    <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[group.activePutCode]" class="bulk-edit-input-header">
-                                </li>
-                                </#if>                
+                            <ul class="workspace-private-toolbar">              
                                 <li class="works-details">
                                     <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                         <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
@@ -95,13 +90,6 @@
                     </div><!--col-md-9 -->
                     <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
                         <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
-
-                            <!--Bulk edit checkbox-->                               
-                            <#if !(isPublicProfile??)>
-                            <li *ngIf="bulkEditShow" class="bulk-checkbox-item">
-                                <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[researchResource.putCode]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
-                            </li>
-                            </#if> 
                             <!--Show details toggle-->
                             <li class="works-details" *ngIf="!editSources[group.groupId]">
                                 <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">

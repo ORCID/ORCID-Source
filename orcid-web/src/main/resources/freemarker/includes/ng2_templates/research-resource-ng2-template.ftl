@@ -52,13 +52,6 @@
                                             </a>                                            
                                         </li>
                                         <!--No sort by type functionality on research resource controller-->
-                                        <!--<li [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
-                                            <a (click)="sort('type');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-                                                <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
-                                                <span *ngIf="sortState.reverseKey['type'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
-                                            </a>                                                                                       
-                                        </li>-->
                                     </ul>                                           
                                 </li>
                             </ul>                                   
