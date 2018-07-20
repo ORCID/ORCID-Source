@@ -130,7 +130,7 @@ public class MembersManagerImpl implements MembersManager {
         String email = member.getEmail().getValue().trim();
         emailEntity.setEmail(email);
         try {
-            emailEntity.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
+            emailEntity.setId(encryptionManager.sha256Hash(email.toLowerCase()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -208,7 +208,7 @@ public class MembersManagerImpl implements MembersManager {
                     newPrimaryEmail.setCurrent(true);
                     newPrimaryEmail.setEmail(email);
                     try {
-                        newPrimaryEmail.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
+                        newPrimaryEmail.setId(encryptionManager.sha256Hash(email.toLowerCase()));
                     } catch (NoSuchAlgorithmException e) {
                         throw new RuntimeException(e);
                     }

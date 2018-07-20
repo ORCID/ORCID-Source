@@ -141,7 +141,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public EmailEntity find(String email) {
-        return emailDao.find(email);
+        return emailDao.findByEmail(email);
     }
 
     @Override

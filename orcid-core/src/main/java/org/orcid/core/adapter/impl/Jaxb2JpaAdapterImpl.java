@@ -917,7 +917,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 emailEntity = new EmailEntity();
                 emailEntity.setEmail(emailId);
                 try {
-                    emailEntity.setEmailHash(encryptionManager.sha256Hash(emailId.toLowerCase()));
+                    emailEntity.setId(encryptionManager.sha256Hash(emailId.toLowerCase()));
                 } catch(Exception e) {
                     throw new RuntimeException(e);
                 }

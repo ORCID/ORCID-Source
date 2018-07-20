@@ -239,7 +239,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         String email = registration.getEmail().getValue().trim();
         emailEntity.setEmail(email);
         try {
-            emailEntity.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
+            emailEntity.setId(encryptionManager.sha256Hash(email.toLowerCase()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -260,7 +260,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                 String emailValue = emailAdditional.getValue().trim();
                 emailAdditionalEntity.setEmail(emailValue);
                 try {
-                    emailAdditionalEntity.setEmailHash(encryptionManager.sha256Hash(emailValue.toLowerCase()));
+                    emailAdditionalEntity.setId(encryptionManager.sha256Hash(emailValue.toLowerCase()));
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }

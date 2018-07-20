@@ -28,8 +28,8 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     public boolean emailExists(String emailHash) {
-        Assert.hasText(emailHash, "Cannot check for an empty email address");
-        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where emailHash = :emailHash", Long.class);
+        Assert.hasText(emailHash, "Cannot check for an empty email hash");
+        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where id = :emailHash", Long.class);
         query.setParameter("emailHash", emailHash);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
@@ -286,16 +286,24 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     public List<String> getEmailsToHash(Integer batchSize) {
-        TypedQuery<String> query = entityManager.createQuery("select id from EmailEntity where emailHash is null", String.class);
+        Query query = entityManager.createNativeQuery("select id from email where email_hash is null", String.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
     }
     
     @Override    
     public boolean populateEmailHash(String email, String emailHash) {
-        Query query = entityManager.createQuery("update EmailEntity set emailHash=:hash where email = :email");        
+        Query query = entityManager.createQuery("update EmailEntity set id=:hash where email = :email");        
         query.setParameter("email", email);
         query.setParameter("hash", emailHash);
         return query.executeUpdate() > 0;
+    }
+
+    @Override
+    public EmailEntity findByEmail(String email) {
+        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where email = :email", EmailEntity.class);
+        query.setParameter("email", email);
+        List<EmailEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }       
 }

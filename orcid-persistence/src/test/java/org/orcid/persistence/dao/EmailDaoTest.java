@@ -132,24 +132,24 @@ public class EmailDaoTest extends DBUnitTest {
     
     @Test 
     public void testVerify() {
-    	EmailEntity email = emailDao.find("teddybass2@semantico.com");
+    	EmailEntity email = emailDao.findByEmail("teddybass2@semantico.com");
     	assertNotNull(email);
     	assertFalse(email.getVerified());
     	emailDao.verifyEmail("teddybass2@semantico.com");
     	
-    	email = emailDao.find("teddybass2@semantico.com");
+    	email = emailDao.findByEmail("teddybass2@semantico.com");
     	assertNotNull(email);
     	assertTrue(email.getVerified());
     }
     
     @Test 
     public void testVerifyCaseSensitive() {
-    	EmailEntity email = emailDao.find("teddybass3public@semantico.com");
+    	EmailEntity email = emailDao.findByEmail("teddybass3public@semantico.com");
     	assertNotNull(email);
     	assertFalse(email.getVerified());
     	emailDao.verifyEmail("TeDdYbAsS3PuBlIc@semantico.com");
     	
-    	email = emailDao.find("teddybass3public@semantico.com");
+    	email = emailDao.findByEmail("teddybass3public@semantico.com");
     	assertNotNull(email);
     	assertTrue(email.getVerified());
     }
@@ -158,10 +158,10 @@ public class EmailDaoTest extends DBUnitTest {
     public void testFindPrimaryEmail() {
         EmailEntity email = emailDao.findPrimaryEmail("0000-0000-0000-0003");
         assertNotNull(email);
-        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getId());
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmail());
         
         email = emailDao.findPrimaryEmail("0000-0000-0000-0004");
         assertNotNull(email);
-        assertEquals("private_0000-0000-0000-0004@test.orcid.org", email.getId());
+        assertEquals("private_0000-0000-0000-0004@test.orcid.org", email.getEmail());
     }    
 }

@@ -51,6 +51,7 @@
 	<email
         orcid="5555-5555-5555-5558"
         email="5555-5555-5555-5558@user.com"
+        email_hash="5b569083f34079f001b6c81bff6ec764c0c70c448f032dc79d930971aa407201"
         is_primary="true"
         is_current="true"
         is_verified="true"

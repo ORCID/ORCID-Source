@@ -196,7 +196,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     public void setPrimary(String orcid, String email, HttpServletRequest request) {
         Email currentPrimaryEmail = this.findPrimaryEmail(orcid);
-        EmailEntity newPrimary = emailDao.find(email); 
+        EmailEntity newPrimary = emailDao.findByEmail(email); 
         if(newPrimary != null && !currentPrimaryEmail.getEmail().equals(email)) {
             emailDao.updatePrimary(orcid, email);                 
             notificationManager.sendEmailAddressChangedNotification(orcid, email, currentPrimaryEmail.getEmail());
