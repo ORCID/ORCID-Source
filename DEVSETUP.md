@@ -63,9 +63,9 @@ Clone the repository
 Skip test the first time you run this
 
     cd ORCID-Source
-    mvn clean install test -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-test/pom.xml && \
-    mvn clean install test -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-model/pom.xml && \
-    mvn clean package test -Dmaven.test.skip=true -Dlicense.skip=true
+    mvn clean install -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-test/pom.xml && \
+    mvn clean install -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-model/pom.xml && \
+    mvn clean package -Dmaven.test.skip=true -Dlicense.skip=true
 
 >If you experience the below error you can find the solution [here](http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy)
 
