@@ -13,7 +13,7 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
-import org.orcid.pojo.WorkGroup;
+import org.orcid.pojo.grouping.WorkGroup;
 
 public class WorksPaginator {
 

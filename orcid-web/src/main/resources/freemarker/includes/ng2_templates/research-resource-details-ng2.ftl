@@ -216,7 +216,7 @@
                                             <div class="sources-header">
                                                 <div class="row">
                                                     <div class="col-md-5 col-sm-5 col-xs-5">
-                                                        Resource name
+                                                        <@orcid.msg 'manage.research_resources.resource_item' />
                                                     </div>
                                                     <div class="col-md-2 col-sm-2 col-xs-2">
                                                         <@orcid.msg 'peer_review.type' />

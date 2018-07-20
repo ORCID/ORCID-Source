@@ -294,6 +294,14 @@ export class WorksService {
         return true;
     }
 
+    createNew(work): any {
+        var cloneW = JSON.parse(JSON.stringify(work));
+        cloneW.source = null;
+        cloneW.putCode = null;
+        cloneW.contributors = [];
+        return cloneW;
+    }
+
     getBibtexExport(): Observable<any> {
         return this.http.get( 
             getBaseUri() + '/works/works.bib', { responseType: 'text'}

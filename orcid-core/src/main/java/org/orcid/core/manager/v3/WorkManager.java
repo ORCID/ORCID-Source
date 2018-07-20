@@ -6,7 +6,7 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.pojo.WorkGroupingSuggestion;
+import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
 public interface WorkManager extends WorkManagerReadOnly {
     

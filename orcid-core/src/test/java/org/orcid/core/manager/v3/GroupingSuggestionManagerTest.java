@@ -34,7 +34,7 @@ import org.orcid.persistence.dao.GroupingSuggestionDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.WorkGroupingSuggestion;
+import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
 public class GroupingSuggestionManagerTest {
 

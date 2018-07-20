@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="research-resource-ng2-template">
-    <div>
+    <div *ngIf="researchResourceService.groups?.length > 0">
         <!-- RESEARCH RESOURCE -->
         <div class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && researchResourceService.groups.length < 1">
             <div class="workspace-accordion-header clearfix">
@@ -51,7 +51,6 @@
                                                 <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
                                             </a>                                            
                                         </li>
-                                        <!--No sort by type functionality on research resource controller-->
                                     </ul>                                           
                                 </li>
                             </ul>                                   
@@ -62,7 +61,7 @@
                 </div>
             </div>                        
             <div *ngIf="workspaceSrvc.displayResearchResource" class="workspace-accordion-content">
-                <ul id="groups-list" *ngIf="researchResourceService.groups?.length > 0" class="workspace-research-resource workspace-body-list bottom-margin-medium">
+                <ul id="groups-list" class="workspace-research-resource workspace-body-list bottom-margin-medium">
                     <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of researchResourceService.groups">
                         <#include "research-resource-details-ng2.ftl"/>                     
                     </li>

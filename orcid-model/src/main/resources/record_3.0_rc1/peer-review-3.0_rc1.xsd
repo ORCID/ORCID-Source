@@ -167,7 +167,28 @@
 								<xs:documentation>Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc). Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
 								</xs:documentation>
 							</xs:annotation>
-						</xs:element>	
+						</xs:element>
+						<xs:element name="reviewer-role" type="peer-review:role" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>The role played by a person in their
+                                    contribution to a review.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="review-type" type="peer-review:type"
+                            minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>The kind of review applied to the subject type
+                                    reviewed
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>	
+						<xs:element name="review-url" type="common:url" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>A link to a representation of the review on the web. <i>This URL refers to the review itself, NOT to the item that was reviewed.</i>
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
 					</xs:sequence>
 				</xs:extension>
 			</xs:complexContent>
