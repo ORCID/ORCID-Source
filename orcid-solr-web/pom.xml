@@ -12,7 +12,7 @@
 
     <parent>
         <relativePath>../pom.xml</relativePath>
-        <version>${branchVersion}</version>
+        <version>1.1.5-SNAPSHOT</version>
         <groupId>org.orcid</groupId>
         <artifactId>orcid-parent</artifactId>
     </parent>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-test</artifactId>
-            <version>${branchVersion}</version>
+            <version>1.1.5-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         	<dependency>
