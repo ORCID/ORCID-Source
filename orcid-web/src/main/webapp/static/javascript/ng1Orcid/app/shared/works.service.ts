@@ -293,6 +293,14 @@ export class WorksService {
         return true;
     }
 
+    createNew(work): any {
+        var cloneW = JSON.parse(JSON.stringify(work));
+        cloneW.source = null;
+        cloneW.putCode = null;
+        cloneW.contributors = [];
+        return cloneW;
+    }
+
     getBibtexExport(): Observable<any> {
         return this.http.get( 
             getBaseUri() + '/works/works.bib', { responseType: 'text'}
@@ -400,7 +408,7 @@ export class WorksService {
         if (this.groups == undefined) {
             this.groups = new Array();
         }
-        this.groups = this.groups.concat(data.workGroups);
+        this.groups = this.groups.concat(data.groups);
         this.groupsLabel = this.groups.length + " of " + data.totalGroups;
         this.showLoadMore = this.groups.length < data.totalGroups;
         this.loading = false;
