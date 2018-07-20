@@ -33,7 +33,11 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
     @Override
     @Column(name = "email_hash")
     public String getId() {
-        return emailHash;
+        return this.emailHash;
+    }
+    
+    public void setId(String email) {
+        this.email = email;
     }
     
     @Column(name = "email", length = 350)
@@ -44,16 +48,7 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
     public void setEmail(String email) {
         this.email = email;
     }
-
-    @Column(name = "email_hash")
-    public String getEmailHash() {
-        return emailHash;
-    }
-
-    public void setEmailHash(String emailHash) {
-        this.emailHash = emailHash;
-    }
-    
+       
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getProfile() {
