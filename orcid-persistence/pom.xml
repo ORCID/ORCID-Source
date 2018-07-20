@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.orcid</groupId>
         <artifactId>orcid-parent</artifactId>
-        <version>1.1.5-SNAPSHOT</version>
+        <version>${branchVersion}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,6 +16,7 @@
     <properties>
         <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
+        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
 
     <build>
@@ -50,18 +51,18 @@
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-utils</artifactId>
-            <version>1.1.5-SNAPSHOT</version>
+            <version>${branchVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-test</artifactId>
-            <version>1.1.5-SNAPSHOT</version>
+            <version>${branchVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-utils</artifactId>
-            <version>1.1.5-SNAPSHOT</version>
+            <version>${branchVersion}</version>
         </dependency>
         <!-- ##External dependencies## -->
 
