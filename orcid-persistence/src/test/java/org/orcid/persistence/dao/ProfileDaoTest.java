@@ -498,6 +498,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_1.setPrimary(false);
         unverified_1.setCurrent(true);
         unverified_1.setEmail("unverified_1@test.orcid.org");
+        unverified_1.setId("bd22086b65b6259fe79f7844a6b6a369441733b9ef04eff762f3d640957b78f5");
         
         // Created a week ago
         EmailEntity unverified_2 = new EmailEntity();
@@ -509,6 +510,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_2.setPrimary(false);
         unverified_2.setCurrent(true);
         unverified_2.setEmail("unverified_2@test.orcid.org");
+        unverified_2.setId("95770578974f683fb05c179a84f57c3fc7d4b260f8079fbc590080e51873bb67");
         
         // Created 15 days ago
         EmailEntity unverified_3 = new EmailEntity();
@@ -520,6 +522,7 @@ public class ProfileDaoTest extends DBUnitTest {
         unverified_3.setPrimary(false);
         unverified_3.setCurrent(true);
         unverified_3.setEmail("unverified_3@test.orcid.org");
+        unverified_3.setId("3cbebfc1de2500494fc95553c956e757cb1998149d366afb71888cdeb1550719");
         
         // Created 7 days ago and verified
         EmailEntity verified_1 = new EmailEntity();
@@ -531,6 +534,7 @@ public class ProfileDaoTest extends DBUnitTest {
         verified_1.setPrimary(false);
         verified_1.setCurrent(true);
         verified_1.setEmail("verified_1@test.orcid.org");
+        verified_1.setId("2f4812b9c675e9803a4bb616dd1bc241c8c9302ba5690a1ea9d48049a32e7c5f");
         
         // Created 15 days ago and verified
         EmailEntity verified_2 = new EmailEntity();
@@ -542,7 +546,7 @@ public class ProfileDaoTest extends DBUnitTest {
         verified_2.setPrimary(false);
         verified_2.setCurrent(true);
         verified_2.setEmail("verified_2@test.orcid.org");
-        
+        verified_2.setId("896dea808bbf69bde1b177f27800e84d17763860bffde1dfd8ef200e79ff9971");
         emailDao.removeAll();
         emailDao.persist(unverified_1);
         emailDao.persist(unverified_2);
