@@ -29,26 +29,34 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
     private Boolean verified;
     private String visibility;    
     
-    @Id
     @Override
-    @Column(name = "email_hash")
     public String getId() {
-        return this.emailHash;
+        return getEmailHash();
     }
     
     public void setId(String email) {
-        this.email = email;
+        setEmailHash(emailHash);
     }
     
     @Column(name = "email", length = 350)
     public String getEmail() {
         return email;
     }
-
+    
     public void setEmail(String email) {
         this.email = email;
     }
-       
+    
+    @Id
+    @Column(name = "email_hash")
+    public String getEmailHash() {
+        return this.emailHash;
+    }
+    
+    public void setEmailHash(String emailHash) {
+        this.emailHash = emailHash;
+    }
+    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getProfile() {
