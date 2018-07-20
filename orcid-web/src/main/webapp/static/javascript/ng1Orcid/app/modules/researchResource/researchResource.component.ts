@@ -50,19 +50,13 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     distinctionsAndInvitedPositions: any;
     editResearchResource: any;
     editSources: any;
-    educations: any;
-    educationsAndQualifications: any;
     emails: any;
-    employments: any;
-    initialOffset = "0";
-    membershipsAndServices: any;
     moreInfo: any;
     moreInfoOpen: boolean;
     moreInfoCurKey: any;
     orgIdsFeatureEnabled: boolean;
     privacyHelp: any;
     privacyHelpCurKey: any;
-    sectionOneElements: any;
     showElement: any;
     showResourceItemDetails: any;
     sortState: any;
@@ -80,9 +74,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         this.disambiguatedResearchResource = null;
         this.editResearchResource = {};
         this.editSources = {};
-        this.educations = [];
         this.emails = {};
-        this.employments = [];
         this.moreInfo = {};
         this.moreInfoCurKey = null;
         this.moreInfoOpen = false;
@@ -121,6 +113,12 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             } 
         );
         
+    };
+
+    closeAllMoreInfo(): void {
+        for (var idx in this.moreInfo){
+            this.moreInfo[idx]=false;
+        }
     };
 
     closeMoreInfo(key): void {
@@ -359,8 +357,23 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
-        for (var idx in group.researchResources){
-            this.loadDetails(group.researchResources[idx].putCode, $event);
+        if(this.moreInfo[group.groupId] == true){
+            for (var idx in group.researchResources){
+                this.loadDetails(group.researchResources[idx].putCode, $event);
+            }
+        } else {
+            for (var idx in group.researchResources){
+                console.log(group.researchResources[idx]);
+
+                for(var idy in this.researchResourceService.details[group.researchResources[idx].putCode].resourceItems){
+                    var id = group.researchResources[idx].putCode + 'resourceItem' + idy;
+                    console.log(id);
+                    console.log(this.showResourceItemDetails[id]);
+                    this.showResourceItemDetails[id] = false;
+                    console.log(this.showResourceItemDetails[id]);
+                    this.cdr.detectChanges();
+                }
+            }
         }
     };
 
@@ -419,8 +432,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
        
     };
 
-
-
     toggleClickMoreInfo(key): void {
         if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
             if (this.moreInfoCurKey != null
@@ -473,6 +484,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             (res) => {                
                 if (res.action == 'cancel' || res.action == 'delete') {
                     if(res.successful == true) {
+                        this.closeAllMoreInfo();
                         this.researchResourceService.resetGroups();
                         this.getResearchResourceGroups();
                     }

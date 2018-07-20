@@ -42,7 +42,7 @@
                                         publicClick="researchResourceService.setGroupPrivacy(group, 'PUBLIC', $event)"
                                         limitedClick="researchResourceService.setGroupPrivacy(group, 'LIMITED', $event)"
                                         privateClick="researchResourceService.setGroupPrivacy(group, 'PRIVATE', $event)"/>
-                                </li>s
+                                </li>
                                 </#if>
                             </ul>
                         </div>
@@ -250,11 +250,11 @@
                                                 <!--Action buttons-->
                                                 <div class="col-md-2 col-sm-2 col-xs-2 pull-right">                              
                                                     <span> 
-                                                        <a (click)="toggleResourceItemDetails(researchResource.putCode+index,$event)" *ngIf="!showResourceItemDetails[researchResource.putCode+index]">
+                                                        <a (click)="toggleResourceItemDetails(researchResource.putCode + 'resourceItem' + index,$event)" *ngIf="!showResourceItemDetails[researchResource.putCode+'resourceItem'+index]">
                                                         <span class="glyphicons expand"></span>
                                                         <span class="hidden-xs"><@orcid.msg 'common.details.show_details_lc' /></span>
                                                         </a> 
-                                                        <a (click)="toggleResourceItemDetails(researchResource.putCode+index,$event);" *ngIf="showResourceItemDetails[researchResource.putCode+index]">
+                                                        <a (click)="toggleResourceItemDetails(researchResource.putCode + 'resourceItem' + index,$event);" *ngIf="showResourceItemDetails[researchResource.putCode+'resourceItem'+index]">
                                                             <span class="glyphicons collapse_top"></span>
                                                             <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                                         </a>
@@ -263,7 +263,7 @@
                                             </div>                      
                                              
                                             <!-- Details row -->
-                                            <div class="row" *ngIf="showResourceItemDetails[researchResource.putCode+index]" >
+                                            <div class="row" *ngIf="showResourceItemDetails[researchResource.putCode+'resourceItem'+index]" >
                                                 <!--Ext ids-->
                                                 <div class="col-md-12 info-detail" *ngIf="resourceItem?.externalIdentifiers?.externalIdentifier.length > 0">
                                                     <ul class="id-details clearfix">
