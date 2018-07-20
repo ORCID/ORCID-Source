@@ -17,6 +17,9 @@ import { takeUntil }
 import { ResearchResourceService } 
     from '../../shared/researchResource.service.ts';
 
+import { CommonService } 
+    from '../../shared/common.service.ts';
+
 import { EmailService } 
     from '../../shared/email.service.ts';
 
@@ -25,17 +28,10 @@ import { ModalService }
 
 import { WorkspaceService } 
     from '../../shared/workspace.service.ts'; 
-
-import { FeaturesService }
-    from '../../shared/features.service.ts' 
-    
-import { CommonService } 
-    from '../../shared/common.service.ts';
     
 @Component({
     selector: 'research-resource-ng2',
-    template:  scriptTmpl("research-resource-ng2-template"),
-    providers: [CommonService]
+    template:  scriptTmpl("research-resource-ng2-template")
 })
 
 export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnInit {
@@ -43,18 +39,10 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    
-
-    disambiguatedResearchResource: any;
-    displayNewResearchResourceTypesFeatureEnabled: boolean;
-    distinctionsAndInvitedPositions: any;
-    editResearchResource: any;
     editSources: any;
     emails: any;
     moreInfo: any;
     moreInfoOpen: boolean;
-    moreInfoCurKey: any;
-    orgIdsFeatureEnabled: boolean;
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
@@ -64,65 +52,28 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     constructor(
         private researchResourceService: ResearchResourceService,
         private cdr: ChangeDetectorRef,
+        private commonSrvc: CommonService,
         private emailService: EmailService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService,
-        private featuresService: FeaturesService,
-        private commonSrvc: CommonService,
         private elementRef: ElementRef
     ) {
-        this.disambiguatedResearchResource = null;
-        this.editResearchResource = {};
         this.editSources = {};
         this.emails = {};
         this.moreInfo = {};
-        this.moreInfoCurKey = null;
         this.moreInfoOpen = false;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.showResourceItemDetails = {};
         this.sortState = this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
-        /*this.sortAsc = false;
-        this.sortDisplayKey = 'endDate';
-        this.sortKey = ['endDate', 'title'];*/
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
-
-    addResearchResourceModal(type, researchResource): void {
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    this.researchResourceService.notifyOther({ researchResource:researchResource, type: type });
-                    if(researchResource == undefined) {
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalResearchResourceForm', edit: false});
-                    } else {
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalResearchResourceForm', edit: true});
-                    }                    
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
-        
-    };
 
     closeAllMoreInfo(): void {
         for (var idx in this.moreInfo){
             this.moreInfo[idx]=false;
         }
-    };
-
-    closeMoreInfo(key): void {
-        this.moreInfo[key]=false;
     };
 
     closePopover(event): void {
@@ -149,14 +100,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                 //console.log('getEmails', error);
             } 
         );
-    };
-
-    displayEducation(): boolean {
-        return this.workspaceSrvc.displayEducation;
-    };
-    
-    displayEducationAndQualification(): boolean {
-        return this.workspaceSrvc.displayEducationAndQualification;
     };
 
     getResearchResourceGroups(): void {
@@ -194,26 +137,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             );
         
         }
-    };
-
-    getDisambiguatedResearchResource = function(id) {
-        this.researchResourceService.getDisambiguatedResearchResource(id)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if (data != null) {
-                    this.disambiguatedResearchResource = data;
-                    this.editResearchResource.orgDisambiguatedId.value = id;
-                    this.editResearchResource.disambiguatedResearchResourceSourceId = data.sourceId;
-                    this.editResearchResource.disambiguationSource = data.sourceType;
-                }
-            },
-            error => {
-                console.log("getResearchResourcesId", id, error);
-            } 
-        );
     };
 
     getDetails(putCode): void {
@@ -282,53 +205,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         );
     }
 
-    moreInfoMouseEnter(key, $event): void {
-        $event.stopPropagation();
-        if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
-            if (this.moreInfoCurKey != null
-                && this.moreInfoCurKey != key) {
-                this.privacyHelp[this.moreInfoCurKey]=false;
-            }
-            this.moreInfoCurKey = key;
-            this.moreInfo[key]=true;
-        }
-    };
-
-    openEditResearchResource(researchResource): void {
-        this.addResearchResourceModal(researchResource.researchResourceType.value, researchResource);
-    };
-
-    selectResearchResource(datum): void {
-        if (datum != undefined && datum != null) {
-            this.editResearchResource.researchResourceName.value = datum.value;
-            this.editResearchResource.city.value = datum.city;
-            
-            if(datum.city) {
-                this.editResearchResource.city.errors = [];
-            }
-
-            this.editResearchResource.region.value = datum.region;
-            
-            if(datum.region){
-                this.editResearchResource.region.errors = [];
-            }
-            
-            if(datum.country != undefined && datum.country != null) {
-                this.editResearchResource.country.value = datum.country;
-                this.editResearchResource.country.errors = [];
-            }
-
-            if (datum.disambiguatedResearchResourceIdentifier != undefined && datum.disambiguatedResearchResourceIdentifier != null) {
-                this.getDisambiguatedResearchResource(datum.disambiguatedResearchResourceIdentifier);
-            }
-        }
-    };
-
-    setAddResearchResourcePrivacy(priv, $event): void {
-        $event.preventDefault();
-        this.editResearchResource.visibility.visibility = priv;
-    };
-
     setGroupPrivacy = function(group, priv, $event): void {
         $event.preventDefault();
         var putCodes = new Array();
@@ -375,11 +251,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                 }
             }
         }
-    };
-
-    toggleResourceItemDetails = function(id, $event) {
-        $event.stopPropagation();
-        this.showResourceItemDetails[id] = !this.showResourceItemDetails[id];
     };
 
     showSources(group, $event): void {
@@ -432,17 +303,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
        
     };
 
-    toggleClickMoreInfo(key): void {
-        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
-            if (this.moreInfoCurKey != null
-                    && this.moreInfoCurKey != key) {
-                this.moreInfo[this.moreInfoCurKey]=false;
-            }
-            this.moreInfoCurKey = key;
-            this.moreInfo[key]=!this.moreInfo[key];
-        }
-    };
-
     toggleClickPrivacyHelp(key): void {
         if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
             if (
@@ -456,24 +316,9 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
 
     };
 
-    toggleEdit(): void {
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    //this.showEdit = !this.showEdit;
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
+    toggleResourceItemDetails = function(id, $event) {
+        $event.stopPropagation();
+        this.showResourceItemDetails[id] = !this.showResourceItemDetails[id];
     };
 
     //Default init functions provided by Angular Core

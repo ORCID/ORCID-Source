@@ -29,6 +29,9 @@ public enum Features implements Feature {
 
     @Label("New footer")
     NEW_FOOTER,
+    
+    @Label("Research resource actvities section in the UI")
+    RESEARCH_RESOURCE,
 
     @Label("Revoke access token if authorization code is reused")
     REVOKE_TOKEN_ON_CODE_REUSE,

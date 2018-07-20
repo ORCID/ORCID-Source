@@ -5740,14 +5740,23 @@ ul.oauth-scopes li {
     vertical-align: top
 }
 
-.peer-review-list-container .sources-edit-list li {
+.peer-review-list-container .sources-edit-list li,
+.research-resource-list-container .sources-edit-list li{
     border-left: 1px solid #c9cacb;
-    border-right: 1px solid #c9cacb
+    border-right: 1px solid #c9cacb;
 }
 
-.peer-review-list-container .glyphicons,
-.research-resource-list-container .glyphicons {
+.research-resource-list-container .sources-edit-list li li{
+    border-left: none;
+    border-right: none;
+}
+
+.peer-review-list-container .glyphicons {
     padding-left: 15px
+}
+
+.research-resource-list-container .glyphicons {
+    padding-left: 18px
 }
 
 .peer-review-list-container .glyphicons:before,
