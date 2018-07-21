@@ -16,7 +16,6 @@
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
         <jena.dir>${project.build.directory}/generated-sources/jena</jena.dir>
-        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
 
 	<repositories>
