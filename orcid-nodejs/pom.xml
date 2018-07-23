@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.orcid</groupId>
         <artifactId>orcid-parent</artifactId>
-        <version>1.1.5-SNAPSHOT</version>
+        <version>${branchVersion}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>orcid-nodejs</artifactId>
@@ -16,6 +16,7 @@
         <main.basedir>${project.parent.basedir}</main.basedir>
         <nodejs.workingDirectory>${env.HOME}/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid</nodejs.workingDirectory>
         <webpackConfig>webpack.config.js</webpackConfig>
+        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
     <build>
         <finalName>orcid-nodejs</finalName>
