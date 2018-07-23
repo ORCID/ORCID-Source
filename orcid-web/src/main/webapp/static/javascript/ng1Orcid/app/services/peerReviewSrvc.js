@@ -46,7 +46,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
             
             getGroup: function(id) {
                 for (var idx in peerReviewSrvc.groups) {
-                    if (peerReviewSrvc.groups[idx].id == id) {
+                    if (peerReviewSrvc.groups[idx].groupId == id) {
                         return peerReviewSrvc.groups[idx];
                     }
                 }

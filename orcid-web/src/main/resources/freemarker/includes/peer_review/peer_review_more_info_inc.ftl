@@ -1,4 +1,4 @@
-<div class="more-info" ng-if="showDetails[group.id] == true">
+<div class="more-info" ng-if="showDetails[group.groupId] == true">
     <div class="content">       
         <div class="row">
             <div class="col-md-12">
