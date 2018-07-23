@@ -22,6 +22,9 @@
                 <span *ngIf="group?.defaultAffiliation?.roleTitle?.value && !printView">&nbsp;</span>(<span>{{group?.defaultAffiliation?.departmentName.value}}</span>)
                 </span>
             </div><!--info-date-->
+            <div class="info-detail" *ngIf="group?.defaultAffiliation?.affiliationType?.value">
+                <span class="journaltitle">{{group?.defaultAffiliation?.affiliationType?.value | titlecase | dashToSpace}}</span>
+            </div>
         </div><!--info-detail-->
     </div><!--col-md-9 -->
     <div class="col-md-3 col-sm-3 col-xs-5 padding-left-fix">          
