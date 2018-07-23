@@ -64,7 +64,7 @@
                         </div>                      
                          
                         <!-- Details row -->
-                        <div class="row" ng-if="showPeerReviewDetails[peerReview.putCode.value] == true && group.activePutCode == peerReview.putCode.value;">
+                        <div class="row" ng-if="showPeerReviewDetails[peerReview.putCode.value] == true">
                             <div class="col-md-12 info-detail" ng-if="peerReview.externalIdentifiers[0].externalIdentifierId.value != null" ng-cloak>
                                 <span class="workspace-title"><@orcid.msg 'peer_review.review_identifiers' />&nbsp;</span> 
                                 <span ng-repeat='ie in peerReview.externalIdentifiers'><span
