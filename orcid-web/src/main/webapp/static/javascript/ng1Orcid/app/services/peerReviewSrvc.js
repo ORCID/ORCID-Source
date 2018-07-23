@@ -39,14 +39,14 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                 peerReviewSrvc.removePeerReview(rmPeerReview);
             },
 
-            deletePeerReview: function(putCode) {
-                peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.getPeerReviews();});
+            deletePeerReview: function(putCode, sortAsc) {
+                peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.getPeerReviews(sortAsc);});
             },
 
             
             getGroup: function(id) {
                 for (var idx in peerReviewSrvc.groups) {
-                    if (peerReviewSrvc.groups[idx].id == id) {
+                    if (peerReviewSrvc.groups[idx].groupId == id) {
                         return peerReviewSrvc.groups[idx];
                     }
                 }
