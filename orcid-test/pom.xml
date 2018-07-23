@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 	<groupId>org.orcid</groupId>
     <artifactId>orcid-test</artifactId>
-    <version>${branchVersion}</version>
+    <version>1.1.5-SNAPSHOT</version>
 
     <name>ORCID - Test</name>
     <description>Test utilities that can be brought in to other modules with the test scope</description>

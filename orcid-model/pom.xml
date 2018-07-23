@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 	<groupId>org.orcid</groupId>
     <artifactId>orcid-model</artifactId>
-    <version>${branchVersion}</version>
+    <version>1.1.5-SNAPSHOT</version>
 
     <name>ORCID - Model</name>
     <description>Container for all classes that will be used to marshal and unmarshal XML/JSON from the API</description>
@@ -11,7 +11,6 @@
     	<main.basedir>${project.basedir}</main.basedir>
 		<swagger.version>1.5.16</swagger.version>
 		<jena.version>3.0.0</jena.version>
-        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
     
     <!-- BUILD -->
@@ -165,7 +164,7 @@
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-test</artifactId>
-            <version>${branchVersion}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
