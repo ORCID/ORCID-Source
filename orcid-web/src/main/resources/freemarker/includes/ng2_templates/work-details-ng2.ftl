@@ -1,7 +1,7 @@
 <div class="work-list-container">
     <ul class="sources-edit-list">
         <!--Edit sources-->
-        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}" [(ngModel)]="group.works">
+        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}">
             <div class="sources-header">
                 <div class="row">
                     <div class="col-md-7 col-sm-7 col-xs-6">
