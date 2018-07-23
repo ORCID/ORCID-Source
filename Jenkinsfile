@@ -17,11 +17,23 @@ node {
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: env.BRANCH_NAME
     def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_${env.BRANCH_NAME}_$BUILD_NUMBER"
 
-    stage('TEST') {
+    stage('SETUP VERSION') {
         try {
             sh "mkdir -p $EHCACHE_LOCATION"
+            do_maven("mvn versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-test/pom.xml")
+            do_maven("mvn versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-model/pom.xml")
+            do_maven("mvn versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME}")
+        } catch(Exception err) {
+            orcid_notify("Failed to update artifact versions ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            deleteDir()
+            throw err
+        }
+    }
+
+    stage('TEST') {
+        try {
             do_maven("clean")
-            do_maven("-D maven.test.skip=true -D license.skip=true -D branchVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-test/pom.xml clean install")
+            do_maven("-D maven.test.skip=true -D license.skip=true -f orcid-test/pom.xml clean install")
         } catch(Exception err) {
             orcid_notify("test compile failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             deleteDir()
@@ -30,7 +42,7 @@ node {
     }
     stage('MODEL') {
         try {
-            do_maven("-D maven.test.skip=true -D license.skip=true -D branchVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-model/pom.xml clean install")
+            do_maven("-D maven.test.skip=true -D license.skip=true -f orcid-model/pom.xml clean install")
         } catch(Exception err) {
             orcid_notify("model compile failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             deleteDir()
@@ -40,7 +52,7 @@ node {
 
     stage('PARENT') {
         try {
-            do_maven("-D maven.test.skip=true -D license.skip=true -D branchVersion=${BUILD_NUMBER}-${BRANCH_NAME} clean install")
+            do_maven("-D maven.test.skip=true -D license.skip=true clean install")
         } catch(Exception err) {
             orcid_notify("parent compile failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             deleteDir()
@@ -51,9 +63,9 @@ node {
     stage('TESTS') {
         try {
             parallel(
-                model:   {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-test/pom.xml")},
-                test:    {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME} -f orcid-model/pom.xml")},
-                parent:  {do_maven("test -D branchVersion=${BUILD_NUMBER}-${env.BRANCH_NAME}")}
+                model:   {do_maven("test -f orcid-test/pom.xml")},
+                test:    {do_maven("test -f orcid-model/pom.xml")},
+                parent:  {do_maven("test")}
             )
         } catch(Exception err) {
             orcid_notify("running tests on model and test modules failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
