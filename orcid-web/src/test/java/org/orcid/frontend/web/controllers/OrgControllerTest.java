@@ -21,6 +21,7 @@ import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
@@ -77,11 +78,17 @@ public class OrgControllerTest extends BaseControllerTest {
         
         @Test
         public void testFindBySourceTypeAndSourceId(){
-            OrgDisambiguated o = orgController.getDisambiguatedOrg("abc456","WDB");
-            assertEquals("abc456",o.getSourceId());
-            assertEquals("WDB",o.getSourceType());
-            assertEquals("London",o.getCity());
-            assertEquals("An Institution",o.getValue());
-            assertEquals("GB",o.getCountry());
+            ResponseEntity<OrgDisambiguated> o = orgController.getDisambiguatedOrg("abc456","WDB");
+            
+            assertEquals("abc456",o.getBody().getSourceId());
+            assertEquals("WDB",o.getBody().getSourceType());
+            assertEquals("London",o.getBody().getCity());
+            assertEquals("An Institution",o.getBody().getValue());
+            assertEquals("GB",o.getBody().getCountry());
+            assertEquals(200,o.getStatusCodeValue());
+            
+            ResponseEntity<OrgDisambiguated> o2 = orgController.getDisambiguatedOrg("no","no");
+            assertEquals(404,o2.getStatusCodeValue());
+
         }
 }
