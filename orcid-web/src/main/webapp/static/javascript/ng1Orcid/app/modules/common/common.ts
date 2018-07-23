@@ -27,12 +27,14 @@ import { AjaxFormDateToISO8601Pipe }
 import { ContributorFilterPipe }
     from '../../pipes/contributorFilterNg2.ts';
 
+import { ExternalIdentifierHtmlPipe }
+    from '../../pipes/externalIdentifierHtmlNg2.ts';
+
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
 import { KeysPipe }
     from '../../pipes/keysNg2.ts'; 
-
 
 import { LatexPipe }
     from '../../pipes/latexNg2.ts'; 
@@ -54,13 +56,6 @@ import { WorkExternalIdentifierHtmlPipe }
 
 //User generated modules
 
-/*
-import { DelegatesNg2Module }
-    from './../delegates/delegates.ts';
-
-import { EditTableNg2Module }
-    from './../editTable/editTable.ts';
-*/
 import { ExtIdPopoverNg2Module }
     from './../extIdPopover/extIdPopover.ts';
 
@@ -206,6 +201,7 @@ import { UnsubscribeService }
             FocusMe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            ExternalIdentifierHtmlPipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
@@ -226,6 +222,7 @@ import { UnsubscribeService }
             //User Pipes
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            ExternalIdentifierHtmlPipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,

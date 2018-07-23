@@ -370,6 +370,24 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    openEditFunding( putCode ): void {
+
+        this.fundingService.getEditable(putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                console.log('editable data', data);
+                this.addFundingModal(data);
+
+            },
+            error => {
+                //console.log('getBiographyFormError', error);
+            } 
+        );
+    }
+
     removeDisambiguatedFunding(): void {
         this.bindTypeaheadForOrgs();
         if (this.disambiguatedFunding != undefined) {
@@ -456,6 +474,13 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
+    };
+
+    userIsSource(funding): boolean {
+        if (funding.source == orcidVar.orcidId){
+            return true;
+        }
+        return false;
     };
 
 

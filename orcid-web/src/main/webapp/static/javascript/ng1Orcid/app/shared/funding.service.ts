@@ -38,11 +38,54 @@ export class FundingService {
         this.fundingToEdit = {};
     }
 
-    getFunding(): Observable<any> {
+    createNew(obj): any {
+        var cloneF = JSON.parse(JSON.stringify(obj));
+        cloneF.source = null;
+        cloneF.putCode = null;
+        for (var idx in cloneF.externalIdentifiers){
+            cloneF.externalIdentifiers[idx].putCode = null;
+        }
+        return cloneF;
+    }
+
+    getEditable( putCode ): any {
+        // first check if they are the current source
+        var funding = this.getFunding(putCode);
+
+        var bestMatch = null;
+        var group = this.getGroup(putCode);
+        for (var idx in group.activitiess) {
+            if (group[idx].source == orcidVar.orcidId) {
+                //bestMatch = callback(group[idx]);
+                break;
+            }
+        }
+        if (bestMatch == null) {
+            bestMatch = this.createNew(funding);
+        }
+    }
+
+    getFunding(putCode?): any {
+        if( putCode ){
+            for (var idx in this.groups) {
+                if (this.groups[idx].hasPut(putCode)){
+                    return this.groups[idx].getByPut(putCode);
+                }
+            }
+            return null;
+            
+        } else {
+            this.getFundingEmpty();
+
+        }
+    }
+    
+    getFundingEmpty(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/fundings/funding.json'
         )
     }
+    
 
     getFundingsById( idList ): Observable<any> {
         this.loading = true;
@@ -65,6 +108,15 @@ export class FundingService {
 
     getFundingToEdit(): any {
         return this.fundingToEdit;
+    }
+
+    getGroup(putCode): any {
+        for (var idx in this.groups) {
+            if (this.groups[idx].hasPut(putCode)){
+                return this.groups[idx];
+            }
+        }
+        return null;
     }
 
     makeDefault(group, putCode): Observable<any> {

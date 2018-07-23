@@ -320,12 +320,12 @@
                                         <div class="col-md-12 col-sm-12 bottomBuffer">
                                             <ul class="id-details clearfix">
                                                 <li>
-                                                    <!--
-                                                    <span *ngFor='let ei of group.getActive().externalIdentifiers' class="clearfix"><!-- | orderBy:["-relationship.value", "type.value"] 
-                                                        <span [innerHTML]='ei ' class="url-popover"><!-- | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId] - ->
+                                                    
+                                                    <span *ngFor='let ei of group.getActive().externalIdentifiers; let first = first; let last = last' class="clearfix"><!-- | orderBy:["-relationship.value", "type.value"]  -->
+                                                        <span [innerHTML]='ei | externalIdentifierHtml:first:last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId] ' class="url-popover"><!-- | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId] -->
                                                         </span>
                                                     </span>
-                                                    -->
+                                                    
                                                     <span *ngIf="group?.defaultFunding?.funding[0]?.externalIdentifierId?.value?.length > 0">
                                                         <ext-id-popover-ng2 [extID]="extID" [putCode]="group?.defaultFunding?.putCode?.value+i" [activityType]="'funding'"></ext-id-popover-ng2>
                                                     </span>
@@ -427,12 +427,9 @@
                                             <#if !(isPublicProfile??)>
                                                 <ul class="sources-actions">
                                                     <li>
-                                                        <@orcid.editActivityIcon
-                                                    activity="funding"
-                                                    click="openEditFunding(funding.putCode.value)"
-                                                    toolTipSuffix="editFundingToolSourceActions"
-                                                    toolTipClass="popover popover-tooltip top edit-activeSource-popover"
-                                                    />
+                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.putCode.value)" (mouseenter)="showTooltip(funding.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.putCode.value+'-editFundingToolTipSources')">
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                        </a>
                                                     </li>
                                                     <li>
                                                         <a (click)="deleteFundingConfirm(group.getActive().putCode.value, false)"  (mouseenter)="showTooltip(group.groupId+'-deleteActiveSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteActiveSource')">
@@ -473,12 +470,9 @@
                                             <#if !(isPublicProfile??)>
                                                 <ul class="sources-actions">
                                                     <li> 
-                                                        <@orcid.editActivityIcon
-                                                            activity="funding"
-                                                            click="openEditFunding(funding.putCode.value)"
-                                                            toolTipSuffix="editFundingToolSourceActions"
-                                                            toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
-                                                        />
+                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.putCode.value)" (mouseenter)="showTooltip(funding.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.putCode.value+'-editFundingToolTipSources')">
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                        </a>
                                                     </li>
                                                     <li>
                                                         <a (click)="deleteFundingConfirm(group.getActive().putCode.value, false)" (mouseenter)="showTooltip(funding.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(funding.putCode.value+'-deleteInactiveSource')">
@@ -516,14 +510,10 @@
                                             <ul class="sources-options" >
                                                 <#if !(isPublicProfile??)>
                                                     <li>
-                                                        <!--
-                                                        <@orcid.editActivityIcon
-                                                            activity="funding"
-                                                            click="openEditFunding(funding.putCode.value)"
-                                                            toolTipSuffix="editFundingToolTipSources"
-                                                            toolTipClass="popover popover-tooltip top edit-source-popover"
-                                                        />
-                                                    -->
+    
+                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.putCode.value)" (mouseenter)="showTooltip(funding.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.putCode.value+'-editFundingToolTipSources')">
+                                                            <span class="glyphicon glyphicon-pencil"></span>
+                                                        </a>
                                                     </li>
                                                     <li *ngIf="!(group.activitiesCount == 1 || editSources[group.groupId] == true)">
                     
