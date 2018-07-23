@@ -79,7 +79,7 @@ public class MailGunManager {
             webResource = client.resource(getNotifyApiUrl());
         else if (fromEmail.endsWith("@verify.orcid.org"))
             webResource = client.resource(getVerifyApiUrl());
-        else if (fromEmail.endsWith("@notify.orcid.org"))
+        else if (fromEmail.endsWith("@notify.orcid.org") || fromEmail.endsWith("@orcid.org"))
             webResource = client.resource(getNotifyApiUrl());
         else
             webResource = client.resource(getApiUrl());
