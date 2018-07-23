@@ -296,7 +296,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 callables.add(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        processServiceAnnouncementOrNotification(n);
+                        processServiceAnnouncementOrNotification(n, fromAddress);
                         return true;
                     }
 
