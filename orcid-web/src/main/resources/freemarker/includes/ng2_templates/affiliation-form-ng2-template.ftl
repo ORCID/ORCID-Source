@@ -14,7 +14,7 @@
                     </h1>
                     <h1 *ngIf="addAffType == 'education'" class="lightbox-title pull-left">
                         <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></span>
-                        <span *ngIf="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_education'/></span>
+                        <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_education'/></span>
                     </h1>
                     <h1 *ngIf="addAffType == 'employment'" class="lightbox-title pull-left">
                         <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></span>
@@ -234,8 +234,8 @@
                             <li>
                                 <button id="save-affiliation" class="btn btn-primary" (click)="addAffiliation()" [disabled]="addingAffiliation" [ngClass]="{disabled:addingAffiliation}">
                                     
-                                    <span *ngIf="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
-                                    <span *ngIf="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
+                                    <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
+                                    <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
                                 </button>
                             </li>                       
                             <li>                      

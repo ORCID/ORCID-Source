@@ -57,6 +57,22 @@ export class AffiliationService {
         }
     }
 
+    consistentVis(group): boolean {
+        for(let i = 0; i < group.affiliations.length; i++) {
+            if (group.affiliations[i].visibility.visibility != group.activeVisibility) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    createNew(affiliation): any {
+        var clone = JSON.parse(JSON.stringify(affiliation));
+        clone.source = null;
+        clone.putCode = null;
+        return clone;
+    }
+
     deleteAffiliation( data ): Observable<any> {     
         return this.http.delete( 
             this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             

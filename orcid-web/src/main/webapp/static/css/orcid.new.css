@@ -3965,12 +3965,17 @@ ul.workspace-bar-menu>li.hidden-md,ul.workspace-bar-menu>li.hidden-sm {
     display: block!important
 }
 
-.workspace-publications {
+.workspace-publications,
+.workspace-affiliations {
     margin: 0;
     padding: 0
 }
 
-ul#body-work-list>li {
+ul#body-work-list>li,
+ul#body-employment-list>li,
+ul#body-education-list>li,
+ul#body-distinction-list>li,
+ul#body-membership-list>li {
     display: inline-block;
     width: 100%
 }

@@ -1,4 +1,6 @@
 declare var $: any;
+declare var orcidVar: any;
+declare var GroupedActivities: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 
@@ -44,6 +46,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     displayNewAffiliationTypesFeatureEnabled: boolean;
     distinctionsAndInvitedPositions: any;
     editAffiliation: any;
+    editSources: any;
     educations: any;
     educationsAndQualifications: any;
     emails: any;
@@ -81,6 +84,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.disambiguatedAffiliation = null;
         this.editAffiliation = {};
+        this.editSources = {};
         this.educations = [];
         this.emails = {};
         this.employments = [];
@@ -220,6 +224,16 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    hideAllTooltip(): void {
+        for (var idx in this.showElement){
+            this.showElement[idx]=false;
+        }
+    };
+
+    hideSources(group): void {
+        this.editSources[group.groupId] = false;
+    };
+
     hideTooltip(element): void{        
         this.showElement[element] = false;
     };
@@ -236,8 +250,26 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    openEditAffiliation(affiliation): void {
-        this.addAffiliationModal(affiliation.affiliationType.value, affiliation);
+    openEditAffiliation(affiliation, group): void {
+        // first check if user is current source
+        if (affiliation.source == orcidVar.orcidId){
+            this.addAffiliationModal(affiliation.affiliationType.value, affiliation);
+        } else{
+            // in this case we want to open their version
+            // if they don't have a version yet then copy
+            // the current one
+            var bestMatch = null;
+            for (var idx in group) {    
+                if (group[idx].source == orcidVar.orcidId) {
+                    bestMatch = group[idx];
+                    break;
+                }
+            }
+            if (bestMatch == null) {
+                bestMatch = this.affiliationService.createNew(affiliation);
+            }
+            this.addAffiliationModal(bestMatch.affiliationType.value, bestMatch);
+        }
     };
 
     parseAffiliationGroups(data): void {
@@ -300,19 +332,41 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editAffiliation.visibility.visibility = priv;
     };
 
-    setPrivacy(aff, priv, $event): void {
+    setGroupPrivacy = function(group, priv, $event): void {
         $event.preventDefault();
-        aff.visibility.visibility = priv;                
-        this.affiliationService.updateVisibility(aff)
-            .pipe(    
+        var putCodes = new Array();
+        for (var idx in group.researchResources) {
+            putCodes.push(group.researchResources[idx].putCode);
+            group.affiliations[idx].visibility = priv;
+        }
+        group.activeVisibility = priv;
+        this.affiliationService.updateVisibility(putCodes, priv)
+        .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
-            .subscribe(data => {});
+        .subscribe(
+            data => {
+                if (putCodes.length > 0) {
+                    this.affiliationService.updateVisibility(putCodes, priv);   
+                }
+                
+            },
+            error => {
+                console.log('Error updating group visibility', error);
+            } 
+        );
+    }
+
+    showDetailsMouseClick(group, $event): void {
+        $event.stopPropagation();
+        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
     };
 
-    showDetailsMouseClick = function(group, $event) {
+
+    showSources(group, $event): void {
         $event.stopPropagation();
-        this.moreInfo[group.activePutCode] = !this.moreInfo[group.activePutCode];
+        this.editSources[group.groupId] = true;
+        this.hideAllTooltip();
     };
 
     showTooltip(element): void{        
@@ -417,6 +471,14 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
+
+    userIsSource(affiliation): boolean {
+        if (affiliation.source == orcidVar.orcidId){
+            return true;
+        }
+        return false;
+    };
+
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
