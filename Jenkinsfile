@@ -80,6 +80,7 @@ node {
 def report_and_clean(){
     junit '**/target/surefire-reports/*.xml'
     deleteDir()
+    sh "rm -rf /var/lib/jenkins/.m2/repository/org/orcid/orcid-**/${BUILD_NUMBER}-${BRANCH_NAME}"
 }
 
 def orcid_notify(message, level){
