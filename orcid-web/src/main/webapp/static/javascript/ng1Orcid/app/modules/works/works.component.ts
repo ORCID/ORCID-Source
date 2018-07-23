@@ -793,7 +793,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         ); 
     }
 
-    showDetailsMouseClick = function(group, $event) {
+    showDetailsMouseClick(group, $event): void {
         $event.stopPropagation();
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
         for (var idx in group.works){
