@@ -20,9 +20,9 @@ node {
     stage('SETUP VERSION') {
         try {
             sh "mkdir -p $EHCACHE_LOCATION"
-            do_maven("mvn versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-test/pom.xml")
-            do_maven("mvn versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-model/pom.xml")
-            do_maven("mvn versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME}")
+            do_maven("versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-test/pom.xml")
+            do_maven("versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-model/pom.xml")
+            do_maven("versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME}")
         } catch(Exception err) {
             orcid_notify("Failed to update artifact versions ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             deleteDir()
