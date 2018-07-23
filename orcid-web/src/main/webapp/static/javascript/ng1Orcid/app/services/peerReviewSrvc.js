@@ -39,8 +39,8 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                 peerReviewSrvc.removePeerReview(rmPeerReview);
             },
 
-            deletePeerReview: function(putCode) {
-                peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.getPeerReviews();});
+            deletePeerReview: function(putCode, sortAsc) {
+                peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.getPeerReviews(sortAsc);});
             },
 
             
