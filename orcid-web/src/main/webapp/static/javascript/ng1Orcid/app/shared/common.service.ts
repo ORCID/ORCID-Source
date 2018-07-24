@@ -3,12 +3,19 @@ declare var colorbox: any;
 declare var isMobile: any;
 
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
+     from '@angular/common/http';
+
+import { Observable, Subject } 
+    from 'rxjs';
 
 @Injectable()
 export class CommonService {
     private shownElement: any;
 
-    constructor() { 
+    constructor(
+        private http: HttpClient
+    ) {
         this.shownElement = [];
     }
 
@@ -108,6 +115,12 @@ export class CommonService {
 
     formColorBoxWidth(): string {
         return isMobile()? '100%': '800px';
+    };
+
+    getNormalizedExtId(extId): Observable<any>{
+        return this.http.get( 
+            getBaseUri() + '/identifiers/norm/' + extId.externalIdentifierType.value + '?value=' + extId.externalIdentifierId.value
+        )
     };
 
     getParameterByName( name ): any {

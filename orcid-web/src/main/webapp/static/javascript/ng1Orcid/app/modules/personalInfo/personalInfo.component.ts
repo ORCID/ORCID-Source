@@ -32,7 +32,7 @@ export class PersonalInfoComponent implements AfterViewInit, OnDestroy, OnInit {
         private workspaceSrvc: WorkspaceService,
         private utilsService: CommonService
     ) {
-        this.lastModifiedTimeString = orcidVar.lastModified.replace(/,|\./g , "");
+        this.lastModifiedTimeString = orcidVar.lastModified.replace(/,|\.|\s/g , "");
         this.displayInfo = workspaceSrvc.displayPersonalInfo;
         this.lastModifiedDate = utilsService.formatTime(Number(this.lastModifiedTimeString));
     }
