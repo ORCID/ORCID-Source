@@ -24,6 +24,7 @@ export class ResearchResourceService {
     public groupsLabel: any;
     public loading: boolean;
     public offset: any;
+    public orgDisambiguatedDetails: any;
     public researchResource: any;
     public showLoadMore: boolean;
     public type: string;

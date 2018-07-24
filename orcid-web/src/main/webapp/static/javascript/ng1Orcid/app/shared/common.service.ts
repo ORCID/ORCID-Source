@@ -117,9 +117,15 @@ export class CommonService {
         return isMobile()? '100%': '800px';
     };
 
-    getNormalizedExtId(extId): Observable<any>{
+    getDisambiguatedOrgDetails(type, value): Observable<any>{
         return this.http.get( 
-            getBaseUri() + '/identifiers/norm/' + extId.externalIdentifierType.value + '?value=' + extId.externalIdentifierId.value
+            getBaseUri() + '/orgs/disambiguated/' + type + '/' + value
+        )
+    };
+
+    getNormalizedExtId(type, value): Observable<any>{
+        return this.http.get( 
+            getBaseUri() + '/identifiers/norm/' + type + '?value=' + value
         )
     };
 
