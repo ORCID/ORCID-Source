@@ -59,7 +59,7 @@ export class ExtIdPopoverComponent implements OnInit {
         this.displayAffiliationExtIdPopOver[id] = true;
     };
 
-    ngOnInit() {;
+    ngOnInit() {
         switch(this.activityType){
             case "affiliation":
                 this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
@@ -96,13 +96,15 @@ export class ExtIdPopoverComponent implements OnInit {
         if(this.url){
             this.urlProtocol.transform(this.url); 
         } else {
-            this.commonService.getNormalizedExtId(this.extID)
+            this.commonService.getNormalizedExtId(this.type, this.value)
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
                 data => {
-                    this.url = data.normUrl;
+                    if(data.normUrl){
+                        this.url = data.normUrl;
+                    }
                 },
                 error => {
                     console.log('getNormalizedUrl', error);
