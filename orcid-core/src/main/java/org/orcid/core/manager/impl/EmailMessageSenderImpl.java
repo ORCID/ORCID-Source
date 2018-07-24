@@ -265,7 +265,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 callables.add(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        processServiceAnnouncementOrNotification(n);
+                        processServiceAnnouncementOrTipNotification(n);
                         return true;
                     }
 
@@ -296,7 +296,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 callables.add(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        processServiceAnnouncementOrNotification(n, fromAddress);
+                        processServiceAnnouncementOrTipNotification(n, fromAddress);
                         return true;
                     }
 
@@ -314,11 +314,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
     }
     
-    private void processServiceAnnouncementOrNotification(NotificationEntity n) {
-        processServiceAnnouncementOrNotification(n, null);
+    private void processServiceAnnouncementOrTipNotification(NotificationEntity n) {
+        processServiceAnnouncementOrTipNotification(n, null);
     }
     
-    private void processServiceAnnouncementOrNotification(NotificationEntity n, String fromAddress) {
+    private void processServiceAnnouncementOrTipNotification(NotificationEntity n, String fromAddress) {
         String orcid = n.getProfile().getId();
         EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
         if (primaryEmail == null) {
