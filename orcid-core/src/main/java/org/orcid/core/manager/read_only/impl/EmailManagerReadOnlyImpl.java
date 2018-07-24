@@ -30,7 +30,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     protected JpaJaxbEmailAdapter jpaJaxbEmailAdapter;
     
     @Resource
-    private EncryptionManager encryptionManager;
+    protected EncryptionManager encryptionManager;
     
     protected EmailDao emailDao;
     

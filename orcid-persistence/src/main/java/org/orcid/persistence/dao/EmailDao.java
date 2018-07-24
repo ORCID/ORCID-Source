@@ -59,7 +59,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
      * @return true if the email exists, the owner is not claimed and the
      *         client source of the record allows auto deprecating records
      */
-    boolean isAutoDeprecateEnableForEmail(String email);
+    boolean isAutoDeprecateEnableForEmailUsingHash(String emailHash);
     
     boolean isPrimaryEmail(String email);
     

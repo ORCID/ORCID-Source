@@ -50,18 +50,12 @@ public class EmailDaoTest extends DBUnitTest {
     @Test
     public void testIsAutoDeprecateEnableForEmail() {
         //Unclaimed and the source have auto deprecate enabled
-        assertTrue(emailDao.isAutoDeprecateEnableForEmail("public_0000-0000-0000-0001@test.orcid.org"));
-        assertTrue(emailDao.isAutoDeprecateEnableForEmail("PUBLIC_0000-0000-0000-0001@test.orcid.org"));
-        assertTrue(emailDao.isAutoDeprecateEnableForEmail("PuBlIc_0000-0000-0000-0001@test.orcid.org"));
+        assertTrue(emailDao.isAutoDeprecateEnableForEmailUsingHash("8f649f6d12203f020ee26467547432add46bc5395ff8dd72242fa2d7aa4fc04a"));
         //Claimed
-        assertFalse(emailDao.isAutoDeprecateEnableForEmail("public_0000-0000-0000-0002@test.orcid.org"));
-        assertFalse(emailDao.isAutoDeprecateEnableForEmail("PUBLIC_0000-0000-0000-0002@test.orcid.org"));
-        assertFalse(emailDao.isAutoDeprecateEnableForEmail("PuBlIc_0000-0000-0000-0002@test.orcid.org"));
-        
+        assertFalse(emailDao.isAutoDeprecateEnableForEmailUsingHash("ecdc2c6aef7aa5aa4012b9e5f262de2214c9b0e3f3b0201da0eeebc7531ae018"));
         //Unclaimed but source have auto deprecate disabled
-        assertFalse(emailDao.isAutoDeprecateEnableForEmail("public_0000-0000-0000-0006@test.orcid.org"));
-        assertFalse(emailDao.isAutoDeprecateEnableForEmail("PUBLIC_0000-0000-0000-0006@test.orcid.org"));
-        assertFalse(emailDao.isAutoDeprecateEnableForEmail("PuBlIc_0000-0000-0000-0006@test.orcid.org"));
+        assertFalse(emailDao.isAutoDeprecateEnableForEmailUsingHash("49919fd6890f32d00cad6be9dbe277c3f1f84476d2ca0ec4dd74dbf03114b8d7"));
+        
     }
     
     @Test

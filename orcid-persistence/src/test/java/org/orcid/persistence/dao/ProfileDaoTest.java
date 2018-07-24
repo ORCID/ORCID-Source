@@ -422,15 +422,12 @@ public class ProfileDaoTest extends DBUnitTest {
     
     @Test
     public void testGetClaimedStatusByEmail() {
-        assertFalse(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0001@test.orcid.org"));
-        assertFalse(profileDao.getClaimedStatusByEmail("PUBLIC_0000-0000-0000-0001@test.orcid.org"));
-        assertTrue(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0002@test.orcid.org"));
-        assertTrue(profileDao.getClaimedStatusByEmail("PUBLIC_0000-0000-0000-0002@test.orcid.org"));
-        assertTrue(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0003@test.orcid.org"));
-        assertTrue(profileDao.getClaimedStatusByEmail("pUbLiC_0000-0000-0000-0003@test.orcid.org"));
-        assertTrue(profileDao.getClaimedStatusByEmail("limited_0000-0000-0000-0003@test.orcid.org"));
-        assertTrue(profileDao.getClaimedStatusByEmail("private_0000-0000-0000-0003@test.orcid.org"));
-    }
+        assertFalse(profileDao.getClaimedStatusByEmailHash("8f649f6d12203f020ee26467547432add46bc5395ff8dd72242fa2d7aa4fc04a"));        
+        assertTrue(profileDao.getClaimedStatusByEmailHash("ecdc2c6aef7aa5aa4012b9e5f262de2214c9b0e3f3b0201da0eeebc7531ae018"));
+        assertTrue(profileDao.getClaimedStatusByEmailHash("c3ba0b26aceb622a04908c202927db3633bd1e748e049e4bd2b070d29b189aa4"));
+        assertTrue(profileDao.getClaimedStatusByEmailHash("71d1e18acf189e7b14e486a53691cef30249a3aedfd5b4c988b1754eb179e6b9"));
+        assertTrue(profileDao.getClaimedStatusByEmailHash("4cccdb9a8342f8e7e7b730b0870664f9428f6958082957ed36e22997525fe7ce"));
+    }       
     
     @Test
     @Rollback(true)
