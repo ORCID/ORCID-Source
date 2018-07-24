@@ -12,9 +12,11 @@
 
 <@emailMacros.msg "email.july_2018.paragraph.5.1" /> <@emailMacros.msg "email.july_2018.paragraph.5.1.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.1.url.link" />)<@emailMacros.msg "email.july_2018.paragraph.5.2" /> <@emailMacros.msg "email.july_2018.paragraph.5.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.2.url.link" />)
 
-Cheers,
-Laure Haak 
-Executive Director, ORCID
+<@emailMacros.msg "email.service_announcement.regards" />
+		
+<@emailMacros.msg "email.service_announcement.director.name" />
+		
+<@emailMacros.msg "email.service_announcement.director.title" />
 
 <@emailMacros.msg "email.july_2018.note.1" /> <@emailMacros.msg "email.july_2018.note.1.url.text" /> (<@emailMacros.msg "email.july_2018.note.1.url.link" />)<@emailMacros.msg "email.july_2018.note.2" /> <@emailMacros.msg "email.july_2018.note.2.url.link" /> (<@emailMacros.msg "email.july_2018.note.2.url.text" />)
 

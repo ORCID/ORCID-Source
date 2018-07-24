@@ -12,14 +12,14 @@ public class PeerReviewSummaryComparator implements Comparator<PeerReviewSummary
             return 0;
         }
         
-        if (x.getCompletionDate() == null) {
+        if (y.getCompletionDate() == null) {
             return -1;
         }
         
-        if (y.getCompletionDate() == null) {
+        if (x.getCompletionDate() == null) {
             return 1;
         }
-        return x.getCompletionDate().compareTo(y.getCompletionDate());
+        return y.getCompletionDate().compareTo(x.getCompletionDate());
     }
     
 }
