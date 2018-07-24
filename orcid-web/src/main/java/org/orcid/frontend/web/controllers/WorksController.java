@@ -795,6 +795,7 @@ public class WorksController extends BaseWorkspaceController {
      * @param value
      * @return "resolved" if it can be resolved, "resolvableType" if we attempted to resolve it.
      */
+    //TODO: move to PIDController.
     @RequestMapping(value = "/id/{type}", method = RequestMethod.GET)
     public @ResponseBody PIDResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value){        
         return resolverService.resolve(type, value);
