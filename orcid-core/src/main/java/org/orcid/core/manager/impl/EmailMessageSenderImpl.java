@@ -342,7 +342,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 NotificationTipEntity nc = (NotificationTipEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendEmail(fromAddressParam, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
                         nc.getBodyHtml());            
             }
             
