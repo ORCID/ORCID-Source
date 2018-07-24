@@ -6,6 +6,18 @@ import { NgIf }
 import { AfterViewInit, Component, ElementRef, Input, OnInit} 
     from '@angular/core';
 
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+
+import { takeUntil } 
+    from 'rxjs/operators';
+
+import { catchError, map, tap } 
+    from 'rxjs/operators';
+
+import { CommonService } 
+    from '../../shared/common.service.ts';
+
 import { UrlProtocolPipe }
     from '../../pipes/urlProtocolNg2.ts';
 
@@ -15,6 +27,8 @@ import { UrlProtocolPipe }
     providers: [ UrlProtocolPipe ]
 })
 export class ExtIdPopoverComponent implements OnInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
     
     @Input() extID: any;
     @Input() putCode: any;
@@ -27,6 +41,7 @@ export class ExtIdPopoverComponent implements OnInit {
     value: string;
 
     constructor(
+        private commonService: CommonService,
         private elementRef: ElementRef,
         private urlProtocol: UrlProtocolPipe
     ) {
@@ -80,6 +95,19 @@ export class ExtIdPopoverComponent implements OnInit {
         }
         if(this.url){
             this.urlProtocol.transform(this.url); 
+        } else {
+            this.commonService.getNormalizedExtId(this.extID)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.url = data.normUrl;
+                },
+                error => {
+                    console.log('getNormalizedUrl', error);
+                } 
+            );
         }
         
     }; 

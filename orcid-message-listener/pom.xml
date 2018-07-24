@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>orcid-message-listener</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.1.5-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>ORCID - Message Listener</name>
@@ -11,24 +11,23 @@
 
   <properties>
   	  <main.basedir>${project.parent.basedir}</main.basedir>
-    <branchVersion>1.1.5-SNAPSHOT</branchVersion>
   </properties>
   
   <dependencies>
          <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-utils</artifactId>
-            <version>${branchVersion}</version>
+            <version>${project.version}</version>
         </dependency>
          <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-model</artifactId>
-            <version>${branchVersion}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-test</artifactId>
-            <version>${branchVersion}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -135,7 +134,7 @@
   <parent>
   	<groupId>org.orcid</groupId>
   	<artifactId>orcid-parent</artifactId>
-  	<version>${branchVersion}</version>
+  	<version>1.1.5-SNAPSHOT</version>
   	<relativePath>../pom.xml</relativePath>
   </parent>
   
