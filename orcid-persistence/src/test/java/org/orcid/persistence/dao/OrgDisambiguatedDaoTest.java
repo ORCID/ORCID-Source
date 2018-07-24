@@ -8,12 +8,14 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,5 +50,26 @@ public class OrgDisambiguatedDaoTest extends DBUnitTest {
         assertEquals(1, pair.getLeft().longValue());
         assertEquals(48, pair.getRight().intValue());
     }
+    
+    @Test
+    @Transactional
+    public void testFindBySourceIdAndSourceType(){
+        /*<org_disambiguated
+            id="1"
+            name="An Institution"
+            city="London"
+            country="GB"
+            source_id="abc456"
+            source_type="WDB"
+            popularity="1"
+            />*/
+        OrgDisambiguatedEntity e = orgDisambiguatedDao.findBySourceIdAndSourceType("abc456", "WDB");
+        assertEquals("abc456",e.getSourceId());
+        assertEquals("WDB",e.getSourceType());
+        assertEquals("London",e.getCity());
+        assertEquals("An Institution",e.getName());
+        assertEquals("GB",e.getCountry());
+    }
+
 
 }

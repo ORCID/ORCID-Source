@@ -1,6 +1,9 @@
 package org.orcid.core.manager;
 
 import java.util.List;
+
+import javax.persistence.NoResultException;
+
 import org.orcid.pojo.OrgDisambiguated;
 
 /**
@@ -19,5 +22,7 @@ public interface OrgDisambiguatedManager {
     List<OrgDisambiguated> searchOrgsFromSolrForSelfService(String searchTerm, int firstResult, int maxResult);
     
     public OrgDisambiguated findInDB(Long id);
+    
+    public OrgDisambiguated findInDB(String idValue, String idType);
 
 }
