@@ -27,9 +27,10 @@
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.july_2018.paragraph.5.1" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.5.1.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.5.1.url.text" /></a><@emailMacros.msg "email.july_2018.paragraph.5.2" /> <a href="<@emailMacros.msg "email.july_2018.paragraph.5.2.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.5.2.url.text" /></a>
             </p>
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">Cheers,
-Laurel L. Haak
-Executive Director, ORCID
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;"><@emailMacros.msg "email.service_announcement.regards" />
+<@emailMacros.msg "email.service_announcement.director.name" />
+		 
+<@emailMacros.msg "email.service_announcement.director.title" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.july_2018.note.1" /> <a href="<@emailMacros.msg "email.july_2018.note.1.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.note.1.url.text" /></a><@emailMacros.msg "email.july_2018.note.2" /> <a href="<@emailMacros.msg "email.july_2018.note.2.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.note.2.url.text" /></a>
