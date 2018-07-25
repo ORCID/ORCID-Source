@@ -147,7 +147,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     changeExtIdType(i, event): void {
         this.cdr.detectChanges();
         event.preventDefault();
-        this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = event.item.name;            
+        this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = event.item.name;
         if (this.exIdResolverFeatureEnabled == true){
             if(this.editWork.workExternalIdentifiers[i].url == null) {
                 this.editWork.workExternalIdentifiers[i].url = {value:""};
@@ -180,7 +180,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 )
                 .subscribe(
                     data => {
-                        console.log(data);
                         this.editWork.workExternalIdentifiers[i].externalIdentifierId.errors = [];
                         if (data.generatedUrl){
                             if(this.editWork.workExternalIdentifiers[i].url == null) {
