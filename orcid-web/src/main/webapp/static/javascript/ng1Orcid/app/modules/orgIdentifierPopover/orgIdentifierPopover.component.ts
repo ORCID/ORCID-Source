@@ -43,10 +43,6 @@ export class OrgIdentifierPopoverComponent implements OnInit {
         private commonSrvc: CommonService,
         private elementRef: ElementRef
     ) {
-        /*this.value = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].disambiguatedAffiliationSourceId.value');
-        this.putCode = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].putCode.value');
-        this.type = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].disambiguationSource.value');*/
-
         this.GRID_BASE_URL = "https://www.grid.ac/institutes/";
         this.TEST_BASE_URL = "https://orcid.org/";
         this.displayURLPopOver = {};
@@ -60,9 +56,7 @@ export class OrgIdentifierPopoverComponent implements OnInit {
         )
         .subscribe(
             (data: OrgDisambiguated[]) => {
-                console.log(data);
                 this.commonSrvc.orgDisambiguatedDetails[type + value] = data;
-                console.log(this.commonSrvc.orgDisambiguatedDetails);
             },
             error => {
                 console.log('getDisambiguatedOrgDetailsError', error);

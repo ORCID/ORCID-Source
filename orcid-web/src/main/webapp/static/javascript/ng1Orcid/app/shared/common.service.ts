@@ -124,14 +124,15 @@ export class CommonService {
     };
 
     getDisambiguatedOrgDetails(type, value): Observable<OrgDisambiguated[]>{
+        console.log(value);
         return this.http.get<OrgDisambiguated[]>( 
-            getBaseUri() + '/orgs/disambiguated/' + type + '/' + value
+            getBaseUri() + '/orgs/disambiguated/' + type + '?value=' + encodeURIComponent(value)
         )
     };
 
     getNormalizedExtId(type, value): Observable<any>{
         return this.http.get( 
-            getBaseUri() + '/identifiers/norm/' + type + '?value=' + value
+            getBaseUri() + '/identifiers/norm/' + type + '?value=' + encodeURIComponent(value)
         )
     };
 

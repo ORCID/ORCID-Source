@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -42,8 +43,8 @@ public class OrgController {
         orgManager.writeDisambiguatedOrgs(response.getWriter());
     }
     
-    @RequestMapping(value = "/disambiguated/{idType}/{idValue}", method = RequestMethod.GET)
-    public ResponseEntity<OrgDisambiguated> getDisambiguatedOrg( @PathVariable("idValue") String idValue, @PathVariable("idType") String idType){
+    @RequestMapping(value = "/disambiguated/{idType}", method = RequestMethod.GET)
+    public ResponseEntity<OrgDisambiguated> getDisambiguatedOrg( @PathVariable("idType") String idType, @RequestParam("value") String idValue){
         OrgDisambiguated org = orgDisambiguatedManager.findInDB(idValue,idType);
         if (org == null)
             return new ResponseEntity<OrgDisambiguated>(HttpStatus.NOT_FOUND);
