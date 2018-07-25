@@ -61,7 +61,7 @@
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
                             <span *ngIf="editWork?.workType" class="required" [ngClass]="isValidClass(editWork.workType)">*</span>
 
-                            <select id="workType" name="workType" class="form-control" [ngModel]="editWork?.workType?.value" (ngModelChange)="clearErrors(); applyLabelWorkType();">
+                            <select id="workType" name="workType" class="form-control" [(ngModel)]="editWork.workType.value" (ngModelChange)="clearErrors(); applyLabelWorkType();">
                                 <option *ngFor="let type of types" value={{type.key}}>{{type.value}}</option>
                             </select>
 
