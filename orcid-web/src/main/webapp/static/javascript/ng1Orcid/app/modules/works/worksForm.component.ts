@@ -145,7 +145,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     changeExtIdType(i, event): void {
-        this.cdr.detectChanges();
         event.preventDefault();
         this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = event.item.name;
         if (this.exIdResolverFeatureEnabled == true){
@@ -171,7 +170,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     fillUrl(i): void {
         //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
         if (this.exIdResolverFeatureEnabled == true){
-            this.cdr.detectChanges();
             if (this.editWork.workExternalIdentifiers[i] && this.editWork.workExternalIdentifiers[i].externalIdentifierId.value && this.editWork.workExternalIdentifiers[i].externalIdentifierType.value){
                 this.editWork.workExternalIdentifiers[i].resolvingId = true;
                 this.worksService.resolveExtId(this.editWork.workExternalIdentifiers[i])
