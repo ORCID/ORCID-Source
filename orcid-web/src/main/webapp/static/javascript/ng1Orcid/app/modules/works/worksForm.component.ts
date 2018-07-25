@@ -292,6 +292,10 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 errors: {}, 
                 value: ""
             },
+            workType: {
+                errors: {}, 
+                value: ""
+            },
             workExternalIdentifiers: [
                 {
                     errors: {},
