@@ -20,7 +20,6 @@ import javax.annotation.Resource;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -56,6 +55,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class WorkManagerTest extends BaseTest {
@@ -81,6 +81,9 @@ public class WorkManagerTest extends BaseTest {
     
     @Resource
     private WorkDao workDao;
+    
+    @Value("${org.orcid.core.works.bulk.max:100}")
+    private Long maxBulkSize;
     
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
@@ -955,7 +958,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testFindWorkBulkInvalidPutCodes() {
-        String putCodes = "11,12,13,invalid";
+        String putCodes = "11,12,13,99999";
         WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes);
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
@@ -969,7 +972,7 @@ public class WorkManagerTest extends BaseTest {
     @Test(expected = ExceedMaxNumberOfPutCodesException.class)
     public void testFindWorkBulkTooManyPutCodes() {
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= WorkManagerReadOnlyImpl.MAX_BULK_PUT_CODES; i++) {
+        for (int i = 1; i <= maxBulkSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         
