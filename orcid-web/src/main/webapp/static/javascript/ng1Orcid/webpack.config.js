@@ -3,7 +3,7 @@ var webpack = require('webpack');
 module.exports = {
     context: __dirname + "/",
     entry: "./require.js",
-    mode: 'development',
+    mode: 'production',
     module: {
         rules: [{
             test: /\.ts$/, 
