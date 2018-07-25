@@ -76,6 +76,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
+      distinctUntilChanged(),
       map(term => term === '' ? []
         : this.externalIDTypeCache.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     );
@@ -142,10 +143,26 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
         this.worksService.notifyOther({action:'cancel', successful:true});
     };
-
+    
     changeExtIdType(i, event): void {
-        event.preventDefault();
-        this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = event.item.name;
+        console.log("1:");
+        console.log(this.editWork.workExternalIdentifiers[i]);//selectItemEvent = {item:{name: "doi", description: "doi: Digital object identifier", resolutionPrefix: "https://doi.org/"}}
+        this.cdr.detectChanges();
+        console.log("2:");
+        console.log(this.editWork.workExternalIdentifiers[i]);
+        //on blur, the model is not updated!
+        if (event){ //this is when it's selected, missing on blur
+            event.preventDefault();
+            this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = event.item.name;            
+        }else{
+            //check it's a valid value on blur
+            console.log("blur");
+            if (!this.externalIDNamesToDescriptions[this.editWork.workExternalIdentifiers[i].externalIdentifierType.value]){
+                this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = "";
+                this.cdr.detectChanges();
+                return;
+            }
+        }
         if (this.exIdResolverFeatureEnabled == true){
             if(this.editWork.workExternalIdentifiers[i].url == null) {
                 this.editWork.workExternalIdentifiers[i].url = {value:""};
@@ -169,7 +186,14 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     fillUrl(i): void {
         //if we have a value and type, generate URL.  If no URL, but attempted resolution, show warning.
         if (this.exIdResolverFeatureEnabled == true){
+            this.cdr.detectChanges();
+            console.log("A:");
+            console.log(this.editWork.workExternalIdentifiers[i]);
+            console.log(this.editWork.workExternalIdentifiers[i].externalIdentifierId.value);
+            console.log(this.editWork.workExternalIdentifiers[i].externalIdentifierType.value);
             if (this.editWork.workExternalIdentifiers[i] && this.editWork.workExternalIdentifiers[i].externalIdentifierId.value && this.editWork.workExternalIdentifiers[i].externalIdentifierType.value){
+                console.log("B:");
+                console.log(this.editWork.workExternalIdentifiers[i]);
                 this.editWork.workExternalIdentifiers[i].resolvingId = true;
                 this.worksService.resolveExtId(this.editWork.workExternalIdentifiers[i])
                 .pipe(    
@@ -177,6 +201,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 )
                 .subscribe(
                     data => {
+                        console.log(data);
                         this.editWork.workExternalIdentifiers[i].externalIdentifierId.errors = [];
                         if (data.generatedUrl){
                             if(this.editWork.workExternalIdentifiers[i].url == null) {
@@ -214,9 +239,13 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     formatExtIdTypeInput = function(input) {
+        console.log("X:");
+        console.log(input);
         if (typeof(input)=='object' && input.name){
-           return this.externalIDNamesToDescriptions[input.name].description; 
+            console.log(this.externalIDNamesToDescriptions[input.name].description);
+            return this.externalIDNamesToDescriptions[input.name].description; 
         } else if (typeof(input)=='string' && input != "")  {
+            console.log(this.externalIDNamesToDescriptions[input].description);
             return this.externalIDNamesToDescriptions[input].description;
         } else {
             return "";
