@@ -28,6 +28,9 @@ import { ModalService }
 
 import { WorkspaceService } 
     from '../../shared/workspace.service.ts'; 
+
+import { OrgDisambiguated } 
+    from '../orgIdentifierPopover/orgDisambiguated.ts';
     
 @Component({
     selector: 'research-resource-ng2',
@@ -151,35 +154,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                 data => {
                     console.log(data);
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
-                    this.researchResourceService.details[putCode] = data;
-                    
-                    if(data.proposal.hosts.organization){
-                        for(var idx in data.proposal.hosts.organization){
-                            if(data.proposal.hosts.organization[idx].disambiguatedOrganization){
-                                var id = data.proposal.hosts.organization[idx].disambiguatedOrganization.disambiguationSource + data.proposal.hosts.organization[idx].disambiguatedOrganization.disambiguatedOrganizationIdentifier.toString();
-                                    if(this.orgDisambiguatedDetails[id] == undefined){
-                                        this.getDisambiguatedOrgDetails(data.proposal.hosts.organization[idx].disambiguatedOrganization);
-                                }
-                            }
-                        }
-
-                    }
-
-                    if(data.resourceItems){
-                        for(var idx in data.resourceItems){
-                            if(data.resourceItems[idx].hosts.organization){
-                                for(var idy in data.resourceItems[idx].hosts.organization){
-                                    if(data.resourceItems[idx].hosts.organization[idy].disambiguatedOrganization){
-                                        var id = data.resourceItems[idx].hosts.organization[idy].disambiguatedOrganization.disambiguationSource + data.resourceItems[idx].hosts.organization[idy].disambiguatedOrganization.disambiguatedOrganizationIdentifier.toString();
-
-                                        if(this.orgDisambiguatedDetails[id] == undefined){
-                                            this.getDisambiguatedOrgDetails(data.resourceItems[idx].hosts.organization[idy].disambiguatedOrganization);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }    
+                    this.researchResourceService.details[putCode] = data;   
                 },
                 error => {
                     console.log('getDetailsError', error);
@@ -194,34 +169,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                 data => {
                     console.log(data);
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
-                    this.researchResourceService.details[putCode] = data;
-
-                    if(data.proposal.hosts.organization){
-                        for(var idx in data.proposal.hosts.organization){
-                            if(data.proposal.hosts.organization[idx].disambiguatedOrganization){
-                                var id = data.proposal.hosts.organization[idx].disambiguatedOrganization.disambiguationSource + data.proposal.hosts.organization[idx].disambiguatedOrganization.disambiguatedOrganizationIdentifier.toString();
-                                    if(this.orgDisambiguatedDetails[id] == undefined){
-                                        this.getDisambiguatedOrgDetails(data.proposal.hosts.organization[idx].disambiguatedOrganization);
-                                }
-                            }
-                        }
-                    }
-
-                    if(data.resourceItems){
-                        for(var idx in data.resourceItems){
-                            if(data.resourceItems[idx].hosts.organization){
-                                for(var idy in data.resourceItems[idx].hosts.organization){
-                                    if(data.resourceItems[idx].hosts.organization[idy].disambiguatedOrganization){
-                                        var id = data.resourceItems[idx].hosts.organization[idy].disambiguatedOrganization.disambiguationSource + data.resourceItems[idx].hosts.organization[idy].disambiguatedOrganization.disambiguatedOrganizationIdentifier.toString();
-
-                                        if(this.orgDisambiguatedDetails[id] == undefined){
-                                            this.getDisambiguatedOrgDetails(data.resourceItems[idx].hosts.organization[idy].disambiguatedOrganization);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }    
+                    this.researchResourceService.details[putCode] = data;   
                 },
                 error => {
                     console.log('getDetailsError', error);
@@ -230,22 +178,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         }
     }
 
-    getDisambiguatedOrgDetails(disambiguatedOrganization): void {
-        this.commonSrvc.getDisambiguatedOrgDetails(disambiguatedOrganization.disambiguationSource, disambiguatedOrganization.disambiguatedOrganizationIdentifier)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                console.log(data);
-                this.orgDisambiguatedDetails[disambiguatedOrganization.disambiguationSource + disambiguatedOrganization.disambiguatedOrganizationIdentifier] = data;
-                console.log(this.orgDisambiguatedDetails);
-            },
-            error => {
-                console.log('getDisambiguatedOrgDetailsError', error);
-            } 
-        );
-    }
+    
 
     hideSources(group): void {
         this.editSources[group.groupId] = false;

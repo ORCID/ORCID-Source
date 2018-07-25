@@ -165,50 +165,8 @@
                                     <div class="org-ids" *ngIf="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier">
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+                                            
                                             <org-identifier-popover-ng2 [value]="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier" [putCode]="researchResource.putCode+i" [type]="host?.disambiguatedOrganization?.disambiguationSource"></org-identifier-popover-ng2>
-                                        </div>
-                                        <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
-                                            <!--Org disambiguated name-->
-                                            <span *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.value">{{orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.value}}</span>
-
-                                            <!--Org disambiguated city-->
-                                            <span *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.city || orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.region || orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.country">: </span>
-
-                                            
-                                            <span *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.city">{{orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.city}}</span>
-
-                                            <!--Org disambiguated region-->
-                                            <span *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.city && orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.region">, </span>
-
-                                            
-                                            <span *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.region">{{orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.region}}</span>
-
-                                            <!--Org disambiguated country-->
-                                            <span *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.country && (orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.city || orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.region)">, </span>
-                                            <span *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.country">{{orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.country}}</span>
-
-                                            <!--Org disambiguated URL-->
-                                            <span *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.url"><br>
-                                                <a href="{{orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.url}}" target="url">
-                                                <span>{{orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.url}}</span></a>
-                                            </span> 
-
-                                            <!--Org disambiguated ext ids-->
-                                            <div *ngIf="orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.orgDisambiguatedExternalIdentifiers">
-                                                <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group?.defaultAffiliation?.disambiguationSource.value}}</strong><br>
-                                                <ul class="reset">
-                                                    <li *ngFor="let orgDisambiguatedExternalIdentifier of orgDisambiguatedDetails[host?.disambiguatedOrganization?.disambiguationSource+host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier]?.orgDisambiguatedExternalIdentifiers">
-                                                        {{orgDisambiguatedExternalIdentifier.identifierType}}: <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span> 
-                                                        <!-- Put the ',' only if there is more than one ext id or if the only one is not the same as the preferred one -->
-                                                        <span *ngIf="orgDisambiguatedExternalIdentifier.all && (orgDisambiguatedExternalIdentifier.all.length > 1 || (orgDisambiguatedExternalIdentifier.preferred && (orgDisambiguatedExternalIdentifier.all[0] != orgDisambiguatedExternalIdentifier.preferred)))">,</span>   
-                                                        <span *ngIf="orgDisambiguatedExternalIdentifier.all">
-                                                            <span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all;let last = last">
-                                                                <span *ngIf="orgDisambiguatedExternalIdentifierAll != orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifierAll}}{{last ? '' : ', '}}</span>                                        
-                                                            </span>
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>  
                                         </div>
                                     </div><!--org-ids-->
                                 </div>

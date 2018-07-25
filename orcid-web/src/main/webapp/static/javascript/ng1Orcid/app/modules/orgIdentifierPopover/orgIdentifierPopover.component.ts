@@ -8,6 +8,18 @@ import { NgIf }
 import { AfterViewInit, Component, ElementRef, Input, OnInit} 
     from '@angular/core';
 
+import { Observable, Subject, Subscription } 
+    from 'rxjs';
+
+import { takeUntil } 
+    from 'rxjs/operators';
+
+import { CommonService } 
+    from '../../shared/common.service.ts';
+
+import { OrgDisambiguated } 
+    from '../orgIdentifierPopover/orgDisambiguated.ts';
+
 @Component({
     selector: 'org-identifier-popover-ng2',
     template:  scriptTmpl("org-identifier-popover-ng2-template")
@@ -18,6 +30,9 @@ export class OrgIdentifierPopoverComponent implements OnInit {
     @Input() putCode: any;
     @Input() type: any;
 
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
+
     GRID_BASE_URL: any;
     TEST_BASE_URL: any;
     displayType: any;
@@ -25,16 +40,34 @@ export class OrgIdentifierPopoverComponent implements OnInit {
     link: any;
 
     constructor(
+        private commonSrvc: CommonService,
         private elementRef: ElementRef
     ) {
-        this.value = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].disambiguatedAffiliationSourceId.value');
+        /*this.value = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].disambiguatedAffiliationSourceId.value');
         this.putCode = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].putCode.value');
-        this.type = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].disambiguationSource.value');
+        this.type = elementRef.nativeElement.getAttribute('group.activities[group.activePutCode].disambiguationSource.value');*/
 
         this.GRID_BASE_URL = "https://www.grid.ac/institutes/";
         this.TEST_BASE_URL = "https://orcid.org/";
         this.displayURLPopOver = {};
         this.link = null;
+    }
+
+    getDisambiguatedOrgDetails(type, value): void {
+        this.commonSrvc.getDisambiguatedOrgDetails(type, value)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            (data: OrgDisambiguated[]) => {
+                console.log(data);
+                this.commonSrvc.orgDisambiguatedDetails[type + value] = data;
+                console.log(this.commonSrvc.orgDisambiguatedDetails);
+            },
+            error => {
+                console.log('getDisambiguatedOrgDetailsError', error);
+            } 
+        );
     }
 
     hideURLPopOver(id): void{
@@ -65,6 +98,9 @@ export class OrgIdentifierPopoverComponent implements OnInit {
             }
             
         } 
+        if(this.type && this.value){
+            this.getDisambiguatedOrgDetails(this.type, this.value);
+        }
           
     }; 
 }

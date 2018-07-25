@@ -9,13 +9,19 @@ import { HttpClient, HttpClientModule, HttpHeaders, HttpParams }
 import { Observable, Subject } 
     from 'rxjs';
 
+import { OrgDisambiguated } 
+    from '../modules/orgIdentifierPopover/orgDisambiguated.ts';
+
 @Injectable()
 export class CommonService {
     private shownElement: any;
 
+    public orgDisambiguatedDetails: any;
+
     constructor(
         private http: HttpClient
     ) {
+        this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
     }
 
@@ -117,8 +123,8 @@ export class CommonService {
         return isMobile()? '100%': '800px';
     };
 
-    getDisambiguatedOrgDetails(type, value): Observable<any>{
-        return this.http.get( 
+    getDisambiguatedOrgDetails(type, value): Observable<OrgDisambiguated[]>{
+        return this.http.get<OrgDisambiguated[]>( 
             getBaseUri() + '/orgs/disambiguated/' + type + '/' + value
         )
     };
