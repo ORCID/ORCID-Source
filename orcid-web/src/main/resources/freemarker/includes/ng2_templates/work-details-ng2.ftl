@@ -120,7 +120,7 @@
                         <ul class="id-details clearfix">
                             <li class="url-work clearfix">
                                 <ul class="id-details clearfix">
-                                    <li *ngFor='let extID of work?.workExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                                    <li *ngFor='let extID of work?.workExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["relationship.value", "type.value"]' class="url-popover">
                                         <span *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
                                             <ext-id-popover-ng2 [extID]="extID" [putCode]="work.putCode.value+i" [activityType]="'work'"></ext-id-popover-ng2>
                                         </span>
