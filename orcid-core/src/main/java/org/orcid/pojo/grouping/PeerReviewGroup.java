@@ -20,7 +20,7 @@ public class PeerReviewGroup implements Serializable {
     
     private String type;
     
-    private long id;
+    private long groupId;
     
     public List<PeerReviewForm> getPeerReviews() {
         return peerReviews;
@@ -46,12 +46,12 @@ public class PeerReviewGroup implements Serializable {
         this.description = description;
     }
 
-    public long getId() {
-        return id;
+    public long getGroupId() {
+        return groupId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
     }
     
     public String getType() {
@@ -71,7 +71,7 @@ public class PeerReviewGroup implements Serializable {
         group.setName(groupName);
         group.setType(type);
         group.setDescription(groupDescription);
-        group.setId(groupIdRecord.getPutCode());
+        group.setGroupId(groupIdRecord.getPutCode());
         group.setPeerReviews(new ArrayList<>());
 
         for (PeerReviewSummary peerReviewSummary : peerReviewGroup.getPeerReviewSummary()) {

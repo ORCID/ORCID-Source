@@ -33,7 +33,7 @@
             </div>
             <h2><@orcid.msg 'manage.email.email_frequency.news.header' /></h2>
             <div class="control-group">
-                <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips"/>
+                <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips"/>&nbsp;
                 <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
             </div>                
             <div class="controls">

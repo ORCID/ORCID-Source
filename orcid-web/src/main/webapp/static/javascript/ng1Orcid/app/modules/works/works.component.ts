@@ -324,8 +324,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.elementRef.nativeElement.append(anchor);
                     anchor.setAttribute('href', 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data));
                     anchor.setAttribute('target', '_self');
-                    anchor.setAttribute('download', 'works.bib');  
-                    anchor[0].click();
+                    anchor.setAttribute('download', 'works.bib');
+                    anchor.click();
                     anchor.remove();
                 }
             },
@@ -391,10 +391,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             }
                             
                             callback(bestMatch);
-                        }
-                    );
+                        }.bind(this)
+                    )
                 }
-            }
+            }.bind(this)
         );
     }
 
@@ -426,6 +426,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }
         return false;
+    };
+
+    hideAllTooltip(): void {
+        for (var idx in this.showElement){
+            this.showElement[idx]=false;
+        }
     };
 
     hideSources(group): void {
@@ -631,6 +637,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openEditWork(putCode): void{
+        console.log(putCode);
         this.getEditable(putCode, function(data) {
             this.addWorkModal(data);
         }.bind(this));
@@ -797,9 +804,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showSources(group, $event): void {
         $event.stopPropagation();
         this.editSources[group.groupId] = true;
+        this.hideAllTooltip();
     };
 
-    showTooltip(key): void{        
+    showTooltip(key): void{       
         this.showElement[key] = true;     
     };
 

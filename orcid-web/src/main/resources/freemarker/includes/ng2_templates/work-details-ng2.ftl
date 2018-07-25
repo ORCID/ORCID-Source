@@ -1,7 +1,7 @@
 <div class="work-list-container">
     <ul class="sources-edit-list">
         <!--Edit sources-->
-        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}" [(ngModel)]="group.works">
+        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}">
             <div class="sources-header">
                 <div class="row">
                     <div class="col-md-7 col-sm-7 col-xs-6">
@@ -393,7 +393,7 @@
                             </li>
 
                             <li *ngIf="!(editSources[group.groupId] || group?.works?.length == 1)">
-                                <a (click)="showSources(group)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
+                                <a (click)="showSources(group,$event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
                                 <div class="popover popover-tooltip top delete-group-popover" *ngIf="showElement[group.groupId+'-deleteGroup']">

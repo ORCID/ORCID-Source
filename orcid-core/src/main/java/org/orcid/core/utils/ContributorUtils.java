@@ -119,8 +119,8 @@ public class ContributorUtils {
     
     private Map<String, String> getContributorNamesFromDB(Set<String> ids) {
         Iterable<List<String>> it = Iterables.partition(ids, BATCH_SIZE);
-        Map<String, String> contributorNames = new HashMap<String, String>();        
-        for(List<String> idsList : it) {            
+        Map<String, String> contributorNames = new HashMap<String, String>();
+        for(List<String> idsList : it) {
             List<RecordNameEntity> entities = recordNameDao.getRecordNames(idsList);
             if(entities != null) {
                 for(RecordNameEntity entity : entities) {

@@ -174,7 +174,7 @@ public abstract class QuarterlyNotificationsManager {
     }
     
     protected Locale getUserLocale(String localeStr) {
-        if(LOCALIZED) {
+        if(!LOCALIZED) {
             return Locale.ENGLISH;
         } 
         
