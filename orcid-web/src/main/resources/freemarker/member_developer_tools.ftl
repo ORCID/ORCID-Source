@@ -288,6 +288,21 @@
 								<textarea class="input-xlarge authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>
 							</span>
 						</div>
+						
+						<div class="row">
+							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.openid'/></strong></span>
+							<span class="col-md-9 col-sm-9 col-xs-12">
+								{{authorizeUrlBase}}<br />
+								<@orcid.msg 'manage.developer_tools.view.available_scopes.openid.description'/> (<a href="<@orcid.msg 'manage.developer_tools.view.example.opendid.url' />" target="openidWiki"><@orcid.msg 'manage.developer_tools.view.example.openid.text' /></a>)
+							</span>
+						</div>
+						<div class="row">
+							<span class="col-md-3 col-sm-3 col-xs-12"></span>
+							<span class="col-md-9 col-sm-9 col-xs-12">
+								<textarea class="input-xlarge authorizeURL" ng-model="sampleOpenId" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>
+							</span>
+						</div>
+						
 					</div>
 					<!-- Google playground example -->
 					<div ng-hide="playgroundExample == ''">
@@ -297,7 +312,12 @@
 								<span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
 								<span ng-show="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
 								<span ng-show="selectedRedirectUri.value.value == swaggerMemberUri"><@orcid.msg 'manage.developer_tools.view.example.swagger_member'/></span>
-							</a></span>
+							</a></span><br/>
+							<span ng-show="selectedRedirectUri.value.value == googleUri">
+								<a href="{{googleExampleLinkOpenID}}" target="'manage.developer_tools.view.example.google">
+									<@orcid.msg 'manage.developer_tools.view.example.googleOIDC'/>
+								</a>
+							</span>
 						</div>
 					</div>
 				</div>
