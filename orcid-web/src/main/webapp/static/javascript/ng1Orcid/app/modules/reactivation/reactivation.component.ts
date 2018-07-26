@@ -6,7 +6,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, EventEmitter, Output } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -31,6 +31,8 @@ import { ReactivationService }
     template:  scriptTmpl("reactivation-ng2-template")
 })
 export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
+    @Output() sendReactivationEmail: EventEmitter<any> = new EventEmitter<any>();
+    
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     privacyHelp: any;
@@ -123,6 +125,11 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     updateActivitiesVisibilityDefault(priv, $event): void {
         this.registrationForm.activitiesVisibilityDefault.visibility = priv;
     };
+    
+    sendReactivation(email?): void {
+        let _email = email;
+        this.sendReactivationEmail.emit(_email);
+    }
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

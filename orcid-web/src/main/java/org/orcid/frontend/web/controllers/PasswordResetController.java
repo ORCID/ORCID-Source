@@ -261,6 +261,7 @@ public class PasswordResetController extends BaseController {
         ModelAndView mav = new ModelAndView("reactivation");
         if (isTokenExpired(passwordResetToken)) {
             mav.addObject("reactivationLinkExpired", true);
+            mav.addObject("email", passwordResetToken.getEmail());
         }
         mav.addObject("resetParams", resetParams);
         return mav;
@@ -305,11 +306,13 @@ public class PasswordResetController extends BaseController {
     public void validateReactivationFields(HttpServletRequest request, Registration reg) {
         reg.setErrors(new ArrayList<String>());
 
+        activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
         givenNameValidate(reg.getGivenNames());
         passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
         passwordConfirmValidate(reg.getPasswordConfirm(), reg.getPassword());
         termsOfUserValidate(reg.getTermsOfUse());
 
+        copyErrors(reg.getActivitiesVisibilityDefault(), reg);
         copyErrors(reg.getGivenNames(), reg);
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
