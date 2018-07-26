@@ -121,8 +121,7 @@ export class OauthService {
     }
 
     sendReactivationEmail( email ): Observable<any> {        
-        const params = new HttpParams().set('email', encodeURIComponent(email)).toString();
-        console.log('params:' + params)
+        const params = new HttpParams().set('email', encodeURIComponent(email)).toString();        
         return this.http.post( 
             getBaseUri() + '/sendReactivation.json', 
             params, 

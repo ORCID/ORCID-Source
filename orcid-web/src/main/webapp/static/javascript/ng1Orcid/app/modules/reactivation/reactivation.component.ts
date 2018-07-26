@@ -127,6 +127,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     sendReactivation(email?): void {
+        console.log('Sending reactivation email')
         let _email = email;
         this.sendReactivationEmail.emit(_email);
     }
