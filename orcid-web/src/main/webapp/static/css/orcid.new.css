@@ -3407,7 +3407,8 @@ p.orcid-id-container {
 
 #currencyCode {
     width: 20%;
-    float: left
+    float: left;
+    margin-right: 0;
 }
 
 #fundingAmount {
@@ -8116,9 +8117,8 @@ ul.comma li:last-child:after {
     left: -128px;
 }
 
-.lang-rl #cboxContent,
-.lang-rl #cboxLoadedContent {
-    overflow: visible!important;
+.lang-rl #cboxContent {
+    overflow: scroll!important;
 }
 
 .lang-rl #idpSelectInput {
@@ -8264,9 +8264,9 @@ ul.comma li:last-child:after {
     z-index: 1
 }
 
-.lang-rl .id-details .url-work .id-details li span span {
+.lang-rl .id-details .url-work .id-details li span:first-child {
     float: right;
-    margin-right: -15px
+    margin-right: -8px;
 }
 
 .lang-rl .lhs {
