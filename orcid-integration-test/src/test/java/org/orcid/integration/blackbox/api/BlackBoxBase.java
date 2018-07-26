@@ -26,6 +26,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -553,7 +554,7 @@ public class BlackBoxBase {
 
     public static void saveOtherNamesModal() {
         ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));
-        waitForNoCboxOverlay();
+        waitForAngular();
         waitForElementVisibility(By.id("open-edit-other-names"));
     }
 
@@ -578,14 +579,14 @@ public class BlackBoxBase {
     }
 
     public static void saveKeywordsModal() {
-        ngAwareClick(findElementByXpath("//keywords-form-ng2//button[contains('Save changes',text())]"));  
-        waitForNoCboxOverlay();
+        ngAwareClick(findElementByXpath("//div[contains(@class, 'edit-keyword')]//button[contains('Save changes',text())]"));  
+        waitForAngular();
         waitForElementVisibility(By.id("open-edit-keywords"));        
     }        
 
     public static void changeKeywordsVisibility(String visibility) {
         int index = getPrivacyIndex(visibility);
-        String keywordsVisibilityXpath = "//keywords-form-ng2//div[@class='row aka-row']//ul[@class='privacyToggle']/li[" + index +"]";
+        String keywordsVisibilityXpath = "//div[contains(@class, 'edit-keyword')]//div[@class='row aka-row']//ul[@class='privacyToggle']/li[" + index +"]";
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(keywordsVisibilityXpath));                
         for (int i = 0; i < visibilityElements.size(); i++) {
             BBBUtil.ngAwareClick(visibilityElements.get(i), webDriver);
@@ -595,7 +596,7 @@ public class BlackBoxBase {
     }
     
     public static void createKeyword(String value) {
-        By addNew = By.xpath("//keywords-form-ng2//span[contains(@class, 'glyphicon-plus')]");
+        By addNew = By.xpath("//div[contains(@class, 'edit-keyword')]//span[contains(@class, 'glyphicon-plus')]");
         waitForElementVisibility(addNew);
         waitForAngular();
         ngAwareClick(findElement(addNew));
@@ -606,7 +607,7 @@ public class BlackBoxBase {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        By emptyInput = By.xpath("(//keywords-form-ng2//input)[last()]");
+        By emptyInput = By.xpath("(//div[contains(@class, 'edit-keyword')]//input)[last()]");
         waitForElementVisibility(emptyInput);
         WebElement input = findElement(emptyInput);
         input.sendKeys(value);
@@ -615,7 +616,7 @@ public class BlackBoxBase {
     
     public static void deleteKeywords() {
         waitForAngular();
-        By rowBy = By.xpath("//keywords-form-ng2//div[@class='row aka-row']");
+        By rowBy = By.xpath("//div[contains(@class, 'edit-keyword')]//div[@class='row aka-row']");
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
@@ -632,8 +633,8 @@ public class BlackBoxBase {
     }
 
     public static void saveEditAddressModal() {
-        ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));
-        waitForNoCboxOverlay();
+        ngAwareClick(findElementByXpath("//div[contains(@class, 'edit-country')]//button[contains('Save changes',text())]"));
+        waitForAngular();
         waitForElementVisibility(By.id("country-open-edit-modal"));        
     }    
 
@@ -681,8 +682,8 @@ public class BlackBoxBase {
     }
     
     public static void saveResearcherUrlsModal() {
-        ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));  
-        waitForNoCboxOverlay();
+        ngAwareClick(findElementByXpath("//div[contains(@class, 'edit-websites')]//button[contains('Save changes',text())]"));      
+        waitForAngular();
         waitForElementVisibility(By.id("open-edit-websites"));
     }
     
@@ -734,8 +735,8 @@ public class BlackBoxBase {
     }
     
     public static void saveExternalIdentifiersModal() {
-        ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)));        
-        waitForNoCboxOverlay();
+        ngAwareClick(findElementByXpath("//div[contains(@class, 'edit-external-identifiers')]//button[contains('Save changes',text())]"));      
+        waitForAngular();
     }
     
     public static void deleteAllExternalIdentifiersInModal() {
@@ -789,50 +790,53 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-work-container")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-work")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-work")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+        BBBUtil.waitForAngular();
     }
     
     public static void changeWorksVisibility(String title, String visibility) {
+        waitForAngular();
         int index = getPrivacyIndex(visibility);
-        String workVisibilityXpath = "//li[@orcid-put-code and descendant::span[text()='" + title + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        String workVisibilityXpath = "//li[descendant::span[text()='" + title + "']]//ul[@class='privacyToggle']/li[" + index + "]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(workVisibilityXpath)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(workVisibilityXpath)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }    
     
     public static void createWork(String workTitle) {
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//select[@ng-model='editWork.workCategory.value']")), webDriver);
-        BBBUtil.ngAwareSendKeys("conference","workCategory", webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//option[text()='Conference paper']")), webDriver);
-        BBBUtil.ngAwareSendKeys("string:conference-abstract","workType", webDriver);
+        By conferenceBy = By.xpath("//select[@id='workCategory']/option[text()='Conference']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(conferenceBy), webDriver);
+        BBBUtil.ngAwareClick(findElement(conferenceBy));
+        By conferencePaperBy = By.xpath("//option[text()='Conference paper']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(conferencePaperBy), webDriver);
+        BBBUtil.ngAwareClick(findElement(conferencePaperBy));
         
         //Pick the identifier type from the list 
-        WebElement input = findElement(By.id("worksIdType0"));
+        WebElement input = findElement(By.id("workIdType0"));
         input.sendKeys("doi");
-        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath("//a[starts-with(@title,\"doi\")]")), webDriver);
-        WebElement typeAheadList = BBBUtil.findElement(By.xpath("//a[starts-with(@title,\"doi\")]"));
+        By typeAheadBy = By.xpath("//span[@class='ngb-highlight']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(typeAheadBy), webDriver);
+        WebElement typeAheadList = BBBUtil.findElement(typeAheadBy);
         typeAheadList.click();
         
-        BBBUtil.ngAwareSendKeys("10.10/"+System.currentTimeMillis(),"worksIdValue0", webDriver);
-        BBBUtil.ngAwareSendKeys(workTitle, "work-title", webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        ((JavascriptExecutor)webDriver).executeScript("$('#save-new-work').click();");
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+        findElement(By.id("workIdValue0")).sendKeys("10.10/" + System.currentTimeMillis());
+        findElement(By.id("work-title")).sendKeys(workTitle);
+        BBBUtil.waitForAngular();  
+        BBBUtil.ngAwareClick(findElementById("save-new-work"));
+        BBBUtil.waitForAngular();     
     }
     
     public static void deleteWork(String workTitle) {
-        By byWorkTitle = By.xpath("//span[@ng-bind='work.title.value' and text()='" + workTitle + "']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
-        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
-        if (wList.size() > 0)
-            for (WebElement we : wList) {
-                String putCode = we.getAttribute("orcid-put-code");
-                putCode = "" + putCode;
-                String deleteJsStr = "angular.element(document.body).injector().get('worksSrvc').deleteWork('" + putCode + "');";
-                ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
-                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
-            }
+        waitForAngular();
+        By byWorkTitle = By.xpath("(//li[descendant::span[text() = '" + workTitle + "']])[1]");
+        WebElement element = null;
+        try {
+            element = webDriver.findElement(byWorkTitle);
+        } catch (NoSuchElementException e) {
+            return;
+        }
+        WebElement deleteButton = element.findElement(By.xpath(".//span[@class='glyphicon glyphicon-trash']"));
+        ngAwareClick(deleteButton);
+        ngAwareClick(findElementByXpath("//div[h3/text()='Please confirm deletion of work: ']/div[contains(text(), 'Delete')]"));
         BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byWorkTitle)), webDriver);
         assertTrue(0 == webDriver.findElements(byWorkTitle).size());
     }
@@ -905,8 +909,9 @@ public class BlackBoxBase {
     }
     
     public static void deleteEducation(String institutionName) {
+        waitForAngular();
         By byInstitutionName = By.xpath("//span[@ng-bind-html='group.getActive().affiliationName.value' and text()='" + institutionName + "']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications']")), webDriver);
         List<WebElement> wList = webDriver.findElements(By.xpath("//*[@education-put-code and descendant::span[text() = '" + institutionName + "']]"));
         if (wList.size() > 0)
             for (WebElement we : wList) {
@@ -914,7 +919,7 @@ public class BlackBoxBase {
                 putCode = "" + putCode;
                 String deleteJsStr = "angular.element(document.body).injector().get('affiliationsSrvc').deleteAffiliation({'putCode': {'value': '" + putCode + "'},'affiliationType': {'value': 'education'}});";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
-                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications']")), webDriver);
             }
         BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byInstitutionName)), webDriver);
         assertTrue(0 == webDriver.findElements(byInstitutionName).size());
@@ -968,8 +973,9 @@ public class BlackBoxBase {
     }
     
     public static void deleteEmployment(String institutionName) {
+        waitForAngular();
         By byInstitutionName = By.xpath("//span[@ng-bind-html='group.getActive().affiliationName.value' and text()='" + institutionName + "']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications']")), webDriver);
         List<WebElement> wList = webDriver.findElements(By.xpath("//*[@employment-put-code and descendant::span[text() = '" + institutionName + "']]"));
         if (wList.size() > 0)
             for (WebElement we : wList) {
@@ -977,7 +983,7 @@ public class BlackBoxBase {
                 putCode = "" + putCode;
                 String deleteJsStr = "angular.element(document.body).injector().get('affiliationsSrvc').deleteAffiliation({'putCode': {'value': '" + putCode + "'},'affiliationType': {'value': 'employment'}});";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
-                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications']")), webDriver);
             }
         BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byInstitutionName)), webDriver);
         assertTrue(0 == webDriver.findElements(byInstitutionName).size());
@@ -1039,8 +1045,9 @@ public class BlackBoxBase {
     }
     
     public static void deleteFunding(String fundingTitle) {
+        waitForAngular();
         By byFundingTitle = By.xpath("//span[@ng-bind='group.getActive().fundingTitle.title.value' and text()='" + fundingTitle + "']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications']")), webDriver);
         List<WebElement> wList = webDriver.findElements(By.xpath("//*[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
         if (wList.size() > 0)
             for (WebElement we : wList) {
@@ -1048,7 +1055,7 @@ public class BlackBoxBase {
                 putCode = "" + putCode;
                 String deleteJsStr = "angular.element(document.body).injector().get('fundingSrvc').deleteFunding('" + putCode + "');";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
-                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications']")), webDriver);
             }
         BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byFundingTitle)), webDriver);
         assertTrue(0 == webDriver.findElements(byFundingTitle).size());
@@ -1059,7 +1066,7 @@ public class BlackBoxBase {
      * */
     public static void changePeerReviewVisibility(String groupName, String visibility) {
         int index = getPrivacyIndex(visibility);
-        String peerReviewVisibilityXpath = "//li[@orcid-put-code and descendant::span[text()='" + groupName + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        String peerReviewVisibilityXpath = "//li[descendant::span[text()='" + groupName + "']]//div[@id='privacy-bar']/ul/li[" + index + "]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(peerReviewVisibilityXpath)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(peerReviewVisibilityXpath)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
@@ -1260,7 +1267,7 @@ public class BlackBoxBase {
     }
     
     public boolean workAppearsInPublicPage(String workTitle) {                                                
-        String publicWorkXpath = "//li[@orcid-put-code and descendant::span[text()='" + workTitle + "']]";
+        String publicWorkXpath = "//li[descendant::span[text()='" + workTitle + "']]";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicWorkXpath)), webDriver);
         return true;
     }

@@ -2,7 +2,6 @@ package org.orcid.persistence.dao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 

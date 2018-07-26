@@ -1,8 +1,10 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -28,12 +30,11 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.springframework.beans.factory.annotation.Value;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
 
     public static final String BULK_PUT_CODES_DELIMITER = ",";
-
-    public static final Integer MAX_BULK_PUT_CODES = 50;
 
     @Resource(name = "jpaJaxbWorkAdapterV3")
     protected JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
@@ -45,6 +46,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     protected WorkEntityCacheManager workEntityCacheManager;
 
+    private final Integer maxBulkSize;
+    
+    public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.max:100}") Integer bulkSize) {
+        this.maxBulkSize = (bulkSize == null || bulkSize > 100) ? 100 : bulkSize;
+    }
+    
     public void setWorkDao(WorkDao workDao) {
         this.workDao = workDao;
     }
@@ -183,18 +190,20 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
-        List<BulkElement> works = new ArrayList<>();
-        String[] putCodes = getPutCodeArray(putCodesAsString);
-        long lastModifiedTime = getLastModified(orcid);
-        for (String putCode : putCodes) {
-            try {
-                Long id = Long.valueOf(putCode);
-                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, lastModifiedTime);
-                works.add(jpaJaxbWorkAdapter.toWork(workEntity));
-            } catch (Exception e) {
-                works.add(orcidCoreExceptionMapper.getV3OrcidError(new PutCodeFormatException("'" + putCode + "' is not a valid put code")));
-            }
+        List<BulkElement> works = new ArrayList<>();        
+        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());        
+        List<WorkEntity> entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
+        
+        for(WorkEntity entity : entities) {
+            works.add(jpaJaxbWorkAdapter.toWork(entity));
+            putCodes.remove(entity.getId());
         }
+        
+        // Put codes still in this list doesn't exists on the database
+        for(Long invalidPutCode : putCodes) {
+            works.add(orcidCoreExceptionMapper.getV3OrcidError(new PutCodeFormatException("'" + invalidPutCode + "' is not a valid put code")));
+        }
+        
         WorkBulk bulk = new WorkBulk();
         bulk.setBulk(works);
         return bulk;
@@ -207,8 +216,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private String[] getPutCodeArray(String putCodesAsString) {
         String[] putCodeArray = putCodesAsString.split(BULK_PUT_CODES_DELIMITER);
-        if (putCodeArray.length > MAX_BULK_PUT_CODES) {
-            throw new ExceedMaxNumberOfPutCodesException(MAX_BULK_PUT_CODES);
+        if (putCodeArray.length > maxBulkSize) {
+            throw new ExceedMaxNumberOfPutCodesException(maxBulkSize);
         }
         return putCodeArray;
     }
