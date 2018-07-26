@@ -48,28 +48,36 @@ export class FundingService {
         return cloneF;
     }
 
-    getEditable( putCode ): any {
+    getEditable( putCode, groups ): any {
         // first check if they are the current source
-        var funding = this.getFunding(putCode);
+        var funding = this.getFunding(putCode, groups);
+        console.log('getEditable', funding);
 
-        var bestMatch = null;
-        var group = this.getGroup(putCode);
-        for (var idx in group.activitiess) {
-            if (group[idx].source == orcidVar.orcidId) {
-                //bestMatch = callback(group[idx]);
-                break;
+        if (funding.source == orcidVar.orcidId){
+            return funding;
+        } else {
+            var bestMatch = null;
+            var group = this.getGroup(putCode);
+            for (var idx in group.activities) {
+                if (group[idx].source == orcidVar.orcidId) {
+                    //bestMatch = callback(group[idx]);
+                    break;
+                }
             }
+            if (bestMatch == null) {
+                bestMatch = this.createNew(funding);
+            }
+            return bestMatch;
         }
-        if (bestMatch == null) {
-            bestMatch = this.createNew(funding);
-        }
+
     }
 
-    getFunding(putCode?): any {
+    getFunding(putCode?, groups?): any {
+        console.log('getFunding', putCode, groups);
         if( putCode ){
-            for (var idx in this.groups) {
-                if (this.groups[idx].hasPut(putCode)){
-                    return this.groups[idx].getByPut(putCode);
+            for (var idx in groups) {
+                if (groups[idx].hasPut(putCode)){
+                    return groups[idx].getByPut(putCode);
                 }
             }
             return null;

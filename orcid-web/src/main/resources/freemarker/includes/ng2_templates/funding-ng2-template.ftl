@@ -216,7 +216,7 @@
                                 <!--
                                 --------{{group.activitiesObj | json }}++++
                                 -->
-                                <li *ngFor="let funding of group.activitiesObj" ><!-- funding-put-code="{{funding.putCode.value}}" -->
+                                <li *ngFor="let funding of group.activitiesObj" ><!-- funding-put-code="{{funding.value.putCode.value}}" -->
                                     <!--
                                     <br />/////+
                                     {{funding | json}}
@@ -260,7 +260,7 @@
                                                 <#if !(isPublicProfile??)>
                                                     <!-- Bulk edit tool / for further implementation -->
                                                     <li *ngIf="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">                                
-                                                            <input type="checkbox" [ngModel]="bulkEditMap[funding.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">                                                            
+                                                            <input type="checkbox" [ngModel]="bulkEditMap[funding.value.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">                                                            
                                                     </li>
                                                     
                                                 </#if>
@@ -331,10 +331,10 @@
                                                     </span>
                                                 </li>
                                                 <li *ngIf="group.getActive().url.value" class="url-popover">
-                                                    <@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" [innerHTML]="group.getActive().url.value" target="funding.putCode.value" (mouseenter)='showURLPopOver(funding.putCode.value + "-alternate")' (mouseleave)='hideURLPopOver(funding.putCode.value + "-alternate")'></a>
+                                                    <@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" [innerHTML]="group.getActive().url.value" target="funding.value.putCode.value" (mouseenter)='showURLPopOver(funding.value.putCode.value + "-alternate")' (mouseleave)='hideURLPopOver(funding.value.putCode.value + "-alternate")'></a>
                                                     <div class="popover-pos">
                                                         <div class="popover-help-container">
-                                                           <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver[funding.putCode.value + '-alternate'] == true}">
+                                                           <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver[funding.value.putCode.value + '-alternate'] == true}">
                                                                 <div class="arrow"></div>
                                                                 <div class="popover-content">
                                                                     <a href="{{group.getActive().url.value}}" target="url.value" >{{group.getActive().url.value}}</a>
@@ -413,10 +413,10 @@
                                         </div>                          
                                         <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="editSources[group.groupId] == true">
 
-                                            <span class="glyphicon glyphicon-check" *ngIf="funding.putCode.value == group.defaultPutCode"></span><span *ngIf="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                            <span class="glyphicon glyphicon-check" *ngIf="funding.value.putCode.value == group.defaultPutCode"></span><span *ngIf="funding.value.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                             <#if !(isPublicProfile??)>
                                                 <div *ngIf="editSources[group.groupId]">
-                                                    <a (click)="makeDefault(group, funding.putCode.value);" *ngIf="funding.putCode.value != group.defaultPutCode" class="">
+                                                    <a (click)="makeDefault(group, funding.value.putCode.value);" *ngIf="funding.value.putCode.value != group.defaultPutCode" class="">
                                                         <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                                     </a>
                                                 </div>
@@ -427,7 +427,7 @@
                                             <#if !(isPublicProfile??)>
                                                 <ul class="sources-actions">
                                                     <li>
-                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.putCode.value)" (mouseenter)="showTooltip(funding.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.putCode.value+'-editFundingToolTipSources')">
+                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.value.putCode.value)" (mouseenter)="showTooltip(funding.value.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.value.putCode.value+'-editFundingToolTipSources')">
                                                             <span class="glyphicon glyphicon-pencil"></span>
                                                         </a>
                                                     </li>
@@ -452,14 +452,14 @@
                                     <!-- not active row && edit sources -->
                                     <div *ngIf="group.activePutCode != funding.value.putCode.value" class="row source-line">
                                         <div class="col-md-7 col-sm-7 col-xs-12">
-                                                <a (click)="group.activePutCode = funding.putCode.value;">                                
+                                                <a (click)="group.activePutCode = funding.value.putCode.value;">                                
                                                 {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                                             </a>
                                         </div>                        
                                         <div class="col-md-3 col-sm-3 col-xs-6">
                                              <#if !(isPublicProfile??)>
-                                                <span class="glyphicon glyphicon-check" *ngIf="funding.putCode.value == group.defaultPutCode"></span><span *ngIf="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                                <a (click)="makeDefault(group, funding.putCode.value);" *ngIf="funding.putCode.value != group.defaultPutCode">
+                                                <span class="glyphicon glyphicon-check" *ngIf="funding.value.putCode.value == group.defaultPutCode"></span><span *ngIf="funding.value.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                                <a (click)="makeDefault(group, funding.value.putCode.value);" *ngIf="funding.value.putCode.value != group.defaultPutCode">
                                                    <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                                 </a>
                                             </#if>
@@ -470,15 +470,15 @@
                                             <#if !(isPublicProfile??)>
                                                 <ul class="sources-actions">
                                                     <li> 
-                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.putCode.value)" (mouseenter)="showTooltip(funding.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.putCode.value+'-editFundingToolTipSources')">
+                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.value.putCode.value)" (mouseenter)="showTooltip(funding.value.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.value.putCode.value+'-editFundingToolTipSources')">
                                                             <span class="glyphicon glyphicon-pencil"></span>
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a (click)="deleteFundingConfirm(group.getActive().putCode.value, false)" (mouseenter)="showTooltip(funding.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(funding.putCode.value+'-deleteInactiveSource')">
+                                                        <a (click)="deleteFundingConfirm(group.getActive().putCode.value, false)" (mouseenter)="showTooltip(funding.value.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(funding.value.putCode.value+'-deleteInactiveSource')">
                                                             <span class="glyphicon glyphicon-trash"></span>
                                                         </a>
-                                                        <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[funding.putCode.value+'-deleteInactiveSource']">
+                                                        <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[funding.value.putCode.value+'-deleteInactiveSource']">
                                                             <div class="arrow"></div>
                                                             <div class="popover-content">
                                                                  <@orcid.msg 'groups.common.delete_this_source' />
@@ -511,7 +511,7 @@
                                                 <#if !(isPublicProfile??)>
                                                     <li>
     
-                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.putCode.value)" (mouseenter)="showTooltip(funding.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.putCode.value+'-editFundingToolTipSources')">
+                                                        <a *ngIf="userIsSource(funding)" (click)="openEditFunding(funding.value.putCode.value)" (mouseenter)="showTooltip(funding.value.putCode.value+'-editFundingToolTipSources')" (mouseleave)="hideTooltip(funding.value.putCode.value+'-editFundingToolTipSources')">
                                                             <span class="glyphicon glyphicon-pencil"></span>
                                                         </a>
                                                     </li>

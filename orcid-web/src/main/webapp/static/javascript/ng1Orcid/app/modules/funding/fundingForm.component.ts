@@ -117,6 +117,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     value: null
                 },
                 translatedTitle: {
+                    content: null,
                     errors: {}
                 }
             },
@@ -281,12 +282,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         });
     };
 
-    close(): void {
-        //$.colorbox.close();
-    };
 
     closeModal(): void {
-        //$.colorbox.close();
+        this.modalService.notifyOther({action:'close', moduleId: 'modalemailunverified'});
     };
 
     closeMoreInfo(key): void {
@@ -380,28 +378,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             count += this.fundingService.groups[idx].activitiesCount;
         }
         return count;
-    }
-
-    getEditable(putCode, callback): void {
-        // first check if they are the current source
-        var funding = this.getFunding(putCode);
-        if (funding.source == orcidVar.orcidId){
-            callback(funding);
-        }
-        else {
-            var bestMatch = null;
-            var group = this.getGroup(putCode);
-            for (var idx in group.activitiess) {
-                if (group[idx].source == orcidVar.orcidId) {
-                    bestMatch = callback(group[idx]);
-                    break;
-                }
-            }
-            if (bestMatch == null) {
-                bestMatch = this.createNew(funding);
-            }
-            callback(bestMatch);
-        };
     }
 
     getEmptyExtId(): any {
@@ -592,26 +568,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             this.privacyHelp[key]=!this.privacyHelp[key];
         }
 
-    };
-
-    toggleEdit(): void {
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    //this.showEdit = !this.showEdit;
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
     };
 
     typeChanged(): void {

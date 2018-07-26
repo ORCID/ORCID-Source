@@ -172,7 +172,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
                     if(obj == undefined){
                         this.removeDisambiguatedFunding();
-                        this.fundingService.getFunding().pipe(    
+                        this.fundingService.getFundingEmpty().pipe(    
                             takeUntil(this.ngUnsubscribe)
                         )
                         .subscribe(
@@ -198,48 +198,31 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-
-    bindTypeahead(): void {
-
-    };
-
-    bindTypeaheadForOrgs(): void {
-        (<any>$('#fundingName')).typeahead('destroy');
-    };
-
-    close(): void {
-        //$.colorbox.close();
-    };
-
-    closeModal(): void {
-        //$.colorbox.close();
-    };
-
     closeMoreInfo(key): void {
         this.moreInfo[key]=false;
     };
 
     deleteFunding(delFunding): void {
         //this.fundingService.deleteData(delFunding);
-        this.closeModal();
+        //this.closeModal();
     };
 
     getFundingsById( ids ): any {
-        console.log('getFundingsById', ids);
+        //console.log('getFundingsById', ids);
         this.fundingService.getFundingsById( ids ).pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
                 this.fundings = data;
-                console.log('this.getFundingsById', data, this.fundings);
+                //console.log('this.getFundingsById', data, this.fundings);
 
                 for (let i in this.fundings) {
                     var funding = this.fundings[i];
                     groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING, this.groups);
                 };
 
-                console.log('this.groups before', this.groups);
+                //console.log('this.groups before', this.groups);
                 
                 for (let j in this.groups){
                     //let evilResponseProps = Object.keys(this.groups[j]);
@@ -264,7 +247,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 } else {
                     //this.getFundingsById( this.fundingToAddIds );//previously addFundingToScope();
                 }
-                console.log('groupedActivitiesUtil funding', this.groups);
+                //console.log('groupedActivitiesUtil funding', this.groups);
                         
 
             },
@@ -288,24 +271,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                     var fundingIds = this.fundingToAddIds.splice(0,20).join()
                     this.getFundingsById( fundingIds );
                 }
-                /*
-                let funding = null;
-                for (let i in data) {
-                    funding = data[i];
-                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
-                };
-                if (fundingSrvc.fundingToAddIds.length == 0) {
-                    $timeout(function() {
-                      fundingSrvc.loading = false;
-                    });
-                } else {
-                    $timeout(function () {
-                        fundingSrvc.addFundingToScope(path);
-                    },50);
-                }
-                
-                let ids = data.splice(0,20).join();
-                */
             },
             error => {
                 //console.log('getBiographyFormError', error);
@@ -372,24 +337,13 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     openEditFunding( putCode ): void {
 
-        this.fundingService.getEditable(putCode)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                console.log('editable data', data);
-                this.addFundingModal(data);
+        let data = this.fundingService.getEditable(putCode, this.groups)
+        console.log('editable data', data)
+        this.addFundingModal(data);
 
-            },
-            error => {
-                //console.log('getBiographyFormError', error);
-            } 
-        );
     }
 
     removeDisambiguatedFunding(): void {
-        this.bindTypeaheadForOrgs();
         if (this.disambiguatedFunding != undefined) {
             delete this.disambiguatedFunding;
         }
@@ -477,7 +431,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     userIsSource(funding): boolean {
-        if (funding.source == orcidVar.orcidId){
+        if (funding.value.source == orcidVar.orcidId){
             return true;
         }
         return false;
