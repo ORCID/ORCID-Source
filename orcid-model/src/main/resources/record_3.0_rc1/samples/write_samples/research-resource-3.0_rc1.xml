@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<research-resource:research-resource put-code="1234" path="/0000-0003-0902-4386/research-resource/1234"
-	visibility="public"
+<research-resource:research-resource
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:research-resource="http://www.orcid.org/ns/research-resource"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/research-resource ../research-resource-3.0_rc1.xsd ">
@@ -18,26 +17,14 @@
 					<common:country>US</common:country>
 				</common:address>
 				<common:disambiguated-organization>
-					<common:disambiguated-organization-identifier>XX</common:disambiguated-organization-identifier>
-					<common:disambiguation-source>grid</common:disambiguation-source>
-				</common:disambiguated-organization>
-			</common:organization>
-			<common:organization>
-				<common:name>Lasers-R-Us</common:name>
-				<common:address>
-					<common:city>city</common:city>
-					<common:region>region</common:region>
-					<common:country>US</common:country>
-				</common:address>
-				<common:disambiguated-organization>
-					<common:disambiguated-organization-identifier>XX</common:disambiguated-organization-identifier>
-					<common:disambiguation-source>lei</common:disambiguation-source>
+					<common:disambiguated-organization-identifier>grid.400000.c</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>GRID</common:disambiguation-source>
 				</common:disambiguated-organization>
 			</common:organization>
 		</research-resource:hosts>
 		<common:external-ids>
 			<common:external-id>
-				<common:external-id-type>proposal_id</common:external-id-type>
+				<common:external-id-type>source-work-id</common:external-id-type>
 				<common:external-id-value>123456</common:external-id-value>
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
@@ -59,8 +46,7 @@
 				<common:day>02</common:day>
 			</common:end-date>
 			<common:url>http://xsede.org/GiantLaserAward</common:url>
-		</research-resource:proposal>
-			
+		</research-resource:proposal>	
     	<!-- resource(s) -->
 			<research-resource:resource-items>
 				<!-- resource 1 -->
@@ -76,8 +62,8 @@
 								<common:country>US</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>XX</common:disambiguated-organization-identifier>
-								<common:disambiguation-source>LEI</common:disambiguation-source>
+								<common:disambiguated-organization-identifier>1000</common:disambiguated-organization-identifier>
+								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</common:organization>
 					</research-resource:hosts>
@@ -107,8 +93,8 @@
 								<common:country>US</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>XX</common:disambiguated-organization-identifier>
-								<common:disambiguation-source>lei</common:disambiguation-source>
+								<common:disambiguated-organization-identifier>1001</common:disambiguated-organization-identifier>
+								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</common:organization>
 					</research-resource:hosts>
