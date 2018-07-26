@@ -37,8 +37,8 @@ import org.orcid.jaxb.model.v3.rc1.record.Activity;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews",
-        "qualifications", "researchResources", "services", "works" })
+@XmlType(propOrder = { "lastModifiedDate", "distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews", "qualifications",
+        "researchResources", "services", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
@@ -278,9 +278,11 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             List<PeerReviewGroup> groups = peerReviews.getPeerReviewGroup();
             for (PeerReviewGroup peerReview : groups) {
                 if (peerReview != null) {
-                    List<PeerReviewSummary> summaries = peerReview.getPeerReviewSummary();
-                    for (PeerReviewSummary summary : summaries) {
-                        activities.put(summary.getPutCode(), summary);
+                    for (PeerReviewDuplicateGroup duplicateGroup : peerReview.getPeerReviewGroup()) {
+                        List<PeerReviewSummary> summaries = duplicateGroup.getPeerReviewSummary();
+                        for (PeerReviewSummary summary : summaries) {
+                            activities.put(summary.getPutCode(), summary);
+                        }
                     }
                 }
             }

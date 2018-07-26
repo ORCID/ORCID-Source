@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.rc1.record.summary;
+package org.orcid.core.utils.v3.activities;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.v3.rc1.record.GroupAble;

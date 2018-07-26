@@ -34,6 +34,9 @@ import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewDuplicateGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV3 {
@@ -138,6 +141,35 @@ public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV
                 }
                 if (g.getActivities().isEmpty()) {
                     groupIt.remove();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void filter(PeerReviews peerReviews) {
+        if (peerReviews == null || peerReviews.retrieveGroups() == null) {
+            return;
+        }
+
+        Iterator<PeerReviewGroup> groupIt = peerReviews.retrieveGroups().iterator();
+
+        while (groupIt.hasNext()) {
+            PeerReviewGroup g = groupIt.next();
+            for (PeerReviewDuplicateGroup duplicateGroup : g.getPeerReviewGroup()) {
+                if (duplicateGroup.getActivities() != null) {
+                    Iterator<? extends GroupableActivity> activityIt = duplicateGroup.getActivities().iterator();
+                    while (activityIt.hasNext()) {
+                        GroupableActivity activity = activityIt.next();
+                        try {
+                            checkIsPublic(activity);
+                        } catch (OrcidNonPublicElementException e) {
+                            activityIt.remove();
+                        }
+                    }
+                    if (duplicateGroup.getActivities().isEmpty()) {
+                        groupIt.remove();
+                    }
                 }
             }
         }

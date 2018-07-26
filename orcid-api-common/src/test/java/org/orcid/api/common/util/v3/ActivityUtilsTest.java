@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositions;
 import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewDuplicateGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
@@ -126,7 +127,7 @@ public class ActivityUtilsTest {
     public void setPathToPeerReviewsTest() {
         PeerReviews x = getPeerReviews();
         ActivityUtils.setPathToPeerReviews(x, ORCID);
-        assertEquals("/" + ORCID + "/peer-review/123", x.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
+        assertEquals("/" + ORCID + "/peer-review/123", x.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
     }
 
     @Test
@@ -153,7 +154,7 @@ public class ActivityUtilsTest {
         assertEquals("/" + ORCID + "/qualification/123", x.getQualifications().retrieveGroups().iterator().next().getActivities().get(0).getPath());
         assertEquals("/" + ORCID + "/service/123", x.getServices().retrieveGroups().iterator().next().getActivities().get(0).getPath());
         assertEquals("/" + ORCID + "/work/123", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath());
-        assertEquals("/" + ORCID + "/peer-review/123", x.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
+        assertEquals("/" + ORCID + "/peer-review/123", x.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
     }
 
     @Test
@@ -387,9 +388,11 @@ public class ActivityUtilsTest {
     private PeerReviews getPeerReviews() {
         PeerReviews x = new PeerReviews();
         PeerReviewGroup g = new PeerReviewGroup();
+        PeerReviewDuplicateGroup duplicateGroup = new PeerReviewDuplicateGroup();
         PeerReviewSummary e = new PeerReviewSummary();
         e.setPutCode(123L);
-        g.getPeerReviewSummary().add(e);
+        duplicateGroup.getPeerReviewSummary().add(e);
+        g.getPeerReviewGroup().add(duplicateGroup);
         x.getPeerReviewGroup().add(g);
         return x;
     }

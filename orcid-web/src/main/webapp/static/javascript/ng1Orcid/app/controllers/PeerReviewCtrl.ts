@@ -259,8 +259,16 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                 $scope.peerReviewImportWizard = !$scope.peerReviewImportWizard;
             };
 
-            $scope.showTooltip = function (element){        
+            $scope.showTooltip = function (element){
                 $scope.showElement[element] = true;
+            };
+            
+            $scope.showSources = function(groupId) {
+                $scope.editSources[groupId] = true;
+            };
+            
+            $scope.hideSources = function(id) {
+                $scope.editSources[id] = false;
             };
 
             $scope.showURLPopOver = function(id){
@@ -271,7 +279,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                 $scope.sortState.sortBy(key);
                 peerReviewSrvc.getPeerReviews(!$scope.sortState.reverseKey[key]);
             };
-
+            
             $scope.toggleTranslatedTitleModal = function(){
                 $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
                 $('#translatedTitle').toggle();

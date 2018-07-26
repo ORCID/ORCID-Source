@@ -22,11 +22,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc1.common.SourceName;
+import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
@@ -164,33 +167,55 @@ public class PeerReviewManagerTest extends BaseTest {
          * */
         PeerReviewSummary s1 = getPeerReviewSummary("peer-review-group-id-1", "ext-id-1", Visibility.PUBLIC);
         PeerReviewSummary s2 = getPeerReviewSummary("peer-review-group-id-2", "ext-id-2", Visibility.LIMITED);
+        PeerReviewSummary s2a = getPeerReviewSummaryWithDifferentSource("peer-review-group-id-2", "ext-id-2", Visibility.LIMITED);
         PeerReviewSummary s3 = getPeerReviewSummary("peer-review-group-id-3", "ext-id-3", Visibility.PRIVATE);
         PeerReviewSummary s4 = getPeerReviewSummary("peer-review-group-id-1", "ext-id-4", Visibility.PRIVATE);
         PeerReviewSummary s5 = getPeerReviewSummary("peer-review-group-id-2", "ext-id-5", Visibility.PUBLIC);
         PeerReviewSummary s6 = getPeerReviewSummary("peer-review-group-id-4", "ext-id-6", Visibility.PRIVATE);
         
-        List<PeerReviewSummary> peerReviewList1 = Arrays.asList(s1, s2, s3, s4, s5, s6); 
+        List<PeerReviewSummary> peerReviewList1 = Arrays.asList(s1, s2, s2a, s3, s4, s5, s6); 
         
         PeerReviews peerReviews1 = peerReviewManager.groupPeerReviews(peerReviewList1, false);
         assertNotNull(peerReviews1);
         assertEquals(4, peerReviews1.getPeerReviewGroup().size());
-        //Group 1 have group1
-        assertEquals(2, peerReviews1.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        
+        // 2 different duplicate groups...
+        assertEquals(2, peerReviews1.getPeerReviewGroup().get(0).getPeerReviewGroup().size());
+        
+        // .. each with 1 summary (ie no duplicates)
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(0).getPeerReviewGroup().get(1).getPeerReviewSummary().size());
+        
         assertEquals(1, peerReviews1.getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review-group-id-1", peerReviews1.getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
         
-        //Group 2 have group2
-        assertEquals(2, peerReviews1.getPeerReviewGroup().get(1).getPeerReviewSummary().size());
-        assertEquals(1, peerReviews1.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        // group peer-review-group-id-2...
         assertEquals("peer-review-group-id-2", peerReviews1.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
         
+        // Group 2 have group2 - two different duplicate groups...
+        assertEquals(2, peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().size());
+        
+        // ... one of the two duplicate groups has two summaries (ie there are two duplicates)
+        assertTrue(2 == peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().size() || 2 == peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(1).getPeerReviewSummary().size());
+        
+        // .. these have been grouped on external id ext-id-2
+        assertEquals("ext-id-2", peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("ext-id-2", peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(1).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        // other peer review from group peer-review-group-id-2 has no duplicates (duplicate list is of size 1)
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(1).getPeerReviewSummary().size());
+        
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        
         //Group 3 have group3
-        assertEquals(1, peerReviews1.getPeerReviewGroup().get(2).getPeerReviewSummary().size());
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(2).getPeerReviewGroup().size());
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(2).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
         assertEquals(1, peerReviews1.getPeerReviewGroup().get(2).getIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review-group-id-3", peerReviews1.getPeerReviewGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
         
         //Group 4 have group4
-        assertEquals(1, peerReviews1.getPeerReviewGroup().get(3).getPeerReviewSummary().size());
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(3).getPeerReviewGroup().size());
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(3).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
         assertEquals(1, peerReviews1.getPeerReviewGroup().get(3).getIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review-group-id-4", peerReviews1.getPeerReviewGroup().get(3).getIdentifiers().getExternalIdentifier().get(0).getValue());
         
@@ -210,22 +235,22 @@ public class PeerReviewManagerTest extends BaseTest {
         assertNotNull(peerReviews2);
         assertEquals(4, peerReviews2.getPeerReviewGroup().size());
         //Group 1 have peer-review-group-id-1, so, it will now have 1 more
-        assertEquals(3, peerReviews2.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(3, peerReviews2.getPeerReviewGroup().get(0).getPeerReviewGroup().size());
         assertEquals(1, peerReviews2.getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review-group-id-1", peerReviews2.getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
         
         //Group 2 have peer-review-group-id-2
-        assertEquals(2, peerReviews2.getPeerReviewGroup().get(1).getPeerReviewSummary().size());
+        assertEquals(2, peerReviews2.getPeerReviewGroup().get(1).getPeerReviewGroup().size());
         assertEquals(1, peerReviews2.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review-group-id-2", peerReviews2.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
         
         //Group 3 have peer-review-group-id-3
-        assertEquals(1, peerReviews1.getPeerReviewGroup().get(2).getPeerReviewSummary().size());
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(2).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
         assertEquals(1, peerReviews1.getPeerReviewGroup().get(2).getIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review-group-id-3", peerReviews1.getPeerReviewGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
         
         //Group 4 have peer-review-group-id-4
-        assertEquals(1, peerReviews1.getPeerReviewGroup().get(3).getPeerReviewSummary().size());
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(3).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
         assertEquals(1, peerReviews1.getPeerReviewGroup().get(3).getIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review-group-id-4", peerReviews1.getPeerReviewGroup().get(3).getIdentifiers().getExternalIdentifier().get(0).getValue());        
     }
@@ -234,15 +259,17 @@ public class PeerReviewManagerTest extends BaseTest {
     public void testGroupPeerReviews_groupOnlyPublicPeerReviews1() {
         PeerReviewSummary s1 = getPeerReviewSummary("public-peer-review-group-id-1", "ext-id-1", Visibility.PUBLIC);
         PeerReviewSummary s2 = getPeerReviewSummary("limited-peer-review-group-id-1", "ext-id-2", Visibility.LIMITED);
+        PeerReviewSummary s2a = getPeerReviewSummaryWithDifferentSource("peer-review-group-id-1", "ext-id-2", Visibility.LIMITED);
         PeerReviewSummary s3 = getPeerReviewSummary("private-peer-review-group-id-1", "ext-id-3", Visibility.PRIVATE);
         PeerReviewSummary s4 = getPeerReviewSummary("public-peer-review-group-id-2", "ext-id-4", Visibility.PUBLIC);
+        PeerReviewSummary s4a = getPeerReviewSummaryWithDifferentSource("public-peer-review-group-id-2", "ext-id-4", Visibility.PUBLIC);
         PeerReviewSummary s5 = getPeerReviewSummary("limited-peer-review-group-id-2", "ext-id-5", Visibility.LIMITED);
         PeerReviewSummary s6 = getPeerReviewSummary("private-peer-review-group-id-2", "ext-id-6", Visibility.PRIVATE);
         PeerReviewSummary s7 = getPeerReviewSummary("public-peer-review-group-id-3", "ext-id-7", Visibility.PUBLIC);
         PeerReviewSummary s8 = getPeerReviewSummary("limited-peer-review-group-id-3", "ext-id-8", Visibility.LIMITED);
         PeerReviewSummary s9 = getPeerReviewSummary("private-peer-review-group-id-3", "ext-id-9", Visibility.PRIVATE);
         
-        List<PeerReviewSummary> workList = Arrays.asList(s1, s2, s3, s4, s5, s6, s7, s8, s9);
+        List<PeerReviewSummary> workList = Arrays.asList(s1, s2, s2a, s3, s4, s4a, s5, s6, s7, s8, s9);
         
         /**
          * They should be grouped as
@@ -255,17 +282,21 @@ public class PeerReviewManagerTest extends BaseTest {
         assertNotNull(peerReviews);
         assertEquals(3, peerReviews.getPeerReviewGroup().size());
         assertEquals(1, peerReviews.getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
-        assertEquals(1, peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(1, peerReviews.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
         assertEquals("public-peer-review-group-id-1", peerReviews.getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals("public-peer-review-group-id-1", peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertEquals("public-peer-review-group-id-1", peerReviews.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
         assertEquals(1, peerReviews.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().size());
-        assertEquals(1, peerReviews.getPeerReviewGroup().get(1).getPeerReviewSummary().size());
+        assertEquals(2, peerReviews.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().size());  // two duplicates for public-peer-review-group-id-2
         assertEquals("public-peer-review-group-id-2", peerReviews.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals("public-peer-review-group-id-2", peerReviews.getPeerReviewGroup().get(1).getPeerReviewSummary().get(0).getGroupId());
+        assertEquals("public-peer-review-group-id-2", peerReviews.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertEquals("public-peer-review-group-id-2", peerReviews.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(1).getGroupId());
+        assertEquals("ext-id-4", peerReviews.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("ext-id-4", peerReviews.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("ext-id-4", peerReviews.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(1).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(1, peerReviews.getPeerReviewGroup().get(2).getIdentifiers().getExternalIdentifier().size());
-        assertEquals(1, peerReviews.getPeerReviewGroup().get(2).getPeerReviewSummary().size());
+        assertEquals(1, peerReviews.getPeerReviewGroup().get(2).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
         assertEquals("public-peer-review-group-id-3", peerReviews.getPeerReviewGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals("public-peer-review-group-id-3", peerReviews.getPeerReviewGroup().get(2).getPeerReviewSummary().get(0).getGroupId());
+        assertEquals("public-peer-review-group-id-3", peerReviews.getPeerReviewGroup().get(2).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
     }
     
     @Test
@@ -293,13 +324,13 @@ public class PeerReviewManagerTest extends BaseTest {
         assertEquals(2, peerReviews.getPeerReviewGroup().size());
         assertEquals(1, peerReviews.getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertEquals("public-peer-review-group-id-1", peerReviews.getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals(2, peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().size());                
-        assertThat(peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-1"), is("ext-id-4")));
-        assertThat(peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().get(1).getExternalIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-1"), is("ext-id-4")));                                                       
+        assertEquals(2, peerReviews.getPeerReviewGroup().get(0).getPeerReviewGroup().size());                
+        assertThat(peerReviews.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-1"), is("ext-id-4")));
+        assertThat(peerReviews.getPeerReviewGroup().get(0).getPeerReviewGroup().get(1).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-1"), is("ext-id-4")));                                                       
         assertEquals(1, peerReviews.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().size());
         assertEquals("public-peer-review-group-id-2", peerReviews.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals(1, peerReviews.getPeerReviewGroup().get(1).getPeerReviewSummary().size());
-        assertEquals("ext-id-7", peerReviews.getPeerReviewGroup().get(1).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(1, peerReviews.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals("ext-id-7", peerReviews.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
     }
     
     @Test
@@ -381,17 +412,17 @@ public class PeerReviewManagerTest extends BaseTest {
         boolean found2 = false;
         boolean found3 = false;
         for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
-            assertEquals(1, group.getPeerReviewSummary().size());
+            assertEquals(1, group.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
             assertNotNull(group.getIdentifiers().getExternalIdentifier());
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
             if(group.getIdentifiers().getExternalIdentifier().get(0).getValue() == null) {
-                assertEquals("ext-id-1", group.getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("ext-id-1", group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 foundEmptyGroup = true;
             } else if (group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("Element 2")) {
-                assertEquals("ext-id-2", group.getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("ext-id-2", group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 found2 = true;
             } else if (group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("Element 3")) {
-                assertEquals("ext-id-3", group.getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("ext-id-3", group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 found3 = true;
             } else {
                 fail("Invalid ext id found " + group.getIdentifiers().getExternalIdentifier().get(0).getValue());
@@ -414,6 +445,16 @@ public class PeerReviewManagerTest extends BaseTest {
         extId.setValue(extIdValue);               
         extIds.getExternalIdentifier().add(extId);
         summary.setExternalIdentifiers(extIds);
+        return summary;
+    }
+    
+    private PeerReviewSummary getPeerReviewSummaryWithDifferentSource(String titleValue, String extIdValue, Visibility visibility) {
+        PeerReviewSummary summary = getPeerReviewSummary(titleValue, extIdValue, visibility);
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId("a-client-id"));
+        source.setSourceName(new SourceName("some different client"));
+        source.setSourceOrcid(new SourceOrcid("erm"));
+        summary.setSource(source);
         return summary;
     }
     

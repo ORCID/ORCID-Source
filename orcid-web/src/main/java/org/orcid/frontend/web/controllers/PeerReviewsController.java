@@ -25,6 +25,7 @@ import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,11 +73,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         List<PeerReviewSummary> summaries = peerReviewManager.getPeerReviewSummaryList(getEffectiveUserOrcid());
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(summaries, false);
         for (org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
-            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewSummary().get(0).getGroupId());
-            PeerReviewGroup peerReviewGroup = PeerReviewGroup.valueOf(group, groupIdRecord.get());
-            for (PeerReviewForm peerReviewForm : peerReviewGroup.getPeerReviews()) {
-                if (peerReviewForm.getCountry() != null) {
-                    peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
+            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
+            for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
+                for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
+                    if (peerReviewForm.getCountry() != null) {
+                        peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
+                    }
                 }
             }
             peerReviewGroups.add(peerReviewGroup);
