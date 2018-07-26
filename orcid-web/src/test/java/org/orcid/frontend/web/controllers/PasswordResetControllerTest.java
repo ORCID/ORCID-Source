@@ -191,9 +191,10 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertFalse(oneTimeResetPasswordForm.getErrors().isEmpty());
+        assertFalse(oneTimeResetPasswordForm.getPassword().getErrors().isEmpty());
 
         oneTimeResetPasswordForm.setPassword(Text.valueOf("Password#123"));
+        oneTimeResetPasswordForm.setRetypedPassword(Text.valueOf("Password#123"));
         when(bindingResult.hasErrors()).thenReturn(false);
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
