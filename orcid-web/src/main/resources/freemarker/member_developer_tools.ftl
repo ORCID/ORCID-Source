@@ -307,13 +307,13 @@
 					<!-- Google playground example -->
 					<div ng-hide="playgroundExample == ''">
 						<div class="row">
-							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></span>
+							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></span><br/>
 							<span class="col-md-9 col-sm-9 col-xs-12"><a href="{{playgroundExample}}" target="playgroundExample">
 								<span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
 								<span ng-show="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
 								<span ng-show="selectedRedirectUri.value.value == swaggerMemberUri"><@orcid.msg 'manage.developer_tools.view.example.swagger_member'/></span>
 							</a></span><br/>
-							<span ng-show="selectedRedirectUri.value.value == googleUri">
+							<span class="col-md-9 col-sm-9 col-xs-12" ng-show="selectedRedirectUri.value.value == googleUri">
 								<a href="{{googleExampleLinkOpenID}}" target="'manage.developer_tools.view.example.google">
 									<@orcid.msg 'manage.developer_tools.view.example.googleOIDC'/>
 								</a>
