@@ -518,6 +518,7 @@
 						</common:source-client-id>
 						<common:source-name />
 					</common:source>
+					<peer-review:reviewer-role>reviewer</peer-review:reviewer-role>
 					<common:external-ids>
 						<common:external-id>
 							<common:external-id-type>something</common:external-id-type>
@@ -526,6 +527,8 @@
 							<common:external-id-relationship>self</common:external-id-relationship>
 						</common:external-id>
 					</common:external-ids>
+					<peer-review:review-url>http://orcid.org</peer-review:review-url>
+					<peer-review:review-type>review</peer-review:review-type>
 					<peer-review:completion-date>
 						<common:year>1948</common:year>
 						<common:month>02</common:month>
@@ -544,9 +547,6 @@
 							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</peer-review:convening-organization>
-					<peer-review:reviewer-role>reviewer</peer-review:reviewer-role>
-					<peer-review:review-type>review</peer-review:review-type>
-					<peer-review:review-url>http://orcid.org</peer-review:review-url>
 				</peer-review:peer-review-summary>
 			</activities:group>
 		</activities:peer-reviews>
