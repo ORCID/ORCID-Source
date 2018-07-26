@@ -82,6 +82,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.test.helper.v3.Utils;
 import org.orcid.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.context.request.RequestAttributes;
@@ -110,6 +111,9 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
+    
+    @Value("${org.orcid.core.works.bulk.max:100}")
+    private Long maxBulkSize;
     
     @Before
     public void before() {
@@ -738,7 +742,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     @Test
     public void testViewBulkWorksWithBadPutCode() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,bad");
+        Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,9999");
         WorkBulk workBulk = (WorkBulk) response.getEntity();
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
@@ -759,7 +763,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     public void testViewBulkWorksWithTooManyPutCodes() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= WorkManagerReadOnlyImpl.MAX_BULK_PUT_CODES; i++) {
+        for (int i = 1; i <= maxBulkSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         serviceDelegator.viewBulkWorks(ORCID, tooManyPutCodes.toString());
