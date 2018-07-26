@@ -407,10 +407,12 @@
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
-<modalngcomponent elementHeight="645" elementId="modalFundingForm" elementWidth="700">
-  <funding-form-ng2></funding-form-ng2>
-</modalngcomponent>
+<@orcid.checkFeatureStatus 'ANGULAR2_DEV'>
+  <#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
+  <modalngcomponent elementHeight="645" elementId="modalFundingForm" elementWidth="700">
+    <funding-form-ng2></funding-form-ng2>
+  </modalngcomponent>
+</@orcid.checkFeatureStatus>
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
