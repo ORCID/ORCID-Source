@@ -196,14 +196,20 @@ public class PeerReviewManagerTest extends BaseTest {
         assertEquals(2, peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().size());
         
         // ... one of the two duplicate groups has two summaries (ie there are two duplicates)
-        assertTrue(2 == peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().size() || 2 == peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(1).getPeerReviewSummary().size());
+        int duplicateGroupIndex = -1;
+        for (int i = 0; i < peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().size(); i++) {
+            if (peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(i).getPeerReviewSummary().size() == 2) {
+                duplicateGroupIndex = i;
+            }
+        }
+        assertTrue(duplicateGroupIndex >= 0); // duplicate group found
         
         // .. these have been grouped on external id ext-id-2
-        assertEquals("ext-id-2", peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals("ext-id-2", peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(0).getPeerReviewSummary().get(1).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("ext-id-2", peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(duplicateGroupIndex).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("ext-id-2", peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(duplicateGroupIndex).getPeerReviewSummary().get(1).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         
         // other peer review from group peer-review-group-id-2 has no duplicates (duplicate list is of size 1)
-        assertEquals(1, peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(1).getPeerReviewSummary().size());
+        assertEquals(1, peerReviews1.getPeerReviewGroup().get(1).getPeerReviewGroup().get(duplicateGroupIndex == 0 ? 1 : 0).getPeerReviewSummary().size());
         
         assertEquals(1, peerReviews1.getPeerReviewGroup().get(1).getIdentifiers().getExternalIdentifier().size());
         
