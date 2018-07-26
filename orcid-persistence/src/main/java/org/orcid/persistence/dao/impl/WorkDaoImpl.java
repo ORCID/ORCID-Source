@@ -44,12 +44,13 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
-    public List<WorkEntity> getWorkEntities(List<Long> ids) {
+    public List<WorkEntity> getWorkEntities(String orcid, List<Long> ids) {
         // batch up list into sets of 50;
         List<WorkEntity> list = new ArrayList<>();
         for (List<Long> partition : Lists.partition(ids, 50)) {
-            TypedQuery<WorkEntity> query = entityManager.createQuery("SELECT x FROM WorkEntity x WHERE x.id IN :ids", WorkEntity.class);
+            TypedQuery<WorkEntity> query = entityManager.createQuery("SELECT x FROM WorkEntity x WHERE x.orcid=:orcid AND x.id IN :ids", WorkEntity.class);
             query.setParameter("ids", partition);
+            query.setParameter("orcid", orcid);
             list.addAll(query.getResultList());
         }
         return list;
@@ -202,6 +203,15 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid, List<Long> ids) {
+        Query query = entityManager.createQuery("from WorkLastModifiedEntity w where w.orcid=:orcid and id in (:ids) order by w.displayIndex desc, w.dateCreated asc");
+        query.setParameter("orcid", orcid);
+        query.setParameter("ids", ids);        
+        return query.getResultList();
+    }
+    
     @Override
     @Transactional
     public boolean increaseDisplayIndexOnAllElements(String orcid) {
