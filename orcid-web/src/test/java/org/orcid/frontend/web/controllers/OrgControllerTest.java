@@ -78,7 +78,7 @@ public class OrgControllerTest extends BaseControllerTest {
         
         @Test
         public void testFindBySourceTypeAndSourceId(){
-            ResponseEntity<OrgDisambiguated> o = orgController.getDisambiguatedOrg("abc456","WDB");
+            ResponseEntity<OrgDisambiguated> o = orgController.getDisambiguatedOrg("WDB", "abc456");
             
             assertEquals("abc456",o.getBody().getSourceId());
             assertEquals("WDB",o.getBody().getSourceType());
