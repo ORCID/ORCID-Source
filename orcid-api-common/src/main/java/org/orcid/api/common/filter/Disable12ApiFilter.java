@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -17,6 +15,7 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -25,7 +24,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class Disable12ApiFilter extends OncePerRequestFilter {
     private static final String API_12_version = "1.2";
-    private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
     private final String JSON_ERROR_MESSAGE;
     private final String XML_ERROR_MESSAGE;
 
@@ -61,31 +59,21 @@ public class Disable12ApiFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (feature.isActive()) {
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
-            String path = httpRequest.getServletPath();
-            Matcher matcher = VERSION_PATTERN.matcher(path);
-            String version = null;
-            if (matcher.lookingAt()) {
-                version = matcher.group(1);
-            }
-            if (PojoUtil.isEmpty(version)) {
+        String version = (String) request.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME);
+        if (PojoUtil.isEmpty(version)) {
+            filterChain.doFilter(request, response);
+        } else if (version.equals(API_12_version) && feature.isActive()) {
+            String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
+            if (membersToKeepItActive.contains(clientId)) {
                 filterChain.doFilter(request, response);
-            } else if (version.equals(API_12_version)) {
-                String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-                if (membersToKeepItActive.contains(clientId)) {
-                    filterChain.doFilter(request, response);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    String accept = request.getHeader("Accept") == null ? null : request.getHeader("Accept").toLowerCase();
-                    if (accept.contains("json")) {
-                        response.getWriter().println(JSON_ERROR_MESSAGE);
-                    } else {
-                        response.getWriter().println(XML_ERROR_MESSAGE);
-                    }
-                }
             } else {
-                filterChain.doFilter(request, response);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                String accept = request.getHeader("Accept") == null ? null : request.getHeader("Accept").toLowerCase();
+                if (accept.contains("json")) {
+                    response.getWriter().println(JSON_ERROR_MESSAGE);
+                } else {
+                    response.getWriter().println(XML_ERROR_MESSAGE);
+                }
             }
         } else {
             filterChain.doFilter(request, response);

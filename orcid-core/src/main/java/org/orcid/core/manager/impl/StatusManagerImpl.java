@@ -9,6 +9,8 @@ import javax.persistence.PersistenceException;
 
 import org.orcid.core.manager.StatusManager;
 import org.orcid.persistence.dao.MiscDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -17,10 +19,7 @@ import org.orcid.persistence.dao.MiscDao;
  */
 public class StatusManagerImpl implements StatusManager {
 
-    private static final String OVERALL_OK = "overallOk";
-    private static final String READ_ONLY_DB_CONNECTION_OK = "readOnlyDbConnectionOk";
-    private static final String DB_CONNECTION_OK = "dbConnectionOk";
-    private static final String TOMCAT_UP = "tomcatUp";
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatusManagerImpl.class);
     
     @Resource(name= "miscDao")
     private MiscDao miscDao;
@@ -36,6 +35,9 @@ public class StatusManagerImpl implements StatusManager {
         result.put(READ_ONLY_DB_CONNECTION_OK, isConnectionOk(miscDaoReadOnly));
         Boolean overall = result.values().stream().filter(v -> !v).findAny().orElse(true);
         result.put(OVERALL_OK, overall);
+        if (!overall) {
+            LOGGER.error("Status check failed: " + result);
+        }
         return result;
     }
 
