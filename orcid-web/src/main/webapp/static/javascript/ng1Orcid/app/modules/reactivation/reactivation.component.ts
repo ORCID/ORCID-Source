@@ -45,10 +45,36 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         private cdr:ChangeDetectorRef
     ) {
         this.privacyHelp = {};
-        this.registrationForm = {}; 
+        this.registrationForm = {
+                "errors": [],
+                "termsOfUse": {
+                    "value": false, 
+                    "errors": []
+                },
+                "password": {
+                    "value": "",
+                    "errors": []
+                },
+                "passwordConfirm": {
+                    "value": "",
+                    "errors": []
+                },
+                "givenNames": {
+                    "value": "",
+                    "errors": []
+                },
+                "familyNames": {
+                    "value": "",
+                    "errors": []
+                },
+                "activitiesVisibilityDefault": {
+                    "value": null,
+                    "errors": []
+                }
+            }; 
     }
 
-    getReactivation(resetParams, linkFlag): void{
+    getReactivation(resetParams, linkFlag): void {
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -125,8 +151,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.registrationForm.activitiesVisibilityDefault.visibility = priv;
     };
     
-    sendReactivationEmail(email): void {
-        console.log(email);
+    sendReactivationEmail(email): void {        
         this.oauthService.sendReactivationEmail(email)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
