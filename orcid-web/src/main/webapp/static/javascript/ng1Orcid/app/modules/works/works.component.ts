@@ -453,54 +453,59 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         try {
             this.worksFromBibtex = new Array();
             for (let bibtex of this.textFiles) {
-                let reader = new FileReader();
-                reader.readAsText(bibtex);
-                reader.onloadend = function(e){
-                    var parsed = bibtexParse.toJSON(reader.result);
-                    if (parsed.length == 0) {
-                        throw "bibtex parse return nothing";
-                    }
-                    this.worksService.getBlankWork()
-                    .pipe(    
-                        takeUntil(this.ngUnsubscribe)
-                    )
-                    .subscribe(
-                        data => {
-                            var blankWork = data;
-                            var newWorks = new Array();
-                            while (parsed.length > 0) {
-                                var cur = parsed.shift();
-                                var bibtexEntry = cur.entryType.toLowerCase();
-                                if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') {    
-                                    //Filtering @PREAMBLE and @COMMENT
-                                    newWorks.push( populateWorkAjaxForm( cur,JSON.parse( JSON.stringify(blankWork) ) ) );
-                                }
-                            };
-                            this.worksService.worksValidate(newWorks)
-                            .pipe(    
-                                takeUntil(this.ngUnsubscribe)
-                            )
-                            .subscribe(
-                                data => {
-                                    for (var i in data) {                           
-                                        this.worksFromBibtex.push(data[i]);
+                    let reader = new FileReader();
+                    reader.readAsText(bibtex);
+                    reader.onloadend = function(e){
+                        try {
+                            var parsed = bibtexParse.toJSON(reader.result);
+                            if (parsed.length == 0) {
+                                throw "bibtex parse return nothing";
+                            }
+                        } catch(err){
+                            console.log("bibtexParse error");
+                            this.bibtexParsingError = true;
+                        }
+                        this.worksService.getBlankWork()
+                        .pipe(    
+                            takeUntil(this.ngUnsubscribe)
+                        )
+                        .subscribe(
+                            data => {
+                                var blankWork = data;
+                                var newWorks = new Array();
+                                while (parsed.length > 0) {
+                                    var cur = parsed.shift();
+                                    var bibtexEntry = cur.entryType.toLowerCase();
+                                    if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') {    
+                                        //Filtering @PREAMBLE and @COMMENT
+                                        newWorks.push( populateWorkAjaxForm( cur,JSON.parse( JSON.stringify(blankWork) ) ) );
                                     }
-                                },
-                                error => {
-                                    console.log('worksValidateError', error);
-                                } 
-                            );
-                        },
-                        error => {
-                            console.log('parseBibtexError', error);
-                        } 
-                    );
-                }.bind(this);
-            }
-            this.bibtexParsingError = false;     
+                                };
+                                this.worksService.worksValidate(newWorks)
+                                .pipe(    
+                                    takeUntil(this.ngUnsubscribe)
+                                )
+                                .subscribe(
+                                    data => {
+                                        for (var i in data) {                           
+                                            this.worksFromBibtex.push(data[i]);
+                                        }
+                                    },
+                                    error => {
+                                        console.log('worksValidateError', error);
+                                    } 
+                                );
+                            },
+                            error => {
+                                console.log('parseBibtexError', error);
+                            } 
+                        );
+                    }.bind(this);
+                    this.bibtexParsingError = false;  
+            }    
         } catch (err) {
-            console.log("error parsing bibtex: " + err);
             this.bibtexParsingError = true;
+            console.log('parseBibtexError', err);
         }
     };
 
