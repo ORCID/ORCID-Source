@@ -698,6 +698,7 @@
 						<common:month>02</common:month>
 						<common:day>02</common:day>
 					</common:publication-date>
+					<work:journal-title>Procedia Computer Science</work:journal-title>
 				</work:work-summary>
 			</activities:group>
 		</activities:works>
