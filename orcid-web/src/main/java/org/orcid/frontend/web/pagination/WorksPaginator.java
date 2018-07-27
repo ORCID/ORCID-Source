@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
@@ -133,16 +134,22 @@ public class WorksPaginator {
 
         @Override
         public int compare(org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup o2) {
-            if (o1.getWorkSummary().get(0).getPublicationDate() == null && o2.getWorkSummary().get(0).getPublicationDate() == null) {
+            PublicationDate date1 = o1.getWorkSummary().get(0).getPublicationDate();
+            PublicationDate date2 = o2.getWorkSummary().get(0).getPublicationDate();
+            if (date1 == null && date2 == null) {
                 return new TitleComparator().compare(o1, o2) * -1; // reverse secondary order
             }
             
-            if (o1.getWorkSummary().get(0).getPublicationDate() == null) {
+            if (date1 == null) {
                 return -1;
             }
             
-            if (o2.getWorkSummary().get(0).getPublicationDate() == null) {
+            if (date2 == null) {
                 return 1;
+            }
+            
+            if (date1.compareTo(date2) == 0) {
+                return new TitleComparator().compare(o1, o2) * -1; // reverse secondary order
             }
             
             return o1.getWorkSummary().get(0).getPublicationDate().compareTo(o2.getWorkSummary().get(0).getPublicationDate());
