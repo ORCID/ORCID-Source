@@ -30,13 +30,12 @@ import { ReactivationService }
     selector: 'reactivation-ng2',
     template:  scriptTmpl("reactivation-ng2-template")
 })
-export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
-    @Output() sendReactivationEmail: EventEmitter<any> = new EventEmitter<any>();
-    
+export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {    
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     privacyHelp: any;
     registrationForm: any;
+    showReactivationSent: boolean = false;
     
     constructor(
         private oauthService: OauthService,
@@ -126,11 +125,22 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.registrationForm.activitiesVisibilityDefault.visibility = priv;
     };
     
-    sendReactivation(email?): void {
-        console.log('Sending reactivation email')
-        let _email = email;
-        this.sendReactivationEmail.emit(_email);
-    }
+    sendReactivationEmail(email): void {
+        console.log(email);
+        this.oauthService.sendReactivationEmail(email)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.showReactivationSent = true;
+                this.cdr.detectChanges();
+            },
+            error => {
+                console.log("error sending reactivation email");
+            } 
+        );
+    };
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
