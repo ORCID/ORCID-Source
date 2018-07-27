@@ -69,6 +69,14 @@ export class ExtIdPopoverComponent implements OnInit {
                 }
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
+            case "researchResource":
+                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship));
+                this.type = JSON.parse(JSON.stringify(this.extID.type));
+                if(this.extID.url){
+                    this.url = JSON.parse(JSON.stringify(this.extID.url));
+                }
+                this.value = JSON.parse(JSON.stringify(this.extID.value));
+                break;
             case "work":
                 this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
@@ -88,13 +96,15 @@ export class ExtIdPopoverComponent implements OnInit {
         if(this.url){
             this.urlProtocol.transform(this.url); 
         } else {
-            this.commonService.getNormalizedExtId(this.extID)
+            this.commonService.getNormalizedExtId(this.type, this.value)
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
                 data => {
-                    this.url = data.normUrl;
+                    if(data.normUrl){
+                        this.url = data.normUrl;
+                    }
                 },
                 error => {
                     console.log('getNormalizedUrl', error);

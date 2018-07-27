@@ -5708,21 +5708,25 @@ ul.oauth-scopes li {
     cursor: pointer
 }
 
-.workspace-peer-review .peer-review-list-container {
+.workspace-peer-review .peer-review-list-container,
+.workspace-research-resource .research-resource-list-container{
     padding: 0 15px 15px;
     float: left;
     width: 100%
 }
 
-.workspace-peer-review .source-active>.sources-header div[class^=col-]:not(:last-child) {
+.workspace-peer-review .source-active>.sources-header div[class^=col-]:not(:last-child),
+.workspace-research-resource .source-active>.sources-header div[class^=col-]:not(:last-child){
     padding-top: 0
 }
 
-.workspace-peer-review .more-info .ng-binding {
+.workspace-peer-review .more-info .ng-binding,
+.workspace-research-resource .more-info {
     min-height: 21px
 }
 
-.workspace-peer-review ul.sources-edit-list>li:first-child {
+.workspace-peer-review ul.sources-edit-list>li:first-child
+.workspace-research-resource  ul.sources-edit-list>li:first-child{
     box-shadow: none;
     font-size: 12px;
 }
@@ -5736,16 +5740,27 @@ ul.oauth-scopes li {
     vertical-align: top
 }
 
-.peer-review-list-container .sources-edit-list li {
+.peer-review-list-container .sources-edit-list li,
+.research-resource-list-container .sources-edit-list li{
     border-left: 1px solid #c9cacb;
-    border-right: 1px solid #c9cacb
+    border-right: 1px solid #c9cacb;
+}
+
+.research-resource-list-container .sources-edit-list li li{
+    border-left: none;
+    border-right: none;
 }
 
 .peer-review-list-container .glyphicons {
     padding-left: 15px
 }
 
-.peer-review-list-container .glyphicons:before {
+.research-resource-list-container .glyphicons {
+    padding-left: 18px
+}
+
+.peer-review-list-container .glyphicons:before,
+.research-resource-list-container .glyphicons:before {
     top: -10px;
     font-size: 17px;
     color: #338caf;
@@ -7682,7 +7697,9 @@ ul.comma li:last-child:after {
         padding-left: 0
     }
 
-    #old-login .control-group,.peer-review-list-container .sources-header .col-xs-3 {
+    #old-login .control-group,
+    .peer-review-list-container .sources-header .col-xs-3,
+    .research-resource-list-container .sources-header .col-xs-3 {
         padding-left: 15px
     }
 
