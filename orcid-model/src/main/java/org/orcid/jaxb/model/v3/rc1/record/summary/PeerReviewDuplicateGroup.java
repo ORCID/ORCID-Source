@@ -2,6 +2,7 @@ package org.orcid.jaxb.model.v3.rc1.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,19 +13,21 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc1.record.Group;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "identifiers", "peerReviewGroup" })
-@XmlRootElement(name = "peer-review-group", namespace = "http://www.orcid.org/ns/activities")
-public class PeerReviewGroup implements Serializable {
+@XmlType(propOrder = { "lastModifiedDate", "identifiers", "peerReviewSummary" })
+@XmlRootElement(name = "peer-review-duplicate-group", namespace = "http://www.orcid.org/ns/activities")
+public class PeerReviewDuplicateGroup implements Group, Serializable {
     private static final long serialVersionUID = 1L;
 
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     private ExternalIDs identifiers;
-    @XmlElement(name = "peer-review-group", namespace = "http://www.orcid.org/ns/activities")
-    private List<PeerReviewDuplicateGroup> peerReviewGroup;
+    @XmlElement(name = "peer-review-summary", namespace = "http://www.orcid.org/ns/peer-review")
+    private List<PeerReviewSummary> peerReviewSummary;
 
     public ExternalIDs getIdentifiers() {
         if (identifiers == null)
@@ -32,17 +35,22 @@ public class PeerReviewGroup implements Serializable {
         return identifiers;
     }
 
-    public List<PeerReviewDuplicateGroup> getPeerReviewGroup() {
-        if (peerReviewGroup == null)
-            peerReviewGroup = new ArrayList<PeerReviewDuplicateGroup>();
-        return peerReviewGroup;
+    public List<PeerReviewSummary> getPeerReviewSummary() {
+        if (peerReviewSummary == null)
+            peerReviewSummary = new ArrayList<PeerReviewSummary>();
+        return peerReviewSummary;
+    }
+
+    @Override
+    public Collection<? extends GroupableActivity> getActivities() {
+        return getPeerReviewSummary();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((peerReviewGroup == null) ? 0 : peerReviewGroup.hashCode());
+        result = prime * result + ((peerReviewSummary == null) ? 0 : peerReviewSummary.hashCode());
         result = prime * result + ((identifiers == null) ? 0 : identifiers.hashCode());
         return result;
     }
@@ -55,11 +63,11 @@ public class PeerReviewGroup implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PeerReviewGroup other = (PeerReviewGroup) obj;
-        if (peerReviewGroup == null) {
-            if (other.peerReviewGroup != null)
+        PeerReviewDuplicateGroup other = (PeerReviewDuplicateGroup) obj;
+        if (peerReviewSummary == null) {
+            if (other.peerReviewSummary != null)
                 return false;
-        } else if (!peerReviewGroup.equals(other.peerReviewGroup))
+        } else if (!peerReviewSummary.equals(other.peerReviewSummary))
             return false;
         if (identifiers == null) {
             if (other.identifiers != null)

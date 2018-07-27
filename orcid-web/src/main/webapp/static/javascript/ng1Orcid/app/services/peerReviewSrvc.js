@@ -95,7 +95,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
             peerReviewCount: function() {
                 var count = 0;
                 for (var idx in peerReviewSrvc.groups) {
-                    count += peerReviewSrvc.groups[idx].peerReviews.length;
+                    count += peerReviewSrvc.groups[idx].peerReviewDuplicateGroups.length;
                 }
                 return count;
             },
@@ -116,6 +116,19 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                     }
                 }).fail(function() {
                     console.log("Error deleting Peer Review.");
+                });
+            },
+            
+            makeDefault: function(peerReviewDuplicateGroup, preferredPutCode) {
+                $.ajax({
+                    url: getBaseUri() + '/peer-reviews/updateToMaxDisplay.json?putCode=' + preferredPutCode,
+                    dataType: 'json',
+                    success: function(data) {
+                        peerReviewDuplicateGroup.activePutCode = preferredPutCode;
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("some bad is hppending");
                 });
             },
 
@@ -149,10 +162,12 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
             },
             
             consistentVis: function(group) {
-                var visibility = group.peerReviews[0].visibility.visibility;
-                for(var i = 0; i < group.peerReviews.length; i++) {
-                    if (group.peerReviews[i].visibility.visibility != visibility) {
-                        return false;
+                var visibility = group.peerReviewDuplicateGroups[0].peerReviews[0].visibility.visibility;
+                for(var i = 0; i < group.peerReviewDuplicateGroups.length; i++) {
+                    for(var x = 0; x < group.peerReviewDuplicateGroups[i].peerReviews.length; x++) {
+                        if (group.peerReviewDuplicateGroups[i].peerReviews[x].visibility.visibility != visibility) {
+                            return false;
+                        }
                     }
                 }
                 return true;
