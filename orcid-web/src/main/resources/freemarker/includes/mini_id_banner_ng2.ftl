@@ -23,7 +23,6 @@
 	<div class="oid">
 		<#if (locked)?? && !locked>
 			<!-- SWITCH USER -->
-            <#include "/includes/ng2_templates/switch-user-ng2-template.ftl">
             <switch-user-ng2 [requestInfoForm]="requestInfoForm"></switch-user-ng2>
 		</#if>
 	</div>
