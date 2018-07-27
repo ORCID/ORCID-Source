@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/funding /funding-3.0_rc1.xsd ">    
 	<funding:type>grant</funding:type>
-	<common:organization-defined-type>Funding sub-type</common:organization-defined-type>
+	<funding:organization-defined-type>Funding sub-type</funding:organization-defined-type>
 	<funding:title>
 		<common:title>Grant title</common:title>
 		<common:translated-title language-code="en">Translated title</common:translated-title>
