@@ -103,7 +103,7 @@ public class ContributorUtils {
                     String name = contributorNames.get(orcid);                    
                     CreditName creditName = new CreditName(name);
                     contributor.setCreditName(creditName);                    
-                }
+                } 
             }
         }
     }
