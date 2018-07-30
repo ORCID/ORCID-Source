@@ -17,14 +17,13 @@ import { CommonService }
 import { ResendClaimService } 
     from '../../shared/resendClaim.service.ts'; 
 
-
 @Component({
     selector: 'resend-claim-ng2',
     template:  scriptTmpl("resend-claim-ng2-template")
 })
 export class ResendClaimComponent implements AfterViewInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    resendClaimEmailForm: any;
+    requestResendClaim: any;
 
     constructor(
         private commonSrvc: CommonService,
@@ -35,7 +34,7 @@ export class ResendClaimComponent implements AfterViewInit, OnDestroy {
         if(urlParts != null) {
             email = urlParts[urlParts.length -1];   
         }
-        this.resendClaimEmailForm = {
+        this.requestResendClaim = {
                 "email": email,
                 "errors": [],
                 "successMessage": null
@@ -43,13 +42,13 @@ export class ResendClaimComponent implements AfterViewInit, OnDestroy {
     }
 
     postResendClaimRequest(): void {                
-        this.resendClaimService.post( this.resendClaimEmailForm )
+        this.resendClaimService.post( this.requestResendClaim )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.resendClaimEmailForm = data;
+                this.requestResendClaim = data;
             },
             error => {
                 console.log('error on postResendClaimRequest');

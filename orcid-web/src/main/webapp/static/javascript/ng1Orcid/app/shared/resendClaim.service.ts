@@ -1,12 +1,11 @@
-import { HttpClient, HttpClientModule, HttpHeaders } 
-     from '@angular/common/http';
-
 import { Injectable } 
     from '@angular/core';
 
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
 import { Observable, Subject } 
     from 'rxjs';
-
 
 import { catchError, map, tap } 
     from 'rxjs/operators';
@@ -29,6 +28,7 @@ export class ResendClaimService {
         );
         this.url = getBaseUri() + '/resend-claim.json';
     }
+    
     notifyOther(): void {
         this.notify.next();        
     }
