@@ -27,12 +27,14 @@ import { AjaxFormDateToISO8601Pipe }
 import { ContributorFilterPipe }
     from '../../pipes/contributorFilterNg2.ts';
 
+import { DashToSpacePipe }
+    from '../../pipes/dashToSpaceNg2.ts';
+
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
 import { KeysPipe }
     from '../../pipes/keysNg2.ts'; 
-
 
 import { LatexPipe }
     from '../../pipes/latexNg2.ts'; 
@@ -209,6 +211,7 @@ import { UnsubscribeService }
             FocusMe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            DashToSpacePipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
@@ -229,6 +232,7 @@ import { UnsubscribeService }
             //User Pipes
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            DashToSpacePipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
