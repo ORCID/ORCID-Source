@@ -27,6 +27,9 @@ import { AjaxFormDateToISO8601Pipe }
 import { ContributorFilterPipe }
     from '../../pipes/contributorFilterNg2.ts';
 
+import { DashToSpacePipe }
+    from '../../pipes/dashToSpaceNg2.ts';
+
 import { ExternalIdentifierHtmlPipe }
     from '../../pipes/externalIdentifierHtmlNg2.ts';
 
@@ -154,6 +157,9 @@ import { PreferencesService }
 import { ReactivationService }
     from '../../shared/reactivation.service.ts';
 
+import { ResearchResourceService }
+    from '../../shared/researchResource.service.ts';
+
 import { SearchService } 
     from '../../shared/search.service.ts';
 
@@ -201,6 +207,7 @@ import { UnsubscribeService }
             FocusMe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
             FilterImportWizardsPipe,
             KeysPipe,
@@ -222,6 +229,7 @@ import { UnsubscribeService }
             //User Pipes
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
             FilterImportWizardsPipe,
             KeysPipe,
@@ -266,6 +274,7 @@ import { UnsubscribeService }
             PasswordService,
             PreferencesService,
             ReactivationService,
+            ResearchResourceService,
             SearchService,
             TwoFAStateService,
             SwitchUserService,

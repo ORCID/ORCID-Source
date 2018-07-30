@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -46,7 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -171,7 +171,7 @@ public class PasswordResetController extends BaseController {
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm resetPasswordConfirmValidate(@RequestBody OneTimeResetPasswordForm resetPasswordForm) {
         resetPasswordForm.setErrors(new ArrayList<String>());
-        if (resetPasswordForm.getPassword() == null || !resetPasswordForm.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+        if (resetPasswordForm.getPassword().getValue() == null || !resetPasswordForm.getPassword().getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             setError(resetPasswordForm, "Pattern.registrationForm.password");
         }
 
@@ -179,7 +179,7 @@ public class PasswordResetController extends BaseController {
             setError(resetPasswordForm, "FieldMatch.registrationForm");
         }
         
-        if (CommonPasswords.passwordIsCommon(resetPasswordForm.getPassword())) {
+        if (CommonPasswords.passwordIsCommon(resetPasswordForm.getPassword().getValue())) {
             setError(resetPasswordForm, "password.too_common", resetPasswordForm.getPassword());
         }
         return resetPasswordForm;
@@ -206,13 +206,15 @@ public class PasswordResetController extends BaseController {
             oneTimeResetPasswordForm.getErrors().add(message);
             return oneTimeResetPasswordForm;
         }
-
-        if (oneTimeResetPasswordForm.getPassword() == null || !oneTimeResetPasswordForm.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(oneTimeResetPasswordForm, "Pattern.registrationForm.password");
+        
+        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        passwordValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        if (!oneTimeResetPasswordForm.getPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
             return oneTimeResetPasswordForm;
         }
+
         String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
-        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword());
+        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
         
         String redirectUrl = calculateRedirectUrl(request, response);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
@@ -236,9 +238,10 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)    
-    public ResponseEntity<?> sendReactivation(@RequestParam("email") String orcidOrEmail) {
+    public ResponseEntity<?> sendReactivation(@RequestParam("email") String orcidOrEmail) throws UnsupportedEncodingException {
         String orcid = null;
         String email = null;
+        orcidOrEmail = URLDecoder.decode(orcidOrEmail, "UTF-8");
         if(orcidOrEmail.contains("@")) {
             orcid = emailManager.findOrcidIdByEmail(orcidOrEmail);
             email = orcidOrEmail;
@@ -261,6 +264,7 @@ public class PasswordResetController extends BaseController {
         ModelAndView mav = new ModelAndView("reactivation");
         if (isTokenExpired(passwordResetToken)) {
             mav.addObject("reactivationLinkExpired", true);
+            mav.addObject("email", passwordResetToken.getEmail());
         }
         mav.addObject("resetParams", resetParams);
         return mav;
@@ -305,11 +309,13 @@ public class PasswordResetController extends BaseController {
     public void validateReactivationFields(HttpServletRequest request, Registration reg) {
         reg.setErrors(new ArrayList<String>());
 
+        activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
         givenNameValidate(reg.getGivenNames());
         passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
         passwordConfirmValidate(reg.getPasswordConfirm(), reg.getPassword());
         termsOfUserValidate(reg.getTermsOfUse());
 
+        copyErrors(reg.getActivitiesVisibilityDefault(), reg);
         copyErrors(reg.getGivenNames(), reg);
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);

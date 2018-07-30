@@ -10,7 +10,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
     from '@angular/core';
 
 import { ReCaptchaComponent } 
@@ -48,6 +48,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+
+    public newInput = new EventEmitter<boolean>();
 
     res: any;
 
@@ -239,7 +241,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     addEmailField(): void {
         this.registrationForm.emailsAdditional.push({value: ''});
-        this.focusIndex = this.registrationForm.emailsAdditional.length-1;
+        this.cdr.detectChanges();       
+        this.newInput.emit(true); 
     };  
 
     removeEmailField(index): void {
@@ -308,7 +311,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 if(data){
-                    this.requestInfoForm = JSON.parse(data._body); 
+                    this.requestInfoForm = data;
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
@@ -331,7 +334,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     oauth2ScreensLoadRegistrationForm(givenName, familyName, email, linkFlag): void{
-
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -340,10 +342,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             data => {
                 this.registrationForm = data;
 
-                if(givenName || familyName || email || linkFlag){
+                if(!this.registrationForm.givenNames.value){
                     this.registrationForm.givenNames.value=givenName;
-                    this.registrationForm.familyNames.value=familyName;
+                }
+                if(!this.registrationForm.familyNames.value){
+                    this.registrationForm.familyNames.value=data.familyNames;
+                }
+                if(!this.registrationForm.email.value){
                     this.registrationForm.email.value=email;
+                }
+                if(!this.registrationForm.email.value){
                     this.registrationForm.linkType=linkFlag; 
                 }
 
@@ -646,6 +654,19 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             givenNames:  {value: ""},
             familyNames:  {value: ""},
             email:  {value: ""},
+            linkType:  {value: null},
+        }
+
+        this.registrationForm = {
+            userName:  {value: null},
+            givenNames:  {value: null},
+            familyNames:  {value: null},
+            email:  {value: null},
+            password: {value: null},
+            passwordConfirm: {value: null},
+            activitiesVisibilityDefault: {visibility: null},
+            sendOrcidNews: {value: null},
+            termsOfUse: {value: null},
             linkType:  {value: null},
         }
 

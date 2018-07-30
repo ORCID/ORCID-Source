@@ -17,18 +17,25 @@
 
 -->
 <script type="text/ng-template" id="reactivation-ng2-template">
-    
-        <div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 oauth-registration">
-            <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.thank_you")}</p>
-            <p>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation.please_complete")}</p>
+    <#if reactivationLinkExpired!false>
+        <div class="row">
+            <div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
+            <p *ngIf="!showReactivationSent"><@orcid.msg 'orcid.frontend.reset.password.resetLinkExpired_1' /><a (click)="sendReactivationEmail('${email}')"><@orcid.msg 'orcid.frontend.reset.password.resetLinkExpired_2' /></a></p>
+            <p *ngIf="showReactivationSent"><@orcid.msg 'orcid.frontend.verify.reactivation_sent.1' /><a href="mailto:support@orcid.org"><@orcid.msg 'orcid.frontend.verify.reactivation_sent.2' /></a><@orcid.msg 'orcid.frontend.verify.reactivation_sent.3' /></p>                         
+        </div>
+    </div>
+    <#else>
+    <div class="row">
+        <div class="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
+            <p><@orcid.msg "orcid.frontend.verify.reactivation.thank_you" /></p>
+            <p><@orcid.msg "orcid.frontend.verify.reactivation.please_complete" /></p>
             <div>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <!-- First name -->
                 <div class="form-group clear-fix">
-                    <label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelfirstname")}
-                    </label>
+                    <label for="givenNames" class="control-label"><@orcid.msg "oauth_sign_up.labelfirstname" /></label>
                     <div class="bottomBuffer form-group clear-fix">
-                        <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>
+                        <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="input-xlarge" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>
                         <span class="required" [ngClass]="isValidClass(registrationForm.givenNames)">*</span> 
                         <div class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
@@ -51,7 +58,7 @@
                 <div class="form-group clear-fix">
                     <label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
                     <div class="bottomBuffer">
-                        <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class=""  [(ngModel)]="registrationForm.familyNames.value"/>
+                        <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class="input-xlarge" [(ngModel)]="registrationForm.familyNames.value"/>
                         <span class="orcid-error" *ngIf="registrationForm.familyNames.errors.length > 0">
                             <div *ngFor="let error of registrationForm.familyNames.errors" [innerHTML]="error"></div>
                         </span>
@@ -61,7 +68,7 @@
                 <div class="form-group clear-fix">
                     <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
                     <div class="bottomBuffer">
-                        <input id="register-form-password" type="password" name="password" tabindex="5" class="" [(ngModel)]="registrationForm.password.value" (blur)="serverValidate('Password')"/>
+                        <input id="register-form-password" type="password" name="password" tabindex="5" class="input-xlarge" [(ngModel)]="registrationForm.password.value" (blur)="serverValidate('Password')"/>
                         <span class="required" [ngClass]="isValidClass(registrationForm.password)">*</span>
                         <@orcid.passwordHelpPopup />
                         <span class="orcid-error" *ngIf="registrationForm.password.errors.length > 0">
@@ -73,7 +80,7 @@
                 <div class="form-group clear-fix">
                     <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
                     <div class="bottomBuffer">
-                        <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
+                        <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="input-xlarge" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
                         <span class="required" [ngClass]="isValidClass(registrationForm.passwordConfirm)">*</span>                 
                         <span class="orcid-error" *ngIf="registrationForm.passwordConfirm.errors.length > 0">
                             <div *ngFor="let error of registrationForm.passwordConfirm.errors" [innerHTML]="error"></div>
@@ -83,9 +90,9 @@
                 <div> 
                     <!--Visibility default-->
                     <div class="form-group clear-fix popover-registry">  
-                        <h4>${springMacroRequestContext.getMessage("register.privacy_settings")}</h4>         
-                        <p>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</p> 
-                        <p><b>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</b></p>
+                        <h4><@orcid.msg "register.privacy_settings" /></h4>         
+                        <p><@orcid.msg "privacy_preferences.activitiesVisibilityDefault" /></p> 
+                        <p><b><@orcid.msg "privacy_preferences.activitiesVisibilityDefault.who_can_see_this" /></b></p>
                         <div class="visibilityDefault">
                             <div class="radio">
                               <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PUBLIC" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
@@ -104,13 +111,13 @@
                                 <div id="name-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+                                        <strong><@orcid.msg "privacyToggle.help.who_can_see" /></strong>
                                         <ul class="privacyHelp">
-                                            <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
-                                            <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
-                                            <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+                                            <li class="public" style="color: #009900;"><@orcid.msg "privacyToggle.help.everyone" /></li>
+                                            <li class="limited" style="color: #ffb027;"><@orcid.msg "privacyToggle.help.trusted_parties" /></li>
+                                            <li class="private" style="color: #990000;"><@orcid.msg "privacyToggle.help.only_me" /></li>
                                         </ul>
-                                        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+                                        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg "privacyToggle.help.more_information" /></a>
                                     </div>
                                 </div>
                             </div>
@@ -133,8 +140,10 @@
                     </div>
                 </div>
                 <div class="relative">
-                    <button tabindex="10" class="btn btn-primary" (click)="postReactivationConfirm(null)">${springMacroRequestContext.getMessage("orcid.frontend.reactivate")}</button>
+                    <button tabindex="10" class="btn btn-primary" (click)="postReactivationConfirm(null)"><@orcid.msg "orcid.frontend.reactivate" /></button>
                 </div>
             </div>
         </div>
+    </div>
+    </#if>
 </script>

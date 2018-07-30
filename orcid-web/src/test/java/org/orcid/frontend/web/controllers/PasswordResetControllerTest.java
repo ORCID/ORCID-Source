@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.pojo.EmailRequest;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
@@ -190,9 +191,10 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertFalse(oneTimeResetPasswordForm.getErrors().isEmpty());
+        assertFalse(oneTimeResetPasswordForm.getPassword().getErrors().isEmpty());
 
-        oneTimeResetPasswordForm.setPassword("Password#123");
+        oneTimeResetPasswordForm.setPassword(Text.valueOf("Password#123"));
+        oneTimeResetPasswordForm.setRetypedPassword(Text.valueOf("Password#123"));
         when(bindingResult.hasErrors()).thenReturn(false);
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
@@ -210,11 +212,11 @@ public class PasswordResetControllerTest extends DBUnitTest {
     public void testResetPasswordDontFailIfAnyFieldIsEmtpy() {
         OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
         passwordResetController.resetPasswordConfirmValidate(form);
-        form.setPassword("");
+        form.setPassword(Text.valueOf(""));
         form.setRetypedPassword(null);
         passwordResetController.resetPasswordConfirmValidate(form);
         form.setPassword(null);
-        form.setRetypedPassword("");
+        form.setRetypedPassword(Text.valueOf(""));
         passwordResetController.resetPasswordConfirmValidate(form);
     }
 

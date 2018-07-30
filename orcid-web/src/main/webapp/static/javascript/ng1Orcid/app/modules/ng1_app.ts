@@ -121,6 +121,12 @@ import { RequestPasswordResetModule }
 import { ResetPasswordModule }
     from './resetPassword/resetPassword.ts';
 
+import { ResearchResourceModule } 
+    from './researchResource/researchResource.ts';
+
+import { ResearchResourceDeleteModule } 
+    from './researchResource/researchResourceDelete.ts';
+
 import { SearchModule } 
     from './search/search.ts';
 
@@ -233,6 +239,8 @@ export const orcidApp = angular.module(
         RegisterDuplicatesModule.name,
         RequestPasswordResetModule.name,
         ResetPasswordModule.name,
+        ResearchResourceModule.name,
+        ResearchResourceDeleteModule.name,
         SearchModule.name,
         SecurityQuestionEditModule.name,
         SelfServiceModule.name,

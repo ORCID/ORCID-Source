@@ -14,6 +14,7 @@ import java.util.Optional;
 import javax.annotation.Resource;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.common.util.v3.ActivityUtils;
@@ -122,7 +123,6 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.jaxb.model.v3.rc1.search.Search;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -262,7 +262,9 @@ public class MemberV3ApiServiceDelegatorImpl implements
     
     @Override
     public Response viewStatus() {
-        return Response.ok(statusManager.createStatusMap()).build();
+        Map<String, Boolean> statusMap = statusManager.createStatusMap();
+        Status responseStatus = statusMap.get(StatusManager.OVERALL_OK) ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+        return Response.status(responseStatus).entity(statusMap).build();
     }
 
     @Override

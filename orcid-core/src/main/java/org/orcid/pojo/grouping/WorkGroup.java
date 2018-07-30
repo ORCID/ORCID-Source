@@ -3,7 +3,6 @@ package org.orcid.pojo.grouping;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;

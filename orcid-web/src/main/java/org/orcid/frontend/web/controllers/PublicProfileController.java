@@ -93,6 +93,7 @@ import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
+import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -116,10 +117,10 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
-    
+
     @Resource(name = "peerReviewManagerReadOnlyV3")
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
-    
+
     @Resource
     private WorksPaginator worksPaginator;
 
@@ -137,7 +138,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntManager;
-    
+
     @Resource(name = "groupIdRecordManagerV3")
     private GroupIdRecordManager groupIdRecordManager;
 
@@ -146,7 +147,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "personalDetailsManagerV3")
     private PersonalDetailsManager personalDetailsManager;
-    
+
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
 
@@ -173,7 +174,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "activitiesSummaryManagerV3")
     private ActivitiesSummaryManager activitiesSummaryManager;
-    
+
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
 
@@ -188,7 +189,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private Long getLastModifiedTime(String orcid) {
         return profileEntManager.getLastModified(orcid);
     }
-    
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -198,21 +199,20 @@ public class PublicProfileController extends BaseWorkspaceController {
         return new ModelAndView(rv);
     }
 
-
-    @RequestMapping(value = {"/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print"})
+    @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
     public ModelAndView publicPreview(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
             @PathVariable("orcid") String orcid) {
-               
-        ProfileEntity profile = null; 
-        
+
+        ProfileEntity profile = null;
+
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
-        } catch(Exception e) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());   
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
             return new ModelAndView("error-404");
-        }    
-        
+        }
+
         try {
             // Check if the profile is deprecated, non claimed or locked
             orcidSecurityManager.checkProfile(orcid);
@@ -248,7 +248,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
             } else {
-                mav.addObject("deactivated", true);                
+                mav.addObject("deactivated", true);
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
             }
@@ -261,7 +261,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         long lastModifiedTime = getLastModifiedTime(orcid);
-        
+
         ModelAndView mav = null;
         if (request.getRequestURI().contains("/print")) {
             mav = new ModelAndView("print_public_record");
@@ -373,16 +373,15 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-        
-        //TODO: DO we need this?  It's reads ALL works from the DB, groups and counts them!
+
+        // TODO: DO we need this? It's reads ALL works from the DB, groups and
+        // counts them!
         if (worksPaginator.getPublicWorksCount(orcid) > 0) {
             isProfileEmtpy = false;
         }
         if (researchResourcePaginator.getPublicCount(orcid) > 0) {
             isProfileEmtpy = false;
         }
-
-        
 
         affiliationMap = activityManager.affiliationMap(orcid);
         if (affiliationMap.size() > 0) {
@@ -571,18 +570,18 @@ public class PublicProfileController extends BaseWorkspaceController {
             validateVisibility(aff.getVisibility());
             AffiliationForm form = AffiliationForm.valueOf(aff);
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
-            if(form.getOrgDisambiguatedId() != null){
+            if (form.getOrgDisambiguatedId() != null) {
                 OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
                 form.setOrgDisambiguatedName(orgDisambiguated.getValue());
                 form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
                 form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
                 form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
                 form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
-                if(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
                     form.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
-                }   
+                }
             }
-            affs.add(form);            
+            affs.add(form);
         }
 
         return affs;
@@ -622,21 +621,23 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         return fundings;
     }
-    
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
+            @RequestParam("sortAsc") boolean sortAsc) {
         return worksPaginator.getWorksPage(orcid, offset, true, sort, sortAsc);
     }
-    
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
-        return researchResourcePaginator.getPage(orcid, offset,true, sort, sortAsc);
+    public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset,
+            @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+        return researchResourcePaginator.getPage(orcid, offset, true, sort, sortAsc);
     }
-    
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResource.json", method = RequestMethod.GET)
     public @ResponseBody ResearchResource getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
         ResearchResource r = this.researchResourceManager.getResearchResource(orcid, Long.valueOf(id));
-        validateVisibility(r.getVisibility());            
+        validateVisibility(r.getVisibility());
         sourceUtils.setSourceName(r);
         return r;
     }
@@ -654,9 +655,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId);       
-        if (workObj != null) {            
-            validateVisibility(workObj.getVisibility());            
+        Work workObj = workManager.getWork(orcid, workId);
+        if (workObj != null) {
+            validateVisibility(workObj.getVisibility());
             sourceUtils.setSourceName(workObj);
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
@@ -699,11 +700,13 @@ public class PublicProfileController extends BaseWorkspaceController {
         List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, true);
         for (org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
-            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewSummary().get(0).getGroupId());
-            PeerReviewGroup peerReviewGroup = PeerReviewGroup.valueOf(group, groupIdRecord.get());
-            for (PeerReviewForm peerReviewForm : peerReviewGroup.getPeerReviews()) {
-                if (peerReviewForm.getCountry() != null) {
-                    peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
+            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
+            for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
+                for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
+                    if (peerReviewForm.getCountry() != null) {
+                        peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
+                    }
                 }
             }
             peerReviewGroups.add(peerReviewGroup);
@@ -733,29 +736,28 @@ public class PublicProfileController extends BaseWorkspaceController {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
     }
-    
+
     private void validateVisibility(Visibility v) {
-        if(!Visibility.PUBLIC.equals(v)) {
+        if (!Visibility.PUBLIC.equals(v)) {
             throw new IllegalArgumentException("Invalid request");
         }
     }
-    
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)
-    public @ResponseBody AffiliationGroupContainer getGroupedAffiliations() {
-        String orcid = getCurrentUserOrcid();        
+    public @ResponseBody AffiliationGroupContainer getGroupedAffiliations(@PathVariable("orcid") String orcid) {        
         AffiliationGroupContainer result = new AffiliationGroupContainer();
-        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, true);        
-        for(AffiliationType type : AffiliationType.values()) {
-            if(affiliationsMap.containsKey(type)) {
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, true);
+        for (AffiliationType type : AffiliationType.values()) {
+            if (affiliationsMap.containsKey(type)) {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
                 List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
-                IntStream.range(0, elementsList.size()).forEach(idx -> {                
+                IntStream.range(0, elementsList.size()).forEach(idx -> {
                     AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
                     elementsFormList.add(groupForm);
                 });
                 result.getAffiliationGroups().put(type, elementsFormList);
             }
-        }        
+        }
         return result;
     }
 }

@@ -48,11 +48,14 @@ export class SwitchUserService {
     }
 
     switchUser(targetOrcid): Observable<any> {
-        return this.http.post( 
+        /*return this.http.post( 
             getBaseUri() + '/switch-user?username=' + targetOrcid, 
             { headers: this.headers }
         )
-        ;
+        ;*/
+        return this.http.get( 
+            getBaseUri() + '/switch-user?username=' + targetOrcid
+        )
     }
 
     notifyOther(): void {

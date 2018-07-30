@@ -333,8 +333,8 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(peerReviews.getLastModifiedDate());
         assertNotNull(peerReviews.getLastModifiedDate().getValue());
         assertEquals(1, peerReviews.getPeerReviewGroup().size());
-        assertEquals(1, peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
-        PeerReviewSummary peerReview = peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
+        assertEquals(1, peerReviews.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        PeerReviewSummary peerReview = peerReviews.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
         assertEquals(Long.valueOf(9), peerReview.getPutCode());
         assertNotNull(peerReview.getLastModifiedDate());
         assertNotNull(peerReview.getLastModifiedDate().getValue());
@@ -965,11 +965,11 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(p.getLastModifiedDate().getValue());
         assertNotNull(p.getPeerReviewGroup());
         assertEquals(1, p.getPeerReviewGroup().size());
-        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewSummary());
-        assertEquals(1, p.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
-        assertEquals(Long.valueOf(9), p.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
-        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
-        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate().getValue());
+        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertEquals(1, p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(Long.valueOf(9), p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
+        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate().getValue());
     }
 
     @Test
@@ -983,11 +983,11 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(p.getLastModifiedDate().getValue());
         assertNotNull(p.getPeerReviewGroup());
         assertEquals(1, p.getPeerReviewGroup().size());
-        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewSummary());
-        assertEquals(1, p.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
-        assertEquals(Long.valueOf(9), p.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
-        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
-        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate().getValue());
+        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertEquals(1, p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(Long.valueOf(9), p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
+        assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate().getValue());
     }
 
     @Test(expected = OrcidNonPublicElementException.class)
@@ -1895,11 +1895,11 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getLastModifiedDate());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getLastModifiedDate().getValue());
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate().getValue());
-        assertEquals(Long.valueOf(9), summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
-        assertEquals("/0000-0000-0000-0003/peer-review/9", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
-        assertEquals(Visibility.PUBLIC.value(), summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility().value());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(9), summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertEquals("/0000-0000-0000-0003/peer-review/9", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
+        assertEquals(Visibility.PUBLIC.value(), summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility().value());
 
         // Check Educations
         assertNotNull(summary.getEducations());

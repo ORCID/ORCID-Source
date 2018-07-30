@@ -141,7 +141,7 @@ public class LoadFundRefData {
                     if(entityChanged(rdfOrganization, existingEntity)) {
                         existingEntity.setCity(rdfOrganization.city);
                         Iso3166Country country = StringUtils.isNotBlank(rdfOrganization.country) ? Iso3166Country.fromValue(rdfOrganization.country) : null;
-                        existingEntity.setCountry(country.name());
+                        existingEntity.setCountry(country == null ? null : country.name());
                         existingEntity.setName(rdfOrganization.name);                        
                         String orgType = getOrgType(rdfOrganization);
                         existingEntity.setOrgType(orgType);                        

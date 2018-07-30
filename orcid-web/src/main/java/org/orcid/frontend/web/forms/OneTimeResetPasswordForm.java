@@ -4,12 +4,13 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
+import org.orcid.pojo.ajaxForm.Text;
 
 public class OneTimeResetPasswordForm implements ErrorsInterface {
 
-    private String password;
+    private Text password;
 
-    private String retypedPassword;
+    private Text retypedPassword;
 
     private Integer securityQuestionId;
 
@@ -21,19 +22,25 @@ public class OneTimeResetPasswordForm implements ErrorsInterface {
     
     private List<String> errors;
 
-    public String getPassword() {
+    public Text getPassword() {
+        if (password == null) {
+            password = new Text();
+        }
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(Text password) {
         this.password = password;
     }
 
-    public String getRetypedPassword() {
+    public Text getRetypedPassword() {
+        if (retypedPassword == null) {
+            retypedPassword = new Text();
+        }
         return retypedPassword;
     }
 
-    public void setRetypedPassword(String retypedPassword) {
+    public void setRetypedPassword(Text retypedPassword) {
         this.retypedPassword = retypedPassword;
     }
 

@@ -100,8 +100,8 @@
                         </#if>
                     </strong>
                 </div>
-                <ul id="employments-list" *ngIf="employments?.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                    <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of (employments | orderByAffiliations: sortKeyEmployments:sortAscEmployments)" [attr.employment-put-code]="group?.defaultAffiliation?.putCode.value">
+                <ul id="employments-list" *ngIf="employments?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-employment-list">
+                    <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of (employments | orderByAffiliations: sortKeyEmployments:sortAscEmployments)" [attr.employment-put-code]="group?.defaultAffiliation?.putCode.value">
                         <#include "affiliation-details-ng2.ftl"/>                      
                     </li>
                 </ul>
@@ -321,8 +321,8 @@
                         </#if>
                     </strong>
                 </div>
-                <ul id="educations-distinctions-list" *ngIf="sectionOneElements?.length" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                    <li class="bottom-margin-small workspace-border-box affiliation-box card ng-scope" *ngFor="let group of (sectionOneElements | orderByAffiliations: sortKeyEducations:sortAscEducations)" [attr.education-distinction-put-code]="group?.defaultAffiliation?.putCode.value">
+                <ul id="educations-distinctions-list" *ngIf="sectionOneElements?.length" class="workspace-affiliations bottom-margin-medium" id="body-education-list">
+                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of (sectionOneElements | orderByAffiliations: sortKeyEducations:sortAscEducations)" [attr.education-distinction-put-code]="group?.defaultAffiliation?.putCode.value">
                         <#include "affiliation-details-ng2.ftl"/> 
                     </li>
                 </ul>
@@ -458,8 +458,8 @@
                             </#if>
                         </strong>
                     </div>
-                    <ul id="distinction-invited-position-list" *ngIf="distinctionsAndInvitedPositions?.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of (distinctionsAndInvitedPositions | orderByAffiliations: sortKeyDistinctions:sortAscDistinctions)" [attr.distinction-invited-position-put-code]="group?.defaultAffiliation?.putCode.value">
+                    <ul id="distinction-invited-position-list" *ngIf="distinctionsAndInvitedPositions?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-distinction-list">
+                        <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of (distinctionsAndInvitedPositions | orderByAffiliations: sortKeyDistinctions:sortAscDistinctions)" [attr.distinction-invited-position-put-code]="group?.defaultAffiliation?.putCode.value">
                             <#include "affiliation-details-ng2.ftl"/>          
                         </li>
                     </ul>
@@ -596,8 +596,8 @@
                             </#if>
                         </strong>
                     </div>
-                    <ul id="membership-service-list" *ngIf="membershipsAndServices?.length > 0" class="workspace-affiliations workspace-body-list bottom-margin-medium">
-                        <li class="bottom-margin-small workspace-border-box affiliation-box card" *ngFor="let group of (membershipsAndServices | orderByAffiliations: sortKeyMemberships:sortAscMemberships)" [attr.membership-service-put-code]="group?.defaultAffiliation?.putCode.value">
+                    <ul id="membership-service-list" *ngIf="membershipsAndServices?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-membership-list">
+                        <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of (membershipsAndServices | orderByAffiliations: sortKeyMemberships:sortAscMemberships)" [attr.membership-service-put-code]="group?.defaultAffiliation?.putCode.value">
                             <#include "affiliation-details-ng2.ftl"/>            
                         </li>
                     </ul>

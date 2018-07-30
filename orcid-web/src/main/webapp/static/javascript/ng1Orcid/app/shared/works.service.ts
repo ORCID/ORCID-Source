@@ -48,6 +48,7 @@ export class WorksService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
+
         this.labelsMapping = {
             "default": {
                 types: [

@@ -4,21 +4,24 @@
             <div class="control-group">
                 <p><small>${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.label")}</small></p>
             </div>
-            <span class="orcid-error" *ngIf="resetPasswordForm?.errors?.length > 0">
-                <div *ngFor='let error of resetPasswordForm.errors'>{{error}}</div>
-            </span>   
             <div class="control-group">
+                <span class="orcid-error" *ngIf="resetPasswordForm?.password?.errors?.length > 0">
+                    <div *ngFor='let error of resetPasswordForm.password.errors'>{{error}}</div>
+                </span>  
                 <label for="passwordField" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.pleaseenternewpassword")}</label>
                 <div class="controls">
-                    <input id="passwordField" type="password" name="password" class="input-xlarge" [(ngModel)]="resetPasswordForm.password" (onChange)="serverValidate()"/>
+                    <input id="passwordField" type="password" name="password" class="input-xlarge" [(ngModel)]="resetPasswordForm.password.value" (onChange)="serverValidate()"/>
                     <span class="required">*</span>
                     <@orcid.passwordHelpPopup /> 
                 </div>
             </div>
             <div class="control-group">
+                <span class="orcid-error" *ngIf="resetPasswordForm?.retypedPassword?.errors?.length > 0">
+                    <div *ngFor='let error of resetPasswordForm.retypedPassword.errors'>{{error}}</div>
+                </span>  
                 <label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.confirmyournewpassword")}</label>
                 <div class="controls">
-                    <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [(ngModel)]="resetPasswordForm.retypedPassword" (onChange)="validatePassword(); serverValidate()" />
+                    <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [(ngModel)]="resetPasswordForm.retypedPassword.value" (onChange)="validatePassword(); serverValidate()" />
                     <span class="required">*</span>
                 </div>        
             </div>
