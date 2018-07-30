@@ -147,15 +147,8 @@
             </div>
             <div *ngIf="workspaceSrvc.displayFunding" class="workspace-accordion-content">
                 <ul *ngIf="groups.length > 0" class="workspace-fundings workspace-body-list bottom-margin-medium" >
-                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups"><!-- | orderBy:sortState.predicate:sortState.reverse -->
+                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups | orderBy: 'sortState'"><!-- | orderBy:sortState.predicate:sortState.reverse -->
 
-                        <!--
-                        <br />**********
-                        {{group | json}}
-                        <br />**********
-                        {{editSources | json}}
-                        <br />**********
-                        -->
                         <div class="work-list-container">
                             <ul class="sources-edit-list">
                                 <!-- Header -->
@@ -187,23 +180,13 @@
                                                             </li>
                     
                                                             <li>
-                                                                <!--
-                                                                <@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
-                                                                    questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
-                                                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-                                                                    publicClick="setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-                                                                    limitedClick="setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                                    privateClick="setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"
-                                                                    />
-                                                                
-                                                                <@orcid.privacyToggle2Ng2  angularModel="group?.defaultFunding?.visibility?.visibility"
-                                                                elementId="group?.defaultFunding?.putCode?.value"
-                                                                questionClick="toggleClickPrivacyHelp(group?.defaultFunding?.putCode?.value)"
-                                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group?.defaultFunding?.putCode?.value]==true}" 
-                                                                publicClick="setPrivacy(group?.defaultFunding, 'PUBLIC', $event)" 
-                                                                limitedClick="setPrivacy(group?.defaultFunding, 'LIMITED', $event)" 
-                                                                privateClick="setPrivacy(group?.defaultFunding, 'PRIVATE', $event)" />
-                                                                -->
+                                                                <@orcid.privacyToggle2Ng2  angularModel="group.getActive().visibility?.visibility"
+                                                                elementId="group.getActive().putCode?.value"
+                                                                questionClick="toggleClickPrivacyHelp(group.getActive().putCode?.value)"
+                                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode?.value]==true}" 
+                                                                publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
+                                                                limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
+                                                                privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -213,15 +196,8 @@
                                     </div>
                                 </li><!--  End of header -->
 
-                                <!--
-                                --------{{group.activitiesObj | json }}++++
-                                -->
-                                <li *ngFor="let funding of group.activitiesObj" ><!-- funding-put-code="{{funding.value.putCode.value}}" -->
-                                    <!--
-                                    <br />/////+
-                                    {{funding | json}}
-                                    <br />/////
-                                    -->
+
+                                <li *ngFor="let funding of group.activitiesObj" [attr.funding-put-code]="group.getActive().putCode.value"><!-- funding-put-code="{{funding.value.putCode.value}}" -->
                                     <!-- active row summary info -->
 
                                     
@@ -280,22 +256,14 @@
                                                 </li>
                                                 <#if !(isPublicProfile??)>
                                                     <li>
-                                                        <!--
-                                                        <@orcid.privacyToggle2  angularModel="group.getActive().visibility.visibility"
-                                                            questionClick="toggleClickPrivacyHelp(group.getActive().putCode.value)"
-                                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-                                                            publicClick="setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-                                                            limitedClick="setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                            privateClick="setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
+                                                        <@orcid.privacyToggle2Ng2  angularModel="group.getActive().visibility?.visibility"
+                                                        elementId="group.getActive().putCode?.value"
+                                                        questionClick="toggleClickPrivacyHelp(group.getActive().putCode?.value)"
+                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode?.value]==true}" 
+                                                        publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
+                                                        limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
+                                                        privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
                                                         
-                                                        <@orcid.privacyToggle2Ng2  angularModel="group?.defaultFunding?.visibility?.visibility"
-                                                        elementId="group?.defaultFunding?.putCode?.value"
-                                                        questionClick="toggleClickPrivacyHelp(group?.defaultFunding?.putCode?.value)"
-                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group?.defaultFunding?.putCode?.value]==true}" 
-                                                        publicClick="setPrivacy(group?.defaultFunding, 'PUBLIC', $event)" 
-                                                        limitedClick="setPrivacy(group?.defaultFunding, 'LIMITED', $event)" 
-                                                        privateClick="setPrivacy(group?.defaultFunding, 'PRIVATE', $event)" />
-                                                        -->
                                                     </li>
                                                 </#if>  
                                             </ul>

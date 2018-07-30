@@ -176,7 +176,7 @@ import { ThanksForVerifyingNg2Module }
 import { TwoFASetupNg2Module }
     from './2FASetup/twoFASetup.ts';
 
-import { TwoFAStateNg2Module }
+import { TwoFaStateNg2Module }
     from './2FAState/twoFAState.ts';
 
 import { VerifyEmailNg2Module }
@@ -350,7 +350,7 @@ export class RootCmp {
         SwitchUserNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
-        TwoFAStateNg2Module,
+        TwoFaStateNg2Module,
         TwoFASetupNg2Module,
         UnsubscribeNg2Module,
         VerifyEmailNg2Module,

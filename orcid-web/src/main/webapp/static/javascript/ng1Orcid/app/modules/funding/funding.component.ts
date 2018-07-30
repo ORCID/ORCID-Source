@@ -9,7 +9,7 @@ declare var typeahead: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -17,6 +17,9 @@ import { Observable, Subject, Subscription }
 
 import { takeUntil } 
     from 'rxjs/operators';
+
+import { CommonService } 
+    from '../../shared/common.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -32,15 +35,15 @@ import { WorkspaceService }
 
 @Component({
     selector: 'funding-ng2',
-    template:  scriptTmpl("funding-ng2-template")
+    template:  scriptTmpl("funding-ng2-template"),
+    providers: [CommonService]
 })
 export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
+    @Input() publicView: any;
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    /*
-    emailSrvc: any;
-    workspaceSrvc: any;
-    */
+    
     addingFunding: boolean;
     defaultFunding: any;
     deleFunding: any;
@@ -65,6 +68,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     sortState: any;
 
     constructor(
+        private elementRef: ElementRef,
+        private commonSrvc: CommonService,
         private fundingService: FundingService,
         private emailService: EmailService,
         private modalService: ModalService,
@@ -147,6 +152,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfoCurKey = null;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
+        this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
         this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.FUNDING);

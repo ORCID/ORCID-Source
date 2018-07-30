@@ -11,12 +11,12 @@ import { downgradeComponent, UpgradeModule }
 import { CommonNg2Module }
     from './../common/common.ts';
 
-import { TwoFAStateComponent } 
+import { TwoFaStateComponent } 
     from './twoFAState.component.ts';
 
 // This is the Angular 1 part of the module
-export const TwoFAStateModule = angular.module(
-    'TwoFAStateModule', 
+export const TwoFaStateModule = angular.module(
+    'TwoFaStateModule', 
     []
 );
 
@@ -25,10 +25,10 @@ export const TwoFAStateModule = angular.module(
 @NgModule(
     {
         declarations: [
-            TwoFAStateComponent
+            TwoFaStateComponent
         ],
         entryComponents: [ 
-            TwoFAStateComponent 
+            TwoFaStateComponent 
         ],
         imports: [
             CommonNg2Module
@@ -37,16 +37,16 @@ export const TwoFAStateModule = angular.module(
         ]
     }
 )
-export class TwoFAStateNg2Module {}
+export class TwoFaStateNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
-TwoFAStateModule.directive(
-    'twoFAStateNg2', 
+TwoFaStateModule.directive(
+    'twoFaStateNg2',
     <any>downgradeComponent(
         {
-            component: TwoFAStateComponent
+            component: TwoFaStateComponent
         }
     )
 );

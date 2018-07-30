@@ -178,20 +178,20 @@
                     </td>
                 </tr>
 
-                <@orcid.checkFeatureStatus 'TWO_FACTOR_AUTHENTICATION'>
+                
                     <tr>
                         <th><a name="edit2FA"></a>${springMacroRequestContext.getMessage("manage.2FA")}</th>
                         <td><a href="" ng-click="toggle2FAEdit()" ng-bind="twoFAToggleText"></a></td>
                     </tr>
-                    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+                    
                     <tr ng-show="showEdit2FA" >
                         <td colspan="2">
                             <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
                             <two-fa-state-ng2></two-fa-state-ng2>
                         </td>
                     </tr>
-                    </@orcid.checkFeatureStatus>
-                    <@orcid.checkFeatureStatus 'TWO_FACTOR_AUTHENTICATION'>
+                    
+                    
                     <tr ng-controller="2FAStateCtrl" ng-init="check2FAState()" ng-show="showEdit2FA" ng-cloak>
                         <td colspan="2">
                             <p>
@@ -212,8 +212,8 @@
                             </div>
                         </td>
                     </tr>
-                    </@orcid.checkFeatureStatus>
-                </@orcid.checkFeatureStatus>
+                    
+                
                 <tr>
                     <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
                     <td><a href="" ng-click="toggleGetMyDataEdit()" ng-bind="getMyDataToggleText" /></a></td>

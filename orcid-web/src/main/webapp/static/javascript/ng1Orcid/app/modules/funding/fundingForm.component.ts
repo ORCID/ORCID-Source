@@ -284,7 +284,12 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
     closeModal(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalemailunverified'});
+        this.modalService.notifyOther(
+            {
+                action:'close', 
+                moduleId: 'modalFundingForm'
+            }
+        );
     };
 
     closeMoreInfo(key): void {
@@ -500,28 +505,10 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    setGroupPrivacy(putCode, priv): void {
-        /*
-        var group = this.getGroup(putCode);
-        for (var idx in group.activities) {
-            var curPutCode = group.activities[idx].putCode.value;
-            this.fundingService.setPrivacy(curPutCode, priv);
-        }
-        */
-    }
-
-    setPrivacy(putCode, priv): void {
-        /*
-        var funding = this.getFunding(putCode);
-        funding.visibility.visibility = priv;
-        this.fundingService.updateProfileFunding(funding);
-        */
-    }
 
     setIdsToAdd(ids): void {
         this.fundingToAddIds = ids;
     }
-
 
     showAddModal(): void{
         let numOfResults = 25;
@@ -636,30 +623,49 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
                     if ( res.action === "open") {
                         this.editFunding = this.fundingService.getFundingToEdit();
-                        console.log('form aff', this.editFunding);
+                        
+                        if (this.editFunding.putCode == null) {
+                            this.editFunding.putCode = {
+                                'value': null
+                            };
+                        }
+
+                        if (this.editFunding.fundingTitle == null) {
+                            this.editFunding.fundingTitle = {
+                                'translatedTitle': {
+                                    'content': null,
+                                    'languageCode': null
+                                }
+                            };
+                        }
+
+                        if (this.editFunding.fundingTitle.translatedTitle == null) {
+                            this.editFunding.fundingTitle.translatedTitle = {
+
+                                'content': null,
+                                'languageCode': null
+                            };
+                        }
+
+                        if (this.editFunding.startDate == null) {
+                            this.editFunding.startDate = {
+                                'month': null,
+                                'year': null
+                            };
+                        }
+
+                        if (this.editFunding.endDate == null) {
+                            this.editFunding.endDate = {
+                                'month': null,
+                                'year': null
+                            };
+                        }
                     }
 
                 }
             }
         );
 
-        
-
-        /*
-        this.fundingService.getFundingToEdit()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.editFunding = data;
-                console.log('form aff', this.editFunding);
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
-        */
     }; 
 }
 

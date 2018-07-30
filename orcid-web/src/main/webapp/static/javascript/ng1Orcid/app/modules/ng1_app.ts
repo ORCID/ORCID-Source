@@ -157,7 +157,7 @@ import { ThanksForVerifyingModule }
 import { TwoFASetupModule } 
     from './2FASetup/twoFASetup.ts';
 
-import { TwoFAStateModule }
+import { TwoFaStateModule }
     from './2FAState/twoFAState.ts';
 
 import { VerifyEmailModule }
@@ -245,7 +245,7 @@ export const orcidApp = angular.module(
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
         TwoFASetupModule.name,
-        TwoFAStateModule.name,
+        TwoFaStateModule.name,
         VerifyEmailModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,
