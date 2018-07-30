@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule, HttpHeaders } 
+import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
 import { Injectable, ChangeDetectorRef } 
@@ -13,7 +13,7 @@ import { catchError, map, tap }
 
 @Injectable()
 export class OauthService {
-    private formHeaders: Headers;
+    private formHeaders: HttpHeaders;
     private headers: HttpHeaders;
     private notify = new Subject<any>();
     private url: string;
@@ -21,7 +21,13 @@ export class OauthService {
     notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
-        this.formHeaders = new Headers({'Content-Type': 'application/x-www-form-urlencoded'});
+        this.formHeaders = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+            }
+        );
         this.headers = new HttpHeaders(
             {
                 'Access-Control-Allow-Origin':'*',
@@ -114,12 +120,12 @@ export class OauthService {
         
     }
 
-    sendReactivationEmail( email ): Observable<any> {
-        let data = 'email=' + encodeURIComponent(email);
+    sendReactivationEmail( email ): Observable<any> {        
+        const params = new HttpParams().set('email', encodeURIComponent(email)).toString();        
         return this.http.post( 
             getBaseUri() + '/sendReactivation.json', 
-            data, 
-            { headers: this.headers}
+            params, 
+            { headers: this.formHeaders}
         )
         
     }
