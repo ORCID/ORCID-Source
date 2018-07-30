@@ -307,14 +307,25 @@
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
+	
+	<xs:complexType name="peer-review-duplicates">
+        <xs:sequence>
+            <xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+            <xs:element ref="common:external-ids"></xs:element>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0"
+                    ref="peer-review:peer-review-summary" />
+            </xs:sequence>
+        </xs:sequence>
+    </xs:complexType>
 
 	<xs:complexType name="peer-review-group">
 		<xs:sequence>
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element ref="common:external-ids"></xs:element>
 			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="peer-review:peer-review-summary" />
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="peer-review-group"
+                    type="activities:peer-review-duplicates" />
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
@@ -322,8 +333,8 @@
 	<xs:complexType name="peer-reviews">		
 		<xs:sequence>
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
-				type="activities:peer-review-group" />
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
+					type="activities:peer-review-group" />
 		</xs:sequence>
 		<xs:attribute name="path" type="common:element-path" use="optional" />
 	</xs:complexType>

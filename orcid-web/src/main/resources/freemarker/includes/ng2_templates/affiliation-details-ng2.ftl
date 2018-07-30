@@ -145,31 +145,6 @@
                                     <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
                                     <org-identifier-popover-ng2 [value]="affiliation?.disambiguatedAffiliationSourceId?.value" [putCode]="affiliation?.putCode?.value" [type]="affiliation?.disambiguationSource?.value"></org-identifier-popover-ng2>
                                 </div>
-                                <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">
-                                    <span *ngIf="affiliation?.orgDisambiguatedName">{{affiliation?.orgDisambiguatedName}}</span><span *ngIf="affiliation?.orgDisambiguatedCity || affiliation?.orgDisambiguatedRegion || affiliation?.orgDisambiguatedCountry">: </span><span *ngIf="affiliation?.orgDisambiguatedCity">{{affiliation?.orgDisambiguatedCity}}</span><span *ngIf="affiliation?.orgDisambiguatedCity && affiliation?.orgDisambiguatedRegion">, </span><span *ngIf="affiliation?.orgDisambiguatedRegion">{{affiliation?.orgDisambiguatedRegion}}</span><span *ngIf="affiliation?.orgDisambiguatedCountry && (affiliation?.orgDisambiguatedCity || affiliation?.orgDisambiguatedRegion)">, </span><span *ngIf="affiliation?.orgDisambiguatedCountry">{{affiliation?.orgDisambiguatedCountry}}</span>
-                                    <span *ngIf="affiliation?.orgDisambiguatedUrl"><br>
-                                    <a href="{{affiliation?.orgDisambiguatedUrl}}" target="orgDisambiguatedUrl"><span>{{affiliation?.orgDisambiguatedUrl}}</span></a>
-                                    </span> 
-
-                                    <div *ngIf="affiliation?.orgDisambiguatedExternalIdentifiers">
-                                        <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{affiliation?.disambiguationSource.value}}</strong><br>
-                                        <ul class="reset">
-                                            <li *ngFor="let orgDisambiguatedExternalIdentifier of affiliation?.orgDisambiguatedExternalIdentifiers">
-                                                {{orgDisambiguatedExternalIdentifier.identifierType}}: <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span> 
-                                                
-                                                <!-- Put the ',' only if there is more than one ext id or if the only one is not the same as the preferred one -->
-                                                
-                                                <span *ngIf="orgDisambiguatedExternalIdentifier.all && (orgDisambiguatedExternalIdentifier.all.length > 1 || (orgDisambiguatedExternalIdentifier.preferred && (orgDisambiguatedExternalIdentifier.all[0] != orgDisambiguatedExternalIdentifier.preferred)))">,</span>   
-                                                
-                                                <span *ngIf="orgDisambiguatedExternalIdentifier.all">
-                                                    <span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all;let last = last">
-                                                        <span *ngIf="orgDisambiguatedExternalIdentifierAll != orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifierAll}}{{last ? '' : ', '}}</span>                                        
-                                                    </span>
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </div><!--affiliation?.orgDisambiguatedExternalIdentifiers-->
-                                </div><!--col md 11-->
                             </div><!--org-ids-->
                             <!--URL-->
                             <div class="col-md-6" *ngIf="affiliation?.url?.value">

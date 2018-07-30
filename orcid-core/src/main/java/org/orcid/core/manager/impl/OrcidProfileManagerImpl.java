@@ -603,7 +603,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     public OrcidProfile updateOrcidWorks(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
         if (existingProfile == null) {
             return null;
         }
@@ -672,7 +672,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override    
     public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
 
         if (existingProfile != null && existingProfile.getOrcidBio() != null) {
             OrcidBio orcidBio = existingProfile.getOrcidBio();
@@ -710,7 +710,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override    
     public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {
         addSourceToBioElements(updatedOrcidProfile);
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
         if (existingProfile == null) {
             return null;
         }
@@ -724,7 +724,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     @Deprecated
     public OrcidProfile updateAffiliations(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
         if (existingProfile == null) {
             return null;
         }
@@ -756,7 +756,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override    
     @Deprecated
     public OrcidProfile updateFundings(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
         if (existingProfile == null) {
             return null;
         }

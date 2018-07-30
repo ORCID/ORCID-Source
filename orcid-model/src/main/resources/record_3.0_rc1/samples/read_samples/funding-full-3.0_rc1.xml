@@ -14,7 +14,7 @@
 		<common:source-name />
 	</common:source>	 
 	<funding:type>grant</funding:type>
-	<common:organization-defined-type>common:organization-defined-type</common:organization-defined-type>
+	<funding:organization-defined-type>common:organization-defined-type</funding:organization-defined-type>
 	<funding:title>
 		<common:title>common:title</common:title>
 		<common:translated-title language-code="en">common:translated-title</common:translated-title>

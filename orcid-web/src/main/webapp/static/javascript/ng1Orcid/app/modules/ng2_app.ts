@@ -137,6 +137,12 @@ import { RegisterDuplicatesNg2Module }
 import { RequestPasswordResetNg2Module } 
     from './requestPasswordReset/requestPasswordReset.ts';
 
+import { ResearchResourceNg2Module } 
+    from './researchResource/researchResource.ts';
+
+import { ResearchResourceDeleteNg2Module } 
+    from './researchResource/researchResourceDelete.ts';
+
 import { ResetPasswordNg2Module }
     from './resetPassword/resetPassword.ts';
 
@@ -339,6 +345,8 @@ export class RootCmp {
         ReactivationNg2Module,
         RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,
+        ResearchResourceNg2Module,
+        ResearchResourceDeleteNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved

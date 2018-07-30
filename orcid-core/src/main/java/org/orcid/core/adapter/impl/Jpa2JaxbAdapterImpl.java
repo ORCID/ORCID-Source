@@ -129,7 +129,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
 
         if (loadOptions.isLoadActivities()) {
-            profile.setOrcidActivities(getOrcidActivities(profileEntity));
+            if(loadOptions.isLoadNewAffiliationTypes()) {
+                profile.setOrcidActivities(getOrcidActivities(profileEntity, true));
+            } else {
+                profile.setOrcidActivities(getOrcidActivities(profileEntity, false));
+            }            
         }
         if (loadOptions.isLoadBio()) {
             profile.setOrcidBio(getOrcidBio(profileEntity));
@@ -279,8 +283,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return orcidId;
     }
 
-    private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
-        Affiliations affiliations = getAffiliations(profileEntity);
+    private OrcidActivities getOrcidActivities(ProfileEntity profileEntity, boolean loadNewAffiliationTypes) {
+        Affiliations affiliations = getAffiliations(profileEntity, loadNewAffiliationTypes);
         FundingList fundings = getFundingList(profileEntity);
         OrcidWorks orcidWorks = getOrcidWorks(profileEntity);
         if (NullUtils.allNull(fundings, orcidWorks, affiliations)) {
@@ -393,11 +397,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return personalDetails;
     }
 
-    private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
-        if (!org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EDUCATION.name().equals(orgAffiliationRelationEntity.getAffiliationType())
-                && !org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EMPLOYMENT.name().equals(orgAffiliationRelationEntity.getAffiliationType())) {
-            throw new IllegalArgumentException(
-                    "Invalid affiliation type for API 1.2: " + orgAffiliationRelationEntity.getAffiliationType() + " with id: " + orgAffiliationRelationEntity.getId());
+    private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity, boolean includeNewTypes) {
+        if(!includeNewTypes) {
+            if (!org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EDUCATION.name().equals(orgAffiliationRelationEntity.getAffiliationType())
+                    && !org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EMPLOYMENT.name().equals(orgAffiliationRelationEntity.getAffiliationType())) {
+                throw new IllegalArgumentException(
+                        "Invalid affiliation type for API 1.2: " + orgAffiliationRelationEntity.getAffiliationType() + " with id: " + orgAffiliationRelationEntity.getId());
+            }            
         }
         
         Affiliation affiliation = new Affiliation();
@@ -551,16 +557,21 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return disambiguatedOrganization;
     }
 
-    private Affiliations getAffiliations(ProfileEntity profileEntity) {
+    private Affiliations getAffiliations(ProfileEntity profileEntity, boolean includeNewTypes) {
         LOGGER.debug("About to convert affiliations from entity: " + profileEntity.getId());
         Set<OrgAffiliationRelationEntity> orgRelationEntities = profileEntity.getOrgAffiliationRelations();
         if (orgRelationEntities != null && !orgRelationEntities.isEmpty()) {
             Affiliations affiliations = new Affiliations();
             List<Affiliation> affiliationList = affiliations.getAffiliation();
             for (OrgAffiliationRelationEntity orgRelationEntity : orgRelationEntities) {
-                if (org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EDUCATION.name().equals(orgRelationEntity.getAffiliationType())
-                        || org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EMPLOYMENT.name().equals(orgRelationEntity.getAffiliationType()))
-                    affiliationList.add(getAffiliation(orgRelationEntity));
+                if(includeNewTypes) {
+                    affiliationList.add(getAffiliation(orgRelationEntity, includeNewTypes));
+                } else {
+                    if (org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EDUCATION.name().equals(orgRelationEntity.getAffiliationType()) 
+                        || org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EMPLOYMENT.name().equals(orgRelationEntity.getAffiliationType())) {
+                        affiliationList.add(getAffiliation(orgRelationEntity, false));
+                    }
+                }
             }
             return affiliations;
         }

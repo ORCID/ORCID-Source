@@ -13,13 +13,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc1.record.Group;
-import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "peerReviewGroup" })
 @XmlRootElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/activities")
-public class PeerReviews implements GroupsContainer, Serializable {
+public class PeerReviews implements Serializable {
 
     private static final long serialVersionUID = 6779626621503362679L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
@@ -35,8 +33,7 @@ public class PeerReviews implements GroupsContainer, Serializable {
         return peerReviewGroup;
     }
 
-    @Override
-    public Collection<? extends Group> retrieveGroups() {
+    public Collection<PeerReviewGroup> retrieveGroups() {
         return getPeerReviewGroup();
     }
 

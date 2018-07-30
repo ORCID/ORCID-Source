@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -172,6 +173,20 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Transactional
     public OrgDisambiguated findInDB(Long id) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.find(id);
+        OrgDisambiguated org = convertEntity(orgDisambiguatedEntity);
+        return org;
+    }
+
+    @Override
+    @Transactional
+    public OrgDisambiguated findInDB(String idValue, String idType) {
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.findBySourceIdAndSourceType(idValue, idType);
+        if (orgDisambiguatedEntity != null)
+            return convertEntity(orgDisambiguatedEntity);
+        return null;
+    }
+
+    private OrgDisambiguated convertEntity(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         OrgDisambiguated org = new OrgDisambiguated();
         org.setValue(orgDisambiguatedEntity.getName());
         org.setCity(orgDisambiguatedEntity.getCity());
@@ -214,5 +229,4 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         return org;
     }
-
 }

@@ -336,7 +336,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendEmail(fromAddressParam, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
                         nc.getBodyHtml());            
             } else if (n instanceof NotificationTipEntity) {
                 NotificationTipEntity nc = (NotificationTipEntity) n;

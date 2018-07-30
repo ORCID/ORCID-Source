@@ -61,7 +61,7 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.delegators = data.delegators;
                 this.searchResultsCache[''] = this.delegators;
                 this.me = data.me;
-                this.unfilteredLength = this.delegators != null ? this.delegators.length : 0;
+                this.unfilteredLength = this.delegators.length;
                 this.cdr.detectChanges();
             },
             error => {

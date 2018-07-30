@@ -32,6 +32,7 @@ export const PublicClientCtrl = angular.module('orcidApp').controller(
             $scope.viewing = false; 
             $scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
             $scope.googleUri = 'https://developers.google.com/oauthplayground';
+            $scope.googleExampleLinkOpenID = 'https://developers.google.com/oauthplayground/#step1&scopes=openid&url=https%3A%2F%2F&content_type=application%2Fjson&http_method=GET&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&includeCredentials=unchecked&accessTokenType=query&response_type=token&oauthClientId=[CLIENT_ID]';
             $scope.hideGoogleUri = false;
             $scope.hideSwaggerMemberUri = false;
             $scope.hideSwaggerUri = false;
@@ -48,6 +49,9 @@ export const PublicClientCtrl = angular.module('orcidApp').controller(
             $scope.nameToDisplay = '';
             $scope.descriptionToDisplay = '';
             $scope.verifyEmailSent=false;
+            
+            $scope.sampleOpenId = '';
+            $scope.sampleOpenIdTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=token&scope=openid&redirect_uri=[REDIRECT_URI]';
             
             $scope.addTestRedirectUri = function(type) {  
             	var rUri = null;
@@ -279,7 +283,9 @@ export const PublicClientCtrl = angular.module('orcidApp').controller(
             $scope.updateSelectedRedirectUri = function() {
                 var clientId = $scope.userCredentials.clientId.value;
                 var example = null;
+                var exampleOIDC = null;
                 var sampeleCurl = null;
+                var sampleOIDC = null;
                 var selectedRedirectUriValue = $scope.selectedRedirectUri.value.value;
                 var selectedClientSecret = $scope.userCredentials.clientSecret.value;
 
@@ -292,6 +298,10 @@ export const PublicClientCtrl = angular.module('orcidApp').controller(
                     example = example.replace('[CLIENT_ID]', clientId);
                     example = example.replace('[CLIENT_SECRET]', selectedClientSecret);
                     $scope.playgroundExample = example;
+                    exampleOIDC = $scope.googleExampleLinkOpenID;
+                    exampleOIDC = exampleOIDC.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
+                    exampleOIDC = exampleOIDC.replace('[CLIENT_ID]', clientId);
+                    $scope.googleExampleLinkOpenID = exampleOIDC;                    
                 }else if($scope.swaggerUri == selectedRedirectUriValue) {
                     $scope.playgroundExample = $scope.swaggerUri;
                 }else if($scope.swaggerMemberUri == selectedRedirectUriValue) {
@@ -310,6 +320,13 @@ export const PublicClientCtrl = angular.module('orcidApp').controller(
                     .replace('[CLIENT_SECRET]', selectedClientSecret)
                     .replace('[BASE_URI]', orcidVar.baseUri)
                     .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+                
+                sampleOIDC = $scope.sampleOpenIdTemplate;
+                $scope.sampleOpenId = sampleOIDC
+                  .replace('[CLIENT_ID]', clientId)
+                  .replace('[REDIRECT_URI]', selectedRedirectUriValue);
+                console.log($scope.sampleOpenIdTemplate);
+                console.log($scope.sampleOpenId);
             };
             
             $scope.setHtmlTrustedNameAndDescription = function() {

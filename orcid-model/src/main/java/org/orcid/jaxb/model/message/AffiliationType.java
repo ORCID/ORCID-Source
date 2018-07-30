@@ -19,7 +19,23 @@ public enum AffiliationType implements Serializable {
     EDUCATION("education"),
 
     @XmlEnumValue("employment")
-    EMPLOYMENT("employment");
+    EMPLOYMENT("employment"),
+    
+    // New affiliation types are used INTERNALLY only on 1.2, not to be exposed
+    @XmlEnumValue("distinction")
+    DISTINCTION("distinction"),
+    
+    @XmlEnumValue("invited-postition")
+    INVITED_POSITION("invited-position"),
+    
+    @XmlEnumValue("membership")
+    MEMBERSHIP("membership"),
+    
+    @XmlEnumValue("qualification")
+    QUALIFICATION("qualification"),
+    
+    @XmlEnumValue("service")
+    SERVICE("service");
     
     private final String value;
 

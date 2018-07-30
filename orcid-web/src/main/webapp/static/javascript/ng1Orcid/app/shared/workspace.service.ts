@@ -13,26 +13,29 @@ import { catchError, map, tap }
 
 @Injectable()
 export class WorkspaceService {
+    public displayDistinctionAndInvitedPosition: boolean;
     public displayEducation: boolean;
+    public displayEducationAndQualification: boolean;
     public displayEmployment: boolean;
     public displayFunding: boolean;
-    public displayPersonalInfo: boolean;
-    public displayWorks: boolean;
-    public displayPeerReview: boolean;    
-    public displayEducationAndQualification: boolean;
-    public displayDistinctionAndInvitedPosition: boolean;
     public displayMembershipAndService: boolean;
+    public displayPersonalInfo: boolean;
+    public displayPeerReview: boolean; 
+    public displayResearchResource: boolean;
+    public displayWorks: boolean;   
 
     constructor(){
+        this.displayDistinctionAndInvitedPosition = true;
         this.displayEducation = true;
+        this.displayEducationAndQualification = true;
         this.displayEmployment = true;
         this.displayFunding = true;
-        this.displayPersonalInfo = true;
-        this.displayWorks = true;
-        this.displayPeerReview = true;
-        this.displayEducationAndQualification = true;
-        this.displayDistinctionAndInvitedPosition = true;
         this.displayMembershipAndService = true;
+        this.displayPeerReview = true;
+        this.displayPersonalInfo = true;
+        this.displayResearchResource = true;
+        this.displayWorks = true;
+        
     }
 
     openEducation(): void {
@@ -57,6 +60,10 @@ export class WorkspaceService {
 
     openPersonalInfo(): void {
         this.displayPersonalInfo = true;
+    };
+
+    openResearchResource(): void {
+        this.displayResearchResource = true;
     };
 
     openWorks(): void {
@@ -93,6 +100,10 @@ export class WorkspaceService {
 
     togglePeerReviews(): void {
         this.displayPeerReview = !this.displayPeerReview;
+    };
+
+    toggleResearchResource(): void {
+        this.displayResearchResource = !this.displayResearchResource;
     };
 
     togglePersonalInfo(): void {

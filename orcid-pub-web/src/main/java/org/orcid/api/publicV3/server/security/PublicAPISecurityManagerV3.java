@@ -15,6 +15,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Record;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 
 public interface PublicAPISecurityManagerV3 {
     void checkIsPublic(VisibilityType visibilityType);
@@ -46,4 +47,6 @@ public interface PublicAPISecurityManagerV3 {
     void filter(Record record);
 
     void filter(WorkBulk workBulk);
+
+    void filter(PeerReviews peerReviews);
 }

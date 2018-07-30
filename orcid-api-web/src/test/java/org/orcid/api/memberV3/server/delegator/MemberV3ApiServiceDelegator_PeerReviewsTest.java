@@ -277,9 +277,9 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
             assertNotNull(group.getIdentifiers());
             assertNotNull(group.getIdentifiers().getExternalIdentifier());
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
-            assertNotNull(group.getPeerReviewSummary());
-            assertEquals(1, group.getPeerReviewSummary().size());
-            PeerReviewSummary summary = group.getPeerReviewSummary().get(0);
+            assertNotNull(group.getPeerReviewGroup().get(0).getPeerReviewSummary());
+            assertEquals(1, group.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+            PeerReviewSummary summary = group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
             Utils.verifyLastModified(summary.getLastModifiedDate());
             switch (group.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
             case "issn:0000009":
@@ -474,9 +474,9 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
         assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0));
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary());
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
-        assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
+        assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
 
         PeerReview peerReview = Utils.getPeerReview();
 
@@ -504,11 +504,11 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 
         for (PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
             Utils.verifyLastModified(group.getLastModifiedDate());
-            Utils.verifyLastModified(group.getPeerReviewSummary().get(0).getLastModifiedDate());
-            if ("issn:0000001".equals(group.getPeerReviewSummary().get(0).getGroupId())) {
+            Utils.verifyLastModified(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
+            if ("issn:0000001".equals(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId())) {
                 haveOld = true;
             } else {
-                assertEquals("issn:0000003", group.getPeerReviewSummary().get(0).getGroupId());
+                assertEquals("issn:0000003", group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
                 haveNew = true;
             }
         }

@@ -393,53 +393,65 @@
 					<common:external-id-relationship>self</common:external-id-relationship>
 				</common:external-id>
 			</common:external-ids>
-			<peer-review:peer-review-summary
-				put-code="12345" visibility="private" display-index="0">
-				<common:created-date>2001-12-31T12:00:00</common:created-date>
-				<common:last-modified-date>2001-12-31T12:00:00
-				</common:last-modified-date>
-				<common:source>
-					<common:source-client-id>
-						<common:uri>https://orcid.org/client/APP-9999999999999901</common:uri>
-						<common:path>APP-9999999999999901</common:path>
-						<common:host>orcid.org</common:host>
-					</common:source-client-id>
-					<common:source-name />
-				</common:source>
-				<common:external-ids>
-					<common:external-id>
-						<common:external-id-type>something</common:external-id-type>
-						<common:external-id-value>external-id-value
-						</common:external-id-value>
-						<common:external-id-url>http://orcid.org</common:external-id-url>
-						<common:external-id-relationship>self</common:external-id-relationship>
-					</common:external-id>
-				</common:external-ids>
-				<peer-review:completion-date>
-					<common:year>1948</common:year>
-					<common:month>02</common:month>
-					<common:day>02</common:day>
-				</peer-review:completion-date>
-				<peer-review:review-group-id>orcid-generated:12345</peer-review:review-group-id>
-				<peer-review:convening-organization>
-					<common:name>common:name</common:name>
-					<common:address>
-						<common:city>common:city</common:city>
-						<common:region>common:region</common:region>
-						<common:country>AF</common:country>
-					</common:address>
-					<common:disambiguated-organization>
-						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier
-						</common:disambiguated-organization-identifier>
-						<common:disambiguation-source>common:disambiguation-source
-						</common:disambiguation-source>
-					</common:disambiguated-organization>
-				</peer-review:convening-organization>
-				<peer-review:reviewer-role>reviewer</peer-review:reviewer-role>
-                <peer-review:review-type>review</peer-review:review-type>
-                <peer-review:review-url>http://orcid.org</peer-review:review-url>
-			</peer-review:peer-review-summary>
-		</activities:group>
+			<activities:peer-review-group>
+			    <common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+	            <common:external-ids>
+	                <common:external-id>
+	                    <common:external-id-type>something</common:external-id-type>
+	                    <common:external-id-value>external-id-value
+	                    </common:external-id-value>
+	                    <common:external-id-url>http://orcid.org</common:external-id-url>
+	                    <common:external-id-relationship>self</common:external-id-relationship>
+	                </common:external-id>
+	            </common:external-ids>
+				<peer-review:peer-review-summary
+					put-code="12345" visibility="private" display-index="0">
+					<common:created-date>2001-12-31T12:00:00</common:created-date>
+					<common:last-modified-date>2001-12-31T12:00:00
+					</common:last-modified-date>
+					<common:source>
+						<common:source-client-id>
+							<common:uri>https://orcid.org/client/APP-9999999999999901</common:uri>
+							<common:path>APP-9999999999999901</common:path>
+							<common:host>orcid.org</common:host>
+						</common:source-client-id>
+						<common:source-name />
+					</common:source>
+					<peer-review:reviewer-role>reviewer</peer-review:reviewer-role>
+					<common:external-ids>
+						<common:external-id>
+							<common:external-id-type>something</common:external-id-type>
+							<common:external-id-value>external-id-value
+							</common:external-id-value>
+							<common:external-id-url>http://orcid.org</common:external-id-url>
+							<common:external-id-relationship>self</common:external-id-relationship>
+						</common:external-id>
+					</common:external-ids>
+					<peer-review:review-url>http://orcid.org</peer-review:review-url>
+                    <peer-review:review-type>review</peer-review:review-type>
+					<peer-review:completion-date>
+						<common:year>1948</common:year>
+						<common:month>02</common:month>
+						<common:day>02</common:day>
+					</peer-review:completion-date>
+					<peer-review:review-group-id>orcid-generated:12345</peer-review:review-group-id>
+					<peer-review:convening-organization>
+						<common:name>common:name</common:name>
+						<common:address>
+							<common:city>common:city</common:city>
+							<common:region>common:region</common:region>
+							<common:country>AF</common:country>
+						</common:address>
+						<common:disambiguated-organization>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier
+							</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>common:disambiguation-source
+							</common:disambiguation-source>
+						</common:disambiguated-organization>
+					</peer-review:convening-organization>
+				</peer-review:peer-review-summary>
+            </activities:peer-review-group>
+        </activities:group>
 	</activities:peer-reviews>
 	<activities:qualifications
 		path="/8888-8888-8888-8880/qualifications">

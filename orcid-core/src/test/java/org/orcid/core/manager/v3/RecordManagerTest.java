@@ -232,7 +232,7 @@ public class RecordManagerTest extends DBUnitTest {
         assertNotNull(activities.getPeerReviews());
         assertNotNull(activities.getPeerReviews().getPeerReviewGroup());
         assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(Long.valueOf(9), activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertEquals(Long.valueOf(9), activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
         
         assertNotNull(activities.getWorks());
         assertNotNull(activities.getWorks().getWorkGroup());

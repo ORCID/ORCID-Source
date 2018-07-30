@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.orcid.core.manager.MembersManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.togglz.Features;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
@@ -30,7 +30,7 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     @Resource
     private OrcidProfileManager orcidProfileManager;
     
-    @Resource
+    @Resource(name = "membersManagerV3")
     private MembersManager memberManager;
     
     
