@@ -744,8 +744,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)
-    public @ResponseBody AffiliationGroupContainer getGroupedAffiliations() {
-        String orcid = getCurrentUserOrcid();
+    public @ResponseBody AffiliationGroupContainer getGroupedAffiliations(@PathVariable("orcid") String orcid) {        
         AffiliationGroupContainer result = new AffiliationGroupContainer();
         Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, true);
         for (AffiliationType type : AffiliationType.values()) {
