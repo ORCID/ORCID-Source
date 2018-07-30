@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -58,23 +57,6 @@ public class HomeController extends BaseController {
         return new ModelAndView("redirect:/");
 
     }
-
-    @RequestMapping(value = "/tomcatUp.json")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody
-    String tomcatUp(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        request.setAttribute("isMonitoring", true);
-        return "{tomcatUp:true}";
-    }
-    
-    @RequestMapping(value = "/webStatus.json")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody Map<String, Boolean> webStatus(HttpServletRequest request) {
-        request.setAttribute("isMonitoring", true);
-        return statusManager.createStatusMap();
-    }
-
-    
 
     @RequestMapping(value = "/robots.txt")
     public String dynamicRobots(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {

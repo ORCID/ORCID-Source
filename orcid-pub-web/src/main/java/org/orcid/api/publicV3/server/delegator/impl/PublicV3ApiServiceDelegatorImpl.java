@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.api.common.util.v3.ActivityUtils;
@@ -215,7 +216,9 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewStatus() {
-        return Response.ok(statusManager.createStatusMap()).build();
+        Map<String, Boolean> statusMap = statusManager.createStatusMap();
+        Status responseStatus = statusMap.get(StatusManager.OVERALL_OK) ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+        return Response.status(responseStatus).entity(statusMap).build();
     }
 
     /**
