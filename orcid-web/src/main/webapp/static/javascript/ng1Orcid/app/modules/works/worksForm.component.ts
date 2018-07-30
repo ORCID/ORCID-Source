@@ -76,6 +76,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(300),
+      distinctUntilChanged(),
       map(term => term === '' ? []
         : this.externalIDTypeCache.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     );
@@ -142,7 +143,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksForm'});
         this.worksService.notifyOther({action:'cancel', successful:true});
     };
-
+    
     changeExtIdType(i, event): void {
         event.preventDefault();
         this.editWork.workExternalIdentifiers[i].externalIdentifierType.value = event.item.name;
@@ -215,7 +216,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     formatExtIdTypeInput = function(input) {
         if (typeof(input)=='object' && input.name){
-           return this.externalIDNamesToDescriptions[input.name].description; 
+            return this.externalIDNamesToDescriptions[input.name].description; 
         } else if (typeof(input)=='string' && input != "")  {
             return this.externalIDNamesToDescriptions[input].description;
         } else {

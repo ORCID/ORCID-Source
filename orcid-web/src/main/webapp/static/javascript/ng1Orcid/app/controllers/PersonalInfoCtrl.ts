@@ -20,8 +20,7 @@ export const PersonalInfoCtrl = angular.module('orcidApp').controller(
             utilsService,
             workspaceSrvc 
         ){
-
-            var lastModifiedTimeString = orcidVar.lastModified.replace(/,|\./g , "");
+            var lastModifiedTimeString = orcidVar.lastModified.replace(/,|\.|\s/g , "");
 
             $scope.displayInfo = workspaceSrvc.displayPersonalInfo;
             $scope.lastModifiedDate = utilsService.formatTime(Number(lastModifiedTimeString));
@@ -29,9 +28,6 @@ export const PersonalInfoCtrl = angular.module('orcidApp').controller(
             $scope.toggleDisplayInfo = function () {
                 $scope.displayInfo = !$scope.displayInfo;
             };
-
-            console.log(orcidVar);
-
         }
     ]
 );

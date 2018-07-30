@@ -67,14 +67,14 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         List<PeerReviewGroup> groups = peerReviewsController.getPeerReviewsJson(true);
         assertNotNull(groups);
         assertEquals(4, groups.size());
-        assertNotNull(groups.get(0).getPeerReviews());
-        assertNotNull(groups.get(1).getPeerReviews());
-        assertNotNull(groups.get(2).getPeerReviews());
-        assertNotNull(groups.get(3).getPeerReviews());
-        assertEquals(1, groups.get(0).getPeerReviews().size());
-        assertEquals(1, groups.get(1).getPeerReviews().size());
-        assertEquals(1, groups.get(2).getPeerReviews().size());
-        assertEquals(1, groups.get(3).getPeerReviews().size());
+        assertNotNull(groups.get(0).getPeerReviewDuplicateGroups());
+        assertNotNull(groups.get(1).getPeerReviewDuplicateGroups());
+        assertNotNull(groups.get(2).getPeerReviewDuplicateGroups());
+        assertNotNull(groups.get(3).getPeerReviewDuplicateGroups());
+        assertEquals(1, groups.get(0).getPeerReviewDuplicateGroups().size());
+        assertEquals(1, groups.get(1).getPeerReviewDuplicateGroups().size());
+        assertEquals(1, groups.get(2).getPeerReviewDuplicateGroups().size());
+        assertEquals(1, groups.get(3).getPeerReviewDuplicateGroups().size());
         
         assertTrue(groups.get(0).getName().compareTo(groups.get(1).getName()) < 0);
         assertTrue(groups.get(1).getName().compareTo(groups.get(2).getName()) < 0);
@@ -83,14 +83,14 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         groups = peerReviewsController.getPeerReviewsJson(false);
         assertNotNull(groups);
         assertEquals(4, groups.size());
-        assertNotNull(groups.get(0).getPeerReviews());
-        assertNotNull(groups.get(1).getPeerReviews());
-        assertNotNull(groups.get(2).getPeerReviews());
-        assertNotNull(groups.get(3).getPeerReviews());
-        assertEquals(1, groups.get(0).getPeerReviews().size());
-        assertEquals(1, groups.get(1).getPeerReviews().size());
-        assertEquals(1, groups.get(2).getPeerReviews().size());
-        assertEquals(1, groups.get(3).getPeerReviews().size());
+        assertNotNull(groups.get(0).getPeerReviewDuplicateGroups());
+        assertNotNull(groups.get(1).getPeerReviewDuplicateGroups());
+        assertNotNull(groups.get(2).getPeerReviewDuplicateGroups());
+        assertNotNull(groups.get(3).getPeerReviewDuplicateGroups());
+        assertEquals(1, groups.get(0).getPeerReviewDuplicateGroups().size());
+        assertEquals(1, groups.get(1).getPeerReviewDuplicateGroups().size());
+        assertEquals(1, groups.get(2).getPeerReviewDuplicateGroups().size());
+        assertEquals(1, groups.get(3).getPeerReviewDuplicateGroups().size());
         
         assertTrue(groups.get(0).getName().compareTo(groups.get(1).getName()) > 0);
         assertTrue(groups.get(1).getName().compareTo(groups.get(2).getName()) > 0);

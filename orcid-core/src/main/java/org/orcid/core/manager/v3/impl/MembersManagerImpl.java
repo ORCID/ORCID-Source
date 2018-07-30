@@ -179,7 +179,7 @@ public class MembersManagerImpl implements MembersManager {
     public Member updateMemeber(Member member) throws IllegalArgumentException {
         String memberId = member.getGroupOrcid().getValue();
         String name = member.getGroupName().getValue();
-        String email = member.getEmail().getValue();
+        String email = member.getEmail().getValue().trim();
         String salesForceId = member.getSalesforceId() == null ? null : member.getSalesforceId().getValue();
         MemberType memberType = MemberType.fromValue(member.getType().getValue());
 
@@ -204,10 +204,14 @@ public class MembersManagerImpl implements MembersManager {
                     }
                     Date now = new Date();
                     EmailEntity newPrimaryEmail = new EmailEntity();
-                    newPrimaryEmail.setLastModified(now);
-                    newPrimaryEmail.setDateCreated(now);
+                    newPrimaryEmail.setLastModified(now);                    
                     newPrimaryEmail.setCurrent(true);
                     newPrimaryEmail.setId(email);
+                    try {
+                        newPrimaryEmail.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new RuntimeException(e);
+                    }
                     newPrimaryEmail.setPrimary(true);
                     newPrimaryEmail.setVerified(true);
                     newPrimaryEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());

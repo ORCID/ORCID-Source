@@ -752,9 +752,9 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
             assertNotNull(group.getIdentifiers());
             assertNotNull(group.getIdentifiers().getExternalIdentifier());
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
-            assertNotNull(group.getPeerReviewSummary());
-            assertEquals(1, group.getPeerReviewSummary().size());
-            PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
+            assertNotNull(group.getPeerReviewGroup().get(0).getPeerReviewSummary());
+            assertEquals(1, group.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+            PeerReviewSummary peerReview = group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
             Utils.verifyLastModified(peerReview.getLastModifiedDate());
             assertNotNull(peerReview.getCompletionDate());
             assertEquals("2016", peerReview.getCompletionDate().getYear().getValue());
@@ -948,8 +948,8 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
 
         for (PeerReviewGroup group : as.getPeerReviews().getPeerReviewGroup()) {
-            assertEquals(1, group.getPeerReviewSummary().size());
-            PeerReviewSummary element = group.getPeerReviewSummary().get(0);
+            assertEquals(1, group.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+            PeerReviewSummary element = group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
             if (element.getPutCode().equals(Long.valueOf(9))) {
                 found1 = true;
             } else if (element.getPutCode().equals(Long.valueOf(10))) {

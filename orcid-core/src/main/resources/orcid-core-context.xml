@@ -958,9 +958,7 @@
 	
 	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />	
 	
-	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />		
-
-	<bean id="membersManager" class="org.orcid.core.manager.impl.MembersManagerImpl" />
+	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />			
 
 	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />		
 	

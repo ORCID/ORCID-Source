@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewDuplicateGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
@@ -126,10 +127,12 @@ public class SourceUtils {
             List<PeerReviewGroup> groups = peerReviews.getPeerReviewGroup();
             if (groups != null) {
                 for (PeerReviewGroup group : groups) {
-                    List<PeerReviewSummary> summaryList = group.getPeerReviewSummary();
-                    if (summaryList != null) {
-                        for (PeerReviewSummary summary : summaryList) {
-                            setSourceName(summary);
+                    for (PeerReviewDuplicateGroup duplicateGroup : group.getPeerReviewGroup()) {
+                        List<PeerReviewSummary> summaryList = duplicateGroup.getPeerReviewSummary();
+                        if (summaryList != null) {
+                            for (PeerReviewSummary summary : summaryList) {
+                                setSourceName(summary);
+                            }
                         }
                     }
                 }
@@ -285,13 +288,15 @@ public class SourceUtils {
     public void setSourceName(PeerReviews peerReviews) {
         if (peerReviews != null) {
             for (PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
-                for (PeerReviewSummary summary : group.getPeerReviewSummary()) {
-                    setSourceName(summary);
+                for (PeerReviewDuplicateGroup duplicateGroup : group.getPeerReviewGroup()) {
+                    for (PeerReviewSummary summary : duplicateGroup.getPeerReviewSummary()) {
+                        setSourceName(summary);
+                    }
                 }
             }
         }
     }
-    
+
     public void setSourceName(ResearchResources rr) {
         if (rr != null) {
             for (ResearchResourceGroup group : rr.getResearchResourceGroup()) {
