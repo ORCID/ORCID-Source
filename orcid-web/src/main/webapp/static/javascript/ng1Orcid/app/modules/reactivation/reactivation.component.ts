@@ -46,9 +46,17 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.privacyHelp = {};
         this.registrationForm = {
+                "activitiesVisibilityDefault": {
+                    "value": null,
+                    "errors": []
+                },
                 "errors": [],
-                "termsOfUse": {
-                    "value": false, 
+                "familyNames": {
+                    "value": "",
+                    "errors": []
+                },
+                "givenNames": {
+                    "value": "",
                     "errors": []
                 },
                 "password": {
@@ -59,18 +67,10 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                     "value": "",
                     "errors": []
                 },
-                "givenNames": {
-                    "value": "",
+                "termsOfUse": {
+                    "value": false, 
                     "errors": []
-                },
-                "familyNames": {
-                    "value": "",
-                    "errors": []
-                },
-                "activitiesVisibilityDefault": {
-                    "value": null,
-                    "errors": []
-                }
+                }                                                
             }; 
     }
 
