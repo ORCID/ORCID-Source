@@ -1,16 +1,16 @@
 //Import all the angular components
-
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
+    
 import { takeUntil } 
     from 'rxjs/operators';
-
+    
 import { CommonService }
     from '../../shared/common.service.ts';
 
@@ -29,11 +29,7 @@ export class ResendClaimComponent implements AfterViewInit, OnDestroy {
         private commonSrvc: CommonService,
         private resendClaimService: ResendClaimService
     ) {
-        var email = "";
-        var urlParts = window.location.href.split('/');
-        if(urlParts != null) {
-            email = urlParts[urlParts.length -1];   
-        }
+        var email = commonSrvc.getParameterByName("email");        
         this.requestResendClaim = {
                 "email": email,
                 "errors": [],
@@ -65,4 +61,5 @@ export class ResendClaimComponent implements AfterViewInit, OnDestroy {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     };
+    
 }

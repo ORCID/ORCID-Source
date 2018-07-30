@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;
@@ -188,6 +189,8 @@ public class ClaimController extends BaseController {
 
     @RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
     public @ResponseBody EmailRequest resendClaimEmail(@RequestBody EmailRequest resendClaimRequest) {
+        resendClaimRequest.setErrors(new ArrayList<String>());
+        resendClaimRequest.setSuccessMessage(StringUtils.EMPTY);
         String email = resendClaimRequest.getEmail();
         List<String> errors = new ArrayList<>();
         resendClaimRequest.setErrors(errors);

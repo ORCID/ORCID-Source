@@ -4,8 +4,8 @@
             <h2><@spring.message "resend_claim.title"/></h2>
             <p><small><@orcid.msg "resend_claim.resend_help"/> <a href="mailto:support@orcid.org"><@orcid.msg "resend_claim.labelorg" /></a>.</small></p>            
             <div name="emailAddress">                
-            <span class="orcid-error" *ngIf="requestResendClaim.errors.length > 0">
-                <div *ngFor="let error of requestResendClaim.errors" [innerHTML]="error"></div>
+            <span class="alert orcid-error" *ngIf="requestResendClaim.errors.length > 0">
+                <strong><span *ngFor="let error of requestResendClaim.errors" [innerHTML]="error"></span></strong>
             </span>
             <div class="alert alert-success" *ngIf="requestResendClaim.successMessage != null">
                 <strong><span [innerHTML]="requestResendClaim.successMessage"></span></strong>
