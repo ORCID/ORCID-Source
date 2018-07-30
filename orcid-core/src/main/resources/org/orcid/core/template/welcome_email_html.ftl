@@ -60,7 +60,7 @@
 				<@emailMacros.msg "email.welcome.need_help.description" /> <a href='<@emailMacros.msg "email.welcome.need_help.description.link.href" />' target="orcid.blank"><@emailMacros.msg "email.welcome.need_help.description.link.text" /></a>.
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
-<@emailMacros.msg "email.common.kind_regards" />
+<@emailMacros.msg "email.common.warm_regards" />
 <a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">

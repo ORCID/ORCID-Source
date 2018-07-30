@@ -10,7 +10,7 @@ ${baseUri}/account?lang=${locale}
 
 <@emailMacros.msg "email.email_removed.important" />
 
-<@emailMacros.msg "email.common.kind_regards" />
+<@emailMacros.msg "email.common.warm_regards" />
 ${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />

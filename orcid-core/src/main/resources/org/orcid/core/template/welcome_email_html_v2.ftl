@@ -72,7 +72,7 @@
                 <@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><a href='<@emailMacros.msg "email.common.need_help.description.1.href" />'><@emailMacros.msg "email.common.need_help.description.1.text" /></a><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><@emailMacros.space /><a href='<@emailMacros.msg "email.common.need_help.description.2.href" />'><@emailMacros.msg "email.common.need_help.description.2.text" /></a>
             </p>
             <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
-<@emailMacros.msg "email.common.kind_regards.simple" />
+<@emailMacros.msg "email.common.warm_regards.simple" />
 <a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>
             </p>
             <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
