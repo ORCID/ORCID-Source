@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.Address;
+import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc1.record.Biography;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.jaxb.model.v3.rc1.record.Keyword;
@@ -38,6 +40,8 @@ import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
+import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -317,6 +321,60 @@ public class PublicProfileControllerTest extends DBUnitTest {
         profileEntity.setSubmissionDate(new Date());
         profileDao.merge(profileEntity);
         profileDao.flush();
+    }
+    
+    @Test
+    public void testGetGroupedAffiliations() {
+        AffiliationGroupContainer container = publicProfileController.getGroupedAffiliations(userOrcid);
+        Map<AffiliationType, List<AffiliationGroupForm>> map = container.getAffiliationGroups();
+        boolean distinctions = false, invitedPositions = false, educations = false, memberships = false, employments = false, qualifications = false, services = false;
+        for (AffiliationType type : map.keySet()) {
+            List<AffiliationGroupForm> elements = map.get(type);
+            // There should be only one public element
+            assertEquals(1, elements.size());
+            assertEquals(Visibility.PUBLIC.name(), elements.get(0).getActiveVisibility());
+            assertEquals(Visibility.PUBLIC.name(), elements.get(0).getAffiliations().get(0).getVisibility().getVisibility().name());
+            Long activePutCode = Long.valueOf(elements.get(0).getActivePutCode());
+            Long elementPutCode = Long.valueOf(elements.get(0).getAffiliations().get(0).getPutCode().getValue());
+            assertEquals(activePutCode, elementPutCode);
+            switch (type) {
+            case DISTINCTION:
+                distinctions = true;
+                assertEquals(Long.valueOf(27), activePutCode);                
+                break;
+            case EDUCATION:
+                educations = true;
+                assertEquals(Long.valueOf(20), activePutCode);
+                break;
+            case EMPLOYMENT:
+                employments = true;
+                assertEquals(Long.valueOf(17), activePutCode);
+                break;
+            case INVITED_POSITION:
+                invitedPositions = true;
+                assertEquals(Long.valueOf(32), activePutCode);
+                break;
+            case MEMBERSHIP:
+                memberships = true;
+                assertEquals(Long.valueOf(37), activePutCode);
+                break;
+            case QUALIFICATION:
+                qualifications = true;
+                assertEquals(Long.valueOf(42), activePutCode);
+                break;
+            case SERVICE:
+                services = true;
+                assertEquals(Long.valueOf(47), activePutCode);
+                break;
+            }
+        }
+        assertTrue(distinctions);
+        assertTrue(educations);
+        assertTrue(employments);
+        assertTrue(invitedPositions);
+        assertTrue(memberships);
+        assertTrue(qualifications);
+        assertTrue(services);
     }
     
     private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
