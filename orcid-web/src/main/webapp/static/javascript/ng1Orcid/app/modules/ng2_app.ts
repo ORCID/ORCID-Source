@@ -220,6 +220,9 @@ import { UnsubscribeNg2Module }
 
 import { DelegatorsNg2Module } 
     from './delegators/delegators.ts';    
+
+import { ResendClaimNg2Module }
+    from './resendClaim/resendClaim.ts';    
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -369,7 +372,8 @@ export class RootCmp {
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,
         WorksPrivacyPreferencesNg2Module,
-        DelegatorsNg2Module
+        DelegatorsNg2Module,
+        ResendClaimNg2Module
     ],
     providers: [
         { 
