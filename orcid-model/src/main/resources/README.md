@@ -1,4 +1,4 @@
-## ORCID Message (XSD) Readme 
+## ORCID Message (XSD) Readme
 
 **Contents**
 
@@ -38,9 +38,9 @@
 
 #### XSD deprecated versions
 
-* **[ORCID Message 2.0_rc4](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc4)** - _Contains: Minor corrections and updates_ <br/> 
-* **[ORCID Message 2.0_rc3](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc3)** - _Contains: bulk works, activities section endpoints_ <br/> 
-* **[ORCID Message 2.0_rc2](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc2)** - _Contains: Person section, migrates all identifiers to external-identifier_ <br/> 
+* **[ORCID Message 2.0_rc4](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc4)** - _Contains: Minor corrections and updates_ <br/>
+* **[ORCID Message 2.0_rc3](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc3)** - _Contains: bulk works, activities section endpoints_ <br/>
+* **[ORCID Message 2.0_rc2](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc2)** - _Contains: Person section, migrates all identifiers to external-identifier_ <br/>
 * **[ORCID Message 2.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc1)** - _Contains: Peer-review, new format XSD for activities_ <br/><br/>
     * API Base URLs - PRODUCTION (replace 'X' in the URL with the rc version)
         * Public API:   https://pub.orcid.org/v2.0_rcX/
@@ -49,7 +49,7 @@
         * Public API:   https://pub.sandbox.orcid.org/v2.0_rcX/
         * Member API:   https://api.sandbox.orcid.org/v2.0_rcX/
 
-* **[ORCID Message 1.2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2.xsd)** 
+* **[ORCID Message 1.2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2.xsd)**
     * API Base URLs - PRODUCTION
         * Public API:   https://pub.orcid.org/v1.2/
         * Member API:   https://api.orcid.org/v1.2/
@@ -84,7 +84,7 @@ The XSD version you should use depends on what you are trying to do. Most develo
 
 ## Staying informed
 
-You can stay informed of updates to the XSD and API by subscribing to our [API Users Group](https://groups.google.com/forum/?fromgroups#!forum/orcid-api-users) mailing list and forum. 
+You can stay informed of updates to the XSD and API by subscribing to our [API Users Group](https://groups.google.com/forum/?fromgroups#!forum/orcid-api-users) mailing list and forum.
 
 ## Using XSD versions
 
@@ -92,7 +92,7 @@ You can stay informed of updates to the XSD and API by subscribing to our [API U
 
 The deprecated version(s) of the XSD are former versions of the XSD. If you are using a deprecated version, you should be planning a migration to move to a release version. Other things of note about deprecated versions:
 
-* An XSD that has changed to deprecated status will not be removed immediately, though we are actively encouraging all developers to move to the current release version. 
+* An XSD that has changed to deprecated status will not be removed immediately, though we are actively encouraging all developers to move to the current release version.
 * Developers on deprecated versions should refer to the migration notes to assist in moving to the latest release version.
 * Future functionality will not be supported in deprecated versions.
 * Future versions may not be backward compatible with deprecated versions.
@@ -120,7 +120,7 @@ Release candidate versions of the XSD contain elements and data structures for f
 
 | Version/link | Release Date | Sunset date | Notes | Who should be using this version |
 | ------------ | ------------ | ----------- | ----- | -------------------------------- |
-| [ORCID XSD 2.1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1) | Nov 17, 2017 | | **[Release version](#releaseVersion)**<br><br>CURRENT SUPPORTED VERSION<br/>*ORCID iDs are expressed in the cannonical form with the https perfix* |This is a preferred version. All developers should be using or migrating to this version or 2.0. [Documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md)|
+| [ORCID XSD 2.1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1) | Nov 17, 2017 | | **[Release version](#releaseVersion)**<br><br>CURRENT SUPPORTED VERSION<br/>*ORCID iDs are expressed in the canonical form with the https prefix* |This is a preferred version. All developers should be using or migrating to this version or 2.0. [Documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md)|
 | [ORCID XSD 2.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0) | Feb 13, 2017 | | **[Release version](#releaseVersion)**<br><br>CURRENT SUPPORTED VERSION<br/>[Change log from 1.2](https://members.orcid.org/api/news/xsd-20-update) |This is a preferred version. All developers should be using or migrating to this version or 2.1. [Documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/README.md)|
 | [ORCID XSD 2.0_rc4](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc4) | Jan 24, 2017 | Spring 2018 | **[Release candidate version](#releaseCandidate)**<br><br/>_minor fixes and corrections_ | |
 | [ORCID XSD 2.0_rc3](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc3) | Nov 18, 2016 | Spring 2018 | **[Release candidate version](#releaseCandidate)**<br><br/>_adds bulk works_ |  |
@@ -135,6 +135,6 @@ Release candidate versions of the XSD contain elements and data structures for f
 
 Technical documentation is included with the read-me file for each version. [Current release documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md)
 
-The [ORCID Member Support Site](https://members.orcid.org) has additional documentation, tutorials and guides, as well as contact for our support team. 
+The [ORCID Member Support Site](https://members.orcid.org) has additional documentation, tutorials and guides, as well as contact for our support team.
 
 We also invite you to submit questions to the [API Users Group](https://groups.google.com/forum/?fromgroups#!forum/orcid-api-users) mailing list and forum.
