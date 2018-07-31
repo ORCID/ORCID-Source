@@ -106,7 +106,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                    peerReviewSrvc.deleteGroupPeerReview(putCode);
                 }
                 else{
-                    peerReviewSrvc.deletePeerReview(putCode, $scope.sortState.reverseKey['groupName']);
+                    peerReviewSrvc.deletePeerReview(putCode, !$scope.sortState.reverseKey['groupName']);
                 }
                 $.colorbox.close();
             };
