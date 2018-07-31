@@ -694,17 +694,13 @@ $(function() {
     }
     
     function showLoginDeactivatedError() {
-        if(orcidVar.features['ANGULAR2_QA']){
-            window.angularComponentReference.zone.run(
-                function(){
-                    window.angularComponentReference.showDeactivationError(); 
-                    
-                }
+        window.angularComponentReference.zone.run(
+            function(){
+                window.angularComponentReference.showDeactivationError(); 
+                
+            }
 
-            );
-        } else {
-          angular.element($("#login-deactivated-error")).scope().showDeactivationError();  
-        }
+        );
         if ($('form#loginForm #login-error-mess').length == 0) {
             $('form#loginForm #login-deactivated-error').fadeIn('fast');
         } else {
