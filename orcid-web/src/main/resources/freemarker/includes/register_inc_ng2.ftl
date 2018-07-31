@@ -65,6 +65,10 @@
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" *ngIf="showDeactivatedError">
+                -----------------------------------------------------------------------    
+                -------------------------------TODO------------------------------------
+                -----------------------------------------------------------------------
+
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a (click)="sendReactivationEmail(registrationForm.email.value)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" *ngIf="showReactivationSent">
@@ -97,6 +101,10 @@
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[i]}} ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span class="orcid-error" *ngIf="showEmailsAdditionalDeactivatedError[i]">
+                -----------------------------------------------------------------------    
+                -------------------------------TODO------------------------------------
+                -----------------------------------------------------------------------
+
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a (click)="sendEmailsAdditionalReactivationEmail(i)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                 </span>
                 <span class="orcid-error" *ngIf="showEmailsAdditionalReactivationSent[i]">
