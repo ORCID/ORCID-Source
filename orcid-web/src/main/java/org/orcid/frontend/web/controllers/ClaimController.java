@@ -190,7 +190,7 @@ public class ClaimController extends BaseController {
     @RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
     public @ResponseBody EmailRequest resendClaimEmail(@RequestBody EmailRequest resendClaimRequest) {
         resendClaimRequest.setErrors(new ArrayList<String>());
-        resendClaimRequest.setSuccessMessage(StringUtils.EMPTY);
+        resendClaimRequest.setSuccessMessage(null);
         String email = resendClaimRequest.getEmail();
         List<String> errors = new ArrayList<>();
         resendClaimRequest.setErrors(errors);
