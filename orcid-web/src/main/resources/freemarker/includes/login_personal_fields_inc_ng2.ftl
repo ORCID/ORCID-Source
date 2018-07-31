@@ -64,7 +64,7 @@
         </small>
     </p>
     <div id="reactivate" name="emailAddressForm">
-        <div class="alert alert-success" *ngIf="initReactivationRequest.error == null">
+        <div class="alert alert-success" *ngIf="initReactivationRequest.success">
             <strong><@spring.message 'orcid.frontend.verify.reactivation_sent.1' /><a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' /></strong>
         </div>
         <div class="control-group">
@@ -72,10 +72,10 @@
             <div class="controls"> 
                 <input id="email" name="email" type="text" class="form-control" [(ngModel)]="initReactivationRequest.email" />
             </div>
-                <span class="orcid-error" *ngIf="initReactivationRequest.error != null">
+            <span class="orcid-error" *ngIf="initReactivationRequest.error != null">
                 <div [innerHTML]="initReactivationRequest.error"></div>
             </span>
-            <button class="btn btn-primary" (click)="sendReactivation(initReactivationRequest.email)"><@spring.message 'check_password_modal.submit' /></button>
+            <span class="btn btn-primary" (click)="sendReactivationEmail(initReactivationRequest.email)"><@spring.message 'check_password_modal.submit' /></span>
         </div>
     </div>
     </span> 

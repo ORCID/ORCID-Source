@@ -92,6 +92,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     generalRegistrationError: any;
     //registration form togglz features    
     disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
+    initReactivationRequest: any;
     
     constructor(
         private zone:NgZone,
@@ -149,6 +150,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.socialSignInForm = {};
         this.loadTime = 0;
         this.generalRegistrationError = null;
+        this.initReactivationRequest = { "email":null, "error":null, "success":false };
     }
 
     addScript(url, onLoadFunction): void {      
