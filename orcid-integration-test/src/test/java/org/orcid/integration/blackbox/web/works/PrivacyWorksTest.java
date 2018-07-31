@@ -44,9 +44,9 @@ public class PrivacyWorksTest extends BlackBoxBase {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
         AddWorksTest.waitWorksLoaded(wait, webDriver);
         // clean up any from previous test
-        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_A, webDriver);
-        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_B, webDriver);
-        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_C, webDriver);
+        deleteWork(PRIVACY_WORKS_TEST+_A);
+        deleteWork(PRIVACY_WORKS_TEST+_B);
+        deleteWork(PRIVACY_WORKS_TEST+_C);
         
         // Test actually begins
         AddWorksTest.addSimple(PRIVACY_WORKS_TEST+_A, webDriver);
@@ -68,9 +68,9 @@ public class PrivacyWorksTest extends BlackBoxBase {
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_C, "PRIVATE")));
         
         // clean up after test
-        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_A, webDriver);
-        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_B, webDriver);
-        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_C, webDriver);
+        deleteWork(PRIVACY_WORKS_TEST+_A);
+        deleteWork(PRIVACY_WORKS_TEST+_B);
+        deleteWork(PRIVACY_WORKS_TEST+_C);
     }
     
     public static By selectPublicByTitle(String title) {
@@ -86,10 +86,10 @@ public class PrivacyWorksTest extends BlackBoxBase {
     }
     
     public static By privSelectByTitle(String title, int pos) {
-        return By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + title + "']]//ul[@class='privacyToggle']/li[" + pos + "]/a");
+        return By.xpath("//li[descendant::span[text() = '" + title + "']]//ul[@class='privacyToggle']/li[" + pos + "]/a");
     }
     
     public static By privIsVis(String title, String vis) {
-        return By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + title + "']]//ul[@class='privacyToggle']/li[@class='" + vis.toLowerCase() + "Active']");
+        return By.xpath("//li[descendant::span[text() = '" + title + "']]//ul[@class='privacyToggle']/li[@class='" + vis.toLowerCase() + "Active']");
     }
 }

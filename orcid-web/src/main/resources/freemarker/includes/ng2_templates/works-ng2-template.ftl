@@ -344,7 +344,7 @@
                                 <ul class="id-details">
                                     <li class="url-work">
                                         <ul class="id-details">
-                                            <li *ngFor='let extID of work.workExternalIdentifiers | orderBy:["-relationship.value", "externalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
+                                            <li *ngFor='let extID of work.workExternalIdentifiers | orderBy:["relationship.value", "externalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
                                                 <span *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
                                                     <ext-id-popover-ng2 [extID]="extID" [putCode]="'bibtexWork'+i" [activityType]="'work'"></ext-id-popover-ng2>
                                                 </span>
@@ -396,7 +396,7 @@
                 <strong>
                     <#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} 
                     <a *ngIf="noLinkFlag" (click)="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a>
-                    <span *ngIf="noLinkFlag">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</span>
+                    <span *ngIf="!noLinkFlag">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</span>
                     </#if>
                 </strong>
             </div>          

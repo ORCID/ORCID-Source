@@ -119,16 +119,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody List<ImportWizzardClientForm> retrievePeerReviewImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopePeerReviewImport(localeManager.getLocale());
     }
-
-    @ModelAttribute("affiliationTypes")
-    public Map<String, String> retrieveAffiliationTypesAsMap() {
-        Map<String, String> affiliationTypes = new LinkedHashMap<String, String>();
-        for (AffiliationType affiliationType : AffiliationType.values()) {
-            affiliationTypes.put(affiliationType.value(), getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.AffiliationType.class, affiliationType.value())));
-        }
-        return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
-    }
-
+    
     @ModelAttribute("fundingTypes")
     public Map<String, String> retrieveFundingTypesAsMap() {
         Map<String, String> grantTypes = new LinkedHashMap<String, String>();
@@ -147,16 +138,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }
         return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
-    }
-
-    @ModelAttribute("affiliationLongDescriptionTypes")
-    public Map<String, String> retrieveAffiliationLongDescriptionTypesAsMap() {
-        Map<String, String> organizationTypes = new LinkedHashMap<String, String>();
-        for (AffiliationType organizationType : AffiliationType.values()) {
-            organizationTypes.put(organizationType.value(), getMessage(AffiliationType.class.getName() + '.' + "longDescription" + '.' + organizationType.value()));
-        }
-        return FunctionsOverCollections.sortMapsByValues(organizationTypes);
-    }
+    }    
 
     @ModelAttribute("workCategories")
     public Map<String, String> retrieveWorkCategoriesAsMap() {

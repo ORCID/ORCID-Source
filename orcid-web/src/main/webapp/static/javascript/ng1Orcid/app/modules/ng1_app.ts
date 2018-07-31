@@ -121,6 +121,12 @@ import { RequestPasswordResetModule }
 import { ResetPasswordModule }
     from './resetPassword/resetPassword.ts';
 
+import { ResearchResourceModule } 
+    from './researchResource/researchResource.ts';
+
+import { ResearchResourceDeleteModule } 
+    from './researchResource/researchResourceDelete.ts';
+
 import { SearchModule } 
     from './search/search.ts';
 
@@ -190,6 +196,9 @@ import { UnsubscribeModule }
 import { DelegatorsModule } 
     from './delegators/delegators.ts';
     
+import { ResendClaimModule } 
+    from './resendClaim/resendClaim.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -233,6 +242,8 @@ export const orcidApp = angular.module(
         RegisterDuplicatesModule.name,
         RequestPasswordResetModule.name,
         ResetPasswordModule.name,
+        ResearchResourceModule.name,
+        ResearchResourceDeleteModule.name,
         SearchModule.name,
         SecurityQuestionEditModule.name,
         SelfServiceModule.name,
@@ -255,7 +266,8 @@ export const orcidApp = angular.module(
         WorkSpaceSummaryModule.name,
         WorksPrivacyPreferencesModule.name,
         UnsubscribeModule.name,
-        DelegatorsModule.name
+        DelegatorsModule.name,
+        ResendClaimModule.name
     ]
 );
 

@@ -158,8 +158,12 @@
         <#include "workspace_affiliations_body_list_v3.ftl"/>
         <!-- Fundings -->
         <#include "workspace_fundings_body_list_v3.ftl"/>
-
         
+        <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
+          <!--Research resources-->
+          <#include "/includes/ng2_templates/research-resource-ng2-template.ftl">
+          <research-resource-ng2 publicView="false"></research-resource-ng2>
+        </@orcid.checkFeatureStatus>
 
         <!-- Works -->
         <#include "/includes/ng2_templates/works-ng2-template.ftl">
@@ -369,6 +373,11 @@
   </div>
   </#if>
 </script>
+<#include "/includes/ng2_templates/research-resource-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalResearchResourceDelete" elementWidth="300">
+    <research-resource-delete-ng2></research-resource-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <#include "/includes/ng2_templates/works-bulk-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="280" elementId="modalWorksBulkDelete" elementWidth="600">
     <works-bulk-delete-ng2></works-bulk-delete-ng2>
@@ -407,10 +416,12 @@
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
-<modalngcomponent elementHeight="645" elementId="modalFundingForm" elementWidth="700">
-  <funding-form-ng2></funding-form-ng2>
-</modalngcomponent>
+<@orcid.checkFeatureStatus 'ANGULAR2_DEV'>
+  <#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
+  <modalngcomponent elementHeight="645" elementId="modalFundingForm" elementWidth="700">
+    <funding-form-ng2></funding-form-ng2>
+  </modalngcomponent>
+</@orcid.checkFeatureStatus>
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>

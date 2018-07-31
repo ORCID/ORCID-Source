@@ -147,15 +147,14 @@
 											<div class="col-md-9 col-sm-9 col-xs-12">
 												<div class="row">
 									    			<div class="col-md-12 col-sm-12 col-xs-12">
-									    				{{authorizeUrlBase}}
+									    				<strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{authorizeUrlBase}}
 									    			</div>
 									    		</div>
 									    		<div class="row">									    			
-										    		<div class="col-md-5 col-sm-5 col-xs-12">
-										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/></strong>
-										  			</div>
-										  			<div class="col-md-7 col-sm-7 col-xs-12 no-wrap">
-										  				<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
+										    		<div class="col-md-12 col-sm-12 col-xs-12">
+										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/><br/>
+										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.response_type'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.response_type.code'/><br/>
+										  				<strong><@orcid.msg 'manage.developer_tools.view.description'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
 										  			</div>
 									    		</div>
 									    		<div class="row">
@@ -170,11 +169,38 @@
 												<strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong>								
 											</div>
 											<div class="col-md-9 col-sm-9 col-xs-12">
-													{{tokenURL}}<br />
+													<strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{tokenURL}}<br />
 											    	<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
 											    	<textarea class="input-xlarge-full authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>							
 											</div>
 										</div>
+										
+										<!-- Openid URL -->
+										<div class="row bottomBuffer" ng-hide="playgroundExample != ''">
+											<div class="col-md-3 col-sm-3 col-xs-12">
+												<strong><@orcid.msg 'manage.developer_tools.view.example.openid'/></strong>							
+											</div>
+											<div class="col-md-9 col-sm-9 col-xs-12">
+												<div class="row">
+									    			<div class="col-md-12 col-sm-12 col-xs-12">
+									    				<strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{authorizeUrlBase}}
+									    			</div>
+									    		</div>
+									    		<div class="row">									    			
+										    		<div class="col-md-12 col-sm-12 col-xs-12">
+										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.openid'/><br/>
+										  				<strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.response_type'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.response_type.token'/><br/>
+										  				<strong><@orcid.msg 'manage.developer_tools.view.description'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.openid.description'/> (<a href="<@orcid.msg 'manage.developer_tools.view.example.opendid.url' />" target="openidWiki"><@orcid.msg 'manage.developer_tools.view.example.openid.text' /></a>)
+										  			</div>
+									    		</div>
+									    		<div class="row">
+									    			<div class="col-md-12 col-sm-12 col-xs-12">
+									    				<textarea class="input-xlarge-full authorizeURL" ng-model="sampleOpenId" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>
+									    			</div>
+									    		</div>								
+											</div>
+										</div>
+										
 										<div class="row" ng-hide="playgroundExample == ''">
 											<div class="col-md-3 col-sm-3 col-xs-12">
 												<strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong>								
@@ -184,6 +210,12 @@
 													<span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
 													<span ng-show="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
 												</a>
+												<br/>
+												<span ng-show="selectedRedirectUri.value.value == googleUri">
+													<a href="{{googleExampleLinkOpenID}}" target="'manage.developer_tools.view.example.google">
+														<@orcid.msg 'manage.developer_tools.view.example.googleOIDC'/>
+													</a>
+												</span>
 											</div>
 										</div>												
 									</div>

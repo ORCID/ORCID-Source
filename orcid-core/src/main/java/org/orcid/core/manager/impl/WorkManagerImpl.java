@@ -82,6 +82,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
+        
+    public WorkManagerImpl(@Value("${org.orcid.core.works.bulk.max:100}") Integer bulkReadSize) {
+        super(bulkReadSize);
+    }
     
     /**
      * Updates the visibility of an existing work

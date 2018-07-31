@@ -1157,18 +1157,18 @@
     <bean id="minimizedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="minimized-work" />
         <property name="cacheManager" ref="coreCacheManager" />
-        <property name="maxElementsInMemory" value="30000" />
-        <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxMegaBytesOnDisk" value="1024" />
+        <property name="maxMegaBytesInMemory" value="1024" />
+        <property name="timeToIdleSeconds" value="600" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="true" />
     </bean>
     
     <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="full-work-entity" />
         <property name="cacheManager" ref="coreCacheManager" />
-        <property name="maxElementsInMemory" value="30000" />
-        <property name="timeToIdleSeconds" value="3600" />
-        <property name="maxMegaBytesOnDisk" value="16384" />
+        <property name="maxMegaBytesInMemory" value="1024" />
+        <property name="timeToIdleSeconds" value="600" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="true" />
     </bean>
     

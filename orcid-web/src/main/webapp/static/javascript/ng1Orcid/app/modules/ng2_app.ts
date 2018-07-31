@@ -137,6 +137,12 @@ import { RegisterDuplicatesNg2Module }
 import { RequestPasswordResetNg2Module } 
     from './requestPasswordReset/requestPasswordReset.ts';
 
+import { ResearchResourceNg2Module } 
+    from './researchResource/researchResource.ts';
+
+import { ResearchResourceDeleteNg2Module } 
+    from './researchResource/researchResourceDelete.ts';
+
 import { ResetPasswordNg2Module }
     from './resetPassword/resetPassword.ts';
 
@@ -214,6 +220,9 @@ import { UnsubscribeNg2Module }
 
 import { DelegatorsNg2Module } 
     from './delegators/delegators.ts';    
+
+import { ResendClaimNg2Module }
+    from './resendClaim/resendClaim.ts';    
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -339,6 +348,8 @@ export class RootCmp {
         ReactivationNg2Module,
         RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,
+        ResearchResourceNg2Module,
+        ResearchResourceDeleteNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
@@ -361,7 +372,8 @@ export class RootCmp {
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,
         WorksPrivacyPreferencesNg2Module,
-        DelegatorsNg2Module
+        DelegatorsNg2Module,
+        ResendClaimNg2Module
     ],
     providers: [
         { 

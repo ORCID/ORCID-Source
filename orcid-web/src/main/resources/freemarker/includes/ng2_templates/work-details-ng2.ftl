@@ -36,7 +36,7 @@
                                 <#if !(isPublicProfile??)>
                                 <li>
                                     <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
-                                    elementId="group.groupId" 
+                                    elementId="group.activePutCode" 
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
                                         clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
                                         publicClick="worksService.setGroupPrivacy(group.activePutCode, 'PUBLIC', $event)"
@@ -94,7 +94,7 @@
                             <#if !(isPublicProfile??)>
                             <li>
                                 <@orcid.privacyToggle2Ng2 angularModel="work.visibility.visibility"
-                                elementId="group.groupId" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" publicClick="setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(work.putCode.value, 'LIMITED', $event)" privateClick="setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
+                                elementId="group.activePutCode" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" publicClick="setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(work.putCode.value, 'LIMITED', $event)" privateClick="setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
                             </li>
                             </#if>
                         </ul>
@@ -120,7 +120,7 @@
                         <ul class="id-details clearfix">
                             <li class="url-work clearfix">
                                 <ul class="id-details clearfix">
-                                    <li *ngFor='let extID of work?.workExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                                    <li *ngFor='let extID of work?.workExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["relationship.value", "type.value"]' class="url-popover">
                                         <span *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
                                             <ext-id-popover-ng2 [extID]="extID" [putCode]="work.putCode.value+i" [activityType]="'work'"></ext-id-popover-ng2>
                                         </span>

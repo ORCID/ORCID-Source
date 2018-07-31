@@ -137,7 +137,7 @@ public class ActivitiesSummaryManagerTest extends DBUnitTest {
         assertNotNull(summary.getPeerReviews());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
         assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(Long.valueOf(9), summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertEquals(Long.valueOf(9), summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
         
         assertNotNull(summary.getWorks());
         assertNotNull(summary.getWorks().getWorkGroup());

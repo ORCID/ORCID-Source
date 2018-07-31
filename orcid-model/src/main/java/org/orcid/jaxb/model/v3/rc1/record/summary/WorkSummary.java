@@ -42,7 +42,7 @@ import org.orcid.jaxb.model.v3.rc1.record.WorkType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "journalTitle", "publicationDate" })
+@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type",  "publicationDate","journalTitle"  })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
 public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
 

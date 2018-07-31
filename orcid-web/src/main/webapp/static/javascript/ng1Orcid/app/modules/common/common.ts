@@ -27,12 +27,14 @@ import { AjaxFormDateToISO8601Pipe }
 import { ContributorFilterPipe }
     from '../../pipes/contributorFilterNg2.ts';
 
+import { DashToSpacePipe }
+    from '../../pipes/dashToSpaceNg2.ts';
+
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
 import { KeysPipe }
     from '../../pipes/keysNg2.ts'; 
-
 
 import { LatexPipe }
     from '../../pipes/latexNg2.ts'; 
@@ -159,6 +161,9 @@ import { PreferencesService }
 import { ReactivationService }
     from '../../shared/reactivation.service.ts';
 
+import { ResearchResourceService }
+    from '../../shared/researchResource.service.ts';
+
 import { SearchService } 
     from '../../shared/search.service.ts';
 
@@ -182,6 +187,9 @@ import { EmailFrequencyService }
 
 import { UnsubscribeService }
     from '../../shared/unsubscribe.service.ts';
+
+import { ResendClaimService }
+    from '../../shared/resendClaim.service.ts';    
     
 // This is the Angular 2 part of the module
 @NgModule(
@@ -206,6 +214,7 @@ import { UnsubscribeService }
             FocusMe,
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            DashToSpacePipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
@@ -226,6 +235,7 @@ import { UnsubscribeService }
             //User Pipes
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
+            DashToSpacePipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
@@ -269,13 +279,15 @@ import { UnsubscribeService }
             PasswordService,
             PreferencesService,
             ReactivationService,
+            ResearchResourceService,
             SearchService,
             TwoFAStateService,
             SwitchUserService,
             WidgetService,
             WorksService,
             WorkspaceService,
-            UnsubscribeService
+            UnsubscribeService,
+            ResendClaimService
         ]
     }
 )

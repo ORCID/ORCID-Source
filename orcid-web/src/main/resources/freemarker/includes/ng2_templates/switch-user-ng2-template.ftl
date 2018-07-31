@@ -19,7 +19,7 @@
 
 <script type="text/ng-template" id="switch-user-ng2-template">
     <div>
-        <div class="dropdown id-banner-container" *ngIf="unfilteredLength">
+        <div class="dropdown id-banner-container" *ngIf="(me || unfilteredLength > 0)">
             <a (click)="openMenu($event)" class="id-banner-switch">
                 <div class="orcid-id-container">
                         ${baseUri}/{{requestInfoForm?.userOrcid}}
