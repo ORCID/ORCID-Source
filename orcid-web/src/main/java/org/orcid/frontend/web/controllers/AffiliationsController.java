@@ -297,7 +297,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
         return affiliationIds;
     }
-
+    
     /**
      * Updates an affiliation visibility
      */
@@ -307,6 +307,20 @@ public class AffiliationsController extends BaseWorkspaceController {
         affiliationsManager.updateVisibility(getEffectiveUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()), visibility);
         return affiliation;
     }
+
+    /**
+     * Updates visibility on multiple affiliations
+     */
+    @RequestMapping(value = "/{affiliationIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
+    public @ResponseBody ArrayList<Long> updateAffiliationVisibilities(@PathVariable("affiliationIdsStr") String affiliationIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
+        String orcid = getEffectiveUserOrcid();
+        ArrayList<Long> affIds = new ArrayList<Long>();
+        for (String affId : affiliationIdsStr.split(","))
+            affIds.add(new Long(affId));
+        affiliationsManager.updateVisibilities(orcid, affIds, org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibilityStr));
+        return affIds;
+    }
+    
 
     /**
      * Search DB for disambiguated affiliations to suggest to user
