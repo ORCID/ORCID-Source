@@ -64,6 +64,9 @@ import { ExternalIdentifiersModule }
 import { ExtIdPopoverModule } 
     from './extIdPopover/extIdPopover.ts';
 
+import { FundingDeleteModule } 
+    from './funding/fundingDelete.ts';
+
 import { FundingModule } 
     from './funding/funding.ts';
 
@@ -220,8 +223,9 @@ export const orcidApp = angular.module(
         EmailVerificationSentMesssageModule.name,
         ExternalIdentifiersModule.name,
         ExtIdPopoverModule.name,
-        FundingModule.name,
+        FundingDeleteModule.name,
         FundingFormModule.name,
+        FundingModule.name,
         HomeModule.name,
         HeaderModule.name,
         LanguageModule.name,

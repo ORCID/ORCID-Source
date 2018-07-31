@@ -186,7 +186,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                                 this.editFunding = data;
                                 this.fundingService.setFundingToEdit(data);
                                 this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: false});
-                                console.log('this.editFunding3', this.editFunding);
                             }
                         );
                     } else {
@@ -209,8 +208,40 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     deleteFunding(delFunding): void {
-        //this.fundingService.deleteData(delFunding);
+        this.fundingService.removeFunding(delFunding).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                console.log('delete response', data)
+                //this.fundings = data;
+            }
+        );
         //this.closeModal();
+    };
+
+    deleteFundingConfirm(putCode, deleteGroup) {
+        var funding = this.fundingService.getFunding(putCode);
+        var maxSize = 100;
+ 
+        
+        if (funding.fundingTitle && funding.fundingTitle.title){
+            this.fixedTitle = funding.fundingTitle.title.value;
+        }
+        else{
+            this.fixedTitle = '';
+        } 
+
+        if(this.fixedTitle.length > maxSize){
+            this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
+        }
+
+        /*
+        $.colorbox({
+            html : $compile($('#delete-funding-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+        */
     };
 
     getFundingsById( ids ): any {

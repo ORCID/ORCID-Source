@@ -83,6 +83,9 @@ import { ExternalIdentifiersNg2Module }
 import { ExtIdPopoverNg2Module } 
     from './extIdPopover/extIdPopover.ts';
 
+import { FundingDeleteNg2Module } 
+    from './funding/fundingDelete.ts';
+
 import { FundingNg2Module } 
     from './funding/funding.ts';
 
@@ -327,6 +330,7 @@ export class RootCmp {
         ExternalIdentifiersNg2Module,
         ExtIdPopoverNg2Module,
         HeaderNg2Module,
+        FundingDeleteNg2Module,
         FundingFormNg2Module,
         FundingNg2Module,
         HomeNg2Module,

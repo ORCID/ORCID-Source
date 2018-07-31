@@ -13,15 +13,17 @@ import { catchError, map, tap }
 
 @Injectable()
 export class FundingService {
-    
-    private fundingToAddIds: any;
     private headers: HttpHeaders;
+    private notify = new Subject<any>();
+    private fundingToAddIds: any;
     private urlFundingsById: string;
     private urlFundingsId: string;
     private fundingToEdit: any;
     
     public groups: any;
     public loading: any;
+
+    notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -38,6 +40,12 @@ export class FundingService {
         this.fundingToEdit = {};
     }
 
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
+    }
+    
     createNew(obj): any {
         var cloneF = JSON.parse(JSON.stringify(obj));
         cloneF.source = null;

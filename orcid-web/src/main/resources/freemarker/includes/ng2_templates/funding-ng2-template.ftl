@@ -147,7 +147,7 @@
             </div>
             <div *ngIf="workspaceSrvc.displayFunding" class="workspace-accordion-content">
                 <ul *ngIf="groups.length > 0" class="workspace-fundings workspace-body-list bottom-margin-medium" >
-                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups | orderBy: 'sortState'"><!-- | orderBy:sortState.predicate:sortState.reverse -->
+                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups | orderBy: 'sortState.predicate:sortState.reverse'"><!-- | orderBy:sortState.predicate:sortState.reverse -->
 
                         <div class="work-list-container">
                             <ul class="sources-edit-list">
@@ -534,6 +534,19 @@
 
 
             </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete-funding-modal">
+    <div class="row">
+        <div class="col-md-12 col-xs-12 col-sm-12">
+            <h3><@orcid.msg 'manage.deleteFunding.pleaseConfirm' /></h3>
+            <p>{{fixedTitle}}</p>       
+            <div id="confirm-delete-funding" class="btn btn-danger" (click)="deleteFundingByPut(deletePutCode, deleteGroup)">
+                <@orcid.msg 'freemarker.btnDelete' />
+            </div>
+            <a href="" (click)="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
         </div>
     </div>
 </script>
