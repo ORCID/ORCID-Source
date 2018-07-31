@@ -117,7 +117,6 @@ public class PasswordResetController extends BaseController {
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
         }
-        
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
@@ -125,34 +124,22 @@ public class PasswordResetController extends BaseController {
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
-        try {
+        if(emailManager.emailExists(passwordResetRequest.getEmail())) {
             String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
-            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-            if (profile == null) {
-                String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
-                message += "<a href=\"mailto:support@orcid.org\">";
-                message += getMessage("orcid.frontend.reset.password.email_not_found_3");
-                message += "</a>";
-                message += getMessage("orcid.frontend.reset.password.email_not_found_4");
-                errors.add(message);
-                return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-            }
-    
-            if (profile.getDeactivationDate() != null) {
-                /*String message = getMessage("orcid.frontend.reset.password.disabled_account_1");
-                message += "<a href=\"/help/contact-us\">";
-                message += getMessage("orcid.frontend.reset.password.disabled_account_2");
-                message += "</a>";
-                errors.add(message);*/
+
+            if (profileEntityManager.isDeactivated(orcid)) {
                 errors.add("orcid.frontend.security.orcid_deactivated");
                 return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
+            } else if (profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
+                notificationManager.sendApiRecordCreationEmail(passwordResetRequest.getEmail(), orcid);
+            } else {
+                notificationManager.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
             }
-    
-            registrationManager.resetUserPassword(passwordResetRequest.getEmail(), orcid, profile.getClaimed());
-            passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
-        } catch(NoResultException nre) {
-            errors.add(getMessage("Email.resetPasswordForm.error"));
+        } else {
+            notificationManager.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail()); 
+            return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
+        
         return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
     }
 

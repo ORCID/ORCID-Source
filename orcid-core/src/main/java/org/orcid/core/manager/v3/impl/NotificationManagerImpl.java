@@ -477,6 +477,23 @@ public class NotificationManagerImpl implements NotificationManager {
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", locale), body, htmlBody);
     }
+    
+    @Override
+    public void sendPasswordResetNotFoundEmail(String submittedEmail) {     
+        Locale locale = LocaleUtils.toLocale("en");
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", submittedEmail);
+        templateParams.put("subject", getSubject("email.subject.reset_not_found", locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        addMessageParams(templateParams, locale);
+        // Generate body from template
+        String body = templateManager.processTemplate("reset_password_not_found_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("reset_password_not_found_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset_not_found", locale), body, htmlBody);
+    }
+
 
     @Override
     public void sendReactivationEmail(String submittedEmail, String userOrcid) {

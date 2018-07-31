@@ -27,6 +27,8 @@ public interface NotificationManager {
     
     void sendPasswordResetEmail(String toEmail, String userOrcid);
     
+    void sendPasswordResetNotFoundEmail(String toEmail);
+
     void sendReactivationEmail(String submittedEmail, String userOrcid);
 
     public String createVerificationUrl(String email, String baseUri);
@@ -98,5 +100,4 @@ public interface NotificationManager {
     void processUnverifiedEmails7Days();
     
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
-
 }
