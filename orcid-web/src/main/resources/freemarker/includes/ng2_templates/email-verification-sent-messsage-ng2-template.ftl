@@ -3,6 +3,6 @@
         <h4><@orcid.msg 'manage.email.verificationEmail'/> {{emailPrimary}}</h4>
         <p><@orcid.msg 'workspace.check_your_email'/></p>
         <br />
-        <button class="btn" (click)="close()"><@orcid.msg 'freemarker.btnclose'/></button>
+        <button class="btn btn-white-no-border" (click)="close()"><@orcid.msg 'freemarker.btnclose'/></button>
     </div>
 </script>
