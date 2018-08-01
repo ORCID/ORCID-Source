@@ -20,8 +20,14 @@
                             <div *ngFor="let error of requestResetPassword.errors"
                                 [innerHTML]="error"></div>
                         </span>
-                        <div class="alert alert-success" *ngIf="requestResetPassword?.successMessage != null">
-                            <strong><span [innerHTML]="requestResetPassword.successMessage"></span></strong>
+                        <div class="alert alert-success" *ngIf="requestResetPassword?.successMessage != null && (!resetPasswordEmailFeatureEnabled)">
+                            <strong><span [innerHTML]="requestResetPassword.successMessage"></span>
+                            </strong>
+                        </div>
+                        <div class="alert alert-success" *ngIf="requestResetPassword?.successMessage != null && resetPasswordEmailFeatureEnabled">
+                            ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_1")} {{requestResetPassword?.email}}
+                            ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_2")}
+                            <a href="common.contact_us.uri" target="common.contact_us.uri">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_3")}</a>
                         </div>
                         <div class="control-group">
                             <label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label>
@@ -50,8 +56,14 @@
                 <span class="orcid-error" *ngIf="requestResetPassword.errors && requestResetPassword.errors.length > 0 && !showDeactivatedError &&  !showReactivationSent">
                    <div *ngFor='let error of requestResetPassword.errors' [innerHTML]="error"></div>
                 </span>
-                <div class="alert alert-success" *ngIf="requestResetPassword.successMessage != null">
-                    <strong><span [innerHTML]="requestResetPassword.successMessage"></span></strong>
+                <div class="alert alert-success" *ngIf="requestResetPassword?.successMessage != null && (!resetPasswordEmailFeatureEnabled)">
+                    <strong><span [innerHTML]="requestResetPassword.successMessage"></span>
+                    </strong>
+                </div>
+                <div class="alert alert-success" *ngIf="requestResetPassword?.successMessage != null && resetPasswordEmailFeatureEnabled">
+                    ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_1")} {{requestResetPassword?.email}}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_2")}
+                    <a href="common.contact_us.uri" target="common.contact_us.uri">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_3")}</a>
                 </div>
                 <div class="control-group">
                     <label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label>                       

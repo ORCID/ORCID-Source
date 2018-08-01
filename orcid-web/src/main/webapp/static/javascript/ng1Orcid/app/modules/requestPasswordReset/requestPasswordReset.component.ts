@@ -20,6 +20,9 @@ import { takeUntil }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
+import { FeaturesService }
+    from '../../shared/features.service.ts'
+
 import { GenericService } 
     from '../../shared/generic.service.ts';
 
@@ -41,11 +44,13 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     requestResetPassword: any;
     showSendResetLinkError: any;
     url_path: string;
+    resetPasswordEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('RESET_PASSWORD_EMAIL'); 
 
     constructor(
         private cdr:ChangeDetectorRef,
         private commonService: CommonService,
         private elementRef: ElementRef, 
+        private featuresService: FeaturesService,
         private requestPasswordResetService: GenericService,
     ) {
         this.authorizationForm = elementRef.nativeElement.getAttribute('authorizationForm');
@@ -83,8 +88,10 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         )
         .subscribe(
             data => {
-                this.requestResetPassword = data; 
-                this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);               
+                this.requestResetPassword = data;
+                if(!this.resetPasswordEmailFeatureEnabled){
+                    this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);
+                }               
                 this.cdr.detectChanges();
             },
             error => {
@@ -131,6 +138,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     };
 
     ngOnInit() {
+        console.log(this.resetPasswordEmailFeatureEnabled);
         this.getRequestResetPassword();
         // init reset password toggle text
         this.showSendResetLinkError = false;

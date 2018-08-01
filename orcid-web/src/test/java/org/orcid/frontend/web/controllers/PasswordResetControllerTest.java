@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +26,11 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -38,6 +42,8 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.jaxb.model.message.DeactivationDate;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -50,6 +56,8 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
@@ -57,6 +65,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.togglz.junit.TogglzRule;
 
 import com.google.common.collect.Lists;
 
@@ -89,6 +98,12 @@ public class PasswordResetControllerTest extends DBUnitTest {
     @Mock
     private EmailManagerReadOnly mockEmailManagerReadOnly;
     
+    @Mock
+    private ProfileEntityManager profileEntityManager;
+    
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -106,9 +121,14 @@ public class PasswordResetControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(passwordResetController, "orcidProfileManager", orcidProfileManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "encryptionManager", encryptionManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManagerReadOnly", mockEmailManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityManager", profileEntityManager);
+        
+        // Disable all features by default
+        togglzRule.disableAll();
     }
 
     @Test
+    //TODO: remove this test when RESET_PASSWORD_EMAIL feature is live
     public void testPasswordResetUserNotFound() {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(null);
         EmailRequest resetRequest = new EmailRequest();
@@ -116,8 +136,21 @@ public class PasswordResetControllerTest extends DBUnitTest {
         assertNotNull(resetRequest.getErrors());
         assertFalse(resetRequest.getErrors().isEmpty());
     }
+    
+    @Test
+    public void testPasswordResetUserNotFoundSendEmail() {
+        //TODO: remove togglzRule.enable togglz when feature is live
+        togglzRule.enable(Features.RESET_PASSWORD_EMAIL);
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(null);
+        EmailRequest resetRequest = new EmailRequest();
+        resetRequest.setEmail("not_in_orcid@test.orcid.org");
+        resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
+        assertNotNull(resetRequest.getErrors());
+        assertTrue(resetRequest.getErrors().isEmpty());
+    }
 
     @Test
+    //TODO: remove this test when RESET_PASSWORD_EMAIL feature is live
     public void testPasswordResetUserDeactivated() throws DatatypeConfigurationException {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(new Date());
@@ -131,9 +164,29 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(deactivatedProfile);
         EmailRequest resetRequest = new EmailRequest();
+        
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
         assertFalse(resetRequest.getErrors().isEmpty());
+    }
+    
+    @Test
+    public void testPasswordResetUserDeactivatedSendEmail() throws DatatypeConfigurationException {
+        //TODO: remove togglzRule.enable togglz when feature is live
+        togglzRule.enable(Features.RESET_PASSWORD_EMAIL);
+        String email = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        
+        when(mockEmailManagerReadOnly.emailExists(email)).thenReturn(true); 
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail(email)).thenReturn(orcid);
+        //Set it as deactivated
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(true);
+        EmailRequest resetRequest = new EmailRequest();
+        resetRequest.setEmail("email1@test.orcid.org");
+        resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
+        assertNotNull(resetRequest.getErrors());
+        assertTrue(resetRequest.getErrors().isEmpty());
+        
     }
 
     @Test

@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.v3.rc1.notification.Notification;
@@ -27,7 +28,7 @@ public interface NotificationManager {
     
     void sendPasswordResetEmail(String toEmail, String userOrcid);
     
-    void sendPasswordResetNotFoundEmail(String toEmail);
+    void sendPasswordResetNotFoundEmail(String toEmail, Locale locale);
 
     void sendReactivationEmail(String submittedEmail, String userOrcid);
 
