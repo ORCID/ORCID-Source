@@ -196,6 +196,9 @@ import { UnsubscribeModule }
 import { DelegatorsModule } 
     from './delegators/delegators.ts';
     
+import { ResendClaimModule } 
+    from './resendClaim/resendClaim.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -263,7 +266,8 @@ export const orcidApp = angular.module(
         WorkSpaceSummaryModule.name,
         WorksPrivacyPreferencesModule.name,
         UnsubscribeModule.name,
-        DelegatorsModule.name
+        DelegatorsModule.name,
+        ResendClaimModule.name
     ]
 );
 

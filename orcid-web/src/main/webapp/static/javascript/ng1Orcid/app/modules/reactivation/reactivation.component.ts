@@ -6,7 +6,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, EventEmitter, Output } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -30,11 +30,12 @@ import { ReactivationService }
     selector: 'reactivation-ng2',
     template:  scriptTmpl("reactivation-ng2-template")
 })
-export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
+export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {    
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     privacyHelp: any;
     registrationForm: any;
+    showReactivationSent: boolean = false;
     
     constructor(
         private oauthService: OauthService,
@@ -44,10 +45,36 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         private cdr:ChangeDetectorRef
     ) {
         this.privacyHelp = {};
-        this.registrationForm = {}; 
+        this.registrationForm = {
+                "activitiesVisibilityDefault": {
+                    "value": null,
+                    "errors": []
+                },
+                "errors": [],
+                "familyNames": {
+                    "value": "",
+                    "errors": []
+                },
+                "givenNames": {
+                    "value": "",
+                    "errors": []
+                },
+                "password": {
+                    "value": "",
+                    "errors": []
+                },
+                "passwordConfirm": {
+                    "value": "",
+                    "errors": []
+                },
+                "termsOfUse": {
+                    "value": false, 
+                    "errors": []
+                }                                                
+            }; 
     }
 
-    getReactivation(resetParams, linkFlag): void{
+    getReactivation(resetParams, linkFlag): void {
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -122,6 +149,22 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     updateActivitiesVisibilityDefault(priv, $event): void {
         this.registrationForm.activitiesVisibilityDefault.visibility = priv;
+    };
+    
+    sendReactivationEmail(email): void {        
+        this.oauthService.sendReactivationEmail(email)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.showReactivationSent = true;
+                this.cdr.detectChanges();
+            },
+            error => {
+                console.log("error sending reactivation email");
+            } 
+        );
     };
     
     //Default init functions provided by Angular Core

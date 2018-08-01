@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -46,7 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -225,9 +225,10 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)    
-    public ResponseEntity<?> sendReactivation(@RequestParam("email") String orcidOrEmail) {
+    public ResponseEntity<?> sendReactivation(@RequestParam("email") String orcidOrEmail) throws UnsupportedEncodingException {
         String orcid = null;
         String email = null;
+        orcidOrEmail = URLDecoder.decode(orcidOrEmail, "UTF-8");
         if(orcidOrEmail.contains("@")) {
             orcid = emailManager.findOrcidIdByEmail(orcidOrEmail);
             email = orcidOrEmail;
@@ -250,6 +251,7 @@ public class PasswordResetController extends BaseController {
         ModelAndView mav = new ModelAndView("reactivation");
         if (isTokenExpired(passwordResetToken)) {
             mav.addObject("reactivationLinkExpired", true);
+            mav.addObject("email", passwordResetToken.getEmail());
         }
         mav.addObject("resetParams", resetParams);
         return mav;
@@ -294,11 +296,13 @@ public class PasswordResetController extends BaseController {
     public void validateReactivationFields(HttpServletRequest request, Registration reg) {
         reg.setErrors(new ArrayList<String>());
 
+        activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
         givenNameValidate(reg.getGivenNames());
         passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
         passwordConfirmValidate(reg.getPasswordConfirm(), reg.getPassword());
         termsOfUserValidate(reg.getTermsOfUse());
 
+        copyErrors(reg.getActivitiesVisibilityDefault(), reg);
         copyErrors(reg.getGivenNames(), reg);
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
