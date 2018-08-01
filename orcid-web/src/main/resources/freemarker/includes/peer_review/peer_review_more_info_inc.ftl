@@ -118,7 +118,7 @@
                                         <div class="col-md-12 sources-container-header">       
                                             <div class="row">
                                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                                    <@orcid.msg 'groups.common.source'/>: {{peerReview.source}}    
+                                                    <@orcid.msg 'groups.common.source'/>: {{peerReview.sourceName}}    
                                                 </div>
                                                 <div class="col-md-3 col-sm-3 col-xs-9" ng-if="editSources[peerReviewDuplicateGroup.id] != true">
                                                       <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="peerReviewDuplicateGroup.peerReviews.length == 1">(</span><a ng-click="showSources(peerReviewDuplicateGroup.id)" ng-hide="peerReviewDuplicateGroup.peerReviews.length == 1" ng-mouseenter="showTooltip(peerReview.putCode.value+'-sources')" ng-mouseleave="hideTooltip(peerReview.putCode.value+'-sources')"><@orcid.msg 'groups.common.of'/> {{peerReviewDuplicateGroup.peerReviews.length}}</a><span ng-hide="peerReviewDuplicateGroup.peerReviews.length == 1">)</span>

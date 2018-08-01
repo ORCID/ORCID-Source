@@ -8,7 +8,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
             loadingDetails: false,
             peerReviewGroupDetailsRequested: new Array(),
             peerReviewsToAddIds: null,
-            quickRef: {},            
+            quickRef: {},
 
             createNew: function(peerReview) {
                 var cloneF = JSON.parse(JSON.stringify(peerReview));
@@ -149,9 +149,13 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
             setGroupPrivacy: function(id, priv) {
                 var group = peerReviewSrvc.getGroup(id);
                 var putCodes = new Array();
-                for (var idx in group.peerReviews) {
-                    putCodes.push(group.peerReviews[idx].putCode.value);
-                    group.peerReviews[idx].visibility.visibility = priv;
+                for (var x in group.peerReviewDuplicateGroups) {
+                    var duplicateGroup = group.peerReviewDuplicateGroups[x];
+                    for (var y in duplicateGroup.peerReviews) {
+                        var peerReview = duplicateGroup.peerReviews[y];
+                        putCodes.push(peerReview.putCode.value);
+                        peerReview.visibility.visibility = priv;
+                    }
                 }
                 peerReviewSrvc.updateVisibility(putCodes, priv);
             },

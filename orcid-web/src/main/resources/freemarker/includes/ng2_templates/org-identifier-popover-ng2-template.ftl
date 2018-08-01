@@ -61,7 +61,7 @@
 
     <!--Org disambiguated ext ids-->
     <div *ngIf="commonSrvc.orgDisambiguatedDetails[type+value]?.orgDisambiguatedExternalIdentifiers">
-        <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{group?.defaultAffiliation?.disambiguationSource.value}}</strong><br>
+        <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{displayType}}</strong><br>
         <ul class="reset">
             <li *ngFor="let orgDisambiguatedExternalIdentifier of commonSrvc.orgDisambiguatedDetails[type+value]?.orgDisambiguatedExternalIdentifiers">
                 {{orgDisambiguatedExternalIdentifier.identifierType}}: <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span> 
