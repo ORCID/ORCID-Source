@@ -346,7 +346,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.registrationForm.givenNames.value=givenName;
                 }
                 if(!this.registrationForm.familyNames.value){
-                    this.registrationForm.familyNames.value=data.familyNames;
+                    this.registrationForm.familyNames.value=data.familyNames.value;
                 }
                 if(!this.registrationForm.email.value){
                     this.registrationForm.email.value=email;
