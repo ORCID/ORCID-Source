@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3;
 
+import java.util.ArrayList;
+
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.Distinction;
@@ -176,8 +178,30 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * @return true if the affiliation was deleted, false otherwise
      */
     boolean checkSourceAndDelete(String orcid, Long affiliationId);
-
+    
+    /**
+     * Updates visibility of a single affiliation, if and only if, the client that requested
+     * the delete is the source of the affiliation
+     * 
+     * @param orcid
+     *            the affiliation owner
+     * @param affiliationId
+     *            The affiliation id
+     * @return true if the affiliation visibility was updated, false otherwise
+     */
     boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);
+    
+    /**
+     * Updates visibility of multiple affiliations, if and only if, the client that requested
+     * the delete is the source of the affiliation
+     * 
+     * @param orcid
+     *            the affiliation owner
+     * @param affiliationIds
+     *            List of affiliation ids to update
+     * @return true if the visibility of each affiliation in the list was updated, false otherwise
+     */
+    boolean updateVisibilities(String orcid, ArrayList<Long> affiliationIds, Visibility visibility);
 
     /**
      * Deletes an affiliation.
