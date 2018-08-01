@@ -247,7 +247,8 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                 $scope.showDetails[groupId] = !$scope.showDetails[groupId];
             };
 
-            $scope.showMoreDetails = function(putCode){
+            $scope.showMoreDetails = function(putCode) {
+                peerReviewSrvc.fetchPeerReviewDetails(putCode);
                 $scope.showPeerReviewDetails.length = 0;
                 $scope.showPeerReviewDetails[putCode] = true;   
             };

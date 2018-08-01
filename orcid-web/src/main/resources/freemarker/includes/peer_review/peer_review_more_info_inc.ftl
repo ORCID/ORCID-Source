@@ -81,34 +81,34 @@
                                      
                                     <!-- Details row -->
                                     <div class="row" ng-if="showPeerReviewDetails[peerReview.putCode.value] == true">
-                                        <div class="col-md-12 info-detail" ng-if="peerReview.externalIdentifiers[0].externalIdentifierId.value != null" ng-cloak>
+                                        <div class="col-md-12 info-detail" ng-if="peerReviewSrvc.details.externalIdentifiers[0].externalIdentifierId.value != null" ng-cloak>
                                             <span class="workspace-title"><@orcid.msg 'peer_review.review_identifiers' />&nbsp;</span> 
-                                            <span ng-repeat='ie in peerReview.externalIdentifiers'><span
-                                                ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.externalIdentifiers.length:showDetails[group.groupId]:false'></span>                            
+                                            <span ng-repeat='ie in peerReviewSrvc.details.externalIdentifiers'><span
+                                                ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReviewSrvc.details.externalIdentifiers.length:showDetails[group.groupId]:false'></span>                            
                                             </span>                             
                                         </div>
-                                        <div class="col-md-12 info-detail" ng-if="peerReview.orgName.value != null" ng-cloak>
-                                            <span class="workspace-title"><@orcid.msg 'peer_review.convening_organization' />&nbsp;</span><span ng-bind="peerReview.orgName.value"></span>(<span ng-bind="peerReview.city.value"></span><span ng-if="peerReview.city.value">,</span> <span ng-bind="peerReview.countryForDisplay"></span>)
+                                        <div class="col-md-12 info-detail" ng-if="peerReviewSrvc.details.orgName.value != null" ng-cloak>
+                                            <span class="workspace-title"><@orcid.msg 'peer_review.convening_organization' />&nbsp;</span><span ng-bind="peerReviewSrvc.details.orgName.value"></span>(<span ng-bind="peerReviewSrvc.details.city.value"></span><span ng-if="peerReviewSrvc.details.city.value">,</span> <span ng-bind="peerReviewSrvc.details.countryForDisplay"></span>)
                                         </div>
                                         <div class="col-md-12 info-detail">
-                                            <span ng-if="peerReview.subjectName.value != null">
+                                            <span ng-if="peerReviewSrvc.details.subjectName.value != null">
                                                 <span class="workspace-title">Review subject:&nbsp;</span>                                  
-                                                <span ng-bind="peerReview.subjectName.value"></span>
+                                                <span ng-bind="peerReviewSrvc.details.subjectName.value"></span>
                                             </span>
-                                            <span ng-if="peerReview.subjectName.value != null" ng-bind="peerReview.subjectType.value"></span>
-                                            <span ng-if="peerReview.subjectContainerName != null">
-                                                {{peerReview.subjectContainerName.value}}.
+                                            <span ng-if="peerReviewSrvc.details.subjectName.value != null" ng-bind="peerReviewSrvc.details.subjectType.value"></span>
+                                            <span ng-if="peerReviewSrvc.details.subjectContainerName != null">
+                                                {{peerReviewSrvc.details.subjectContainerName.value}}.
                                             </span>
-                                            <span ng-if="peerReview.subjectExternalIdentifier.externalIdentifierId.value != null" ng-cloak>
-                                                <span ng-repeat='ie in peerReview'><span
-                                                    ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.subjectExternalIdentifier.length:showDetails[group.groupId]:true'></span>                           
+                                            <span ng-if="peerReviewSrvc.details.subjectExternalIdentifier.externalIdentifierId.value != null" ng-cloak>
+                                                <span ng-repeat='ie in peerReviewSrvc.details'><span
+                                                    ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReviewSrvc.details.subjectExternalIdentifier.length:showDetails[group.groupId]:true'></span>                           
                                                 </span>                             
                                             </span>                             
                                         </div>   
                                         <div class="col-md-12 sources-container-header">          
                                             <div class="row">
                                                 <div class="col-md-3 col-sm-3 col-xs-6">
-                                                    <@orcid.msg 'groups.common.created'/>: <span ng-bind="peerReview.createdDate | ajaxFormDateToISO8601"></span>
+                                                    <@orcid.msg 'groups.common.created'/>: <span ng-bind="peerReviewSrvc.details.createdDate | ajaxFormDateToISO8601"></span>
                                                 </div>              
                                             </div>
                                         </div>
