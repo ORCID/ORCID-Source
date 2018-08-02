@@ -64,12 +64,13 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                 return null;
             },
             
-            fetchPeerReviewDetails: function(putCode) {
+            fetchPeerReviewDetails: function(putCode, callbackFunction) {
                 $.ajax({
                     url: getBaseUri() + '/peer-reviews/peer-review.json?putCode=' + putCode,
                     dataType: 'json',
                     success: function(data) {
                         peerReviewSrvc.details = data;
+                        callbackFunction();
                     }
                 }).fail(function(e){
                     // something bad is happening!

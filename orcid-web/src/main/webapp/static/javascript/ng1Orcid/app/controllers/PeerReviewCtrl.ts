@@ -248,9 +248,10 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.showMoreDetails = function(putCode) {
-                peerReviewSrvc.fetchPeerReviewDetails(putCode);
-                $scope.showPeerReviewDetails.length = 0;
-                $scope.showPeerReviewDetails[putCode] = true;   
+                peerReviewSrvc.fetchPeerReviewDetails(putCode, function() { 
+                    $scope.showPeerReviewDetails.length = 0;
+                    $scope.showPeerReviewDetails[putCode] = true;   
+                });
             };
 
             $scope.showPeerReviewImportWizard = function(){
