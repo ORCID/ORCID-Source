@@ -260,8 +260,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.bulkDeleteCount++;
             }
         }
-        this.worksService.notifyOther({bulkDeleteCount:this.bulkDeleteCount, bulkEditMap:this.bulkEditMap});
-        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
+        
+        if (this.bulkDeleteCount > 0) {
+            this.worksService.notifyOther({bulkDeleteCount:this.bulkDeleteCount, bulkEditMap:this.bulkEditMap});
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
+        }
     };
     
     mergeConfirm(): void {
@@ -272,8 +275,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 mergeCount++;
             }
         }
-        this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
-        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+        
+        if (mergeCount > 0) {
+            this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+        }
     };
     
     deleteWorkConfirm(putCode, deleteGroup): void {
