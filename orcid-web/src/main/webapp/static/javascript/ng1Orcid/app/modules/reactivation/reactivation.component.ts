@@ -136,6 +136,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 else{
                     this.registrationForm = data;
                     
+                    
                     for (var index in this.registrationForm.emailsAdditional) {
                         if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
                             this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
@@ -201,6 +202,16 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log("error sending reactivation email");
             } 
         );
+    };
+    
+    addEmailField(): void {
+        this.registrationForm.emailsAdditional.push({value: ''});
+        this.cdr.detectChanges();       
+    }; 
+    
+    removeEmailField(index): void {
+        this.registrationForm.emailsAdditional.splice(index, 1);
+        this.cdr.detectChanges();
     };
     
     //Default init functions provided by Angular Core
