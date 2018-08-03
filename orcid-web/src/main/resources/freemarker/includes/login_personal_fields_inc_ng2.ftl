@@ -63,10 +63,7 @@
             <a href="mailto:support@orcid.org"><@spring.message 'resend_claim.labelorg' /></a>
         </small>
     </p>
-    <div id="reactivate" name="emailAddressForm">
-        <div class="alert alert-success" *ngIf="initReactivationRequest.success">
-            <strong><@spring.message 'orcid.frontend.verify.reactivation_sent.1' /><a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' /></strong>
-        </div>
+    <div id="reactivate" name="emailAddressForm">        
         <div class="control-group">
             <label for="email" class="control-label"><@spring.message 'manage_bio_settings.h3email' /></label>                       
             <div class="controls"> 
@@ -79,9 +76,6 @@
         </div>
     </div>
     </span> 
-
-    
-    
     <span *ngIf="showReactivationSent">
         <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /><a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
     </span>
