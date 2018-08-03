@@ -49,7 +49,7 @@
         * Public API:   https://pub.sandbox.orcid.org/v2.0_rcX/
         * Member API:   https://api.sandbox.orcid.org/v2.0_rcX/
 
-* **[ORCID Message 1.2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2.xsd)**
+* **[ORCID Message 1.2](https://github.com/ORCID/ORCID-Sßource/blob/master/orcid-model/src/main/resources/orcid-message-1.2.xsd)**
     * API Base URLs - PRODUCTION
         * Public API:   https://pub.orcid.org/v1.2/
         * Member API:   https://api.orcid.org/v1.2/
