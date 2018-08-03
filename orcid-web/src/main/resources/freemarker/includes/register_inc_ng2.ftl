@@ -121,11 +121,13 @@
     <!--Confirm password-->
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
-        <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
-        <span class="required" [ngClass]="isValidClass(registrationForm.passwordConfirm)">*</span>                 
-        <span class="orcid-error" *ngIf="registrationForm?.passwordConfirm?.errors?.length > 0">
-            <div *ngFor="let error of registrationForm.passwordConfirm.errors" [innerHTML]="error"></div>
-        </span>
+        <div class="bottomBuffer">
+            <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
+            <span class="required" [ngClass]="isValidClass(registrationForm.passwordConfirm)">*</span>                 
+            <span class="orcid-error" *ngIf="registrationForm?.passwordConfirm?.errors?.length > 0">
+                <div *ngFor="let error of registrationForm.passwordConfirm.errors" [innerHTML]="error"></div>
+            </span>
+        </div>
     </div>
     <div>
         <!--Visibility default-->
