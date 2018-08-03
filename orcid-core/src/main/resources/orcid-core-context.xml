@@ -1074,7 +1074,7 @@
 	<bean id="profileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="profile" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxMegaBytesInMemory" value="${org.orcid.core.profileCache.maxMegaBytesInMemory:1024}" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.profileCache.maxMegaBytesInMemory:512}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
 		<property name="maxMegaBytesOnDisk" value="0" />
 	</bean>
@@ -1106,7 +1106,7 @@
 	<bean id="profileEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="profile-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:5000}" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:2000}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:3600}" />
 		<property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
@@ -1157,7 +1157,7 @@
     <bean id="minimizedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="minimized-work" />
         <property name="cacheManager" ref="coreCacheManager" />
-        <property name="maxMegaBytesInMemory" value="1024" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.minimizedWorkEntityCache.maxMegaBytesInMemory:512}" />
         <property name="timeToIdleSeconds" value="600" />
         <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="true" />
@@ -1166,7 +1166,7 @@
     <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="full-work-entity" />
         <property name="cacheManager" ref="coreCacheManager" />
-        <property name="maxMegaBytesInMemory" value="1024" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.fullWorkEntityCache.maxMegaBytesInMemory:1024}" />
         <property name="timeToIdleSeconds" value="600" />
         <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="true" />

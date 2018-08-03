@@ -1,9 +1,11 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -500,12 +502,18 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
         return Arrays.asList(item);
     }
-
+    
     @Override
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
         return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility.name());
     }
 
+    @Override
+    @Transactional
+    public boolean updateVisibilities(String orcid, ArrayList<Long> affiliationIds, Visibility visibility) {
+        return orgAffiliationRelationDao.updateVisibilitiesOnOrgAffiliationRelation(orcid, affiliationIds, visibility.name());
+    }
+    
     /**
      * Deletes an affiliation.
      * 

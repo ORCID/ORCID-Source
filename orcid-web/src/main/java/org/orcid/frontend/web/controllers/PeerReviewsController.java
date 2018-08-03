@@ -19,6 +19,7 @@ import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
@@ -86,6 +87,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
         peerReviewGroups.sort(new PeerReviewGroupComparator(!sortAsc));
         return peerReviewGroups;
+    }
+    
+    @RequestMapping(value = "/peer-review.json", method = RequestMethod.GET)
+    public @ResponseBody PeerReviewForm getPeerReviewJson(@RequestParam("putCode") long putCode) {
+        PeerReview peerReview = peerReviewManager.getPeerReview(getEffectiveUserOrcid(), putCode);
+        return PeerReviewForm.valueOf(peerReview);
     }
 
     @RequestMapping(value = "/{peerReviewIdsStr}", method = RequestMethod.DELETE)

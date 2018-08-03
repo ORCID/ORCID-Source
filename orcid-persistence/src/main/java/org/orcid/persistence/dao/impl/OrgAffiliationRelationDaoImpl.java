@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     }
 
     /**
-     * Updates the visibility of an existing profile affiliation relationship
+     * Updates the visibility of a single existing profile affiliation relationship
      * 
      * @param clientOrcid
      *            The client orcid
@@ -74,7 +75,31 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0 ? true : false;
     }
-
+    
+    /**
+     * Updates the visibility of multiple existing profile affiliation relationships
+     * 
+     * @param clientOrcid
+     *            The client orcid
+     * 
+     * @param orgAffiliationRelationIds
+     *            List of ids of orgAffiliationRelations that will be updated
+     * 
+     * @param visibility
+     *            The new visibility value for the profile affiliation relationships
+     * 
+     * @return true if each relationship was updated
+     * */
+    @Override
+    public boolean updateVisibilitiesOnOrgAffiliationRelation(String userOrcid, ArrayList<Long> orgAffiliationRelationIds, String visibility) {
+        Query query = entityManager
+                .createQuery("update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:userOrcid and id in (:orgAffiliationRelationIds)");
+        query.setParameter("userOrcid", userOrcid);
+        query.setParameter("orgAffiliationRelationIds", orgAffiliationRelationIds);
+        query.setParameter("visibility", visibility);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+    
     /**
      * Get the affiliation associated with the client orcid and the orgAffiliationRelationId
      * 

@@ -106,7 +106,7 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                    peerReviewSrvc.deleteGroupPeerReview(putCode);
                 }
                 else{
-                    peerReviewSrvc.deletePeerReview(putCode, $scope.sortState.reverseKey['groupName']);
+                    peerReviewSrvc.deletePeerReview(putCode, !$scope.sortState.reverseKey['groupName']);
                 }
                 $.colorbox.close();
             };
@@ -247,9 +247,11 @@ export const PeerReviewCtrl = angular.module('orcidApp').controller(
                 $scope.showDetails[groupId] = !$scope.showDetails[groupId];
             };
 
-            $scope.showMoreDetails = function(putCode){
-                $scope.showPeerReviewDetails.length = 0;
-                $scope.showPeerReviewDetails[putCode] = true;   
+            $scope.showMoreDetails = function(putCode) {
+                peerReviewSrvc.fetchPeerReviewDetails(putCode, function() { 
+                    $scope.showPeerReviewDetails.length = 0;
+                    $scope.showPeerReviewDetails[putCode] = true;   
+                });
             };
 
             $scope.showPeerReviewImportWizard = function(){

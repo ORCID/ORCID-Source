@@ -143,13 +143,11 @@ export class AffiliationService {
         );
     }
 
-    updateVisibility( obj ): Observable<any> {
-        let encoded_data = JSON.stringify( obj );         
-        
-        return this.http.put(
-            this.urlAffiliation,
-            encoded_data,
-            { headers: this.headers }
-        );
+    updateVisibility(putCodes, priv): Observable<any> {
+        let url = getBaseUri() + '/affiliations/' + putCodes.splice(0,150).join() + '/visibility/'+priv;
+
+        return this.http.get(
+            url
+        )
     }
 }

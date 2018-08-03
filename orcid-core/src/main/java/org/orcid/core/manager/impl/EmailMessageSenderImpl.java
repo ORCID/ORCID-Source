@@ -326,6 +326,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             flagAsFailed(orcid, n);
             return;
         }
+        if(!primaryEmail.getVerified()) {
+            LOGGER.info("Primary email not verified for: " + orcid);
+            flagAsFailed(orcid, n);
+            return;
+        }
         try {
             boolean successfullySent = false;
             String fromAddressParam = DIGEST_FROM_ADDRESS;
