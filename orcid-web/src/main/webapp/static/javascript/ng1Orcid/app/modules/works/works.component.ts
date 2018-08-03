@@ -263,7 +263,19 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.worksService.notifyOther({bulkDeleteCount:this.bulkDeleteCount, bulkEditMap:this.bulkEditMap});
         this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
     };
-
+    
+    mergeConfirm(): void {
+        var idx: any;
+        var mergeCount = 0;       
+        for (idx in this.worksService.groups){
+            if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){
+                mergeCount++;
+            }
+        }
+        this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+    };
+    
     deleteWorkConfirm(putCode, deleteGroup): void {
         this.emailService.getEmails()
         .pipe(    

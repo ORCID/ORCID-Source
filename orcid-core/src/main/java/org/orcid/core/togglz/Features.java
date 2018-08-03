@@ -88,7 +88,10 @@ public enum Features implements Feature {
     DISABLE_1_1,
     
     @Label("Enable group affiliations")
-    GROUP_AFFILIATIONS;
+    GROUP_AFFILIATIONS,
+    
+    @Label("Enable manual work grouping")
+    MANUAL_WORK_GROUPING;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

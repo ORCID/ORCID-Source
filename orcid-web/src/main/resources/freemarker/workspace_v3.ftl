@@ -383,9 +383,20 @@
     <works-bulk-delete-ng2></works-bulk-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<#include "/includes/ng2_templates/works-merge-ng2-template.ftl">
+<modalngcomponent elementHeight="180" elementId="modalWorksMerge" elementWidth="600">
+    <works-merge-ng2></works-merge-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/works-merge-choose-preferred-version-ng2-template.ftl">
+<modalngcomponent elementHeight="280" elementId="modalWorksMergeChoosePreferredVersion" elementWidth="600">
+    <works-merge-choose-preferred-version-ng2></works-merge-choose-preferred-version-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">
     <works-delete-ng2></works-delete-ng2>
+    
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
