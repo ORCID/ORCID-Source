@@ -517,7 +517,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
         emailClassMap.byDefault();
-        emailClassMap.field("email", "id");
+        emailClassMap.field("email", "email");
         emailClassMap.field("primary", "primary");
         emailClassMap.field("verified", "verified");
         emailClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
