@@ -94,6 +94,10 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             }; 
     }
 
+    isValidClass(cur) : string {
+        return this.commonSrvc.isValidClass(cur);
+    };
+    
     getReactivation(resetParams, linkFlag): void {
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
         .pipe(    
@@ -114,10 +118,6 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    isValidClass(cur) : string{
-        return this.commonSrvc.isValidClass(cur);
-    };
-
     postReactivationConfirm(): void {
         this.registrationForm.valNumClient = this.registrationForm.valNumServer / 2;
         var baseUri = getBaseUri();                
@@ -135,8 +135,6 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 else{
                     this.registrationForm = data;
-                    
-                    
                     for (var index in this.registrationForm.emailsAdditional) {
                         if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
                             this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
@@ -150,7 +148,6 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                             this.showEmailsAdditionalDuplicateEmailError[index] = false;
                         } 
                     }
-                    
                     this.cdr.detectChanges();
                 } 
             },

@@ -150,4 +150,17 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
         }
         return jpaJaxbEmailAdapter.toEmail(emailDao.findPrimaryEmail(orcid));
     }
+
+    @Override
+    public Boolean emailExistsAndBelongToUser(String orcid, String email) {
+        try {
+            EmailEntity entity = emailDao.find(encryptionManager.sha256Hash(email.trim().toLowerCase()));
+            if (orcid.equals(entity.getProfile().getId())) {
+                return true;
+            }
+            return false;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
