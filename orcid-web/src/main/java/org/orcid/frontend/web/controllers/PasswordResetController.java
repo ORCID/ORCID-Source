@@ -263,9 +263,9 @@ public class PasswordResetController extends BaseController {
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetParams);
         ModelAndView mav = new ModelAndView("reactivation");
         if (isTokenExpired(passwordResetToken)) {
-            mav.addObject("reactivationLinkExpired", true);
-            mav.addObject("email", passwordResetToken.getEmail());
+            mav.addObject("reactivationLinkExpired", true);            
         }
+        mav.addObject("email", passwordResetToken.getEmail());
         mav.addObject("resetParams", resetParams);
         return mav;
     }
