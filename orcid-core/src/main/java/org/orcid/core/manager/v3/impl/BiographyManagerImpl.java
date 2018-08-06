@@ -38,4 +38,9 @@ public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implement
         
         biographyDao.persistBiography(orcid, bio.getContent(), bio.getVisibility().name());
     }
+    
+    @Override
+    public void deleteBiography(String orcid){
+        biographyDao.removeForId(orcid);
+    }
 }

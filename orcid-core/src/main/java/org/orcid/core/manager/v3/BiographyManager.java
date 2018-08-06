@@ -12,4 +12,6 @@ public interface BiographyManager extends BiographyManagerReadOnly {
     boolean updateBiography(String orcid, Biography bio);
 
     void createBiography(String orcid, Biography bio);
+
+    void deleteBiography(String orcid);
 }

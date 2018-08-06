@@ -22,6 +22,26 @@ public class ActivityExternalIdentifier implements ErrorsInterface, Serializable
     
     private Text relationship;
     
+    private Text normalized;
+    
+    public Text getNormalized() {
+        return normalized;
+    }
+
+    public void setNormalized(Text normalized) {
+        this.normalized = normalized;
+    }
+
+    private Text normalizedUrl;
+    
+    public Text getNormalizedUrl() {
+        return normalizedUrl;
+    }
+
+    public void setNormalizedUrl(Text normalizedUrl) {
+        this.normalizedUrl = normalizedUrl;
+    }
+
     public static ActivityExternalIdentifier valueOf(ExternalID externalIdentifier) {
         ActivityExternalIdentifier wi = new ActivityExternalIdentifier();
         if (externalIdentifier != null) {
@@ -33,6 +53,14 @@ public class ActivityExternalIdentifier implements ErrorsInterface, Serializable
                 wi.setRelationship(Text.valueOf(externalIdentifier.getRelationship().value()));
             if(externalIdentifier.getUrl() != null)
                 wi.setUrl(Text.valueOf(externalIdentifier.getUrl().getValue()));
+            if(externalIdentifier.getNormalized() != null){
+                wi.setNormalized(Text.valueOf(externalIdentifier.getNormalized().getValue()));
+                wi.getNormalized().setRequired(false);
+            }
+            if(externalIdentifier.getNormalizedUrl() != null){
+                wi.setNormalizedUrl(Text.valueOf(externalIdentifier.getNormalizedUrl().getValue()));
+                wi.getNormalizedUrl().setRequired(false);
+            }
         }
         return wi;
 
@@ -91,6 +119,7 @@ public class ActivityExternalIdentifier implements ErrorsInterface, Serializable
         this.relationship = relationship;
     }
 
+    //NOTE: Ignores normalized values
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -102,6 +131,7 @@ public class ActivityExternalIdentifier implements ErrorsInterface, Serializable
         return result;
     }
 
+    //NOTE: Ignores normalized values
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
