@@ -3,7 +3,7 @@
         <div id="RequestPasswordResetCtr" class="row">
             <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
                 <h2>${springMacroRequestContext.getMessage("reset_password.h2ForgottenPassword")}</h2>
-                <#if (tokenExpired)??>
+                <#if (tokenExpired)?? && (tokenExpired)>
                     <span class="orcid-error">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.resetAgain")}</span>
                 </#if>
                 <p>
