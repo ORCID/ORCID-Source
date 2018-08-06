@@ -43,7 +43,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         assertNotNull(entity.getDateCreated());
         assertNotNull(entity.getLastModified());
-        assertEquals("user1@email.com", entity.getId());
+        assertEquals("user1@email.com", entity.getEmail());
         assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());
         
         // Source

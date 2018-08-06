@@ -753,7 +753,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         List<Email> emailList = contactDetails.getEmail();
         if (emailEntities != null) {
             for (EmailEntity emailEntity : emailEntities) {
-                Email email = new Email(emailEntity.getId());
+                Email email = new Email(emailEntity.getEmail());
                 email.setPrimary(emailEntity.getPrimary());
                 email.setCurrent(emailEntity.getCurrent());
                 email.setVerified(emailEntity.getVerified());

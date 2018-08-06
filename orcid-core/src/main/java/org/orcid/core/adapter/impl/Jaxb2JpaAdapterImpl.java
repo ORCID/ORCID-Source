@@ -946,7 +946,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (existingEmailsEntities == null) {
             return new HashMap<>();
         }
-        return EmailEntity.mapById(existingEmailsEntities);
+        Map<String, EmailEntity> map = new HashMap<String, EmailEntity>(existingEmailsEntities.size());
+        for (EmailEntity entity : existingEmailsEntities) {
+            map.put(entity.getEmail(), entity);
+        }
+        return map;        
     }
 
     private void setHistoryDetails(ProfileEntity profileEntity, OrcidHistory orcidHistory) {
