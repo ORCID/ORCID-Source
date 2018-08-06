@@ -5,7 +5,7 @@
             <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
                 <h1>${springMacroRequestContext.getMessage("2FA.enable")}</h1>
                 <hr>
-                <div *nfIf="showSetup2FA" >
+                <div *ngIf="showSetup2FA" >
                     <p>
                         ${springMacroRequestContext.getMessage("2FA.setup.details")}
                         <br />
@@ -20,22 +20,22 @@
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_4")}</p>
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
-                        <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span> <a id="getTextCode">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
-                        <img id="2FA-QR-code" *nfIf="showQRCode" />
-                        <pre *nfIf="showTextCode">{{textCodeFor2FA}}</pre>
-                        <p *nfIf="showTextCode">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR")}<a (click)="showQRCodeAgain()">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR.click_here")}</a></p>
+                        <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span><a id="getTextCode" (click)="getTextCodeClick()">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
+                        <img id="2FA-QR-code" *ngIf="showQRCode" [src]="qrCodeUrl" />
+                        <pre *ngIf="showTextCode">{{textCodeFor2FA}}</pre>
+                        <p *ngIf="showTextCode">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR")}<a (click)="showQRCodeAgain()">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR.click_here")}</a></p>
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step3.details")}</p>
                     </ul>
                     <form>
-                        <input type="text" [(ngModel)]="twoFactorAuthRegistration.verificationCode" />
-                        <div id="invalidCodeError" class="orcid-error" *nfIf="showInvalidCodeError" ">${springMacroRequestContext.getMessage("2FA.setup.invalidCode")}</div>
+                        <input name="verificationCode" type="text" [(ngModel)]="twoFactorAuthRegistration.verificationCode" />
+                        <div id="invalidCodeError" class="orcid-error" *ngIf="showInvalidCodeError">${springMacroRequestContext.getMessage("2FA.setup.invalidCode")}</div>
                         <hr>
-                        <button id="sendVerificationCode" (click)="sendVerificationCode()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.continue")}</button>
+                        <button [disabled]="sendVerificationCodeDisabled" id="sendVerificationCode" (click)="sendVerificationCode()" class="btn btn-primary">${springMacroRequestContext.getMessage("2FA.continue")}</button>
                         <a class="leftBuffer" id="cancel2FASetup" (click)="cancel2FASetup()" >${springMacroRequestContext.getMessage("2FA.cancel")}</a>
                     </form>
                  </div>
-                 <div *nfIf="show2FARecoveryCodes" >
+                 <div *ngIf="show2FARecoveryCodes" >
                     <h2 id="saveRecoveryCodesHeading">${springMacroRequestContext.getMessage("2FA.recoveryCodes.heading")}</h2>
                     <p>
                         ${springMacroRequestContext.getMessage("2FA.recoveryCodes.details")}
@@ -43,7 +43,7 @@
                         <a href="${knowledgeBaseUri}/articles/1190068" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.recoveryCodes.learn_more")}</a>
                     </p>
                     <div id="recoveryCodes">
-                        <span ng-repeat="recoveryCode in recoveryCodes">{{recoveryCode}}<br></span>
+                        <span *ngFor="let recoveryCode of recoveryCodes">{{recoveryCode}}<br></span>
                     </div>
                     <div class="form-group">
                         <button (click)="downloadRecoveryCodes()" class="btn btn-white"><span class="glyphicon glyphicon-download-alt"></span> ${springMacroRequestContext.getMessage("2FA.recoveryCodes.download")}</button>
