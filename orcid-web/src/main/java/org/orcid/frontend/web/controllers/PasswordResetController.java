@@ -137,7 +137,7 @@ public class PasswordResetController extends BaseController {
                     notificationManager.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
                 }
             } else {
-                Locale locale = LocaleUtils.toLocale("en");
+                Locale locale = localeManager.getLocale();
                 notificationManager.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale); 
             }
             passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
