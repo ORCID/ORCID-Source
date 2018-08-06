@@ -1,15 +1,21 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
         
-    <changeSet id="USE-EMAIL-HASH-AS-PRIMARY-KEY" author="Angel Montenegro">
+    <changeSet id="USE-EMAIL-HASH-AS-PRIMARY-KEY" author="Angel Montenegro" dbms="postgresql">
          <preConditions onFail="MARK_RAN">
          	<not>
-         		<primaryKeyExists tableName="email" primaryKeyName="email_pkey"/>
+         		<primaryKeyExists tableName="email" primaryKeyName="email_primary_key"/>
          	</not>
          </preConditions>
          <sql>ALTER TABLE email_event DROP CONSTRAINT email_event_email</sql>
          <sql>ALTER TABLE email DROP CONSTRAINT email_pk</sql>
-         <sql>ALTER TABLE email ADD CONSTRAINT email_pkey PRIMARY KEY (email_hash)</sql>         
+         <sql>ALTER TABLE email ADD CONSTRAINT email_primary_key PRIMARY KEY (email_hash)</sql>         
+     </changeSet>
+     
+     <changeSet id="USE-EMAIL-HASH-AS-PRIMARY-KEY_HSQL" author="Angel Montenegro" dbms="hsqldb">
+         <sql>ALTER TABLE email_event DROP CONSTRAINT email_event_email</sql>
+         <sql>ALTER TABLE email DROP CONSTRAINT email_pk</sql>
+         <sql>ALTER TABLE email ADD CONSTRAINT email_primary_key PRIMARY KEY (email_hash)</sql>         
      </changeSet>
 
 </databaseChangeLog>
