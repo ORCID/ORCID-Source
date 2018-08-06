@@ -45,7 +45,7 @@ export class FundingService {
             this.notify.next(data);
         }
     }
-    
+
     createNew(obj): any {
         var cloneF = JSON.parse(JSON.stringify(obj));
         cloneF.source = null;
@@ -59,7 +59,7 @@ export class FundingService {
     getEditable( putCode, groups ): any {
         // first check if they are the current source
         var funding = this.getFunding(putCode, groups);
-        console.log('getEditable', funding);
+        //console.log('getEditable', funding);
 
         if (funding.source == orcidVar.orcidId){
             return funding;
@@ -81,7 +81,7 @@ export class FundingService {
     }
 
     getFunding(putCode?, groups?): any {
-        console.log('getFunding', putCode, groups);
+        //console.log('getFunding', putCode, groups);
         if( putCode ){
             for (var idx in groups) {
                 if (groups[idx].hasPut(putCode)){
@@ -143,6 +143,24 @@ export class FundingService {
         )
     }
 
+    putFunding(obj) {
+        let encoded_data = JSON.stringify(obj);
+        return this.http.post( 
+            getBaseUri() + '/fundings/funding.json',
+            encoded_data,         
+            { headers: this.headers }
+        )
+        .pipe(
+            tap(
+                (data) => {
+                    //this.getData();
+                    //groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);                      
+                }
+            )
+        )  
+        ;
+    }
+
     removeFunding(obj): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         return this.http.delete( 
@@ -167,20 +185,19 @@ export class FundingService {
 
     updateProfileFunding(obj) {
         let encoded_data = JSON.stringify(obj);
+
         return this.http.post( 
-            getBaseUri() + '/fundings/funding.json',           
+            getBaseUri() + '/fundings/funding.json', 
+            encoded_data,           
             { headers: this.headers }
         )
         .pipe(
             tap(
-                (data) => {
-                    //this.getData();
-                    //groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);                      
+                (data) => {                    
                 }
             )
         )  
         ;
-
     }
 
 }

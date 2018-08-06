@@ -164,38 +164,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
     }
 
-    addFunding(): void {
-        if (this.addingFunding == true) {
-            return; // don't process if adding affiliation
-        }
-
-        this.addingFunding = true;
-        this.editFunding.errors.length = 0;
-        
-        /*
-        this.fundingService.addFundingToScope( this.editFunding )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.editFunding = data;
-                //console.log('this.editFunding response', this.editFunding);
-                this.addingFunding = false;
-                //this.close();
-
-                if (data.errors.length > 0){
-
-                }
-            },
-            error => {
-                //console.log('setBiographyFormError', error);
-            } 
-        );
-        */
-        
-    };
-
     addFundingExternalIdentifier(): void {
         this.editFunding.externalIdentifiers.push(
             {
@@ -505,6 +473,40 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    putFunding(): void {
+        if (this.addingFunding){    
+            return; // don't process if adding funding
+        } 
+        this.addingFunding = true;
+        this.editFunding.errors.length = 0;
+
+        this.fundingService.putFunding( this.editFunding )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.editFunding = data;
+                //console.log('this.editFunding response', this.editFunding);
+                this.addingFunding = false;
+
+                if (data['errors'].length == 0){
+                    this.closeModal();
+                    
+                } else {
+                    this.editFunding = data;
+                    if(this.editFunding.externalIdentifiers.length == 0) {
+                        this.addFundingExternalIdentifier();
+                    }
+                }
+                this.addingFunding = false;
+            },
+            error => {
+                //console.log('setFundingFormError', error);
+            } 
+        );
+    };
+
 
     setIdsToAdd(ids): void {
         this.fundingToAddIds = ids;
@@ -598,6 +600,10 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    unbindTypeahead(): void {
+        $('#fundingName').typeahead('destroy');
+    };
+
 
 
     //Default init functions provided by Angular Core
@@ -622,6 +628,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 if ( res.moduleId == 'modalFundingForm' ) {
 
                     if ( res.action === "open") {
+                        this.bindTypeaheadForOrgs();
                         this.editFunding = this.fundingService.getFundingToEdit();
                         
                         if (this.editFunding.putCode == null) {

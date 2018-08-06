@@ -42,7 +42,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() publicView: any;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-
+    private subscription: Subscription;
+    private viewSubscription: Subscription;
     
     addingFunding: boolean;
     defaultFunding: any;
@@ -262,16 +263,13 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('this.groups before', this.groups);
                 
                 for (let j in this.groups){
-                    //let evilResponseProps = Object.keys(this.groups[j]);
-                    //console.log('evilResponseProps', this.groups[j], this.groups[j]['activities'], Object.keys(this.groups[j]['activities']).length);
+
                     let goodResponse = [];
                     for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
                         let tmpObj = new Object();
                         tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
                         tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
 
-                        //console.log('bs', Object.keys(this.groups[j]['activities'])[k] );
-                        console.log('tmpObj', tmpObj);
                         goodResponse.push(tmpObj);
                     }
                     this.groups[j]['activitiesObj'] = goodResponse; 
@@ -283,9 +281,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.fundingService.loading = false;
                 } else {
                     //this.getFundingsById( this.fundingToAddIds );//previously addFundingToScope();
-                }
-                //console.log('groupedActivitiesUtil funding', this.groups);
-                        
+                }       
 
             },
             error => {
@@ -303,7 +299,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 
                 this.fundingToAddIds = data;
-                console.log('getFundingsIds', data, this.fundingToAddIds, this.fundingToAddIds.length);
+                //console.log('getFundingsIds', data, this.fundingToAddIds, this.fundingToAddIds.length);
                 if( this.fundingToAddIds.length != 0 ) {
                     var fundingIds = this.fundingToAddIds.splice(0,20).join()
                     this.getFundingsById( fundingIds );
@@ -375,7 +371,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     openEditFunding( putCode ): void {
 
         let data = this.fundingService.getEditable(putCode, this.groups)
-        console.log('editable data', data)
+        //console.log('editable data', data)
         this.addFundingModal(data);
 
     }
@@ -389,11 +385,30 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     }
 
+    setPrivacy( obj, priv, $event ): void {
 
-    setPrivacy(aff, priv, $event): void {
         $event.preventDefault();
-        aff.visibility.visibility = priv;
-        //this.affiliationService.updateProfileAffiliation(aff);
+        obj.visibility.visibility = priv;
+
+        if (this.addingFunding){    
+            return; // don't process if adding funding
+        } 
+        this.addingFunding = true;
+        this.editFunding.errors.length = 0;
+
+        this.fundingService.putFunding( obj )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.addingFunding = false;
+                this.getFundings();
+            },
+            error => {
+                //console.log('setFundingFormError', error);
+            } 
+        );
     };
 
     showAddModal(): void{
@@ -490,5 +505,17 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         //console.log('initi funding component');
         this.getFundings();
+        
+        this.viewSubscription = this.modalService.notifyObservable$.subscribe(
+            (res) => {
+
+                if(res.moduleId == "modalFundingForm") {
+                    if(res.action == "close") {
+                        this.editFunding = this.getFundings();
+                    }
+                }
+            }
+        );
+
     }; 
 }
