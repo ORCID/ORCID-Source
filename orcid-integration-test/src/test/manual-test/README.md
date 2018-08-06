@@ -121,7 +121,7 @@
 
 61. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
 	* 3 other names
-	* 3 counties
+	* 3 countries
 	* 4 keywords
 	* 4 websites
 	* 3 external id
