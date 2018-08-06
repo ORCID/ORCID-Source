@@ -2373,6 +2373,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     margin: 0 4px 0 0;
 }
 
+.settings-table #emailFrequency input[type=select]{
+    display: block;
+}
+
 .settings-table small.italic {
     line-height: 12px;
 }
