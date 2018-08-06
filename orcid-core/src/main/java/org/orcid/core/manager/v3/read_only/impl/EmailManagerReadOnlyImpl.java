@@ -48,7 +48,11 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public String findOrcidIdByEmail(String email) {
-        return emailDao.findOrcidIdByCaseInsenitiveEmail(email);
+        try {            
+            return emailDao.findOrcidIdByEmailHash(encryptionManager.sha256Hash(email.trim().toLowerCase()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } 
     }
     
     @Override

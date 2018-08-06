@@ -59,10 +59,6 @@
                         <input id="email" name="email" type="text" class="form-control" [(ngModel)]="requestResetPassword.email" />
                     </div>
                     <span class="orcid-error" *ngIf="showDeactivatedError && !showReactivationSent">
-                    -----------------------------------------------------------------------    
-                    -------------------------------TODO------------------------------------
-                    -----------------------------------------------------------------------
-
                         ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a (click)="sendReactivation(requestResetPassword.email)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                     </span> 
                     <span class="orcid-error" *ngIf="showReactivationSent">

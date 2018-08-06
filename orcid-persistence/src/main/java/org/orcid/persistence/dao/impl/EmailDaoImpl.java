@@ -45,9 +45,9 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
-    public String findOrcidIdByCaseInsenitiveEmail(String email) {
-        TypedQuery<String> query = entityManager.createQuery("select profile.id from EmailEntity where trim(lower(email)) = trim(lower(:email))", String.class);
-        query.setParameter("email", email);
+    public String findOrcidIdByEmailHash(String emailHash) {
+        TypedQuery<String> query = entityManager.createQuery("select profile.id from EmailEntity where id = emailHash", String.class);
+        query.setParameter("emailHash", emailHash);
         return query.getSingleResult();
     }
 

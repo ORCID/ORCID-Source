@@ -292,6 +292,14 @@ public class PasswordResetController extends BaseController {
             return reg;
         }
 
+        // validate email addresses are available
+        if(reg.getEmailsAdditional() != null && !reg.getEmailsAdditional().isEmpty()) {
+            String orcid = emailManagerReadOnly.findOrcidIdByEmail(reg.getEmail().getValue());
+            for(Text email : reg.getEmailsAdditional()) {
+                validateEmailAddressOnReactivation(orcid, email);
+            }            
+        }
+        
         if (reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer() / 2) {
             r.setUrl(getBaseUri() + "/register");
             return r;
@@ -329,22 +337,7 @@ public class PasswordResetController extends BaseController {
             String email = emailText.getValue();
             Boolean belongsToMe = emailManagerReadOnly.emailExistsAndBelongToUser(orcid, email);
             if(!belongsToMe) {
-                emailText.getErrors().add("");
-                
-                String m1 = getMessage("oauth.registration.duplicate_email_1_ng2", null);
-                String m2 = getMessage("oauth.registration.duplicate_email_2_ng2", null);
-                String m3 = getMessage("oauth.registration.duplicate_email_3_ng2", null);
-                String m4 = getMessage("oauth.registration.duplicate_email_4_ng2", null);
-                
-                String error = email + " " + m1 + "<a href='" + getBaseUri() + "/signin?email=" + email + "'>" + m2 + "</a> " + m3 + " " + m4;
-                
-                /*
-                 * {{errorEmail}} 
-                 * 
-                 * ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm()">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
-                ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
-                 */
-                
+                emailText.getErrors().add("unavailable");                
             } 
         } catch(NoResultException nre) {
             // Email doesnt exists, so, we are good to go

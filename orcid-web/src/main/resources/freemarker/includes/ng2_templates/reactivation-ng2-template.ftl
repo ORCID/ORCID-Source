@@ -64,8 +64,8 @@
                         </span>
                     </div>
                 </div>
+                <!-- Emails -->
                 <div>
-                    <!-- Primary email -->
                     <div class="form-group clear-fix">
                         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
                         <div class="relative">          
@@ -92,7 +92,10 @@
                                 <a class="btn-white-no-border" (click)="removeEmailField(i)"><i class="glyphicon glyphicon-remove-sign"></i></a>
                             </div>
                             <span class="orcid-error" *ngIf="registrationForm?.emailsAdditional[i]?.errors && registrationForm?.emailsAdditional[i]?.errors?.length > 0">
-                                <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex" [innerHTML]="error"></div>
+                                <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex">
+                                    <span *ngIf="error=='unavailable'">Unavailable error message here</span>
+                                    <span *ngIf="error!='unavailable'" [innerHTML]="error"></span>
+                                </div>
                             </span>
                         </div>
                     </div>

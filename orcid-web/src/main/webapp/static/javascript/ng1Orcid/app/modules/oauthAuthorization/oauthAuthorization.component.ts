@@ -715,6 +715,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.oauth2ScreensPostRegisterConfirm();
                 }
             }
-        );        
+        );
     };
 }
