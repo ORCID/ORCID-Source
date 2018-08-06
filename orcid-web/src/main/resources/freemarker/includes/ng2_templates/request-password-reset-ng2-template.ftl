@@ -25,9 +25,10 @@
                             </strong>
                         </div>
                         <div class="alert alert-success" *ngIf="requestResetPassword?.successMessage != null && resetPasswordEmailFeatureEnabled">
-                            ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_1")} {{requestResetPassword?.email}}
-                            ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_2")}
-                            <a href="common.contact_us.uri" target="common.contact_us.uri">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_3")}</a>
+                            <strong>${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_1")} {{requestResetPassword?.email}}
+                            ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_2")}</strong><br>
+                            ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_3")}
+                            <a href='${springMacroRequestContext.getMessage("common.contact_us.uri")}' target="common.contact_us.uri">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_4")}</a>${springMacroRequestContext.getMessage("common.period")}
                         </div>
                         <div class="control-group">
                             <label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label>
@@ -61,9 +62,10 @@
                     </strong>
                 </div>
                 <div class="alert alert-success" *ngIf="requestResetPassword?.successMessage != null && resetPasswordEmailFeatureEnabled">
-                    ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_1")} {{requestResetPassword?.email}}
-                    ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_2")}
-                    <a href="common.contact_us.uri" target="common.contact_us.uri">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_3")}</a>
+                    <strong>${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_1")} {{requestResetPassword?.email}}
+                    ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_2")}</strong><br>
+                    ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_3")}
+                    <a href='${springMacroRequestContext.getMessage("common.contact_us.uri")}' target="common.contact_us.uri">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_4")}</a>${springMacroRequestContext.getMessage("common.period")}
                 </div>
                 <div class="control-group">
                     <label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label>                       
