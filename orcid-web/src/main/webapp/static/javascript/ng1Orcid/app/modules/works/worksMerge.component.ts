@@ -47,49 +47,15 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeContinue(): void {
+        var worksToMerge = new Array();
+        for (var putCode in this.bulkEditMap) {
+            var work = this.worksService.getWork(putCode);
+            worksToMerge.push({ work: work, preferred: false});
+        }
+        this.worksService.notifyOther({worksToMerge:worksToMerge});
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-        this.worksService.notifyOther({mergeCount:this.mergeCount, bulkEditMap:this.bulkEditMap});
         this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
     };
-
-    mergeGroupWorks(putCodes): void {
-        var rmWorks = [];
-        var rmGroups = [];
-        for (var i in putCodes) {
-            for (var j in this.worksService.groups) {
-                for (var k in this.worksService.groups[j].works) {
-                    if (this.worksService.groups[j].works[k].putCode.value == putCodes[i]) {
-                        rmGroups.push(j);
-                        for (var y in this.worksService.groups[j].works){
-                            rmWorks.push(this.worksService.groups[j].works[y].putCode.value);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        while (rmGroups.length > 0) {
-            this.worksService.groups.splice(rmGroups.pop(),1);
-        }
-        this.worksService.removeWorks(rmWorks)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if (rmWorks.length > 0) {
-                    this.worksService.removeWorks(rmWorks);
-                }
-                this.delCountVerify = 0;
-                this.mergeSubmit = false;
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-                this.worksService.notifyOther({action:'merge', successful:true});
-            },
-            error => {
-                console.log('Error deleting work', error);
-            } 
-        ); 
-    }
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

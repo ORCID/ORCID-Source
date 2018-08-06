@@ -13,6 +13,19 @@
           </div>
         </div>
       </div>
+      <span *ngFor='let workToMerge of worksToMerge'>
+        <div class="row">
+            <div class="col-md-1 col-sm-2 col-xs-2">
+                <input type="radio" name="preferred" [checked]="workToMerge.preferred" [id]="workToMerge.work.putCode.value" (change)="selectPreferred(workToMerge)"  />
+            </div>
+            <div class="col-md-11 col-sm-10 col-xs-10">
+                <label [for]="workToMerge.work.putCode.value">
+                    {{workToMerge.work.title.value}}<br/>
+                    <@orcid.msg 'groups.common.source'/>: {{(workToMerge.work.sourceName == null || workToMerge.work.sourceName == '') ? workToMerge.work.source : workToMerge.work.sourceName }}
+                </label>
+            </div>
+        </div>                    
+      </span>
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12"> 
           <div class="right">     
@@ -21,7 +34,7 @@
               <@orcid.msg 'freemarker.btncancel'/>
             </a>  
           </div>        
-        </div>
+        </div>  
       </div>
     </div>
 </script>

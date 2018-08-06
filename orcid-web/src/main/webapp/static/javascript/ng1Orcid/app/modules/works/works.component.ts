@@ -276,7 +276,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }
         
-        if (mergeCount > 0) {
+        if (mergeCount > 1) {
             this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
         }

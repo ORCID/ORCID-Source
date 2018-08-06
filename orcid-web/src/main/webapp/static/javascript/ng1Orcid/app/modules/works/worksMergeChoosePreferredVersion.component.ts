@@ -28,7 +28,7 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
 
     mergeCount: any;
     mergeSubmit: boolean;
-    bulkEditMap: any;
+    worksToMerge: Array<any>;
     delCountVerify: number;
 
     constructor(
@@ -47,9 +47,23 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
     };
 
     merge(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-        this.worksService.notifyOther({mergeCount:this.mergeCount, bulkEditMap:this.bulkEditMap});
-        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+        console.log("Merging:");
+        for (var i in this.worksToMerge) {
+            var workToMerge = this.worksToMerge[i];
+            console.log(workToMerge.work.title.value + ':' + workToMerge.preferred);
+            
+        }
+        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+    };
+    
+    selectPreferred(preference): void {
+        for (var i in this.worksToMerge) {
+            var workToMerge = this.worksToMerge[i];
+            if (workToMerge.work.putCode != preference.work.putCode) {
+                workToMerge.preferred = false;
+            }
+        }
+        preference.preferred = true;   
     };
 
     mergeGroupWorks(putCodes): void {
@@ -99,8 +113,8 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
                 if( res.mergeCount ) {
                     this.mergeCount = res.mergeCount;
                 }
-                if( res.bulkEditMap ) {
-                    this.bulkEditMap = res.bulkEditMap;
+                if( res.worksToMerge ) {
+                    this.worksToMerge = res.worksToMerge;
                 }
             }
         );
