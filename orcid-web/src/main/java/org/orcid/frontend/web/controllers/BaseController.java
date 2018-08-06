@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +37,7 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
@@ -54,6 +56,7 @@ import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
@@ -156,6 +159,9 @@ public class BaseController {
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean shibbolethEnabled;
 
+    @Resource(name = "profileEntityManagerV3")
+    protected ProfileEntityManager profileEntityManager;
+    
     @ModelAttribute("recaptchaWebKey")
     public String getRecaptchaWebKey() {
         return recaptchaWebKey;
@@ -903,4 +909,81 @@ public class BaseController {
         }
     }
     
+    public void additionalEmailsValidateOnRegister(HttpServletRequest request, Registration reg) {
+        if(reg.getEmailsAdditional() != null && !reg.getEmailsAdditional().isEmpty()) {
+            Iterator<Text> it = reg.getEmailsAdditional().iterator();
+            while(it.hasNext()) {
+                Text additionalEmail = it.next();
+                if(PojoUtil.isEmpty(additionalEmail)) {
+                    it.remove();                    
+                } else {
+                    additionalEmailValidateOnRegister(request, reg, additionalEmail); 
+                }
+            }            
+        }
+    }
+    
+    private void additionalEmailValidateOnRegister(HttpServletRequest request, Registration reg, Text email) {
+        email.setErrors(new ArrayList<String>());
+        additionalEmailValidate(reg, email);
+        if(!email.getErrors().isEmpty()) {
+            String emailValue = email.getValue();
+            if(emailManager.emailExists(email.getValue())) {
+                String orcid = emailManager.findOrcidIdByEmail(emailValue);
+                //If it is claimed, should return a duplicated exception
+                if(profileEntityManager.isDeactivated(orcid)) {
+                    email.getErrors().add("orcid.frontend.verify.deactivated_email");
+                } else if(profileEntityManager.isProfileClaimedByEmail(emailValue)) {                                                                        
+                    email.getErrors().add("orcid.frontend.verify.duplicate_email");
+                } else if(!emailManager.isAutoDeprecateEnableForEmail(emailValue)) {
+                    //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
+                    String resendUrl = createResendClaimUrl(emailValue, request);
+                    String message = getVerifyUnclaimedMessage(emailValue, resendUrl);
+                    email.getErrors().add(message);                                    
+                } else {
+                    LOGGER.info("Email " + emailValue + " belongs to a unclaimed record and can be auto deprecated");
+                }
+            }
+        }
+    }
+    
+    public void additionalEmailValidateOnReactivate(HttpServletRequest request, Registration reg, Text email, String userOrcid) {
+        email.setErrors(new ArrayList<String>());
+        additionalEmailValidate(reg, email);
+        if(!email.getErrors().isEmpty()) {
+            String emailValue = email.getValue();
+            if(emailManager.emailExists(email.getValue())) {
+                String orcid = emailManager.findOrcidIdByEmail(emailValue);
+                if(!userOrcid.contentEquals(orcid)) {
+                    email.getErrors().add("unavailable");
+                }
+            }
+        }
+    }
+    
+    private void additionalEmailValidate(Registration reg, Text email) {
+        String emailAddressAdditional = email.getValue();
+        // Validate the email address is ok        
+        if(!validateEmailAddress(emailAddressAdditional)) {
+            email.getErrors().add(getMessage("Email.personalInfoForm.email", emailAddressAdditional));
+        } else if(emailAddressAdditional.equalsIgnoreCase(reg.getEmail().getValue())){
+            email.getErrors().add(getMessage("Email.personalInfoForm.additionalEmailCannotMatchPrimary"));
+        } else if (duplicateAdditionalEmails(reg, emailAddressAdditional)){
+            email.getErrors().add(getMessage("Email.personalInfoForm.additionalEmailCannotMatchAdditional"));
+        }
+    }
+        
+    public boolean duplicateAdditionalEmails(Registration reg, String emailAddressAdditional) {
+        int count = 0;
+        for(Text emailCheckAdditional : reg.getEmailsAdditional()){
+            if(emailAddressAdditional.equalsIgnoreCase(emailCheckAdditional.getValue())){
+                count++;
+            }
+        }
+        if(count > 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

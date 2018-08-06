@@ -294,10 +294,7 @@ public class PasswordResetController extends BaseController {
 
         // validate email addresses are available
         if(reg.getEmailsAdditional() != null && !reg.getEmailsAdditional().isEmpty()) {
-            String orcid = emailManagerReadOnly.findOrcidIdByEmail(reg.getEmail().getValue());
-            for(Text email : reg.getEmailsAdditional()) {
-                validateEmailAddressOnReactivation(orcid, email);
-            }            
+            regEmailAdditionalValidate(request, reg);           
         }
         
         if (reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer() / 2) {
@@ -332,7 +329,16 @@ public class PasswordResetController extends BaseController {
         copyErrors(reg.getTermsOfUse(), reg);
     }
     
-    public void validateEmailAddressOnReactivation(String orcid, Text emailText) {
+    
+    @RequestMapping(value = "/reactivateAdditionalEmailsValidate.json", method = RequestMethod.POST)
+    public @ResponseBody Registration regEmailAdditionalValidate(HttpServletRequest request, @RequestBody Registration reg) {
+        String orcid = emailManagerReadOnly.findOrcidIdByEmail(reg.getEmail().getValue());
+        for(Text email : reg.getEmailsAdditional()) {
+            additionalEmailValidateOnReactivate(request, reg, email, orcid);
+        }
+        return reg;
+    }
+    public void validateEmailAddressOnReactivation(HttpServletRequest request, String orcid, Text emailText) {
         try {
             String email = emailText.getValue();
             Boolean belongsToMe = emailManagerReadOnly.emailExistsAndBelongToUser(orcid, email);
