@@ -288,7 +288,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
 
     loadAndInitAuthorizationForm(): void{
-
         this.oauthService.loadAndInitAuthorizationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -296,7 +295,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 this.authorizationForm = data;
-
             },
             error => {
                 console.log("An error occured initializing the authorization form.");
@@ -650,9 +648,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
-
         this.authorizationForm = {
-            userName:  {value: ""},
+            userName:  {value: orcidVar.loginId},
             givenNames:  {value: ""},
             familyNames:  {value: ""},
             email:  {value: ""},
@@ -718,6 +715,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.oauth2ScreensPostRegisterConfirm();
                 }
             }
-        );
+        );        
     };
 }
