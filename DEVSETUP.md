@@ -2,7 +2,7 @@
 
 ## Prerequisites 
 
-* Install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* Install [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 * Add JAVA_HOME environment variable:
   * Windows - control panel -> system -> advanced system settings -> environment variables
   * Mac - create or edit .bash_profile file in home directory, add EXPORT JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home
@@ -63,9 +63,7 @@ Clone the repository
 Skip test the first time you run this
 
     cd ORCID-Source
-    mvn clean install -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-test/pom.xml && \
-    mvn clean install -Dmaven.test.skip=true -Dlicense.skip=true -f orcid-model/pom.xml && \
-    mvn clean package -Dmaven.test.skip=true -Dlicense.skip=true
+    mvn clean install 
 
 >If you experience the below error you can find the solution [here](http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy)
 
