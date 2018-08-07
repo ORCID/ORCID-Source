@@ -27,7 +27,6 @@ import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;

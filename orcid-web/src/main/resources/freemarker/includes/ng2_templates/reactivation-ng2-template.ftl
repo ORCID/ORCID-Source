@@ -93,8 +93,10 @@
                             </div>
                             <span class="orcid-error" *ngIf="registrationForm?.emailsAdditional[i]?.errors && registrationForm?.emailsAdditional[i]?.errors?.length > 0">
                                 <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex">
-                                    <span *ngIf="error=='unavailable'">Unavailable error message here</span>
-                                    <span *ngIf="error!='unavailable'" [innerHTML]="error"></span>
+                                    <span class="orcid-error" *ngIf="error=='unavailable'">
+                                        {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_1_ng2' /> <a href="${baseUri}/signin?loginId={{registrationForm.emailsAdditional[i].value}}"><@orcid.msg 'oauth.registration.duplicate_email_2' /></a><@orcid.msg 'oauth.registration.duplicate_email_3_ng2' /> {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_4_ng2' />
+                                    </span>
+                                    <span class="orcid-error" *ngIf="error!='unavailable'" [innerHTML]="error"></span>
                                 </div>
                             </span>
                         </div>
