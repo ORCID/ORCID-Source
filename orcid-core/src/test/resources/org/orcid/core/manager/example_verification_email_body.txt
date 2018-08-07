@@ -11,9 +11,11 @@ The ORCID Registry is always evolving. Stay up-to-date on the latest at our
 blog: https://testserver.orcid.org/blog
 
 If you have any questions or need help, visit https://orcid.org/help or contact us at https://orcid.org/help/contact-us
-Kind Regards,
-The ORCID Team 
-https://testserver.orcid.org/home?lang=en
+Warm Regards,
+The ORCID Team
+https://orcid.org/help/contact-us
+
+https://localhost:8443/orcid-web/home?lang=en
 
 You have received this email as a service announcement related to your
 ORCID Account.
