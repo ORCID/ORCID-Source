@@ -126,7 +126,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         ProfileEntity profile = profileDao.find("5555-5555-5555-0000");
         assertNotNull(profile);
         assertNotNull(profile.getPrimaryEmail());
-        String existingEmail = profile.getPrimaryEmail().getId();
+        String existingEmail = profile.getPrimaryEmail().getEmail();
         assertNotNull(existingEmail);
         Member group = new Member();
         group.setGroupName(Text.valueOf("Group Name"));
