@@ -394,8 +394,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             return; // don't process if adding funding
         } 
         this.addingFunding = true;
-        this.editFunding.errors.length = 0;
-
         this.fundingService.putFunding( obj )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -406,7 +404,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.getFundings();
             },
             error => {
-                //console.log('setFundingFormError', error);
+                console.log('setFundingPrivacyError', error);
             } 
         );
     };

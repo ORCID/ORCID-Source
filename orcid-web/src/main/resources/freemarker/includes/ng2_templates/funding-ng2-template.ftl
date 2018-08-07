@@ -148,7 +148,6 @@
             <div *ngIf="workspaceSrvc.displayFunding" class="workspace-accordion-content">
                 <ul *ngIf="groups.length > 0" class="workspace-fundings workspace-body-list bottom-margin-medium" >
                     <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups | orderBy: 'sortState.predicate:sortState.reverse'"><!-- | orderBy:sortState.predicate:sortState.reverse -->
-
                         <div class="work-list-container">
                             <ul class="sources-edit-list">
                                 <!-- Header -->
