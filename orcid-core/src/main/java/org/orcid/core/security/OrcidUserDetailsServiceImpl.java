@@ -130,7 +130,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     private String retrievePrimaryEmail(ProfileEntity profile) {
         String orcid = profile.getId();
         try {
-            return emailDao.findPrimaryEmail(orcid).getId();
+            return emailDao.findPrimaryEmail(orcid).getEmail();
         } catch (javax.persistence.NoResultException nre) {
             String message = String.format("User with orcid %s have no primary email", orcid);
             LOGGER.error(message);

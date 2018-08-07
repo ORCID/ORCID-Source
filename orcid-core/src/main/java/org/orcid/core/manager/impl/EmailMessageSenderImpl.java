@@ -225,7 +225,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
-                    digestMessage.setTo(primaryEmail.getId());
+                    digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
                     if (successfullySent) {
@@ -341,13 +341,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getEmail(), nc.getSubject(), nc.getBodyText(),
                         nc.getBodyHtml());            
             } else if (n instanceof NotificationTipEntity) {
                 NotificationTipEntity nc = (NotificationTipEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getEmail(), nc.getSubject(), nc.getBodyText(),
                         nc.getBodyHtml());            
             }
             

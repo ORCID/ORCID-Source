@@ -198,7 +198,7 @@ public class MembersManagerImpl implements MembersManager {
                 }
 
                 EmailEntity primaryEmail = memberEntity.getPrimaryEmail();
-                if (!email.equals(primaryEmail.getId())) {
+                if (!email.equals(primaryEmail.getEmail())) {
                     if (emailManager.emailExists(email)) {
                         throw new IllegalArgumentException("Email already exists");
                     }
