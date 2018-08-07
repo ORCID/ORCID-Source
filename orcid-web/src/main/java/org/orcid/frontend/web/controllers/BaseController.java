@@ -926,7 +926,7 @@ public class BaseController {
     private void additionalEmailValidateOnRegister(HttpServletRequest request, Registration reg, Text email) {
         email.setErrors(new ArrayList<String>());
         additionalEmailValidate(reg, email);
-        if(!email.getErrors().isEmpty()) {
+        if(email.getErrors().isEmpty()) {
             String emailValue = email.getValue();
             if(emailManager.emailExists(email.getValue())) {
                 String orcid = emailManager.findOrcidIdByEmail(emailValue);
