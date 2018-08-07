@@ -343,39 +343,12 @@ public class PasswordResetController extends BaseController {
         PasswordResetToken resetParams = buildResetTokenFromEncryptedLink(reactivation.getResetParams());
         String email = resetParams.getEmail();
         String orcid = emailManager.findOrcidIdByEmail(email);
-        LOGGER.info("About to reactivate record, orcid={}, email={}", orcid, email);
         String password = reactivation.getPassword().getValue();
         //TODO: Start transaction
-        // Populate primary email
-        emailManager.reactivateEmail(orcid, email, getEmailHash(email), true);
-        // Populate emails
-        if(reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
-            for(Text additionalEmail : reactivation.getEmailsAdditional()) {
-                if(!PojoUtil.isEmpty(additionalEmail)) {
-                    String value = additionalEmail.getValue();
-                    String hash = getEmailHash(value);
-                    if(emailManager.emailExistsAndBelongToUser(orcid, value)) {
-                        emailManager.reactivateEmail(orcid, value, hash, false);
-                    } else {
-                        throw new IllegalArgumentException("Email " + value + " belongs to other record than " + orcid);
-                    }                                        
-                }                
-            }
-        }
-        // Delete any non populated email
-        // Reactivate user
-        profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password,
-                reactivation.getActivitiesVisibilityDefault().getVisibility());
-        // Verify email used to reactivate
-        emailManager.verifyEmail(email, orcid);
+        
+        
+        
+        
         registrationController.logUserIn(request, response, orcid, password);
-    }
-    
-    private String getEmailHash(String email) {
-        try {
-            return encryptionManager.sha256Hash(email.toLowerCase());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    }        
 }

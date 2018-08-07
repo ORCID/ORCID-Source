@@ -54,5 +54,5 @@ public interface EmailManager extends EmailManagerReadOnly {
     
     void reactivateEmail(String orcid, String email, String hash, boolean isPrimary);
     
-    void clearEmailsAfterReactivation(String orcid);
+    Integer clearEmailsAfterReactivation(String orcid);
 }

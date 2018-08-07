@@ -285,6 +285,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> getEmailsToHash(Integer batchSize) {
         Query query = entityManager.createNativeQuery("select id from email where email_hash is null", String.class);
         query.setMaxResults(batchSize);
@@ -305,5 +306,12 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("email", email);
         List<EmailEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public Integer clearEmailsAfterReactivation(String orcid) {
+        Query query = entityManager.createNativeQuery("delete from email where email is null and orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate();        
     }       
 }

@@ -75,5 +75,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     List<String> getEmailsToHash(Integer batchSize); 
     
-    boolean populateEmailHash(String email, String emailHash);   
+    boolean populateEmailHash(String email, String emailHash); 
+    
+    Integer clearEmailsAfterReactivation(String orcid);
 }

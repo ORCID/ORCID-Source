@@ -1,15 +1,14 @@
 package org.orcid.core.manager.v3;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.v3.rc1.common.Locale;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
+import org.orcid.pojo.ajaxForm.Reactivation;
 
 /**
  * User: Declan Newman (declan) Date: 10/02/2012 </p>
@@ -48,7 +47,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     void disableApplication(Long tokenId, String userOrcid);
     
-    String getOrcidHash(String orcid) throws NoSuchAlgorithmException;
+    String getHash(String orcid);
     
     String retrivePublicDisplayName(String orcid);
     
@@ -56,13 +55,13 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     boolean deactivateRecord(String orcid);
     
-    boolean reactivateRecord(String orcid);
+    boolean reactivateRecord(String orcid, String primaryEmail);
 
     void updateLastModifed(String orcid);
 
     void updateLocale(String orcid, Locale locale);
 
-    void reactivate(String orcid, String givenNames, String familyName, String password, Visibility defaultVisibility);
+    void reactivate(String orcid, String email, Reactivation reactivation);
 
     public void updatePassword(String orcid, String encryptedPassword);
     
