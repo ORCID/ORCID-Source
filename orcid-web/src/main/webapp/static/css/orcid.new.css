@@ -2373,6 +2373,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     margin: 0 4px 0 0;
 }
 
+.settings-table #emailFrequency input[type=select]{
+    display: block;
+}
+
 .settings-table small.italic {
     line-height: 12px;
 }
@@ -5731,9 +5735,11 @@ ul.oauth-scopes li {
     min-height: 21px
 }
 
-.workspace-peer-review ul.sources-edit-list>li:first-child
+.workspace-peer-review ul.sources-edit-list>li:first-child,
+.workspace-peer-review ul.sources-edit-list>ul.sources-edit-list>li,
 .workspace-research-resource  ul.sources-edit-list>li:first-child{
     box-shadow: none;
+    border: none;
     font-size: 12px;
 }
 

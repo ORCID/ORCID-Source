@@ -8,7 +8,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
             loadingDetails: false,
             peerReviewGroupDetailsRequested: new Array(),
             peerReviewsToAddIds: null,
-            quickRef: {},            
+            quickRef: {},
 
             createNew: function(peerReview) {
                 var cloneF = JSON.parse(JSON.stringify(peerReview));
@@ -62,6 +62,21 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                     }
                 }
                 return null;
+            },
+            
+            fetchPeerReviewDetails: function(putCode, callbackFunction) {
+                $.ajax({
+                    url: getBaseUri() + '/peer-reviews/peer-review.json?putCode=' + putCode,
+                    dataType: 'json',
+                    success: function(data) {
+                        peerReviewSrvc.details = data;
+                        callbackFunction();
+                    }
+                }).fail(function(e){
+                    // something bad is happening!
+                    console.log("error fetching Peer Review details");
+                    logAjaxError(e);
+                });
             },
 
             getPeerReviews: function(sortAsc) {
@@ -135,9 +150,13 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
             setGroupPrivacy: function(id, priv) {
                 var group = peerReviewSrvc.getGroup(id);
                 var putCodes = new Array();
-                for (var idx in group.peerReviews) {
-                    putCodes.push(group.peerReviews[idx].putCode.value);
-                    group.peerReviews[idx].visibility.visibility = priv;
+                for (var x in group.peerReviewDuplicateGroups) {
+                    var duplicateGroup = group.peerReviewDuplicateGroups[x];
+                    for (var y in duplicateGroup.peerReviews) {
+                        var peerReview = duplicateGroup.peerReviews[y];
+                        putCodes.push(peerReview.putCode.value);
+                        peerReview.visibility.visibility = priv;
+                    }
                 }
                 peerReviewSrvc.updateVisibility(putCodes, priv);
             },

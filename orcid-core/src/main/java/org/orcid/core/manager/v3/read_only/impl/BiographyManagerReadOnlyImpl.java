@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.v3.read_only.BiographyManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;

@@ -163,12 +163,12 @@ import { ThanksForRegisteringModule }
 import { ThanksForVerifyingModule } 
     from './thanksForVerifying/thanksForVerifying.ts';
 
-import { TwoFASetupModule } 
+import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
 
 import { TwoFaStateModule }
     from './2FAState/twoFAState.ts';
-
+    
 import { VerifyEmailModule }
     from './verifyEmail/verifyEmail.ts';
 
@@ -198,6 +198,9 @@ import { UnsubscribeModule }
 
 import { DelegatorsModule } 
     from './delegators/delegators.ts';
+    
+import { ResendClaimModule } 
+    from './resendClaim/resendClaim.ts';
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -256,7 +259,6 @@ export const orcidApp = angular.module(
         SwitchUserModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
-        TwoFASetupModule.name,
         TwoFaStateModule.name,
         VerifyEmailModule.name,
         WidgetModule.name,
@@ -267,7 +269,8 @@ export const orcidApp = angular.module(
         WorkSpaceSummaryModule.name,
         WorksPrivacyPreferencesModule.name,
         UnsubscribeModule.name,
-        DelegatorsModule.name
+        DelegatorsModule.name,
+        ResendClaimModule.name
     ]
 );
 

@@ -378,9 +378,13 @@ public class PublicProfileController extends BaseWorkspaceController {
         // counts them!
         if (worksPaginator.getPublicWorksCount(orcid) > 0) {
             isProfileEmtpy = false;
+        } else {
+            mav.addObject("worksEmpty", true);
         }
         if (researchResourcePaginator.getPublicCount(orcid) > 0) {
             isProfileEmtpy = false;
+        } else {
+            mav.addObject("researchResourcesEmpty", true);
         }
 
         affiliationMap = activityManager.affiliationMap(orcid);

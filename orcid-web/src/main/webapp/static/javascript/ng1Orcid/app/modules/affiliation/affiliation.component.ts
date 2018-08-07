@@ -336,9 +336,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     setGroupPrivacy = function(group, priv, $event): void {
         $event.preventDefault();
         var putCodes = new Array();
-        for (var idx in group.researchResources) {
-            putCodes.push(group.researchResources[idx].putCode);
-            group.affiliations[idx].visibility = priv;
+        for (var idx in group.affiliations) {
+            putCodes.push(group.affiliations[idx].putCode.value);
+            group.affiliations[idx].visibility.visibility = priv;
         }
         group.activeVisibility = priv;
         this.affiliationService.updateVisibility(putCodes, priv)

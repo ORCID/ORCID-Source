@@ -32,7 +32,7 @@
                                 <#if !(isPublicProfile??)>
                                 <li>
                                     <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
-                                    elementId="group.groupId" 
+                                    elementId="group.activePutCode" 
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
                                         clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
                                         publicClick="researchResourceService.setGroupPrivacy(group, 'PUBLIC', $event)"
@@ -82,7 +82,7 @@
                         <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
                             <!--Show details toggle-->
                             <li class="works-details" *ngIf="!editSources[group.groupId]">
-                                <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                     <span [ngClass]="(z == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                     </span>
                                 </a>
@@ -97,8 +97,8 @@
                             <!--Visibility selector-->
                             <#if !(isPublicProfile??)>
                             <li>
-                                <@orcid.privacyToggle2Ng2 angularModel="affiliation.visibility.visibility"
-                                elementId="group.groupId" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[affiliation.putCode.value]==true}" publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
+                                <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
+                                elementId="group.activePutCode" questionClick="toggleClickPrivacyHelp(group.activePutCode)" clickedClassCheck="{'popover-help-container-show':privacyHelp[affiliation.putCode.value]==true}" publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
                             </li>
                             </#if>
                         </ul>

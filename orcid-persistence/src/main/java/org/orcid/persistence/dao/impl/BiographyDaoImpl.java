@@ -59,5 +59,13 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
         query.setParameter("orcid", orcid);
         Long result = ((BigInteger)query.getSingleResult()).longValue();
         return (result != null && result > 0);
+    }
+
+    @Override
+    @Transactional
+    public boolean removeForId(String orcid) {
+        Query query = entityManager.createQuery("DELETE FROM BiographyEntity WHERE profile.id = :orcid");
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0 ? true : false;
     }   
 }

@@ -182,12 +182,12 @@ import { ThanksForRegisteringNg2Module }
 import { ThanksForVerifyingNg2Module } 
     from './thanksForVerifying/thanksForVerifying.ts';
 
-import { TwoFASetupNg2Module }
+import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
 
 import { TwoFaStateNg2Module }
     from './2FAState/twoFAState.ts';
-
+    
 import { VerifyEmailNg2Module }
     from './verifyEmail/verifyEmail.ts';
 
@@ -223,6 +223,9 @@ import { UnsubscribeNg2Module }
 
 import { DelegatorsNg2Module } 
     from './delegators/delegators.ts';    
+
+import { ResendClaimNg2Module }
+    from './resendClaim/resendClaim.ts';    
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -363,7 +366,7 @@ export class RootCmp {
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
         TwoFaStateNg2Module,
-        TwoFASetupNg2Module,
+        TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
         VerifyEmailNg2Module,
         WidgetNg2Module, //Approved
@@ -373,7 +376,8 @@ export class RootCmp {
         WorksNg2Module,
         WorkSpaceSummaryNg2Module,
         WorksPrivacyPreferencesNg2Module,
-        DelegatorsNg2Module
+        DelegatorsNg2Module,
+        ResendClaimNg2Module
     ],
     providers: [
         { 

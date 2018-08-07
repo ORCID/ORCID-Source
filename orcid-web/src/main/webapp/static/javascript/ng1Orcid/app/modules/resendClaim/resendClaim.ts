@@ -7,46 +7,45 @@ import { Directive, NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-//User generated components
+//User generated
+import { ResendClaimComponent } 
+    from './resendClaim.component.ts';
+
 import { CommonNg2Module }
     from './../common/common.ts';
 
-import { TwoFaSetupComponent } 
-    from './twoFASetup.component.ts';
-
 // This is the Angular 1 part of the module
-export const TwoFaSetupModule = angular.module(
-    'TwoFaSetupModule', 
+export const ResendClaimModule = angular.module(
+    'ResendClaimModule', 
     []
 );
 
 // This is the Angular 2 part of the module
-
 @NgModule(
     {
-        declarations: [
-            TwoFaSetupComponent
-        ],
-        entryComponents: [ 
-            TwoFaSetupComponent 
-        ],
         imports: [
             CommonNg2Module
         ],
+        declarations: [ 
+            ResendClaimComponent
+        ],
+        entryComponents: [ 
+            ResendClaimComponent 
+        ],
         providers: [
+            
         ]
     }
 )
-export class TwoFaSetupNg2Module {}
+export class ResendClaimNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-
-TwoFaSetupModule.directive(
-    'twoFaSetupNg2', 
+ResendClaimModule.directive(
+    'resendClaimNg2', 
     <any>downgradeComponent(
         {
-            component: TwoFaSetupComponent
+            component: ResendClaimComponent,
         }
     )
 );

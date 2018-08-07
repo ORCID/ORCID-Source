@@ -34,14 +34,18 @@
 </#if>
 
 <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
+<#if !(researchResourcesEmpty)??>  
     <!-- Research resources -->
     <#include "/includes/ng2_templates/research-resource-ng2-template.ftl">
     <research-resource-ng2  publicView="true"></research-resource-ng2>
+</#if>
 </@orcid.checkFeatureStatus>
 
 <!-- Works -->
+<#if !(worksEmpty)??> 
 <#include "/includes/ng2_templates/works-ng2-template.ftl">
 <works-ng2  publicView="true"></works-ng2>
+</#if>
 
 <!-- Peer Review -->
 <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicPeerReviewCtrl" ng-hide="!peerReviewSrvc.groups.length" ng-cloak>

@@ -43,6 +43,8 @@ the software.
     </properties>
 
     <modules>
+        <module>orcid-test</module>
+        <module>orcid-model</module>
         <module>orcid-utils</module>
         <module>orcid-core</module>
         <module>orcid-web</module>

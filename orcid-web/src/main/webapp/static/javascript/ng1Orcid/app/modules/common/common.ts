@@ -183,6 +183,9 @@ import { EmailFrequencyService }
 
 import { UnsubscribeService }
     from '../../shared/unsubscribe.service.ts';
+
+import { ResendClaimService }
+    from '../../shared/resendClaim.service.ts';    
     
 // This is the Angular 2 part of the module
 @NgModule(
@@ -281,7 +284,8 @@ import { UnsubscribeService }
             WidgetService,
             WorksService,
             WorkspaceService,
-            UnsubscribeService
+            UnsubscribeService,
+            ResendClaimService
         ]
     }
 )

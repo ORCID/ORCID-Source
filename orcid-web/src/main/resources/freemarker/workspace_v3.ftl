@@ -244,7 +244,7 @@
         <h4><@orcid.msg 'manage.email.verificationEmail'/> {{emailsPojo.emails[0].value}}</h4>
         <@orcid.msg 'workspace.check_your_email'/><br />
         <br />
-        <button class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></button>
+        <button class="btn btn-white-no-border" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></button>
       </div>
     </div>
   </div>

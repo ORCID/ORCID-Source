@@ -1291,7 +1291,7 @@ public class BlackBoxBase {
     }
     
     public boolean peerReviewAppearsInPublicPage(String groupName) {                                                
-        String publicPeerReviewXpath = "//li[@orcid-put-code and descendant::span[text()='" + groupName + "']]";
+        String publicPeerReviewXpath = "//li[descendant::span[text()='" + groupName + "']]";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicPeerReviewXpath)), webDriver);
         return true;
     }
