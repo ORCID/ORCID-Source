@@ -391,7 +391,7 @@
                         <ul class="sources-actions">
                             <li>
                                 <div class="left">
-                                    <input type="checkbox" value="false" />
+                                    <input type="checkbox" value="false" (click)="toggleSelectAll()" />
                                 </div>
                             </li>
                             <li>

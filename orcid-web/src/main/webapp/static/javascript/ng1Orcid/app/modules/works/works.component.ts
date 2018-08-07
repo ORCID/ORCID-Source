@@ -88,6 +88,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workImportWizardsOriginal: any;
     workType: any;
     worksFromBibtex: any;
+    allSelected: boolean;
 
     constructor( 
         private commonSrvc: CommonService,
@@ -963,6 +964,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     toggleSelectMenu(): void {                   
         this.bulkDisplayToggle = !this.bulkDisplayToggle;                    
     };
+    
+    toggleSelectAll(): void {
+        this.allSelected = !this.allSelected;
+        this.bulkChangeAll(this.allSelected);
+    }
 
     toggleWizardDesc(id): void {
         this.wizardDescExpanded[id] = !this.wizardDescExpanded[id];
