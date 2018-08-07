@@ -20,6 +20,9 @@
 
 
 <@emailMacros.msg "email.common.warm_regards" />
+<@emailMacros.msg "email.common.need_help.description.2.href" />
+
+
 ${baseUri}/home?lang=${locale}
 
 
