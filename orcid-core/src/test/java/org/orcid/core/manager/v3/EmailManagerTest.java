@@ -286,4 +286,12 @@ public class EmailManagerTest extends BaseTest {
        
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);        
     }
+    
+    @Test
+    public void emailExistsAndBelongToUserTest() {
+        assertTrue(emailManager.emailExistsAndBelongToUser(ORCID, "public_0000-0000-0000-0003@test.orcid.org"));
+        assertFalse(emailManager.emailExistsAndBelongToUser(ORCID, ""));
+        assertTrue(emailManager.emailExistsAndBelongToUser(ORCID, "limited_0000-0000-0000-0003@test.orcid.org"));
+        assertFalse(emailManager.emailExistsAndBelongToUser(ORCID, "public_0000-0000-0000-0002@test.orcid.org"));
+    }
 }

@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -291,11 +292,6 @@ public class PasswordResetController extends BaseController {
             return reg;
         }
 
-        // validate email addresses are available
-        if(reg.getEmailsAdditional() != null && !reg.getEmailsAdditional().isEmpty()) {
-            regEmailAdditionalValidate(request, reg);           
-        }
-        
         if (reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer() / 2) {
             r.setUrl(getBaseUri() + "/register");
             return r;
@@ -326,40 +322,60 @@ public class PasswordResetController extends BaseController {
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
+        
+        // validate email addresses are available
+        if(reg.getEmailsAdditional() != null && !reg.getEmailsAdditional().isEmpty()) {
+            regEmailAdditionalValidate(request, reg);           
+        }
     }
-    
     
     @RequestMapping(value = "/reactivateAdditionalEmailsValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailAdditionalValidate(HttpServletRequest request, @RequestBody Registration reg) {
         String orcid = emailManagerReadOnly.findOrcidIdByEmail(reg.getEmail().getValue());
         for(Text email : reg.getEmailsAdditional()) {
             additionalEmailValidateOnReactivate(request, reg, email, orcid);
+            copyErrors(email, reg);
         }
         return reg;
     }
-    public void validateEmailAddressOnReactivation(HttpServletRequest request, String orcid, Text emailText) {
-        try {
-            String email = emailText.getValue();
-            Boolean belongsToMe = emailManagerReadOnly.emailExistsAndBelongToUser(orcid, email);
-            if(!belongsToMe) {
-                emailText.getErrors().add("unavailable");                
-            } 
-        } catch(NoResultException nre) {
-            // Email doesnt exists, so, we are good to go
-        }
-    }
 
-    public void reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
+    private void reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
         PasswordResetToken resetParams = buildResetTokenFromEncryptedLink(reactivation.getResetParams());
         String email = resetParams.getEmail();
         String orcid = emailManager.findOrcidIdByEmail(email);
         LOGGER.info("About to reactivate record, orcid={}, email={}", orcid, email);
         String password = reactivation.getPassword().getValue();
+        //TODO: Start transaction
+        // Populate primary email
+        emailManager.reactivateEmail(orcid, email, getEmailHash(email), true);
+        // Populate emails
+        if(reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
+            for(Text additionalEmail : reactivation.getEmailsAdditional()) {
+                if(!PojoUtil.isEmpty(additionalEmail)) {
+                    String value = additionalEmail.getValue();
+                    String hash = getEmailHash(value);
+                    if(emailManager.emailExistsAndBelongToUser(orcid, value)) {
+                        emailManager.reactivateEmail(orcid, value, hash, false);
+                    } else {
+                        throw new IllegalArgumentException("Email " + value + " belongs to other record than " + orcid);
+                    }                                        
+                }                
+            }
+        }
+        // Delete any non populated email
         // Reactivate user
         profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password,
                 reactivation.getActivitiesVisibilityDefault().getVisibility());
         // Verify email used to reactivate
         emailManager.verifyEmail(email, orcid);
         registrationController.logUserIn(request, response, orcid, password);
+    }
+    
+    private String getEmailHash(String email) {
+        try {
+            return encryptionManager.sha256Hash(email.toLowerCase());
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

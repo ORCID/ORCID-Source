@@ -212,4 +212,20 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             }
         }        
     }
+
+    @Override
+    @Transactional
+    public void reactivateEmail(String orcid, String email, String hash, boolean isPrimary) {
+        EmailEntity entity = emailDao.find(hash);
+        if(!orcid.equals(entity.getProfile().getId())) {
+            throw new IllegalArgumentException("Email with hash " + hash + " doesn't belong to " + orcid);
+        }
+        if(!PojoUtil.isEmpty(entity.getEmail()) && !email.equals(entity.getEmail())) {            
+            throw new IllegalArgumentException("Email address with hash " + hash + " is already populated and doesn't match the given address " + email);            
+        }
+        entity.setEmail(email);
+        entity.setPrimary(isPrimary);
+        entity.setLastModified(new Date());
+        emailDao.merge(entity);        
+    }
 }

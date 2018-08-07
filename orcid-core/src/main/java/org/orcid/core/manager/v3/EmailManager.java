@@ -51,4 +51,8 @@ public interface EmailManager extends EmailManagerReadOnly {
     boolean updateVisibility(String orcid, String email, Visibility visibility);
     
     void setPrimary(String orcid, String email, HttpServletRequest request);
+    
+    void reactivateEmail(String orcid, String email, String hash, boolean isPrimary);
+    
+    void clearEmailsAfterReactivation(String orcid);
 }
