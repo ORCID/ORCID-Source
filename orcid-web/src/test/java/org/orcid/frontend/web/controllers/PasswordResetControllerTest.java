@@ -40,8 +40,11 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
@@ -51,6 +54,7 @@ import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
@@ -85,6 +89,9 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
     @Mock
     private OrcidProfileManager orcidProfileManager;
+    
+    @Mock
+    private EmailManager emailManager;
 
     @Mock
     private EncryptionManager encryptionManager;
@@ -100,6 +107,12 @@ public class PasswordResetControllerTest extends DBUnitTest {
     
     @Mock
     private ProfileEntityManager profileEntityManager;
+    
+    @Mock
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Mock
+    private NotificationManager notificationManager;
     
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
@@ -119,12 +132,34 @@ public class PasswordResetControllerTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "registrationManager", registrationManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "orcidProfileManager", orcidProfileManager);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManager", emailManager); 
         TargetProxyHelper.injectIntoProxy(passwordResetController, "encryptionManager", encryptionManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManagerReadOnly", mockEmailManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityManager", profileEntityManager);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityCacheManager", profileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "notificationManager", notificationManager);
         
         // Disable all features by default
         togglzRule.disableAll();
+    }
+    
+    @Test
+    public void testPasswordResetUnclaimedSendEmail() throws DatatypeConfigurationException {
+        //TODO: remove togglzRule.enable togglz when feature is live
+        togglzRule.enable(Features.RESET_PASSWORD_EMAIL);
+        String email = "email1@test.orcid.org";
+        String orcid = "0000-0000-0000-0000";
+        when(emailManager.emailExists(email)).thenReturn(true); 
+        when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+        when(profileEntityManager.isProfileClaimedByEmail(orcid)).thenReturn(false);
+        ProfileEntity record= new ProfileEntity();
+        when(profileEntityCacheManager.retrieve(orcid)).thenReturn(record);
+        EmailRequest resetRequest = new EmailRequest();
+        resetRequest.setEmail("email1@test.orcid.org");
+        resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
+        assertNotNull(resetRequest.getErrors());
+        assertTrue(resetRequest.getErrors().isEmpty());   
     }
 
     @Test
@@ -176,17 +211,16 @@ public class PasswordResetControllerTest extends DBUnitTest {
         togglzRule.enable(Features.RESET_PASSWORD_EMAIL);
         String email = "email1@test.orcid.org";
         String orcid = "0000-0000-0000-0000";
-        
-        when(mockEmailManagerReadOnly.emailExists(email)).thenReturn(true); 
-        when(mockEmailManagerReadOnly.findOrcidIdByEmail(email)).thenReturn(orcid);
-        //Set it as deactivated
+        when(emailManager.emailExists(email)).thenReturn(true); 
+        when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
         when(profileEntityManager.isDeactivated(orcid)).thenReturn(true);
+        ProfileEntity record = new ProfileEntity();
+        when(profileEntityCacheManager.retrieve(orcid)).thenReturn(record);
         EmailRequest resetRequest = new EmailRequest();
         resetRequest.setEmail("email1@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
-        assertTrue(resetRequest.getErrors().isEmpty());
-        
+        assertTrue(resetRequest.getErrors().isEmpty());   
     }
 
     @Test
