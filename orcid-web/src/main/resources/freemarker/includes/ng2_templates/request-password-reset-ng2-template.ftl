@@ -25,7 +25,7 @@
                             </strong>
                         </div>
                         <div class="alert alert-success" *ngIf="requestResetPassword?.successMessage != null && resetPasswordEmailFeatureEnabled">
-                            <strong>${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_1")} {{requestResetPassword?.email}}
+                            <strong>${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_1")} {{successEmailSentTo}}
                             ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_2")}</strong><br>
                             ${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_3")}
                             <a href='${springMacroRequestContext.getMessage("common.contact_us.uri")}' target="common.contact_us.uri">${springMacroRequestContext.getMessage("orcid.frontend.reset.password.email_success_4")}</a>${springMacroRequestContext.getMessage("common.period")}

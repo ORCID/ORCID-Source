@@ -43,6 +43,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     resetPasswordToggleText: any;
     requestResetPassword: any;
     showSendResetLinkError: any;
+    successEmailSentTo: string;
     url_path: string;
     resetPasswordEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('RESET_PASSWORD_EMAIL'); 
 
@@ -57,6 +58,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         this.showDeactivatedError = elementRef.nativeElement.getAttribute('showDeactivatedError');
         this.showReactivationSent = elementRef.nativeElement.getAttribute('showReactivationSent');
         this.showSendResetLinkError = false;
+        this.successEmailSentTo = "";
         this.requestResetPassword = {};
         this.url_path = '/reset-password.json';
     }
@@ -89,6 +91,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         .subscribe(
             data => {
                 this.requestResetPassword = data;
+                this.successEmailSentTo = this.requestResetPassword.email;
                 if(!this.resetPasswordEmailFeatureEnabled){
                     this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);
                 }               
