@@ -157,6 +157,9 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public Boolean emailExistsAndBelongToUser(String orcid, String email) {
+        if(PojoUtil.isEmpty(email)) {
+            return false;
+        }
         try {
             EmailEntity entity = emailDao.find(encryptionManager.sha256Hash(email.trim().toLowerCase()));
             if (orcid.equals(entity.getProfile().getId())) {
