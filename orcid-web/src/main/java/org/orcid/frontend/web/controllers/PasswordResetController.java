@@ -5,6 +5,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -248,6 +249,12 @@ public class PasswordResetController extends BaseController {
             orcid = emailManager.findOrcidIdByEmail(email);            
         }
         
+        ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
+        if(entity.getDeactivationDate() == null) {
+            String error = getMessage("orcid.frontend.reactivate.error.already_active");
+            return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
+        }
+        
         notificationManager.sendReactivationEmail(email, orcid);
         return ResponseEntity.ok("{\"sent\":true}");
     }
@@ -324,9 +331,15 @@ public class PasswordResetController extends BaseController {
     @RequestMapping(value = "/reactivateAdditionalEmailsValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailAdditionalValidate(HttpServletRequest request, @RequestBody Registration reg) {
         String orcid = emailManagerReadOnly.findOrcidIdByEmail(reg.getEmail().getValue());
-        for(Text email : reg.getEmailsAdditional()) {
-            additionalEmailValidateOnReactivate(request, reg, email, orcid);
-            copyErrors(email, reg);
+        Iterator<Text> it = reg.getEmailsAdditional().iterator();
+        while(it.hasNext()) {
+            Text email = it.next();
+            if(PojoUtil.isEmpty(email)) {
+                it.remove();
+            } else {
+                additionalEmailValidateOnReactivate(request, reg, email, orcid);
+                copyErrors(email, reg);
+            }
         }
         return reg;
     }
