@@ -531,7 +531,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 }
                 
                 // Populate primary email
-                emailManager.reactivateEmail(orcid, primaryEmail, getHash(primaryEmail), true);
+                emailManager.reactivatePrimaryEmail(orcid, primaryEmail, getHash(primaryEmail));
                 
                 // Delete any non primary email
                 emailManager.clearEmailsAfterReactivation(orcid);
@@ -564,25 +564,21 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void reactivate(String orcid, String email, Reactivation reactivation) {        
+    public void reactivate(String orcid, String primaryEmail, Reactivation reactivation) {        
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
                 LOGGER.info("About to reactivate record, orcid={}", orcid);
-                String orcid = emailManager.findOrcidIdByEmail(email);
+                String orcid = emailManager.findOrcidIdByEmail(primaryEmail);
                 // Populate primary email
-                emailManager.reactivateEmail(orcid, email, getHash(email), true);
+                emailManager.reactivatePrimaryEmail(orcid, primaryEmail, getHash(primaryEmail));
                 // Populate additional emails
                 if(reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
                     for(Text additionalEmail : reactivation.getEmailsAdditional()) {
                         if(!PojoUtil.isEmpty(additionalEmail)) {
-                            String value = additionalEmail.getValue();
-                            String hash = getHash(value);
-                            if(emailManager.emailExistsAndBelongToUser(orcid, value)) {
-                                emailManager.reactivateEmail(orcid, value, hash, false);
-                            } else {
-                                throw new IllegalArgumentException("Email " + value + " belongs to other record than " + orcid);
-                            }                                        
+                            String email = additionalEmail.getValue();
+                            String hash = getHash(email);
+                            emailManager.reactivateOrCreate(orcid, email, hash, reactivation.getActivitiesVisibilityDefault().getVisibility());                                      
                         }                
                     }
                 }

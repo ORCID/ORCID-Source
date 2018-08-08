@@ -61,7 +61,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     void updateLocale(String orcid, Locale locale);
 
-    void reactivate(String orcid, String email, Reactivation reactivation);
+    void reactivate(String orcid, String primaryEmail, Reactivation reactivation);
 
     public void updatePassword(String orcid, String encryptedPassword);
     

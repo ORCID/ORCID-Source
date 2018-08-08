@@ -2,7 +2,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,7 +26,6 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -338,11 +336,11 @@ public class PasswordResetController extends BaseController {
         String email = resetParams.getEmail();
         String orcid = emailManager.findOrcidIdByEmail(email);
         String password = reactivation.getPassword().getValue();
-        //TODO: Start transaction
         
+        // Reactivate the user
+        profileEntityManager.reactivate(orcid, email, reactivation);
         
-        
-        
+        // Log user in
         registrationController.logUserIn(request, response, orcid, password);
     }        
 }

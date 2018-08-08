@@ -215,7 +215,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     @Transactional
-    public void reactivateEmail(String orcid, String email, String hash, boolean isPrimary) {
+    public void reactivatePrimaryEmail(String orcid, String email, String hash) {
         EmailEntity entity = emailDao.find(hash);
         if(!orcid.equals(entity.getProfile().getId())) {
             throw new IllegalArgumentException("Email with hash {}" + hash + " doesn't belong to " + orcid);
@@ -224,10 +224,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             throw new IllegalArgumentException("Email address with hash " + hash + " is already populated and doesn't match the given address " + email);            
         }
         entity.setEmail(email);
-        entity.setPrimary(isPrimary);
-        if(isPrimary) {
-            entity.setVerified(true);
-        }
+        entity.setPrimary(true);
+        entity.setVerified(true);
         entity.setLastModified(new Date());
         emailDao.merge(entity);  
         emailDao.flush();
@@ -239,5 +237,25 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
            return 0; 
         }
         return emailDao.clearEmailsAfterReactivation(orcid);
+    }
+
+    @Override
+    public void reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility) {
+        EmailEntity entity = emailDao.find(emailHash);
+        // If email doesn't exists, create it
+        if(entity == null) {
+            emailDao.addEmail(orcid, email, emailHash, visibility.name(), orcid, null);
+        } else {
+            if(orcid.equals(entity.getProfile().getId())) {
+                entity.setEmail(email);
+                entity.setPrimary(false);
+                entity.setVerified(false);
+                entity.setLastModified(new Date());
+                emailDao.merge(entity);  
+                emailDao.flush();
+            } else {
+                throw new IllegalArgumentException("Email " + email + " belongs to other record than " + orcid);
+            }
+        }
     }
 }
