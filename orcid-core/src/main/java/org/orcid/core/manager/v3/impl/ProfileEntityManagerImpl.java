@@ -518,10 +518,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return true;
     }
 
-    @Override
-    @Transactional
+    @Override    
     public boolean reactivateRecord(String orcid, String primaryEmail) {
-        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+        boolean result = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
                 LOGGER.info("About to reactivate record, orcid={}", orcid);
@@ -541,12 +540,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 ProfileEntity toReactivate = profileDao.find(orcid);
                 toReactivate.setLastModified(new Date());
                 toReactivate.setDeactivationDate(null);
-                profileDao.merge(toReactivate);
-                
-                notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
+                profileDao.merge(toReactivate);                                
                 return true;
             }
         });
+        notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
+        return result;
     }
 
     @Override
