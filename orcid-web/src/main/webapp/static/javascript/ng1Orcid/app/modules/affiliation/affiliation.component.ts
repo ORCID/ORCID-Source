@@ -272,6 +272,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+
     parseAffiliationGroups(data): void {
         this.distinctionsAndInvitedPositions = new Array();
         this.educations = new Array();
