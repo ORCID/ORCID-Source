@@ -64,6 +64,9 @@ import { ExternalIdentifiersModule }
 import { ExtIdPopoverModule } 
     from './extIdPopover/extIdPopover.ts';
 
+import { FundingDeleteModule } 
+    from './funding/fundingDelete.ts';
+
 import { FundingModule } 
     from './funding/funding.ts';
 
@@ -160,12 +163,12 @@ import { ThanksForRegisteringModule }
 import { ThanksForVerifyingModule } 
     from './thanksForVerifying/thanksForVerifying.ts';
 
-import { TwoFASetupModule } 
+import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
 
-import { TwoFAStateModule }
+import { TwoFaStateModule }
     from './2FAState/twoFAState.ts';
-
+    
 import { VerifyEmailModule }
     from './verifyEmail/verifyEmail.ts';
 
@@ -223,8 +226,9 @@ export const orcidApp = angular.module(
         EmailVerificationSentMesssageModule.name,
         ExternalIdentifiersModule.name,
         ExtIdPopoverModule.name,
-        FundingModule.name,
+        FundingDeleteModule.name,
         FundingFormModule.name,
+        FundingModule.name,
         HomeModule.name,
         HeaderModule.name,
         LanguageModule.name,
@@ -255,8 +259,7 @@ export const orcidApp = angular.module(
         SwitchUserModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
-        TwoFASetupModule.name,
-        TwoFAStateModule.name,
+        TwoFaStateModule.name,
         VerifyEmailModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,

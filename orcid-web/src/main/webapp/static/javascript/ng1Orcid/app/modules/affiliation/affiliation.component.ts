@@ -231,7 +231,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     hideSources(group): void {
-        this.editSources[group.groupId] = false;
+        this.editSources[group.activePutCode] = false;
     };
 
     hideTooltip(element): void{        
@@ -271,6 +271,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             this.addAffiliationModal(bestMatch.affiliationType.value, bestMatch);
         }
     };
+
 
     parseAffiliationGroups(data): void {
         this.distinctionsAndInvitedPositions = new Array();
@@ -359,13 +360,13 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     showDetailsMouseClick(group, $event): void {
         $event.stopPropagation();
-        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        this.moreInfo[group.activePutCode] = !this.moreInfo[group.activePutCode];
     };
 
 
     showSources(group, $event): void {
         $event.stopPropagation();
-        this.editSources[group.groupId] = true;
+        this.editSources[group.activePutCode] = true;
         this.hideAllTooltip();
     };
 

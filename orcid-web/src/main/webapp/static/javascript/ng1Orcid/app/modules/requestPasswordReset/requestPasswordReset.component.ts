@@ -23,6 +23,9 @@ import { CommonService }
 import { GenericService } 
     from '../../shared/generic.service.ts';
 
+import { OauthService } 
+    from '../../shared/oauth.service.ts';
+
 
 @Component({
     selector: 'request-password-reset-ng2',
@@ -46,6 +49,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         private cdr:ChangeDetectorRef,
         private commonService: CommonService,
         private elementRef: ElementRef, 
+        private oauthService: OauthService,
         private requestPasswordResetService: GenericService,
     ) {
         this.authorizationForm = elementRef.nativeElement.getAttribute('authorizationForm');
@@ -97,6 +101,27 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
 
     };
 
+    //Send reactivation email from /reset-password
+    sendReactivationResetPasswordPage(email): void {
+        this.oauthService.sendReactivationEmail(email)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.showDeactivatedError = false;
+                this.showReactivationSent = true;
+                this.cdr.detectChanges();
+            },
+            error => {
+                console.log("error sending reactivation email");
+            } 
+        );
+    };
+
+    //Emit event to trigger sending reactivation email from parent component
+    //Used on /signin and any other location where request-reset-password-ng2 
+    //is child of oauth-authorization-ng2
     sendReactivation(email?): void {
         let _email = email;
         this.sendReactivationEmail.emit(_email);

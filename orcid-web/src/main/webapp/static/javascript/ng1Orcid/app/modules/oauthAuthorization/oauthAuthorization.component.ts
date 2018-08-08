@@ -351,7 +351,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.registrationForm.givenNames.value=givenName;
                 }
                 if(!this.registrationForm.familyNames.value){
-                    this.registrationForm.familyNames.value=data.familyNames.value;
+                    this.registrationForm.familyNames.value=familyName;
                 }
                 if(!this.registrationForm.email.value){
                     this.registrationForm.email.value=email;
@@ -486,10 +486,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     oauth2ScreensPostRegisterConfirm(): void {
-        var baseUri = getBaseUri();  
-        if(this.registrationForm.linkType === 'shibboleth'){
-            baseUri += '/shibboleth';
-        }
         this.registrationForm.valNumClient = this.registrationForm.valNumServer / 2;
         this.oauthService.oauth2ScreensPostRegisterConfirm(this.registrationForm)
         .pipe(    

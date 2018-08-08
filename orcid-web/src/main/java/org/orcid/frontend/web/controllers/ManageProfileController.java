@@ -760,11 +760,21 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
 
             String orcid = getCurrentUserOrcid();
-            if (biographyManager.exists(orcid)) {
-                biographyManager.updateBiography(orcid, bio);
-            } else {
-                biographyManager.createBiography(orcid, bio);
+
+            if (StringUtils.isEmpty(bio.getContent())){
+                if (biographyManager.exists(orcid)) {
+                    biographyManager.deleteBiography(orcid);
+                } else {
+                    //do nothing - don't add empty bios
+                }                  
+            }else{
+                if (biographyManager.exists(orcid)) {
+                    biographyManager.updateBiography(orcid, bio);
+                } else {
+                    biographyManager.createBiography(orcid, bio);
+                }                
             }
+
         }
         return bf;
     }

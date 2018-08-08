@@ -48,7 +48,7 @@ export const PublicPeerReviewCtrl = angular.module('orcidApp').controller(
             
             
             $scope.showMoreDetails = function(putCode){  
-                peerReviewSrvc.fetchPeerReviewDetails(putCode, function() { 
+                peerReviewSrvc.fetchPublicPeerReviewDetails(putCode, function() { 
                     $scope.showPeerReviewDetails.length = 0;
                     $scope.showPeerReviewDetails[putCode] = true;   
                 });

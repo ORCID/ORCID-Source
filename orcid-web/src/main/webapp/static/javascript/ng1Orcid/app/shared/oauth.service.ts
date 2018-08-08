@@ -111,9 +111,13 @@ export class OauthService {
     }
 
     oauth2ScreensPostRegisterConfirm( obj ): Observable<any> {
+        var baseUri = getBaseUri();  
+        if(obj.linkType === 'shibboleth'){
+            baseUri += '/shibboleth';
+        }
         let encoded_data = JSON.stringify(obj);
         return this.http.post( 
-            getBaseUri() + '/registerConfirm.json', 
+            baseUri + '/registerConfirm.json', 
             encoded_data, 
             { headers: this.headers }
         )

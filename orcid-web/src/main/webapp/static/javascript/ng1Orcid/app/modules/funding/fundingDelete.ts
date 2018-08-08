@@ -8,45 +8,44 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated components
+import { FundingDeleteComponent } 
+    from './fundingDelete.component.ts';
+
 import { CommonNg2Module }
     from './../common/common.ts';
 
-import { TwoFaSetupComponent } 
-    from './twoFASetup.component.ts';
-
 // This is the Angular 1 part of the module
-export const TwoFaSetupModule = angular.module(
-    'TwoFaSetupModule', 
+export const FundingDeleteModule = angular.module(
+    'FundingDeleteModule', 
     []
 );
 
 // This is the Angular 2 part of the module
-
 @NgModule(
     {
-        declarations: [
-            TwoFaSetupComponent
+        declarations: [ 
+            FundingDeleteComponent
         ],
         entryComponents: [ 
-            TwoFaSetupComponent 
+            FundingDeleteComponent 
         ],
         imports: [
             CommonNg2Module
         ],
         providers: [
+            
         ]
     }
 )
-export class TwoFaSetupNg2Module {}
+export class FundingDeleteNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-
-TwoFaSetupModule.directive(
-    'twoFaSetupNg2', 
+FundingDeleteModule.directive(
+    'fundingDeleteNg2', 
     <any>downgradeComponent(
         {
-            component: TwoFaSetupComponent
+            component: FundingDeleteComponent,
         }
     )
 );

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +38,14 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
     protected Url url;
     @XmlElement(name = "external-id-relationship", namespace = "http://www.orcid.org/ns/common")
     protected Relationship relationship;
+    
+    @JsonIgnore
+    @XmlTransient
+    protected TransientNonEmptyString normalizedUrl;
+
+    @JsonIgnore
+    @XmlTransient
+    protected TransientError normalizedUrlError;    
 
     public String getType() {
         return type;
@@ -86,6 +95,22 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
         this.url = url;
     }
 
+    public TransientNonEmptyString getNormalizedUrl() {
+        return normalizedUrl;
+    }
+
+    public void setNormalizedUrl(TransientNonEmptyString normalizedUrl) {
+        this.normalizedUrl = normalizedUrl;
+    }
+
+    public TransientError getNormalizedUrlError() {
+        return normalizedUrlError;
+    }
+
+    public void setNormalizedUrlError(TransientError normalizedUrlError) {
+        this.normalizedUrlError = normalizedUrlError;
+    }
+    
     /**
      * If we have a normalized value, use that to generate Group ID;
      */
@@ -179,12 +204,17 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
             id.url = new Url(this.getUrl().getValue());
         if (this.getRelationship() != null)
             id.relationship = this.getRelationship();
+        if (this.getNormalizedUrl() != null)
+            id.setNormalizedUrl(this.getNormalizedUrl());
+        if (this.getNormalizedUrlError() != null)
+            id.setNormalizedUrlError(this.getNormalizedUrlError());
         return id;
     }
 
     @Override
     public String toString() {
-        return "ExternalID [type=" + type + ", value=" + value + ", normalized=" + normalized + ", url=" + url + ", relationship=" + relationship + "]";
+        return "ExternalID [type=" + type + ", value=" + value + ", normalized=" + normalized + ", normalizedError=" + normalizedError + ", url=" + url
+                + ", relationship=" + relationship + ", normalizedUrl=" + normalizedUrl + ", normalizedUrlError=" + normalizedUrlError + "]";
     }
 
 }

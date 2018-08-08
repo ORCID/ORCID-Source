@@ -48,6 +48,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     displayFundingxtIdPopOver: any;
     displayURLPopOver: any;
     editFunding: any;
+    editSources: any;
     educations: any;
     emails: any;
     employments: any;
@@ -80,13 +81,77 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.deleFunding = null;
         this.deleteGroup = null;
         this.deletePutCode = null;
+        this.disambiguatedFunding = {};
         this.displayURLPopOver = {};
-        this.editFunding = {};
+        this.editFunding = {
+            amount: {
+                errors: {},
+                value: null
+            },
+            city: {
+                errors: {},
+                value: null
+            },
+            country: {
+                errors: {},
+                value: null
+            },
+            currencyCode: {
+                errors: {}
+            },
+            description: {
+                errors: {},
+                value: null
+            },
+            endDate: {
+                errors: {},
+            },
+            errors: {},
+            fundingName: {
+                errors: {},
+                value: null
+            },
+            fundingTitle: {
+                title: {
+                    errors: {},
+                    value: null
+                },
+                translatedTitle: {
+                    content: null,
+                    errors: {}
+                }
+            },
+            fundingType: {
+                errors: {},
+                value: null
+            },
+            organizationDefinedFundingSubType: {
+                subtype: {
+                    errors: {},
+                    value: null
+                }
+            },
+            putCode: {
+                value: null
+            },
+            region: {
+                errors: {},
+                value: null
+            },
+            startDate: {
+                errors: {},
+            },
+            url: {
+                errors: {},
+                value: null
+            }
+        };
+        this.editSources = {};
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
-        this.fundingToAddIds = new Array();
-        this.groups = null;
+        this.fundingToAddIds = {};
+        this.groups = new Array();
         this.loading = false;    
         this.moreInfo = {};
         this.moreInfoCurKey = null;
@@ -98,38 +163,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
     }
-
-    addFunding(): void {
-        if (this.addingFunding == true) {
-            return; // don't process if adding affiliation
-        }
-
-        this.addingFunding = true;
-        this.editFunding.errors.length = 0;
-        
-        /*
-        this.fundingService.addFundingToScope( this.editFunding )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.editFunding = data;
-                //console.log('this.editFunding response', this.editFunding);
-                this.addingFunding = false;
-                //this.close();
-
-                if (data.errors.length > 0){
-
-                }
-            },
-            error => {
-                //console.log('setBiographyFormError', error);
-            } 
-        );
-        */
-        
-    };
 
     addFundingExternalIdentifier(): void {
         this.editFunding.externalIdentifiers.push(
@@ -148,42 +181,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             }
         );
-    };
-
-    addFundingToScope( path ): void {
-        if( this.fundingToAddIds.length != 0 ) {
-            var fundingIds = this.fundingToAddIds.splice(0,20).join();
-
-            this.fundingService.addFundingToScope( this.editFunding, fundingIds )
-            .pipe(    
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe(
-                data => {
-                    for (var i in data) {
-                        var funding = data[i];
-                        groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
-                    }
-                    if (this.fundingToAddIds.length == 0) {
-                        this.loading = false;
-                        
-                    } else {
-                        this.addFundingToScope(path);
-                        
-                    }
-                },
-                error => {
-                    //console.log('setBiographyFormError', error);
-                } 
-            );
-
-        } else {
-            this.loading = false;
-        };
-    }
-
-    addFundingModal(type, affiliation): void {
-
     };
 
     bindTypeaheadForOrgs(): void {
@@ -253,12 +250,14 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         });
     };
 
-    close(): void {
-        //$.colorbox.close();
-    };
 
     closeModal(): void {
-        //$.colorbox.close();
+        this.modalService.notifyOther(
+            {
+                action:'close', 
+                moduleId: 'modalFundingForm'
+            }
+        );
     };
 
     closeMoreInfo(key): void {
@@ -354,28 +353,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         return count;
     }
 
-    getEditable(putCode, callback): void {
-        // first check if they are the current source
-        var funding = this.getFunding(putCode);
-        if (funding.source == orcidVar.orcidId){
-            callback(funding);
-        }
-        else {
-            var bestMatch = null;
-            var group = this.getGroup(putCode);
-            for (var idx in group.activitiess) {
-                if (group[idx].source == orcidVar.orcidId) {
-                    bestMatch = callback(group[idx]);
-                    break;
-                }
-            }
-            if (bestMatch == null) {
-                bestMatch = this.createNew(funding);
-            }
-            callback(bestMatch);
-        };
-    }
-
     getEmptyExtId(): any {
         return {
             "errors": [],
@@ -434,41 +411,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     }
-
-    getFundingsIds(): any {
-        this.fundingService.getFundingsId()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                //console.log('getFundingsIds', data);
-                let funding = null;
-                for (let i in data) {
-                    funding = data[i];
-                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
-                };
-                
-                /*
-                if (this.fundingService.fundingToAddIds.length == 0) {
-                    $timeout(function() {
-                      this.fundingService.loading = false;
-                    });
-                } else {
-                    $timeout(function () {
-                        this.fundingService.addFundingToScope(path);
-                    },50);
-                }
-                
-                let ids = data.splice(0,20).join();
-                this.getFundingsById( ids );
-                */
-            },
-            error => {
-                //console.log('getBiographyFormError', error);
-            } 
-        );
-    };
 
     getGroup(putCode): any {
         for (var idx in this.fundingService.groups) {
@@ -531,28 +473,44 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    setGroupPrivacy(putCode, priv): void {
-        /*
-        var group = this.getGroup(putCode);
-        for (var idx in group.activities) {
-            var curPutCode = group.activities[idx].putCode.value;
-            this.fundingService.setPrivacy(curPutCode, priv);
-        }
-        */
-    }
+    putFunding(): void {
+        if (this.addingFunding){    
+            return; // don't process if adding funding
+        } 
+        this.addingFunding = true;
+        this.editFunding.errors.length = 0;
 
-    setPrivacy(putCode, priv): void {
-        /*
-        var funding = this.getFunding(putCode);
-        funding.visibility.visibility = priv;
-        this.fundingService.updateProfileFunding(funding);
-        */
-    }
+        this.fundingService.putFunding( this.editFunding )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.editFunding = data;
+                //console.log('this.editFunding response', this.editFunding);
+                this.addingFunding = false;
+
+                if (data['errors'].length == 0){
+                    this.closeModal();
+                    
+                } else {
+                    this.editFunding = data;
+                    if(this.editFunding.externalIdentifiers.length == 0) {
+                        this.addFundingExternalIdentifier();
+                    }
+                }
+                this.addingFunding = false;
+            },
+            error => {
+                //console.log('setFundingFormError', error);
+            } 
+        );
+    };
+
 
     setIdsToAdd(ids): void {
         this.fundingToAddIds = ids;
     }
-
 
     showAddModal(): void{
         let numOfResults = 25;
@@ -601,26 +559,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     };
 
-    toggleEdit(): void {
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    //this.showEdit = !this.showEdit;
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
-    };
-
     typeChanged(): void {
         var selectedType = this.editFunding.fundingType.value;
         switch (selectedType){
@@ -662,6 +600,10 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    unbindTypeahead(): void {
+        $('#fundingName').typeahead('destroy');
+    };
+
 
 
     //Default init functions provided by Angular Core
@@ -678,8 +620,59 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //console.log('initi funding component');
-        this.getFundingsIds();
+        //console.log('initi funding component')
+
+        this.modalService.notifyObservable$.subscribe(
+            (res) => {
+                //console.log('res.value',res, this.elementId);
+                if ( res.moduleId == 'modalFundingForm' ) {
+
+                    if ( res.action === "open") {
+                        this.bindTypeaheadForOrgs();
+                        this.editFunding = this.fundingService.getFundingToEdit();
+                        
+                        if (this.editFunding.putCode == null) {
+                            this.editFunding.putCode = {
+                                'value': null
+                            };
+                        }
+
+                        if (this.editFunding.fundingTitle == null) {
+                            this.editFunding.fundingTitle = {
+                                'translatedTitle': {
+                                    'content': null,
+                                    'languageCode': null
+                                }
+                            };
+                        }
+
+                        if (this.editFunding.fundingTitle.translatedTitle == null) {
+                            this.editFunding.fundingTitle.translatedTitle = {
+
+                                'content': null,
+                                'languageCode': null
+                            };
+                        }
+
+                        if (this.editFunding.startDate == null) {
+                            this.editFunding.startDate = {
+                                'month': null,
+                                'year': null
+                            };
+                        }
+
+                        if (this.editFunding.endDate == null) {
+                            this.editFunding.endDate = {
+                                'month': null,
+                                'year': null
+                            };
+                        }
+                    }
+
+                }
+            }
+        );
+
     }; 
 }
 
