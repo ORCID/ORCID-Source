@@ -30,6 +30,7 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
     mergeSubmit: boolean;
     worksToMerge: Array<any>;
     delCountVerify: number;
+    preferredNotSelected: boolean;
 
     constructor(
         private worksService: WorksService,
@@ -47,15 +48,37 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
     };
 
     merge(): void {
-        console.log("Merging:");
+        var putCodesAsString = '';
+        var preferredPutCode;        
         for (var i in this.worksToMerge) {
             var workToMerge = this.worksToMerge[i];
-            console.log(workToMerge.work.title.value + ':' + workToMerge.preferred);
-            
+            if (workToMerge.preferred) {
+                preferredPutCode = workToMerge.work.putCode.value;
+            } else {
+                putCodesAsString += ',' + workToMerge.work.putCode.value;
+            }
         }
-        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+        if (!preferredPutCode) {
+            this.preferredNotSelected = true;
+        } else {
+            this.preferredNotSelected = false;
+            putCodesAsString = preferredPutCode + putCodesAsString;
+            this.worksService.mergeWorks(putCodesAsString)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.worksService.notifyOther({action:'merge', successful:true});
+                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+                },
+                error => {
+                    console.log('error calling mergeWorks', error);
+                } 
+            );
+        }
     };
-    
+        
     selectPreferred(preference): void {
         for (var i in this.worksToMerge) {
             var workToMerge = this.worksToMerge[i];
@@ -65,45 +88,6 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
         }
         preference.preferred = true;   
     };
-
-    mergeGroupWorks(putCodes): void {
-        var rmWorks = [];
-        var rmGroups = [];
-        for (var i in putCodes) {
-            for (var j in this.worksService.groups) {
-                for (var k in this.worksService.groups[j].works) {
-                    if (this.worksService.groups[j].works[k].putCode.value == putCodes[i]) {
-                        rmGroups.push(j);
-                        for (var y in this.worksService.groups[j].works){
-                            rmWorks.push(this.worksService.groups[j].works[y].putCode.value);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        while (rmGroups.length > 0) {
-            this.worksService.groups.splice(rmGroups.pop(),1);
-        }
-        this.worksService.removeWorks(rmWorks)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if (rmWorks.length > 0) {
-                    this.worksService.removeWorks(rmWorks);
-                }
-                this.delCountVerify = 0;
-                this.mergeSubmit = false;
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-                this.worksService.notifyOther({action:'merge', successful:true});
-            },
-            error => {
-                console.log('Error deleting work', error);
-            } 
-        ); 
-    }
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

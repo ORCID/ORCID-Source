@@ -30,6 +30,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     mergeSubmit: boolean;
     bulkEditMap: any;
     delCountVerify: number;
+    externalIdsPresent: boolean;
 
     constructor(
         private worksService: WorksService,
@@ -47,12 +48,6 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeContinue(): void {
-        var worksToMerge = new Array();
-        for (var putCode in this.bulkEditMap) {
-            var work = this.worksService.getWork(putCode);
-            worksToMerge.push({ work: work, preferred: false});
-        }
-        this.worksService.notifyOther({worksToMerge:worksToMerge});
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
         this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
     };
@@ -67,6 +62,9 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 if( res.bulkEditMap ) {
                     this.bulkEditMap = res.bulkEditMap;
+                }
+                if( res.externalIdsPresent ) {
+                    this.externalIdsPresent = res.externalIdsPresent;
                 }
             }
         );

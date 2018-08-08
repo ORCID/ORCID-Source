@@ -278,6 +278,19 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         
         if (mergeCount > 1) {
+            var worksToMerge = new Array();
+            var externalIdsPresent = false;
+            for (var putCode in this.bulkEditMap) {
+                if (this.bulkEditMap[putCode]) {
+                    var work = this.worksService.getWork(putCode);
+                    worksToMerge.push({ work: work, preferred: false});
+                    if (work.workExternalIdentifiers.length > 0) {
+                        externalIdsPresent = true;
+                    }
+                }
+            }
+            this.worksService.notifyOther({worksToMerge:worksToMerge});      
+            this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
             this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
         }
@@ -990,6 +1003,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                    }
+                } 
+                if(res.action == 'merge') {
+                    if(res.successful == true) {
+                        this.closeAllMoreInfo();
+                        this.refreshWorkGroups();
+                        this.allSelected = false;
+                        this.bulkEditMap = {};
                     }
                 } 
                 if(res.action == 'deleteBulk') {

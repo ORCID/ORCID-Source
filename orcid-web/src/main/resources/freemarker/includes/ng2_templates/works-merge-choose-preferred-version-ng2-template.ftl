@@ -13,10 +13,13 @@
           </div>
         </div>
       </div>
+      <div class="orcid-error" *ngIf='preferredNotSelected'>
+         <@orcid.msg 'groups.merge.preferred_not_selected'/>
+      </div>
       <span *ngFor='let workToMerge of worksToMerge'>
         <div class="row">
             <div class="col-md-1 col-sm-2 col-xs-2">
-                <input type="radio" name="preferred" [checked]="workToMerge.preferred" [id]="workToMerge.work.putCode.value" (change)="selectPreferred(workToMerge)"  />
+                <input type="radio" name="preferred" [disabled]="!workToMerge.work.userSource && workToMerge.work.workExternalIdentifiers.length == 0" [checked]="workToMerge.preferred" [id]="workToMerge.work.putCode.value" (change)="selectPreferred(workToMerge)"  />
             </div>
             <div class="col-md-11 col-sm-10 col-xs-10">
                 <label [for]="workToMerge.work.putCode.value">
