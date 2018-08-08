@@ -68,6 +68,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Keywords;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
@@ -696,6 +697,14 @@ public class PublicProfileController extends BaseWorkspaceController {
             return work;
         }
         return null;
+    }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-review.json", method = RequestMethod.GET)
+    public @ResponseBody PeerReviewForm getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") long putCode) {
+        PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
+        validateVisibility(peerReview.getVisibility());
+        sourceUtils.setSourceName(peerReview);
+        return PeerReviewForm.valueOf(peerReview);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
