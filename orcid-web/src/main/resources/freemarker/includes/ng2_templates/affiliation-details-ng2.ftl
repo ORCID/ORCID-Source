@@ -1,7 +1,7 @@
 <div class="work-list-container">
     <ul class="sources-edit-list">
         <!--Edit sources-->
-        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}">
+        <li *ngIf="editSources[group?.activePutCode]" class="source-header" [ngClass]="{'source-active' : editSources[group.activePutCode] == true}">
             <div class="sources-header">
                 <div class="row">
                     <div class="col-md-7 col-sm-7 col-xs-6">
@@ -18,14 +18,14 @@
                                 <!--Show/hide details-->              
                                 <li *ngIf="orgIdsFeatureEnabled" class="works-details">
                                     <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.activePutCode+'-showHideDetails')">
-                                        <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                        <span [ngClass]="(moreInfo[group?.activePutCode] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                         </span>
                                     </a>
                                     <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group?.activePutCode+'-showHideDetails']">
                                          <div class="arrow"></div>
                                         <div class="popover-content">   
-                                            <span *ngIf="moreInfo[group?.groupId] == false || moreInfo[group?.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
-                                            <span *ngIf="moreInfo[group?.groupId]"><@orcid.msg 'common.details.hide_details'/></span>
+                                            <span *ngIf="moreInfo[group?.activePutCode] == false || moreInfo[group?.activePutCode] == null"><@orcid.msg 'common.details.show_details'/></span>   
+                                            <span *ngIf="moreInfo[group?.activePutCode]"><@orcid.msg 'common.details.hide_details'/></span>
                                         </div>
                                     </div>
                                 </li>
@@ -48,7 +48,7 @@
         </li>
         <!--End edit sources-->
         <li *ngFor="let affiliation of group.affiliations; let index = index; let first = first; let last = last;">
-            <div *ngIf="group.activePutCode == affiliation.putCode.value || editSources[group.groupId] == true">
+            <div *ngIf="group.activePutCode == affiliation.putCode.value || editSources[group.activePutCode] == true">
                 <div class="row" *ngIf="group.activePutCode == affiliation.putCode?.value">
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <h3 class="workspace-title">
@@ -79,18 +79,18 @@
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
-                        <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
+                        <ul class="workspace-private-toolbar" *ngIf="!editSources[group.activePutCode]"> 
                             <!--Show details toggle-->
-                            <li class="works-details" *ngIf="!editSources[group.groupId]">
-                                <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                            <li class="works-details" *ngIf="!editSources[group.activePutCode]">
+                                <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.activePutCode+'-showHideDetails')">
                                     <span [ngClass]="(z == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                     </span>
                                 </a>
-                                <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.groupId+'-showHideDetails']">
+                                <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[group.activePutCode+'-showHideDetails']">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <span *ngIf="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details' /></span>   
-                                        <span *ngIf="moreInfo[group.groupId]"><@orcid.msg 'common.details.hide_details' /></span>
+                                        <span *ngIf="moreInfo[group.activePutCode] == false || moreInfo[group.activePutCode] == null"><@orcid.msg 'common.details.show_details' /></span>   
+                                        <span *ngIf="moreInfo[group.activePutCode]"><@orcid.msg 'common.details.hide_details' /></span>
                                     </div>
                                 </div>
                             </li>
@@ -104,7 +104,7 @@
                         </ul>
                         <!--Inconsistent visibility warning-->  
                         <#if !(isPublicProfile??)>
-                        <div *ngIf="!affiliationService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
+                        <div *ngIf="!affiliationService.consistentVis(group) && !editSources[group.activePutCode]" class="vis-issue">
                             <div class="popover-help-container">
                                 <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
                                 <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
@@ -135,7 +135,7 @@
                     </div>
                 </div><!--Identifiers-->
                 <!--More info-->
-                <div class="more-info" *ngIf="moreInfo[group?.groupId] && group.activePutCode == affiliation.putCode.value">
+                <div class="more-info" *ngIf="moreInfo[group?.activePutCode] && group.activePutCode == affiliation.putCode.value">
                     <div class="content">   
                         <span class="dotted-bar"></span>
                         <div class="row"> 
@@ -169,12 +169,12 @@
                 <div class="row source-line" *ngIf="group.activePutCode == affiliation.putCode.value">
                     <!--Edit sources-->
                     <!--Source name-->
-                    <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
+                    <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.activePutCode]">
                         {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                     </div>
                     <!--Preferred source-->
-                    <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
-                        <div *ngIf="editSources[group.groupId]">
+                    <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.activePutCode]">
+                        <div *ngIf="editSources[group.activePutCode]">
                             <span class="glyphicon glyphicon-check" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
                             <!--Make default functionality does not yet exist on affiliations-->
                             <#if !(isPublicProfile??)>
@@ -185,8 +185,8 @@
                         </div>
                     </div>
                     <!--Edit/delete sources-->
-                    <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.groupId]">
-                        <div *ngIf="editSources[group.groupId]">
+                    <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.activePutCode]">
+                        <div *ngIf="editSources[group.activePutCode]">
                             <#if !(isPublicProfile??)>
                             <ul class="sources-actions">
                                 <li> 
@@ -263,15 +263,15 @@
                         </#if>
                     </div>
                 </div>
-                <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
+                <div class="row source-line" *ngIf="!editSources[group.activePutCode]">                        
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <@orcid.msg 'groups.common.source'/>: {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                     </div>
                     
                     <div class="col-md-3 col-sm-3 col-xs-9">
-                        <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.affiliations?.length != 1"> (</span><a (click)="showSources(group, $event)" *ngIf="group?.affiliations?.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.affiliations.length}}</a><span *ngIf="group?.affiliations?.length != 1">)</span>
+                        <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.affiliations?.length != 1"> (</span><a (click)="showSources(group, $event)" *ngIf="group?.affiliations?.length != 1" (mouseenter)="showTooltip(group.activePutCode+'-sources')" (mouseleave)="hideTooltip(group.activePutCode+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.affiliations.length}}</a><span *ngIf="group?.affiliations?.length != 1">)</span>
 
-                        <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
+                        <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.activePutCode+'-sources']">
                             <div class="arrow"></div>
                             <div class="popover-content">
                                 <@orcid.msg 'groups.common.sources.show_other_sources' />
@@ -291,11 +291,11 @@
                                 />
                             </li>
 
-                            <li *ngIf="!(editSources[group.groupId] || group?.affiliations?.length == 1)">
-                                <a (click)="showSources(group,$event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
+                            <li *ngIf="!(editSources[group.activePutCode] || group?.affiliations?.length == 1)">
+                                <a (click)="showSources(group,$event)" (mouseenter)="showTooltip(group.activePutCode+'-deleteGroup')" (mouseleave)="hideTooltip(group.activePutCode+'-deleteGroup')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
-                                <div class="popover popover-tooltip top delete-group-popover" *ngIf="showElement[group.groupId+'-deleteGroup']">
+                                <div class="popover popover-tooltip top delete-group-popover" *ngIf="showElement[group.activePutCode+'-deleteGroup']">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
                                        <@orcid.msg 'groups.common.delete_this_source' />
@@ -304,10 +304,10 @@
                             </li>
 
                             <li *ngIf="group?.affiliations?.length == 1">
-                                <a (click)="deleteAffiliation(affiliation)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
+                                <a (click)="deleteAffiliation(affiliation)" (mouseenter)="showTooltip(group.activePutCode+'-deleteSource')" (mouseleave)="hideTooltip(group.activePutCode+'-deleteSource')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
-                                <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteSource']">
+                                <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.activePutCode+'-deleteSource']">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
                                         <@orcid.msg 'groups.common.delete_this_source' />
