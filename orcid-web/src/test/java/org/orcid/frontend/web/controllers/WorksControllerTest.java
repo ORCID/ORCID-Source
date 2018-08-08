@@ -94,14 +94,13 @@ public class WorksControllerTest extends BaseControllerTest {
         
         worksController.groupWorks("1,2,3,4");
         
-        Mockito.verify(mockWorkManager).createNewWorkGroup(idsCaptor.capture(), orcidCaptor.capture());
+        Mockito.verify(mockWorkManager).setPreferredAndCreateGroup(Mockito.eq(1L), idsCaptor.capture(), orcidCaptor.capture());
         
         List<Long> ids = idsCaptor.getValue();
-        assertEquals(4, ids.size());
-        assertEquals(Long.valueOf(1l), ids.get(0));
-        assertEquals(Long.valueOf(2l), ids.get(1));
-        assertEquals(Long.valueOf(3l), ids.get(2));
-        assertEquals(Long.valueOf(4l), ids.get(3));
+        assertEquals(3, ids.size());
+        assertEquals(Long.valueOf(2l), ids.get(0));
+        assertEquals(Long.valueOf(3l), ids.get(1));
+        assertEquals(Long.valueOf(4l), ids.get(2));
         
         ReflectionTestUtils.setField(worksController, "workManager", oldWorkManager);
     }

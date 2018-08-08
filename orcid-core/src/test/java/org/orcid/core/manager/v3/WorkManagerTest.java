@@ -1066,6 +1066,8 @@ public class WorkManagerTest extends BaseTest {
         Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
         
         // full work matching user preferred id should be loaded from db (10 is highest display index)
+        WorkEntity userVersionEntity = getUserSourceWorkEntity("some-orcid");
+        Mockito.when(mockDao.getWork(Mockito.eq("some-orcid"), Mockito.eq(1l))).thenReturn(userVersionEntity);
         Mockito.when(mockDao.find(Mockito.eq(4l))).thenReturn(getUserPreferredWork());
         
         workManager.createNewWorkGroup(Arrays.asList(1l, 2l, 3l, 4l), "some-orcid");
@@ -1073,7 +1075,7 @@ public class WorkManagerTest extends BaseTest {
         // no new work should be created
         Mockito.verify(mockDao, Mockito.times(1)).persist(Mockito.any(WorkEntity.class));
         
-        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":null,\"url\":null,\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},{\"relationship\":null,\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}", userSource.getExternalIdentifiersJson());
+        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":null,\"url\":null,\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},{\"relationship\":null,\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}", userVersionEntity.getExternalIdentifiersJson());
         
         // only identifiers should have been updated
         assertEquals("work:title", userSource.getTitle());
@@ -1185,6 +1187,12 @@ public class WorkManagerTest extends BaseTest {
             minWorks.add(work);
         }
         return minWorks;
+    }
+    
+    private WorkEntity getUserSourceWorkEntity(String sourceId) {
+        WorkEntity workEntity = new WorkEntity();
+        workEntity.setSourceId(sourceId);
+        return workEntity;
     }
 
     private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) {
