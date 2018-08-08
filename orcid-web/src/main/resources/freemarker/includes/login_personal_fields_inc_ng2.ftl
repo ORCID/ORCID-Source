@@ -56,7 +56,25 @@
 </div>
 <div id="login-deactivated-error" class="orcid-error" style="display:none">
     <span *ngIf="showDeactivatedError">
-        <@spring.message 'orcid.frontend.verify.deactivated_email.1' /><a  (click)="sendReactivationEmail(authorizationForm.userName.value)"><@spring.message 'orcid.frontend.verify.deactivated_email.2' /></a><@spring.message 'orcid.frontend.verify.deactivated_email.3' />
+        <p>
+            <small>
+                <@spring.message 'orcid.frontend.deactivated' /><br />
+                <@spring.message 'reset_password.enterEmail_2' />
+                <a href="mailto:support@orcid.org"><@spring.message 'resend_claim.labelorg' /></a>
+            </small>
+        </p>
+        <div id="reactivate" name="emailAddressForm">            
+            <div class="control-group">
+                <label for="email" class="control-label"><@spring.message 'manage_bio_settings.h3email' /></label>                       
+                <div class="controls"> 
+                    <input id="email" name="email" type="text" class="form-control" [(ngModel)]="initReactivationRequest.email" />
+                </div>
+                <span class="orcid-error" *ngIf="initReactivationRequest.error != null">
+                    <div [innerHTML]="initReactivationRequest.error"></div>
+                </span>
+                <span class="btn btn-primary" (click)="sendReactivationEmail()"><@spring.message 'check_password_modal.submit' /></span>
+            </div>
+        </div>         
     </span> 
     <span *ngIf="showReactivationSent">
         <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /><a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />

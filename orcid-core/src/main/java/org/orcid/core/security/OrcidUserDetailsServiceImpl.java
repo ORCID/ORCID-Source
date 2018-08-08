@@ -27,13 +27,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SlackManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
-import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +52,9 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     @Resource
     private ProfileDao profileDao;
 
-    @Resource
-    private EmailDao emailDao;
-
+    @Resource(name = "emailManagerReadOnlyV3")
+    protected EmailManagerReadOnly emailManagerReadOnly;
+    
     @Resource
     private OrcidSecurityManager securityMgr;
 
@@ -130,7 +130,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     private String retrievePrimaryEmail(ProfileEntity profile) {
         String orcid = profile.getId();
         try {
-            return emailDao.findPrimaryEmail(orcid).getEmail();
+            return emailManagerReadOnly.findPrimaryEmail(orcid).getEmail();
         } catch (javax.persistence.NoResultException nre) {
             String message = String.format("User with orcid %s have no primary email", orcid);
             LOGGER.error(message);
@@ -157,9 +157,9 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
             if (OrcidStringUtils.isValidOrcid(username)) {
                 profile = profileDao.find(username);
             } else {
-                EmailEntity emailEntity = emailDao.findCaseInsensitive(username);
-                if (emailEntity != null) {
-                    profile = emailEntity.getProfile();
+                String orcid = emailManagerReadOnly.findOrcidIdByEmail(username);
+                if (!PojoUtil.isEmpty(orcid)) {
+                    profile = profileDao.find(orcid);
                 }
             }
         }

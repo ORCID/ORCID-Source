@@ -240,20 +240,14 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)    
-    public ResponseEntity<?> sendReactivation(@RequestParam("email") String orcidOrEmail) throws UnsupportedEncodingException {
+    public ResponseEntity<?> sendReactivation(@RequestParam("email") String email) throws UnsupportedEncodingException {
+        email = URLDecoder.decode(email, "UTF-8");
         String orcid = null;
-        String email = null;
-        orcidOrEmail = URLDecoder.decode(orcidOrEmail, "UTF-8");
-        if(orcidOrEmail.contains("@")) {
-            orcid = emailManager.findOrcidIdByEmail(orcidOrEmail);
-            email = orcidOrEmail;
+        if(!email.contains("@")) {
+            String error = getMessage("Email.personalInfoForm.email");
+            return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
         } else {
-            orcid = orcidOrEmail;
-        }
-        //If email is null it means the user used the orcid id to login, so, retrieve the email from the DB
-        if(email == null) {
-            Email entity = emailManager.findPrimaryEmail(orcid);
-            email = entity.getEmail();
+            orcid = emailManager.findOrcidIdByEmail(email);            
         }
         
         notificationManager.sendReactivationEmail(email, orcid);
