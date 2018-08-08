@@ -75,10 +75,10 @@
                                     </ul>
                                 </div>         
                             </li>                            
-                            <li class="hidden-md hidden-sm visible-xs-inline">                     
+                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                 <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                     <span class="glyphicon glyphicon-plus"></span>
-                                    <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />  
                                 </a>                
                             </li>
                         </ul>
@@ -184,10 +184,10 @@
                                             </ul>
                                         </div>         
                                     </li>
-                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education' />  
                                         </a>
                                     </li>
                                 </ul>
@@ -210,10 +210,10 @@
                                             </ul>
                                         </div>         
                                     </li>
-                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification' />  
                                         </a>
                                     </li>
                                 </ul>
@@ -293,10 +293,10 @@
                                             </ul>
                                         </div>         
                                     </li>
-                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education' />  
                                         </a>
                                     </li>                                        
                                 </ul>
@@ -405,10 +405,10 @@
                                             </ul>
                                         </div>
                                     </li>                                    
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                     
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_distinction' />  
                                         </a>                
                                     </li>
                                 </ul>
@@ -431,10 +431,10 @@
                                             </ul>
                                         </div>         
                                     </li>                                   
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                     
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_invited_position' />  
                                         </a>                
                                     </li>
                                 </ul>
@@ -543,10 +543,10 @@
                                             </ul>
                                         </div>
                                     </li>                                    
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                     
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_membership' />  
                                         </a>                
                                     </li>
                                 </ul>
@@ -569,10 +569,10 @@
                                             </ul>
                                         </div>         
                                     </li>                                   
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                     
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_service' />  
                                         </a>                
                                     </li>
                                 </ul>
