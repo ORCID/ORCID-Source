@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.when;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -288,10 +289,44 @@ public class EmailManagerTest extends BaseTest {
     }
     
     @Test
-    public void emailExistsAndBelongToUserTest() {
-        assertTrue(emailManager.emailExistsAndBelongToUser(ORCID, "public_0000-0000-0000-0003@test.orcid.org"));
-        assertFalse(emailManager.emailExistsAndBelongToUser(ORCID, ""));
-        assertTrue(emailManager.emailExistsAndBelongToUser(ORCID, "limited_0000-0000-0000-0003@test.orcid.org"));
-        assertFalse(emailManager.emailExistsAndBelongToUser(ORCID, "public_0000-0000-0000-0002@test.orcid.org"));
+    public void reactivateOrCreateTest() {
+        String otherOrcid = "0000-0000-0000-0002";
+        String orcid = "0000-0000-0000-0003";
+        String email = "public_0000-0000-0000-0003@test.orcid.org";
+        String hash = "public_0000-0000-0000-0003@test.orcid.org";
+        EmailEntity e = new EmailEntity();
+        e.setEmail(email);
+        e.setId(hash);
+        e.setProfile(new ProfileEntity("0000-0000-0000-0003"));
+        TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", mockEmailDao);
+        
+        // Test merging
+        when(mockEmailDao.find(hash)).thenReturn(e);
+        emailManager.reactivateOrCreate(orcid, email, hash, Visibility.PUBLIC);
+        
+        ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
+        Mockito.verify(mockEmailDao).merge(captor.capture());
+        
+        EmailEntity merged = captor.getValue();
+        assertNotNull(merged);
+        assertFalse(merged.getPrimary());
+        assertEquals(orcid, merged.getProfile().getId());
+        assertEquals(email, merged.getEmail());
+        assertEquals(hash, merged.getId());
+        assertEquals(Visibility.PUBLIC.name(), merged.getVisibility());
+        
+        // Test creating
+        emailManager.reactivateOrCreate(orcid, "new@email.com", "new@email.com", Visibility.PUBLIC);
+        Mockito.verify(mockEmailDao).addEmail(eq(orcid), eq("new@email.com"), eq("new@email.com"), eq(Visibility.PUBLIC.name()), eq(orcid), eq(null));
+        
+        // Test belong to other record
+        try {
+            emailManager.reactivateOrCreate(otherOrcid, email, hash, Visibility.PUBLIC);            
+            fail();
+        } catch (IllegalArgumentException iae) {
+            
+        }
+        
+        TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);
     }
 }
