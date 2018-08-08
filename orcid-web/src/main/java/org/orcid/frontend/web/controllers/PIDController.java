@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import javax.annotation.Resource;
-import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Controller
+@Controller("pidController")
 @RequestMapping(value = { "/identifiers" })
 public class PIDController {
 
