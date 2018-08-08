@@ -58,6 +58,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     primaryEmail: string;
     verifyEmailObject: any;
     showEmailVerifBox: boolean;
+    showEmailVerifBoxNewsTips: boolean;
     isPassConfReq: any;
     baseUri: any;
     curPrivToggle: any; 
@@ -83,6 +84,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.verifyEmailObject = {};
         this.showEmailVerifBox = false;
+        this.showEmailVerifBoxNewsTips = false;
         this.baseUri = orcidVar.baseUri;
         this.curPrivToggle = null;
         this.isPassConfReq = orcidVar.isPasswordConfirmationRequired;
@@ -115,7 +117,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement = {};
         this.showEditEmail = (window.location.hash === "#editEmail")
         this.emailsEditText = om.get("manage.edit.emails");
-        //this.popUp = true;
         this.showUnverifiedEmailSetPrimaryBox = false;
         this.primaryEmail = '';
         this.emailStatusOptions = [
@@ -435,11 +436,18 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.formData.visibility = null;
     }
 
-    closeVerificationBox(): void {
-        this.showEmailVerifBox = false;
+    closeVerificationBox(location?): void {
+        if(location){
+            if(location == "newsTips"){
+                this.showEmailVerifBoxNewsTips = false;
+
+            }
+        } else {
+            this.showEmailVerifBox = false;
+        }
     };
 
-    verifyEmail(email, popup): void {
+    verifyEmail(email, popup, location?): void {
 
         this.verifyEmailObject = email;
         
@@ -454,7 +462,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 ////console.log('setEmailsKnownAs', error);
             } 
         );
-        this.showEmailVerifBox = true;
+        if(location){
+            if(location == "newsTips"){
+                this.showEmailVerifBoxNewsTips = true;
+
+            }
+        } else {
+            this.showEmailVerifBox = true;
+        }
 
         if( !popup ){
             this.modalService.notifyOther(

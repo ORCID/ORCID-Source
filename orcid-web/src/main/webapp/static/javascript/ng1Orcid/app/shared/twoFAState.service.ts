@@ -52,6 +52,7 @@ export class TwoFAStateService {
     disable(): Observable<any> {        
         return this.http.post( 
             this.urlDisable,  
+            { },
             { headers: this.headers }
         )
         
@@ -73,6 +74,12 @@ export class TwoFAStateService {
             { headers: this.headers }
         )
         
+    }
+    
+    getTextCode(): Observable<any> {   
+        return this.http.get( 
+            getBaseUri() + '/2FA/secret.json'
+        )
     }
 
     startSetup(): Observable<any> {

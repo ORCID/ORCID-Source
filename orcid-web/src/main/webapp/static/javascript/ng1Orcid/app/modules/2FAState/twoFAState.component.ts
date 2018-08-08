@@ -18,7 +18,7 @@ import { TwoFAStateService }
     selector: 'two-fa-state-ng2',
     template:  scriptTmpl("two-fa-state-ng2-template")
 })
-export class TwoFAStateComponent implements AfterViewInit, OnDestroy, OnInit {
+export class TwoFaStateComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
