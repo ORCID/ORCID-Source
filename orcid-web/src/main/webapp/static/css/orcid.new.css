@@ -7531,6 +7531,17 @@ ul.comma li:last-child:after {
         display: block
     }
 
+    .workspace-accordion-header ul.workspace-bar-menu>li.affiliations-mobile>a.action-option {
+        width: 100%;
+        color: #494a4c;
+        overflow: hidden;
+        padding: 15px 0;
+        height: 60px!important;
+        text-align: center;
+        font-size: 18px;
+        display: block
+    }
+
     .workspace-accordion-header ul>li>a.works {
         width: 25%;
         font-size: 0
@@ -7550,6 +7561,12 @@ ul.comma li:last-child:after {
         font-size: 25px;
         color: #494a4c;
         display: block
+    }
+
+    .workspace-accordion-header ul>li.affiliations-mobile>a.action-option>span:not(.bibtex-wizard) {
+        font-size: 18px;
+        color: #494a4c;
+        display: inline-block;
     }
 
     .workspace-accordion-header ul>li>a.action-option.two-options {

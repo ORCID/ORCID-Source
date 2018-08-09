@@ -21,7 +21,7 @@
 	</peer-review:review-completion-date>
 	<peer-review:review-group-id>issn:1741-4857</peer-review:review-group-id>
 	<peer-review:subject-external-identifier>			
-		<common:external-id-type>DOI</common:external-id-type>
+		<common:external-id-type>doi</common:external-id-type>
 		<common:external-id-value>10.1087/20120404</common:external-id-value>			
 		<common:external-id-url>https://doi.org/10.1087/20120404</common:external-id-url>
 		<common:external-id-relationship>self</common:external-id-relationship>

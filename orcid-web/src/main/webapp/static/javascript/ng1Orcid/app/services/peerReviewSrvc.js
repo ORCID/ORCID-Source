@@ -79,6 +79,21 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', '$timeout', 
                 });
             },
 
+            fetchPublicPeerReviewDetails: function(putCode, callbackFunction) {
+                $.ajax({
+                    url: getBaseUri() + '/' + orcidVar.orcidId + '/peer-review.json?putCode=' + putCode,
+                    dataType: 'json',
+                    success: function(data) {
+                        peerReviewSrvc.details = data;
+                        callbackFunction();
+                    }
+                }).fail(function(e){
+                    // something bad is happening!
+                    console.log("error fetching Peer Review details");
+                    logAjaxError(e);
+                });
+            },
+
             getPeerReviews: function(sortAsc) {
                 $.ajax({
                     url: getBaseUri() + '/peer-reviews/peer-reviews.json?sortAsc=' + sortAsc,

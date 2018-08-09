@@ -132,6 +132,7 @@
         </div>
       </div>                
       </#if>
+
       <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
       <work-summary-ng2></work-summary-ng2>
       </@orcid.checkFeatureStatus>         
@@ -373,6 +374,43 @@
   </div>
   </#if>
 </script>
+
+<#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
+<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
+    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+
+
+
+
+<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
+    <affiliation-delete-ng2></affiliation-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
+    <affiliation-form-ng2></affiliation-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
+<modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
+    <emails-form-ng2 popUp="true"></emails-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
+<modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
+    <email-unverified-warning-ng2></email-unverified-warning-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+<modalngcomponent elementHeight="160" elementId="modalFundingDelete" elementWidth="300">
+    <funding-delete-ng2></funding-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
+<modalngcomponent elementHeight="800" elementId="modalFundingForm" elementWidth="800">
+  <funding-form-ng2></funding-form-ng2>
+</modalngcomponent>
+
 <#include "/includes/ng2_templates/research-resource-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalResearchResourceDelete" elementWidth="300">
     <research-resource-delete-ng2></research-resource-delete-ng2>
@@ -393,35 +431,6 @@
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
-    <affiliation-delete-ng2></affiliation-delete-ng2>
-</modalngcomponent><!-- Ng2 component -->
-
-<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
-    <affiliation-form-ng2></affiliation-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
-
-<#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
-<modalngcomponent elementHeight="650" elementId="modalEmails" elementWidth="700">
-    <emails-form-ng2 popUp="true"></emails-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
-
-<#include "/includes/ng2_templates/email-unverified-warning-ng2-template.ftl">
-<modalngcomponent elementHeight="280" elementId="modalemailunverified" elementWidth="500">
-    <email-unverified-warning-ng2></email-unverified-warning-ng2>
-</modalngcomponent><!-- Ng2 component --> 
-
-<#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
-<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
-    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
-</modalngcomponent><!-- Ng2 component --> 
-
-<@orcid.checkFeatureStatus 'ANGULAR2_DEV'>
-  <#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
-  <modalngcomponent elementHeight="645" elementId="modalFundingForm" elementWidth="700">
-    <funding-form-ng2></funding-form-ng2>
-  </modalngcomponent>
-</@orcid.checkFeatureStatus>
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>

@@ -15,7 +15,8 @@
                             <div id="employment-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_new'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_2'/><br>
+                                    <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div>
@@ -75,10 +76,10 @@
                                     </ul>
                                 </div>         
                             </li>                            
-                            <li class="hidden-md hidden-sm visible-xs-inline">                     
+                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                 <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                     <span class="glyphicon glyphicon-plus"></span>
-                                    <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />  
                                 </a>                
                             </li>
                         </ul>
@@ -124,7 +125,9 @@
                                     <div id="education-qualification-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
-                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification'/> <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
+                                            <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_2'/><br>
+                                            <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_4'/><br>
+                                            <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
                                         </div>
                                     </div>
                                 </div>  
@@ -184,10 +187,10 @@
                                             </ul>
                                         </div>         
                                     </li>
-                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education' />  
                                         </a>
                                     </li>
                                 </ul>
@@ -210,10 +213,10 @@
                                             </ul>
                                         </div>         
                                     </li>
-                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification' />  
                                         </a>
                                     </li>
                                 </ul>
@@ -293,10 +296,10 @@
                                             </ul>
                                         </div>         
                                     </li>
-                                    <li class="hidden-md hidden-sm visible-xs-inline">          
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education' />  
                                         </a>
                                     </li>                                        
                                 </ul>
@@ -345,7 +348,9 @@
                                 <div id="distinction-invited-position-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition'/> <a href="${knowledgeBaseUri}/articles/115486" target="manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_2'/><br>
+                                        <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_4'/><br>
+                                        <a href="${knowledgeBaseUri}/articles/115486" target="manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div>
@@ -405,10 +410,10 @@
                                             </ul>
                                         </div>
                                     </li>                                    
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                     
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_distinction' />  
                                         </a>                
                                     </li>
                                 </ul>
@@ -431,10 +436,10 @@
                                             </ul>
                                         </div>         
                                     </li>                                   
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                     
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_invited_position' />  
                                         </a>                
                                     </li>
                                 </ul>
@@ -483,7 +488,9 @@
                                 <div id="membership-service-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService'/> <a href="${knowledgeBaseUri}/articles/116752" target="manage_affiliations_settings.helpPopoverMembershipAndService"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_2'/><br>
+                                        <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_4'/><br>
+                                        <a href="${knowledgeBaseUri}/articles/116752" target="manage_affiliations_settings.helpPopoverMembershipAndService"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div>
@@ -543,10 +550,10 @@
                                             </ul>
                                         </div>
                                     </li>                                    
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                     
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_membership' />  
                                         </a>                
                                     </li>
                                 </ul>
@@ -569,10 +576,10 @@
                                             </ul>
                                         </div>         
                                     </li>                                   
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                     
+                                    <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
                                         <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_service' />  
                                         </a>                
                                     </li>
                                 </ul>
