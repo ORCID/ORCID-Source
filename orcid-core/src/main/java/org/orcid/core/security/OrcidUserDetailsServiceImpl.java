@@ -31,6 +31,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -52,6 +53,9 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     @Resource
     private ProfileDao profileDao;
 
+    @Resource
+    private EmailDao emailDao;
+    
     @Resource(name = "emailManagerReadOnlyV3")
     protected EmailManagerReadOnly emailManagerReadOnly;
     
@@ -130,7 +134,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     private String retrievePrimaryEmail(ProfileEntity profile) {
         String orcid = profile.getId();
         try {
-            return emailManagerReadOnly.findPrimaryEmail(orcid).getEmail();
+            return emailDao.findPrimaryEmail(orcid).getEmail();
         } catch (javax.persistence.NoResultException nre) {
             String message = String.format("User with orcid %s have no primary email", orcid);
             LOGGER.error(message);
