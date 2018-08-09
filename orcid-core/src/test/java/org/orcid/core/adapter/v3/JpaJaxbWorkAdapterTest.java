@@ -153,6 +153,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(workExtId.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId.getType());
         assertEquals("work:journalTitle", ws.getJournalTitle().getContent());
+        assertEquals("work:url",ws.getUrl().getValue());
     }
 
     private Work getWork(boolean full) throws JAXBException {
