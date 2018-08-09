@@ -509,4 +509,9 @@ public class AffiliationsController extends BaseWorkspaceController {
         return result;
     }
 
+    @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
+    public @ResponseBody boolean updateToMaxDisplay(@RequestParam(value = "putCode") Long putCode) {
+        String orcid = getEffectiveUserOrcid();
+        return affiliationsManager.updateToMaxDisplay(orcid, putCode);
+    }
 }
