@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -189,9 +190,13 @@ public class AdminController extends BaseController {
         else if (PojoUtil.isEmpty(email))
             result.getErrors().add(getMessage("admin.errors.deactivated_account.primary_email_required"));
         else {
-            String orcidId = emailManager.findOrcidIdByEmail(email);
-            if(!orcidId.equals(orcid)) {
-                result.getErrors().add(getMessage("admin.errors.deactivated_account.orcid_id_dont_match", orcidId));
+            try {
+                String orcidId = emailManager.findOrcidIdByEmail(email);
+                if(!orcidId.equals(orcid)) {
+                    result.getErrors().add(getMessage("admin.errors.deactivated_account.orcid_id_dont_match", orcidId));
+                }
+            } catch(NoResultException nre) {
+                // Don't do nothing, the email doesn't exists
             }
         }
         if (result.getErrors() == null || result.getErrors().size() == 0)
