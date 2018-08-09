@@ -214,9 +214,8 @@
                     </tr>
                     
                 
-=======
                 </@orcid.checkFeatureStatus>
->>>>>>> ba65387df3d1456ede48774ff98551f677a4e105
+
                 <tr>
                     <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
                     <td><a href="" ng-click="toggleGetMyDataEdit()" ng-bind="getMyDataToggleText" /></a></td>
