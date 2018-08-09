@@ -504,6 +504,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.field("publicationDate", "publicationDate");
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        workSummaryClassMap.field("url.value", "workUrl");
+
         workSummaryClassMap.byDefault();
         workSummaryClassMap.register();
 
@@ -586,7 +588,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         fundingSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         fundingSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
-        
+        fundingSummaryClassMap.field("url.value", "url");
         fundingSummaryClassMap.fieldBToA("org.name", "organization.name");
         fundingSummaryClassMap.fieldBToA("org.city", "organization.address.city");
         fundingSummaryClassMap.fieldBToA("org.region", "organization.address.region");
