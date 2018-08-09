@@ -52,7 +52,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("common:title", pfe.getTitle());
         assertEquals("common:translated-title", pfe.getTranslatedTitle());
         assertEquals("en", pfe.getTranslatedTitleLanguageCode());
-        assertEquals("funding:organization-defined-type", pfe.getOrganizationDefinedType());
+        assertEquals("common:organization-defined-type", pfe.getOrganizationDefinedType());
         assertEquals("funding:short-description", pfe.getDescription());
         assertEquals("1234", pfe.getNumericAmount().toString());
         assertEquals("ADP", pfe.getCurrencyCode());
@@ -68,7 +68,7 @@ public class JpaJaxbFundingAdapterTest {
 
         // Contributors
         assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:credit-name\"},\"contributorEmail\":{\"value\":\"funding@contributor.email\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
+                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"https://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:credit-name\"},\"contributorEmail\":{\"value\":\"funding@contributor.email\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
                 pfe.getContributorsJson());
 
         // External identifiers
@@ -144,9 +144,9 @@ public class JpaJaxbFundingAdapterTest {
     private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/read_samples/funding-2.0.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/funding-3.0_rc1.xml";
         if(full) {
-            name = "/record_2.0/samples/read_samples/funding-full-2.0.xml";
+            name = "/record_3.0_rc1/samples/read_samples/funding-full-3.0_rc1.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Funding) unmarshaller.unmarshal(inputStream);

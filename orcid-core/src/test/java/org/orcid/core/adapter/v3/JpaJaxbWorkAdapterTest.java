@@ -85,7 +85,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 workEntity.getExternalIdentifiersJson());
         assertEquals("http://tempuri.org", workEntity.getWorkUrl());
         assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:credit-name\"},\"contributorEmail\":{\"value\":\"work@contributor.email\"},\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}}]}",
+                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"https://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"work:credit-name\"},\"contributorEmail\":{\"value\":\"work@contributor.email\"},\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}}]}",
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
         assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), workEntity.getIso2Country());
@@ -158,9 +158,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/read_samples/work-2.0.xml";
+        String name = "/record_3.0_rc1/samples/read_samples/work-3.0_rc1.xml";
         if (full) {
-            name = "/record_2.0/samples/read_samples/work-full-2.0.xml";
+            name = "/record_3.0_rc1/samples/read_samples/work-full-3.0_rc1.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);

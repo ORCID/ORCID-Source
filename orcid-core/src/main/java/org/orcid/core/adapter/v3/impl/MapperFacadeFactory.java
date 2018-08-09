@@ -505,7 +505,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         workSummaryClassMap.field("url.value", "workUrl");
-
         workSummaryClassMap.byDefault();
         workSummaryClassMap.register();
 
