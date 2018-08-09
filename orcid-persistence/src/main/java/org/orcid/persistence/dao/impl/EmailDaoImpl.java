@@ -34,15 +34,6 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }
-
-    @Override
-    public EmailEntity findCaseInsensitive(String email) {
-        Assert.hasText(email, "Cannot find using an empty email address");
-        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where trim(lower(email)) = trim(lower(:email))", EmailEntity.class);
-        query.setParameter("email", email);
-        List<EmailEntity> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
-    }
     
     @Override
     public String findOrcidIdByEmailHash(String emailHash) {

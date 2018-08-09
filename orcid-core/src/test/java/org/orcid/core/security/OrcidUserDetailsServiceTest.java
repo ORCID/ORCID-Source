@@ -79,8 +79,8 @@ public class OrcidUserDetailsServiceTest {
         when(emailManagerReadOnly.findOrcidIdByEmail(EMAIL)).thenReturn(ORCID);
         when(emailManagerReadOnly.findPrimaryEmail(ORCID)).thenReturn(email);   
         
-        when(emailDao.findCaseInsensitive(anyString())).thenReturn(null);
-        when(emailDao.findCaseInsensitive(EMAIL)).thenReturn(getEmailEntity(getProfileEntity()));
+        when(emailDao.find(anyString())).thenReturn(null);
+        when(emailDao.find(EMAIL)).thenReturn(getEmailEntity(getProfileEntity()));
         when(emailDao.findPrimaryEmail(ORCID)).thenReturn(getEmailEntity(getProfileEntity()));
     }
 

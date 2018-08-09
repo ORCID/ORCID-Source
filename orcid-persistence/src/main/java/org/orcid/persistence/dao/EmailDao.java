@@ -15,8 +15,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     EmailEntity findByEmail(String email);
 
-    EmailEntity findCaseInsensitive(String email);
-    
     String findOrcidIdByEmailHash(String email);
 
     void updateEmail(String orcid, String email, boolean isCurrent, String visibility);

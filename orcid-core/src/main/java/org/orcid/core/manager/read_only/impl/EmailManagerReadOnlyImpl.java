@@ -136,16 +136,16 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             }
         }
         return false;
-    }     
-    
-    @Override
-    public EmailEntity findCaseInsensitive(String email) {
-        return emailDao.findCaseInsensitive(email);
     }
 
     @Override
     public EmailEntity find(String email) {
-        return emailDao.findByEmail(email);
+        try {            
+            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
+            return emailDao.find(emailHash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } 
     }
 
     @Override

@@ -240,7 +240,7 @@ public class ManageProfileControllerTest {
 
         });
 
-        when(mockEmailManager.findCaseInsensitive(Mockito.anyString())).thenAnswer(new Answer<EmailEntity>() {
+        when(mockEmailManager.find(Mockito.anyString())).thenAnswer(new Answer<EmailEntity>() {
 
             @Override
             public EmailEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -309,7 +309,7 @@ public class ManageProfileControllerTest {
             }
         });
 
-        when(mockEmailManager.findCaseInsensitive(Mockito.eq("0000-0000-0000-0002_1@test.orcid.org"))).thenAnswer(new Answer<EmailEntity>() {
+        when(mockEmailManager.find(Mockito.eq("0000-0000-0000-0002_1@test.orcid.org"))).thenAnswer(new Answer<EmailEntity>() {
 
             @Override
             public EmailEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -357,7 +357,7 @@ public class ManageProfileControllerTest {
             }
         });
 
-        when(mockEmailManager.findCaseInsensitive(Mockito.eq("0000-0000-0000-0002_1@test.orcid.org"))).thenAnswer(new Answer<EmailEntity>() {
+        when(mockEmailManager.find(Mockito.eq("0000-0000-0000-0002_1@test.orcid.org"))).thenAnswer(new Answer<EmailEntity>() {
 
             @Override
             public EmailEntity answer(InvocationOnMock invocation) throws Throwable {
