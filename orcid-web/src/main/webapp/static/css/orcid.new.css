@@ -1817,7 +1817,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 .workspace-accordion-header h2.toggle-text,
 .workspace-title a.toggle-text {
     color: #fff;
-    //display: inline-block;
     font-size: 16px;
     font-weight: 700;
     height: 30px;
@@ -1827,6 +1826,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .workspace-accordion-header h2.toggle-text {
+    width: auto;
     width: initial;
     float: left;
 }
