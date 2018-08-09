@@ -581,7 +581,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     @Transactional
     public OrcidProfile retrieveOrcidProfileByEmail(String email, LoadOptions loadOptions) {
-        EmailEntity emailEntity = emailDao.find(email);
+        EmailEntity emailEntity = emailDao.findByEmail(email);
         if (emailEntity != null) {
             ProfileEntity profileEntity = emailEntity.getProfile();
             OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, loadOptions);
@@ -1206,7 +1206,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     // associated with that email
                     String email = contributor.getContributorEmail().getValue();
 
-                    EmailEntity emailEntity = emailDao.find(email);
+                    EmailEntity emailEntity = emailDao.findByEmail(email);
                     if (emailEntity != null) {
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
