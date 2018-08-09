@@ -157,8 +157,10 @@
         </div>    
         <!-- Affiliations / Education / Employment -->
         <#include "workspace_affiliations_body_list_v3.ftl"/>
+
         <!-- Fundings -->
-        <#include "workspace_fundings_body_list_v3.ftl"/>
+        <#include "/includes/ng2_templates/funding-ng2-template.ftl">
+        <funding-ng2></funding-ng2>
         
         <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
           <!--Research resources-->
@@ -402,6 +404,7 @@
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
+<#include "/includes/ng2_templates/funding-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalFundingDelete" elementWidth="300">
     <funding-delete-ng2></funding-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->

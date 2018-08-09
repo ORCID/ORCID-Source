@@ -91,7 +91,25 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * */
     public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility) {
         return profileFundingDao.updateProfileFundingVisibility(clientOrcid, profileFundingId, visibility.name());
-    }    
+    }
+    
+    /**
+     * Updates visibility of multiple existing profile funding relationships
+     * 
+     * @param clientOrcid
+     *            The client orcid
+     * 
+     * @param profileFundingIds
+     *            The ids of the profile fundings that will be updated
+     * 
+     * @param visibility
+     *            The new visibility value for the profile profileFunding objects
+     *           
+     * @return true if the relationships were updated
+     */
+    public boolean updateProfileFundingVisibilities(String clientOrcid, ArrayList<Long> profileFundingIds, Visibility visibility) {
+        return profileFundingDao.updateProfileFundingVisibilities(clientOrcid, profileFundingIds, visibility.name());
+    }
     
     /**
      * Add a new funding subtype to the list of pending for indexing subtypes

@@ -440,8 +440,8 @@ public class FundingsController extends BaseWorkspaceController {
     }
 
     /**
-     * Saves an affiliation
-     * */
+     * Updates a funding visibility
+     */
     @RequestMapping(value = "/funding.json", method = RequestMethod.PUT)
     public @ResponseBody
     FundingForm updateProfileFundingJson(HttpServletRequest request, @RequestBody FundingForm fundingForm) {
@@ -450,6 +450,19 @@ public class FundingsController extends BaseWorkspaceController {
                     fundingForm.getVisibility().getVisibility());
         }        
         return fundingForm;
+    }
+    
+    /**
+     * Updates visibility on multiple fundings
+     */
+    @RequestMapping(value = "/{fundingIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
+    public @ResponseBody ArrayList<Long> updateAffiliationVisibilities(@PathVariable("fundingIdsStr") String fundingIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
+        String orcid = getEffectiveUserOrcid();
+        ArrayList<Long> fundIds = new ArrayList<Long>();
+        for (String fundId : fundingIdsStr.split(","))
+            fundIds.add(new Long(fundId));
+        profileFundingManager.updateProfileFundingVisibilities(orcid, fundIds, org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibilityStr));
+        return fundIds;
     }
 
     /**

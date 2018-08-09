@@ -105,8 +105,6 @@ export class FundingService {
 
     getFundingsById( idList ): Observable<any> {
         this.loading = true;
-        this.fundingToAddIds = null;
-        //console.log('getFundingsById', this.urlFundingsById + idList);
         return this.http.get(
             this.urlFundingsById + idList
         )
@@ -115,11 +113,9 @@ export class FundingService {
     getFundingsId(): Observable<any> {
         this.loading = true;
         this.fundingToAddIds = null;
-        //this.groups.length = 0;
         return this.http.get(
             this.urlFundingsId
-        )
-        
+        )    
     }
 
     getFundingToEdit(): any {
@@ -198,6 +194,14 @@ export class FundingService {
             )
         )  
         ;
+    }
+
+    updateVisibility(putCodes, priv): Observable<any> {
+        let url = getBaseUri() + '/fundings/' + putCodes.splice(0,150).join() + '/visibility/'+priv;
+
+        return this.http.get(
+            url
+        )
     }
 
 }

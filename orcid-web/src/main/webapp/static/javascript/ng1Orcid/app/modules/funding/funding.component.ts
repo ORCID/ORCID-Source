@@ -246,62 +246,47 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getFundingsById( ids ): any {
-        //console.log('getFundingsById', ids);
         this.fundingService.getFundingsById( ids ).pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.fundings = data;
-                //console.log('this.getFundingsById', data, this.fundings);
-
-                for (let i in this.fundings) {
-                    var funding = this.fundings[i];
-                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING, this.groups);
+                for (let i in data) {
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.FUNDING, this.groups);
                 };
-
-                //console.log('this.groups before', this.groups);
-                
+                console.log(this.groups);
                 for (let j in this.groups){
-
-                    let goodResponse = [];
+                    let activitiesObjConvertedToArray = [];
                     for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
                         let tmpObj = new Object();
                         tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
                         tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
-
-                        goodResponse.push(tmpObj);
+                        activitiesObjConvertedToArray.push(tmpObj);
                     }
-                    this.groups[j]['activitiesObj'] = goodResponse; 
-                    //console.log('good response', goodResponse, this.groups[j]);
+                    console.log(activitiesObjConvertedToArray);
+                    this.groups[j]['activitiesArray'] = activitiesObjConvertedToArray; 
                 }
-                console.log('this.groups after2', this.groups);
-                
-                if (this.fundings.length == 0) {
-                    this.fundingService.loading = false;
-                } else {
-                    //this.getFundingsById( this.fundingToAddIds );//previously addFundingToScope();
-                }       
-
             },
             error => {
-                //console.log('getBiographyFormError', error);
+                console.log('getFundingsByIdError', error);
             } 
         );
     }
 
     getFundings(): any {
+        //Be sure all arrays are empty
+        this.groups = new Array();
+        /*if(this.publicView === "true") {
+             this.getFundingsById( orcidVar.fundingIdsJson );
+        }*/ 
         this.fundingService.getFundingsId()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                
-                this.fundingToAddIds = data;
-                //console.log('getFundingsIds', data, this.fundingToAddIds, this.fundingToAddIds.length);
-                if( this.fundingToAddIds.length != 0 ) {
-                    var fundingIds = this.fundingToAddIds.splice(0,20).join()
+                if( data.length != 0 ) {
+                    var fundingIds = data.splice(0,20).join()
                     this.getFundingsById( fundingIds );
                 }
             },
@@ -383,6 +368,31 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (this.editFunding != undefined && this.editFunding.disambiguatedFundingSourceId != undefined) {
             delete this.editFunding.disambiguatedFundingSourceId;
         }
+    }
+
+    setGroupPrivacy = function(group, priv, $event): void {
+        console.log(group);
+        $event.preventDefault();
+        var putCodes = new Array();
+        for (var idx in group.activities) {
+            putCodes.push(group.activities[idx].putCode.value);
+            group.activities[idx].visibility.visibility = priv;
+        }
+        this.fundingService.updateVisibility(putCodes, priv)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if (putCodes.length > 0) {
+                    this.fundingService.updateVisibility(putCodes, priv);   
+                }
+                
+            },
+            error => {
+                console.log('Error updating group visibility', error);
+            } 
+        );
     }
 
     setPrivacy( obj, priv, $event ): void {
@@ -481,14 +491,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     userIsSource(funding): boolean {
-        if (funding.value.source == orcidVar.orcidId){
+        if (funding.source == orcidVar.orcidId){
             return true;
         }
         return false;
     };
-
-
-
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
