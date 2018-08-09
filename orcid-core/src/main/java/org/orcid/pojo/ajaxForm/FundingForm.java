@@ -49,7 +49,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
 
     private List<Contributor> contributors;
 
-    private List<FundingExternalIdentifierForm> externalIdentifiers;
+    private List<ActivityExternalIdentifier> externalIdentifiers;
 
     private Text putCode;
 
@@ -190,11 +190,11 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         this.sourceName = sourceName;
     }
 
-    public List<FundingExternalIdentifierForm> getExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(List<FundingExternalIdentifierForm> externalIdentifiers) {
+    public void setExternalIdentifiers(List<ActivityExternalIdentifier> externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 
@@ -319,9 +319,9 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         // Set external identifiers
         if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
             ExternalIDs fExternalIdentifiers = new ExternalIDs();
-            for (FundingExternalIdentifierForm fExternalIdentifier : externalIdentifiers) {
-                if (!PojoUtil.isEmtpy(fExternalIdentifier))
-                    fExternalIdentifiers.getExternalIdentifier().add(fExternalIdentifier.toFundingExternalIdentifier());
+            for (ActivityExternalIdentifier fExternalIdentifier : externalIdentifiers) {
+                if (!PojoUtil.isEmpty(fExternalIdentifier))
+                    fExternalIdentifiers.getExternalIdentifier().add(fExternalIdentifier.toExternalIdentifier());
             }
             result.setExternalIdentifiers(fExternalIdentifiers);
         }
@@ -449,11 +449,11 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
             result.setContributors(contributors);
         }
 
-        List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
+        List<ActivityExternalIdentifier> externalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();
         // Set external identifiers 
         if (funding.getExternalIdentifiers() != null) {            
             for (ExternalID fExternalIdentifier : funding.getExternalIdentifiers().getExternalIdentifier()) {
-                FundingExternalIdentifierForm fundingExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
+                ActivityExternalIdentifier fundingExternalIdentifierForm = ActivityExternalIdentifier.valueOf(fExternalIdentifier);
                 externalIdentifiersList.add(fundingExternalIdentifierForm);
             }            
         } 

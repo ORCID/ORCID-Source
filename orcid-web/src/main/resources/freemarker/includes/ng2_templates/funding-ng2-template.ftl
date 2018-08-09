@@ -288,7 +288,7 @@
                                             <ul class="id-details clearfix">
                                                 <li>
                                                     
-                                                    <span *ngFor='let ei of group.getActive().externalIdentifiers; let first = first; let last = last' class="clearfix"><!-- | orderBy:["-relationship.value", "type.value"]  -->
+                                                    <span *ngFor='let ei of group.getActive().externalIdentifiers; let first = first; let last = last' class="clearfix"><!-- | orderBy:["-relationship.value", "externalIdentifierType.value"]  -->
                                                         <span [innerHTML]='ei | externalIdentifierHtml:first:last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId] ' class="url-popover"><!-- | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId] -->
                                                         </span>
                                                     </span>

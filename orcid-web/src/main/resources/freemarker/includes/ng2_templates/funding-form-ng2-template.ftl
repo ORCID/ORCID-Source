@@ -236,9 +236,9 @@
                     <!-- Value -->
                     <div class="deactivateAccountMessage-group">
                         <label id="funding-ext-ids-value-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_value'/></label>                        
-                        <input name="currentFundingExternalIdentifierValue" id="funding-ext-ids-value-input" type="text" class="deactivateAccountMessage-control" [(ngModel)]="externalIdentifier.value.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" />
-                        <span class="orcid-error" *ngIf="externalIdentifier?.value?.errors?.length > 0">
-                            <div *ngFor='let error of externalIdentifier.value.errors' [innerHtml]="error"></div>
+                        <input name="currentFundingExternalIdentifierValue" id="funding-ext-ids-value-input" type="text" class="deactivateAccountMessage-control" [(ngModel)]="externalIdentifier.externalIdentifierId.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" />
+                        <span class="orcid-error" *ngIf="externalIdentifier?.externalIdentifierId?.errors?.length > 0">
+                            <div *ngFor='let error of externalIdentifier.externalIdentifierId.errors' [innerHtml]="error"></div>
                         </span>
                     </div>
                     <!-- URL -->
