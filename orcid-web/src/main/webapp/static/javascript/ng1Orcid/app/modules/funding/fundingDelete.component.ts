@@ -50,6 +50,11 @@ export class FundingDeleteComponent implements AfterViewInit, OnDestroy, OnInit 
     ) {
 
         this.deleteObj = {
+            fundingTitle: {
+                title: {
+                    value: null
+                }
+            }
         };
 
     }
@@ -61,7 +66,7 @@ export class FundingDeleteComponent implements AfterViewInit, OnDestroy, OnInit 
 
 
     deleteFunding(): void {        
-        this.fundingService.removeFunding(this.deleteObj)
+        this.fundingService.deleteFunding(this.deleteObj)
             .pipe(    
             takeUntil(this.ngUnsubscribe)
         )

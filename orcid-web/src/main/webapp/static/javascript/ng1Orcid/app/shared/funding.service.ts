@@ -157,21 +157,11 @@ export class FundingService {
         ;
     }
 
-    removeFunding(obj): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
+    deleteFunding(obj): Observable<any> {
         return this.http.delete( 
-            getBaseUri() + '/fundings/funding.json?' + encoded_data,           
+            getBaseUri() + '/fundings/funding.json?id=' + encodeURIComponent(obj.putCode.value),           
             { headers: this.headers }
         )
-        .pipe(
-            tap(
-                (data) => {
-                    //this.getData();
-                    //groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);                      
-                }
-            )
-        )  
-        ;
     }
 
     setFundingToEdit(obj): void {

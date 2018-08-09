@@ -99,7 +99,7 @@
                             </li>
                         </#if>  
                     </ul>
-                    <#if !(isPublicProfile??)>
+                    <#if !(isPublicProfile??)>f
                         <div *ngIf="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
                              <div class="popover-help-container">
                                 <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
@@ -210,7 +210,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a (click)="deleteFundingConfirm(group?.activities[group?.activePutCode]?.putCode.value, false)"  (mouseenter)="showTooltip(group.groupId+'-deleteActiveSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteActiveSource')">
+                                <a (click)="deleteFunding(group?.activities[group?.activePutCode])"  (mouseenter)="showTooltip(group.groupId+'-deleteActiveSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteActiveSource')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
 
@@ -253,7 +253,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a (click)="deleteFundingConfirm(group?.activities[group?.activePutCode]?.putCode.value, false)" (mouseenter)="showTooltip(group?.activities[group?.activePutCode]?.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(group?.activities[group?.activePutCode]?.putCode.value+'-deleteInactiveSource')">
+                                <a (click)="deleteFunding(group?.activities[group?.activePutCode])" (mouseenter)="showTooltip(group?.activities[group?.activePutCode]?.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(group?.activities[group?.activePutCode]?.putCode.value+'-deleteInactiveSource')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
                                 <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[group?.activities[group?.activePutCode]?.putCode.value+'-deleteInactiveSource']">
@@ -306,7 +306,7 @@
                                 </div>  
                             </li>
                             <li *ngIf="group.activitiesCount == 1">
-                               <a id="delete-funding_{{group?.activities[group?.activePutCode]?.putCode.value}}" (click)="deleteFundingConfirm(group?.activities[group?.activePutCode]?.putCode.value, false)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
+                               <a id="delete-funding_{{group?.activities[group?.activePutCode]?.putCode.value}}" (click)="deleteFunding(group?.activities[group?.activePutCode])" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
                                   <span class="glyphicon glyphicon-trash"></span>
                                </a>                                 
                               <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteSource']">

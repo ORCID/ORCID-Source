@@ -279,7 +279,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         for (let idx in this.fundingService.groups) {
             if (this.fundingService.groups[idx].hasPut(putCode)) {
                for (var idj in this.fundingService.groups[idx].activities) {
-                   this.fundingService.removeFunding(this.fundingService.groups[idx].activities[idj]);
+                   this.fundingService.deleteFunding(this.fundingService.groups[idx].activities[idj]);
                 }
                 this.fundingService.groups.splice(idx,1);
                 break;
@@ -296,7 +296,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             };
         };
         // remove work on server
-        this.fundingService.removeFunding(rmFunding);
+        this.fundingService.deleteFunding(rmFunding);
         this.closeModal();
     };
 

@@ -208,41 +208,25 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo[key]=false;
     };
 
-    deleteFunding(delFunding): void {
-        this.fundingService.removeFunding(delFunding).pipe(    
+    deleteFunding(funding): void {
+        this.emailService.getEmails()
+        .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                console.log('delete response', data)
-                //this.fundings = data;
-            }
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.fundingService.notifyOther({funding:funding});
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalFundingDelete'});
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
         );
-        //this.closeModal();
-    };
-
-    deleteFundingConfirm(putCode, deleteGroup) {
-        var funding = this.fundingService.getFunding(putCode);
-        var maxSize = 100;
- 
-        
-        if (funding.fundingTitle && funding.fundingTitle.title){
-            this.fixedTitle = funding.fundingTitle.title.value;
-        }
-        else{
-            this.fixedTitle = '';
-        } 
-
-        if(this.fixedTitle.length > maxSize){
-            this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
-        }
-
-        /*
-        $.colorbox({
-            html : $compile($('#delete-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-        */
     };
 
     getFundingsById( ids ): any {
@@ -500,6 +484,16 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+
+        this.subscription = this.fundingService.notifyObservable$.subscribe(
+            (res) => {                
+                if(res.action == 'add' || res.action == 'cancel' || res.action == 'delete') {
+                    if(res.successful == true) {
+                        this.getFundings();
+                    }
+                }                
+            }
+        );
     };
 
     ngOnDestroy() {
