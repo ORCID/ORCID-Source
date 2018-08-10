@@ -61,7 +61,7 @@ export class FundingDeleteComponent implements AfterViewInit, OnDestroy, OnInit 
 
     cancelEdit(): void {
         this.modalService.notifyOther({action:'close', moduleId: 'modalFundingDelete'});
-        this.modalService.notifyOther({action:'cancel', successful:true});
+        this.fundingService.notifyOther({action:'cancel', successful:true});
     };
 
 
@@ -73,7 +73,7 @@ export class FundingDeleteComponent implements AfterViewInit, OnDestroy, OnInit 
             .subscribe(data => {       
                 
                 if(data.errors.length == 0) {
-                    this.modalService.notifyOther({action: 'delete', successful:true});                  
+                    this.fundingService.notifyOther({action: 'delete', successful:true});                  
                 }
                 this.modalService.notifyOther({action:'close', moduleId: 'modalFundingDelete'});
             });         
