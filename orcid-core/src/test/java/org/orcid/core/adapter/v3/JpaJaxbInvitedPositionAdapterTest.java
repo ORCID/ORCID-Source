@@ -63,6 +63,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertNull(oar.getSourceId());        
         assertNull(oar.getClientSourceId());        
         assertNull(oar.getElementSourceId());
+        assertEquals("http://tempuri.org",oar.getUrl());
     }
     
     @Test
@@ -91,6 +92,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertNotNull(invitedPosition.getSource());        
         assertNotNull(invitedPosition.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", invitedPosition.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",invitedPosition.getUrl().getValue());
     }
     
     @Test
@@ -113,6 +115,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertNotNull(summary.getSource());
         assertNotNull(summary.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", summary.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",summary.getUrl().getValue());
     }
 
     private InvitedPosition getInvitedPosition() throws JAXBException {
@@ -143,7 +146,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         result.setTitle("invited-position:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
-        
+        result.setUrl("http://tempuri.org");
         return result;
     }
 }

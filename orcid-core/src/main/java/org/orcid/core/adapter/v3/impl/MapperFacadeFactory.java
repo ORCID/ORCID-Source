@@ -725,6 +725,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         summaryClassMap.field("departmentName", "department");
         summaryClassMap.field("roleTitle", "title");
         summaryClassMap.field("displayIndex", "displayIndex");
+        summaryClassMap.fieldAToB("url.value", "url");
+        summaryClassMap.fieldBToA("url", "url.value");
         summaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();    
         summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
         summaryClassMap.register();

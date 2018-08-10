@@ -37,7 +37,7 @@ import com.google.common.io.Resources;
  * @author tom
  *
  */
-public class OrcidTranslator<T> {
+public class OrcidTranslator<T> { 
 
     private ObjectMapper mapper;
     Unmarshaller unmarshaller;
@@ -56,7 +56,8 @@ public class OrcidTranslator<T> {
         V3_0RC1_WORKS("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.Works.class),
         V3_0RC1_PEER_REVIEW("record_3.0_rc1/peer-review-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.PeerReview.class),
         V3_0RC1_FUNDING("record_3.0_rc1/funding-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.Funding.class),
-        V3_0RC1_FUNDINGS("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.Fundings.class);
+        V3_0RC1_FUNDINGS("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.Fundings.class),
+        V3_0RC1_ACTIVITIES("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary.class);
         
         public final String location;
         public final Class<?> modelClass;
