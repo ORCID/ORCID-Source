@@ -99,7 +99,7 @@
                             </li>
                         </#if>  
                     </ul>
-                    <#if !(isPublicProfile??)>f
+                    <#if !(isPublicProfile??)>
                         <div *ngIf="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
                              <div class="popover-help-container">
                                 <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>

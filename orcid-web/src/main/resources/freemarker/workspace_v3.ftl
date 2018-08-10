@@ -410,7 +410,7 @@
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
-<modalngcomponent elementHeight="800" elementId="modalFundingForm" elementWidth="800">
+<modalngcomponent elementHeight="700" elementId="modalFundingForm" elementWidth="800">
   <funding-form-ng2></funding-form-ng2>
 </modalngcomponent>
 
