@@ -317,50 +317,11 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.closeModal();
     };
 
-
-    deleteFundingByPut(putCode, deleteGroup): void {
-        if (deleteGroup){
-            //this.this.fundingService.deleteGroupFunding(putCode);
-        }
-        else {
-            //this.this.fundingService.deleteFunding(putCode);
-        }
-        //$.colorbox.close();
+    deleteFundingExternalIdentifier(obj): void {
+        var index = this.editFunding.externalIdentifiers.indexOf(obj);
+        this.editFunding.externalIdentifiers.splice(index,1);
     };
 
-    deleteFundingConfirm(putCode, deleteGroup): void {
-        //var funding = this.getFunding(putCode);
-        var funding = {
-            fundingTitle: {
-                title: {
-                    value: null
-                }
-            }
-        };
-
-        var maxSize = 100;
-        
-        this.deletePutCode = putCode;
-        this.deleteGroup = deleteGroup;
-        
-        if (funding.fundingTitle && funding.fundingTitle.title){
-            this.fixedTitle = funding.fundingTitle.title.value;
-        }
-        else{
-            this.fixedTitle = '';
-        } 
-
-        if(this.fixedTitle.length > maxSize){
-            this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
-        }
-
-        /*
-        $.colorbox({
-            html : $compile($('#delete-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-        */
-    };
 
     fundingCount(): Number {
         var count = 0;
@@ -742,7 +703,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //console.log('initi funding component')
+        //console.log('init funding component')
 
         this.modalService.notifyObservable$.subscribe(
             (res) => {
@@ -788,6 +749,10 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                                 'month': "",
                                 'year': ""
                             };
+                        }
+
+                        if(this.editFunding.externalIdentifiers.length == 0) {
+                            this.addFundingExternalIdentifier();
                         }
                     }
 

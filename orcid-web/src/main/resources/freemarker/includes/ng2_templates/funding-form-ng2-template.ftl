@@ -228,7 +228,7 @@
                     <strong id="funding-ext-ids-title"><@orcid.msg 'manual_funding_form_contents.title_external_identifier'/></strong>
                 </div>
                 
-                <div class="control-group" *ngFor="let externalIdentifier of  editFunding.externalIdentifiers">
+                <div class="control-group" *ngFor="let externalIdentifier of  editFunding.externalIdentifiers;let last=last;let first=first;let i=index;trackBy:trackByIndex">
                     <!-- Value -->
                     <div class="form-group">
                         <label id="funding-ext-ids-value-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_value'/></label>                        
@@ -258,9 +258,9 @@
                                 <input type="radio" name="relationship{{$index}}" [(ngModel)]="externalIdentifier.relationship.value" value="part-of">
                                 <@orcid.msg "common.part_of" />
                             </label>                            
-                            <a href (click)="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" *ngIf="!$first"></a>                         
+                            <a href (click)="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" *ngIf="!first"></a>
                         </div>
-                        <div *ngIf="$last" class="add-item-link">
+                        <div *ngIf="last" class="add-item-link">
                             <span><a href (click)="addFundingExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.external_identifier.add_another' /></a></span>
                         </div>
                     </div>
