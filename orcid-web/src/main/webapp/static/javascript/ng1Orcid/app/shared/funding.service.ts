@@ -56,6 +56,12 @@ export class FundingService {
         return cloneF;
     }
 
+    getDisambiguatedFunding( id ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/fundings/disambiguated/id/' + id
+        );
+    }
+
     getEditable( putCode, groups ): any {
         // first check if they are the current source
         var funding = this.getFunding(putCode, groups);

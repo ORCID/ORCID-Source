@@ -60,13 +60,13 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     fundingToAddIds: any;
     fundings: any;
     groups: any;
+    lastIndexedTerm: any;
     loading: boolean;
     moreInfo: any;
     moreInfoCurKey: any;
     privacyHelp: any;
     privacyHelpCurKey: any;
     putCode: any;
-    selectOrgDefinedFundingSubType: any;
     showElement: any;
     sortHideOption: boolean;
     sortState: any;
@@ -165,13 +165,13 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.fundings = new Array();
         this.fundingToAddIds = {};
         this.groups = new Array();
+        this.lastIndexedTerm = null;
         this.loading = false;    
         this.moreInfo = {};
         this.moreInfoCurKey = null;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.putCode = null;
-        this.selectOrgDefinedFundingSubType = {};
         this.showElement = {};
         this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
@@ -197,7 +197,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     bindTypeaheadForOrgs(): void {
-        var numOfResults = 100;
+        let numOfResults = 100;
         (<any>$("#fundingName")).typeahead({
             name: 'fundingName',
             limit: numOfResults,
@@ -230,10 +230,14 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 return forDisplay;
             }
         });
-        $("#fundingName").bind("typeahead:selected", function(obj, datum) {
-            this.selectFunding(datum);
-            
-        });
+        $("#fundingName").bind(
+            "typeahead:selected", 
+            (
+                function(obj, datum) {
+                    this.selectFunding(datum);
+                }
+            ).bind(this)
+        );
     };
 
     bindTypeaheadForSubTypes(): void {
@@ -365,6 +369,25 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         return count;
     }
+
+    getDisambiguatedFunding = function(id) {
+        this.fundingService.getDisambiguatedFunding(id)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if (data != null) {
+                    this.disambiguatedFunding = data;
+                    this.editFunding.disambiguatedFundingSourceId = data.sourceId;
+                    this.editFunding.disambiguationSource = data.sourceType;
+                }
+            },
+            error => {
+                console.log("getAffiliationsId", id, error);
+            } 
+        );
+    };
 
     getEmptyExtId(): any {
         return {
@@ -520,6 +543,48 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    removeDisambiguatedFunding(): void {
+        this.bindTypeaheadForOrgs();
+        if (this.disambiguatedFunding != undefined) {
+            delete this.disambiguatedFunding;
+        }
+        if (this.editFunding != undefined && this.editFunding.disambiguatedFundingSourceId != undefined) {
+            delete this.editFunding.disambiguatedFundingSourceId;
+        }
+    };
+
+    selectFunding(datum): void {
+        if (datum != undefined && datum != null) {
+            this.editFunding.fundingName.value = datum.value;
+            if(datum.value){
+                this.editFunding.fundingName.errors = [];
+            }
+            this.editFunding.city.value = datum.city;
+            if(datum.city){
+                this.editFunding.city.errors = [];
+            }
+
+            this.editFunding.region.value = datum.region;
+
+            if(datum.country != undefined && datum.country != null) {
+                this.editFunding.country.value = datum.country;
+                this.editFunding.country.errors = [];
+            }
+
+            if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+                this.getDisambiguatedFunding(datum.disambiguatedAffiliationIdentifier);
+            }
+        }
+    };
+
+    selectOrgDefinedFundingSubType(subtype): void {
+        if (subtype != undefined && subtype != null) {
+            this.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
+            this.editFunding.organizationDefinedFundingSubType.alreadyIndexed = true;
+            this.lastIndexedTerm = subtype.value;
+        }
+    };
+
     serverValidate(relativePath): void {
         if( relativePath == 'fundings/funding/datesValidate.json' ){
             if( this.editFunding.startDate.month == "" 
@@ -556,6 +621,13 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     setIdsToAdd(ids): void {
         this.fundingToAddIds = ids;
     }
+
+    setSubTypeAsNotIndexed(): void {
+        if(this.lastIndexedTerm != $.trim($('#organizationDefinedType').val())) {
+            console.log("value changed: " + this.lastIndexedTerm + " <-> " + $('#organizationDefinedType').val());
+            this.editFunding.organizationDefinedFundingSubType.alreadyIndexed = false;
+        }
+    };
 
     showAddModal(): void{
         let numOfResults = 25;
