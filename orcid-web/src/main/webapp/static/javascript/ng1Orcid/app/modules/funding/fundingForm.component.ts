@@ -9,7 +9,7 @@ declare var typeahead: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -52,6 +52,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     displayURLPopOver: any;
     editFunding: any;
     editSources: any;
+    editTranslatedTitle: any;
     educations: any;
     emails: any;
     employments: any;
@@ -71,6 +72,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     sortState: any;
 
     constructor(
+        private cdr: ChangeDetectorRef,
         private commonService: CommonService,
         private fundingService: FundingService,
         private emailService: EmailService,
@@ -157,6 +159,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         };
         this.editSources = {};
+        this.editTranslatedTitle = false;
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
@@ -640,6 +643,11 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
             break;
         }
+    };
+
+    toggleTranslatedTitle(): void{
+        this.editTranslatedTitle = !this.editTranslatedTitle;
+        console.log(this.editTranslatedTitle);
     };
 
     unbindTypeahead(): void {

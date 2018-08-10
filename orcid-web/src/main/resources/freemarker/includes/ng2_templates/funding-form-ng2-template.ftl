@@ -47,34 +47,34 @@
                     <span class="orcid-error" *ngIf="editFunding?.fundingTitle?.title?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.fundingTitle.title.errors'>{{error}}</div>
                     </span>
-                    <div class="add-item-link">
-                        <span *ngIf="!editTranslatedTitle"><a (click)="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.labelshowtranslatedtitle'/></a></span>
-                        <span *ngIf="editTranslatedTitle"><a (click)="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-minus-sign"></i> <@orcid.msg 'manual_funding_form_contents.labelhidetranslatedtitle'/></a></span>
-                    </div>                    
+                    <div class="add-item-link clearfix">
+                        <span *ngIf="!editTranslatedTitle"><a (click)="toggleTranslatedTitle()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.labelshowtranslatedtitle'/></a></span>
+                        <span *ngIf="editTranslatedTitle"><a (click)="toggleTranslatedTitle()"><i class="glyphicon glyphicon-minus-sign"></i> <@orcid.msg 'manual_funding_form_contents.labelhidetranslatedtitle'/></a></span>
+                    </div>                   
                 </div>
-                <!-- Translated title -->
-                <div id="translatedTitle">
-                    <span class="orcid-error" *ngIf="editFunding?.fundingTitle?.translatedTitle?.errors?.length > 0">
-                        <div *ngFor='let error of editFunding.fundingTitle.translatedTitle.errors' [innerHtml]="error"></div>
-                    </span>
-                    <div class="form-group" *ngIf="editFunding?.fundingTitle?.translatedTitle != null">
-                        <label><@orcid.msg 'manual_funding_form_contents.label_translated_title'/></label>
+                <!--Translated title-->
+                <div *ngIf="editTranslatedTitle">
+                    <div class="form-group" *ngIf="editFunding">
+                        <label><@orcid.msg 'manual_funding_form_contents.labeltranslatedtitle'/></label>
                         <div class="relative">
-                            <input name="translatedTitle" type="text" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_funding_form_contents.add_translated_title'/>" />
-                        </div>
+                            <input name="translatedTitle" type="text" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_funding_form_contents.add_translated_title'/>" (ngModelChange)="serverValidate('fundings/funding/translatedTitleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>                                                     
+                        </div>                      
+                        <span class="orcid-error" *ngIf="editFunding?.fundingTitle?.translatedTitle?.errors?.length > 0">
+                            <div *ngFor='let error of editFunding.fundingTitle.translatedTitle.errors' [innerHtml]="error"></div>
+                        </span>
                     </div>
-                    <!--Translated title language-->
-                    <div class="form-group" *ngIf="editFunding?.fundingTitle?.translatedTitle != null">
-                        <label class="relative"><@orcid.msg 'manual_funding_form_contents.label_translated_title_language'/></label>
-                        <div class="relative">
-                            <select id="language" name="language" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.languageCode">
+
+                    <div class="form-group">
+                        <label class="relative"><@orcid.msg 'manual_funding_form_contents.labeltranslatedtitlelanguage'/></label>
+                        <div class="relative">            
+                            <select id="translatedTitleLanguage" class="form-control" name="translatedTitleLanguage" [(ngModel)]="editFunding.fundingTitle.translatedTitle.languageCode" (ngModelChange)="serverValidate('fundings/funding/translatedTitleValidate.json')">      
                                 <#list languages?keys as key>
-                                <option value="${languages[key]}">${key}</option>
+                                    <option value="${languages[key]}">${key}</option>
                                 </#list>
-                            </select>
+                            </select>         
                         </div>
-                    </div>
-                </div>
+                    </div>                  
+                </div>              
                 <!--Description-->
                 <div class="form-group" *ngIf="editFunding?.description?.value?.length >= 0">
                     <span>
