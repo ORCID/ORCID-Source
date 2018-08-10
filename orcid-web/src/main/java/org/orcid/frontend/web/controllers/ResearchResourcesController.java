@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
+import org.orcid.pojo.ResearchResource;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,8 +40,8 @@ public class ResearchResourcesController extends BaseWorkspaceController {
     @RequestMapping(value = "/researchResource.json", method = RequestMethod.GET)
     public @ResponseBody ResearchResource getResearchResource(@RequestParam("id") long id) {
         String orcid = getCurrentUserOrcid();
-        ResearchResource r = researchResourceManager.getResearchResource(orcid, id);
-        return r;
+        org.orcid.jaxb.model.v3.rc1.record.ResearchResource r = researchResourceManager.getResearchResource(orcid, id);
+        return ResearchResource.fromValue(r);
     }
     
     @RequestMapping(value = "/{researchResourceIdsStr}", method = RequestMethod.DELETE)

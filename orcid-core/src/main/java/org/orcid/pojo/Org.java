@@ -12,9 +12,25 @@ public class Org {
     
     private String country;
     
-    private String disambiguatedOrganizationIdentifier;
-
+    private String orgDisambiguatedId;
+    
     private String disambiguationSource;
+    
+    public String getOrgDisambiguatedId() {
+        return orgDisambiguatedId;
+    }
+
+    public void setOrgDisambiguatedId(String orgDisambiguatedId) {
+        this.orgDisambiguatedId = orgDisambiguatedId;
+    }
+
+    public String getDisambiguationSource() {
+        return disambiguationSource;
+    }
+
+    public void setDisambiguationSource(String disambiguationSource) {
+        this.disambiguationSource = disambiguationSource;
+    }
 
     public String getName() {
         return name;
@@ -48,27 +64,15 @@ public class Org {
         this.country = country;
     }
 
-    public String getDisambiguatedOrganizationIdentifier() {
-        return disambiguatedOrganizationIdentifier;
-    }
-
-    public void setDisambiguatedOrganizationIdentifier(String disambiguatedOrganizationIdentifier) {
-        this.disambiguatedOrganizationIdentifier = disambiguatedOrganizationIdentifier;
-    }
-
-    public String getDisambiguationSource() {
-        return disambiguationSource;
-    }
-
-    public void setDisambiguationSource(String disambiguationSource) {
-        this.disambiguationSource = disambiguationSource;
-    }
-
     public static Org valueOf(Organization organization) {
         Org org = new Org();
+        org.setName(organization.getName());
         org.setCity(organization.getAddress().getCity());
         org.setRegion(organization.getAddress().getRegion());
-        org.setCountry(organization.getAddress().getCountry().);
+        org.setCountry(organization.getAddress().getCountry().value());
+        org.setDisambiguationSource(organization.getDisambiguatedOrganization().getDisambiguationSource());
+        org.setOrgDisambiguatedId(String.valueOf(organization.getDisambiguatedOrganization().getId()));
+        return org;
     }
     
 }
