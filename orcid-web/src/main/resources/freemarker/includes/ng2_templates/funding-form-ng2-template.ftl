@@ -52,7 +52,6 @@
                         <span *ngIf="editTranslatedTitle"><a (click)="toggleTranslatedTitleModal()"><i class="glyphicon glyphicon-minus-sign"></i> <@orcid.msg 'manual_funding_form_contents.labelhidetranslatedtitle'/></a></span>
                     </div>                    
                 </div>
-
                 <!-- Translated title -->
                 <div id="translatedTitle">
                     <span class="orcid-error" *ngIf="editFunding?.fundingTitle?.translatedTitle?.errors?.length > 0">
@@ -61,14 +60,14 @@
                     <div class="form-group" *ngIf="editFunding?.fundingTitle?.translatedTitle != null">
                         <label><@orcid.msg 'manual_funding_form_contents.label_translated_title'/></label>
                         <div class="relative">
-                            <input name="translatedTitle" type="text" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_funding_form_contents.add_translated_title'/>" (onChange)="serverValidate('fundings/funding/translatedTitleValidate.json')" />
+                            <input name="translatedTitle" type="text" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_funding_form_contents.add_translated_title'/>" />
                         </div>
                     </div>
-
+                    <!--Translated title language-->
                     <div class="form-group" *ngIf="editFunding?.fundingTitle?.translatedTitle != null">
                         <label class="relative"><@orcid.msg 'manual_funding_form_contents.label_translated_title_language'/></label>
                         <div class="relative">
-                            <select id="language" name="language" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.languageCode" (onChange)="serverValidate('fundings/funding/translatedTitleValidate.json')">
+                            <select id="language" name="language" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.languageCode">
                                 <#list languages?keys as key>
                                 <option value="${languages[key]}">${key}</option>
                                 </#list>
@@ -76,8 +75,7 @@
                         </div>
                     </div>
                 </div>
-
-
+                <!--Description-->
                 <div class="form-group" *ngIf="editFunding?.description?.value?.length >= 0">
                     <span>
                        <label><@orcid.msg 'manual_funding_form_contents.label_description'/></label>
@@ -88,23 +86,21 @@
                             <div *ngFor='let error of editFunding.description.errors' [innerHtml]="error"></div>
                         </span>
                     </div>
-                </div>
-
-
+                </div>  
+                <!--Currency code-->
                 <div class="form-group" *ngIf="editFunding?.currencyCode?.value?.length >= 0 && editFunding?.amount?.value?.length >= 0">
                     <span>
                         <label><@orcid.msg 'manual_funding_form_contents.label_amount'/></label>
-                    </span>
-                    
+                    </span>   
                     <div class="funding-info">
                         <select id="currencyCode" name="currencyCode" [(ngModel)]="editFunding.currencyCode.value" (onChange)="serverValidate('fundings/funding/currencyValidate.json')">
                              <#list currencyCodeTypes?keys as key>
                                   <option value="${currencyCodeTypes[key]}">${key}</option>
                              </#list>
                         </select>
+                        <!--Funding amount-->
                         <input id="fundingAmount" name="fundingAmount" type="text" [(ngModel)]="editFunding.amount.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_amount'/>" (onChange)="serverValidate('fundings/funding/amountValidate.json')" [ngClass]="form-control" />
                     </div>
-
                     <span class="orcid-error" *ngIf="editFunding?.currencyCode?.errors?.length > 0">
                          <div *ngFor='let error of editFunding.currencyCode.errors' [innerHtml]="error"></div>
                     </span>
@@ -112,18 +108,18 @@
                          <div *ngFor='let error of editFunding.amount.errors' [innerHtml]="error"></div>
                     </span>                     
                 </div>
-
+                <!--Start date-->
                 <div class="form-group" *ngIf="editFunding?.startDate != null && editFunding?.startDate != null">
                     <label class="start-year"><@orcid.msg 'manual_funding_form_contents.labelStartDate'/></label>
                     <div>                    
-                        <select id="startYear" name="startMonth" [(ngModel)]="editFunding.startDate.year">
+                        <select id="startYear" name="startYear" [(ngModel)]="editFunding.startDate.year" (ngModelChange)="serverValidate('fundings/funding/datesValidate.json')">
                             <#list years?keys as key>
-                            <option value="${key}">${years[key]}</option>
+                                <option value="${key}">${years[key]}</option>
                             </#list>
                         </select>
-                        <select id="startMonth" name="startMonth" [(ngModel)]="editFunding.startDate.month">
+                        <select id="startMonth" name="startMonth" [(ngModel)]="editFunding.startDate.month"(ngModelChange)="serverValidate('fundings/funding/datesValidate.json')">
                             <#list months?keys as key>
-                            <option value="${key}">${months[key]}</option>
+                                <option value="${key}">${months[key]}</option>
                             </#list>
                         </select>
                     </div>                    

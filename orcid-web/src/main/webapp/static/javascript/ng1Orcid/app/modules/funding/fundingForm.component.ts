@@ -17,6 +17,9 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
+import { CommonService } 
+    from '../../shared/common.service.ts';
+
 import { EmailService } 
     from '../../shared/email.service.ts';
 
@@ -68,6 +71,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     sortState: any;
 
     constructor(
+        private commonService: CommonService,
         private fundingService: FundingService,
         private emailService: EmailService,
         private modalService: ModalService,
@@ -104,6 +108,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 value: null
             },
             endDate: {
+                day: "",
+                month: "",
+                year: "",
                 errors: {},
             },
             errors: {},
@@ -139,6 +146,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 value: null
             },
             startDate: {
+                day: "",
+                month: "",
+                year: "",
                 errors: {},
             },
             url: {
@@ -507,6 +517,38 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    serverValidate(relativePath): void {
+        if( relativePath == 'fundings/funding/datesValidate.json' ){
+            if( this.editFunding.startDate.month == "" 
+                || this.editFunding.startDate.day == ""
+                || this.editFunding.startDate.year == ""
+                || this.editFunding.endDate.month == "" 
+                || this.editFunding.endDate.day == ""
+                || this.editFunding.endDate.year == ""
+                || this.editFunding.startDate.month == null 
+                || this.editFunding.startDate.day == null
+                || this.editFunding.startDate.year == null
+                || this.editFunding.endDate.month == null 
+                || this.editFunding.endDate.day == null
+                || this.editFunding.endDate.year == null  ){
+                return;
+            }
+        }
+        this.fundingService.serverValidate(this.editFunding, relativePath)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if (data != null) {
+                    this.commonService.copyErrorsLeft(this.editFunding, data);
+                }
+            },
+            error => {
+            } 
+        );
+    }
+
 
     setIdsToAdd(ids): void {
         this.fundingToAddIds = ids;
@@ -656,15 +698,15 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
                         if (this.editFunding.startDate == null) {
                             this.editFunding.startDate = {
-                                'month': null,
-                                'year': null
+                                'month': "",
+                                'year': ""
                             };
                         }
 
                         if (this.editFunding.endDate == null) {
                             this.editFunding.endDate = {
-                                'month': null,
-                                'year': null
+                                'month': "",
+                                'year': ""
                             };
                         }
                     }
