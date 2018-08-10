@@ -3,19 +3,19 @@ package org.orcid.pojo;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 
 public class Org {
-    
+
     private String name;
-    
+
     private String city;
-    
+
     private String region;
-    
+
     private String country;
-    
+
     private String orgDisambiguatedId;
-    
+
     private String disambiguationSource;
-    
+
     public String getOrgDisambiguatedId() {
         return orgDisambiguatedId;
     }
@@ -70,9 +70,12 @@ public class Org {
         org.setCity(organization.getAddress().getCity());
         org.setRegion(organization.getAddress().getRegion());
         org.setCountry(organization.getAddress().getCountry().value());
-        org.setDisambiguationSource(organization.getDisambiguatedOrganization().getDisambiguationSource());
-        org.setOrgDisambiguatedId(String.valueOf(organization.getDisambiguatedOrganization().getId()));
+
+        if (organization.getDisambiguatedOrganization() != null) {
+            org.setDisambiguationSource(organization.getDisambiguatedOrganization().getDisambiguationSource());
+            org.setOrgDisambiguatedId(String.valueOf(organization.getDisambiguatedOrganization().getId()));
+        }
         return org;
     }
-    
+
 }

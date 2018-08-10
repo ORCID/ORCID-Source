@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
@@ -209,6 +209,7 @@ public class ResearchResource implements Serializable {
         researchResource.setDisplayIndex(resource.getDisplayIndex());
         researchResource.setSource(resource.getSource().retrieveSourcePath());
         researchResource.setSourceName(resource.getSource().getSourceName().getContent());
+        researchResource.setVisibility(Visibility.valueOf(resource.getVisibility()));
         return researchResource;
     }
 
