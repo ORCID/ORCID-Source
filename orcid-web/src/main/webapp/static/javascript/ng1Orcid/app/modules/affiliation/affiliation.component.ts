@@ -480,7 +480,23 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         return false;
     };
 
-
+    makeDefault(group, affiliation, putCode): any {
+        this.affiliationService.updateToMaxDisplay(putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                group.defaultActivity = affiliation;
+                group.activePutCode = group.defaultActivity.putCode;  
+            },
+            error => {
+                console.log('makeDefault', error);
+            } 
+        );
+    }
+    
+    
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
