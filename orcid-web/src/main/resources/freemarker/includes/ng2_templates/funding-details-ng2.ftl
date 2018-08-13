@@ -61,8 +61,7 @@
                         <!-- Funding date -->
                         <span class="funding-date" *ngIf="group?.activities[group?.activePutCode]?.startDate">
                             <span *ngIf="group?.activities[group?.activePutCode]?.startDate.year">{{group?.activities[group?.activePutCode]?.startDate?.year}}</span><span *ngIf="group?.activities[group?.activePutCode]?.startDate?.month">-{{group?.activities[group?.activePutCode]?.startDate?.month}}</span><span *ngIf="group?.activities[group?.activePutCode]?.startDate?.day">-{{group?.activities[group?.activePutCode]?.startDate?.day}}</span> 
-                            <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-                            <span [hidden]="group?.activities[group?.activePutCode]?.endDate && group?.activities[group?.activePutCode]?.endDate?.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                            <span>&nbsp;<@orcid.msg 'workspace_affiliations.dateSeparator'/>&nbsp;</span><span [hidden]="group?.activities[group?.activePutCode]?.endDate && group?.activities[group?.activePutCode]?.endDate?.year"><@orcid.msg 'workspace_affiliations.present'/></span>
                             <span *ngIf="group?.activities[group?.activePutCode]?.endDate">
                                 <span *ngIf="group?.activities[group?.activePutCode]?.endDate?.year">{{group?.activities[group?.activePutCode]?.endDate?.year}}</span><span *ngIf="group?.activities[group?.activePutCode]?.endDate?.month">-{{group?.activities[group?.activePutCode]?.endDate?.month}}</span><span *ngIf="group?.activities[group?.activePutCode]?.endDate?.day">-{{group?.activities[group?.activePutCode]?.endDate?.day}}</span>
                             </span>
@@ -121,9 +120,9 @@
                     <ul class="id-details">
                         <li class="url-work"> 
                             <ul class="id-details"> 
-                                <li *ngFor='let extID of group?.activities[group?.activePutCode]?.affiliationExternalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "externalIdentifierType.value"]' class="url-popover">
-                                    <span *ngIf="group?.activities[group?.activePutCode]?.affiliationExternalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
-                                        <ext-id-popover-ng2 [extID]="extID" [putCode]="group?.activities[group?.activePutCode]?.putCode.value+i" activityType="affiliation"></ext-id-popover-ng2>
+                                <li *ngFor='let extID of group?.activities[group?.activePutCode]?.externalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "externalIdentifierType.value"]' class="url-popover">
+                                    <span *ngIf="group?.activities[group?.activePutCode]?.externalIdentifiers[0]?.value?.value?.length > 0">
+                                        <ext-id-popover-ng2 [extID]="extID" [putCode]="group?.activities[group?.activePutCode]?.putCode.value+i" activityType="funding"></ext-id-popover-ng2>
                                     </span>
                                 </li>
                             </ul>
@@ -163,7 +162,7 @@
                     </div>
                     
                     <!-- Contribuitors -->
-                    <div class="col-md-6" *ngIf="group?.activities[group?.activePutCode]?.contributors.length > 0" >
+                    <div class="col-md-6" *ngIf="group?.activities[group?.activePutCode]?.contributors?.length > 0" >
                         <div class="bottomBuffer">
                             <strong><@orcid.msg 'manual_funding_form_contents.label_contributors'/></strong>
                             <div *ngFor="let contributor of group?.activities[group?.activePutCode]?.contributors">

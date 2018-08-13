@@ -232,30 +232,40 @@
                     <!-- Value -->
                     <div class="form-group">
                         <label id="funding-ext-ids-value-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_value'/></label>                        
-                        <input name="currentFundingExternalIdentifierValue" id="funding-ext-ids-value-input" type="text" class="form-control" [(ngModel)]="externalIdentifier.value.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" />
-                        <span class="orcid-error" *ngIf="externalIdentifier?.value?.errors?.length > 0">
-                            <div *ngFor='let error of externalIdentifier.value.errors' [innerHtml]="error"></div>
+                        <input name="fundingIdValue{{i}}" id="funding-ext-ids-value-input{{i}}" type="text" class="form-control" [(ngModel)]="editFunding.externalIdentifiers[i].value.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" />
+                        <span class="orcid-error" *ngIf="editFunding?.externalIdentifiers[i]?.externalIdentifier?.value?.errors?.length > 0">
+                            <div *ngFor='let error of editFunding.externalIdentifiers[i].externalIdentifier.value.errors' [innerHtml]="error"></div>
                         </span>
                     </div>
                     <!-- URL -->
                     <div class="form-group">
                         <label id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>                            
-                        <input name="currentFundingExternalIdentifierUrl" id="funding-ext-ids-url-input" type="text" class="form-control action-icon-inside" [(ngModel)]="externalIdentifier.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" />                        
-                        <span class="orcid-error" *ngIf="externalIdentifier?.url?.errors?.length > 0">
-                            <div *ngFor='let error of externalIdentifier.url.errors' [innerHtml]="error"></div>
+                        <input name="fundingIdUrl{{i}}" id="undingIdUrl{{i}}" type="text" class="form-control action-icon-inside" [(ngModel)]="editFunding.externalIdentifiers[i].url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" />                        
+                        <span class="orcid-error" *ngIf="editFunding?.externalIdentifiers[i]?.externalIdentifier?.url?.errors?.length > 0">
+                            <div *ngFor='let error of editFunding.externalIdentifiers[i].externalIdentifier.url.errors' [innerHtml]="error"></div>
                         </span>                        
                     </div>
                     <!-- Relationship -->
                     <div class="bottomBuffer">
-                        <label><@orcid.msg 'common.ext_id.relationship'/></label>
+                        <label><@orcid.msg 'common.ext_id.relationship'/>
+                            <div class="popover-help-container">
+                                <i class="glyphicon glyphicon-question-sign"></i>
+                                <div id="widget-help" class="popover bottom">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <p><@orcid.msg 'relationship.tooltip'/></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
                         <div class="relative">                          
                             <label class="checkbox-inline">
-                                <input type="radio" name="relationship{{$index}}" [(ngModel)]="externalIdentifier.relationship.value" value="self">
+                                <input type="radio" name="relationship{{i}}" [(ngModel)]="editFunding.externalIdentifiers[i].relationship.value" value="self">
                                 <@orcid.msg "common.self" />
                             </label>
                                                                                     
                             <label class="checkbox-inline">
-                                <input type="radio" name="relationship{{$index}}" [(ngModel)]="externalIdentifier.relationship.value" value="part-of">
+                                <input type="radio" name="relationship{{i}}" [(ngModel)]="editFunding.externalIdentifiers[i].relationship.value" value="part-of">
                                 <@orcid.msg "common.part_of" />
                             </label>                            
                             <a href (click)="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" *ngIf="!first"></a>
@@ -265,7 +275,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group" *ngIf="editFunding?.url?.value?.length >= 0">                    
                     <label><@orcid.msg 'manual_funding_form_contents.label_url'/></label>                                        
                     <input id="fundingUrl" class="form-control" name="fundingUrl" type="text" [(ngModel)]="editFunding.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_url'/>" (onChange)="serverValidate('fundings/funding/urlValidate.json')" />
