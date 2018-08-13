@@ -35,9 +35,9 @@
                                     elementId="group.activePutCode" 
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
                                         clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
-                                        publicClick="affiliationService.setGroupPrivacy(group, 'PUBLIC', $event)"
-                                        limitedClick="affiliationService.setGroupPrivacy(group, 'LIMITED', $event)"
-                                        privateClick="affiliationService.setGroupPrivacy(group, 'PRIVATE', $event)"/>
+                                        publicClick="setGroupPrivacy(group, 'PUBLIC', $event)"
+                                        limitedClick="setGroupPrivacy(group, 'LIMITED', $event)"
+                                        privateClick="setGroupPrivacy(group, 'PRIVATE', $event)"/>
                                 </li>
                                 </#if>
                             </ul>
