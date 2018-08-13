@@ -131,7 +131,8 @@ public class AffiliationGroupForm implements Serializable {
             if(maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
                 affiliationGroup.setActivePutCode(summary.getPutCode());
                 affiliationGroup.setActiveVisibility(summary.getVisibility().name());
-                affiliationGroup.setDefaultAffiliation(AffiliationForm.valueOf(summary));                
+                affiliationGroup.setDefaultAffiliation(AffiliationForm.valueOf(summary));
+                maxDisplayIndex = displayIndex;
             }
             
             if(summary.getSource().retrieveSourcePath().equals(orcid)) {

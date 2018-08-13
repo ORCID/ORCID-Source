@@ -272,7 +272,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-
     parseAffiliationGroups(data): void {
         this.distinctionsAndInvitedPositions = new Array();
         this.educations = new Array();
@@ -284,13 +283,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.distinctionsAndInvitedPositions = this.distinctionsAndInvitedPositions.concat(data.affiliationGroups.INVITED_POSITION);
         
         this.educations = this.educations.concat(data.affiliationGroups.EDUCATION);
-
         
         this.educationsAndQualifications = this.educationsAndQualifications.concat(data.affiliationGroups.EDUCATION);
         this.educationsAndQualifications = this.educationsAndQualifications.concat(data.affiliationGroups.QUALIFICATION);
 
         this.employments = this.employments.concat(data.affiliationGroups.EMPLOYMENT);
-
         
         this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.MEMBERSHIP);
         this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.SERVICE);
@@ -486,9 +483,9 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
-            data => {
-                group.defaultActivity = affiliation;
-                group.activePutCode = group.defaultActivity.putCode;  
+            data => {                
+                group.defaultAffiliation = affiliation;                
+                group.activePutCode = group.defaultAffiliation.putCode.value;                
             },
             error => {
                 console.log('makeDefault', error);
