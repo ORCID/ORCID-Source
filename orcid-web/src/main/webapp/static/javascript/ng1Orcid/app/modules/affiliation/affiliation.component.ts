@@ -231,7 +231,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     hideSources(group): void {
-        this.editSources[group.activePutCode] = false;
+        this.editSources[group.groupId] = false;
     };
 
     hideTooltip(element): void{        
@@ -362,8 +362,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
     showSources(group, $event): void {
-        $event.stopPropagation();
-        this.editSources[group.activePutCode] = true;
+        $event.stopPropagation();        
+        this.editSources[group.groupId] = true;
         this.hideAllTooltip();
     };
 
@@ -485,14 +485,13 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {                
                 group.defaultAffiliation = affiliation;                
-                group.activePutCode = group.defaultAffiliation.putCode.value;                
+                group.activePutCode = group.defaultAffiliation.putCode.value;                 
             },
             error => {
                 console.log('makeDefault', error);
             } 
         );
-    }
-    
+    }    
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
