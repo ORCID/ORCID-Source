@@ -12,7 +12,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -66,7 +65,6 @@ import org.orcid.jaxb.model.v3.rc1.common.Source;
 import org.orcid.jaxb.model.v3.rc1.notification.Notification;
 import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
 import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
@@ -653,5 +651,7 @@ public class NotificationManagerTest extends DBUnitTest {
         verify(mockNotificationDao, times(1)).persist(Matchers.any());
         
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
-    }    
+    }  
+    
+    
 }
