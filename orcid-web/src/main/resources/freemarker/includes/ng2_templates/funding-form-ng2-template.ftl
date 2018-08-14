@@ -21,7 +21,7 @@
                 <div class="form-group">
                     <label><@orcid.msg 'manual_funding_form_contents.grant_type'/></label>
                     <span class="required text-error" [ngClass]="isValidClass(editFunding.fundingType)">*</span>                    
-                    <select id="fundingType" class="form-control" name="fundingType" [(ngModel)]="editFunding.fundingType.value" (onChange)="serverValidate('fundings/funding/typeValidate.json'); typeChanged()">
+                    <select id="fundingType" class="form-control" name="fundingType" [(ngModel)]="editFunding.fundingType.value" (ngModelChange)="serverValidate('fundings/funding/typeValidate.json'); typeChanged()">
                         <option value=""><@orcid.msg 'org.orcid.jaxb.model.message.FundingType.empty' /></option>
                         <#list fundingTypes?keys as key>
                         <option value="${key}">${fundingTypes[key]}</option>
@@ -34,7 +34,7 @@
                 <!-- Funding subtype -->
                 <div class="form-group" *ngIf="editFunding?.organizationDefinedFundingSubType?.subtype.length > 0">
                     <label><@orcid.msg 'manual_funding_form_contents.label_titl'/></label>                    
-                    <input id="organizationDefinedType" class="form-control" name="organizationDefinedTitle" type="text" [(ngModel)]="editFunding.organizationDefinedFundingSubType.subtype.value" placeholder="<@orcid.msg 'manual_funding_form_contents.organization_defined_type.placeholder'/>" (onChange)="serverValidate('fundings/funding/organizationDefinedTypeValidate.json'); setSubTypeAsNotIndexed()" />
+                    <input id="organizationDefinedType" class="form-control" name="organizationDefinedTitle" type="text" [(ngModel)]="editFunding.organizationDefinedFundingSubType.subtype.value" placeholder="<@orcid.msg 'manual_funding_form_contents.organization_defined_type.placeholder'/>" (ngModelChange)="serverValidate('fundings/funding/organizationDefinedTypeValidate.json'); setSubTypeAsNotIndexed()" />
                     <span class="orcid-error" *ngIf="editFunding?.organizationDefinedFundingSubType?.subtype?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.organizationDefinedFundingSubType.subtype.errors'>{{error}}</div>
                     </span>                    
@@ -43,7 +43,7 @@
                 <div class="form-group">
                     <label><@orcid.msg 'manual_funding_form_contents.label_title'/></label>
                     <span class="required" [ngClass]="isValidClass(editFunding.fundingTitle.title)">*</span>                    
-                    <input id="fundingTitle" class="form-control" name="fundingTitle" type="text" [(ngModel)]="editFunding.fundingTitle.title.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_title'/>" (onChange)="serverValidate('fundings/funding/titleValidate.json')" />
+                    <input id="fundingTitle" class="form-control" name="fundingTitle" type="text" [(ngModel)]="editFunding.fundingTitle.title.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_title'/>" (ngModelChange)="serverValidate('fundings/funding/titleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                     <span class="orcid-error" *ngIf="editFunding?.fundingTitle?.title?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.fundingTitle.title.errors'>{{error}}</div>
                     </span>
@@ -81,7 +81,7 @@
                        <label><@orcid.msg 'manual_funding_form_contents.label_description'/></label>
                     </span>
                     <div class="relative">
-                        <textarea id="fundingDescription" class="form-control" name="fundingDescription" type="text" [(ngModel)]="editFunding.description.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_description'/>" (onChange)="serverValidate('fundings/funding/descriptionValidate.json')"></textarea>
+                        <textarea id="fundingDescription" class="form-control" name="fundingDescription" type="text" [(ngModel)]="editFunding.description.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_description'/>" (ngModelChange)="serverValidate('fundings/funding/descriptionValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"></textarea>
                         <span class="orcid-error" *ngIf="editFunding?.description?.errors?.length > 0">
                             <div *ngFor='let error of editFunding.description.errors' [innerHtml]="error"></div>
                         </span>
@@ -93,13 +93,13 @@
                         <label><@orcid.msg 'manual_funding_form_contents.label_amount'/></label>
                     </span>   
                     <div class="funding-info">
-                        <select id="currencyCode" name="currencyCode" [(ngModel)]="editFunding.currencyCode.value" (onChange)="serverValidate('fundings/funding/currencyValidate.json')">
+                        <select id="currencyCode" name="currencyCode" [(ngModel)]="editFunding.currencyCode.value" (ngModelChange)="serverValidate('fundings/funding/currencyValidate.json')">
                              <#list currencyCodeTypes?keys as key>
                                   <option value="${currencyCodeTypes[key]}">${key}</option>
                              </#list>
                         </select>
                         <!--Funding amount-->
-                        <input id="fundingAmount" name="fundingAmount" type="text" [(ngModel)]="editFunding.amount.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_amount'/>" (onChange)="serverValidate('fundings/funding/amountValidate.json')" [ngClass]="form-control" />
+                        <input id="fundingAmount" name="fundingAmount" type="text" [(ngModel)]="editFunding.amount.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_amount'/>" (ngModelChange)="serverValidate('fundings/funding/amountValidate.json')" class="form-control" [ngModelOptions]="{ updateOn: 'blur' }"/>
                     </div>
                     <span class="orcid-error" *ngIf="editFunding?.currencyCode?.errors?.length > 0">
                          <div *ngFor='let error of editFunding.currencyCode.errors' [innerHtml]="error"></div>
@@ -185,7 +185,7 @@
                         <label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_display_name'/></label>                   
                     </span>
                     <span class="required" [ngClass]="isValidClass(editFunding.fundingName)">*</span>                    
-                    <input id="fundingName" class="form-control" name="fundingName" type="text" [(ngModel)]="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" (onChange)="serverValidate('fundings/funding/orgNameValidate.json')" />
+                    <input id="fundingName" class="form-control" name="fundingName" type="text" [(ngModel)]="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" (ngModelChange)="serverValidate('fundings/funding/orgNameValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                     <span class="orcid-error" *ngIf="editFunding?.fundingName?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.fundingName.errors' [innerHtml]="error"></div>
                     </span>                    
@@ -195,7 +195,7 @@
                     <label *ngIf="!disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_city'/></label>
                     <label *ngIf="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_display_city'/></label>
                     <span class="required" [ngClass]="isValidClass(editFunding.city)">*</span>                    
-                    <input id="city" name="city" type="text" class="form-control"  [(ngModel)]="editFunding.city.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_city'/>" (onChange)="serverValidate('fundings/funding/cityValidate.json')" />                        
+                    <input id="city" name="city" type="text" class="form-control"  [(ngModel)]="editFunding.city.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_city'/>" (ngModelChange)="serverValidate('fundings/funding/cityValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>                        
                     <span class="orcid-error" *ngIf="editFunding?.city?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.city.errors' [innerHtml]="error"></div>
                     </span>                    
@@ -204,7 +204,7 @@
                 <div class="form-group" *ngIf="editFunding?.region?.value?.length >= 0">
                     <label *ngIf="!disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_region'/></label>
                     <label *ngIf="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_display_region'/></label>
-                    <input name="region" type="text" class="form-control"  [(ngModel)]="editFunding.region.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_region'/>" (onChange)="serverValidate('fundings/funding/regionValidate.json')" />
+                    <input name="region" type="text" class="form-control"  [(ngModel)]="editFunding.region.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_region'/>" (ngModelChange)="serverValidate('fundings/funding/regionValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                     <span class="orcid-error" *ngIf="editFunding?.region?.errors?.length > 0">
                          <div *ngFor='let error of editFunding.region.errors' [innerHtml]="error"></div>
                     </span>                    
@@ -214,7 +214,7 @@
                     <label *ngIf="!disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_country'/></label>
                     <label *ngIf="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_display_country'/></label>
                     <span class="required" [ngClass]="isValidClass(editFunding.country)">*</span>                    
-                    <select id="country" class="form-control" name="country" [(ngModel)]="editFunding.country.value" (onChange)="serverValidate('fundings/funding/countryValidate.json')">
+                    <select id="country" class="form-control" name="country" [(ngModel)]="editFunding.country.value" (ngModelChange)="serverValidate('fundings/funding/countryValidate.json')">
                         <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
                         <#list isoCountries?keys as key>
                             <option value="${key}">${isoCountries[key]}</option>
@@ -240,7 +240,7 @@
                     <!-- URL -->
                     <div class="form-group">
                         <label id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>                            
-                        <input name="fundingIdUrl{{i}}" id="undingIdUrl{{i}}" type="text" class="form-control action-icon-inside" [(ngModel)]="editFunding.externalIdentifiers[i].url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" />                        
+                        <input name="fundingIdUrl{{i}}" id="fundingIdUrl{{i}}" type="text" class="form-control action-icon-inside" [(ngModel)]="editFunding.externalIdentifiers[i].url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" />                        
                         <span class="orcid-error" *ngIf="editFunding?.externalIdentifiers[i]?.externalIdentifier?.url?.errors?.length > 0">
                             <div *ngFor='let error of editFunding.externalIdentifiers[i].externalIdentifier.url.errors' [innerHtml]="error"></div>
                         </span>                        
@@ -277,15 +277,13 @@
                 </div>
                 <div class="form-group" *ngIf="editFunding?.url?.value?.length >= 0">                    
                     <label><@orcid.msg 'manual_funding_form_contents.label_url'/></label>                                        
-                    <input id="fundingUrl" class="form-control" name="fundingUrl" type="text" [(ngModel)]="editFunding.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_url'/>" (onChange)="serverValidate('fundings/funding/urlValidate.json')" />
+                    <input id="fundingUrl" class="form-control" name="fundingUrl" type="text" [(ngModel)]="editFunding.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_url'/>" (ngModelChange)="serverValidate('fundings/funding/urlValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                     <span class="orcid-error" *ngIf="editFunding?.url?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.url.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
                 
                 <div class="control-group">
-                    
-
                     <div class="control-group" *ngIf="editFunding?.putCode?.value != null">
                         <ul class="inline-list margin-separator pull-left">
                             <li>
