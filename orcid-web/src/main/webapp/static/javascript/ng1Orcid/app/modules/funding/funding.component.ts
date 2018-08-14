@@ -65,6 +65,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
+    showFundingImportWizard: boolean;
     sortHideOption: boolean;
     sortState: any;
 
@@ -156,6 +157,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
+        this.showFundingImportWizard = false;
         this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
     }
@@ -429,6 +431,10 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+    };
+
+    showFundingImportWizard(): void {
+        this.fundingImportWizard = !this.fundingImportWizard;               
     };
 
     showSources(group,$event): void {
