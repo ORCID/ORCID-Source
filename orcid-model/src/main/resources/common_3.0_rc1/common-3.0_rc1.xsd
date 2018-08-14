@@ -1652,6 +1652,8 @@
 						maxOccurs="1" />
 					<xs:element name="organization" type="common:organization"
 						minOccurs="1" maxOccurs="1" />
+					<xs:element ref="common:url" minOccurs="0" />
+					<xs:element ref="common:external-ids" minOccurs="0" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -1671,7 +1673,7 @@
 						maxOccurs="1" />
 					<xs:element name="organization" type="common:organization"
 						minOccurs="1" maxOccurs="1" />
-					<xs:element name="url" type="common:url" minOccurs="0" />
+					<xs:element ref="common:url" minOccurs="0" />
 					<xs:element ref="common:external-ids" minOccurs="0" />
 				</xs:sequence>
 			</xs:extension>

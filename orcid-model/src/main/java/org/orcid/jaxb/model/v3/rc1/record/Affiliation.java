@@ -36,7 +36,7 @@ public abstract class Affiliation implements OrganizationHolder, Filterable, Act
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "url")
     protected Url url;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs externalIdentifiers;

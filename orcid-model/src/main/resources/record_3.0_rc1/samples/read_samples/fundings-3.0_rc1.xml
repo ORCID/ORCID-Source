@@ -18,7 +18,7 @@
 	<activities:group>
 		<common:last-modified-date>2017-01-18T15:09:59.455-06:00</common:last-modified-date>
 		<common:external-ids />			
-		<funding:summary put-code="2020"
+		<funding:funding-summary put-code="2020"
 			path="/8888-8888-8888-8888/funding/2020" visibility="public"
 			display-index="1">
 			<common:created-date>2017-01-18T13:32:28.446-06:00</common:created-date>
@@ -41,6 +41,7 @@
 					<common:external-id-relationship>part-of</common:external-id-relationship>
 				</common:external-id>
 			</common:external-ids>
+			<common:url>http://tempuri.org</common:url>
 			<funding:type>award</funding:type>
 			<common:organization>
 				<common:name>a</common:name>
@@ -49,7 +50,7 @@
 					<common:country>DZ</common:country>
 				</common:address>
 			</common:organization>
-		</funding:summary>
+		</funding:funding-summary>
 	</activities:group>
 	<activities:group>
 		<common:last-modified-date>2017-01-18T15:09:59.455-06:00</common:last-modified-date>
@@ -60,7 +61,7 @@
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
 		</common:external-ids>
-		<funding:summary put-code="2020"
+		<funding:funding-summary put-code="2020"
 			path="/8888-8888-8888-8888/funding/2020" visibility="public"
 			display-index="1">
 			<common:created-date>2017-01-18T13:32:28.446-06:00</common:created-date>
@@ -91,7 +92,7 @@
 					<common:country>DZ</common:country>
 				</common:address>
 			</common:organization>
-		</funding:summary>
+		</funding:funding-summary>
 	</activities:group>
 	<activities:group>
 		<common:last-modified-date>2017-01-18T15:10:27.247-06:00</common:last-modified-date>
@@ -102,7 +103,7 @@
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
 		</common:external-ids>
-		<funding:summary put-code="2021"
+		<funding:funding-summary put-code="2021"
 			path="/8888-8888-8888-8888/funding/2021" visibility="public"
 			display-index="1">
 			<common:created-date>2017-01-18T13:32:28.446-06:00</common:created-date>
@@ -133,6 +134,6 @@
 					<common:country>AO</common:country>
 				</common:address>
 			</common:organization>
-		</funding:summary>
+		</funding:funding-summary>
 	</activities:group>
 </activities:fundings>
