@@ -1012,6 +1012,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         // Add new
         for (OrgAffiliationRelationEntity updatedEntity : updatedOrgAffiliationEntities) {
             if (updatedEntity.getId() == null) {
+                if(updatedEntity.getDisplayIndex() == null) {
+                    updatedEntity.setDisplayIndex(0L); 
+                }
                 existingOrgAffiliationEntities.add(updatedEntity);
             }
         }

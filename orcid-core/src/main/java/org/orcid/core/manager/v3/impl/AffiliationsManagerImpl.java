@@ -388,7 +388,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             entity.setVisibility(originalVisibility);
         }
         
-
+        // Populate display index in case it is missing
+        DisplayIndexCalculatorHelper.setDisplayIndexOnExistingEntity(entity, isApiRequest);
+        
         // Be sure it doesn't overwrite the source
         entity.setSourceId(existingSourceId);
         entity.setClientSourceId(existingClientSourceId);
