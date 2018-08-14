@@ -63,6 +63,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertNull(oar.getSourceId());        
         assertNull(oar.getClientSourceId());        
         assertNull(oar.getElementSourceId());
+        assertEquals("http://tempuri.org",oar.getUrl());
     }
     
     @Test
@@ -91,6 +92,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertNotNull(education.getSource());        
         assertNotNull(education.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", education.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",education.getUrl().getValue());
     }
     
     @Test
@@ -113,6 +115,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertNotNull(educationSummary.getSource());
         assertNotNull(educationSummary.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", educationSummary.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",educationSummary.getUrl().getValue());
     }
 
     private Education getEducation(boolean full) throws JAXBException {
@@ -146,7 +149,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         result.setTitle("education:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
-        
+        result.setUrl("http://tempuri.org");
         return result;
     }
 }

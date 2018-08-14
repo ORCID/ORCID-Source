@@ -58,7 +58,7 @@ public class Funding implements Filterable, Activity, Serializable, Organization
     protected String description;
     @XmlElement(name = "amount", namespace = "http://www.orcid.org/ns/funding")
     protected Amount amount;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date")
     protected FuzzyDate startDate;

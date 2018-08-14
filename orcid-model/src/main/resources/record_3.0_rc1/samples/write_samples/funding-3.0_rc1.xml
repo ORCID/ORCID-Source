@@ -11,7 +11,7 @@
 	</funding:title>
 	<funding:short-description>Short description of the award</funding:short-description>
 	<funding:amount currency-code="ADP">1000</funding:amount>
-	<funding:url>https://alt-url.org</funding:url>
+	<common:url>https://alt-url.org</common:url>
 	<common:start-date>
 		<common:year>2000</common:year>
 		<common:month>02</common:month>
