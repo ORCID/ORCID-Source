@@ -25,12 +25,8 @@
   
 <!-- Funding -->
 <#if !(fundingEmpty)??>     
-    <div id="workspace-funding" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicFundingCtrl" ng-cloak>
-        <#include "includes/funding/funding_section_header_inc_v3.ftl" />
-        <div ng-if="workspaceSrvc.displayFunding" class="workspace-accordion-content">
-            <#include "includes/funding/body_funding_inc_v3.ftl" /> 
-        </div>
-    </div>
+    <#include "/includes/ng2_templates/funding-ng2-template.ftl">
+    <funding-ng2  publicView="true"></funding-ng2>
 </#if>
 
 <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>

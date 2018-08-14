@@ -58,6 +58,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     employments: any;
     fixedTitle: string;
     fundings: any;
+    fundingImportWizard: boolean;
     fundingToAddIds: any;
     groups: any;
     moreInfo: any;
@@ -65,7 +66,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
-    showFundingImportWizard: boolean;
     sortHideOption: boolean;
     sortState: any;
 
@@ -149,6 +149,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
+        this.fundingImportWizard = false;
         this.fundingToAddIds = {};
         this.groups = new Array();
         this.moreInfo = {};
@@ -157,8 +158,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
-        this.showFundingImportWizard = false;
-        this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
     }
 
@@ -250,7 +249,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                         tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
                         activitiesObjConvertedToArray.push(tmpObj);
                     }
-                    console.log(activitiesObjConvertedToArray);
                     this.groups[j]['activitiesArray'] = activitiesObjConvertedToArray; 
                 }
             },
@@ -263,25 +261,53 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     getFundings(): any {
         //Be sure all arrays are empty
         this.groups = new Array();
-        /*if(this.publicView === "true") {
-             this.getFundingsById( orcidVar.fundingIdsJson );
-        }*/ 
-        this.fundingService.getFundingsId()
-        .pipe(    
+        if(this.publicView === "true") {
+             this.getPublicFundingsById();
+        } else {
+            this.fundingService.getFundingsId()
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if( data.length != 0 ) {
+                        var fundingIds = data.splice(0,20).join()
+                        this.getFundingsById( fundingIds );
+                    }
+                },
+                error => {
+                    //console.log('getBiographyFormError', error);
+                } 
+            );
+        }
+    };
+
+    getPublicFundingsById(): any {
+        this.fundingService.getPublicFundingsById( orcidVar.fundingIdsJson ).pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                if( data.length != 0 ) {
-                    var fundingIds = data.splice(0,20).join()
-                    this.getFundingsById( fundingIds );
+                for (let i in data) {
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.FUNDING, this.groups);
+                };
+                console.log(this.groups);
+                for (let j in this.groups){
+                    let activitiesObjConvertedToArray = [];
+                    for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
+                        let tmpObj = new Object();
+                        tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
+                        tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
+                        activitiesObjConvertedToArray.push(tmpObj);
+                    }
+                    this.groups[j]['activitiesArray'] = activitiesObjConvertedToArray; 
                 }
             },
             error => {
-                //console.log('getBiographyFormError', error);
+                console.log('getFundingsByIdError', error);
             } 
         );
-    };
+    }
 
     hideAllTooltip(): void {
         for (var idx in this.showElement){

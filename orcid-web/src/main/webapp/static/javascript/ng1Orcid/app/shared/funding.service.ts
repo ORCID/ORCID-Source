@@ -65,16 +65,12 @@ export class FundingService {
     getEditable( putCode, groups ): any {
         // first check if they are the current source
         var funding = this.getFunding(putCode, groups);
-        //console.log('getEditable', funding);
 
         if (funding.source == orcidVar.orcidId){
             return funding;
         } else {
             var bestMatch = null;
-            console.log("get editable");
-            console.log(groups);
             var group = this.getGroup(putCode, groups);
-            console.log(group);
             for (var idx in group.activities) {
                 if (group.activities[idx].source == orcidVar.orcidId) {
                     bestMatch = group.activities[idx];
@@ -88,28 +84,6 @@ export class FundingService {
         }
 
     }
-
-    /*getEditable (putCode, callback) {
-            // first check if they are the current source
-            var funding = fundingSrvc.getFunding(putCode);
-            if (funding.source == orcidVar.orcidId){
-                callback(funding);
-            }
-            else {
-                var bestMatch = null;
-                var group = fundingSrvc.getGroup(putCode);
-                for (var idx in group.activitiess) {
-                    if (group[idx].source == orcidVar.orcidId) {
-                        bestMatch = callback(group[idx]);
-                        break;
-                    }
-                }
-                if (bestMatch == null) {
-                    bestMatch = fundingSrvc.createNew(funding);
-                }
-                callback(bestMatch);
-            };
-        }*/
 
     getFunding(putCode?, groups?): any {
         //console.log('getFunding', putCode, groups);
@@ -160,6 +134,13 @@ export class FundingService {
             }
         }
         return null;
+    }
+
+    getPublicFundingsById( idList ): Observable<any> {
+        this.loading = true;
+        return this.http.get(
+            getBaseUri() + '/' + orcidVar.orcidId + '/fundings.json?fundingIds=' + idList
+        )
     }
 
     updateToMaxDisplay(group, putCode): Observable<any> {
