@@ -22,40 +22,45 @@
                         </#if> 
                     </div>
                     <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayFunding">
-                        <!-- Sort -->
-                        <#escape x as x?html>                        
+                        <!-- Sort -->                       
                         <div class="menu-container">                                     
                             <ul class="toggle-menu">
                                 <li>
                                     <span class="glyphicon glyphicon-sort"></span>                          
                                     <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                     <ul class="menu-options sort">
-                                        <li [ngClass]="{'checked':sortDisplayKeyFundings=='startDate'}">                                         
-                                            <a (click)="sort('funding', 'startDate', true);" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
-                                                <span *ngIf="sortDisplayKeyFundings=='startDate' && sortAscFundings==false" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortDisplayKeyFundings=='startDate'}"></span>
-                                                <span *ngIf="sortDisplayKeyFundings=='startDate' && sortAscFundings==true" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortDisplayKeyFundings=='startDate'}"></span>
+                                        <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!sortHideOption">                                     
+                                            <a (click)="sort('date');" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+                                                <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
+                                                <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
                                             </a>                                                                                    
                                         </li>
-                                        <li [ngClass]="{'checked':sortDisplayKeyFundings=='endDate'}">
-                                            <a (click)="sort('funding', 'endDate', true);" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
-                                                <span *ngIf="sortDisplayKeyFundings=='endDate' && sortAscFundings==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortDisplayKeyFundings=='endDate'}" ></span>
-                                                <span *ngIf="sortDisplayKeyFundings=='endDate' && sortAscFundings==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortDisplayKeyFundings=='endDate'}" ></span>
+                                        <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="sortHideOption != null">
+                                            <a (click)="sort('groupName');" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+                                                <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
+                                                <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
                                             </a>                                            
                                         </li>
-                                        <li [ngClass]="{'checked':sortDisplayKeyFundings=='title'}">                                            
-                                            <a (click)="sort('funding', 'title', true);" class="action-option manage-button">
+                                        <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
+                                            <a (click)="sort('title');" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                <span *ngIf="sortDisplayKeyFundings=='title' && sortAscFundings==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortDisplayKeyFundings=='title'}" ></span>
-                                                <span *ngIf="sortDisplayKeyFundings=='title' && sortAscFundings==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortDisplayKeyFundings=='title'}" ></span>
+                                                <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
+                                                <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
                                             </a>                                            
-                                        </li>                                            
+                                        </li>
+                                        <li [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!sortHideOption">                                          
+                                            <a (click)="sort('type');" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
+                                                <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
+                                                <span *ngIf="sortState.reverseKey['type'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
+                                            </a>          
+                                        </li>                                                                  
                                     </ul>                                        
                                 </li>
                             </ul>                                   
                         </div>
-                        </#escape>
                         <!--Add funding-->
                         <#if !(isPublicProfile??)>
                             <ul class="workspace-bar-menu">
@@ -146,7 +151,7 @@
             </div>
             <div *ngIf="workspaceSrvc.displayFunding" class="workspace-accordion-content">
                 <ul *ngIf="groups.length > 0" class="workspace-fundings workspace-body-list bottom-margin-medium" >
-                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups | orderBy: 'sortState.predicate:sortState.reverse'">
+                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of (groups | orderBy: sortState.predicate:sortState.reverse)">
                         <#include "funding-details-ng2.ftl"/>                    
                     </li>
                 </ul>

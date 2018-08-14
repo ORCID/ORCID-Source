@@ -80,7 +80,7 @@ var GroupedActivities = function(type) {
 };
 
 GroupedActivities.count = 0;
-GroupedActivities.prototype.FUNDING = 'funding';
+GroupedActivities.FUNDING = 'funding';
 GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.PEER_REVIEW = 'peerReview';
 GroupedActivities.AFFILIATION = 'affiliation';
@@ -257,6 +257,8 @@ GroupedActivities.prototype.makeDefault = function(putCode) {
     else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
     else if (this.type == GroupedActivities.PEER_REVIEW) title = act.subjectName;
     this.title =  title != null ? title.value : null;
+
+    if (this.type == GroupedActivities.FUNDING) this.groupType = act.fundingTypeForDisplay;
 };
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
@@ -329,9 +331,9 @@ sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortStr
 sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getDefault().workType.value','title', '-dateSortString'];
 
 sortPredicateMap[GroupedActivities.FUNDING] = {};
-sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getDefault().fundingTypeForDisplay'];
-sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getDefault().fundingTypeForDisplay'];
-sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingTypeForDisplay','title', '-dateSortString'];
+sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['dateSortString', 'title','groupType'];
+sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', 'dateSortString','groupType'];
+sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['groupType','title', 'dateSortString'];
 
 sortPredicateMap[GroupedActivities.AFFILIATION] = {};
 sortPredicateMap[GroupedActivities.AFFILIATION]['endDate'] = ['-dateSortString', 'title'];
