@@ -70,6 +70,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     constructor(
         private elementRef: ElementRef,
+        private cdr: ChangeDetectorRef,
         private commonSrvc: CommonService,
         private fundingService: FundingService,
         private emailService: EmailService,
@@ -280,6 +281,12 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    hideAllTooltip(): void {
+        for (var idx in this.showElement){
+            this.showElement[idx]=false;
+        }
+    };
+
     hideSources(group): void {
         this.editSources[group.groupId] = false;
         group.activePutCode = group.defaultPutCode;
@@ -293,8 +300,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     hideURLPopOver(id): void{
         this.displayURLPopOver[id] = false;
     };
-
-
 
     isValidClass(cur): any {
         let valid = true;
@@ -325,6 +330,22 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         return '';
     };
 
+    makeDefault(group, putCode): any {
+        this.fundingService.updateToMaxDisplay(group, putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                group.defaultPutCode = putCode;
+                group.activePutCode = putCode;   
+            },
+            error => {
+                console.log('makeDefault', error);
+            } 
+        );
+    }
+
     moreInfoMouseEnter(key, $event): void {
         $event.stopPropagation();
         if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
@@ -338,11 +359,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openEditFunding( putCode ): void {
-
         let data = this.fundingService.getEditable(putCode, this.groups)
-        //console.log('editable data', data)
         this.addFundingModal(data);
-
     }
 
     removeDisambiguatedFunding(): void {
@@ -413,8 +431,10 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
     };
 
-    showSources(group): void {
+    showSources(group,$event): void {
+        $event.stopPropagation();
         this.editSources[group.groupId] = true;
+        this.hideAllTooltip();
     };
 
     showTooltip(element): void{        

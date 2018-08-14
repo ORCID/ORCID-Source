@@ -71,10 +71,13 @@ export class FundingService {
             return funding;
         } else {
             var bestMatch = null;
-            var group = this.getGroup(putCode);
+            console.log("get editable");
+            console.log(groups);
+            var group = this.getGroup(putCode, groups);
+            console.log(group);
             for (var idx in group.activities) {
-                if (group[idx].source == orcidVar.orcidId) {
-                    //bestMatch = callback(group[idx]);
+                if (group.activities[idx].source == orcidVar.orcidId) {
+                    bestMatch = group.activities[idx];
                     break;
                 }
             }
@@ -85,6 +88,28 @@ export class FundingService {
         }
 
     }
+
+    /*getEditable (putCode, callback) {
+            // first check if they are the current source
+            var funding = fundingSrvc.getFunding(putCode);
+            if (funding.source == orcidVar.orcidId){
+                callback(funding);
+            }
+            else {
+                var bestMatch = null;
+                var group = fundingSrvc.getGroup(putCode);
+                for (var idx in group.activitiess) {
+                    if (group[idx].source == orcidVar.orcidId) {
+                        bestMatch = callback(group[idx]);
+                        break;
+                    }
+                }
+                if (bestMatch == null) {
+                    bestMatch = fundingSrvc.createNew(funding);
+                }
+                callback(bestMatch);
+            };
+        }*/
 
     getFunding(putCode?, groups?): any {
         //console.log('getFunding', putCode, groups);
@@ -128,18 +153,17 @@ export class FundingService {
         return this.fundingToEdit;
     }
 
-    getGroup(putCode): any {
-        for (var idx in this.groups) {
-            if (this.groups[idx].hasPut(putCode)){
-                return this.groups[idx];
+    getGroup(putCode, groups): any {
+        for (var idx in groups) {
+            if (groups[idx].hasPut(putCode)){
+                return groups[idx];
             }
         }
         return null;
     }
 
-    makeDefault(group, putCode): Observable<any> {
-        group.makeDefault(putCode);
-
+    updateToMaxDisplay(group, putCode): Observable<any> {
+        //group.makeDefault(putCode);
         return this.http.get(
             getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode
         )
