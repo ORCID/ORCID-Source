@@ -70,6 +70,14 @@ export class ExtIdPopoverComponent implements OnInit {
                 }
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
+            case "funding":
+                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                this.type = JSON.parse(JSON.stringify(this.extID.type.value));
+                if(this.extID.url){
+                    this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                }
+                this.value = JSON.parse(JSON.stringify(this.extID.value.value));
+                break;
             case "researchResource":
                 this.relationship = JSON.parse(JSON.stringify(this.extID.relationship));
                 this.type = JSON.parse(JSON.stringify(this.extID.type));

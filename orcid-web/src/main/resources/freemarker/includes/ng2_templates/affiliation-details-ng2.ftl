@@ -47,8 +47,8 @@
             </div>
         </li>
         <!--End edit sources-->
-        <li *ngFor="let affiliation of group.affiliations; let index = index; let first = first; let last = last;">
-            <div *ngIf="group.activePutCode == affiliation.putCode.value || editSources[group.groupId] == true">
+        <ng-container *ngFor="let affiliation of group.affiliations; let index = index; let first = first; let last = last;">
+            <li *ngIf="group.activePutCode == affiliation.putCode.value || editSources[group.activePutCode] == true">
                 <div class="row" *ngIf="group.activePutCode == affiliation.putCode?.value">
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <h3 class="workspace-title">
@@ -316,7 +316,7 @@
                         </ul>
                     </div>
                 </div> 
-            </div><!---if group.activePutCode-->
-        </li>
+            </li>
+        </ng-container>
     </ul>
 </div>
