@@ -100,4 +100,6 @@ public interface NotificationManager {
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
 
     Integer archiveOffsetNotifications();
+    
+    Integer deleteOffsetNotifications();
 }

@@ -55,6 +55,8 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     
     Integer archiveOffsetNotifications(Integer offset);
     
+    List<Object[]> findNotificationsToDeleteByOffset(Integer offset, Integer recordsPerBatch);
+    
     List<NotificationEntity> findNotificationsCreatedBefore(Date createdBefore, int batchSize);
     
     List<NotificationEntity> findUnsentServiceAnnouncements(int batchSize);

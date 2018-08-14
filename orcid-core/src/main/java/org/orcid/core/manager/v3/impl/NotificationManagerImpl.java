@@ -192,7 +192,13 @@ public class NotificationManagerImpl implements NotificationManager {
     private EmailFrequencyManager emailFrequencyManager;
     
     @Value("${org.orcid.notifications.archive.offset:100}")
-    private Integer notificationOffset;
+    private Integer notificationArchiveOffset;
+    
+    @Value("${org.orcid.notifications.delete.offset:100}")
+    private Integer notificationDeleteOffset;
+    
+    @Value("${org.orcid.notifications.delete.offset.records:10}")
+    private Integer recordsPerBatch;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -1213,6 +1219,26 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public Integer archiveOffsetNotifications() {
-        return notificationDao.archiveOffsetNotifications(notificationOffset == null ? 100 : notificationOffset);
+        return notificationDao.archiveOffsetNotifications(notificationArchiveOffset == null ? 100 : notificationArchiveOffset);
+    }
+
+    @Override    
+    public Integer deleteOffsetNotifications() {
+        List<Object[]> toDelete = new ArrayList<Object[]>();
+        Integer deleted = 0;
+        do {
+            toDelete = notificationDao.findNotificationsToDeleteByOffset((notificationDeleteOffset == null ? 10000 : notificationDeleteOffset), recordsPerBatch);
+            LOGGER.info("Got batch of {} notifications to delete", toDelete.size());
+            for(Object[] o : toDelete) {
+                Long id = (Long) o[0];
+                String orcid = (String) o[1];            
+                LOGGER.info("About to delete old notification: id={}, orcid={}",
+                            new Object[] { id, orcid });
+                    notificationDao.remove(id);            
+            }         
+            deleted += toDelete.size();
+        } while(!toDelete.isEmpty());
+        
+        return deleted;
     }    
 }

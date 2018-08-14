@@ -22,10 +22,9 @@
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
         <task:scheduled ref="notificationManagerV3" method="processUnverifiedEmails7Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails7Days:0 10 * * * *}"/>
-		<task:scheduled ref="notificationManagerV3" method="archiveOffsetNotifications" cron="${org.orcid.scheduler.web.processUnverifiedEmails7Days:08 08 3 * * *}"/>
+		<task:scheduled ref="notificationManagerV3" method="archiveOffsetNotifications" cron="${org.orcid.scheduler.web.archiveOffsetNotifications:08 08 3 * * *}"/>
+		<task:scheduled ref="notificationManagerV3" method="deleteOffsetNotifications" cron="${org.orcid.scheduler.web.deleteOffsetNotifications:09 09 4 * * *}"/>
 	
-
-
 		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:30}000"/>
      	<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
