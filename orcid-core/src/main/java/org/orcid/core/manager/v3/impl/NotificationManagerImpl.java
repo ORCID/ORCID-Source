@@ -191,6 +191,9 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
     
+    @Value("${org.orcid.notifications.archive.offset:100}")
+    private Integer notificationOffset;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -1206,5 +1209,10 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         
         return baseUrl + "static/" + ReleaseNameUtils.getReleaseName();
+    }
+
+    @Override
+    public Integer archiveOffsetNotifications() {
+        return notificationDao.archiveOffsetNotifications(notificationOffset == null ? 100 : notificationOffset);
     }    
 }
