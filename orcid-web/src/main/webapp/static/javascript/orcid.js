@@ -257,7 +257,7 @@ GroupedActivities.prototype.makeDefault = function(putCode) {
     else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
     else if (this.type == GroupedActivities.PEER_REVIEW) title = act.subjectName;
     this.title =  title != null ? title.value : null;
-
+    //temp hack for sorting funding-remove when backend grouping complete
     if (this.type == GroupedActivities.FUNDING) this.groupType = act.fundingTypeForDisplay;
 };
 

@@ -86,7 +86,6 @@ export class FundingService {
     }
 
     getFunding(putCode?, groups?): any {
-        //console.log('getFunding', putCode, groups);
         if( putCode ){
             for (var idx in groups) {
                 if (groups[idx].hasPut(putCode)){
@@ -144,7 +143,6 @@ export class FundingService {
     }
 
     updateToMaxDisplay(group, putCode): Observable<any> {
-        //group.makeDefault(putCode);
         return this.http.get(
             getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode
         )
@@ -186,7 +184,6 @@ export class FundingService {
 
     setFundingToEdit(obj): void {
         this.fundingToEdit = obj;
-        console.log('setFundingToEdit service', obj);
     }
 
     updateProfileFunding(obj) {

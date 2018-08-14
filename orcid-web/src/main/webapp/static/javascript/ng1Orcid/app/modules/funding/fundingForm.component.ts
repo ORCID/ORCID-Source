@@ -1,15 +1,11 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
-declare var groupedActivitiesUtil: any;
-declare var sortState: any;
 declare var typeahead: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -20,17 +16,11 @@ import { takeUntil }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
-import { EmailService } 
-    from '../../shared/email.service.ts';
-
 import { FundingService } 
     from '../../shared/funding.service.ts';
 
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
-
-import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
 
 @Component({
     selector: 'funding-form-ng2',
@@ -39,10 +29,6 @@ import { WorkspaceService }
 export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    /*
-    emailSrvc: any;
-    workspaceSrvc: any;
-    */
     addingFunding: boolean;
     deleFunding: any;
     deleteGroup: any;
@@ -53,10 +39,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     editFunding: any;
     editSources: any;
     editTranslatedTitle: any;
-    educations: any;
-    emails: any;
-    employments: any;
-    fixedTitle: string;
     fundingToAddIds: any;
     fundings: any;
     groups: any;
@@ -72,17 +54,10 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     sortState: any;
 
     constructor(
-        private cdr: ChangeDetectorRef,
         private commonService: CommonService,
         private fundingService: FundingService,
-        private emailService: EmailService,
         private modalService: ModalService,
-        private workspaceSrvc: WorkspaceService
     ) {
-        /*
-        this.emailSrvc = emailSrvc;
-        this.workspaceSrvc = workspaceSrvc;
-        */
         this.addingFunding = false;
         this.deleFunding = null;
         this.deleteGroup = null;
@@ -160,21 +135,9 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.editSources = {};
         this.editTranslatedTitle = false;
-        this.emails = {};
-        this.fixedTitle = '';
-        this.fundings = new Array();
-        this.fundingToAddIds = {};
-        this.groups = new Array();
         this.lastIndexedTerm = null;
         this.loading = false;    
-        this.moreInfo = {};
-        this.moreInfoCurKey = null;
-        this.privacyHelp = {};
-        this.privacyHelpCurKey = null;
         this.putCode = null;
-        this.showElement = {};
-        this.sortHideOption = false;
-        this.sortState = new ActSortState(GroupedActivities.FUNDING);
     }
 
     addFundingExternalIdentifier(): void {
@@ -345,7 +308,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log("getAffiliationsId", id, error);
+                //console.log("getDisambiguatedFunding", id, error);
             } 
         );
     };
@@ -381,54 +344,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
     }
 
-    getFunding(putCode): any {
-        for (var idx in this.fundingService.groups) {
-            if (this.fundingService.groups[idx].hasPut(putCode)){
-                return this.fundingService.groups[idx].getByPut(putCode);
-            }
-        }
-        return null;
-    }
-
-    getFundingsById( ids ): any {
-        this.fundingService.getFundingsById( ids ).pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-
-                //console.log('this.getFundingsById', data);
-                for (let i in data) {
-                    this.fundings.push(data[i]);
-                };
-
-            },
-            error => {
-                //console.log('getBiographyFormError', error);
-            } 
-        );
-    }
-
-    getGroup(putCode): any {
-        for (var idx in this.fundingService.groups) {
-            if (this.fundingService.groups[idx].hasPut(putCode)){
-                return this.fundingService.groups[idx];
-            }
-        }
-        return null;
-    }
-
-
-    hideTooltip(element): void{        
-        this.showElement[element] = false;
-    };
-
-    hideURLPopOver(id): void{
-        this.displayURLPopOver[id] = false;
-    };
-
-
-
     isValidClass(cur): any {
         let valid = true;
 
@@ -458,18 +373,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         return '';
     };
 
-    moreInfoMouseEnter(key, $event): void {
-        $event.stopPropagation();
-        if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
-            if (this.moreInfoCurKey != null
-                && this.moreInfoCurKey != key) {
-                this.privacyHelp[this.moreInfoCurKey]=false;
-            }
-            this.moreInfoCurKey = key;
-            this.moreInfo[key]=true;
-        }
-    };
-
     putFunding(): void {
         if (this.addingFunding){    
             return; // don't process if adding funding
@@ -484,7 +387,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.editFunding = data;
-                //console.log('this.editFunding response', this.editFunding);
                 this.addingFunding = false;
 
                 if (data['errors'].length == 0){
@@ -578,63 +480,14 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-
     setIdsToAdd(ids): void {
         this.fundingToAddIds = ids;
     }
 
     setSubTypeAsNotIndexed(): void {
         if(this.lastIndexedTerm != $.trim($('#organizationDefinedType').val())) {
-            console.log("value changed: " + this.lastIndexedTerm + " <-> " + $('#organizationDefinedType').val());
             this.editFunding.organizationDefinedFundingSubType.alreadyIndexed = false;
         }
-    };
-
-    showAddModal(): void{
-        let numOfResults = 25;
-
-    };
-
-    showDetailsMouseClick = function(group, $event) {
-        $event.stopPropagation();
-        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
-    };
-
-    showTooltip(element): void{        
-        this.showElement[element] = true;
-    };
-
-    sort(key): void {       
-        this.sortState.sortBy(key);
-    };
-
-    showURLPopOver(id): void {
-        this.displayURLPopOver[id] = true;
-    };
-
-    // remove once grouping is live
-    toggleClickMoreInfo(key): void {
-        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
-            if (this.moreInfoCurKey != null
-                    && this.moreInfoCurKey != key) {
-                this.moreInfo[this.moreInfoCurKey]=false;
-            }
-            this.moreInfoCurKey = key;
-            this.moreInfo[key]=!this.moreInfo[key];
-        }
-    };
-
-    toggleClickPrivacyHelp(key): void {
-        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
-            if (
-                this.privacyHelpCurKey != null
-                && this.privacyHelpCurKey != key) {
-                this.privacyHelp[this.privacyHelpCurKey]=false;
-            }
-            this.privacyHelpCurKey = key;
-            this.privacyHelp[key]=!this.privacyHelp[key];
-        }
-
     };
 
     typeChanged(): void {
@@ -680,7 +533,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleTranslatedTitle(): void{
         this.editTranslatedTitle = !this.editTranslatedTitle;
-        console.log(this.editTranslatedTitle);
     };
 
     unbindTypeahead(): void {
@@ -703,11 +555,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //console.log('init funding component')
-
         this.modalService.notifyObservable$.subscribe(
             (res) => {
-                //console.log('res.value',res, this.elementId);
                 if ( res.moduleId == 'modalFundingForm' ) {
 
                     if ( res.action === "open") {

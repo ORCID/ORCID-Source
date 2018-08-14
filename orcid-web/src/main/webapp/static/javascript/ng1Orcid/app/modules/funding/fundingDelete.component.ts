@@ -1,9 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
-declare var groupedActivitiesUtil: any;
-declare var sortState: any;
-declare var typeahead: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 
@@ -20,20 +15,8 @@ import { takeUntil }
 import { FundingService } 
     from '../../shared/funding.service.ts';
 
-import { EmailService } 
-    from '../../shared/email.service.ts';
-
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
-
-import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
-
-import { FeaturesService }
-    from '../../shared/features.service.ts' 
-    
-import { CommonService } 
-    from '../../shared/common.service.ts';
 
 @Component({
     selector: 'funding-delete-ng2',

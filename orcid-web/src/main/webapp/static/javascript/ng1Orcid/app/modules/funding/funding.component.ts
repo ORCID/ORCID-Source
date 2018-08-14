@@ -240,7 +240,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 for (let i in data) {
                     groupedActivitiesUtil.group(data[i],GroupedActivities.FUNDING, this.groups);
                 };
-                console.log(this.groups);
                 for (let j in this.groups){
                     let activitiesObjConvertedToArray = [];
                     for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
@@ -276,7 +275,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 },
                 error => {
-                    //console.log('getBiographyFormError', error);
+                    //console.log('getFundingsError', error);
                 } 
             );
         }
@@ -291,7 +290,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 for (let i in data) {
                     groupedActivitiesUtil.group(data[i],GroupedActivities.FUNDING, this.groups);
                 };
-                console.log(this.groups);
                 for (let j in this.groups){
                     let activitiesObjConvertedToArray = [];
                     for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
@@ -401,7 +399,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     setGroupPrivacy = function(group, priv, $event): void {
-        console.log(group);
         $event.preventDefault();
         var putCodes = new Array();
         for (var idx in group.activities) {
@@ -447,11 +444,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('setFundingPrivacyError', error);
             } 
         );
-    };
-
-    showAddModal(): void{
-        let numOfResults = 25;
-
     };
 
     showDetailsMouseClick = function(group, $event) {
@@ -554,7 +546,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //console.log('initi funding component');
+        //console.log('init funding component');
         this.getFundings();
         
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
