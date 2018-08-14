@@ -553,4 +553,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             }
         }
     }
+
+    @Override
+    public Boolean updateToMaxDisplay(String orcid, Long putCode) {
+        return orgAffiliationRelationDao.updateToMaxDisplay(orcid, putCode);
+    }
 }

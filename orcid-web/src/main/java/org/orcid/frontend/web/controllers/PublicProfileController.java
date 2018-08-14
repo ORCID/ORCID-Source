@@ -765,7 +765,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
                 List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
                 IntStream.range(0, elementsList.size()).forEach(idx -> {
-                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
+                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), type.name() + '_' + idx, orcid);
                     elementsFormList.add(groupForm);
                 });
                 result.getAffiliationGroups().put(type, elementsFormList);

@@ -261,4 +261,13 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
+
+    @Override
+    @Transactional
+    public Boolean updateToMaxDisplay(String orcid, Long putCode) {
+        Query query = entityManager.createNativeQuery("UPDATE org_affiliation_relation SET display_index=(select coalesce(MAX(display_index) + 1, 0) from org_affiliation_relation where orcid=:orcid and id != :putCode and org_affiliation_relation_role = (select org_affiliation_relation_role from org_affiliation_relation where id = :putCode)), last_modified=now() WHERE id=:putCode");        
+        query.setParameter("putCode", putCode);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
+    }
 }
