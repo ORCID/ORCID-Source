@@ -32,9 +32,9 @@
                     </span>
                 </div>
                 <!-- Funding subtype -->
-                <div class="form-group" *ngIf="editFunding?.organizationDefinedFundingSubType?.subtype.length > 0">
-                    <label><@orcid.msg 'manual_funding_form_contents.label_titl'/></label>                    
-                    <input id="organizationDefinedType" class="form-control" name="organizationDefinedTitle" type="text" [(ngModel)]="editFunding.organizationDefinedFundingSubType.subtype.value" placeholder="<@orcid.msg 'manual_funding_form_contents.organization_defined_type.placeholder'/>" (ngModelChange)="serverValidate('fundings/funding/organizationDefinedTypeValidate.json'); setSubTypeAsNotIndexed()" />
+                <div class="form-group">
+                    <label><@orcid.msg 'manual_funding_form_contents.organization_defined_type.label'/></label>                    
+                    <input id="organizationDefinedType" class="form-control" name="organizationDefinedType" type="text" [(ngModel)]="editFunding.organizationDefinedFundingSubType.subtype.value" placeholder="<@orcid.msg 'manual_funding_form_contents.organization_defined_type.placeholder'/>" (ngModelChange)="serverValidate('fundings/funding/organizationDefinedTypeValidate.json'); setSubTypeAsNotIndexed()" />
                     <span class="orcid-error" *ngIf="editFunding?.organizationDefinedFundingSubType?.subtype?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.organizationDefinedFundingSubType.subtype.errors'>{{error}}</div>
                     </span>                    
@@ -156,7 +156,7 @@
                         </#list>
                     </select>
                     <span class="orcid-error" *ngIf="contributor?.contributorRole?.errors?.length > 0">
-                        <div *ngFor='let error of contributor.contributorRole.errors' [innerHtml]="error"></div>
+                        <div *ngFor="let error of contributor.contributorRole.errors" [innerHtml]="error"></div>
                     </span>                    
                 </div>
             </div>
