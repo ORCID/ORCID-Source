@@ -55,7 +55,7 @@
                 <!--Translated title-->
                 <div *ngIf="editTranslatedTitle">
                     <div class="form-group" *ngIf="editFunding">
-                        <label><@orcid.msg 'manual_funding_form_contents.labeltranslatedtitle'/></label>
+                        <label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
                         <div class="relative">
                             <input name="translatedTitle" type="text" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_funding_form_contents.add_translated_title'/>" (ngModelChange)="serverValidate('fundings/funding/translatedTitleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>                                                     
                         </div>                      
@@ -65,7 +65,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="relative"><@orcid.msg 'manual_funding_form_contents.labeltranslatedtitlelanguage'/></label>
+                        <label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>
                         <div class="relative">            
                             <select id="translatedTitleLanguage" class="form-control" name="translatedTitleLanguage" [(ngModel)]="editFunding.fundingTitle.translatedTitle.languageCode" (ngModelChange)="serverValidate('fundings/funding/translatedTitleValidate.json')">      
                                 <#list languages?keys as key>
