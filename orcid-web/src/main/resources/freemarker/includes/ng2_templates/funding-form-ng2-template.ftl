@@ -86,7 +86,7 @@
                             <div *ngFor='let error of editFunding.description.errors' [innerHtml]="error"></div>
                         </span>
                     </div>
-                </div>  
+                </div>
                 <!--Currency code-->
                 <div class="form-group" *ngIf="editFunding?.currencyCode?.value?.length >= 0 && editFunding?.amount?.value?.length >= 0">
                     <span>
@@ -185,7 +185,7 @@
                         <label><@orcid.msg 'manual_funding_form_contents.label_funding_agency_display_name'/></label>                   
                     </span>
                     <span class="required" [ngClass]="isValidClass(editFunding.fundingName)">*</span>                    
-                    <input id="fundingName" class="form-control" name="fundingName" type="text" [(ngModel)]="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" (ngModelChange)="serverValidate('fundings/funding/orgNameValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
+                    <input id="fundingName" class="form-control" name="fundingName" type="text" [(ngModel)]="editFunding.fundingName.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" (ngModelChange)="serverValidate('fundings/funding/orgNameValidate.json')"/>
                     <span class="orcid-error" *ngIf="editFunding?.fundingName?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.fundingName.errors' [innerHtml]="error"></div>
                     </span>                    
