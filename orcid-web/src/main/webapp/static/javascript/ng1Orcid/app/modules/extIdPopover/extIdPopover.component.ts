@@ -60,7 +60,6 @@ export class ExtIdPopoverComponent implements OnInit {
     };
 
     ngOnInit() {
-        console.log(this.extID);
         switch(this.activityType){
             case "affiliation":
                 this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
