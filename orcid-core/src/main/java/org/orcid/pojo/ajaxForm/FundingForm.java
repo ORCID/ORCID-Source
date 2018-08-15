@@ -355,11 +355,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         else
             result.setDescription(new Text());
 
-        if (funding.getStartDate() != null)
-            result.setStartDate(Date.valueOf(funding.getStartDate()));
-
-        if (funding.getEndDate() != null)
-            result.setEndDate(Date.valueOf(funding.getEndDate()));        
+        initDateFields(result, funding.getStartDate(), funding.getEndDate());    
 
         if (funding.getType() != null)
             result.setFundingType(Text.valueOf(funding.getType().value()));
@@ -464,7 +460,47 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
 
 
         return result;
-    }    
+    }
+    
+    private static void initDateFields(FundingForm form, FuzzyDate startDate, FuzzyDate endDate) {
+        if (startDate != null) {
+            form.setStartDate(Date.valueOf(startDate));
+            if (form.getStartDate().getDay() == null) {
+                form.getStartDate().setDay(new String());
+            }
+            if (form.getStartDate().getMonth() == null) {
+                form.getStartDate().setMonth(new String());
+            }
+            if (form.getStartDate().getYear() == null) {
+                form.getStartDate().setYear(new String());
+            }
+        } else {
+            form.setStartDate(getEmptyDate());
+        }
+        
+        if (endDate != null) {
+            form.setEndDate(Date.valueOf(endDate));
+            if (form.getEndDate().getDay() == null) {
+                form.getEndDate().setDay(new String());
+            }
+            if (form.getEndDate().getMonth() == null) {
+                form.getEndDate().setMonth(new String());
+            }
+            if (form.getEndDate().getYear() == null) {
+                form.getEndDate().setYear(new String());
+            }
+        } else {
+            form.setEndDate(getEmptyDate());
+        }
+    }
+    
+    private static Date getEmptyDate() {
+        Date date = new Date();
+        date.setDay(new String());
+        date.setMonth(new String());
+        date.setYear(new String());
+        return date;
+    }
     
     public String getDateSortString() {
         return dateSortString;

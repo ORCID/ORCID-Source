@@ -34,6 +34,7 @@ import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
+import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.OrgDefinedFundingSubType;
@@ -166,18 +167,18 @@ public class FundingsController extends BaseWorkspaceController {
 
         return result;
     }
-
+    
     /**
-     * Deletes a funding
+     * Deletes a funding by putCode
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.DELETE)
-    public @ResponseBody
-    FundingForm deleteFundingJson(HttpServletRequest request, @RequestBody FundingForm funding) {
-        if (funding != null && !PojoUtil.isEmpty(funding.getPutCode())) {
-            String orcid = getEffectiveUserOrcid();
-            profileFundingManager.removeProfileFunding(orcid, Long.valueOf(funding.getPutCode().getValue()));
+    public @ResponseBody Errors deleteFundingByPutCodeJson(@RequestParam(value = "id") String fundingId) {
+        Errors errors = new Errors();
+        boolean deleted = profileFundingManager.removeProfileFunding(getEffectiveUserOrcid(), Long.valueOf(fundingId));        
+        if(!deleted) {
+                //TODO: Log error in case the affiliation wasn't deleted
         }
-        return funding;
+        return errors;
     }
 
     /**
@@ -440,8 +441,8 @@ public class FundingsController extends BaseWorkspaceController {
     }
 
     /**
-     * Saves an affiliation
-     * */
+     * Updates a funding visibility
+     */
     @RequestMapping(value = "/funding.json", method = RequestMethod.PUT)
     public @ResponseBody
     FundingForm updateProfileFundingJson(HttpServletRequest request, @RequestBody FundingForm fundingForm) {
@@ -450,6 +451,19 @@ public class FundingsController extends BaseWorkspaceController {
                     fundingForm.getVisibility().getVisibility());
         }        
         return fundingForm;
+    }
+    
+    /**
+     * Updates visibility on multiple fundings
+     */
+    @RequestMapping(value = "/{fundingIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
+    public @ResponseBody ArrayList<Long> updateAffiliationVisibilities(@PathVariable("fundingIdsStr") String fundingIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
+        String orcid = getEffectiveUserOrcid();
+        ArrayList<Long> fundIds = new ArrayList<Long>();
+        for (String fundId : fundingIdsStr.split(","))
+            fundIds.add(new Long(fundId));
+        profileFundingManager.updateProfileFundingVisibilities(orcid, fundIds, org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibilityStr));
+        return fundIds;
     }
 
     /**

@@ -1,0 +1,13 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="INIT-DISPLAY-INDEX" author="Angel Montenegro">
+        <sql>UPDATE org_affiliation_relation SET display_index=0;</sql>
+    </changeSet>
+    
+    <changeSet id="DISPLAY-INDEX-DEFAULT-VALUE" author="Angel Montenegro">
+        <sql>ALTER TABLE org_affiliation_relation ALTER COLUMN display_index SET DEFAULT 0;</sql>
+    </changeSet>
+    
+    
+</databaseChangeLog>

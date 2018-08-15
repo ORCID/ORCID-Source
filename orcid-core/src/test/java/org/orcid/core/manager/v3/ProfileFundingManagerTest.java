@@ -36,9 +36,11 @@ import org.orcid.jaxb.model.v3.rc1.record.Funding;
 import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
 import org.orcid.jaxb.model.v3.rc1.record.FundingType;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -376,6 +378,14 @@ public class ProfileFundingManagerTest extends BaseTest {
         assertTrue(found3);
         assertTrue(found4);
         assertTrue(found5); 
+    }
+    
+    @Test
+    public void testGetSummaryUrl(){
+        Funding f1 = profileFundingManager.getFunding("0000-0000-0000-0003",10l);
+        FundingSummary f2 = profileFundingManager.getSummary("0000-0000-0000-0003",10l);
+        assertEquals("http://testuri.org",f1.getUrl().getValue());
+        assertEquals(f1.getUrl(),f2.getUrl());
     }
     
     @Test

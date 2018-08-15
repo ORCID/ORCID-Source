@@ -38,7 +38,7 @@
 			<common:external-id-relationship>self</common:external-id-relationship>
 		</common:external-id>
 	</common:external-ids>
-	<work:url>http://tempuri.org</work:url>
+	<common:url>http://tempuri.org</common:url>
 	<work:contributors>
 		<work:contributor>
 			<common:contributor-orcid>

@@ -937,6 +937,14 @@ public class WorkManagerTest extends BaseTest {
     }
     
     @Test
+    public void testGetSummaryUrl(){
+        Work w1 = workManager.getWork("0000-0000-0000-0003", 11l);
+        WorkSummary w2 = workManager.getWorkSummary("0000-0000-0000-0003", 11l);
+        assertEquals("http://testuri.org",w1.getUrl().getValue());
+        assertEquals(w1.getUrl(),w2.getUrl());
+    }
+    
+    @Test
     public void testGetPublic() {
         List<Work> elements = workManager.findPublicWorks("0000-0000-0000-0003");
         assertNotNull(elements);

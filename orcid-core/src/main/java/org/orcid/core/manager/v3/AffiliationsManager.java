@@ -226,4 +226,15 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            removed.
      */
     void removeAllAffiliations(String orcid);
+    
+    /**
+     * Updates the display index of a given affiliation
+     * 
+     * @param orcid
+     *            The affiliation owner
+     * @param putCode
+     *            The affiliation id
+     * @return true if it was able to update the display index
+     * */
+    Boolean updateToMaxDisplay(String orcid, Long putCode);
 }
