@@ -25,7 +25,7 @@ public class AffiliationGroupForm implements Serializable {
 
     private AffiliationForm defaultAffiliation;
 
-    private int groupId;
+    private String groupId;
 
     private String activeVisibility;
 
@@ -59,11 +59,11 @@ public class AffiliationGroupForm implements Serializable {
         this.defaultAffiliation = defaultAffiliation;
     }
 
-    public int getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(int groupId) {
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 
@@ -99,7 +99,7 @@ public class AffiliationGroupForm implements Serializable {
         this.affiliationType = affiliationType;
     }
     
-    public static AffiliationGroupForm valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup<? extends AffiliationSummary> group, int id, String orcid) {
+    public static AffiliationGroupForm valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup<? extends AffiliationSummary> group, String id, String orcid) {
         AffiliationGroupForm affiliationGroup = new AffiliationGroupForm();
         affiliationGroup.setGroupId(id);
         affiliationGroup.setUserVersionPresent(false);
@@ -128,17 +128,20 @@ public class AffiliationGroupForm implements Serializable {
             if(summary.getDisplayIndex() != null) {
                 displayIndex = Long.parseLong(summary.getDisplayIndex());
             } 
-            if(maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
-                affiliationGroup.setActivePutCode(summary.getPutCode());
-                affiliationGroup.setActiveVisibility(summary.getVisibility().name());
-                affiliationGroup.setDefaultAffiliation(AffiliationForm.valueOf(summary));                
-            }
             
             if(summary.getSource().retrieveSourcePath().equals(orcid)) {
                 affiliationGroup.setUserVersionPresent(true);
             } 
             
-            affiliationGroup.getAffiliations().add(AffiliationForm.valueOf(summary));            
+            AffiliationForm form = AffiliationForm.valueOf(summary);
+            affiliationGroup.getAffiliations().add(form);
+            
+            if(maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
+                affiliationGroup.setActivePutCode(summary.getPutCode());
+                affiliationGroup.setActiveVisibility(summary.getVisibility().name());
+                affiliationGroup.setDefaultAffiliation(form);
+                maxDisplayIndex = displayIndex;
+            }
         }
         
         if (group.getIdentifiers() != null) {
@@ -162,7 +165,6 @@ public class AffiliationGroupForm implements Serializable {
         result = prime * result + ((affiliations == null) ? 0 : affiliations.hashCode());
         result = prime * result + ((defaultAffiliation == null) ? 0 : defaultAffiliation.hashCode());
         result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
-        result = prime * result + groupId;
         result = prime * result + ((userVersionPresent == null) ? 0 : userVersionPresent.hashCode());
         return result;
     }

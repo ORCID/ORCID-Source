@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc1.common.Source;
 import org.orcid.jaxb.model.v3.rc1.common.Title;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
 import org.orcid.jaxb.model.v3.rc1.record.Activity;
@@ -42,7 +43,7 @@ import org.orcid.jaxb.model.v3.rc1.record.WorkType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type",  "publicationDate","journalTitle"  })
+@XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "url","type",  "publicationDate","journalTitle"  })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
 public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
 
@@ -57,6 +58,8 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     protected PublicationDate publicationDate;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs externalIdentifiers;
+    @XmlElement(name = "url", namespace = "http://www.orcid.org/ns/common")
+    protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
@@ -103,6 +106,14 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
 
     public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
+    }
+    
+    public Url getUrl() {
+        return url;
+    }
+
+    public void setUrl(Url url) {
+        this.url = url;
     }
 
     public Source getSource() {
@@ -205,6 +216,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
         int result = 1;
         result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
         result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((publicationDate == null) ? 0 : publicationDate.hashCode());
         result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
@@ -234,6 +246,11 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
             if (other.externalIdentifiers != null)
                 return false;
         } else if (!externalIdentifiers.equals(other.externalIdentifiers))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
             return false;
         if (lastModifiedDate == null) {
             if (other.lastModifiedDate != null)

@@ -26,8 +26,7 @@
             <common:external-ids>
                 <common:external-id>
                     <common:external-id-type>agr</common:external-id-type>
-                    <common:external-id-value>external-id-value
-                    </common:external-id-value>
+                    <common:external-id-value>external-id-value</common:external-id-value>
                     <common:external-id-url>http://orcid.org</common:external-id-url>
                     <common:external-id-relationship>part-of</common:external-id-relationship>
                 </common:external-id>
@@ -70,6 +69,15 @@
 						</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
+				<common:url>http://tempuri.org</common:url>  
+				<common:external-ids>
+		            <common:external-id>
+		                <common:external-id-type>agr</common:external-id-type>
+		                <common:external-id-value>external-id-value</common:external-id-value>
+		                <common:external-id-url>http://orcid.org</common:external-id-url>
+		                <common:external-id-relationship>part-of</common:external-id-relationship>
+		            </common:external-id>
+			    </common:external-ids> 
 			</distinction:distinction-summary>
 		</activities:affiliation-group>
 	</activities:distinctions>
@@ -82,8 +90,7 @@
             <common:external-ids>
                 <common:external-id>
                     <common:external-id-type>agr</common:external-id-type>
-                    <common:external-id-value>external-id-value
-                    </common:external-id-value>
+                    <common:external-id-value>external-id-value</common:external-id-value>
                     <common:external-id-url>http://orcid.org</common:external-id-url>
                     <common:external-id-relationship>part-of</common:external-id-relationship>
                 </common:external-id>
@@ -128,6 +135,15 @@
 						</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
+				<common:url>http://tempuri.org</common:url>  
+				<common:external-ids>
+		            <common:external-id>
+		                <common:external-id-type>agr</common:external-id-type>
+		                <common:external-id-value>external-id-value</common:external-id-value>
+		                <common:external-id-url>http://orcid.org</common:external-id-url>
+		                <common:external-id-relationship>part-of</common:external-id-relationship>
+		            </common:external-id>
+			    </common:external-ids> 
 			</education:education-summary>
 	    </activities:affiliation-group>
 	</activities:educations>
@@ -140,8 +156,7 @@
             <common:external-ids>
                 <common:external-id>
                     <common:external-id-type>agr</common:external-id-type>
-                    <common:external-id-value>external-id-value
-                    </common:external-id-value>
+                    <common:external-id-value>external-id-value</common:external-id-value>
                     <common:external-id-url>http://orcid.org</common:external-id-url>
                     <common:external-id-relationship>part-of</common:external-id-relationship>
                 </common:external-id>
@@ -187,6 +202,15 @@
 						</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
+				<common:url>http://tempuri.org</common:url>  
+				<common:external-ids>
+		            <common:external-id>
+		                <common:external-id-type>agr</common:external-id-type>
+		                <common:external-id-value>external-id-value</common:external-id-value>
+		                <common:external-id-url>http://orcid.org</common:external-id-url>
+		                <common:external-id-relationship>part-of</common:external-id-relationship>
+		            </common:external-id>
+			    </common:external-ids>
 			</employment:employment-summary>
 		</activities:affiliation-group>
 	</activities:employments>
@@ -225,8 +249,7 @@
 				<common:external-ids>
 					<common:external-id>
 						<common:external-id-type>grant_number</common:external-id-type>
-						<common:external-id-value>external-id-value
-						</common:external-id-value>
+						<common:external-id-value>external-id-value</common:external-id-value>
 						<common:external-id-url>http://tempuri.org
 						</common:external-id-url>
 						<common:external-id-relationship>self</common:external-id-relationship>
@@ -270,8 +293,7 @@
             <common:external-ids>
                 <common:external-id>
                     <common:external-id-type>agr</common:external-id-type>
-                    <common:external-id-value>external-id-value
-                    </common:external-id-value>
+                    <common:external-id-value>external-id-value</common:external-id-value>
                     <common:external-id-url>http://orcid.org</common:external-id-url>
                     <common:external-id-relationship>part-of</common:external-id-relationship>
                 </common:external-id>
@@ -316,6 +338,15 @@
 						</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
+				<common:url>http://tempuri.org</common:url>  
+				<common:external-ids>
+		            <common:external-id>
+		                <common:external-id-type>agr</common:external-id-type>
+		                <common:external-id-value>external-id-value</common:external-id-value>
+		                <common:external-id-url>http://orcid.org</common:external-id-url>
+		                <common:external-id-relationship>part-of</common:external-id-relationship>
+		            </common:external-id>
+			    </common:external-ids>
 			</invited-position:invited-position-summary>
 		</activities:affiliation-group>
 	</activities:invited-positions>
@@ -329,8 +360,7 @@
             <common:external-ids>
                 <common:external-id>
                     <common:external-id-type>agr</common:external-id-type>
-                    <common:external-id-value>external-id-value
-                    </common:external-id-value>
+                    <common:external-id-value>external-id-value</common:external-id-value>
                     <common:external-id-url>http://orcid.org</common:external-id-url>
                     <common:external-id-relationship>part-of</common:external-id-relationship>
                 </common:external-id>
@@ -375,6 +405,15 @@
 						</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
+				<common:url>http://tempuri.org</common:url>  
+				<common:external-ids>
+		            <common:external-id>
+		                <common:external-id-type>agr</common:external-id-type>
+		                <common:external-id-value>external-id-value</common:external-id-value>
+		                <common:external-id-url>http://orcid.org</common:external-id-url>
+		                <common:external-id-relationship>part-of</common:external-id-relationship>
+		            </common:external-id>
+			    </common:external-ids>
 			</membership:membership-summary>
 		</activities:affiliation-group>
 	</activities:memberships>
@@ -387,8 +426,7 @@
 			<common:external-ids>
 				<common:external-id>
 					<common:external-id-type>something</common:external-id-type>
-					<common:external-id-value>external-id-value
-					</common:external-id-value>
+					<common:external-id-value>external-id-value</common:external-id-value>
 					<common:external-id-url>http://orcid.org</common:external-id-url>
 					<common:external-id-relationship>self</common:external-id-relationship>
 				</common:external-id>
@@ -398,8 +436,7 @@
 	            <common:external-ids>
 	                <common:external-id>
 	                    <common:external-id-type>something</common:external-id-type>
-	                    <common:external-id-value>external-id-value
-	                    </common:external-id-value>
+	                    <common:external-id-value>external-id-value</common:external-id-value>
 	                    <common:external-id-url>http://orcid.org</common:external-id-url>
 	                    <common:external-id-relationship>self</common:external-id-relationship>
 	                </common:external-id>
@@ -421,8 +458,7 @@
 					<common:external-ids>
 						<common:external-id>
 							<common:external-id-type>something</common:external-id-type>
-							<common:external-id-value>external-id-value
-							</common:external-id-value>
+							<common:external-id-value>external-id-value</common:external-id-value>
 							<common:external-id-url>http://orcid.org</common:external-id-url>
 							<common:external-id-relationship>self</common:external-id-relationship>
 						</common:external-id>
@@ -463,8 +499,7 @@
             <common:external-ids>
                 <common:external-id>
                     <common:external-id-type>agr</common:external-id-type>
-                    <common:external-id-value>external-id-value
-                    </common:external-id-value>
+                    <common:external-id-value>external-id-value</common:external-id-value>
                     <common:external-id-url>http://orcid.org</common:external-id-url>
                     <common:external-id-relationship>part-of</common:external-id-relationship>
                 </common:external-id>
@@ -509,6 +544,15 @@
 						</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
+				<common:url>http://tempuri.org</common:url>  
+				<common:external-ids>
+		            <common:external-id>
+		                <common:external-id-type>agr</common:external-id-type>
+		                <common:external-id-value>external-id-value</common:external-id-value>
+		                <common:external-id-url>http://orcid.org</common:external-id-url>
+		                <common:external-id-relationship>part-of</common:external-id-relationship>
+		            </common:external-id>
+			    </common:external-ids>
 			</qualification:qualification-summary>
 		</activities:affiliation-group>
 	</activities:qualifications>
@@ -588,8 +632,7 @@
             <common:external-ids>
                 <common:external-id>
                     <common:external-id-type>agr</common:external-id-type>
-                    <common:external-id-value>external-id-value
-                    </common:external-id-value>
+                    <common:external-id-value>external-id-value</common:external-id-value>
                     <common:external-id-url>http://orcid.org</common:external-id-url>
                     <common:external-id-relationship>part-of</common:external-id-relationship>
                 </common:external-id>
@@ -634,6 +677,15 @@
 						</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
+				<common:url>http://tempuri.org</common:url>  
+				<common:external-ids>
+		            <common:external-id>
+		                <common:external-id-type>agr</common:external-id-type>
+		                <common:external-id-value>external-id-value</common:external-id-value>
+		                <common:external-id-url>http://orcid.org</common:external-id-url>
+		                <common:external-id-relationship>part-of</common:external-id-relationship>
+		            </common:external-id>
+			    </common:external-ids>
 			</service:service-summary>
 		</activities:affiliation-group>
 	</activities:services>
@@ -646,8 +698,7 @@
 			<common:external-ids>
 				<common:external-id>
 					<common:external-id-type>agr</common:external-id-type>
-					<common:external-id-value>external-id-value
-					</common:external-id-value>
+					<common:external-id-value>external-id-value</common:external-id-value>
 					<common:external-id-url>http://orcid.org</common:external-id-url>
 					<common:external-id-relationship>part-of</common:external-id-relationship>
 				</common:external-id>
@@ -673,8 +724,7 @@
 				<common:external-ids>
 					<common:external-id>
 						<common:external-id-type>agr</common:external-id-type>
-						<common:external-id-value>external-id-value
-						</common:external-id-value>
+						<common:external-id-value>external-id-value</common:external-id-value>
 						<common:external-id-url>http://tempuri.org
 						</common:external-id-url>
 						<common:external-id-relationship>self</common:external-id-relationship>

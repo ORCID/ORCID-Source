@@ -27,7 +27,11 @@ public class JpaJaxbEmploymentAdapterImpl implements JpaJaxbEmploymentAdapter {
     public OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Employment employment) {
         if(employment == null)
             return null;
-        return mapperFacade.map(employment, OrgAffiliationRelationEntity.class);
+        OrgAffiliationRelationEntity entity = mapperFacade.map(employment, OrgAffiliationRelationEntity.class);
+        if(entity.getDisplayIndex() == null) {
+            entity.setDisplayIndex(0L);
+        }
+        return entity;
     }
 
     @Override

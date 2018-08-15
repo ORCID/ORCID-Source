@@ -231,7 +231,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     hideSources(group): void {
-        this.editSources[group.activePutCode] = false;
+        this.editSources[group.groupId] = false;
     };
 
     hideTooltip(element): void{        
@@ -272,7 +272,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-
     parseAffiliationGroups(data): void {
         this.distinctionsAndInvitedPositions = new Array();
         this.educations = new Array();
@@ -284,13 +283,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.distinctionsAndInvitedPositions = this.distinctionsAndInvitedPositions.concat(data.affiliationGroups.INVITED_POSITION);
         
         this.educations = this.educations.concat(data.affiliationGroups.EDUCATION);
-
         
         this.educationsAndQualifications = this.educationsAndQualifications.concat(data.affiliationGroups.EDUCATION);
         this.educationsAndQualifications = this.educationsAndQualifications.concat(data.affiliationGroups.QUALIFICATION);
 
         this.employments = this.employments.concat(data.affiliationGroups.EMPLOYMENT);
-
         
         this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.MEMBERSHIP);
         this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.SERVICE);
@@ -365,8 +362,8 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
     showSources(group, $event): void {
-        $event.stopPropagation();
-        this.editSources[group.activePutCode] = true;
+        $event.stopPropagation();        
+        this.editSources[group.groupId] = true;
         this.hideAllTooltip();
     };
 
@@ -480,7 +477,22 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         return false;
     };
 
-
+    makeDefault(group, affiliation, putCode): any {
+        this.affiliationService.updateToMaxDisplay(putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {                
+                group.defaultAffiliation = affiliation;                
+                group.activePutCode = group.defaultAffiliation.putCode.value;                 
+            },
+            error => {
+                console.log('makeDefault', error);
+            } 
+        );
+    }    
+    
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives

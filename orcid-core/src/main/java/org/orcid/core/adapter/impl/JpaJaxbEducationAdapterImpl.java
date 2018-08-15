@@ -27,7 +27,11 @@ public class JpaJaxbEducationAdapterImpl implements JpaJaxbEducationAdapter {
     public OrgAffiliationRelationEntity toOrgAffiliationRelationEntity(Education education) {
         if(education == null)
             return null;
-        return mapperFacade.map(education, OrgAffiliationRelationEntity.class);
+        OrgAffiliationRelationEntity entity = mapperFacade.map(education, OrgAffiliationRelationEntity.class);
+        if(entity.getDisplayIndex() == null) {
+            entity.setDisplayIndex(0L);
+        }
+        return entity;
     }
 
     @Override

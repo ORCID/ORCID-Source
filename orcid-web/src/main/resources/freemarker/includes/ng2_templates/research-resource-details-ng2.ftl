@@ -1,7 +1,7 @@
 <div class="work-list-container">
     <ul class="sources-edit-list">
         <!--Edit sources-->
-        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}" [(ngModel)]="group.researchResources">
+        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}">
             <div class="sources-header">
                 <div class="row">
                     <div class="col-md-7 col-sm-7 col-xs-6">
@@ -47,8 +47,8 @@
         </li>
         <!--End edit sources-->
         <!---Research resource info-->
-        <li *ngFor="let researchResource of group.researchResources; let index = index; let first = first; let last = last;">
-            <div *ngIf="group.activePutCode == researchResource?.putCode || editSources[group.groupId] == true">
+        <ng-container *ngFor="let researchResource of group.researchResources; let index = index; let first = first; let last = last;">
+            <li *ngIf="group.activePutCode == researchResource?.putCode || editSources[group.groupId] == true">
                 <div class="row" *ngIf="group.activePutCode == researchResource?.putCode">
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <!--Proposal-->
@@ -420,7 +420,7 @@
                         </ul>
                     </div>
                 </div>
-            </div>
-        </li>
+            </li>
+        </ng-container>
     </ul>
 </div>

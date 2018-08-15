@@ -44,6 +44,16 @@
 					<common:country>AS</common:country>
 				</common:address>
 			</common:organization>
+			<common:url>http://tempuri.org</common:url>  
+			<common:external-ids>
+	            <common:external-id>
+	                <common:external-id-type>agr</common:external-id-type>
+	                <common:external-id-value>external-id-value
+	                </common:external-id-value>
+	                <common:external-id-url>http://orcid.org</common:external-id-url>
+	                <common:external-id-relationship>part-of</common:external-id-relationship>
+	            </common:external-id>
+		    </common:external-ids> 
 		</invited-position:invited-position-summary>
 	</activities:affiliation-group>
 	<activities:affiliation-group>
@@ -52,8 +62,7 @@
         <common:external-ids>
             <common:external-id>
                 <common:external-id-type>agr</common:external-id-type>
-                <common:external-id-value>external-id-value
-                </common:external-id-value>
+                <common:external-id-value>external-id-value2</common:external-id-value>
                 <common:external-id-url>http://orcid.org</common:external-id-url>
                 <common:external-id-relationship>part-of</common:external-id-relationship>
             </common:external-id>
@@ -83,6 +92,15 @@
 					<common:country>AS</common:country>
 				</common:address>
 			</common:organization>
+			<common:url>http://tempuri.org</common:url>  
+			<common:external-ids>
+	            <common:external-id>
+	                <common:external-id-type>agr</common:external-id-type>
+	                <common:external-id-value>external-id-value2</common:external-id-value>
+	                <common:external-id-url>http://orcid.org</common:external-id-url>
+	                <common:external-id-relationship>part-of</common:external-id-relationship>
+	            </common:external-id>
+		    </common:external-ids> 
 		</invited-position:invited-position-summary>
 	</activities:affiliation-group>
 </activities:invited-positions>

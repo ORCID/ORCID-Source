@@ -150,4 +150,10 @@ export class AffiliationService {
             url
         )
     }
+    
+    updateToMaxDisplay(putCode): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/affiliations/updateToMaxDisplay.json?putCode=' + putCode
+        )
+    }        
 }

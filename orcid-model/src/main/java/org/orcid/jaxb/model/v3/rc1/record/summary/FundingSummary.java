@@ -15,6 +15,7 @@ import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
 import org.orcid.jaxb.model.v3.rc1.record.Activity;
@@ -25,7 +26,7 @@ import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate","organization" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "url", "type", "startDate", "endDate","organization" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
 public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware, OrganizationHolder {
 
@@ -36,6 +37,8 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
     protected FundingTitle title;
     @XmlElement(name="external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs externalIdentifiers;
+    @XmlElement(name = "url", namespace = "http://www.orcid.org/ns/common")
+    protected Url url;
     @XmlElement(name="start-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
     @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
@@ -82,6 +85,14 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
         this.externalIdentifiers = externalIdentifiers;
     }
 
+    public Url getUrl() {
+        return url;
+    }
+
+    public void setUrl(Url url) {
+        this.url = url;
+    }
+    
     public FuzzyDate getStartDate() {
         return startDate;
     }
@@ -182,6 +193,7 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
         result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
         result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
         result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
@@ -216,6 +228,11 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
             if (other.externalIdentifiers != null)
                 return false;
         } else if (!externalIdentifiers.equals(other.externalIdentifiers))
+            return false;        
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
             return false;
         if (lastModifiedDate == null) {
             if (other.lastModifiedDate != null)

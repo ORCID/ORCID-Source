@@ -22,7 +22,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
     @Test
     public void valueOfTest() {
         AffiliationGroupForm form1 = getAffiliationGroupForm();
-        AffiliationGroupForm form2 = AffiliationGroupForm.valueOf(getAffiliationGroup(), 0, "0000-0000-0000-0000");
+        AffiliationGroupForm form2 = AffiliationGroupForm.valueOf(getAffiliationGroup(), AffiliationType.DISTINCTION.name() + "_0", "0000-0000-0000-0000");
         assertEquals(form1.getActivePutCode(), form2.getActivePutCode());
         assertEquals(form1.getActiveVisibility(), form2.getActiveVisibility());
         assertEquals(form1.getAffiliationType(), form2.getAffiliationType());
@@ -47,7 +47,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
         
         groupForm.setDefaultAffiliation(form1);
         
-        groupForm.setGroupId(0);
+        groupForm.setGroupId(AffiliationType.DISTINCTION.name() + "_0");
         groupForm.setUserVersionPresent(true);
         
         groupForm.setAffiliations(Arrays.asList(form1, form2));
