@@ -31,6 +31,7 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.UpdateOptions;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.FuzzyDateUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -1184,6 +1185,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (affiliation.getLastModifiedDate() != null && affiliation.getLastModifiedDate().getValue() != null)
                 orgRelationEntity.setLastModified(affiliation.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
 
+            DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(orgRelationEntity, true);
+            
             return orgRelationEntity;
         }
         return null;
