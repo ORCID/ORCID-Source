@@ -506,21 +506,9 @@ public class NotificationDaoTest extends DBUnitTest {
         assertEquals(Integer.valueOf(15), archived);
         List<NotificationEntity> notifications = notificationDao.findByOrcid(orcid, false, 0, 100);
         assertEquals(3, notifications.size());
-        boolean found1 = false, found2 = false, found3 = false;
-        for (NotificationEntity n : notifications) {
-            if(n.getId().equals(Long.valueOf(1001))) {
-                found1 = true;
-            } else if(n.getId().equals(Long.valueOf(1003))) {
-                found2 = true;
-            } else if(n.getId().equals(Long.valueOf(1005))) {
-                found3 = true;
-            } else {
-                fail("Invalid put code found: " + n.getId());
-            }
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
+        assertEquals(Long.valueOf(1013), notifications.get(0).getId());
+        assertEquals(Long.valueOf(1011), notifications.get(1).getId());
+        assertEquals(Long.valueOf(1009), notifications.get(2).getId());
     }  
     
     @Test
