@@ -1,7 +1,7 @@
 <div class="work-list-container">
     <ul class="sources-edit-list">
         <!--Edit sources-->
-        <li *ngIf="editSources[group?.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}">
+        <li *ngIf="editSources[group?.activePutCode]" class="source-header" [ngClass]="{'source-active' : editSources[group?.activePutCode] == true}">
             <div class="sources-header">
                 <div class="row">
                     <div class="col-md-7 col-sm-7 col-xs-6">
@@ -79,9 +79,9 @@
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
-                        <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
+                        <ul class="workspace-private-toolbar" *ngIf="!editSources[group.activePutCode]"> 
                             <!--Show details toggle-->
-                            <li class="works-details" *ngIf="!editSources[group.groupId]">
+                            <li class="works-details" *ngIf="!editSources[group.activePutCode]">
                                 <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.activePutCode+'-showHideDetails')">
                                     <span [ngClass]="(z == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                     </span>
@@ -104,7 +104,7 @@
                         </ul>
                         <!--Inconsistent visibility warning-->  
                         <#if !(isPublicProfile??)>
-                        <div *ngIf="!affiliationService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
+                        <div *ngIf="!affiliationService.consistentVis(group) && !editSources[group.activePutCode]" class="vis-issue">
                             <div class="popover-help-container">
                                 <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
                                 <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
@@ -169,12 +169,12 @@
                 <div class="row source-line" *ngIf="group.activePutCode == affiliation.putCode.value">
                     <!--Edit sources-->
                     <!--Source name-->
-                    <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
+                    <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.activePutCode]">
                         {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                     </div>
                     <!--Preferred source-->
-                    <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
-                        <div *ngIf="editSources[group.groupId]">
+                    <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.activePutCode]">
+                        <div *ngIf="editSources[group.activePutCode]">
                             <span class="glyphicon glyphicon-check" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>                            
                             <#if !(isPublicProfile??)>
                             <a (click)="makeDefault(group, affiliation, affiliation.putCode.value)" *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value">
@@ -184,7 +184,7 @@
                         </div>
                     </div>
                     <!--Edit/delete sources-->
-                    <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.groupId]">
+                    <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.activePutCode]">
                         <div>
                             <#if !(isPublicProfile??)>
                             <ul class="sources-actions">
@@ -261,7 +261,7 @@
                         </#if>
                     </div>
                 </div>
-                <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
+                <div class="row source-line" *ngIf="!editSources[group.activePutCode]">                        
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <@orcid.msg 'groups.common.source'/>: {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                     </div>
@@ -289,7 +289,7 @@
                                 />
                             </li>
 
-                            <li *ngIf="!(editSources[group.groupId] || group?.affiliations?.length == 1)">
+                            <li *ngIf="!(editSources[group.activePutCode] || group?.affiliations?.length == 1)">
                                 <a (click)="showSources(group,$event)" (mouseenter)="showTooltip(group.activePutCode+'-deleteGroup')" (mouseleave)="hideTooltip(group.activePutCode+'-deleteGroup')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>

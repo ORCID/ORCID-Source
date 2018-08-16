@@ -60,15 +60,15 @@
                         </div>  
                         <div class="info-detail">
                             <!-- Funding date -->
-                            <span class="funding-date" *ngIf="group?.activities[group?.activePutCode]?.startDate">
+                            <span class="funding-date" *ngIf="group?.activities[group?.activePutCode]?.startDate?.year">
                                 <span *ngIf="group?.activities[group?.activePutCode]?.startDate.year">{{group?.activities[group?.activePutCode]?.startDate?.year}}</span><span *ngIf="group?.activities[group?.activePutCode]?.startDate?.month">-{{group?.activities[group?.activePutCode]?.startDate?.month}}</span><span *ngIf="group?.activities[group?.activePutCode]?.startDate?.day">-{{group?.activities[group?.activePutCode]?.startDate?.day}}</span> 
                                 <span>&nbsp;<@orcid.msg 'workspace_affiliations.dateSeparator'/>&nbsp;</span><span [hidden]="group?.activities[group?.activePutCode]?.endDate && group?.activities[group?.activePutCode]?.endDate?.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                <span *ngIf="group?.activities[group?.activePutCode]?.endDate">
-                                    <span *ngIf="group?.activities[group?.activePutCode]?.endDate?.year">{{group?.activities[group?.activePutCode]?.endDate?.year}}</span><span *ngIf="group?.activities[group?.activePutCode]?.endDate?.month">-{{group?.activities[group?.activePutCode]?.endDate?.month}}</span><span *ngIf="group?.activities[group?.activePutCode]?.endDate?.day">-{{group?.activities[group?.activePutCode]?.endDate?.day}}</span>
-                                </span>
+                            </span>
+                            <span *ngIf="group?.activities[group?.activePutCode]?.endDate">
+                                <span *ngIf="group?.activities[group?.activePutCode]?.endDate?.year">{{group?.activities[group?.activePutCode]?.endDate?.year}}</span><span *ngIf="group?.activities[group?.activePutCode]?.endDate?.month">-{{group?.activities[group?.activePutCode]?.endDate?.month}}</span><span *ngIf="group?.activities[group?.activePutCode]?.endDate?.day">-{{group?.activities[group?.activePutCode]?.endDate?.day}}</span>
                             </span>                            
                             <!-- Funding type -->
-                            <span *ngIf="(group?.activities[group?.activePutCode]?.startDate || group?.activities[group?.activePutCode]?.endDate) && group?.activities[group?.activePutCode]?.fundingType?.value">|</span> <span class="capitalize">{{group?.activities[group?.activePutCode]?.fundingTypeForDisplay}}</span>
+                            <span *ngIf="(group?.activities[group?.activePutCode]?.startDate?.year || group?.activities[group?.activePutCode]?.endDate?.year) && group?.activities[group?.activePutCode]?.fundingType?.value">|</span> <span class="capitalize">{{group?.activities[group?.activePutCode]?.fundingTypeForDisplay}}</span>
                         </div>                            
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">

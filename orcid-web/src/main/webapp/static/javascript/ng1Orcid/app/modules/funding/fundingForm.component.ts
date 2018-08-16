@@ -578,6 +578,14 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             };
                         }
 
+                        if (this.editFunding.organizationDefinedFundingSubType == null) {
+                            this.editFunding.organizationDefinedFundingSubType = {
+                                'subtype': {
+                                    'value': null
+                                }
+                            };
+                        }
+
                         if (this.editFunding.fundingTitle.translatedTitle == null) {
                             this.editFunding.fundingTitle.translatedTitle = {
 

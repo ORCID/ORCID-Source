@@ -32,9 +32,9 @@
                     </span>
                 </div>
                 <!-- Funding subtype -->
-                <div class="form-group" *ngIf="editFunding?.organizationDefinedFundingSubType?.subtype.length > 0">
-                    <label><@orcid.msg 'manual_funding_form_contents.label_titl'/></label>                    
-                    <input id="organizationDefinedType" class="form-control" name="organizationDefinedTitle" type="text" [(ngModel)]="editFunding.organizationDefinedFundingSubType.subtype.value" placeholder="<@orcid.msg 'manual_funding_form_contents.organization_defined_type.placeholder'/>" (ngModelChange)="serverValidate('fundings/funding/organizationDefinedTypeValidate.json'); setSubTypeAsNotIndexed()" />
+                <div class="form-group">
+                    <label><@orcid.msg 'manual_funding_form_contents.organization_defined_type.label'/></label>                    
+                    <input id="organizationDefinedType" class="form-control" name="organizationDefinedType" type="text" [(ngModel)]="editFunding.organizationDefinedFundingSubType.subtype.value" placeholder="<@orcid.msg 'manual_funding_form_contents.organization_defined_type.placeholder'/>" (ngModelChange)="serverValidate('fundings/funding/organizationDefinedTypeValidate.json'); setSubTypeAsNotIndexed()" />
                     <span class="orcid-error" *ngIf="editFunding?.organizationDefinedFundingSubType?.subtype?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.organizationDefinedFundingSubType.subtype.errors'>{{error}}</div>
                     </span>                    
@@ -55,7 +55,7 @@
                 <!--Translated title-->
                 <div *ngIf="editTranslatedTitle">
                     <div class="form-group" *ngIf="editFunding">
-                        <label><@orcid.msg 'manual_funding_form_contents.labeltranslatedtitle'/></label>
+                        <label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
                         <div class="relative">
                             <input name="translatedTitle" type="text" class="form-control" [(ngModel)]="editFunding.fundingTitle.translatedTitle.content" placeholder="<@orcid.msg 'manual_funding_form_contents.add_translated_title'/>" (ngModelChange)="serverValidate('fundings/funding/translatedTitleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>                                                     
                         </div>                      
@@ -65,7 +65,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="relative"><@orcid.msg 'manual_funding_form_contents.labeltranslatedtitlelanguage'/></label>
+                        <label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>
                         <div class="relative">            
                             <select id="translatedTitleLanguage" class="form-control" name="translatedTitleLanguage" [(ngModel)]="editFunding.fundingTitle.translatedTitle.languageCode" (ngModelChange)="serverValidate('fundings/funding/translatedTitleValidate.json')">      
                                 <#list languages?keys as key>
@@ -156,7 +156,7 @@
                         </#list>
                     </select>
                     <span class="orcid-error" *ngIf="contributor?.contributorRole?.errors?.length > 0">
-                        <div *ngFor='let error of contributor.contributorRole.errors' [innerHtml]="error"></div>
+                        <div *ngFor="let error of contributor.contributorRole.errors" [innerHtml]="error"></div>
                     </span>                    
                 </div>
             </div>
