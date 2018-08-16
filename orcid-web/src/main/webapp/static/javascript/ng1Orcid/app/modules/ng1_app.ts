@@ -260,6 +260,7 @@ export const orcidApp = angular.module(
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,
         TwoFaStateModule.name,
+        TwoFaSetupModule.name,
         VerifyEmailModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,
