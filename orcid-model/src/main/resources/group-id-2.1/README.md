@@ -68,3 +68,11 @@ Returns a list of group-id-records which belong to the page number 1, when the g
 Returns a list of group-id-records with name "my-name".
 
 ``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.1/group-id-record?name=my-name'``
+
+
+**Search Group-id-records by identifier**
+
+Returns the group-id-record the specified group ID with the identifier "group:identifier".
+
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.1/group-id-record/?group-id=group:identifier'``
+
