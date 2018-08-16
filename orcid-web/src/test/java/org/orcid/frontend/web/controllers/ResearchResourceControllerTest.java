@@ -30,6 +30,7 @@ import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -122,7 +123,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
 
         // in the big group, rr 1 has an org, 2 has higher display index (so is
         // the default and should be first in the list).
-        assertEquals(Long.valueOf(2l), page.getGroups().get(bg).getResearchResources().get(0).getPutCode());
+        assertEquals("2", page.getGroups().get(bg).getResearchResources().get(0).getPutCode());
         assertEquals("An institution", page.getGroups().get(bg).getResearchResources().get(1).getHosts().get(0).getName());
         assertEquals(page.getGroups().get(bg).getResearchResources().get(0), page.getGroups().get(bg).getDefaultResearchResource());
 
@@ -130,8 +131,8 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         assertEquals("work:external-identifier-id#2", page.getGroups().get(sg).getExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
         assertEquals("the title3", page.getGroups().get(sg).getResearchResources().get(0).getTitle());
         assertEquals("the title3", page.getGroups().get(sg).getDefaultResearchResource().getTitle());
-        assertEquals(Long.valueOf(3), page.getGroups().get(sg).getDefaultResearchResource().getPutCode());
-        assertEquals("PUBLIC", page.getGroups().get(sg).getDefaultResearchResource().getVisibility());
+        assertEquals("3", page.getGroups().get(sg).getDefaultResearchResource().getPutCode());
+        assertEquals(Visibility.PUBLIC, page.getGroups().get(sg).getDefaultResearchResource().getVisibility().getVisibility());
         assertEquals("3", page.getGroups().get(sg).getDefaultResearchResource().getDisplayIndex());
 
         this.testDeleteOne();
@@ -174,20 +175,20 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
 
         Page<ResearchResourceGroupPojo> pageBefore = controller.getresearchResourcePage(0, "title", true);
         int bgBefore = getBigGroupIndex(pageBefore);
-        assertEquals(Long.valueOf(2l), pageBefore.getGroups().get(bgBefore).getDefaultResearchResource().getPutCode());
+        assertEquals("2", pageBefore.getGroups().get(bgBefore).getDefaultResearchResource().getPutCode());
         assertEquals("2", pageBefore.getGroups().get(bgBefore).getDefaultResearchResource().getDisplayIndex());
 
         controller.updateToMaxDisplay(1l);
         Page<ResearchResourceGroupPojo> pageAfter = controller.getresearchResourcePage(0, "title", true);
         int bgAfter = getBigGroupIndex(pageAfter);
         assertEquals("4", pageAfter.getGroups().get(bgAfter).getDefaultResearchResource().getDisplayIndex());
-        assertEquals(Long.valueOf(1l), pageAfter.getGroups().get(bgAfter).getDefaultResearchResource().getPutCode());
+        assertEquals("1", pageAfter.getGroups().get(bgAfter).getDefaultResearchResource().getPutCode());
 
         // set back
         controller.updateToMaxDisplay(2l);
         Page<ResearchResourceGroupPojo> pageLast = controller.getresearchResourcePage(0, "title", true);
         int bgLast = getBigGroupIndex(pageLast);
-        assertEquals(Long.valueOf(2l), pageLast.getGroups().get(bgLast).getDefaultResearchResource().getPutCode());
+        assertEquals("2", pageLast.getGroups().get(bgLast).getDefaultResearchResource().getPutCode());
     }
 
     @Test
