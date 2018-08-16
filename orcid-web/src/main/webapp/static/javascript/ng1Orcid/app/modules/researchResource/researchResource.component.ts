@@ -71,7 +71,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.showResourceItemDetails = {};
-        this.sortState = this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+        this.sortState = this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 
@@ -152,7 +152,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             )
             .subscribe(
                 data => {
-                    console.log(data);
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
                     this.researchResourceService.details[putCode] = data;   
                 },
@@ -167,7 +166,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             )
             .subscribe(
                 data => {
-                    console.log(data);
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
                     this.researchResourceService.details[putCode] = data;   
                 },

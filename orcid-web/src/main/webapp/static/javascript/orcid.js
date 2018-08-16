@@ -318,7 +318,7 @@ var ActSortState = function(groupType) {
         _self.reverseKey['endDate']  = true;        
     }  else if (_self.type == 'ng2_affiliation') {
         _self.predicateKey = 'endDate';
-        _self.reverseKey['endDate']  = false;
+        _self.reverseKey['endDate']  = true;
     }  
     
     _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
