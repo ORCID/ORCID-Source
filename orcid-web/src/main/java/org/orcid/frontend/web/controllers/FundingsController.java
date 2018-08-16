@@ -139,18 +139,6 @@ public class FundingsController extends BaseWorkspaceController {
         endDate.setMonth("");
         endDate.setYear("");
 
-        // Set empty contributor
-        Contributor contr = new Contributor();
-        List<Contributor> contrList = new ArrayList<Contributor>();
-        Text rText = new Text();
-        rText.setValue("");
-        contr.setContributorRole(rText);
-        Text sText = new Text();
-        sText.setValue("");
-        contr.setContributorSequence(sText);
-        contrList.add(contr);
-        result.setContributors(contrList);
-
         // Set empty external identifier
         List<FundingExternalIdentifierForm> emptyExternalIdentifiers = new ArrayList<FundingExternalIdentifierForm>();
         FundingExternalIdentifierForm f = new FundingExternalIdentifierForm();
