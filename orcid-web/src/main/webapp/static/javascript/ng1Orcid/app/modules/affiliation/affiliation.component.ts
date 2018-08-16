@@ -426,6 +426,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         }  
     };
 
+    swapSources(group, putCode): void{
+        group.activePutCode = putCode;
+        this.editSources[group.activePutCode] = true;
+    };
+
     toggleClickMoreInfo(key): void {
         if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
             if (this.moreInfoCurKey != null
