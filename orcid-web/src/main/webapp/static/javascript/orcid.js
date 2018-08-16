@@ -316,9 +316,12 @@ var ActSortState = function(groupType) {
         _self.predicateKey = 'endDate';
         _self.reverseKey['date']  = false;
         _self.reverseKey['endDate']  = true;        
-    }  else if (_self.type == 'ng2_affiliation') {
+    } else if (_self.type == 'ng2_affiliation') {
         _self.predicateKey = 'endDate';
         _self.reverseKey['endDate']  = false;
+    } else if (_self.type == 'funding') {
+        //temp hack remove after backend grouping is complete
+        _self.reverseKey['date']  = false;
     }  
     
     _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
