@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -1230,11 +1231,12 @@ public class NotificationManagerImpl implements NotificationManager {
             toDelete = notificationDao.findNotificationsToDeleteByOffset((notificationDeleteOffset == null ? 10000 : notificationDeleteOffset), recordsPerBatch);
             LOGGER.info("Got batch of {} notifications to delete", toDelete.size());
             for(Object[] o : toDelete) {
-                Long id = (Long) o[0];
+                BigInteger big = (BigInteger) o[0];
+                Long id = big.longValue();
                 String orcid = (String) o[1];            
                 LOGGER.info("About to delete old notification: id={}, orcid={}",
                             new Object[] { id, orcid });
-                    notificationDao.remove(id);            
+                    notificationDao.deleteNotificationById(id);            
             }         
             deleted += toDelete.size();
         } while(!toDelete.isEmpty());

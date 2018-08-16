@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -489,5 +491,70 @@ public class NotificationDaoTest extends DBUnitTest {
         emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
         results = notificationDao.findUnsentTips(100);
         assertEquals(0, results.size());
+    }
+    
+    @Test
+    public void archiveOffsetNotificationsTest() throws Exception {
+        String orcid = "0000-0000-0000-0003";
+        Integer unread = notificationDao.getUnreadCount(orcid);
+        assertEquals(Integer.valueOf(14), unread);
+        Integer archived = notificationDao.archiveOffsetNotifications(3);
+        // It will archive 15 notifications:
+        // 11 from 0000-0000-0000-0003
+        // 3 from 4444-4444-4444-4441
+        // 1 from 
+        assertEquals(Integer.valueOf(15), archived);
+        List<NotificationEntity> notifications = notificationDao.findByOrcid(orcid, false, 0, 100);
+        assertEquals(3, notifications.size());
+        boolean found1 = false, found2 = false, found3 = false;
+        for (NotificationEntity n : notifications) {
+            if(n.getId().equals(Long.valueOf(1001))) {
+                found1 = true;
+            } else if(n.getId().equals(Long.valueOf(1003))) {
+                found2 = true;
+            } else if(n.getId().equals(Long.valueOf(1005))) {
+                found3 = true;
+            } else {
+                fail("Invalid put code found: " + n.getId());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+    }  
+    
+    @Test
+    public void findNotificationsToDeleteByOffsetTest() {
+        List<Object[]> toDelete = notificationDao.findNotificationsToDeleteByOffset(3, 10);
+        assertEquals(15, toDelete.size());
+        boolean found1 = false, found2 = false, found3 = false;
+        int count1 = 0;
+        int count2 = 0;
+        int count3 = 0;
+        
+        for(Object [] o : toDelete) {
+            BigInteger id = (BigInteger) o[0];
+            String orcid = (String) o[1];
+            
+            if("0000-0000-0000-0003".equals(orcid)) {
+                found1 = true;
+                count1++;
+            } else if("4444-4444-4444-4441".equals(orcid)) {
+                found2 = true;
+                count2++;
+            } else if("4444-4444-4444-4442".equals(orcid)) {
+                found3 = true;
+                count3++;
+            } else {
+                fail("Invalid orcid found: " + orcid + " " + id.toString());
+            }
+        }
+        
+        assertTrue(found1);
+        assertEquals(11, count1);
+        assertTrue(found2);
+        assertEquals(3, count2);
+        assertTrue(found3);
+        assertEquals(1, count3);        
     }
 }
