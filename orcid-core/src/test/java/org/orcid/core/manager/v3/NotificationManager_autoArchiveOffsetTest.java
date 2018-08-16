@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 @Transactional
-public class NotificationManager_autoArchiveTest extends DBUnitTest {
+public class NotificationManager_autoArchiveOffsetTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
@@ -47,7 +47,7 @@ public class NotificationManager_autoArchiveTest extends DBUnitTest {
     
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationOffset", 3);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationArchiveOffset", 3);
     }
 
     @Test
@@ -63,21 +63,9 @@ public class NotificationManager_autoArchiveTest extends DBUnitTest {
         assertEquals(Integer.valueOf(15), archived);
         List<Notification> notifications = notificationManager.findByOrcid(orcid, false, 0, 100);
         assertEquals(3, notifications.size());
-        boolean found1 = false, found2 = false, found3 = false;
-        for (Notification n : notifications) {
-            if(n.getPutCode().equals(Long.valueOf(1001))) {
-                found1 = true;
-            } else if(n.getPutCode().equals(Long.valueOf(1003))) {
-                found2 = true;
-            } else if(n.getPutCode().equals(Long.valueOf(1005))) {
-                found3 = true;
-            } else {
-                fail("Invalid put code found: " + n.getPutCode());
-            }
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
+        assertEquals(Long.valueOf(1013), notifications.get(0).getPutCode());
+        assertEquals(Long.valueOf(1011), notifications.get(1).getPutCode());
+        assertEquals(Long.valueOf(1009), notifications.get(2).getPutCode());
     }  
         
 }
