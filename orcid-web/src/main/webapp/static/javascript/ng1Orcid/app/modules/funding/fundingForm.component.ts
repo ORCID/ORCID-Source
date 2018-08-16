@@ -436,6 +436,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
             if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
                 this.getDisambiguatedFunding(datum.disambiguatedAffiliationIdentifier);
+                this.unbindTypeahead();
             }
         }
     };
