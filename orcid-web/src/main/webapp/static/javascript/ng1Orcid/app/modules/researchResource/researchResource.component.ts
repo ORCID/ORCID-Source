@@ -178,7 +178,11 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         }
     }
 
-    
+    hideAllTooltip(): void {
+        for (var idx in this.showElement){
+            this.showElement[idx]=false;
+        }
+    };
 
     hideSources(group): void {
         this.editSources[group.groupId] = false;
@@ -249,7 +253,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             for (var idx in group.researchResources){
                 console.log(group.researchResources[idx]);
 
-                for(var idy in this.researchResourceService.details[group.researchResources[idx].putCode].resourceItems){
+                for(var idy in this.researchResourceService.details[group.researchResources[idx].putCode].items){
                     var id = group.researchResources[idx].putCode + 'resourceItem' + idy;
                     console.log(id);
                     console.log(this.showResourceItemDetails[id]);
@@ -264,6 +268,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     showSources(group, $event): void {
         $event.stopPropagation();
         this.editSources[group.groupId] = true;
+        this.hideAllTooltip();
     };
 
     showTooltip(element): void{        

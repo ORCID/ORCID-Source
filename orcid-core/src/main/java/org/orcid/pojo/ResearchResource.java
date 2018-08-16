@@ -176,40 +176,81 @@ public class ResearchResource implements Serializable {
     }
 
     public static ResearchResource fromValue(org.orcid.jaxb.model.v3.rc1.record.ResearchResource resource) {
+        if (resource == null)
+            return null;
+        
         ResearchResource researchResource = new ResearchResource();
-        List<Org> hosts = new ArrayList<>();
-        for (Organization organization : resource.getProposal().getHosts().getOrganization()) {
-            hosts.add(Org.valueOf(organization));
-        }
-        researchResource.setHosts(hosts);
         
-        List<ActivityExternalIdentifier> activityExternalIdentifiers = new ArrayList<>();
-        for (GroupAble groupable : resource.getProposal().getExternalIdentifiers().getExternalIdentifier()) {
-            ExternalID externalID = (ExternalID) groupable;
-            ActivityExternalIdentifier activityExternalIdentifier = ActivityExternalIdentifier.valueOf(externalID);
-            activityExternalIdentifiers.add(activityExternalIdentifier);
+        if(resource.getProposal().getHosts() != null) {
+            List<Org> hosts = new ArrayList<>();
+            for (Organization organization : resource.getProposal().getHosts().getOrganization()) {
+                hosts.add(Org.valueOf(organization));
+            }
+            researchResource.setHosts(hosts);
         }
-        researchResource.setExternalIdentifiers(activityExternalIdentifiers);
         
-        List<ResearchResourceItem> items = new ArrayList<>();
-        for (org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem item : resource.getResourceItems()) {
-            ResearchResourceItem i = ResearchResourceItem.fromValue(item);
-            items.add(i);
+        if(resource.getProposal().getExternalIdentifiers() != null) {
+            List<ActivityExternalIdentifier> activityExternalIdentifiers = new ArrayList<>();
+            for (GroupAble groupable : resource.getProposal().getExternalIdentifiers().getExternalIdentifier()) {
+                ExternalID externalID = (ExternalID) groupable;
+                ActivityExternalIdentifier activityExternalIdentifier = ActivityExternalIdentifier.valueOf(externalID);
+                activityExternalIdentifiers.add(activityExternalIdentifier);
+            }
+            researchResource.setExternalIdentifiers(activityExternalIdentifiers);
         }
-        researchResource.setItems(items);
+        
+        if(resource.getResourceItems() != null) {
+            List<ResearchResourceItem> items = new ArrayList<>();
+            for (org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem item : resource.getResourceItems()) {
+                ResearchResourceItem i = ResearchResourceItem.fromValue(item);
+                items.add(i);
+            }
+            researchResource.setItems(items);
+        }
         
         researchResource.setCreatedDate(Date.valueOf(resource.getCreatedDate()));
-        researchResource.setStartDate(Date.valueOf(resource.getProposal().getStartDate()));
-        researchResource.setEndDate(Date.valueOf(resource.getProposal().getEndDate()));
-        researchResource.setTitle(resource.getProposal().getTitle().getTitle().getContent());
-        researchResource.setTranslatedTitle(resource.getProposal().getTitle().getTranslatedTitle().getContent());
-        researchResource.setTranslatedTitleLanguageCode(resource.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
-        researchResource.setUrl(resource.getProposal().getUrl().getValue());
-        researchResource.setPutCode(resource.getPutCode().toString());
-        researchResource.setDisplayIndex(resource.getDisplayIndex());
-        researchResource.setSource(resource.getSource().retrieveSourcePath());
-        researchResource.setSourceName(resource.getSource().getSourceName().getContent());
-        researchResource.setVisibility(Visibility.valueOf(resource.getVisibility()));
+        
+        if(resource.getProposal().getStartDate() != null) {
+            researchResource.setStartDate(Date.valueOf(resource.getProposal().getStartDate()));
+        }
+        
+        if(resource.getProposal().getEndDate() != null) {
+            researchResource.setEndDate(Date.valueOf(resource.getProposal().getEndDate()));
+        }
+        
+        if(resource.getProposal().getTitle().getTitle() != null) {
+            researchResource.setTitle(resource.getProposal().getTitle().getTitle().getContent());
+        }
+        
+        if(resource.getProposal().getTitle().getTranslatedTitle() != null) {
+            researchResource.setTranslatedTitle(resource.getProposal().getTitle().getTranslatedTitle().getContent());
+            researchResource.setTranslatedTitleLanguageCode(resource.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+        }  
+          
+        if(resource.getProposal().getUrl() != null) {
+            researchResource.setUrl(resource.getProposal().getUrl().getValue());
+        }
+        
+        if(resource.getPutCode() != null) {
+            researchResource.setPutCode(resource.getPutCode().toString());
+        }
+        
+        if(resource.getDisplayIndex() != null) {
+            researchResource.setDisplayIndex(resource.getDisplayIndex());
+        }
+
+        if(resource.getSource() != null) {
+            // Set source
+            researchResource.setSource(resource.getSource().retrieveSourcePath());
+            if(resource.getSource().getSourceName() != null) {
+                researchResource.setSourceName(resource.getSource().getSourceName().getContent());
+            }
+        }
+        
+        if(resource.getVisibility() != null) {
+            researchResource.setVisibility(Visibility.valueOf(resource.getVisibility()));
+        }
+        
         return researchResource;
     }
 

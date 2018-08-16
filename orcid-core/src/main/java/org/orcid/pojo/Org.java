@@ -73,7 +73,7 @@ public class Org {
 
         if (organization.getDisambiguatedOrganization() != null) {
             org.setDisambiguationSource(organization.getDisambiguatedOrganization().getDisambiguationSource());
-            org.setOrgDisambiguatedId(String.valueOf(organization.getDisambiguatedOrganization().getId()));
+            org.setOrgDisambiguatedId(String.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
         }
         return org;
     }

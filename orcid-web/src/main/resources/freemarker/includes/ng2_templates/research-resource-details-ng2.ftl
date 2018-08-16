@@ -54,36 +54,36 @@
                         <!--Proposal-->
                         <!--Title-->
                         <h3 class="workspace-title">
-                            <span>{{researchResource?.proposal?.title?.title?.content}}</span>
+                            <span>{{researchResource?.title}}</span>
                         </h3>
                         <div class="info-detail">
                             <!--Hosts-->
-                            <div *ngIf="researchResource?.proposal?.hosts?.organization && !moreInfo[group?.groupId]">
-                                <div *ngFor="let host of researchResource?.proposal?.hosts?.organization;let i = index;trackBy:trackByIndex" class="journaltitle">
+                            <div *ngIf="researchResource?.hosts && !moreInfo[group?.groupId]">
+                                <div *ngFor="let host of researchResource?.hosts">
                                     <span>{{host?.name}}</span>
-                                    <span *ngIf="host?.address"> (</span>
-                                    <span *ngIf="host?.address?.city">{{host?.address?.city}}</span><span *ngIf="host?.address?.region">, </span><span>{{host?.address?.region}}</span><span *ngIf="host?.address?.country">, </span><span>{{host?.address?.country}}</span>
-                                    <span *ngIf="host?.address">)</span>
-                                </div>
+                                    <span *ngIf="host?.city || host?.region  || host?.country"> (</span>
+                                    <span *ngIf="host?.city">{{host?.city}}</span><span *ngIf="host?.region">, </span><span>{{host?.region}}</span><span *ngIf="host?.country">, </span><span>{{host?.country}}</span>
+                                    <span *ngIf="host?.city || host?.region  || host?.country">)</span>
+                                </div>                      
                             </div>
                             <!--Dates-->
                             <div class="info-date">
                                 <!--Start date-->                     
-                                <span class="affiliation-date" *ngIf="group?.defaultActivity?.proposal?.startDate">
-                                    <span *ngIf="researchResource?.proposal?.startDate?.year.value">{{researchResource?.proposal?.startDate?.year?.value}}</span>
-                                    <span *ngIf="researchResource?.proposal?.startDate?.month?.value">-{{researchResource?.proposal?.startDate?.month?.value}}</span>
-                                    <span *ngIf="researchResource?.proposal?.startDate?.day?.value">-{{researchResource?.proposal?.startDate?.day?.value}}</span>
+                                <span class="affiliation-date" *ngIf="researchResource?.startDate">
+                                    <span *ngIf="researchResource?.startDate?.year">{{researchResource?.startDate?.year}}</span>
+                                    <span *ngIf="researchResource?.startDate?.month">-{{researchResource?.startDate?.month}}</span>
+                                    <span *ngIf="researchResource?.startDate?.day">-{{researchResource?.startDate?.day}}</span>
                                     <span>&nbsp;<@orcid.msg 'workspace_affiliations.dateSeparator'/>&nbsp;</span>
-                                    <span [hidden]="researchResource?.proposal?.endDate && researchResource?.proposal?.endDate.year?.value"><@orcid.msg 'workspace_affiliations.present'/></span>
-                                    <span *ngIf="researchResource?.proposal?.endDate">
-                                    <span *ngIf="researchResource?.proposal?.endDate?.year?.value">{{researchResource?.proposal?.endDate?.year?.value}}</span><span *ngIf="researchResource?.proposal?.endDate?.month?.value">-{{researchResource?.proposal?.endDate?.month?.value}}</span><span *ngIf="researchResource?.proposal?.endDate?.day?.value">-{{researchResource?.proposal?.endDate?.day?.value}}</span>
+                                    <span [hidden]="researchResource?.endDate && researchResource?.endDate?.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                                    <span *ngIf="researchResource?.endDate">
+                                    <span *ngIf="researchResource?.endDate?.year">{{researchResource?.endDate?.year}}</span><span *ngIf="researchResource?.endDate?.month">-{{researchResource?.endDate?.month}}</span><span *ngIf="researchResource?.endDate?.day">-{{researchResource?.endDate?.day}}</span>
                                     </span>
                                 </span>
                                 <!--End date-->
-                                <span class="affiliation-date" *ngIf="!group?.defaultActivity?.proposal?.startDate && group?.defaultActivity?.proposal?.endDate">
-                                    <span *ngIf="researchResource?.proposal?.endDate?.year?.value">{{researchResource?.proposal?.endDate?.year?.value}}</span>
-                                    <span *ngIf="researchResource?.proposal?.endDate?.month?.value">-{{researchResource?.proposal?.endDate?.month?.value}}</span>
-                                    <span *ngIf="researchResource?.proposal?.endDate?.day?.value">-{{researchResource?.proposal?.endDate?.day?.value}}</span>
+                                <span class="affiliation-date" *ngIf="!researchResource?.startDate && researchResource?.endDate">
+                                    <span *ngIf="researchResource?.endDate?.year">{{researchResource?.endDate?.year}}</span>
+                                    <span *ngIf="researchResource?.endDate?.month">-{{researchResource?.endDate?.month}}</span>
+                                    <span *ngIf="researchResource?.endDate?.day">-{{researchResource?.endDate?.day}}</span>
                                 </span>
                             </div><!--info-date-->
                         </div><!--info-detail-->
@@ -107,7 +107,7 @@
                             <!--Visibility selector-->
                             <#if !(isPublicProfile??)>
                             <li>
-                                <@orcid.privacyToggle2Ng2 angularModel="researchResource.visibility"
+                                <@orcid.privacyToggle2Ng2 angularModel="researchResource.visibility.visibility"
                                 elementId="group.activePutCode" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[researchResource.putCode.value]==true}" publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
                             </li>
                             </#if>
@@ -134,8 +134,8 @@
                         <ul class="id-details clearfix">
                             <li class="url-work clearfix">
                                 <ul class="id-details clearfix">
-                                    <li *ngFor='let extID of researchResource?.proposal?.externalIdentifiers?.externalIdentifier;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
-                                        <span *ngIf="researchResource?.proposal?.externalIdentifiers?.externalIdentifier[0].value?.length > 0">
+                                    <li *ngFor='let extID of researchResource?.externalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                                        <span *ngIf="researchResource?.externalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
                                             <ext-id-popover-ng2 [extID]="extID" [putCode]="researchResource.putCode+i" [activityType]="'researchResource'"></ext-id-popover-ng2>
                                         </span>
                                      </li>
@@ -153,40 +153,37 @@
                         <span class="dotted-bar"></span>
                         <div class="row">
                             <!--Hosts-->
-                            <div class="col-md-12" *ngIf="researchResource?.proposal?.hosts?.organization">
-                                <div *ngFor="let host of researchResource?.proposal?.hosts?.organization;let i = index;trackBy:trackByIndex">
-                                    <div class="journaltitle">
-                                        <span>{{host?.name}}</span>
-                                        <span *ngIf="host?.address"> (</span>
-                                        <span *ngIf="host?.address?.city">{{host?.address?.city}}</span><span *ngIf="host?.address?.region">, </span><span>{{host?.address?.region}}</span><span *ngIf="host?.address?.country">, </span><span>{{host?.address?.country}}</span>
-                                        <span *ngIf="host?.address">)</span>
-                                    </div>
+                            <div class="col-md-12" *ngIf="researchResource?.hosts">
+                                <div *ngFor="let host of researchResource?.hosts;let i = index;trackBy:trackByIndex">
+                                    <span>{{host?.name}}</span>
+                                    <span *ngIf="host?.city || host?.region  || host?.country"> (</span>
+                                    <span *ngIf="host?.city">{{host?.city}}</span><span *ngIf="host?.region">, </span><span>{{host?.region}}</span><span *ngIf="host?.country">, </span><span>{{host?.country}}</span>
+                                    <span *ngIf="host?.city || host?.region  || host?.country">)</span>
                                     <!--Org ids-->
-                                    <div class="org-ids" *ngIf="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier">
+                                    <div class="org-ids" *ngIf="host?.orgDisambiguatedId">
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
-                                            
-                                            <org-identifier-popover-ng2 [value]="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier" [putCode]="researchResource.putCode+i" [type]="host?.disambiguatedOrganization?.disambiguationSource"></org-identifier-popover-ng2>
+                                            <org-identifier-popover-ng2 [value]="host?.orgDisambiguatedId" [putCode]="researchResource.putCode+i" [type]="host?.disambiguationSource"></org-identifier-popover-ng2>
                                         </div>
                                     </div><!--org-ids-->
                                 </div>
                             </div>
                             <!--Translated title-->       
-                            <div class="col-md-6" *ngIf="researchResourceService.details[researchResource.putCode].proposal?.translatedTitle?.content" >
+                            <div class="col-md-6" *ngIf="researchResourceService.details[researchResource.putCode].translatedTitle" >
                                 <div class="bottomBuffer">
                                     <strong><@orcid.msg
-                                        'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{researchResourceService.details[researchResource.putCode].proposal.translatedTitle.languageName}})</i></span>
-                                    <div>{{researchResourceService.details[researchResource.putCode].proposal.translatedTitle.content}}</div>                
+                                        'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{researchResourceService.details[researchResource.putCode].translatedTitleLanguageCode}})</i></span>
+                                    <div>{{researchResourceService.details[researchResource.putCode].translatedTitle}}</div>                
                                 </div>
                             </div>
-                            <div class="col-md-6" *ngIf="researchResourceService.details[researchResource.putCode].proposal?.url?.value" >
+                            <div class="col-md-6" *ngIf="researchResourceService.details[researchResource.putCode].url" >
                                 <div class="bottomBuffer">
                                     <strong>
                                         <@orcid.msg
                                         'common.url'/>
                                     </strong>
                                     <div>
-                                        <a href="{{researchResourceService.details[researchResource.putCode].proposal.url.value | urlProtocol}}" target="url.value">{{researchResourceService.details[researchResource.putCode].proposal.url.value}}</a>
+                                        <a href="{{researchResourceService.details[researchResource.putCode].url | urlProtocol}}" target="proposal.url">{{researchResourceService.details[researchResource.putCode].url}}</a>
                                     </div>              
                                 </div>
                             </div>          
@@ -195,13 +192,12 @@
                             <div class="col-md-6">
                                 <div class="bottomBuffer">
                                     <strong><@orcid.msg 'groups.common.created'/></strong><br />
-                                    <div>{{researchResourceService.details[researchResource.putCode].createdDate.value | date:'yyyy-MM-dd'}}</div>
+                                    <div>{{researchResourceService.details[researchResource.putCode].createdDate | ajaxFormDateToISO8601}}</div>
                                 </div>      
                             </div>    
                         </div>
-                        <div class="row bottomBuffer">         
-                            
-                                <div class="research-resource-list-container col-md-12" *ngIf="researchResourceService.details[researchResource.putCode].resourceItems?.length > 0">
+                        <div class="row bottomBuffer">                                    
+                                <div class="research-resource-list-container col-md-12" *ngIf="researchResourceService.details[researchResource.putCode].items?.length > 0">
                                     <ul class="sources-edit-list">
                                         <li class="source-active">
                                             <!-- Header -->
@@ -220,7 +216,7 @@
                                             </div>
                                             <!-- End of Header -->
                                         </li>
-                                        <li *ngFor="let resourceItem of researchResourceService.details[researchResource.putCode].resourceItems; let index = index; let first = first; let last = last;">
+                                        <li *ngFor="let resourceItem of researchResourceService.details[researchResource.putCode].items; let index = index; let first = first; let last = last;">
                                             <!-- Active row -->
                                             <div class="row source-line-peer-review">
                                                 <!--Resource item name-->
@@ -245,10 +241,10 @@
                                             <!-- Details row -->
                                             <div class="row" *ngIf="showResourceItemDetails[researchResource.putCode+'resourceItem'+index]" >
                                                 <!--Ext ids-->
-                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.externalIdentifiers?.externalIdentifier.length > 0">
+                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.externalIdentifiers?.length > 0">
                                                     <ul class="id-details clearfix">
-                                                        <li *ngFor='let extID of resourceItem?.externalIdentifiers?.externalIdentifier;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
-                                                            <span *ngIf="resourceItem?.externalIdentifiers?.externalIdentifier[0].value?.length > 0">
+                                                        <li *ngFor='let extID of resourceItem?.externalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "type.value"]' class="url-popover">
+                                                            <span *ngIf="resourceItem?.externalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
                                                                 <ext-id-popover-ng2 [extID]="extID" [putCode]="researchResource.putCode+'resourceItem'+index" [activityType]="'researchResource'"></ext-id-popover-ng2>
                                                             </span>
                                                          </li>
@@ -256,38 +252,30 @@
                                                 </div>
 
                                                 <!--Hosts-->
-                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.hosts?.organization.length > 0">
-                                                    <div *ngFor="let host of resourceItem?.hosts?.organization">
+                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.hosts?.length > 0">
+                                                    <div *ngFor="let host of resourceItem?.hosts">
                                                         <span>{{host?.name}}</span>
-                                                        <span *ngIf="host?.address"> (</span>
-                                                        <span *ngIf="host?.address?.city">{{host?.address?.city}}</span><span *ngIf="host?.address?.region">, </span><span>{{host?.address?.region}}</span><span *ngIf="host?.address?.country">, </span><span>{{host?.address?.country}}</span>
-                                                        <span *ngIf="host?.address">)</span>
+                                                        <span *ngIf="host?.city || host?.region  || host?.country"> (</span>
+                                                        <span *ngIf="host?.city">{{host?.city}}</span><span *ngIf="host?.region">, </span><span>{{host?.region}}</span><span *ngIf="host?.country">, </span><span>{{host?.country}}</span>
+                                                        <span *ngIf="host?.city || host?.region  || host?.country">)</span>
                                                         <!--Org ids-->
-                                                        <div class="org-ids" *ngIf="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier">
+                                                        <div class="org-ids" *ngIf="host?.orgDisambiguatedId
+">
                                                             <div class="col-md-12">   
                                                                 <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
-                                                                <org-identifier-popover-ng2 [value]="host?.disambiguatedOrganization?.disambiguatedOrganizationIdentifier" [putCode]="researchResource.putCode+i" [type]="host?.disambiguatedOrganization?.disambiguationSource"></org-identifier-popover-ng2>
-                                                            </div>
-                                                            <div class="col-md-11 bottomBuffer info-detail leftBuffer clearfix">              
-                                                                <div *ngIf="host?.disambiguatedOrganization?.externalIdentifiers">
-                                                                    <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{host?.disambiguatedOrganization?.disambiguationSource}}</strong><br>
-                                                                    <ul class="reset">
-                                                                        <li *ngFor="let addlExtId of host?.disambiguatedOrganization?.externalIdentifiers?.externalIdentifier">
-                                                                            {{addlExtId?.disambiguationSource}}:  {{addlExtId?.disambiguatedOrganizationIdentifier}}</li>
-                                                                    </ul>
-                                                                </div>
+                                                                <org-identifier-popover-ng2 [value]="host?.orgDisambiguatedId" [putCode]="researchResource.putCode+i" [type]="host?.disambiguationSource"></org-identifier-popover-ng2>
                                                             </div>
                                                         </div><!--org-ids-->
                                                     </div>
                                                 </div>
                                                 <!--Url-->
-                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.url?.value">
+                                                <div class="col-md-12 info-detail" *ngIf="resourceItem?.url">
                                                     <strong>
                                                         <@orcid.msg
                                                         'common.url'/>
                                                     </strong>
                                                     <div>
-                                                        <a href="{{resourceItem.url.value | urlProtocol}}" target="url.value">{{resourceItem.url.value}}</a>
+                                                        <a href="{{resourceItem.url | urlProtocol}}" target="resourceItem.value">{{resourceItem.url}}</a>
                                                     </div>              
                                                 </div> 
                                             </div>
@@ -301,14 +289,14 @@
                 <div class="row source-line" *ngIf="group.activePutCode == researchResource.putCode">
                     <!--Edit sources-->
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
-                        {{researchResource?.source?.sourceName?.content}}
+                        {{researchResource?.sourceName}}
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
                         <div *ngIf="editSources[group.groupId]">
-                            <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultActivity.putCode"></span><span *ngIf="researchResource.putCode == group.defaultActivity.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                            <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                             
                             <#if !(isPublicProfile??)>
-                            <a (click)="makeDefault(group, researchResource, researchResource.putCode)" *ngIf="researchResource.putCode != group.defaultActivity.putCode">
+                            <a (click)="makeDefault(group, researchResource, researchResource.putCode)" *ngIf="researchResource.putCode != group.defaultResearchResource.putCode">
                                 <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
                             </#if>
@@ -321,7 +309,7 @@
                                 <li>
                                     <a 
                                         (click)="deleteResearchResourceConfirm(researchResource)"  
-                                        title="<@orcid.msg 'freemarker.btnDelete' /> {{researchResource?.proposal?.title?.title?.content}}" 
+                                        title="<@orcid.msg 'freemarker.btnDelete' /> {{researchResource?.title?.title?.content}}" 
                                         (mouseenter)="showTooltip(researchResource.putCode+'-deleteActiveSource')" 
                                         (mouseleave)="hideTooltip(researchResource.putCode+'-deleteActiveSource')">
                                         <span class="glyphicon glyphicon-trash"></span>
@@ -343,13 +331,13 @@
                 <div *ngIf="group.activePutCode != researchResource.putCode" class="row source-line">
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <a (click)="group.activePutCode = researchResource.putCode">                                
-                            {{researchResource?.source?.sourceName?.content}}
+                            {{researchResource?.sourceName}}
                         </a>
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
                         <#if !(isPublicProfile??)>
-                        <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultActivity.putCode.value"></span><span *ngIf="researchResource.putCode == group.defaultActivity.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                        <a (click)="makeDefault(group, researchResource, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultActivity.putCode.value">
+                        <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <a (click)="makeDefault(group, researchResource, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultResearchResource.putCode.value">
                             <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
                         </#if>
@@ -360,7 +348,7 @@
                         <ul class="sources-actions">
                             <li>
                                 <a (click)="deleteResearchResourceConfirm(researchResource)" (mouseenter)="showTooltip(researchResource.putCode+'-deleteInactiveSource')" (mouseleave)="hideTooltip(researchResource.putCode+'-deleteInactiveSource')">
-                                    <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{researchResource?.proposal?.title?.title?.content}}"></span>
+                                    <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{researchResource?.title?.title?.content}}"></span>
                                 </a>
 
                                 <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[researchResource.putCode+'-deleteInactiveSource'] == true">
@@ -376,7 +364,7 @@
                 </div> 
                 <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                        <@orcid.msg 'groups.common.source'/>: {{researchResource?.source?.sourceName?.content }}
+                        <@orcid.msg 'groups.common.source'/>: {{researchResource?.sourceName }}
                     </div>
                     
                     <div class="col-md-3 col-sm-3 col-xs-9">
@@ -406,7 +394,7 @@
                             </li>
 
                             <li *ngIf="group?.researchResources?.length == 1">
-                                <a (click)="deleteResearchResourceConfirm(group.defaultActivity)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
+                                <a (click)="deleteResearchResourceConfirm(group.defaultResearchResource)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
                                 <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteSource']">

@@ -71,24 +71,41 @@ public class ResearchResourceItem {
     }
     
     public static ResearchResourceItem fromValue(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem item) {
+        if (item == null)
+            return null;
+        
         ResearchResourceItem researchResourceItem = new ResearchResourceItem();
-        List<Org> hosts = new ArrayList<>();
-        for (Organization organization : item.getHosts().getOrganization()) {
-            hosts.add(Org.valueOf(organization));
-        }
-        researchResourceItem.setHosts(hosts);
         
-        List<ActivityExternalIdentifier> activityExternalIdentifiers = new ArrayList<>();
-        for (GroupAble groupable : item.getExternalIdentifiers().getExternalIdentifier()) {
-            ExternalID externalID = (ExternalID) groupable;
-            ActivityExternalIdentifier activityExternalIdentifier = ActivityExternalIdentifier.valueOf(externalID);
-            activityExternalIdentifiers.add(activityExternalIdentifier);
+        if(item.getHosts() != null) {
+            List<Org> hosts = new ArrayList<>();
+            for (Organization organization : item.getHosts().getOrganization()) {
+                hosts.add(Org.valueOf(organization));
+            }
+            researchResourceItem.setHosts(hosts);
         }
-        researchResourceItem.setExternalIdentifiers(activityExternalIdentifiers);
         
-        researchResourceItem.setResourceName(item.getResourceName());
-        researchResourceItem.setResourceType(item.getResourceType());
-        researchResourceItem.setUrl(item.getUrl().getValue());
+        if(item.getExternalIdentifiers() != null) {
+            List<ActivityExternalIdentifier> activityExternalIdentifiers = new ArrayList<>();
+            for (GroupAble groupable : item.getExternalIdentifiers().getExternalIdentifier()) {
+                ExternalID externalID = (ExternalID) groupable;
+                ActivityExternalIdentifier activityExternalIdentifier = ActivityExternalIdentifier.valueOf(externalID);
+                activityExternalIdentifiers.add(activityExternalIdentifier);
+            }
+            researchResourceItem.setExternalIdentifiers(activityExternalIdentifiers);
+        }
+        
+        if(item.getResourceName() != null) {
+            researchResourceItem.setResourceName(item.getResourceName());
+        }
+        
+        if(item.getResourceType() != null) {
+            researchResourceItem.setResourceType(item.getResourceType());
+        }
+        
+        if(item.getUrl() != null) {
+            researchResourceItem.setUrl(item.getUrl().getValue());
+        }
+        
         return researchResourceItem;
     }
     
