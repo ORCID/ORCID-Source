@@ -143,10 +143,10 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     addFundingExternalIdentifier(): void {
         this.editFunding.externalIdentifiers.push(
             {
-                type: {
+                externalIdentifierType: {
                     value: ""
                 }, 
-                value: {
+                externalIdentifierId: {
                     value: ""
                 }, 
                 url: {
@@ -349,7 +349,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         };
     }
-
     isValidClass(cur): any {
         let valid = true;
 

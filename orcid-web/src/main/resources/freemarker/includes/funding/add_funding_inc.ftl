@@ -236,9 +236,9 @@
                     <!-- Value -->
                     <div class="form-group">
                         <label id="funding-ext-ids-value-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_value'/></label>                        
-                        <input name="currentFundingExternalIdentifierValue" id="funding-ext-ids-value-input" type="text" class="form-control" ng-model="externalIdentifier.value.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" ng-model-onblur/>
-                        <span class="orcid-error" ng-show="externalIdentifier.value.errors.length > 0">
-                            <div ng-repeat='error in externalIdentifier.value.errors' ng-bind-html="error"></div>
+                        <input name="currentFundingExternalIdentifierValue" id="funding-ext-ids-value-input" type="text" class="form-control" ng-model="externalIdentifier.externalIdentifierId.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" ng-model-onblur/>
+                        <span class="orcid-error" ng-show="externalIdentifier.externalIdentifierId.errors.length > 0">
+                            <div ng-repeat='error in externalIdentifier.externalIdentifierId.errors' ng-bind-html="error"></div>
                         </span>
                     </div>
                     <!-- URL -->
