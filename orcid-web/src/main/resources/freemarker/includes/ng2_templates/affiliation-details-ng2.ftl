@@ -221,10 +221,10 @@
                 </div>
                 <div *ngIf="group.activePutCode != affiliation.putCode.value" class="row source-line">
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                        <a (click)="group.activePutCode = affiliation.putCode.value">                                
+                        <a (click)="swapSources(group, affiliation.putCode.value)">                               
                             {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                         </a>
-                    </div>                                        
+                    </div>                                       
                     <div class="col-md-3 col-sm-3 col-xs-10">
                         <#if !(isPublicProfile??)>
                         <span class="glyphicon glyphicon-check" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>                        

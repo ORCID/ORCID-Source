@@ -143,10 +143,10 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     addFundingExternalIdentifier(): void {
         this.editFunding.externalIdentifiers.push(
             {
-                type: {
+                externalIdentifierType: {
                     value: ""
                 }, 
-                value: {
+                externalIdentifierId: {
                     value: ""
                 }, 
                 url: {
@@ -224,14 +224,20 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 return forDisplay;
             }
         });
-        $("#organizationDefinedType").bind("typeahead:selected", function(obj, datum){
-            this.selectOrgDefinedFundingSubType(datum);
-            
-        });
+        $("#organizationDefinedType").bind(
+            "typeahead:selected", 
+            (
+                function(obj, datum){
+                    this.selectOrgDefinedFundingSubType(datum);
+                }
+            ).bind(this)
+        );
     };
 
 
     closeModal(): void {
+        this.unbindTypeaheadForOrgs();
+        this.unbindTypeaheadForSubTypes();
         this.modalService.notifyOther(
             {
                 action:'close', 
@@ -343,7 +349,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         };
     }
-
     isValidClass(cur): any {
         let valid = true;
 
@@ -436,6 +441,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
             if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
                 this.getDisambiguatedFunding(datum.disambiguatedAffiliationIdentifier);
+                this.unbindTypeaheadForOrgs();
             }
         }
     };
@@ -535,11 +541,13 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editTranslatedTitle = !this.editTranslatedTitle;
     };
 
-    unbindTypeahead(): void {
+    unbindTypeaheadForOrgs(): void {
         $('#fundingName').typeahead('destroy');
     };
 
-
+    unbindTypeaheadForSubTypes(): void {
+        $('#organizationDefinedType').typeahead('destroy');
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
@@ -547,8 +555,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnDestroy() {
-        (<any>$('#fundingName')).typeahead('destroy');
-        (<any>$('#organizationDefinedType')).typeahead('destroy');
+        this.unbindTypeaheadForOrgs();
+        this.unbindTypeaheadForSubTypes();
   
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
@@ -561,6 +569,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
                     if ( res.action === "open") {
                         this.bindTypeaheadForOrgs();
+                        this.bindTypeaheadForSubTypes();
                         this.editFunding = this.fundingService.getFundingToEdit();
                         
                         if (this.editFunding.putCode == null) {

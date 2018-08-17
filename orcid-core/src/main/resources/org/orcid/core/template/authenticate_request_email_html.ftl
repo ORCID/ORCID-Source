@@ -16,10 +16,13 @@
 		    	<@emailMacros.msg 'email.institutional_connection.1' /><@emailMacros.space />${clientName}.<br />
 		    	<@emailMacros.msg 'email.institutional_connection.2' /><@emailMacros.space /><a href="${authorization_url}"><@emailMacros.msg 'email.institutional_connection.here' /></a><@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.3' />
 		    </p>		    
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
-<@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
-		    </p>
+		    <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
+<@emailMacros.msg "email.common.warm_regards" />
+<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
+			</p>
+			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
+				<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
+			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.2" />
 			</p>					   

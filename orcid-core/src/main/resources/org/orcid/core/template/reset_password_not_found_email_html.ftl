@@ -10,21 +10,23 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-		    	<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
+		      <@emailMacros.msg "email.common.hello" /><@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<#if features["HTTPS_IDS"]?? && features["HTTPS_IDS"]> 
-		    		<@emailMacros.msg "email.locked.this_is_an_important_message.1" /><a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a><@emailMacros.msg "email.locked.this_is_an_important_message.2" />
-		    	<#else>
-		    		<@emailMacros.msg "email.locked.this_is_an_important_message.1" /><a href="${baseUriHttp}/${orcid}?lang=${locale}">${baseUriHttp}/${orcid}</a><@emailMacros.msg "email.locked.this_is_an_important_message.2" />
-		    	</#if>
+		    	<@emailMacros.msg "email.reset_password_not_found.email_provided" /><@emailMacros.msg "email.common.dear.comma" /> ${submittedEmail}<@emailMacros.msg "email.common.dear.comma" /> <@emailMacros.msg "email.reset_password_not_found.not_registered" />  
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.locked.the_orcid_registry_provides" />
+		    	<@emailMacros.msg "email.reset_password_not_found.another_email_reset" /> <a href="<@emailMacros.msg "email.common.reset_password.href" />"><@emailMacros.msg "email.common.reset_password.href" /></a>  
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		  		<@emailMacros.msg "email.locked.if_you_believe" />
-		    </p>	
+                <@emailMacros.msg "email.reset_password_not_found.unable_to_reset" />
+		    </p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+			    <@emailMacros.msg "email.reset_password_not_found.unsure_whether" /> <a href="<@emailMacros.msg "email.common.register.href" />"><@emailMacros.msg "email.common.register.href" /></a>  
+ 		    </p> 		    
+ 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">		  
+				<@emailMacros.msg "email.reset_password_not_found.we_recommend" />
+		    </p> 		     		    		    
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.warm_regards" />
 <a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
