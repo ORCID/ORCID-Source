@@ -5,9 +5,14 @@
     	<sql>ALTER TABLE email_event DROP CONSTRAINT email_event_email</sql>
     </changeSet>    
         
-    <changeSet id="USE-EMAIL-HASH-AS-PRIMARY-KEY" author="Angel Montenegro" runInTransaction="false">
+    <changeSet id="USE-EMAIL-HASH-AS-PRIMARY-KEY" author="Angel Montenegro" runInTransaction="false" dbms="postgresql">
          <sql>CREATE UNIQUE INDEX CONCURRENTLY email_primary_key_idx ON email (email_hash)</sql>
          <sql>ALTER TABLE email DROP CONSTRAINT email_pk, ADD CONSTRAINT email_primary_key PRIMARY KEY USING INDEX email_primary_key_idx</sql>         
+     </changeSet>
+     
+     <changeSet id="USE-EMAIL-HASH-AS-PRIMARY-KEY" author="Angel Montenegro" dbms="hsqldb">         
+         <sql>ALTER TABLE email DROP CONSTRAINT email_pk</sql>
+         <sql>ALTER TABLE email ADD CONSTRAINT email_primary_key PRIMARY KEY (email_hash)</sql>    
      </changeSet>
      
 </databaseChangeLog>
