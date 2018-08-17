@@ -3,6 +3,31 @@
 ## Current State (Release Candidate Stable)
 v3.0_rc1 is the current development release of the ORCID API.
 
+## Endpoints
+
+- activities (read only)
+- address
+- biography (read only)
+- distinction/distinctions
+- education/educations
+- email (read only)
+- employment/employments
+- external-identifiers
+- funding/fundings
+- invited-position/invited-positions
+- keywords
+- membership/memberships
+- other-names
+- peer-review/peer-reviews
+- person (read only)
+- personal-details (read only)
+- qualification/qualifications
+- research-resource/research-resources
+- researcher-urls
+- service/services
+- work/works
+
+
 ## XSDs and current state (all stable)
 - [activities-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/activities-3.0_rc1.xsd)
 **stable**
@@ -70,10 +95,11 @@ v3.0_rc1 is the current development release of the ORCID API.
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
 - Use of common namespace for *common:department-name*, *common:role-title* and *common:organization*
 
-### Work Summary
-- Addition of *work:journal-title* field
+### Research-resource
+- This new section of the ORCID record captures information about things that researchers use for their research which require a specific proposal process or credential to access, such as collections, equipment, infrastructure, and services. For more information see the [Research-resource tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/research-resources.md).
 
 ### Works
+- *work:journal-title* field is returned with the work summary
 - Addition of *common:external-id-normalized* when reading works for normalized work identifiers
 - Addition of *software* to the list of [supported work types](https://members.orcid.org/api/resources/work-types)
 
@@ -82,11 +108,9 @@ v3.0_rc1 is the current development release of the ORCID API.
 - Use of common namespace for *common:organization*, replacing *funding:organization*
 
 ### Peer-review
+- *reviewer-role* and *review-type* are returned with the peer-review summary
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
 - Addition of *common:external-id-normalized* when reading peer-reviews for normalized peer-review identifiers
-
-### Research-resource
-- This new section of the ORCID record captures information about things that researchers use for their research which require a specific proposal process or credential to access, such as collections, equipment, infrastructure, and services. For more information see the [Research-resource tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/research-resources.md).
 
 ## Sample files:
 

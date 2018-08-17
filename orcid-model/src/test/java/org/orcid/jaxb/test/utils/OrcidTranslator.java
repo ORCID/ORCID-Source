@@ -37,7 +37,7 @@ import com.google.common.io.Resources;
  * @author tom
  *
  */
-public class OrcidTranslator<T> {
+public class OrcidTranslator<T> { 
 
     private ObjectMapper mapper;
     Unmarshaller unmarshaller;
@@ -51,8 +51,14 @@ public class OrcidTranslator<T> {
     public enum SchemaVersion {
         V2_0("record_2.0/record-2.0.xsd", org.orcid.jaxb.model.record_v2.Record.class), 
         V2_1("record_2.1/record-2.1.xsd", org.orcid.jaxb.model.record_v2.Record.class), 
-        V3_0RC1("record_3.0_rc1/record-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.Record.class);
-
+        V3_0RC1("record_3.0_rc1/record-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.Record.class),
+        V3_0RC1_WORK("record_3.0_rc1/work-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.Work.class),
+        V3_0RC1_WORKS("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.Works.class),
+        V3_0RC1_PEER_REVIEW("record_3.0_rc1/peer-review-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.PeerReview.class),
+        V3_0RC1_FUNDING("record_3.0_rc1/funding-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.Funding.class),
+        V3_0RC1_FUNDINGS("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.Fundings.class),
+        V3_0RC1_ACTIVITIES("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary.class);
+        
         public final String location;
         public final Class<?> modelClass;
 
@@ -81,6 +87,13 @@ public class OrcidTranslator<T> {
      */
     public static OrcidTranslator<org.orcid.jaxb.model.v3.rc1.record.Record> v3_0RC1(){
         return new OrcidTranslator<org.orcid.jaxb.model.v3.rc1.record.Record>(SchemaVersion.V3_0RC1);
+    }
+    
+    /**
+     * @return a new v3.0rc1 OrcidTranslator
+     */
+    public static <X> OrcidTranslator<X> forSchema(SchemaVersion v){
+        return new OrcidTranslator<X>(v);
     }
 
     /**

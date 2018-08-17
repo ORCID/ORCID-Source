@@ -26,7 +26,7 @@ export class PrivacytoggleComponent implements AfterViewInit, OnChanges, OnDestr
 
     constructor(
     ) {
-        this.showElement = {};
+        this.showElement = [];
     }
 
     hideTooltip(elementId): void{

@@ -132,6 +132,7 @@
         </div>
       </div>                
       </#if>
+
       <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
       <work-summary-ng2></work-summary-ng2>
       </@orcid.checkFeatureStatus>         
@@ -156,8 +157,10 @@
         </div>    
         <!-- Affiliations / Education / Employment -->
         <#include "workspace_affiliations_body_list_v3.ftl"/>
+
         <!-- Fundings -->
-        <#include "workspace_fundings_body_list_v3.ftl"/>
+        <#include "/includes/ng2_templates/funding-ng2-template.ftl">
+        <funding-ng2></funding-ng2>
         
         <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
           <!--Research resources-->
@@ -373,15 +376,13 @@
   </div>
   </#if>
 </script>
-<#include "/includes/ng2_templates/research-resource-delete-ng2-template.ftl">
-<modalngcomponent elementHeight="160" elementId="modalResearchResourceDelete" elementWidth="300">
-    <research-resource-delete-ng2></research-resource-delete-ng2>
-</modalngcomponent><!-- Ng2 component -->
 
-<#include "/includes/ng2_templates/works-bulk-delete-ng2-template.ftl">
-<modalngcomponent elementHeight="280" elementId="modalWorksBulkDelete" elementWidth="600">
-    <works-bulk-delete-ng2></works-bulk-delete-ng2>
-</modalngcomponent><!-- Ng2 component -->
+<#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
+<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
+    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
+</modalngcomponent><!-- Ng2 component --> 
+
+
 
 <#include "/includes/ng2_templates/works-merge-ng2-template.ftl">
 <modalngcomponent elementHeight="180" elementId="modalWorksMerge" elementWidth="600">
@@ -399,10 +400,6 @@
     
 </modalngcomponent><!-- Ng2 component -->
 
-<#include "/includes/ng2_templates/works-form-ng2-template.ftl">
-<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="820">
-    <works-form-ng2></works-form-ng2>
-</modalngcomponent><!-- Ng2 component -->
 
 <modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>
@@ -422,17 +419,36 @@
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
-<modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
-    <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
-</modalngcomponent><!-- Ng2 component --> 
+<#include "/includes/ng2_templates/funding-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalFundingDelete" elementWidth="300">
+    <funding-delete-ng2></funding-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
-<@orcid.checkFeatureStatus 'ANGULAR2_DEV'>
-  <#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
-  <modalngcomponent elementHeight="645" elementId="modalFundingForm" elementWidth="700">
-    <funding-form-ng2></funding-form-ng2>
-  </modalngcomponent>
-</@orcid.checkFeatureStatus>
+<#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
+<modalngcomponent elementHeight="700" elementId="modalFundingForm" elementWidth="800">
+  <funding-form-ng2></funding-form-ng2>
+</modalngcomponent>
+
+<#include "/includes/ng2_templates/research-resource-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalResearchResourceDelete" elementWidth="300">
+    <research-resource-delete-ng2></research-resource-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/works-bulk-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="280" elementId="modalWorksBulkDelete" elementWidth="600">
+    <works-bulk-delete-ng2></works-bulk-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">
+    <works-delete-ng2></works-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/works-form-ng2-template.ftl">
+<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="820">
+    <works-form-ng2></works-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>

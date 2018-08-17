@@ -91,39 +91,39 @@
                 </@orcid.checkFeatureStatus>
 
                 <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <tr ng-controller="PasswordEditCtrl" ng-show="showEditPassword"
-                    ng-cloak>
-                    <td colspan="2" class="reset" id="password-edit">
-                        <span class="orcid-error"
-                            ng-show="changePasswordPojo.errors.length > 0">
-                            <div ng-repeat='error in changePasswordPojo.errors'
-                                ng-bind-html="error"></div>
-                        </span>
-                        <div class="form-group">
-                            <label for="passwordField">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label><br>
-                            <input id="passwordField" type="password" name="oldPassword" ng-enter="saveChangePassword()" 
-                                ng-model="changePasswordPojo.oldPassword" class="input-xlarge" />
-                            <span class="required">*</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="passwordField">${springMacroRequestContext.getMessage("change_password.newpassword")}</label><br>
-                            <input id="password" type="password" name="password" ng-enter="saveChangePassword()" 
-                                ng-model="changePasswordPojo.password" class="input-xlarge" />
-                            <span class="required">*</span> <@orcid.passwordHelpPopup />
-                        </div>
-                        <div class="form-group">
-                            <label for="retypedPassword">${springMacroRequestContext.getMessage("change_password.confirmnewpassword")}</label><br>
-                            <input id="retypedPassword" type="password"
-                                    name="retypedPassword"
-                                    ng-model="changePasswordPojo.retypedPassword" ng-enter="saveChangePassword()" 
-                                    class="input-xlarge" />
-                            <span class="required">*</span>
-                        </div>
-                        <button id="bottom-submit-password-change"
-                            class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>                                   
-                        <a class="cancel-option inner-row" ng-click="getChangePassword()" id="bottom-clear-password-changes">${springMacroRequestContext.getMessage("freemarker.btncancel")}</a>                                    
-                    </td>
-                </tr>
+                    <tr ng-controller="PasswordEditCtrl" ng-show="showEditPassword"
+                        ng-cloak>
+                        <td colspan="2" class="reset" id="password-edit">
+                            <span class="orcid-error"
+                                ng-show="changePasswordPojo.errors.length > 0">
+                                <div ng-repeat='error in changePasswordPojo.errors'
+                                    ng-bind-html="error"></div>
+                            </span>
+                            <div class="form-group">
+                                <label for="passwordField">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label><br>
+                                <input id="passwordField" type="password" name="oldPassword" ng-enter="saveChangePassword()" 
+                                    ng-model="changePasswordPojo.oldPassword" class="input-xlarge" />
+                                <span class="required">*</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="passwordField">${springMacroRequestContext.getMessage("change_password.newpassword")}</label><br>
+                                <input id="password" type="password" name="password" ng-enter="saveChangePassword()" 
+                                    ng-model="changePasswordPojo.password" class="input-xlarge" />
+                                <span class="required">*</span> <@orcid.passwordHelpPopup />
+                            </div>
+                            <div class="form-group">
+                                <label for="retypedPassword">${springMacroRequestContext.getMessage("change_password.confirmnewpassword")}</label><br>
+                                <input id="retypedPassword" type="password"
+                                        name="retypedPassword"
+                                        ng-model="changePasswordPojo.retypedPassword" ng-enter="saveChangePassword()" 
+                                        class="input-xlarge" />
+                                <span class="required">*</span>
+                            </div>
+                            <button id="bottom-submit-password-change"
+                                class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>                                   
+                            <a class="cancel-option inner-row" ng-click="getChangePassword()" id="bottom-clear-password-changes">${springMacroRequestContext.getMessage("freemarker.btncancel")}</a>                                    
+                        </td>
+                    </tr>
                 </@orcid.checkFeatureStatus>
                 
                 <!-- Privacy preferences -->
@@ -177,19 +177,16 @@
                         <deprecate-account-ng2></deprecate-account-ng2>
                     </td>
                 </tr>
-
-                <@orcid.checkFeatureStatus 'TWO_FACTOR_AUTHENTICATION'>
-                    <tr>
-                        <th><a name="edit2FA"></a>${springMacroRequestContext.getMessage("manage.2FA")}</th>
-                        <td><a href="" ng-click="toggle2FAEdit()" ng-bind="twoFAToggleText"></a></td>
-                    </tr>
-                    <tr ng-show="showEdit2FA" >
-                        <td colspan="2">
-                            <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
-                            <two-fa-state-ng2></two-fa-state-ng2>
-                        </td>
-                    </tr>
-                </@orcid.checkFeatureStatus>
+                <tr>
+                    <th><a name="edit2FA"></a>${springMacroRequestContext.getMessage("manage.2FA")}</th>
+                    <td><a href="" ng-click="toggle2FAEdit()" ng-bind="twoFAToggleText"></a></td>
+                </tr>
+                <tr ng-show="showEdit2FA" >
+                    <td colspan="2">
+                        <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
+                        <two-fa-state-ng2></two-fa-state-ng2>
+                    </td>
+                </tr>
                 <tr>
                     <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
                     <td><a href="" ng-click="toggleGetMyDataEdit()" ng-bind="getMyDataToggleText" /></a></td>

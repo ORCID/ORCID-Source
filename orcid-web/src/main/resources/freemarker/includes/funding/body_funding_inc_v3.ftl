@@ -48,7 +48,7 @@
                 </li><!--  End of header -->
 
 
-                <li ng-repeat="funding in group.activities" ng-if="group.activePutCode == funding.putCode.value || editSources[group.groupId]" funding-put-code="{{funding.putCode.value}}">
+                <li ng-repeat="funding in group.activities" funding-put-code="{{funding.putCode.value}}">
                     <!-- active row summary info -->
                     <div class="row" ng-if="group.activePutCode == funding.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-7">
@@ -255,7 +255,8 @@
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
                         <div class="col-md-7 col-sm-7 col-xs-12">
                               <@orcid.msg 'groups.common.source'/>: {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
-                        </div>                          
+                        </div> 
+                        <!--Preferred source-->                         
                         <div class="col-md-3 col-sm-3 col-xs-6" ng-if="group.activePutCode == funding.putCode.value">
                             <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                             
@@ -303,7 +304,7 @@
                                 </#if>
                             </ul>
                         </div>
-                    </div>
+                    </div><!--Bottom row-->
                 </li><!-- End line -->
             </ul>
         </div>

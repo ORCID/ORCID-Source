@@ -1821,7 +1821,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 .workspace-accordion-header h2.toggle-text,
 .workspace-title a.toggle-text {
     color: #fff;
-    //display: inline-block;
     font-size: 16px;
     font-weight: 700;
     height: 30px;
@@ -1831,6 +1830,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .workspace-accordion-header h2.toggle-text {
+    width: auto;
     width: initial;
     float: left;
 }
@@ -7535,6 +7535,17 @@ ul.comma li:last-child:after {
         display: block
     }
 
+    .workspace-accordion-header ul.workspace-bar-menu>li.affiliations-mobile>a.action-option {
+        width: 100%;
+        color: #494a4c;
+        overflow: hidden;
+        padding: 15px 0;
+        height: 60px!important;
+        text-align: center;
+        font-size: 18px;
+        display: block
+    }
+
     .workspace-accordion-header ul>li>a.works {
         width: 25%;
         font-size: 0
@@ -7554,6 +7565,12 @@ ul.comma li:last-child:after {
         font-size: 25px;
         color: #494a4c;
         display: block
+    }
+
+    .workspace-accordion-header ul>li.affiliations-mobile>a.action-option>span:not(.bibtex-wizard) {
+        font-size: 18px;
+        color: #494a4c;
+        display: inline-block;
     }
 
     .workspace-accordion-header ul>li>a.action-option.two-options {

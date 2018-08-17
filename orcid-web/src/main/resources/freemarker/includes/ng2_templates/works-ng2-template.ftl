@@ -4,7 +4,7 @@
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
-                <div class="col-md-4 col-sm-3 col-xs-12">
+                <div class="col-md-3 col-sm-3 col-xs-12 no-padding-right">
                     <div>
                         <a (click)="workspaceSrvc.toggleWorks()" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
@@ -23,7 +23,7 @@
                         </#if>
                     </div>
                 </div>
-                <div class="col-md-8 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
+                <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
                     <!--Sort menu-->
                     <div class="menu-container">                                     
                         <ul class="toggle-menu">

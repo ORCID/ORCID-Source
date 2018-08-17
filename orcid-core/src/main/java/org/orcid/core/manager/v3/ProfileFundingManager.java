@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3;
 
+import java.util.ArrayList;
+
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.record.Funding;
@@ -32,7 +34,24 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility);    
+    boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility);
+    
+    /**
+     * Updates visibility of multiple existing profile funding relationships
+     * 
+     * @param clientOrcid
+     *            The client orcid
+     * 
+     * @param profileFundingIds
+     *            The ids of the profile fundings that will be updated
+     * 
+     * @param visibility
+     *            The new visibility value for the profile profileFunding objects
+     *           
+     * @return true if the relationships were updated
+     */
+    boolean updateProfileFundingVisibilities(String orcid, ArrayList<Long> profileFundingIds, Visibility visibility);
+
         
     /**
      * Add a new funding subtype to the list of pending for indexing subtypes

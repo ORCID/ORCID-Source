@@ -54,8 +54,8 @@
         </li>
         <!--End edit sources-->
         <!---Work info-->
-        <li *ngFor="let work of group.works; let index = index; let first = first; let last = last;"><!--  orcid-put-code="{{work.putCode.value}}"*** -->
-            <div *ngIf="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
+        <ng-container *ngFor="let work of group.works; let index = index; let first = first; let last = last;">
+            <li *ngIf="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
                 <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
@@ -425,7 +425,7 @@
                         </ul>
                     </div>
                 </div>
-            </div>
-        </li>
+            </li>
+        </ng-container>
     </ul>
 </div>

@@ -68,6 +68,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Keywords;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
@@ -697,6 +698,14 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         return null;
     }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-review.json", method = RequestMethod.GET)
+    public @ResponseBody PeerReviewForm getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") long putCode) {
+        PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
+        validateVisibility(peerReview.getVisibility());
+        sourceUtils.setSourceName(peerReview);
+        return PeerReviewForm.valueOf(peerReview);
+    }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
     public @ResponseBody List<PeerReviewGroup> getPeerReviewsJson(@PathVariable("orcid") String orcid, @RequestParam("sortAsc") boolean sortAsc) {
@@ -756,7 +765,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
                 List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
                 IntStream.range(0, elementsList.size()).forEach(idx -> {
-                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), idx, orcid);
+                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), type.name() + '_' + idx, orcid);
                     elementsFormList.add(groupForm);
                 });
                 result.getAffiliationGroups().put(type, elementsFormList);

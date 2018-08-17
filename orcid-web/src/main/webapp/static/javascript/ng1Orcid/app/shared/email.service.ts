@@ -59,10 +59,10 @@ export class EmailService {
     addEmail( email? ): Observable<any> {
         let encoded_data;
         if( email ){
-            console.log('if', email);
+            //console.log('if', email);
             encoded_data = JSON.stringify( email );
         }else{
-            console.log('else', this.inputEmail);
+            //console.log('else', this.inputEmail);
             encoded_data = JSON.stringify( this.inputEmail );
             
         }

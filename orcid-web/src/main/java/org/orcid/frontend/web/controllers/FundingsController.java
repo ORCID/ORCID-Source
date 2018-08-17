@@ -18,9 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -31,9 +31,10 @@ import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
+import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.OrgDefinedFundingSubType;
@@ -138,24 +139,12 @@ public class FundingsController extends BaseWorkspaceController {
         endDate.setMonth("");
         endDate.setYear("");
 
-        // Set empty contributor
-        Contributor contr = new Contributor();
-        List<Contributor> contrList = new ArrayList<Contributor>();
-        Text rText = new Text();
-        rText.setValue("");
-        contr.setContributorRole(rText);
-        Text sText = new Text();
-        sText.setValue("");
-        contr.setContributorSequence(sText);
-        contrList.add(contr);
-        result.setContributors(contrList);
-
         // Set empty external identifier
-        List<FundingExternalIdentifierForm> emptyExternalIdentifiers = new ArrayList<FundingExternalIdentifierForm>();
-        FundingExternalIdentifierForm f = new FundingExternalIdentifierForm();
-        f.setType(Text.valueOf(DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE));
+        List<ActivityExternalIdentifier> emptyExternalIdentifiers = new ArrayList<ActivityExternalIdentifier>();
+        ActivityExternalIdentifier f = new ActivityExternalIdentifier();
+        f.setExternalIdentifierType(Text.valueOf(DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE));
         f.setUrl(new Text());
-        f.setValue(new Text());
+        f.setExternalIdentifierId(new Text());
         f.setRelationship(Text.valueOf(Relationship.SELF.value()));
         emptyExternalIdentifiers.add(f);
         result.setExternalIdentifiers(emptyExternalIdentifiers);
@@ -166,18 +155,18 @@ public class FundingsController extends BaseWorkspaceController {
 
         return result;
     }
-
+    
     /**
-     * Deletes a funding
+     * Deletes a funding by putCode
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.DELETE)
-    public @ResponseBody
-    FundingForm deleteFundingJson(HttpServletRequest request, @RequestBody FundingForm funding) {
-        if (funding != null && !PojoUtil.isEmpty(funding.getPutCode())) {
-            String orcid = getEffectiveUserOrcid();
-            profileFundingManager.removeProfileFunding(orcid, Long.valueOf(funding.getPutCode().getValue()));
+    public @ResponseBody Errors deleteFundingByPutCodeJson(@RequestParam(value = "id") String fundingId) {
+        Errors errors = new Errors();
+        boolean deleted = profileFundingManager.removeProfileFunding(getEffectiveUserOrcid(), Long.valueOf(fundingId));        
+        if(!deleted) {
+                //TODO: Log error in case the affiliation wasn't deleted
         }
-        return funding;
+        return errors;
     }
 
     /**
@@ -356,13 +345,13 @@ public class FundingsController extends BaseWorkspaceController {
         if (funding.getOrganizationDefinedFundingSubType() != null)
             copyErrors(funding.getOrganizationDefinedFundingSubType().getSubtype(), funding);
 
-        for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
-            if (extId.getType() != null)
-                copyErrors(extId.getType(), funding);
+        for (ActivityExternalIdentifier extId : funding.getExternalIdentifiers()) {
+            if (extId.getExternalIdentifierType() != null)
+                copyErrors(extId.getExternalIdentifierType(), funding);
             if (extId.getUrl() != null)
                 copyErrors(extId.getUrl(), funding);
-            if (extId.getValue() != null)
-                copyErrors(extId.getValue(), funding);
+            if (extId.getExternalIdentifierId() != null)
+                copyErrors(extId.getExternalIdentifierId(), funding);
         }
 
         // If there are no errors, persist to DB
@@ -409,13 +398,13 @@ public class FundingsController extends BaseWorkspaceController {
     }
 
     private void removeEmptyExternalIds(FundingForm funding) {
-        List<FundingExternalIdentifierForm> extIds = funding.getExternalIdentifiers();
-        List<FundingExternalIdentifierForm> updatedExtIds = new ArrayList<FundingExternalIdentifierForm>();
+        List<ActivityExternalIdentifier> extIds = funding.getExternalIdentifiers();
+        List<ActivityExternalIdentifier> updatedExtIds = new ArrayList<ActivityExternalIdentifier>();
         if (extIds != null) {
             // For all external identifiers
-            for (FundingExternalIdentifierForm extId : extIds) {
+            for (ActivityExternalIdentifier extId : extIds) {
                 // Keep only the ones that contains a value or url
-                if (!PojoUtil.isEmpty(extId.getValue()) || !PojoUtil.isEmpty(extId.getUrl())) {
+                if (!PojoUtil.isEmpty(extId.getExternalIdentifierId()) || !PojoUtil.isEmpty(extId.getUrl())) {
                     updatedExtIds.add(extId);
                 }
             }
@@ -426,8 +415,8 @@ public class FundingsController extends BaseWorkspaceController {
     private void setTypeToExternalIdentifiers(FundingForm funding) {
         if (funding == null || funding.getExternalIdentifiers() == null || funding.getExternalIdentifiers().isEmpty())
             return;
-        for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
-            extId.setType(Text.valueOf(DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE_CODE));
+        for (ActivityExternalIdentifier extId : funding.getExternalIdentifiers()) {
+            extId.setExternalIdentifierType(Text.valueOf(DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE_CODE));
         }
     }
 
@@ -440,8 +429,8 @@ public class FundingsController extends BaseWorkspaceController {
     }
 
     /**
-     * Saves an affiliation
-     * */
+     * Updates a funding visibility
+     */
     @RequestMapping(value = "/funding.json", method = RequestMethod.PUT)
     public @ResponseBody
     FundingForm updateProfileFundingJson(HttpServletRequest request, @RequestBody FundingForm fundingForm) {
@@ -450,6 +439,19 @@ public class FundingsController extends BaseWorkspaceController {
                     fundingForm.getVisibility().getVisibility());
         }        
         return fundingForm;
+    }
+    
+    /**
+     * Updates visibility on multiple fundings
+     */
+    @RequestMapping(value = "/{fundingIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
+    public @ResponseBody ArrayList<Long> updateAffiliationVisibilities(@PathVariable("fundingIdsStr") String fundingIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
+        String orcid = getEffectiveUserOrcid();
+        ArrayList<Long> fundIds = new ArrayList<Long>();
+        for (String fundId : fundingIdsStr.split(","))
+            fundIds.add(new Long(fundId));
+        profileFundingManager.updateProfileFundingVisibilities(orcid, fundIds, org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibilityStr));
+        return fundIds;
     }
 
     /**
@@ -666,23 +668,23 @@ public class FundingsController extends BaseWorkspaceController {
     public @ResponseBody
     FundingForm validateExternalIdentifiers(@RequestBody FundingForm funding) {
         if (funding.getExternalIdentifiers() != null && !funding.getExternalIdentifiers().isEmpty()) {
-            for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
+            for (ActivityExternalIdentifier extId : funding.getExternalIdentifiers()) {
                 extId.setErrors(new ArrayList<String>()); 
-                if(extId.getType() != null)
-                    extId.getType().setErrors(new ArrayList<String>());
+                if(extId.getExternalIdentifierType() != null)
+                    extId.getExternalIdentifierType().setErrors(new ArrayList<String>());
                 if(extId.getUrl() != null)
                     extId.getUrl().setErrors(new ArrayList<String>()); 
-                if(extId.getValue() != null)
-                    extId.getValue().setErrors(new ArrayList<String>());
+                if(extId.getExternalIdentifierId() != null)
+                    extId.getExternalIdentifierId().setErrors(new ArrayList<String>());
                 
-                if (!PojoUtil.isEmpty(extId.getType()) && extId.getType().getValue().length() > 255)
-                    setError(extId.getType(), "fundings.lenght_less_255");
+                if (!PojoUtil.isEmpty(extId.getExternalIdentifierType()) && extId.getExternalIdentifierType().getValue().length() > 255)
+                    setError(extId.getExternalIdentifierType(), "fundings.lenght_less_255");
                 if (!PojoUtil.isEmpty(extId.getUrl()))
                     validateUrl(extId.getUrl());
-                if (!PojoUtil.isEmpty(extId.getValue()) && extId.getValue().getValue().length() > 2084)
-                    setError(extId.getValue(), "fundings.length_less_2084");                
-                if(!PojoUtil.isEmpty(extId.getUrl()) && PojoUtil.isEmpty(extId.getValue())) {
-                    setError(extId.getValue(), "NotBlank.fundings.ext_id.value");
+                if (!PojoUtil.isEmpty(extId.getExternalIdentifierId()) && extId.getExternalIdentifierId().getValue().length() > 2084)
+                    setError(extId.getExternalIdentifierId(), "fundings.length_less_2084");                
+                if(!PojoUtil.isEmpty(extId.getUrl()) && PojoUtil.isEmpty(extId.getExternalIdentifierId())) {
+                    setError(extId.getExternalIdentifierId(), "NotBlank.fundings.ext_id.value");
                 }                
             }
         }

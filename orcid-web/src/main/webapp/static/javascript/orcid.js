@@ -80,7 +80,7 @@ var GroupedActivities = function(type) {
 };
 
 GroupedActivities.count = 0;
-GroupedActivities.prototype.FUNDING = 'funding';
+GroupedActivities.FUNDING = 'funding';
 GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.PEER_REVIEW = 'peerReview';
 GroupedActivities.AFFILIATION = 'affiliation';
@@ -257,6 +257,8 @@ GroupedActivities.prototype.makeDefault = function(putCode) {
     else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
     else if (this.type == GroupedActivities.PEER_REVIEW) title = act.subjectName;
     this.title =  title != null ? title.value : null;
+    //temp hack for sorting funding-remove when backend grouping complete
+    if (this.type == GroupedActivities.FUNDING) this.groupType = act.fundingTypeForDisplay;
 };
 
 GroupedActivities.prototype.rmByPut = function(putCode) {
@@ -314,9 +316,12 @@ var ActSortState = function(groupType) {
         _self.predicateKey = 'endDate';
         _self.reverseKey['date']  = false;
         _self.reverseKey['endDate']  = true;        
-    }  else if (_self.type == 'ng2_affiliation') {
+    } else if (_self.type == 'ng2_affiliation') {
         _self.predicateKey = 'endDate';
         _self.reverseKey['endDate']  = false;
+    } else if (_self.type == 'funding') {
+        //temp hack remove after backend grouping is complete
+        _self.reverseKey['date']  = false;
     }  
     
     _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
@@ -329,9 +334,9 @@ sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortStr
 sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getDefault().workType.value','title', '-dateSortString'];
 
 sortPredicateMap[GroupedActivities.FUNDING] = {};
-sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getDefault().fundingTypeForDisplay'];
-sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getDefault().fundingTypeForDisplay'];
-sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingTypeForDisplay','title', '-dateSortString'];
+sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['dateSortString', 'title','groupType'];
+sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', 'dateSortString','groupType'];
+sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['groupType','title', 'dateSortString'];
 
 sortPredicateMap[GroupedActivities.AFFILIATION] = {};
 sortPredicateMap[GroupedActivities.AFFILIATION]['endDate'] = ['-dateSortString', 'title'];

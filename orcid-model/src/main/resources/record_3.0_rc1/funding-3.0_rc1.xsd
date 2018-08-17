@@ -59,8 +59,7 @@
 							minOccurs="0" />
 						<xs:element name="amount" type="common:amount"
 							minOccurs="0" maxOccurs="1" />
-						<xs:element name="url" type="common:url" minOccurs="0"
-							maxOccurs="1" />
+						<xs:element ref="common:url" minOccurs="0" maxOccurs="1"/>
 						<xs:element ref="common:start-date" minOccurs="0"
 							maxOccurs="1">
 							<xs:annotation>
@@ -93,6 +92,7 @@
 							minOccurs="1" />
 						<xs:element ref="common:external-ids"
 							minOccurs="0" />
+						<xs:element ref="common:url" minOccurs="0" maxOccurs="1"/>
 						<xs:element name="type" type="funding:funding-type"
 							minOccurs="1" maxOccurs="1" />
 						<xs:element ref="common:start-date" minOccurs="0"

@@ -30,6 +30,9 @@ import { ContributorFilterPipe }
 import { DashToSpacePipe }
     from '../../pipes/dashToSpaceNg2.ts';
 
+import { ExternalIdentifierHtmlPipe }
+    from '../../pipes/externalIdentifierHtmlNg2.ts';
+
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
@@ -56,13 +59,6 @@ import { WorkExternalIdentifierHtmlPipe }
 
 //User generated modules
 
-/*
-import { DelegatesNg2Module }
-    from './../delegates/delegates.ts';
-
-import { EditTableNg2Module }
-    from './../editTable/editTable.ts';
-*/
 import { ExtIdPopoverNg2Module }
     from './../extIdPopover/extIdPopover.ts';
 
@@ -215,6 +211,7 @@ import { ResendClaimService }
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             DashToSpacePipe,
+            ExternalIdentifierHtmlPipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
@@ -236,6 +233,7 @@ import { ResendClaimService }
             AjaxFormDateToISO8601Pipe,
             ContributorFilterPipe,
             DashToSpacePipe,
+            ExternalIdentifierHtmlPipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
