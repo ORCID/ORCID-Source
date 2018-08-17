@@ -32,6 +32,9 @@ public enum Features implements Feature {
     
     @Label("Research resource actvities section in the UI")
     RESEARCH_RESOURCE,
+    
+    @Label("Reset password send email in all cases")
+    RESET_PASSWORD_EMAIL,
 
     @Label("Revoke access token if authorization code is reused")
     REVOKE_TOKEN_ON_CODE_REUSE,

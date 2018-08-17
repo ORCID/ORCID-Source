@@ -33,11 +33,11 @@
 	  			<@emailMacros.msg "email.deactivate.if_you_did" /> <a target="orcid.blank" href="${baseUri}/help/contact-us">${baseUri}/help/contact-us</a> <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
 	    	</p>			    	
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
-<@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>
+<@emailMacros.msg "email.common.warm_regards" />
+<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				<@emailMacros.msg "email.common.you_have_received_this_email" />
+				<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 			   <#include "email_footer_html.ftl"/>
