@@ -91,7 +91,10 @@ public enum Features implements Feature {
     DISABLE_1_1,
     
     @Label("Enable group affiliations")
-    GROUP_AFFILIATIONS;
+    GROUP_AFFILIATIONS,
+    
+    @Label("Verbos work group logging")
+    WORK_GROUP_LOGGING;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
