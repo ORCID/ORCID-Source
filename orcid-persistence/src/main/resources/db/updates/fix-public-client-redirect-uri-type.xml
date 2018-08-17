@@ -1,0 +1,8 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="PUBLIC-CLIENT-REDIRECT-URI-TYPE-SHOULD-BE-SSO" author="Angel Montenegro">
+		<sql>UPDATE client_redirect_uri SET redirect_uri_type='sso-authentication' WHERE client_details_id in (SELECT client_details_id FROM client_details WHERE client_type='PUBLIC_CLIENT')</sql>            		    
+    </changeSet>
+
+</databaseChangeLog>
