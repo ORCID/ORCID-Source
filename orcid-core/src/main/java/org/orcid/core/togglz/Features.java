@@ -93,6 +93,9 @@ public enum Features implements Feature {
     @Label("Enable group affiliations")
     GROUP_AFFILIATIONS,
     
+    @Label("Enable manual work grouping")
+    MANUAL_WORK_GROUPING,
+
     @Label("Verbos work group logging")
     WORK_GROUP_LOGGING;
     
