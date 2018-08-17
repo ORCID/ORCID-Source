@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.ResearchResourceManager;
+import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
 import org.orcid.pojo.ResearchResourceGroupPojo;
@@ -33,7 +34,7 @@ public class ResearchResourcePaginator {
         
         for (int i = offset; i < Math.min(offset + PAGE_SIZE, rr.getResearchResourceGroup().size()); i++) {
             org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup group = rr.getResearchResourceGroup().get(i);
-            page.getGroups().add(new ResearchResourceGroupPojo(group, i, orcid));
+            page.getGroups().add(ResearchResourceGroupPojo.valueOf(group, i, orcid));
         }
         page.setTotalGroups(rr.getResearchResourceGroup().size());
         
@@ -60,34 +61,34 @@ public class ResearchResourcePaginator {
     public static class StartDateComparator implements Comparator<ResearchResourceGroupPojo>{
         @Override
         public int compare(ResearchResourceGroupPojo g1, ResearchResourceGroupPojo g2) {
-            if (g1.getDefaultActivity().getProposal().getStartDate() == null && g2.getDefaultActivity().getProposal().getStartDate() == null)
+            if (g1.getDefaultResearchResource().getStartDate() == null && g2.getDefaultResearchResource().getStartDate() == null)
                 return 0;
-            if (g1.getDefaultActivity().getProposal().getStartDate() == null)
+            if (g1.getDefaultResearchResource().getStartDate() == null)
                 return -1;
-            if (g2.getDefaultActivity().getProposal().getStartDate() == null)
+            if (g2.getDefaultResearchResource().getStartDate() == null)
                 return 1;
-            return g1.getDefaultActivity().getProposal().getStartDate().compareTo(g2.getDefaultActivity().getProposal().getStartDate());
+            return g1.getDefaultResearchResource().getStartDate().toFuzzyDate().compareTo(g2.getDefaultResearchResource().getStartDate().toFuzzyDate());
         }        
     }
     
     public static class EndDateComparator implements Comparator<ResearchResourceGroupPojo>{
         @Override
         public int compare(ResearchResourceGroupPojo g1, ResearchResourceGroupPojo g2) {
-            if (g1.getDefaultActivity().getProposal().getEndDate() == null && g2.getDefaultActivity().getProposal().getEndDate() == null)
+            if (g1.getDefaultResearchResource().getEndDate() == null && g2.getDefaultResearchResource().getEndDate() == null)
                 return 0;
-            if (g1.getDefaultActivity().getProposal().getEndDate() == null)
+            if (g1.getDefaultResearchResource().getEndDate() == null)
                 return -1;
-            if (g2.getDefaultActivity().getProposal().getEndDate() == null)
+            if (g2.getDefaultResearchResource().getEndDate() == null)
                 return 1;
-            return g1.getDefaultActivity().getProposal().getEndDate().compareTo(g2.getDefaultActivity().getProposal().getEndDate());
+            return (g1.getDefaultResearchResource().getEndDate().toFuzzyDate()).compareTo(g2.getDefaultResearchResource().getEndDate().toFuzzyDate());
         }        
     }
 
     public static class TitleComparator implements Comparator<ResearchResourceGroupPojo>{
         @Override
         public int compare(ResearchResourceGroupPojo g1, ResearchResourceGroupPojo g2) {
-            String title1 = (g1.getDefaultActivity().getProposal().getTitle() == null || g1.getDefaultActivity().getProposal().getTitle().getTitle() == null || g1.getDefaultActivity().getProposal().getTitle().getTitle().getContent() == null)?null:g1.getDefaultActivity().getProposal().getTitle().getTitle().getContent().toLowerCase();
-            String title2 = (g2.getDefaultActivity().getProposal().getTitle() == null || g2.getDefaultActivity().getProposal().getTitle().getTitle() == null || g2.getDefaultActivity().getProposal().getTitle().getTitle().getContent() == null)?null:g2.getDefaultActivity().getProposal().getTitle().getTitle().getContent().toLowerCase();
+            String title1 = (g1.getDefaultResearchResource().getTitle() == null || g1.getDefaultResearchResource().getTitle() == null || g1.getDefaultResearchResource().getTitle() == null)?null:g1.getDefaultResearchResource().getTitle().toLowerCase();
+            String title2 = (g2.getDefaultResearchResource().getTitle() == null || g2.getDefaultResearchResource().getTitle() == null || g2.getDefaultResearchResource().getTitle() == null)?null:g2.getDefaultResearchResource().getTitle().toLowerCase();
             if (title1 == null && title2 == null)
                 return 0;
             if (title1 == null)

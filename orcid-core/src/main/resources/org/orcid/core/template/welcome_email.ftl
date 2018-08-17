@@ -25,8 +25,11 @@ ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.welcome.need_help.description" /><@emailMacros.space /><@emailMacros.msg "email.welcome.need_help.description.link.text" /> 
 
-<@emailMacros.msg "email.common.kind_regards" />
-${baseUri}
+<@emailMacros.msg "email.common.warm_regards" />
+<@emailMacros.msg "email.common.need_help.description.2.href" />
+
+
+${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
 <#include "email_footer.ftl"/>

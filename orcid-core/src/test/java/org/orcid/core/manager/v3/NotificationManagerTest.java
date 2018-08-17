@@ -36,6 +36,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.junit.After;
@@ -287,6 +288,16 @@ public class NotificationManagerTest extends DBUnitTest {
             when(mockEncypter.encryptForExternalUse(any(String.class)))
                     .thenReturn("Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
             notificationManager.sendPasswordResetEmail(primaryEmail, userOrcid);
+        }
+    }
+    
+    @Test
+    public void testResetNotFoundEmail() throws Exception {
+        resetMocks();
+        String submittedEmail = "email_not_in_orcid@test.orcid.org";
+        for (Locale locale : Locale.values()) {
+            Locale curLocale = org.orcid.jaxb.model.v3.rc1.common.Locale.valueOf(locale.name());
+            notificationManager.sendPasswordResetNotFoundEmail(submittedEmail, LocaleUtils.toLocale(curLocale.value()));
         }
     }
 

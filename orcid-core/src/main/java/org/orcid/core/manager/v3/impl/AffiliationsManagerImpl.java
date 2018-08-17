@@ -7,14 +7,15 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.OrgManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
@@ -301,6 +302,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         entity.setProfile(profile);
         setIncomingWorkPrivacy(entity, profile);
         entity.setAffiliationType(type.name());
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
         
         orgAffiliationRelationDao.persist(entity);
         orgAffiliationRelationDao.flush();
@@ -386,7 +388,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             entity.setVisibility(originalVisibility);
         }
         
-
+        // Populate display index in case it is missing
+        DisplayIndexCalculatorHelper.setDisplayIndexOnExistingEntity(entity, isApiRequest);
+        
         // Be sure it doesn't overwrite the source
         entity.setSourceId(existingSourceId);
         entity.setClientSourceId(existingClientSourceId);

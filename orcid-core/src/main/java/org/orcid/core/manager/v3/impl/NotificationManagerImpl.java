@@ -77,6 +77,7 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -472,6 +473,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("submittedEmail", submittedEmail);
         templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -487,6 +489,22 @@ public class NotificationManagerImpl implements NotificationManager {
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", locale), body, htmlBody);
     }
+    
+    @Override
+    public void sendPasswordResetNotFoundEmail(String submittedEmail, Locale locale) {     
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", submittedEmail);
+        templateParams.put("subject", getSubject("email.subject.reset_not_found", locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        addMessageParams(templateParams, locale);
+        // Generate body from template
+        String body = templateManager.processTemplate("reset_password_not_found_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("reset_password_not_found_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset_not_found", locale), body, htmlBody);
+    }
+
 
     @Override
     public void sendReactivationEmail(String submittedEmail, String userOrcid) {

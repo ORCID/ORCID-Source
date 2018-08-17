@@ -231,7 +231,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     hideSources(group): void {
-        this.editSources[group.groupId] = false;
+        this.editSources[group.activePutCode] = false;
     };
 
     hideTooltip(element): void{        
@@ -363,7 +363,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     showSources(group, $event): void {
         $event.stopPropagation();        
-        this.editSources[group.groupId] = true;
+        this.editSources[group.activePutCode] = true;
         this.hideAllTooltip();
     };
 
@@ -424,6 +424,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.sortDisplayKeyMemberships = displayKey;
                 break;
         }  
+    };
+
+    swapSources(group, putCode): void{
+        group.activePutCode = putCode;
+        this.editSources[group.activePutCode] = true;
     };
 
     toggleClickMoreInfo(key): void {

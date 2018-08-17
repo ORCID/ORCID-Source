@@ -70,6 +70,8 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     private Date createdDate;
 
     private Date lastModified;
+    
+    private boolean userSource;
 
     public static WorkForm valueOf(Work work) {
         if (work == null)
@@ -628,6 +630,14 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     public void setTranslatedTitle(TranslatedTitleForm translatedTitle) {
         this.translatedTitle = translatedTitle;
+    }
+    
+    public boolean isUserSource() {
+        return userSource;
+    }
+
+    public void setUserSource(boolean userSource) {
+        this.userSource = userSource;
     }
 
     @Override

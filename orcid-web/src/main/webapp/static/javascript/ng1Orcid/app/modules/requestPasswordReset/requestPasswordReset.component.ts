@@ -20,6 +20,9 @@ import { takeUntil }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
+import { FeaturesService }
+    from '../../shared/features.service.ts'
+
 import { GenericService } 
     from '../../shared/generic.service.ts';
 
@@ -43,12 +46,15 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     resetPasswordToggleText: any;
     requestResetPassword: any;
     showSendResetLinkError: any;
+    successEmailSentTo: string;
     url_path: string;
+    resetPasswordEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('RESET_PASSWORD_EMAIL'); 
 
     constructor(
         private cdr:ChangeDetectorRef,
         private commonService: CommonService,
         private elementRef: ElementRef, 
+        private featuresService: FeaturesService,
         private oauthService: OauthService,
         private requestPasswordResetService: GenericService,
     ) {
@@ -56,6 +62,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         this.showDeactivatedError = elementRef.nativeElement.getAttribute('showDeactivatedError');
         this.showReactivationSent = elementRef.nativeElement.getAttribute('showReactivationSent');
         this.showSendResetLinkError = false;
+        this.successEmailSentTo = "";
         this.requestResetPassword = {};
         this.url_path = '/reset-password.json';
     }
@@ -87,8 +94,11 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         )
         .subscribe(
             data => {
-                this.requestResetPassword = data; 
-                this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);               
+                this.requestResetPassword = data;
+                this.successEmailSentTo = this.requestResetPassword.email;
+                if(!this.resetPasswordEmailFeatureEnabled){
+                    this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);
+                }               
                 this.cdr.detectChanges();
             },
             error => {
@@ -156,6 +166,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     };
 
     ngOnInit() {
+        console.log(this.resetPasswordEmailFeatureEnabled);
         this.getRequestResetPassword();
         // init reset password toggle text
         this.showSendResetLinkError = false;

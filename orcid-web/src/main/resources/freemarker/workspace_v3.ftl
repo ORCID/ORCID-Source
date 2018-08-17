@@ -157,8 +157,10 @@
         </div>    
         <!-- Affiliations / Education / Employment -->
         <#include "workspace_affiliations_body_list_v3.ftl"/>
+
         <!-- Fundings -->
-        <#include "workspace_fundings_body_list_v3.ftl"/>
+        <#include "/includes/ng2_templates/funding-ng2-template.ftl">
+        <funding-ng2></funding-ng2>
         
         <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
           <!--Research resources-->
@@ -382,6 +384,21 @@
 
 
 
+<#include "/includes/ng2_templates/works-merge-ng2-template.ftl">
+<modalngcomponent elementHeight="180" elementId="modalWorksMerge" elementWidth="600">
+    <works-merge-ng2></works-merge-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/works-merge-choose-preferred-version-ng2-template.ftl">
+<modalngcomponent elementHeight="280" elementId="modalWorksMergeChoosePreferredVersion" elementWidth="600">
+    <works-merge-choose-preferred-version-ng2></works-merge-choose-preferred-version-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">
+    <works-delete-ng2></works-delete-ng2>
+    
+</modalngcomponent><!-- Ng2 component -->
 
 
 <modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
@@ -402,12 +419,13 @@
     <email-unverified-warning-ng2></email-unverified-warning-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
+<#include "/includes/ng2_templates/funding-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalFundingDelete" elementWidth="300">
     <funding-delete-ng2></funding-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
-<modalngcomponent elementHeight="800" elementId="modalFundingForm" elementWidth="800">
+<modalngcomponent elementHeight="700" elementId="modalFundingForm" elementWidth="800">
   <funding-form-ng2></funding-form-ng2>
 </modalngcomponent>
 

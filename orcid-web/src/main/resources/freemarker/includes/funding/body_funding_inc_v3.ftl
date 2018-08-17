@@ -1,13 +1,6 @@
 <ul ng-hide="!fundingSrvc.groups.length" class="workspace-fundings workspace-body-list bottom-margin-medium" ng-cloak>
     <li class="bottom-margin-small workspace-border-box card ng-scope" ng-repeat="group in fundingSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
         <div class="work-list-container">
-            <!--
-            <br />**********
-            {{group | json}}
-            <br />**********
-            {{editSources | json}}
-            <br />**********
-            -->
             <ul class="sources-edit-list">
                 <!-- Header -->
                 <li ng-if="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
@@ -262,7 +255,8 @@
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
                         <div class="col-md-7 col-sm-7 col-xs-12">
                               <@orcid.msg 'groups.common.source'/>: {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
-                        </div>                          
+                        </div> 
+                        <!--Preferred source-->                         
                         <div class="col-md-3 col-sm-3 col-xs-6" ng-if="group.activePutCode == funding.putCode.value">
                             <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                             
@@ -310,7 +304,7 @@
                                 </#if>
                             </ul>
                         </div>
-                    </div>
+                    </div><!--Bottom row-->
                 </li><!-- End line -->
             </ul>
         </div>

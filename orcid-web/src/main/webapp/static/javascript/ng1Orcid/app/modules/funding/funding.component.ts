@@ -58,6 +58,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     employments: any;
     fixedTitle: string;
     fundings: any;
+    fundingImportWizard: boolean;
     fundingToAddIds: any;
     groups: any;
     moreInfo: any;
@@ -70,6 +71,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     constructor(
         private elementRef: ElementRef,
+        private cdr: ChangeDetectorRef,
         private commonSrvc: CommonService,
         private fundingService: FundingService,
         private emailService: EmailService,
@@ -147,6 +149,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
         this.fixedTitle = '';
         this.fundings = new Array();
+        this.fundingImportWizard = false;
         this.fundingToAddIds = {};
         this.groups = new Array();
         this.moreInfo = {};
@@ -155,7 +158,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
-        this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
     }
 
@@ -208,107 +210,107 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfo[key]=false;
     };
 
-    deleteFunding(delFunding): void {
-        this.fundingService.removeFunding(delFunding).pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                console.log('delete response', data)
-                //this.fundings = data;
-            }
-        );
-        //this.closeModal();
-    };
-
-    deleteFundingConfirm(putCode, deleteGroup) {
-        var funding = this.fundingService.getFunding(putCode);
-        var maxSize = 100;
- 
-        
-        if (funding.fundingTitle && funding.fundingTitle.title){
-            this.fixedTitle = funding.fundingTitle.title.value;
-        }
-        else{
-            this.fixedTitle = '';
-        } 
-
-        if(this.fixedTitle.length > maxSize){
-            this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
-        }
-
-        /*
-        $.colorbox({
-            html : $compile($('#delete-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-        */
-    };
-
-    getFundingsById( ids ): any {
-        //console.log('getFundingsById', ids);
-        this.fundingService.getFundingsById( ids ).pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.fundings = data;
-                //console.log('this.getFundingsById', data, this.fundings);
-
-                for (let i in this.fundings) {
-                    var funding = this.fundings[i];
-                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING, this.groups);
-                };
-
-                //console.log('this.groups before', this.groups);
-                
-                for (let j in this.groups){
-
-                    let goodResponse = [];
-                    for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
-                        let tmpObj = new Object();
-                        tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
-                        tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
-
-                        goodResponse.push(tmpObj);
-                    }
-                    this.groups[j]['activitiesObj'] = goodResponse; 
-                    //console.log('good response', goodResponse, this.groups[j]);
-                }
-                console.log('this.groups after2', this.groups);
-                
-                if (this.fundings.length == 0) {
-                    this.fundingService.loading = false;
-                } else {
-                    //this.getFundingsById( this.fundingToAddIds );//previously addFundingToScope();
-                }       
-
-            },
-            error => {
-                //console.log('getBiographyFormError', error);
-            } 
-        );
-    }
-
-    getFundings(): any {
-        this.fundingService.getFundingsId()
+    deleteFunding(funding): void {
+        this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                
-                this.fundingToAddIds = data;
-                //console.log('getFundingsIds', data, this.fundingToAddIds, this.fundingToAddIds.length);
-                if( this.fundingToAddIds.length != 0 ) {
-                    var fundingIds = this.fundingToAddIds.splice(0,20).join()
-                    this.getFundingsById( fundingIds );
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.fundingService.notifyOther({funding:funding});
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalFundingDelete'});
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
             },
             error => {
-                //console.log('getBiographyFormError', error);
+                //console.log('getEmails', error);
             } 
         );
+    };
+
+    getFundingsById( ids ): any {
+        this.fundingService.getFundingsById( ids ).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                for (let i in data) {
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.FUNDING, this.groups);
+                };
+                for (let j in this.groups){
+                    let activitiesObjConvertedToArray = [];
+                    for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
+                        let tmpObj = new Object();
+                        tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
+                        tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
+                        activitiesObjConvertedToArray.push(tmpObj);
+                    }
+                    this.groups[j]['activitiesArray'] = activitiesObjConvertedToArray; 
+                }
+            },
+            error => {
+                console.log('getFundingsByIdError', error);
+            } 
+        );
+    }
+
+    getFundings(): any {
+        //Be sure all arrays are empty
+        this.groups = new Array();
+        if(this.publicView === "true") {
+             this.getPublicFundingsById();
+        } else {
+            this.fundingService.getFundingsId()
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if( data.length != 0 ) {
+                        var fundingIds = data.splice(0,20).join()
+                        this.getFundingsById( fundingIds );
+                    }
+                },
+                error => {
+                    //console.log('getFundingsError', error);
+                } 
+            );
+        }
+    };
+
+    getPublicFundingsById(): any {
+        this.fundingService.getPublicFundingsById( orcidVar.fundingIdsJson ).pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                for (let i in data) {
+                    groupedActivitiesUtil.group(data[i],GroupedActivities.FUNDING, this.groups);
+                };
+                for (let j in this.groups){
+                    let activitiesObjConvertedToArray = [];
+                    for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
+                        let tmpObj = new Object();
+                        tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
+                        tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
+                        activitiesObjConvertedToArray.push(tmpObj);
+                    }
+                    this.groups[j]['activitiesArray'] = activitiesObjConvertedToArray; 
+                }
+            },
+            error => {
+                console.log('getFundingsByIdError', error);
+            } 
+        );
+    }
+
+    hideAllTooltip(): void {
+        for (var idx in this.showElement){
+            this.showElement[idx]=false;
+        }
     };
 
     hideSources(group): void {
@@ -324,8 +326,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     hideURLPopOver(id): void{
         this.displayURLPopOver[id] = false;
     };
-
-
 
     isValidClass(cur): any {
         let valid = true;
@@ -356,6 +356,22 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         return '';
     };
 
+    makeDefault(group, putCode): any {
+        this.fundingService.updateToMaxDisplay(group, putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                group.defaultPutCode = putCode;
+                group.activePutCode = putCode;   
+            },
+            error => {
+                console.log('makeDefault', error);
+            } 
+        );
+    }
+
     moreInfoMouseEnter(key, $event): void {
         $event.stopPropagation();
         if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
@@ -369,11 +385,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openEditFunding( putCode ): void {
-
         let data = this.fundingService.getEditable(putCode, this.groups)
-        //console.log('editable data', data)
         this.addFundingModal(data);
-
     }
 
     removeDisambiguatedFunding(): void {
@@ -383,6 +396,30 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (this.editFunding != undefined && this.editFunding.disambiguatedFundingSourceId != undefined) {
             delete this.editFunding.disambiguatedFundingSourceId;
         }
+    }
+
+    setGroupPrivacy = function(group, priv, $event): void {
+        $event.preventDefault();
+        var putCodes = new Array();
+        for (var idx in group.activities) {
+            putCodes.push(group.activities[idx].putCode.value);
+            group.activities[idx].visibility.visibility = priv;
+        }
+        this.fundingService.updateVisibility(putCodes, priv)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if (putCodes.length > 0) {
+                    this.fundingService.updateVisibility(putCodes, priv);   
+                }
+                
+            },
+            error => {
+                console.log('Error updating group visibility', error);
+            } 
+        );
     }
 
     setPrivacy( obj, priv, $event ): void {
@@ -409,18 +446,19 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    showAddModal(): void{
-        let numOfResults = 25;
-
-    };
-
     showDetailsMouseClick = function(group, $event) {
         $event.stopPropagation();
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
     };
 
-    showSources(group): void {
+    showFundingImportWizard(): void {
+        this.fundingImportWizard = !this.fundingImportWizard;               
+    };
+
+    showSources(group,$event): void {
+        $event.stopPropagation();
         this.editSources[group.groupId] = true;
+        this.hideAllTooltip();
     };
 
     showTooltip(element): void{        
@@ -481,18 +519,25 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     userIsSource(funding): boolean {
-        if (funding.value.source == orcidVar.orcidId){
+        if (funding.source == orcidVar.orcidId){
             return true;
         }
         return false;
     };
 
-
-
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+
+        this.subscription = this.fundingService.notifyObservable$.subscribe(
+            (res) => {                
+                if(res.action == 'add' || res.action == 'cancel' || res.action == 'delete') {
+                    if(res.successful == true) {
+                        this.getFundings();
+                    }
+                }                
+            }
+        );
     };
 
     ngOnDestroy() {
@@ -501,7 +546,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //console.log('initi funding component');
+        //console.log('init funding component');
         this.getFundings();
         
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
