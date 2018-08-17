@@ -347,10 +347,12 @@
 									<!-- URI -->
 									<div class="col-md-12 col-sm-12 col-xs-12">
 										<input type="text" ng-model="rUri.value.value" class="input-xlarge">
+										<a ng-show="client.type.value == 'public-client'" href="" id="delete-redirect-uri" ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a>
+										<a ng-show="$last && client.type.value == 'public-client'" href="" id="load-empty-redirect-uri" ng-click="addRedirectUri()" class="glyphicon glyphicon-plus grey"></a>										
 									</div>
 								</div>
 								<div class="row">
-									<table class="edit-client-table">
+								    <table class="edit-client-table" ng-show="client.type.value != 'public-client'">
 										<tr>
 											<td class="edit-client-table-col">
 												<!-- Type -->
