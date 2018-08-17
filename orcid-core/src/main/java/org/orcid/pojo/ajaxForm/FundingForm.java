@@ -49,7 +49,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
 
     private List<Contributor> contributors;
 
-    private List<FundingExternalIdentifierForm> externalIdentifiers;
+    private List<ActivityExternalIdentifier> externalIdentifiers;
 
     private Text putCode;
 
@@ -190,11 +190,11 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         this.sourceName = sourceName;
     }
 
-    public List<FundingExternalIdentifierForm> getExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(List<FundingExternalIdentifierForm> externalIdentifiers) {
+    public void setExternalIdentifiers(List<ActivityExternalIdentifier> externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 
@@ -319,9 +319,9 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         // Set external identifiers
         if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
             ExternalIDs fExternalIdentifiers = new ExternalIDs();
-            for (FundingExternalIdentifierForm fExternalIdentifier : externalIdentifiers) {
-                if (!PojoUtil.isEmtpy(fExternalIdentifier))
-                    fExternalIdentifiers.getExternalIdentifier().add(fExternalIdentifier.toFundingExternalIdentifier());
+            for (ActivityExternalIdentifier fExternalIdentifier : externalIdentifiers) {
+                if (!PojoUtil.isEmpty(fExternalIdentifier))
+                    fExternalIdentifiers.getExternalIdentifier().add(fExternalIdentifier.toExternalIdentifier());
             }
             result.setExternalIdentifiers(fExternalIdentifiers);
         }
@@ -355,11 +355,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         else
             result.setDescription(new Text());
 
-        if (funding.getStartDate() != null)
-            result.setStartDate(Date.valueOf(funding.getStartDate()));
-
-        if (funding.getEndDate() != null)
-            result.setEndDate(Date.valueOf(funding.getEndDate()));        
+        initDateFields(result, funding.getStartDate(), funding.getEndDate());    
 
         if (funding.getType() != null)
             result.setFundingType(Text.valueOf(funding.getType().value()));
@@ -449,11 +445,11 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
             result.setContributors(contributors);
         }
 
-        List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
+        List<ActivityExternalIdentifier> externalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();
         // Set external identifiers 
         if (funding.getExternalIdentifiers() != null) {            
             for (ExternalID fExternalIdentifier : funding.getExternalIdentifiers().getExternalIdentifier()) {
-                FundingExternalIdentifierForm fundingExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
+                ActivityExternalIdentifier fundingExternalIdentifierForm = ActivityExternalIdentifier.valueOf(fExternalIdentifier);
                 externalIdentifiersList.add(fundingExternalIdentifierForm);
             }            
         } 
@@ -464,7 +460,47 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
 
 
         return result;
-    }    
+    }
+    
+    private static void initDateFields(FundingForm form, FuzzyDate startDate, FuzzyDate endDate) {
+        if (startDate != null) {
+            form.setStartDate(Date.valueOf(startDate));
+            if (form.getStartDate().getDay() == null) {
+                form.getStartDate().setDay(new String());
+            }
+            if (form.getStartDate().getMonth() == null) {
+                form.getStartDate().setMonth(new String());
+            }
+            if (form.getStartDate().getYear() == null) {
+                form.getStartDate().setYear(new String());
+            }
+        } else {
+            form.setStartDate(getEmptyDate());
+        }
+        
+        if (endDate != null) {
+            form.setEndDate(Date.valueOf(endDate));
+            if (form.getEndDate().getDay() == null) {
+                form.getEndDate().setDay(new String());
+            }
+            if (form.getEndDate().getMonth() == null) {
+                form.getEndDate().setMonth(new String());
+            }
+            if (form.getEndDate().getYear() == null) {
+                form.getEndDate().setYear(new String());
+            }
+        } else {
+            form.setEndDate(getEmptyDate());
+        }
+    }
+    
+    private static Date getEmptyDate() {
+        Date date = new Date();
+        date.setDay(new String());
+        date.setMonth(new String());
+        date.setYear(new String());
+        return date;
+    }
     
     public String getDateSortString() {
         return dateSortString;

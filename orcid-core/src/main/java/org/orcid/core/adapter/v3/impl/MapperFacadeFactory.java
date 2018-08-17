@@ -504,6 +504,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.field("publicationDate", "publicationDate");
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        workSummaryClassMap.field("url.value", "workUrl");
         workSummaryClassMap.byDefault();
         workSummaryClassMap.register();
 
@@ -519,6 +520,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
         workSummaryMinimizedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryMinimizedClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        workSummaryMinimizedClassMap.field("url.value", "workUrl");
         workSummaryMinimizedClassMap.byDefault();
         workSummaryMinimizedClassMap.register();
 
@@ -586,7 +588,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         fundingSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         fundingSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
-        
+        fundingSummaryClassMap.field("url.value", "url");
         fundingSummaryClassMap.fieldBToA("org.name", "organization.name");
         fundingSummaryClassMap.fieldBToA("org.city", "organization.address.city");
         fundingSummaryClassMap.fieldBToA("org.region", "organization.address.region");
@@ -723,6 +725,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         summaryClassMap.field("departmentName", "department");
         summaryClassMap.field("roleTitle", "title");
         summaryClassMap.field("displayIndex", "displayIndex");
+        summaryClassMap.fieldAToB("url.value", "url");
+        summaryClassMap.fieldBToA("url", "url.value");
         summaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();    
         summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
         summaryClassMap.register();

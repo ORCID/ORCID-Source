@@ -408,6 +408,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("submittedEmail", submittedEmail);
         templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());

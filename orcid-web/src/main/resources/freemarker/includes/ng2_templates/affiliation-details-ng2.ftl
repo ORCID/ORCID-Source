@@ -1,7 +1,7 @@
 <div class="work-list-container">
     <ul class="sources-edit-list">
         <!--Edit sources-->
-        <li *ngIf="editSources[group?.activePutCode]" class="source-header" [ngClass]="{'source-active' : editSources[group.activePutCode] == true}">
+        <li *ngIf="editSources[group?.activePutCode]" class="source-header" [ngClass]="{'source-active' : editSources[group?.activePutCode] == true}">
             <div class="sources-header">
                 <div class="row">
                     <div class="col-md-7 col-sm-7 col-xs-6">
@@ -35,9 +35,9 @@
                                     elementId="group.activePutCode" 
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
                                         clickedClassCheck="{'popover-help-container-show':privacyHelp[group.activePutCode]==true}"
-                                        publicClick="researchResourceService.setGroupPrivacy(group, 'PUBLIC', $event)"
-                                        limitedClick="researchResourceService.setGroupPrivacy(group, 'LIMITED', $event)"
-                                        privateClick="researchResourceService.setGroupPrivacy(group, 'PRIVATE', $event)"/>
+                                        publicClick="setGroupPrivacy(group, 'PUBLIC', $event)"
+                                        limitedClick="setGroupPrivacy(group, 'LIMITED', $event)"
+                                        privateClick="setGroupPrivacy(group, 'PRIVATE', $event)"/>
                                 </li>
                                 </#if>
                             </ul>
@@ -47,8 +47,8 @@
             </div>
         </li>
         <!--End edit sources-->
-        <li *ngFor="let affiliation of group.affiliations; let index = index; let first = first; let last = last;">
-            <div *ngIf="group.activePutCode == affiliation.putCode.value || editSources[group.activePutCode] == true">
+        <ng-container *ngFor="let affiliation of group.affiliations; let index = index; let first = first; let last = last;">
+            <li *ngIf="group.activePutCode == affiliation.putCode.value || editSources[group.activePutCode] == true">
                 <div class="row" *ngIf="group.activePutCode == affiliation.putCode?.value">
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <h3 class="workspace-title">
@@ -175,10 +175,9 @@
                     <!--Preferred source-->
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.activePutCode]">
                         <div *ngIf="editSources[group.activePutCode]">
-                            <span class="glyphicon glyphicon-check" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                            <!--Make default functionality does not yet exist on affiliations-->
+                            <span class="glyphicon glyphicon-check" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>                            
                             <#if !(isPublicProfile??)>
-                            <a (click)="makeDefault(group, affiliation.putCode.value)" *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value">
+                            <a (click)="makeDefault(group, affiliation, affiliation.putCode.value)" *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value">
                                 <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
                             </#if>
@@ -186,7 +185,7 @@
                     </div>
                     <!--Edit/delete sources-->
                     <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.activePutCode]">
-                        <div *ngIf="editSources[group.activePutCode]">
+                        <div>
                             <#if !(isPublicProfile??)>
                             <ul class="sources-actions">
                                 <li> 
@@ -222,15 +221,14 @@
                 </div>
                 <div *ngIf="group.activePutCode != affiliation.putCode.value" class="row source-line">
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                        <a (click)="group.activePutCode = affiliation.putCode.value">                                
+                        <a (click)="swapSources(group, affiliation.putCode.value)">                               
                             {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                         </a>
-                    </div>                                        
+                    </div>                                       
                     <div class="col-md-3 col-sm-3 col-xs-10">
                         <#if !(isPublicProfile??)>
-                        <span class="glyphicon glyphicon-check" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                        <!--Make default functionality does not yet exist on affiliations-->
-                        <a (click)="makeDefault(group, affiliation.putCode.value); " *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value">
+                        <span class="glyphicon glyphicon-check" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>                        
+                        <a (click)="makeDefault(group, affiliation, affiliation.putCode.value); " *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value">
                             <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
                         </#if>
@@ -318,7 +316,7 @@
                         </ul>
                     </div>
                 </div> 
-            </div><!---if group.activePutCode-->
-        </li>
+            </li>
+        </ng-container>
     </ul>
 </div>

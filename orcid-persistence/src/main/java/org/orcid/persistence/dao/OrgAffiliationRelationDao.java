@@ -131,4 +131,15 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
     List<OrgAffiliationRelationEntity> getQualificationSummaries(String orcid, long lastModified);
     
     List<OrgAffiliationRelationEntity> getServiceSummaries(String orcid, long lastModified);
+    
+    /**
+     * Updates the display index of a given affiliation
+     * 
+     * @param orcid
+     *            The affiliation owner
+     * @param putCode
+     *            The affiliation id
+     * @return true if it was able to update the display index
+     * */
+    Boolean updateToMaxDisplay(String orcid, Long putCode);
 }

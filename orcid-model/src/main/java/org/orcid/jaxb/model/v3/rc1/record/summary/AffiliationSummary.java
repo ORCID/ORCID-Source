@@ -11,6 +11,7 @@ import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.common.Organization;
 import org.orcid.jaxb.model.v3.rc1.common.Source;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
 import org.orcid.jaxb.model.v3.rc1.record.Activity;
@@ -19,7 +20,7 @@ import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "departmentName", "roleTitle", "startDate", "endDate", "organization", "externalIdentifiers", "displayIndex" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "externalIdentifiers", "displayIndex" })
 public abstract class AffiliationSummary implements VisibilityType, Activity, SourceAware, GroupableActivity {
 
     @XmlElement(name = "department-name", namespace = "http://www.orcid.org/ns/common")
@@ -44,6 +45,8 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "url")
+    protected Url url;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs externalIdentifiers;
     @XmlAttribute(name = "display-index")
@@ -150,6 +153,14 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
     public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
+    
+    public Url getUrl() {
+        return url;
+    }
+
+    public void setUrl(Url url) {
+        this.url = url;
+    }
 
     public ExternalIDs getExternalIDs() {
         return externalIdentifiers;
@@ -190,6 +201,7 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
         return result;
     }
@@ -249,6 +261,11 @@ public abstract class AffiliationSummary implements VisibilityType, Activity, So
             if (other.organization != null)
                 return false;
         } else if (!organization.equals(other.organization))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
             return false;
         if (externalIdentifiers == null) {
             if (other.externalIdentifiers != null)

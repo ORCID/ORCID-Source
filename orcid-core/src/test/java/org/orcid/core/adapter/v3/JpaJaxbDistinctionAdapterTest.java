@@ -63,6 +63,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         assertNull(oar.getSourceId());        
         assertNull(oar.getClientSourceId());        
         assertNull(oar.getElementSourceId());
+        assertEquals("http://tempuri.org",oar.getUrl());
     }
     
     @Test
@@ -91,6 +92,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         assertNotNull(distinction.getSource());        
         assertNotNull(distinction.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", distinction.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",distinction.getUrl().getValue());
     }
     
     @Test
@@ -109,10 +111,11 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         assertEquals("01", summary.getStartDate().getDay().getValue());
         assertEquals("2020", summary.getEndDate().getYear().getValue());
         assertEquals("02", summary.getEndDate().getMonth().getValue());
-        assertEquals("02", summary.getEndDate().getDay().getValue());        
+        assertEquals("02", summary.getEndDate().getDay().getValue());    
         assertNotNull(summary.getSource());
         assertNotNull(summary.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", summary.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",summary.getUrl().getValue());
     }
 
     private Distinction getDistinction() throws JAXBException {
@@ -143,6 +146,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         result.setTitle("distinction:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
+        result.setUrl("http://tempuri.org");
         
         return result;
     }

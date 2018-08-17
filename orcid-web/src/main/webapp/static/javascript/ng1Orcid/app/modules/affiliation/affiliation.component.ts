@@ -272,7 +272,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-
     parseAffiliationGroups(data): void {
         this.distinctionsAndInvitedPositions = new Array();
         this.educations = new Array();
@@ -284,13 +283,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.distinctionsAndInvitedPositions = this.distinctionsAndInvitedPositions.concat(data.affiliationGroups.INVITED_POSITION);
         
         this.educations = this.educations.concat(data.affiliationGroups.EDUCATION);
-
         
         this.educationsAndQualifications = this.educationsAndQualifications.concat(data.affiliationGroups.EDUCATION);
         this.educationsAndQualifications = this.educationsAndQualifications.concat(data.affiliationGroups.QUALIFICATION);
 
         this.employments = this.employments.concat(data.affiliationGroups.EMPLOYMENT);
-
         
         this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.MEMBERSHIP);
         this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.SERVICE);
@@ -365,7 +362,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
     showSources(group, $event): void {
-        $event.stopPropagation();
+        $event.stopPropagation();        
         this.editSources[group.activePutCode] = true;
         this.hideAllTooltip();
     };
@@ -429,6 +426,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         }  
     };
 
+    swapSources(group, putCode): void{
+        group.activePutCode = putCode;
+        this.editSources[group.activePutCode] = true;
+    };
+
     toggleClickMoreInfo(key): void {
         if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
             if (this.moreInfoCurKey != null
@@ -480,7 +482,22 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         return false;
     };
 
-
+    makeDefault(group, affiliation, putCode): any {
+        this.affiliationService.updateToMaxDisplay(putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {                
+                group.defaultAffiliation = affiliation;                
+                group.activePutCode = group.defaultAffiliation.putCode.value;                 
+            },
+            error => {
+                console.log('makeDefault', error);
+            } 
+        );
+    }    
+    
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives

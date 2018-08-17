@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.persistence.constants.SendEmailFrequency;
@@ -34,6 +35,9 @@ public class UnsubscribeController extends BaseController {
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
+    @Resource(name = "emailManagerV3")
+    private EmailManager emailManager;
+    
     @RequestMapping(value="/{encryptedId}", method = RequestMethod.GET)
     public ModelAndView unsubscribeView(@PathVariable("encryptedId") String encryptedId) throws UnsupportedEncodingException {
         ModelAndView result = new ModelAndView("unsubscribe");
@@ -44,6 +48,11 @@ public class UnsubscribeController extends BaseController {
         
         // Disable quarterly notifications
         emailFrequencyManager.updateSendQuarterlyTips(orcid, false);
+        
+        // Verify primary email address if it is not verified already
+        if(!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
+            emailManager.verifyPrimaryEmail(orcid);
+        }
         
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
         

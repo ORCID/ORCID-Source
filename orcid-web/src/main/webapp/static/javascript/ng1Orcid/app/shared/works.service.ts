@@ -486,6 +486,14 @@ export class WorksService {
             { headers: this.headers }
         );
     }
+    
+    mergeWorks(putCodesAsString): any {
+        return this.http.post( 
+            getBaseUri() + '/works/group/' + putCodesAsString, 
+            {}, 
+            { headers: this.headers }
+        );
+    }
 
     resetWorkGroups(): void {
         this.offset = 0;

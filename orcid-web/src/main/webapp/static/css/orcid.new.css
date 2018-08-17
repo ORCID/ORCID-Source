@@ -609,6 +609,10 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     text-align: right
 }
 
+.rightBuffer {
+    margin-right: 1em
+}
+
 .row:after,.row:before {
     content: "";
     display: table;
