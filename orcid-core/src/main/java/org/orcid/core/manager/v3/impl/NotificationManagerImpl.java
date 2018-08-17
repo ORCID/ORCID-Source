@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -191,6 +192,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
+    
+    @Value("${org.orcid.notifications.archive.offset:100}")
+    private Integer notificationArchiveOffset;
+    
+    @Value("${org.orcid.notifications.delete.offset:100}")
+    private Integer notificationDeleteOffset;
+    
+    @Value("${org.orcid.notifications.delete.offset.records:10}")
+    private Integer recordsPerBatch;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -1224,5 +1234,31 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         
         return baseUrl + "static/" + ReleaseNameUtils.getReleaseName();
+    }
+
+    @Override
+    public Integer archiveOffsetNotifications() {
+        return notificationDao.archiveOffsetNotifications(notificationArchiveOffset == null ? 100 : notificationArchiveOffset);
+    }
+
+    @Override    
+    public Integer deleteOffsetNotifications() {
+        List<Object[]> toDelete = new ArrayList<Object[]>();
+        Integer deleted = 0;
+        do {
+            toDelete = notificationDao.findNotificationsToDeleteByOffset((notificationDeleteOffset == null ? 10000 : notificationDeleteOffset), recordsPerBatch);
+            LOGGER.info("Got batch of {} notifications to delete", toDelete.size());
+            for(Object[] o : toDelete) {
+                BigInteger big = (BigInteger) o[0];
+                Long id = big.longValue();
+                String orcid = (String) o[1];            
+                LOGGER.info("About to delete old notification: id={}, orcid={}",
+                            new Object[] { id, orcid });
+                    notificationDao.deleteNotificationById(id);            
+            }         
+            deleted += toDelete.size();
+        } while(!toDelete.isEmpty());
+        
+        return deleted;
     }    
 }
