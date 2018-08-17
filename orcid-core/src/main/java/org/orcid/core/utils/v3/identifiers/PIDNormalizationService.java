@@ -16,7 +16,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
 import org.orcid.core.utils.v3.identifiers.normalizers.NormalizerWithURLTransform;
-import org.orcid.core.utils.v3.identifiers.resolvers.Resolver;
+import org.orcid.core.utils.v3.identifiers.resolvers.LinkResolver;
 import org.orcid.pojo.IdentifierType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;

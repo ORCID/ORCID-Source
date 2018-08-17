@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-public class ISBNOCLCResolver implements Resolver {
+public class ISBNOCLCResolver implements LinkResolver {
 
     @Resource
     PIDNormalizationService normalizationService;
