@@ -1,0 +1,16 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="DROP-NOT-NULL-CONSTRAINT-ON-EMAIL" author="Angel Montenegro" dbms="postgresql">
+         <sql>ALTER TABLE email ALTER COLUMN email DROP not null;</sql>         
+     </changeSet>
+     
+     <changeSet id="DROP-NOT-NULL-CONSTRAINT-ON-EMAIL_HSQL" author="Angel Montenegro" dbms="hsqldb">
+    	<preConditions>
+			<dbms type="hsqldb"/>
+		</preConditions>
+		<dropUniqueConstraint tableName="email" constraintName="SYS_CT_11716"/>
+		<dropNotNullConstraint tableName="email" columnName="email"/>
+	</changeSet>     
+     
+</databaseChangeLog>

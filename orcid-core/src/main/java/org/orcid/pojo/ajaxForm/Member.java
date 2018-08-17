@@ -33,7 +33,7 @@ public class Member implements ErrorsInterface, Serializable {
 
     public static Member fromProfileEntity(ProfileEntity profile){
     	Member group = new Member();
-    	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getId()));
+    	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getEmail()));
     	
     	if(profile.getRecordNameEntity() != null) {
     	    group.setGroupName(Text.valueOf(profile.getRecordNameEntity().getCreditName()));

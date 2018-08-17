@@ -32,11 +32,9 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     
     boolean isPrimaryEmail(String orcid, String email);
     
-    EmailEntity findCaseInsensitive(String email);
-    
     EmailEntity find(String email);
     
     Email findPrimaryEmail(String orcid);
 
-    boolean isPrimaryEmail(String email);
+    boolean isPrimaryEmail(String email);    
 }

@@ -92,6 +92,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     generalRegistrationError: any;
     //registration form togglz features    
     disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
+    initReactivationRequest: any;
     
     constructor(
         private zone:NgZone,
@@ -149,6 +150,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.socialSignInForm = {};
         this.loadTime = 0;
         this.generalRegistrationError = null;
+        this.initReactivationRequest = { "email":null, "error":null, "success":false };
     }
 
     addScript(url, onLoadFunction): void {      
@@ -187,7 +189,12 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     showDeactivationError(): void {
         this.showDeactivatedError = true;
-        this.showReactivationSent = false;
+        this.showReactivationSent = false;        
+        if(this.authorizationForm.userName.value != null && this.authorizationForm.userName.value.includes('@')) {
+            this.initReactivationRequest.email = this.authorizationForm.userName.value;            
+        } else {
+            this.initReactivationRequest.email = '';
+        }
     };
 
     showInstitutionLogin(): void  {
@@ -286,7 +293,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
 
     loadAndInitAuthorizationForm(): void{
-
         this.oauthService.loadAndInitAuthorizationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -294,7 +300,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 this.authorizationForm = data;
-
             },
             error => {
                 console.log("An error occured initializing the authorization form.");
@@ -359,8 +364,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
                 
                 this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
-                this.showReactivationSent = false;
-
+                this.showReactivationSent = false;                
+                
                 for (var index in this.registrationForm.emailsAdditional) {
                     this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
                     this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
@@ -440,15 +445,21 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }  
     };
 
-    sendReactivationEmail(email): void {
-        this.oauthService.sendReactivationEmail(email)
+    sendReactivationEmail(): void {
+        this.oauthService.sendReactivationEmail(this.initReactivationRequest.email)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.showDeactivatedError = false;
-                this.showReactivationSent = true;
+                this.initReactivationRequest = data;
+                if(this.initReactivationRequest.error == null || this.initReactivationRequest.error == '') {
+                    this.showDeactivatedError = false;
+                    this.showReactivationSent = true;                    
+                } else {
+                    this.showDeactivatedError = true;
+                    this.showReactivationSent = false;                    
+                }
                 this.cdr.detectChanges();
             },
             error => {
@@ -644,9 +655,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
-
         this.authorizationForm = {
-            userName:  {value: ""},
+            userName:  {value: orcidVar.loginId},
             givenNames:  {value: ""},
             familyNames:  {value: ""},
             email:  {value: ""},

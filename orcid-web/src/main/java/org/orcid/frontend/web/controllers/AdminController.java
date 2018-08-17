@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -177,7 +178,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/reactivate-profile", method = RequestMethod.GET)
-    public @ResponseBody ProfileDetails reactivateOrcidAccount(@RequestParam("orcid") String orcid) {        
+    public @ResponseBody ProfileDetails reactivateOrcidAccount(@RequestParam("orcid") String orcid, @RequestParam("email") String email) {        
         ProfileEntity toReactivate = profileEntityCacheManager.retrieve(orcid);
         ProfileDetails result = new ProfileDetails();
         if (toReactivate == null)
@@ -186,9 +187,20 @@ public class AdminController extends BaseController {
             result.getErrors().add(getMessage("admin.profile_reactivation.errors.already_active"));
         else if (toReactivate.getDeprecatedDate() != null)
             result.getErrors().add(getMessage("admin.errors.deprecated_account"));
-
+        else if (PojoUtil.isEmpty(email))
+            result.getErrors().add(getMessage("admin.errors.deactivated_account.primary_email_required"));
+        else {
+            try {
+                String orcidId = emailManager.findOrcidIdByEmail(email);
+                if(!orcidId.equals(orcid)) {
+                    result.getErrors().add(getMessage("admin.errors.deactivated_account.orcid_id_dont_match", orcidId));
+                }
+            } catch(NoResultException nre) {
+                // Don't do nothing, the email doesn't exists
+            }
+        }
         if (result.getErrors() == null || result.getErrors().size() == 0)
-            profileEntityManager.reactivateRecord(orcid);
+            profileEntityManager.reactivateRecord(orcid, email);
         return result;
     }
 

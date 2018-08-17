@@ -34,6 +34,9 @@ public class EmailManagerTest extends BaseTest {
     @Resource
     private ProfileDao profileDao;
 
+    @Resource
+    private EncryptionManager encryptionManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);

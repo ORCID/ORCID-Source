@@ -8,10 +8,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,13 +72,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:statistics-core-context.xml", "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class AdminControllerTest extends BaseControllerTest {
 
     @Resource(name = "adminController")
@@ -213,12 +210,9 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.invalid_orcid", "4444-4444-4444-444"), result.getErrors().get(0));
 
-        ProfileEntity deactiveProfile = profileDao.find("4444-4444-4444-4443");
-        deactiveProfile.setDeactivationDate(new Date());
-        profileDao.merge(deactiveProfile);
-        profileDao.flush();
-        profileDao.refresh(deactiveProfile);
-
+        // Deactivate primary record
+        adminController.deactivateOrcidAccount("4444-4444-4444-4443");
+        
         // Test set deactive primary account
         result = adminController.deprecateProfile("4444-4444-4444-4440", "4444-4444-4444-4443");
         assertEquals(1, result.getErrors().size());
@@ -236,7 +230,6 @@ public class AdminControllerTest extends BaseControllerTest {
         Map<String, Set<String>> result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
         assertEquals(1, result.get("deactivateSuccessfulList").size());
 
-        profileDao.refresh(profileDao.find("4444-4444-4444-4445"));
         ProfileEntity deactivated = profileDao.find("4444-4444-4444-4445");
         assertNotNull(deactivated.getDeactivationDate());
         assertEquals(deactivated.getRecordNameEntity().getFamilyName(), "Family Name Deactivated");
@@ -246,16 +239,25 @@ public class AdminControllerTest extends BaseControllerTest {
         result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
         assertEquals(1, result.get("alreadyDeactivatedList").size());
 
+        // Test reactivate using an email address that belongs to other record
+        ProfileDetails proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445", "public_0000-0000-0000-0003@test.orcid.org");
+        assertEquals(1, proDetails.getErrors().size());
+        assertEquals(adminController.getMessage("admin.errors.deactivated_account.orcid_id_dont_match", "0000-0000-0000-0003"), proDetails.getErrors().get(0));
+        
+        // Test reactivate using empty primary email
+        proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445", "");
+        assertEquals(1, proDetails.getErrors().size());
+        assertEquals(adminController.getMessage("admin.errors.deactivated_account.primary_email_required"), proDetails.getErrors().get(0));
+        
         // Test reactivate
-        ProfileDetails proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445");
+        proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445", "andrew@timothy.com");
         assertEquals(0, proDetails.getErrors().size());
 
-        profileDao.refresh(profileDao.find("4444-4444-4444-4445"));
         deactivated = profileDao.find("4444-4444-4444-4445");
         assertNull(deactivated.getDeactivationDate());
 
         // Try to reactivate an already active account
-        proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445");
+        proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445", "andrew@timothy.com");
         assertEquals(1, proDetails.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", new ArrayList<String>()), proDetails.getErrors().get(0));
     }

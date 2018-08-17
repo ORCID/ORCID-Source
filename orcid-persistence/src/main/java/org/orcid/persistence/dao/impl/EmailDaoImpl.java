@@ -27,27 +27,18 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
-    public boolean emailExists(String email) {
-        Assert.hasText(email, "Cannot check for an empty email address");
-        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where trim(lower(email)) = trim(lower(:email))", Long.class);
-        query.setParameter("email", email);
+    public boolean emailExists(String emailHash) {
+        Assert.hasText(emailHash, "Cannot check for an empty email hash");
+        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where id = :emailHash", Long.class);
+        query.setParameter("emailHash", emailHash);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }
-
-    @Override
-    public EmailEntity findCaseInsensitive(String email) {
-        Assert.hasText(email, "Cannot find using an empty email address");
-        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where trim(lower(email)) = trim(lower(:email))", EmailEntity.class);
-        query.setParameter("email", email);
-        List<EmailEntity> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
-    }
     
     @Override
-    public String findOrcidIdByCaseInsenitiveEmail(String email) {
-        TypedQuery<String> query = entityManager.createQuery("select profile.id from EmailEntity where trim(lower(email)) = trim(lower(:email))", String.class);
-        query.setParameter("email", email);
+    public String findOrcidIdByEmailHash(String emailHash) {
+        TypedQuery<String> query = entityManager.createQuery("select profile.id from EmailEntity where id = :emailHash", String.class);
+        query.setParameter("emailHash", emailHash);
         return query.getSingleResult();
     }
 
@@ -219,9 +210,9 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
      *         client source of the record allows auto deprecating records
      */
     @Override
-    public boolean isAutoDeprecateEnableForEmail(String email) {
-        Query query = entityManager.createNativeQuery("SELECT allow_auto_deprecate FROM client_details WHERE client_details_id=(SELECT client_source_id FROM profile WHERE orcid=(SELECT orcid FROM email WHERE trim(lower(email)) = trim(lower(:email))) AND claimed = false)");
-        query.setParameter("email", email);
+    public boolean isAutoDeprecateEnableForEmailUsingHash(String emailHash) {
+        Query query = entityManager.createNativeQuery("SELECT allow_auto_deprecate FROM client_details WHERE client_details_id=(SELECT client_source_id FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email_hash = :emailHash) AND claimed = false)");
+        query.setParameter("emailHash", emailHash);
         try {
             Boolean result = (Boolean) query.getSingleResult();
             return result == null ? false : result;
@@ -268,7 +259,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public boolean hideAllEmails(String orcid) {
-        Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, lastModified=now() where orcid = :orcid");
+        Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, email = null, lastModified=now() where orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", PRIVATE_VISIBILITY);
         return query.executeUpdate() > 0;
@@ -285,17 +276,33 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> getEmailsToHash(Integer batchSize) {
-        TypedQuery<String> query = entityManager.createQuery("select id from EmailEntity where emailHash is null", String.class);
+        Query query = entityManager.createNativeQuery("select id from email where email_hash is null", String.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
     }
     
     @Override    
     public boolean populateEmailHash(String email, String emailHash) {
-        Query query = entityManager.createQuery("update EmailEntity set emailHash=:hash where email = :email");        
+        Query query = entityManager.createQuery("update EmailEntity set id=:hash where email = :email");        
         query.setParameter("email", email);
         query.setParameter("hash", emailHash);
         return query.executeUpdate() > 0;
+    }
+
+    @Override
+    public EmailEntity findByEmail(String email) {
+        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where email = :email", EmailEntity.class);
+        query.setParameter("email", email);
+        List<EmailEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public Integer clearEmailsAfterReactivation(String orcid) {
+        Query query = entityManager.createNativeQuery("delete from email where email is null and orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate();        
     }       
 }

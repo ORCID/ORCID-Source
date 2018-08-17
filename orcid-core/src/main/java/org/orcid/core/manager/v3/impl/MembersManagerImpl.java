@@ -128,9 +128,9 @@ public class MembersManagerImpl implements MembersManager {
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
         String email = member.getEmail().getValue().trim();
-        emailEntity.setId(email);
+        emailEntity.setEmail(email);
         try {
-            emailEntity.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
+            emailEntity.setId(encryptionManager.sha256Hash(email.toLowerCase()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -198,7 +198,7 @@ public class MembersManagerImpl implements MembersManager {
                 }
 
                 EmailEntity primaryEmail = memberEntity.getPrimaryEmail();
-                if (!email.equals(primaryEmail.getId())) {
+                if (!email.equals(primaryEmail.getEmail())) {
                     if (emailManager.emailExists(email)) {
                         throw new IllegalArgumentException("Email already exists");
                     }
@@ -206,9 +206,9 @@ public class MembersManagerImpl implements MembersManager {
                     EmailEntity newPrimaryEmail = new EmailEntity();
                     newPrimaryEmail.setLastModified(now);                    
                     newPrimaryEmail.setCurrent(true);
-                    newPrimaryEmail.setId(email);
+                    newPrimaryEmail.setEmail(email);
                     try {
-                        newPrimaryEmail.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
+                        newPrimaryEmail.setId(encryptionManager.sha256Hash(email.toLowerCase()));
                     } catch (NoSuchAlgorithmException e) {
                         throw new RuntimeException(e);
                     }

@@ -118,7 +118,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         if (PojoUtil.isEmpty(email)) {
             return false;
         }
-        return emailDao.isAutoDeprecateEnableForEmail(email);
+        try {
+            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
+            return emailDao.isAutoDeprecateEnableForEmailUsingHash(emailHash);    
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -196,7 +201,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     public void setPrimary(String orcid, String email, HttpServletRequest request) {
         Email currentPrimaryEmail = this.findPrimaryEmail(orcid);
-        EmailEntity newPrimary = emailDao.find(email); 
+        EmailEntity newPrimary = emailDao.findByEmail(email); 
         if(newPrimary != null && !currentPrimaryEmail.getEmail().equals(email)) {
             emailDao.updatePrimary(orcid, email);                 
             notificationManager.sendEmailAddressChangedNotification(orcid, email, currentPrimaryEmail.getEmail());
@@ -206,5 +211,52 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
             }
         }        
+    }
+
+    @Override
+    @Transactional
+    public void reactivatePrimaryEmail(String orcid, String email, String hash) {
+        EmailEntity entity = emailDao.find(hash);
+        if(!orcid.equals(entity.getProfile().getId())) {
+            throw new IllegalArgumentException("Email with hash {}" + hash + " doesn't belong to " + orcid);
+        }
+        if(!PojoUtil.isEmpty(entity.getEmail()) && !email.equals(entity.getEmail())) {            
+            throw new IllegalArgumentException("Email address with hash " + hash + " is already populated and doesn't match the given address " + email);            
+        }
+        entity.setEmail(email);
+        entity.setPrimary(true);
+        entity.setVerified(true);
+        entity.setLastModified(new Date());
+        emailDao.merge(entity);  
+        emailDao.flush();
+    }
+
+    @Override
+    public Integer clearEmailsAfterReactivation(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+           return 0; 
+        }
+        return emailDao.clearEmailsAfterReactivation(orcid);
+    }
+
+    @Override
+    public void reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility) {
+        EmailEntity entity = emailDao.find(emailHash);
+        // If email doesn't exists, create it
+        if(entity == null) {
+            emailDao.addEmail(orcid, email, emailHash, visibility.name(), orcid, null);
+        } else {
+            if(orcid.equals(entity.getProfile().getId())) {
+                entity.setEmail(email);
+                entity.setPrimary(false);
+                entity.setVerified(false);
+                entity.setVisibility(visibility.name());
+                entity.setLastModified(new Date());
+                emailDao.merge(entity);  
+                emailDao.flush();
+            } else {
+                throw new IllegalArgumentException("Email " + email + " belongs to other record than " + orcid);
+            }
+        }
     }
 }

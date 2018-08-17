@@ -64,6 +64,46 @@
                         </span>
                     </div>
                 </div>
+                <!-- Emails -->
+                <div>
+                    <div class="form-group clear-fix">
+                        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
+                        <div class="relative">          
+                            <input name="emailprimary234" type="text" tabindex="3" class="input-xlarge" disabled="true" [(ngModel)]="registrationForm.email.value" (blur)="serverValidate('Email')"/>
+                            <span class="required" [ngClass]="isValidClass(registrationForm.email)">*</span>                                                       
+                        </div>
+                    </div>                
+                    <!-- Additional emails -->
+                    <div class="form-group clear-fix" *ngFor="let emailAdditional of registrationForm.emailsAdditional;let i = index;trackBy:trackByIndex">
+                        <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
+                        <div class="relative">
+                            <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" [(ngModel)]="registrationForm.emailsAdditional[i].value" (blur)="serverValidate('EmailsAdditional')"/>
+                            <div *ngIf="i == 0" class="popover-help-container leftBuffer">
+                                <i class="glyphicon glyphicon-question-sign"></i>
+                                <div id="email-additional-help" class="popover bottom">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <p><@orcid.msg ''/></p>
+                                        <p><@orcid.msg 'orcid.frontend.register.help.email_additional'/></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="i != 0" class="popover-help-container leftBuffer">
+                                <a class="btn-white-no-border" (click)="removeEmailField(i)"><i class="glyphicon glyphicon-remove-sign"></i></a>
+                            </div>
+                            <span class="orcid-error" *ngIf="registrationForm?.emailsAdditional[i]?.errors && registrationForm?.emailsAdditional[i]?.errors?.length > 0">
+                                <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex">
+                                    <span class="orcid-error" *ngIf="error=='unavailable'">
+                                        {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_1_ng2' /> <a href="${baseUri}/signin?loginId={{registrationForm.emailsAdditional[i].value}}"><@orcid.msg 'oauth.registration.duplicate_email_2' /></a><@orcid.msg 'oauth.registration.duplicate_email_3_ng2' /> {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_4_ng2' />
+                                    </span>
+                                    <span class="orcid-error" *ngIf="error!='unavailable'" [innerHTML]="error"></span>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                    <button (click)="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>  
+                </div>
+                
                 <!--Password-->
                 <div class="form-group clear-fix">
                     <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
