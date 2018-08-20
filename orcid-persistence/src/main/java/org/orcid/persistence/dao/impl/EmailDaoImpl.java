@@ -29,7 +29,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     public boolean emailExists(String emailHash) {
         Assert.hasText(emailHash, "Cannot check for an empty email hash");
-        TypedQuery<Long> query = entityManager.createQuery("select count(email) from EmailEntity where id = :emailHash", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(*) from EmailEntity where id = :emailHash", Long.class);
         query.setParameter("emailHash", emailHash);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
