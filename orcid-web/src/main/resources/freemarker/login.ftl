@@ -1,4 +1,11 @@
 <@public classes=['home'] nav="signin">
+    <#if invalidVerifyUrl?? && invalidVerifyUrl>
+        <div class="row">
+            <div class="alert alert-success">
+                <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
+            </div>
+        </div>
+    </#if>
     <div class="row">
         <@spring.bind "loginForm" />
         <@spring.showErrors "<br/>" "error" /> 
