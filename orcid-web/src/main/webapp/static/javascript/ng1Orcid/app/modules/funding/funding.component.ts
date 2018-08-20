@@ -250,9 +250,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                     this.groups[j]['activitiesArray'] = activitiesObjConvertedToArray; 
                 }
+                this.fundingService.loading = false;
             },
             error => {
                 console.log('getFundingsByIdError', error);
+                this.fundingService.loading = false;
             } 
         );
     }
@@ -272,6 +274,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                     if( data.length != 0 ) {
                         var fundingIds = data.splice(0,20).join()
                         this.getFundingsById( fundingIds );
+                    } else {
+                        this.fundingService.loading = false;
                     }
                 },
                 error => {
