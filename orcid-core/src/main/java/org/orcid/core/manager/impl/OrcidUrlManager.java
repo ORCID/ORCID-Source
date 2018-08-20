@@ -29,7 +29,7 @@ public class OrcidUrlManager {
     private static String PROTOCALL_PATTREN = "http[s]{0,1}:\\/\\/";
 
     private static Pattern SAVED_REQUEST_PATTERN = Pattern
-            .compile("/(my-orcid|inbox|account|account/confirm-deactivate-orcid/[^/]+|developer-tools|self-service(/[^/]+)?|manage-members|admin-actions|verify-email/[^/]+)(\\?|$)|(oauth/(?![^?]*\\.json))");
+            .compile("/(my-orcid|inbox|account|account/confirm-deactivate-orcid/[^/]+|developer-tools|self-service(/[^/]+)?|manage-members|admin-actions)(\\?|$)|(oauth/(?![^?]*\\.json))");
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
