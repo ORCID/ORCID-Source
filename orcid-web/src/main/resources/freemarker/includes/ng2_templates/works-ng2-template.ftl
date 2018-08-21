@@ -281,7 +281,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bottomBuffer" *ngIf="bibtexLoading && !bibtexExportError" >
+            <div class="bottomBuffer" *ngIf="bibtexExportLoading && !bibtexExportError" >
                 <span class="dotted-bar"></span>
                 <ul class="inline-list">
                     <li>
@@ -319,68 +319,73 @@
                         </span>                   
                     </div>
                 </div>
-            </div>            
+            </div> 
+            <div class="bottomBuffer" *ngIf="bibtexImportLoading && !bibtexParsingError" >
+                <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+            </div>          
             <div class="alert alert-block" *ngIf="bibtexParsingError">
                 <strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
             </div>
             <span class="dotted-bar" *ngIf="worksFromBibtex?.length > 0"></span>
             <!-- Bibtex Import Results List -->
-            <div *ngFor="let work of worksFromBibtex; let index = index; let first = first; let last = last;" class="bottomBuffer">             
-                <div class="row full-height-row">   
-                    <div class="col-md-9 col-sm-9 col-xs-7">
-                        <h3 class="workspace-title" [ngClass]="work.title?.value == null ? 'bibtex-content-missing' :  ''">
-                            <span *ngIf="work.title?.value != null">{{work.title.value}}</span>
-                            <span *ngIf="work.title?.value == null">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</span>
-                            <span class="journaltitle" *ngIf="work.journalTitle?.value">{{work.journalTitle.value}}</span>
-                        </h3>
+            <ng-container *ngIf="!bibtexImportLoading">
+                <div *ngFor="let work of worksFromBibtex; let index = index; let first = first; let last = last;" class="bottomBuffer">             
+                    <div class="row full-height-row">   
+                        <div class="col-md-9 col-sm-9 col-xs-7">
+                            <h3 class="workspace-title" [ngClass]="work.title?.value == null ? 'bibtex-content-missing' :  ''">
+                                <span *ngIf="work.title?.value != null">{{work.title.value}}</span>
+                                <span *ngIf="work.title?.value == null">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</span>
+                                <span class="journaltitle" *ngIf="work.journalTitle?.value">{{work.journalTitle.value}}</span>
+                            </h3>
 
-                        <div class="info-detail">
-                            <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate?.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate?.day">-</span><span *ngIf="work.publicationDate?.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
-                  
-                            <span class="capitalize" *ngIf="work.workType?.value?.length > 0">{{work.workType.value}}</span>
-                            <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
+                            <div class="info-detail">
+                                <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate?.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate?.day">-</span><span *ngIf="work.publicationDate?.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
+                      
+                                <span class="capitalize" *ngIf="work.workType?.value?.length > 0">{{work.workType.value}}</span>
+                                <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 
-                        </div>
-                        <div class="row" *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value">
-                            <div class="col-md-12 col-sm-12 bottomBuffer">
-                                <ul class="id-details">
-                                    <li class="url-work">
-                                        <ul class="id-details">
-                                            <li *ngFor='let extID of work.workExternalIdentifiers | orderBy:["relationship.value", "externalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
-                                                <span *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
-                                                    <ext-id-popover-ng2 [extID]="extID" [putCode]="'bibtexWork'+i" [activityType]="'work'"></ext-id-popover-ng2>
-                                                </span>
-                                            </li>
-                                        </ul>                                   
-                                    </li>
-
-                                    <li *ngIf="work.url?.value" class="url-popover url-work">
-                                        <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver('bibtexWork'+index)" (mouseleave)="hideURLPopOver('bibtexWork'+index)" [ngClass]="{'truncate-anchor' : moreInfo[group?.groupId] == false || moreInfo[group?.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
-                                        <div class="popover-pos">                                   
-                                            <div class="popover-help-container">
-                                                <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver['bibtexWork'+index] == true}">
-                                                    <div class="arrow"></div>
-                                                    <div class="popover-content">
-                                                        <a href="{{work.url.value}}" target="work.url.value">{{work.url.value}}</a>
-                                                    </div>                
-                                                </div>                              
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
                             </div>
+                            <div class="row" *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value">
+                                <div class="col-md-12 col-sm-12 bottomBuffer">
+                                    <ul class="id-details">
+                                        <li class="url-work">
+                                            <ul class="id-details">
+                                                <li *ngFor='let extID of work.workExternalIdentifiers | orderBy:["relationship.value", "externalIdentifierType.value"]; let index = index; let first = first; let last = last;' class="url-popover">
+                                                    <span *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value?.length > 0">
+                                                        <ext-id-popover-ng2 [extID]="extID" [putCode]="'bibtexWork'+i" [activityType]="'work'"></ext-id-popover-ng2>
+                                                    </span>
+                                                </li>
+                                            </ul>                                   
+                                        </li>
+
+                                        <li *ngIf="work.url?.value" class="url-popover url-work">
+                                            <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver('bibtexWork'+index)" (mouseleave)="hideURLPopOver('bibtexWork'+index)" [ngClass]="{'truncate-anchor' : moreInfo[group?.groupId] == false || moreInfo[group?.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
+                                            <div class="popover-pos">                                   
+                                                <div class="popover-help-container">
+                                                    <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver['bibtexWork'+index] == true}">
+                                                        <div class="arrow"></div>
+                                                        <div class="popover-content">
+                                                            <a href="{{work.url.value}}" target="work.url.value">{{work.url.value}}</a>
+                                                        </div>                
+                                                    </div>                              
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>                          
+                        <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                   
+                            <ul>
+                                <li><a (click)="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
+                                <li><a *ngIf="work?.errors?.length == 0" (click)="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
+                                <li><a *ngIf="work?.errors?.length > 0" (click)="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
+                                <li><span *ngIf="work?.errors?.length > 0"><a (click)="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
+                            </ul>
                         </div>
-                    </div>                          
-                    <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                   
-                        <ul>
-                            <li><a (click)="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
-                            <li><a *ngIf="work?.errors?.length == 0" (click)="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
-                            <li><a *ngIf="work?.errors?.length > 0" (click)="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
-                            <li><span *ngIf="work?.errors?.length > 0"><a (click)="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
-                        </ul>
                     </div>
                 </div>
-            </div>
+            </ng-container>
         </div>
         <!--End bibtex import wizard-->
         <!--Works list-->
