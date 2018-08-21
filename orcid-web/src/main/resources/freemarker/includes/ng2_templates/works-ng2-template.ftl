@@ -387,7 +387,7 @@
         <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
             <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
                 <#if !(isPublicProfile??)>
-                    <div class="row">
+                    <div class="row" *ngIf="worksService?.groups?.length">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <ul class="sources-actions">
                                 <li>
