@@ -102,7 +102,6 @@ public class AffiliationGroupForm implements Serializable {
     public static AffiliationGroupForm valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup<? extends AffiliationSummary> group, String id, String orcid) {
         AffiliationGroupForm affiliationGroup = new AffiliationGroupForm();
         affiliationGroup.setGroupId(id);
-        affiliationGroup.setUserVersionPresent(false);
         
         Long maxDisplayIndex = null;
         for(AffiliationSummary summary : group.getActivities()) {

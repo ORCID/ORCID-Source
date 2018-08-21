@@ -151,7 +151,7 @@
             </div>
             <div *ngIf="workspaceSrvc.displayFunding" class="workspace-accordion-content">
                 <ul *ngIf="groups.length > 0" class="workspace-fundings workspace-body-list bottom-margin-medium" >
-                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of (groups | orderBy: sortState.predicate:sortState.reverse)">
+                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups">
                         <#include "funding-details-ng2.ftl"/>                    
                     </li>
                 </ul>

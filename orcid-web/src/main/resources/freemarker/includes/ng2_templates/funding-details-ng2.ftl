@@ -28,10 +28,10 @@
                                 </li>
                                 <#if !(isPublicProfile??)>
                                     <li>
-                                        <@orcid.privacyToggle2Ng2  angularModel="group?.activities[group?.activePutCode]?.visibility.visibility"
+                                        <@orcid.privacyToggle2Ng2  angularModel="group.fundings[0].visibility.visibility"
                                         elementId="group.activePutCode"
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
-                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group?.activities[group?.activePutCode]?.putCode.value]==true}" 
+                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group.fundings[0].putCode.value]==true}" 
                                         publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" 
                                         limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" 
                                         privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
@@ -44,31 +44,31 @@
             </div>
         </li>
         <!--  End edit sources-->
-        <ng-container *ngFor="let funding of group.activitiesArray;let i = index">
-            <li *ngIf="group.activePutCode == funding.key || editSources[group.groupId]">
+        <ng-container *ngFor="let funding of group.fundings;let i = index">
+            <li *ngIf="group.activePutCode == funding.putCode.value || editSources[group.groupId]">
                 <!-- active row summary info -->
-                <div class="row" *ngIf="group?.activePutCode == funding.key">
+                <div class="row" *ngIf="group?.activePutCode == funding.putCode.value"> 
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <!--Title-->
                         <h3 class="workspace-title">                                
-                           <span *ngIf="group?.activities[group?.activePutCode]?.fundingTitle?.title?.value">{{group?.activities[group?.activePutCode]?.fundingTitle?.title?.value}}</span>                               
+                           <span *ngIf="funding.fundingTitle?.title?.value">{{funding.fundingTitle?.title?.value}}</span>                               
                         </h3>
                         <div class="clear-fix left">
                             <!--Organization-->
-                            <span *ngIf="group?.activities[group?.activePutCode]?.fundingName?.value">{{group?.activities[group?.activePutCode]?.fundingName?.value}}</span> (<span *ngIf="group?.activities[group?.activePutCode]?.city.value">{{group?.activities[group?.activePutCode]?.city?.value}}</span><span *ngIf="group?.activities[group?.activePutCode]?.region.value">, {{group?.activities[group?.activePutCode]?.region?.value}}</span>
-                            <span *ngIf="group?.activities[group?.activePutCode]?.countryForDisplay">, {{group?.activities[group?.activePutCode]?.countryForDisplay}}</span>)
+                            <span *ngIf="funding.fundingName?.value">{{funding.fundingName?.value}}</span> (<span *ngIf="funding.city?.value">{{funding.city?.value}}</span><span *ngIf="funding.region.value">, {{funding.region?.value}}</span>
+                            <span *ngIf="funding.countryForDisplay">, {{funding.countryForDisplay}}</span>)
                         </div>  
                         <div class="info-detail">
                             <!-- Funding date -->
-                            <span class="funding-date" *ngIf="group?.activities[group?.activePutCode]?.startDate?.year">
-                                <span *ngIf="group?.activities[group?.activePutCode]?.startDate.year">{{group?.activities[group?.activePutCode]?.startDate?.year}}</span><span *ngIf="group?.activities[group?.activePutCode]?.startDate?.month">-{{group?.activities[group?.activePutCode]?.startDate?.month}}</span><span *ngIf="group?.activities[group?.activePutCode]?.startDate?.day">-{{group?.activities[group?.activePutCode]?.startDate?.day}}</span> 
-                                <span>&nbsp;<@orcid.msg 'workspace_affiliations.dateSeparator'/>&nbsp;</span><span [hidden]="group?.activities[group?.activePutCode]?.endDate && group?.activities[group?.activePutCode]?.endDate?.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+                            <span class="funding-date" *ngIf="funding.startDate?.year">
+                                <span *ngIf="funding.startDate.year">{{funding.startDate?.year}}</span><span *ngIf="funding.startDate?.month">-{{funding.startDate?.month}}</span><span *ngIf="funding.startDate?.day">-{{funding.startDate?.day}}</span> 
+                                <span>&nbsp;<@orcid.msg 'workspace_affiliations.dateSeparator'/>&nbsp;</span><span [hidden]="funding.endDate && funding.endDate?.year"><@orcid.msg 'workspace_affiliations.present'/></span>
                             </span>
-                            <span *ngIf="group?.activities[group?.activePutCode]?.endDate">
-                                <span *ngIf="group?.activities[group?.activePutCode]?.endDate?.year">{{group?.activities[group?.activePutCode]?.endDate?.year}}</span><span *ngIf="group?.activities[group?.activePutCode]?.endDate?.month">-{{group?.activities[group?.activePutCode]?.endDate?.month}}</span><span *ngIf="group?.activities[group?.activePutCode]?.endDate?.day">-{{group?.activities[group?.activePutCode]?.endDate?.day}}</span>
+                            <span *ngIf="funding.endDate">
+                                <span *ngIf="funding.endDate?.year">{{funding.endDate?.year}}</span><span *ngIf="funding.endDate?.month">-{{funding.endDate?.month}}</span><span *ngIf="funding.endDate?.day">-{{funding.endDate?.day}}</span>
                             </span>                            
                             <!-- Funding type -->
-                            <span *ngIf="(group?.activities[group?.activePutCode]?.startDate?.year || group?.activities[group?.activePutCode]?.endDate?.year) && group?.activities[group?.activePutCode]?.fundingType?.value">|</span> <span class="capitalize">{{group?.activities[group?.activePutCode]?.fundingTypeForDisplay}}</span>
+                            <span *ngIf="(funding.startDate?.year || funding.endDate?.year) && funding.fundingType?.value">|</span> <span class="capitalize">{{funding.fundingTypeForDisplay}}</span>
                         </div>                            
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
@@ -89,10 +89,10 @@
                             </li>
                             <#if !(isPublicProfile??)>
                                 <li>
-                                    <@orcid.privacyToggle2Ng2  angularModel="group?.activities[group?.activePutCode]?.visibility.visibility"
+                                    <@orcid.privacyToggle2Ng2  angularModel="funding.visibility.visibility"
                                     elementId="group.activePutCode"
                                     questionClick="toggleClickPrivacyHelp(group.activePutCode)"
-                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[group?.activities[group?.activePutCode]?.putCode.value]==true}" 
+                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[funding.putCode.value]==true}" 
                                     publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" 
                                     limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" 
                                     privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
@@ -100,7 +100,7 @@
                             </#if>  
                         </ul>
                         <#if !(isPublicProfile??)>
-                            <div *ngIf="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
+                            <div *ngIf="!consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
                                  <div class="popover-help-container">
                                     <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
                                     <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
@@ -116,86 +116,86 @@
                 </div>
                 
                 <!-- Active Row Identifiers / URL / Validations / Versions -->
-                <div class="row" *ngIf="group?.activePutCode == funding?.key">
+                <div class="row" *ngIf="group?.activePutCode == funding?.putCode.value">
                     <div class="col-md-12 col-sm-12 bottomBuffer">
                         <ul class="id-details">
                             <li class="url-work"> 
                                 <ul class="id-details"> 
-                                    <li *ngFor='let extID of group?.activities[group?.activePutCode]?.externalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "externalIdentifierType.value"]' class="url-popover">
-                                        <span *ngIf="group?.activities[group?.activePutCode]?.externalIdentifiers[0]?.value?.value?.length > 0">
-                                            <ext-id-popover-ng2 [extID]="extID" [putCode]="group?.activities[group?.activePutCode]?.putCode.value+i" activityType="funding"></ext-id-popover-ng2>
+                                    <li *ngFor='let extID of funding?.externalIdentifiers;let i = index;trackBy:trackByIndex | orderBy:["-relationship.value", "externalIdentifierType.value"]' class="url-popover">
+                                        <span *ngIf="funding?.externalIdentifiers[0]?.value?.value?.length > 0">
+                                            <ext-id-popover-ng2 [extID]="extID" [putCode]="funding?.putCode.value+i" activityType="funding"></ext-id-popover-ng2>
                                         </span>
                                     </li>
                                 </ul>
                             </li>
-                            <li *ngIf="group?.activities[group?.activePutCode]?.url?.value" class="url-popover">
-                                <@orcid.msg 'common.url' />: <a href="{{group?.activities[group?.activePutCode]?.url?.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="funding.url.value">{{group?.activities[group?.activePutCode]?.url?.value}}</a>
+                            <li *ngIf="funding?.url?.value" class="url-popover">
+                                <@orcid.msg 'common.url' />: <a href="{{funding?.url?.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="funding.url.value">{{funding?.url?.value}}</a>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <!-- more info -->
-                <div class="more-info" *ngIf="moreInfo[group.groupId] && (group.activePutCode == funding.key)">
+                <div class="more-info" *ngIf="moreInfo[group.groupId] && (group.activePutCode == funding.putCode.value)">
                     <span class="dotted-bar"></span>    
                     <div class="row">        
                         <!-- Funding subtype -->
-                        <div class="col-md-6" *ngIf="group?.activities[group?.activePutCode]?.organizationDefinedFundingSubType?.subtype?.value" >
+                        <div class="col-md-6" *ngIf="fundingMoreInfo?.organizationDefinedFundingSubType?.subtype?.value" >
                             <div class="bottomBuffer">                    
                                 <strong><@orcid.msg 'manual_funding_form_contents.organization_defined_type.label'/></strong>
-                                <div>{{group?.activities[group?.activePutCode]?.organizationDefinedFundingSubType?.subtype?.value}}</div>
+                                <div>{{fundingMoreInfo?.organizationDefinedFundingSubType?.subtype?.value}}</div>
                             </div>        
                         </div> 
                         <!-- Funding translated title -->
-                        <div class="col-md-6" *ngIf="group?.activities[group?.activePutCode]?.fundingTitle?.translatedTitle?.content" >
+                        <div class="col-md-6" *ngIf="fundingMoreInfo?.fundingTitle?.translatedTitle?.content" >
                             <div class="bottomBuffer">                
                                 <strong><@orcid.msg
-                                    'manual_funding_form_contents.label_translated_title'/></strong> <span><i>({{group?.activities[group?.activePutCode]?.fundingTitle?.translatedTitle?.languageName}})</i></span>
-                                        <div>{{group?.activities[group?.activePutCode]?.fundingTitle?.translatedTitle?.content}}</div>
+                                    'manual_funding_form_contents.label_translated_title'/></strong> <span><i>({{fundingMoreInfo?.fundingTitle?.translatedTitle?.languageName}})</i></span>
+                                        <div>{{fundingMoreInfo?.fundingTitle?.translatedTitle?.content}}</div>
 
                             </div>        
                         </div>
                         <!-- Funding Amount -->
-                        <div class="col-md-6" *ngIf="group?.activities[group?.activePutCode]?.amount?.value" >
+                        <div class="col-md-6" *ngIf="fundingMoreInfo?.amount?.value" >
                             <div class="bottomBuffer">                
                                 <strong><@orcid.msg 'manual_funding_form_contents.label_amount'/></strong>
-                                <div>{{group?.activities[group?.activePutCode]?.currencyCode?.value}} {{group?.activities[group?.activePutCode]?.amount?.value}}</div>                
+                                <div>{{fundingMoreInfo?.currencyCode?.value}} {{fundingMoreInfo?.amount?.value}}</div>                
                             </div>
                         </div>
                         
                         <!-- Contribuitors -->
-                        <div class="col-md-6" *ngIf="group?.activities[group?.activePutCode]?.contributors?.length > 0" >
+                        <div class="col-md-6" *ngIf="fundingMoreInfo?.contributors?.length > 0" >
                             <div class="bottomBuffer">
                                 <strong><@orcid.msg 'manual_funding_form_contents.label_contributors'/></strong>
-                                <div *ngFor="let contributor of group?.activities[group?.activePutCode]?.contributors">
+                                <div *ngFor="let contributor of fundingMoreInfo?.contributors">
                                     {{contributor?.creditName?.value}} <span>{{contributor | contributorFilter}}</span>
                                 </div>        
                             </div>
                         </div>
                         <!-- Description -->
-                        <div class="col-md-6" *ngIf="group?.activities[group?.activePutCode]?.description.value" >
+                        <div class="col-md-6" *ngIf="fundingMoreInfo?.description?.value" >
                             <div class="bottomBuffer">                
                                 <strong><@orcid.msg 'manual_funding_form_contents.label_description'/></strong>
-                                <div>{{group?.activities[group?.activePutCode]?.description?.value}}</div>                
+                                <div>{{fundingMoreInfo?.description?.value}}</div>                
                             </div>
                         </div>
                         <!-- Created Date -->
                         <div class="col-md-6">
                             <strong><@orcid.msg 'groups.common.created'/></strong>
-                            <div>{{group?.activities[group?.activePutCode]?.createdDate | ajaxFormDateToISO8601}}</div>
+                            <div>{{fundingMoreInfo.createdDate | ajaxFormDateToISO8601}}</div>
                         </div>
                     </div>
                 </div>
                 <!-- active row source display -->
-                <div class="row source-line" *ngIf="group.activePutCode == funding.key">
+                <div class="row source-line" *ngIf="group.activePutCode == funding.putCode.value">
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
-                        {{(group?.activities[group?.activePutCode]?.sourceName == null || group?.activities[group?.activePutCode]?.sourceName == '') ? group?.activities[group?.activePutCode]?.source : group?.activities[group?.activePutCode]?.sourceName}}
+                        {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                     </div>                          
                     <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="editSources[group.groupId]">
 
-                        <span class="glyphicon glyphicon-check" *ngIf="funding?.key == group?.defaultPutCode"></span><span *ngIf="funding?.key == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <span class="glyphicon glyphicon-check" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                         <#if !(isPublicProfile??)>
                             <div *ngIf="editSources[group.groupId]">
-                                <a (click)="makeDefault(group, funding?.key);" *ngIf="funding?.key != group?.defaultPutCode" class="">
+                                <a (click)="makeDefault(group, funding?.putCode.value);" *ngIf="funding?.putCode.value != group?.defaultPutCode" class="">
                                     <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                 </a>
                             </div>
@@ -205,15 +205,15 @@
                         <#if !(isPublicProfile??)>
                             <ul class="sources-actions">
                                 <li>
-                                    <@orcid.editActivityIconNg2
-                                        activity="group.activities[funding.key]"
-                                        click="openEditFunding(funding.key)"
+                                    <@orcid.editActivityIconNg2BackendGrouping
+                                        activity="funding"
+                                        click="openEditFunding(funding.putCode.value)"
                                         toolTipSuffix="editToolTipSource"
                                         toolTipClass="popover popover-tooltip top edit-activeSource-popover"
                                      />
                                 </li>
                                 <li>
-                                    <a (click)="deleteFunding(group?.activities[group?.activePutCode])"  (mouseenter)="showTooltip(group.groupId+'-deleteActiveSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteActiveSource')">
+                                    <a (click)="deleteFunding(funding)"  (mouseenter)="showTooltip(group.groupId+'-deleteActiveSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteActiveSource')">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </a>
 
@@ -231,16 +231,16 @@
                 </div>
 
                 <!-- not active row && edit sources -->
-                <div *ngIf="group?.activePutCode != funding?.key" class="row source-line">
+                <div *ngIf="group?.activePutCode != funding?.putCode.value" class="row source-line">
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                            <a (click)="group.activePutCode = funding.key;">                                
-                            {{(group?.activities[funding?.key]?.sourceName == null || group?.activities[funding?.key]?.sourceName == '') ? group?.activities[funding?.key]?.source : group?.activities[funding?.key]?.sourceName}}
+                            <a (click)="group.activePutCode = funding.putCode.value;">                                
+                            {{(funding?.sourceName == null || funding?.sourceName == '') ? funding?.source : funding?.sourceName}}
                         </a>
                     </div>                        
                     <div class="col-md-3 col-sm-3 col-xs-6">
                          <#if !(isPublicProfile??)>
-                            <span class="glyphicon glyphicon-check" *ngIf="funding?.key == group?.defaultPutCode"></span><span *ngIf="funding?.key == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                            <a (click)="makeDefault(group, funding?.key);" *ngIf="funding?.key != group.defaultPutCode">
+                            <span class="glyphicon glyphicon-check" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                            <a (click)="makeDefault(group, funding?.putCode.value);" *ngIf="funding?.putCode.value != group.defaultPutCode">
                                <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
                         </#if>
@@ -251,18 +251,18 @@
                         <#if !(isPublicProfile??)>
                             <ul class="sources-actions">
                                 <li> 
-                                    <@orcid.editActivityIconNg2
-                                        activity="group.activities[funding.key]"
-                                        click="openEditFunding(funding.key)"
+                                    <@orcid.editActivityIconNg2BackendGrouping
+                                        activity="funding"
+                                        click="openEditFunding(funding.putCode.value)"
                                         toolTipSuffix="editToolTipSourceActions"
                                         toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
                                      />
                                 </li>
                                 <li>
-                                    <a (click)="deleteFunding(group?.activities[group?.activePutCode])" (mouseenter)="showTooltip(group?.activities[group?.activePutCode]?.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(group?.activities[group?.activePutCode]?.putCode.value+'-deleteInactiveSource')">
+                                    <a (click)="deleteFunding(funding)" (mouseenter)="showTooltip(funding?.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(funding?.putCode.value+'-deleteInactiveSource')">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </a>
-                                    <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[group?.activities[group?.activePutCode]?.putCode.value+'-deleteInactiveSource']">
+                                    <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[funding.putCode.value+'-deleteInactiveSource']">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
                                              <@orcid.msg 'groups.common.delete_this_source' />
@@ -277,10 +277,10 @@
                 <!-- Bottom row -->
                 <div class="row source-line" *ngIf="editSources[group.groupId] != true">
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                          <@orcid.msg 'groups.common.source'/>: {{(group?.activities[funding?.key]?.sourceName == null || group?.activities[funding?.key]?.sourceName == '') ? group?.activities[funding?.key]?.source : group?.activities[funding?.key]?.sourceName}}
+                          <@orcid.msg 'groups.common.source'/>: {{(funding?.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                     </div>                          
-                    <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="group?.activePutCode == funding?.key">
-                        <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span>&nbsp;<span *ngIf="!(group.activitiesCount == 1)">(</span><a (click)="showSources(group, $event)" *ngIf="!(group.activitiesCount == 1)" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span *ngIf="!(group.activitiesCount == 1)">)</span>
+                    <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="group?.activePutCode == funding?.putCode.value">
+                        <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span>&nbsp;<span *ngIf="!(group.fundings.length == 1)">(</span><a (click)="showSources(group, $event)" *ngIf="!(group.fundings.length == 1)" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.fundings.length}}</a><span *ngIf="!(group.fundings.length == 1)">)</span>
                         
                         <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
                             <div class="arrow"></div>
@@ -293,14 +293,14 @@
                         <ul class="sources-options" >
                             <#if !(isPublicProfile??)>
                                 <li>
-                                    <@orcid.editActivityIconNg2
-                                        activity="group.activities[funding.key]"
-                                        click="openEditFunding(funding.key)"
+                                    <@orcid.editActivityIconNg2BackendGrouping
+                                        activity="funding"
+                                        click="openEditFunding(funding.putCode.value)"
                                         toolTipSuffix="editToolTip"
                                         toolTipClass="popover popover-tooltip top edit-source-popover"
                                      />
                                 </li>
-                                <li *ngIf="!(group.activitiesCount == 1 || editSources[group.groupId] == true)">
+                                <li *ngIf="!(group.fundings.length == 1 || editSources[group.groupId] == true)">
 
                                     <a (click)="showSources(group, $event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                          <span class="glyphicon glyphicon-trash"></span>
@@ -312,8 +312,8 @@
                                         </div>
                                     </div>  
                                 </li>
-                                <li *ngIf="group.activitiesCount == 1">
-                                   <a id="delete-funding_{{group?.activities[group?.activePutCode]?.putCode.value}}" (click)="deleteFunding(group?.activities[group?.activePutCode])" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
+                                <li *ngIf="group.fundings.length == 1">
+                                   <a id="delete-funding_{{funding.putCode.value}}" (click)="deleteFunding(funding)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
                                       <span class="glyphicon glyphicon-trash"></span>
                                    </a>                                 
                                   <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteSource']">

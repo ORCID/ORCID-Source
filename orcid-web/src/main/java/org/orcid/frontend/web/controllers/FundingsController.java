@@ -7,7 +7,6 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,20 +17,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.v3.activities.FundingComparators;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.rc1.record.Funding;
 import org.orcid.jaxb.model.v3.rc1.record.FundingType;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
-import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
@@ -42,8 +43,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.orcid.pojo.grouping.FundingGroup;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,12 +58,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller("fundingsController")
 @RequestMapping(value = { "/fundings" })
 public class FundingsController extends BaseWorkspaceController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FundingsController.class);
-    private static final String GRANT_MAP = "GRANT_MAP";
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
     private static final String DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE = "Grant number";
     private static final String DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE_CODE = "grant_number";
-
+    
     @Resource(name = "profileFundingManagerV3")
     private ProfileFundingManager profileFundingManager;
 
@@ -169,101 +167,19 @@ public class FundingsController extends BaseWorkspaceController {
         return errors;
     }
 
-    /**
-     * List fundings associated with a profile
-     * */
-    @RequestMapping(value = "/fundingIds.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<String> getFundingsIds(HttpServletRequest request) {
-        // Get cached profile
-        List<String> fundingIds = createFundingIdList(request);
-        return fundingIds;
-    }
-
-    /**
-     * Create a funding id list and sorts a map associated with the list in in
-     * the session
-     * 
-     */
-    private List<String> createFundingIdList(HttpServletRequest request) {
-        Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);        
-        String orcid = getEffectiveUserOrcid();
-        List<Funding> fundings = profileFundingManager.getFundingList(orcid);                
-        HashMap<String, FundingForm> fundingsMap = new HashMap<String, FundingForm>();
-        List<String> fundingIds = new ArrayList<String>();
-        if (fundings != null) {
-            for (Funding funding : fundings) {
-                try {
-                    FundingForm form = FundingForm.valueOf(funding);                                        
-                    if (funding.getType() != null) {
-                        form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, funding.getType().value())));
-                    }
-                    // Set translated title language name
-                    if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
-                        String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
-                        form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
-                    }
-
-                    // Set the formatted amount
-                    if (funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
-                        BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
-                        String formattedAmount = formatAmountString(bigDecimal);
-                        form.setAmount(Text.valueOf(formattedAmount));
-                    }
-                    
-                    if (form.getContributors() != null) {
-                        for (Contributor contributor : form.getContributors()) {
-                            if (!PojoUtil.isEmpty(contributor.getOrcid())) {
-                                String contributorOrcid = contributor.getOrcid().getValue();
-                                if (profileEntityManager.orcidExists(contributorOrcid)) {
-                                    // contributor is an ORCID user - visibility of user's name in record must be taken into account 
-                                    ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                                    String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
-                                    contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                                }
-                            }
-                        }
-                    }
-                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
-                    String putCode = String.valueOf(funding.getPutCode());
-                    fundingsMap.put(putCode, form);
-                    fundingIds.add(putCode);
-                } catch (Exception e) {
-                    LOGGER.error("Failed to parse as Funding. Put code" + funding.getPutCode(), e);
-                }
-            }
-            request.getSession().setAttribute(GRANT_MAP, fundingsMap);
-        }
-        return fundingIds;
-    }
-
-    /**
-     * List fundings associated with a profile
-     * */
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/fundings.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<FundingForm> getFundingsJson(HttpServletRequest request, @RequestParam(value = "fundingIds") String fundingIdsStr) {
-        List<FundingForm> fundingList = new ArrayList<>();
-        FundingForm funding = null;
-        String[] fundingIds = fundingIdsStr.split(",");
-
-        if (fundingIds != null) {
-            HashMap<String, FundingForm> fundingsMap = (HashMap<String, FundingForm>) request.getSession().getAttribute(GRANT_MAP);
-            // this should never happen, but just in case.
-            if (fundingsMap == null) {
-                createFundingIdList(request);
-                fundingsMap = (HashMap<String, FundingForm>) request.getSession().getAttribute(GRANT_MAP);
-            }
-            for (String fundingId : fundingIds) {
-                funding = fundingsMap.get(fundingId);
-                fundingList.add(funding);
-            }
+    public @ResponseBody List<FundingGroup> getFundingsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+        List<FundingGroup> fundingGroups = new ArrayList<>();
+        List<FundingSummary> summaries = profileFundingManager.getFundingSummaryList(getEffectiveUserOrcid());
+        Fundings fundings = profileFundingManager.groupFundings(summaries, false);
+        for (org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup group : fundings.getFundingGroup()) {
+            FundingGroup fundingGroup = FundingGroup.valueOf(group);
+            fundingGroups.add(fundingGroup);
         }
-
-        return fundingList;
+        fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
+        return fundingGroups;
     }
-
+    
     /**
      * List fundings associated with a profile
      * */

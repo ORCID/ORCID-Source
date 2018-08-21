@@ -124,7 +124,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                         }            
                         $scope.showAddModal();
                     }
-                }else{
+                } else {
                     showEmailVerificationModal();
                 }
             };
@@ -499,7 +499,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                         $scope.unbindTypeaheadForOrgs();
                         $scope.unbindTypeaheadForSubTypes();
                         $scope.closeAllMoreInfo();
-                        fundingSrvc.getFundings('fundings/fundingIds.json');
+                        fundingSrvc.getFundings($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
                     }
                 });
             };
@@ -534,6 +534,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
 
             $scope.sort = function(key) {
                 $scope.sortState.sortBy(key);
+                fundingSrvc.getFundings($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
             };
             
             // remove once grouping is live
@@ -615,7 +616,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
             };
 
             //init
-            fundingSrvc.getFundings('fundings/fundingIds.json');
+            fundingSrvc.getFundings($scope.sortState.predicateKey, !$scope.sortState.reverseKey[$scope.sortState.predicateKey]);
 
         }
     ]

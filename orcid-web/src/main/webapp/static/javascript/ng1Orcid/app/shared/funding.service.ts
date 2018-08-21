@@ -15,9 +15,6 @@ import { catchError, map, tap }
 export class FundingService {
     private headers: HttpHeaders;
     private notify = new Subject<any>();
-    private fundingToAddIds: any;
-    private urlFundingsById: string;
-    private urlFundingsId: string;
     private fundingToEdit: any;
     
     public groups: any;
@@ -33,10 +30,7 @@ export class FundingService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
-        this.fundingToAddIds = null;
         this.groups = null;
-        this.urlFundingsById = getBaseUri() + '/fundings/fundings.json?fundingIds=';
-        this.urlFundingsId = getBaseUri() + '/fundings/fundingIds.json';
         this.fundingToEdit = {};
     }
 
@@ -105,20 +99,18 @@ export class FundingService {
             getBaseUri() + '/fundings/funding.json'
         )
     }
-    
 
-    getFundingsById( idList ): Observable<any> {
+    getFundings(sort, sortAsc): Observable<any> {
         this.loading = true;
         return this.http.get(
-            this.urlFundingsById + idList
-        )
+            getBaseUri() + '/fundings/fundings.json?sort=' + sort + '&sortAsc=' + sortAsc
+        )    
     }
-
-    getFundingsId(): Observable<any> {
+    
+    getFullFunding(putCode): Observable<any> {
         this.loading = true;
-        this.fundingToAddIds = null;
         return this.http.get(
-            this.urlFundingsId
+            getBaseUri() + '/fundings/getFunding.json?fundingId=' + putCode
         )    
     }
 
@@ -135,10 +127,10 @@ export class FundingService {
         return null;
     }
 
-    getPublicFundingsById( idList ): Observable<any> {
+    getPublicFundings(sort, sortAsc): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/' + orcidVar.orcidId + '/fundings.json?fundingIds=' + idList
+            getBaseUri() + '/' + orcidVar.orcidId + '/fundings.json?sort=' + sort + '&sortAsc=' + sortAsc
         )
     }
 

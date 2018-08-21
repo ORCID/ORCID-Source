@@ -832,8 +832,8 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 });
             };
 
-            $scope.showCombineMatches = function( work1 ) {
-                $scope.combineWork = work1;
+            $scope.showCombineMatches = function( putCode ) {
+                $scope.combineWork = worksSrvc.getWork(putCode);
                 $.colorbox({
                     scrolling: true,
                     html: $compile($('#combine-work-template').html())($scope),

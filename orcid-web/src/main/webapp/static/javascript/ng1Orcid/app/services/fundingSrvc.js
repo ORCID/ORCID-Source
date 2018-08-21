@@ -10,36 +10,7 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', '$timeout', fun
         loading: false,
         moreDetailsActive: false,
         
-        addFundingToScope: function(path) {
-            if( fundingSrvc.fundingToAddIds.length != 0 ) {
-                var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
-                $.ajax({
-                    url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
-                    dataType: 'json',
-                    success: function(data) {
-                        //console.log('addFundingToScope', path, data);
-                        for (var i in data) {
-                            var funding = data[i];
-                            groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
-                        };
-                        if (fundingSrvc.fundingToAddIds.length == 0) {
-                            $timeout(function() {
-                              fundingSrvc.loading = false;
-                            });
-                        } else {
-                            $timeout(function () {
-                                fundingSrvc.addFundingToScope(path);
-                            },50);
-                        }
-                    }
-                }).fail(function(e) {
-                    console.log("Error fetching fundings");
-                    logAjaxError(e);
-                });
-            } else {
-                fundingSrvc.loading = false;
-            };
-        },
+
         createNew: function(work) {
             var cloneF = JSON.parse(JSON.stringify(work));
             cloneF.source = null;
@@ -109,28 +80,23 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', '$timeout', fun
             }
             return null;
         },
-        getFundings: function(path) {
-            //clear out current fundings
+        getFundings: function(sort, sortAsc) {
             fundingSrvc.loading = true;
             fundingSrvc.fundingToAddIds = null;
-            //new way
             fundingSrvc.groups.length = 0;
-            //get funding ids
             $.ajax({
-                url: getBaseUri() + '/'  + path,
+                url: getBaseUri() + '/fundings.json?sort=' + sort + '&sortAsc=' + sortAsc,
                 dataType: 'json',
                 success: function(data) {
-                    $timeout(function(){
-                        fundingSrvc.fundingToAddIds = data;
-                        fundingSrvc.addFundingToScope('fundings/fundings.json');
-                    });
+                    fundingSrvc.groups = data;
+                    fundingSrvc.loading = false;
                 }
             }).fail(function(e){
-                // something bad is happening!
                 console.log("error fetching fundings");
                 logAjaxError(e);
             });
         },
+        
         getGroup: function(putCode) {
             for (var idx in fundingSrvc.groups) {
                 if (fundingSrvc.groups[idx].hasPut(putCode)){
