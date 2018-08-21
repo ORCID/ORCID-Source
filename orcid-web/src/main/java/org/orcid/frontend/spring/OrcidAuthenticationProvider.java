@@ -90,7 +90,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
             if (OrcidStringUtils.isValidOrcid(username)) {
                 profile = profileEntityCacheManager.retrieve(username);
             } else {
-                EmailEntity emailEntity = emailDaoReadOnly.findCaseInsensitive(username);
+                EmailEntity emailEntity = emailDaoReadOnly.findByEmail(username);
                 if (emailEntity != null) {
                     profile = emailEntity.getProfile();
                 }

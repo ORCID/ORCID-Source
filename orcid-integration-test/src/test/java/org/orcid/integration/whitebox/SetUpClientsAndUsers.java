@@ -531,7 +531,7 @@ public class SetUpClientsAndUsers {
             // Check if the profile have the same email, if not, throw an
             // exception
             EmailEntity e = emailDao.findPrimaryEmail(orcid);
-            if (!email.equals(e.getId())) {
+            if (!email.equals(e.getEmail())) {
                 throw new ApplicationException(
                         "User with email " + params.get(EMAIL) + " must have orcid id '" + orcid + "' but it is '" + entity.getId() + "'");
             }
@@ -611,8 +611,8 @@ public class SetUpClientsAndUsers {
             List<EmailEntity> emails = emailDao.findByOrcid(orcid, profileEntityManager.getLastModified(orcid));
             if(emails != null && !emails.isEmpty()) {
                 for(EmailEntity rc2Email : emails) {
-                    if (!params.get(EMAIL).equals(rc2Email.getId())) {
-                        emailDao.removeEmail(orcid, rc2Email.getId());
+                    if (!params.get(EMAIL).equals(rc2Email.getEmail())) {
+                        emailDao.removeEmail(orcid, rc2Email.getEmail());
                     }
                 }
             }

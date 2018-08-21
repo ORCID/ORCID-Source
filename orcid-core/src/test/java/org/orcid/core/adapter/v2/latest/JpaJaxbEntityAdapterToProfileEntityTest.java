@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -121,24 +122,31 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         Set<EmailEntity> emails = profileEntity.getEmails();
         assertNotNull(emails);
         assertEquals(2, emails.size());
-        Map<String, EmailEntity> emailMap = EmailEntity.mapById(emails);
-
-        EmailEntity primaryEmail = emailMap.get("josiah_carberry@brown.edu");
-        assertNotNull(primaryEmail);
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name(), primaryEmail.getVisibility());
-        assertTrue(primaryEmail.getPrimary());
-        assertTrue(primaryEmail.getCurrent());
-        assertTrue(primaryEmail.getVerified());
-        assertEquals("4444-4444-4444-4446", primaryEmail.getElementSourceId());
-
-        EmailEntity nonPrimaryEmail1 = emailMap.get("josiah_carberry_1@brown.edu");
-        assertNotNull(nonPrimaryEmail1);
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name(), nonPrimaryEmail1.getVisibility());
-        assertFalse(nonPrimaryEmail1.getPrimary());
-        assertTrue(nonPrimaryEmail1.getCurrent());
-        assertFalse(nonPrimaryEmail1.getVerified());
-        assertEquals("4444-4444-4444-4446", nonPrimaryEmail1.getElementSourceId());
-
+        boolean found1 = false, found2 = false;
+        
+        for(EmailEntity email : emails) {
+            if("josiah_carberry@brown.edu".equals(email.getEmail())) {
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name(), email.getVisibility());
+                assertTrue(email.getPrimary());
+                assertTrue(email.getCurrent());
+                assertTrue(email.getVerified());
+                assertEquals("4444-4444-4444-4446", email.getElementSourceId());
+                found1 = true;
+            } else if("josiah_carberry_1@brown.edu".equals(email.getEmail())) {
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name(), email.getVisibility());
+                assertFalse(email.getPrimary());
+                assertTrue(email.getCurrent());
+                assertFalse(email.getVerified());
+                assertEquals("4444-4444-4444-4446", email.getElementSourceId());
+                found2 = true;
+            } else {
+                fail("Invalid email: " + email.getEmail());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+                
         assertEquals(2, profileEntity.getProfileFunding().size());
         for (ProfileFundingEntity profileGrantEntity : profileEntity.getProfileFunding()) {
             assertNotNull(profileGrantEntity.getContributorsJson());

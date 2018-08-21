@@ -20,6 +20,7 @@ export const profileDeactivationAndReactivationCtrl = angular.module('orcidApp')
             $scope.deactivateMessage = om.get('admin.profile_deactivation.success');
             $scope.orcidToDeactivate = null;
             $scope.orcidToReactivate = null;
+            $scope.primaryEmail = null;
             $scope.reactivatedAccount = null;
             $scope.reactivateMessage = om.get('admin.profile_reactivation.success');
             $scope.showDeactivateModal = false;
@@ -86,7 +87,7 @@ export const profileDeactivationAndReactivationCtrl = angular.module('orcidApp')
 
             $scope.reactivateAccount = function() {
                 $.ajax({
-                    url: getBaseUri()+'/admin-actions/reactivate-profile?orcid=' + $scope.orcidToReactivate,
+                    url: getBaseUri()+'/admin-actions/reactivate-profile?orcid=' + $scope.orcidToReactivate + '&email=' + $scope.primaryEmail,
                     type: 'GET',
                     dataType: 'json',
                     success: function(data){
@@ -96,6 +97,7 @@ export const profileDeactivationAndReactivationCtrl = angular.module('orcidApp')
                                 $scope.closeModal();
                             } else {
                                 $scope.orcidToReactivate = null;
+                                $scope.primaryEmail = null;
                                 $scope.showSuccessMessage($scope.reactivateMessage);
                             }
                         });

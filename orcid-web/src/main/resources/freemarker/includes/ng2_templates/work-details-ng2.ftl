@@ -15,11 +15,13 @@
                     <div class="col-md-3 col-sm-3 col-xs-6 right padding-left-fix">
                         <div class="workspace-toolbar">
                             <ul class="workspace-private-toolbar">
-                                <#if !(isPublicProfile??)>
-                                <li *ngIf="bulkEditShow">
-                                    <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[group.activePutCode]" class="bulk-edit-input-header">
-                                </li>
-                                </#if>                
+                                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
+                                    <#if !(isPublicProfile??)>
+                                        <li *ngIf="bulkEditShow">
+                                            <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[group.activePutCode]" class="bulk-edit-input-header">
+                                        </li>
+                                    </#if>           
+                                </@orcid.checkFeatureStatus>     
                                 <li class="works-details">
                                     <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                         <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
@@ -56,7 +58,10 @@
             <li *ngIf="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
                 <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
                     <div class="col-md-9 col-sm-9 col-xs-7">
-                        <h3 class="workspace-title">
+                        <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
+                            <div class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid"></div> 
+                        </@orcid.checkFeatureStatus>
+                        <h3 class="workspace-title leftBuffer">
                             <span>{{work.title.value}}</span>
                             <span class="journaltitle" *ngIf="work.journalTitle?.value">{{work.journalTitle.value}}</span>                                
                         </h3>                                                        
@@ -69,12 +74,14 @@
                     <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
                         <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
 
-                            <!--Bulk edit checkbox-->                               
-                            <#if !(isPublicProfile??)>
-                            <li *ngIf="bulkEditShow" class="bulk-checkbox-item">
-                                <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
-                            </li>
-                            </#if> 
+                            <!--Bulk edit checkbox-->             
+                            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>                  
+                                <#if !(isPublicProfile??)>
+                                    <li *ngIf="bulkEditShow" class="bulk-checkbox-item">
+                                        <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
+                                    </li>
+                                </#if> 
+                            </@orcid.checkFeatureStatus>
                             <!--Show details toggle-->
                             <li class="works-details" *ngIf="!editSources[group.groupId]">
                                 <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">

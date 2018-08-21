@@ -193,7 +193,7 @@ public class ManageProfileControllerTest {
                 });
                 entity.setGivenPermissionTo(givenPermissionTo);
                 EmailEntity email1 = new EmailEntity();
-                email1.setId(invocation.getArgument(0) + "_1@test.orcid.org");
+                email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
                 email1.setDateCreated(new Date());
@@ -202,7 +202,7 @@ public class ManageProfileControllerTest {
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
                 EmailEntity email2 = new EmailEntity();
-                email2.setId(invocation.getArgument(0) + "_2@test.orcid.org");
+                email2.setEmail(invocation.getArgument(0) + "_2@test.orcid.org");
                 email2.setVerified(true);
                 email2.setCurrent(false);
                 email2.setDateCreated(new Date());
@@ -240,14 +240,14 @@ public class ManageProfileControllerTest {
 
         });
 
-        when(mockEmailManager.findCaseInsensitive(Mockito.anyString())).thenAnswer(new Answer<EmailEntity>() {
+        when(mockEmailManager.find(Mockito.anyString())).thenAnswer(new Answer<EmailEntity>() {
 
             @Override
             public EmailEntity answer(InvocationOnMock invocation) throws Throwable {
                 String emailString = invocation.getArgument(0);
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
-                email.setId(emailString);
+                email.setEmail(emailString);
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
@@ -289,7 +289,7 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
-                email1.setId(invocation.getArgument(0) + "_1@test.orcid.org");
+                email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
                 email1.setDateCreated(new Date());
@@ -309,14 +309,14 @@ public class ManageProfileControllerTest {
             }
         });
 
-        when(mockEmailManager.findCaseInsensitive(Mockito.eq("0000-0000-0000-0002_1@test.orcid.org"))).thenAnswer(new Answer<EmailEntity>() {
+        when(mockEmailManager.find(Mockito.eq("0000-0000-0000-0002_1@test.orcid.org"))).thenAnswer(new Answer<EmailEntity>() {
 
             @Override
             public EmailEntity answer(InvocationOnMock invocation) throws Throwable {
                 String emailString = invocation.getArgument(0);
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
-                email.setId(emailString);
+                email.setEmail(emailString);
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
@@ -337,7 +337,7 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
-                email1.setId(invocation.getArgument(0) + "_1@test.orcid.org");
+                email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
                 email1.setDateCreated(new Date());
@@ -357,14 +357,14 @@ public class ManageProfileControllerTest {
             }
         });
 
-        when(mockEmailManager.findCaseInsensitive(Mockito.eq("0000-0000-0000-0002_1@test.orcid.org"))).thenAnswer(new Answer<EmailEntity>() {
+        when(mockEmailManager.find(Mockito.eq("0000-0000-0000-0002_1@test.orcid.org"))).thenAnswer(new Answer<EmailEntity>() {
 
             @Override
             public EmailEntity answer(InvocationOnMock invocation) throws Throwable {
                 String emailString = invocation.getArgument(0);
                 String orcidString = emailString.substring(0, (emailString.indexOf("_")));
                 EmailEntity email = new EmailEntity();
-                email.setId(emailString);
+                email.setEmail(emailString);
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
@@ -715,7 +715,7 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
-                email1.setId(invocation.getArgument(0) + "_1@test.orcid.org");
+                email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
                 email1.setDateCreated(new Date());

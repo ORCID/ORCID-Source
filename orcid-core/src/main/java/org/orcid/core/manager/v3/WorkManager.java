@@ -108,4 +108,13 @@ public interface WorkManager extends WorkManagerReadOnly {
      * @param groupingSuggestion
      */
     void acceptGroupingSuggestion(WorkGroupingSuggestion groupingSuggestion);
+
+    
+    /** 
+     * For user driven grouping - user chooses preferred work and then groups
+     * @param preferredId
+     * @param workIds
+     * @param orcid
+     */
+    void setPreferredAndCreateGroup(Long preferredId, List<Long> workIds, String orcid);
 }

@@ -23,7 +23,6 @@ import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -138,7 +137,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
     
     @RequestMapping(value = "/oauth/custom/register/validateEmailsAdditional.json", method = RequestMethod.POST)
     public @ResponseBody OauthRegistrationForm validateEmailsAdditional(HttpServletRequest request, @RequestBody OauthRegistrationForm reg) {
-        registrationController.regEmailsAdditionalValidate(request, reg, false, false);
+        additionalEmailsValidateOnRegister(request, reg);
         return reg;
     }
 }

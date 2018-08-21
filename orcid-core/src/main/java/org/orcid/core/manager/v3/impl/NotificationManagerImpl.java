@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -190,6 +192,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
+    
+    @Value("${org.orcid.notifications.archive.offset:100}")
+    private Integer notificationArchiveOffset;
+    
+    @Value("${org.orcid.notifications.delete.offset:100}")
+    private Integer notificationDeleteOffset;
+    
+    @Value("${org.orcid.notifications.delete.offset.records:10}")
+    private Integer recordsPerBatch;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -462,6 +473,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("submittedEmail", submittedEmail);
         templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -477,6 +489,22 @@ public class NotificationManagerImpl implements NotificationManager {
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", locale), body, htmlBody);
     }
+    
+    @Override
+    public void sendPasswordResetNotFoundEmail(String submittedEmail, Locale locale) {     
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", submittedEmail);
+        templateParams.put("subject", getSubject("email.subject.reset_not_found", locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        addMessageParams(templateParams, locale);
+        // Generate body from template
+        String body = templateManager.processTemplate("reset_password_not_found_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("reset_password_not_found_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset_not_found", locale), body, htmlBody);
+    }
+
 
     @Override
     public void sendReactivationEmail(String submittedEmail, String userOrcid) {
@@ -1206,5 +1234,31 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         
         return baseUrl + "static/" + ReleaseNameUtils.getReleaseName();
+    }
+
+    @Override
+    public Integer archiveOffsetNotifications() {
+        return notificationDao.archiveOffsetNotifications(notificationArchiveOffset == null ? 100 : notificationArchiveOffset);
+    }
+
+    @Override    
+    public Integer deleteOffsetNotifications() {
+        List<Object[]> toDelete = new ArrayList<Object[]>();
+        Integer deleted = 0;
+        do {
+            toDelete = notificationDao.findNotificationsToDeleteByOffset((notificationDeleteOffset == null ? 10000 : notificationDeleteOffset), recordsPerBatch);
+            LOGGER.info("Got batch of {} notifications to delete", toDelete.size());
+            for(Object[] o : toDelete) {
+                BigInteger big = (BigInteger) o[0];
+                Long id = big.longValue();
+                String orcid = (String) o[1];            
+                LOGGER.info("About to delete old notification: id={}, orcid={}",
+                            new Object[] { id, orcid });
+                    notificationDao.deleteNotificationById(id);            
+            }         
+            deleted += toDelete.size();
+        } while(!toDelete.isEmpty());
+        
+        return deleted;
     }    
 }

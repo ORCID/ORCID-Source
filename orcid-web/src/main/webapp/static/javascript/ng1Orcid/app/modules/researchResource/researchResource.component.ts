@@ -71,7 +71,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.showResourceItemDetails = {};
-        this.sortState = this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+        this.sortState = this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 
@@ -152,7 +152,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             )
             .subscribe(
                 data => {
-                    console.log(data);
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
                     this.researchResourceService.details[putCode] = data;   
                 },
@@ -167,7 +166,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             )
             .subscribe(
                 data => {
-                    console.log(data);
                     //this.researchResourceService.removeBadExternalIdentifiers(data);
                     this.researchResourceService.details[putCode] = data;   
                 },
@@ -178,7 +176,11 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         }
     }
 
-    
+    hideAllTooltip(): void {
+        for (var idx in this.showElement){
+            this.showElement[idx]=false;
+        }
+    };
 
     hideSources(group): void {
         this.editSources[group.groupId] = false;
@@ -249,7 +251,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
             for (var idx in group.researchResources){
                 console.log(group.researchResources[idx]);
 
-                for(var idy in this.researchResourceService.details[group.researchResources[idx].putCode].resourceItems){
+                for(var idy in this.researchResourceService.details[group.researchResources[idx].putCode].items){
                     var id = group.researchResources[idx].putCode + 'resourceItem' + idy;
                     console.log(id);
                     console.log(this.showResourceItemDetails[id]);
@@ -264,6 +266,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     showSources(group, $event): void {
         $event.stopPropagation();
         this.editSources[group.groupId] = true;
+        this.hideAllTooltip();
     };
 
     showTooltip(element): void{        

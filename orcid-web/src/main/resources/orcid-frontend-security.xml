@@ -316,6 +316,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/reset-password-form-validate.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />	
+		<sec:intercept-url pattern="/reactivateAdditionalEmailsValidate.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/claim(.*)Validate.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/registerConfirm.json(\?.*)?"

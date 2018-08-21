@@ -199,7 +199,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         group.setType(MemberType.valueOf(profileEntity.getGroupType()));
         Set<EmailEntity> emailEntities = profileEntity.getEmails();
         for (EmailEntity emailEntity : emailEntities) {
-            group.setEmail(emailEntity.getId());
+            group.setEmail(emailEntity.getEmail());
         }
         for (ClientDetailsEntity clientDetailsEntity : profileEntity.getClients()) {
             OrcidClient client = toOrcidClient(clientDetailsEntity);
@@ -753,7 +753,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         List<Email> emailList = contactDetails.getEmail();
         if (emailEntities != null) {
             for (EmailEntity emailEntity : emailEntities) {
-                Email email = new Email(emailEntity.getId());
+                Email email = new Email(emailEntity.getEmail());
                 email.setPrimary(emailEntity.getPrimary());
                 email.setCurrent(emailEntity.getCurrent());
                 email.setVerified(emailEntity.getVerified());
@@ -834,7 +834,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         if(work.getWorkType() != null) {
             if(org.orcid.jaxb.model.v3.rc1.record.WorkType.SOFTWARE.name().equals(work.getWorkType())) {
-                orcidWork.setWorkType(WorkType.valueOf(org.orcid.jaxb.model.v3.rc1.record.WorkType.SOFTWARE.name()));
+                orcidWork.setWorkType(WorkType.OTHER);
             } else {
                 orcidWork.setWorkType(WorkType.valueOf(work.getWorkType()));
             }            

@@ -38,6 +38,7 @@ public class WorkGroup extends ActivityGroup {
         Long maxDisplayIndex = null;
         for (WorkSummary workSummary : workGroup.getWorkSummary()) {
             WorkForm workForm = getWorkForm(workSummary);
+            workForm.setUserSource(workSummary.getSource().retrieveSourcePath() != null && workSummary.getSource().retrieveSourcePath().equals(orcid));
             group.getWorks().add(workForm);
 
             Long displayIndex = Long.parseLong(workSummary.getDisplayIndex());

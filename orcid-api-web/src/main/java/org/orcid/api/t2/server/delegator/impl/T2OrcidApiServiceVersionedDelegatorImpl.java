@@ -470,7 +470,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             for(Email email : emailList) {
                 if(!PojoUtil.isEmpty(email.getValue())) {
 
-                    EmailEntity emailEntity = emailManager.findCaseInsensitive(email.getValue());
+                    EmailEntity emailEntity = emailManager.find(email.getValue());
                     if(emailEntity != null) {
                         String emailOrcid = emailEntity.getProfile().getId();
                         if(!targetOrcid.equals(emailOrcid)) {
