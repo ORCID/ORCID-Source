@@ -386,43 +386,45 @@
         <!--Works list-->
         <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
             <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
-                <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <ul class="sources-actions">
-                            <li>
-                                <div class="left">
-                                    <input type="checkbox" value="false" (click)="toggleSelectAll()" />
-                                </div>
-                            </li>
-                            <li>
-                                <div class="left leftBuffer">
-                                    <a (click)="mergeConfirm()">
-                                        <span class="edit-option-toolbar glyphicon glyphicon-resize-small"></span>
-                                        <span><@orcid.msg 'workspace.bulkedit.merge'/></span>
-                                    </a>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="left leftBuffer">
-                                    <a (click)="deleteBulkConfirm()">
-                                        <span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
-                                        <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
-                                    </a>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="bulk-edit-privacy-control left leftBuffer">
-                                    <@orcid.privacyToggle2Ng2 angularModel="none" elementId="none" 
-                                    questionClick=""
-                                    clickedClassCheck=""
-                                    publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
-                                    limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
-                                    privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>              
+                <#if !(isPublicProfile??)>
+                    <div class="row" *ngIf="worksService?.groups?.length">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <ul class="sources-actions">
+                                <li>
+                                    <div class="left">
+                                        <input type="checkbox" value="false" (click)="toggleSelectAll()" />
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="left leftBuffer">
+                                        <a (click)="mergeConfirm()">
+                                            <span class="edit-option-toolbar glyphicon glyphicon-resize-small"></span>
+                                            <span><@orcid.msg 'workspace.bulkedit.merge'/></span>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="left leftBuffer">
+                                        <a (click)="deleteBulkConfirm()">
+                                            <span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
+                                            <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="bulk-edit-privacy-control left leftBuffer">
+                                        <@orcid.privacyToggle2Ng2 angularModel="none" elementId="none" 
+                                        questionClick=""
+                                        clickedClassCheck=""
+                                        publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
+                                        limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
+                                        privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>  
+                </#if>            
             </@orcid.checkFeatureStatus>
             <ul *ngIf="worksService?.groups?.length" class="workspace-publications bottom-margin-medium" id="body-work-list">
                 <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of worksService.groups">
