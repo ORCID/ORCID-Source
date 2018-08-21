@@ -30,7 +30,6 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -452,12 +451,11 @@ public class BaseController {
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
             }
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email, LoadOptions.BIO_ONLY);
-                if (orcidProfile.getOrcidHistory().isClaimed()) {
+                if (profileEntityManager.isProfileClaimedByEmail(email)) {
                     String[] codes = null;
                     String[] args = { email };
                     if (isRegisterRequest) {
-                        if (orcidProfile.getOrcidHistory().getDeactivationDate() != null) {
+                        if (profileEntityManager.isDeactivated(emailManager.findOrcidIdByEmail(email))) {
                             codes = new String[] { "orcid.frontend.verify.deactivated_email" };
                         } else {
                             codes = new String[] { "orcid.frontend.verify.duplicate_email" };
