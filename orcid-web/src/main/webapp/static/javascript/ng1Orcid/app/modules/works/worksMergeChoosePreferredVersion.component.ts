@@ -31,6 +31,7 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
     worksToMerge: Array<any>;
     delCountVerify: number;
     preferredNotSelected: boolean;
+    externalIdsPresent: boolean;
 
     constructor(
         private worksService: WorksService,
@@ -99,6 +100,9 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
                 }
                 if( res.worksToMerge ) {
                     this.worksToMerge = res.worksToMerge;
+                }
+                if( res.externalIdsPresent ) {
+                    this.externalIdsPresent = res.externalIdsPresent;
                 }
             }
         );
