@@ -292,7 +292,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             this.worksService.notifyOther({worksToMerge:worksToMerge});      
             this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
             this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
         }
     };
     

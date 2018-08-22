@@ -30,7 +30,11 @@
         </div>                    
       </span>
       <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12"> 
+        <div class="col-md-6 col-sm-12 col-xs-12"> 
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+            <@orcid.msg 'groups.merge.confirm.cannot_undo'/>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12"> 
           <div class="right">     
             <button class="btn btn-primary" (click)="merge()"><@orcid.msg 'freemarker.btnmerge'/></button>&nbsp;&nbsp;
             <a (click)="cancelEdit()">
