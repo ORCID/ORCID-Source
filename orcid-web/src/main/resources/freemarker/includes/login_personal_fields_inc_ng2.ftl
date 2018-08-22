@@ -72,7 +72,7 @@
                 <span class="orcid-error" *ngIf="initReactivationRequest.error != null">
                     <div [innerHTML]="initReactivationRequest.error"></div>
                 </span>
-                <span class="btn btn-primary" (click)="sendReactivationEmail()"><@spring.message 'check_password_modal.submit' /></span>
+                <span class="btn btn-primary" (click)="sendReactivationEmail(initReactivationRequest.email)"><@spring.message 'check_password_modal.submit' /></span>
             </div>
         </div>         
     </span> 
