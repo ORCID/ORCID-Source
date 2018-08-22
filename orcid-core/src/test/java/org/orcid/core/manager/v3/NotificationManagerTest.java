@@ -438,9 +438,16 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
         resetMocks();
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         String userOrcid = "0000-0000-0000-0003";
-        for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
+        RecordNameEntity name = new RecordNameEntity();
+        name.setCreditName("Credit Name");
+        name.setGivenNames("Given Name");
+        ProfileEntity profile = new ProfileEntity(userOrcid);
+        profile.setRecordNameEntity(name);
+        for(Locale locale : Locale.values()) {
+            profile.setLocale(locale.name());
+            when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
             notificationManager.sendClaimReminderEmail(userOrcid, 2);
         }
     }
