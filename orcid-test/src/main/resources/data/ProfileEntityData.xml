@@ -1622,6 +1622,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="spike@milligan.com"
+        email_hash="fa755fdf4ba30ea92bbbd382f4787526d162110cd83192a3bec180e6a09396b5"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1634,6 +1635,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="public@email.com"
+        email_hash="4266e33c87bf6a2410abe5a37a7c0aae3630a6ac18fb765f7ec2d570c687d898"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1646,6 +1648,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="limited@email.com"
+        email_hash="537969d9e9df42b9ef3945c3c68ea08aeee2b81dae7114786f5bffbd471e4432"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1658,6 +1661,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="1@deprecate.com"
+        email_hash="d0ef05afcac77e924955030b14a5debfb69b173e21b453cfe21e52e385f82cf1"
         is_primary="false"
         is_current="false"
         is_verified="true"
@@ -1670,6 +1674,7 @@
     <email
         orcid="4444-4444-4444-4441"
         email="2@deprecate.com"
+        email_hash="030d5c18e52798a1c7cc5635b931dd1c0ecd16d96c9f22528a0ad83f65589990"
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -1682,6 +1687,7 @@
     <email
         orcid="4444-4444-4444-4499"
         email="4441-10@milligan.com"
+        email_hash="82f825b0395bea46d7360ee05758051aab8371b6a02e5bab32d278646457e772"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1694,6 +1700,7 @@
     <email
         orcid="4444-4444-4444-4498"
         email="4444-4444-4444-4498@milligan.com"
+        email_hash="3a5e03495b39d0d18738d215d5f73141799cd3e96b40aa5c24ff54d58ced9c9f"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1706,6 +1713,7 @@
      <email
         orcid="4444-4444-4444-4442"
         email="michael@bentine.com"
+        email_hash="c8017625d38c53394062d1b5ea1a30b76fca792523435f2e87d20fea4172e97d"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1718,6 +1726,7 @@
     <email
         orcid="4444-4444-4444-4442"
         email="MiXeD@cASe.com"
+        email_hash="1293bdbb7ee3963ffa4f8c3cd0182b114a2d702d85c2811797712f09d00d5027"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1730,6 +1739,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="peter@sellers.com"
+        email_hash="93e5ca91a3a030187b723f7934992cd1cab061f32b568c57a276af58f1c2f77f"
         is_primary="true"
         is_current="true"
         is_verified="false"
@@ -1742,6 +1752,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass@semantico.com"
+        email_hash="2c5cb98057d742ca06eff946aa12a2eb3f9a383159ec85097d8a525fc260cbe7"
         is_primary="false"
         is_current="true"
         is_verified="false"
@@ -1754,6 +1765,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass2@semantico.com"
+        email_hash="342c1db9d167945cb61aeb83ee2e4eb9c2774a558dde128649a2a26c30b060f2"
         is_primary="false"
         is_current="true"
         is_verified="false"
@@ -1766,6 +1778,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass3public@semantico.com"
+        email_hash="f956395f84a3ed21f8350dfb478daa0373b5609cb14b391fd1927168094f9e59"
         is_primary="false"
         is_current="true"
         is_verified="false"
@@ -1778,6 +1791,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass3private@semantico.com"
+        email_hash="7ec2c813391c22a9b190062fe07a78b2a409e76eb7877b6bc01097422ca24a79"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1790,6 +1804,7 @@
     <email
         orcid="4444-4444-4444-4444"
         email="harry@secombe.com"
+        email_hash="bbc3d9d7f304fe0139f83ad7745cc54f5e8abb56dde4f5e1c2f966a47df63d17"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1802,6 +1817,7 @@
     <email
         orcid="4444-4444-4444-4445"
         email="andrew@timothy.com"
+        email_hash="813bdeb15d67a17a3eb119daf7098736edeb499746e45c703b06957e15c03dc0"
         is_primary="true"
         is_current="true"
         is_verified="false"
@@ -1814,6 +1830,7 @@
     <email
         orcid="4444-4444-4444-4443"
         email="angel2@montenegro.com"
+        email_hash="955d69759f05bef175aff04ec0242a643442ae089f229d0c4124c525e5dd02a2"
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -1826,6 +1843,7 @@
     <email
         orcid="4444-4444-4444-4444"
         email="angel1@montenegro.com"
+        email_hash="2965a4115f2639b43e5feb78adddfff52e5324813b6c12b4e25ebdac052f72df"
         is_primary="true"
         is_current="false"
         is_verified="true"
@@ -1838,6 +1856,7 @@
 	<email
         orcid="4444-4444-4444-4445"
         email="andrew2@timothy.com"
+        email_hash="716e061d83dcac0e6f7efd4574a6e4c0cd9de4520731819faa054375a0e8c9a2"
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -1850,6 +1869,7 @@
     <email
         orcid="4444-4444-4444-4446"
         email="billie@holiday.com"
+        email_hash="245ff4ed28f695be77c90999acdbcb372f50e82491768e45f6a01f2f18c56a4a"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1862,6 +1882,7 @@
     <email
         orcid="4444-4444-4444-4446"
         email="test@test.com"
+        email_hash="f660ab912ec121d1b1e928a0bb4bc61b15f5ad44d5efdc4e1c92a25e99b8e44a"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1874,6 +1895,7 @@
     <email
         orcid="4444-4444-4444-4446"
         email="user@user.com"
+        email_hash="b238c595b84321b35b8e57610c49523d4e3b9b5b5d090923e9e54f4b929bedba"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1886,6 +1908,7 @@
     <email
         orcid="4444-4444-4444-4447"
         email="otis@reading.com"
+        email_hash="ed69d58e68ea6f821f13f0a5006742d3065bb412bab8bc86899ae39638ddc7b5"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1898,6 +1921,7 @@
 	<email
         orcid="4444-4444-4444-444X"
         email="user@email.com"
+        email_hash="0925f997eb0d742678f66d2da134d15d842d57722af5f7605c4785cb5358831b"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1910,6 +1934,7 @@
     <email
         orcid="4444-4444-4444-4440"
         email="admin@user.com"
+        email_hash="18a88eff6eac8ebd45ac3451ec2c60695d614ed9cbe7b56175d76aa780841146"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1922,6 +1947,7 @@
 	<email
         orcid="0000-0000-0000-0001"
         email="public_0000-0000-0000-0001@test.orcid.org"
+        email_hash="8f649f6d12203f020ee26467547432add46bc5395ff8dd72242fa2d7aa4fc04a"
         is_primary="true"
         is_current="true"
         is_verified="false"
@@ -1934,6 +1960,7 @@
 	<email
         orcid="0000-0000-0000-0002"
         email="public_0000-0000-0000-0002@test.orcid.org"
+        email_hash="ecdc2c6aef7aa5aa4012b9e5f262de2214c9b0e3f3b0201da0eeebc7531ae018"
         is_primary="true"
         is_current="true"
         is_verified="false"
@@ -1946,6 +1973,7 @@
 	<email
         orcid="0000-0000-0000-0003"
         email="public_0000-0000-0000-0003@test.orcid.org"
+        email_hash="c3ba0b26aceb622a04908c202927db3633bd1e748e049e4bd2b070d29b189aa4"
         is_primary="true"
         is_current="true"
         is_verified="true"
@@ -1958,6 +1986,7 @@
 	<email
         orcid="0000-0000-0000-0003"
         email="limited_0000-0000-0000-0003@test.orcid.org"
+        email_hash="71d1e18acf189e7b14e486a53691cef30249a3aedfd5b4c988b1754eb179e6b9"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1970,6 +1999,7 @@
 	<email
         orcid="0000-0000-0000-0003"
         email="private_0000-0000-0000-0003@test.orcid.org"
+        email_hash="4cccdb9a8342f8e7e7b730b0870664f9428f6958082957ed36e22997525fe7ce"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1982,6 +2012,7 @@
 	<email
         orcid="0000-0000-0000-0003"
         email="self_limited_0000-0000-0000-0003@test.orcid.org"
+        email_hash="c1a6afc0cace346a7f9c6cc56a28f063a8d034d1f00730f3103825ce229eac95"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -1994,6 +2025,7 @@
     <email
         orcid="0000-0000-0000-0003"
         email="self_private_0000-0000-0000-0003@test.orcid.org"
+        email_hash="43e9409b44f1875bf9df470b32555c298b6e3a5bd3a28a17b1cdc2cbeccab8d7"
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -2006,6 +2038,7 @@
     <email
         orcid="0000-0000-0000-0006"
         email="public_0000-0000-0000-0006@test.orcid.org"
+        email_hash="49919fd6890f32d00cad6be9dbe277c3f1f84476d2ca0ec4dd74dbf03114b8d7"
         is_primary="false"
         is_current="true"
         is_verified="true"
@@ -2017,6 +2050,7 @@
     <email
         orcid="0000-0000-0000-0004"
         email="public_0000-0000-0000-0004@test.orcid.org"
+        email_hash="a5533ff2a39eae9687aea9906824e5ed9a65a350cfd8ec650b18593a2f9728b2"
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -2029,6 +2063,7 @@
     <email
         orcid="0000-0000-0000-0004"
         email="limited_0000-0000-0000-0004@test.orcid.org"
+        email_hash="4ffaa675b0a65aae1fbb715f0208d14f98fe15d11c52b0b1714f594c9237b324"
         is_primary="false"
         is_current="false"
         is_verified="false"
@@ -2041,6 +2076,7 @@
     <email
         orcid="0000-0000-0000-0004"
         email="private_0000-0000-0000-0004@test.orcid.org"
+        email_hash="bb24ead143f1a58f97394436a0548e7bc3d30a539188accd5d82a28af4315202"
         is_primary="true"
         is_current="false"
         is_verified="false"
@@ -2053,6 +2089,7 @@
     <email
         orcid="4444-4444-4444-4497"
         email="public_4444-4444-4444-4497@test.orcid.org"
+        email_hash="eddeca51af76b619be805d740a715921a666391dcc779f4eac7f0f71623456fc"
         is_primary="true"
         is_current="false"
         is_verified="false"
@@ -2065,6 +2102,7 @@
     <email
         orcid="4444-4444-4444-4497"
         email="limited_4444-4444-4444-4497@test.orcid.org"
+        email_hash="d40c3bf0519f4584cbcd3da368b7c0def44a07b912d1e43bef1b5d695f7529b9"
         is_primary="true"
         is_current="false"
         is_verified="false"
@@ -2077,6 +2115,7 @@
     <email
         orcid="4444-4444-4444-4497"
         email="private_4444-4444-4444-4497@test.orcid.org"
+        email_hash="b21fcb985dd882e44847aafbdd0fd4c7da7b9868e38b518d443ed951b3433e92"
         is_primary="true"
         is_current="false"
         is_verified="false"

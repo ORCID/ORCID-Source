@@ -56,7 +56,7 @@ export class ResearchResourceService {
 
     consistentVis(group): boolean {
         for(let i = 0; i < group.researchResources.length; i++) {
-            if (group.researchResources[i].visibility != group.activeVisibility) {
+            if (group.researchResources[i].visibility.visibility != group.activeVisibility) {
                 return false;
             }
         }

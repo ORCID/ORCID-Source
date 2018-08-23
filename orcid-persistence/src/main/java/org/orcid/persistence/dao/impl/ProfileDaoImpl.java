@@ -751,9 +751,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    public boolean getClaimedStatusByEmail(String email) {
-        Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE trim(lower(email)) = trim(lower(:email)))");
-        query.setParameter("email", email);
+    public boolean getClaimedStatusByEmailHash(String emailHash) {
+        Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email_hash = :emailHash)");
+        query.setParameter("emailHash", emailHash);
         return (Boolean) query.getSingleResult();
     }
 

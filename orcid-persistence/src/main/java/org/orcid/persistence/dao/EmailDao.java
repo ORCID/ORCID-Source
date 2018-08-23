@@ -11,11 +11,11 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
  */
 public interface EmailDao extends GenericDao<EmailEntity, String> {
 
-    boolean emailExists(String email);
-
-    EmailEntity findCaseInsensitive(String email);
+    boolean emailExists(String emailHash);
     
-    String findOrcidIdByCaseInsenitiveEmail(String email);
+    EmailEntity findByEmail(String email);
+
+    String findOrcidIdByEmailHash(String email);
 
     void updateEmail(String orcid, String email, boolean isCurrent, String visibility);
 
@@ -57,7 +57,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
      * @return true if the email exists, the owner is not claimed and the
      *         client source of the record allows auto deprecating records
      */
-    boolean isAutoDeprecateEnableForEmail(String email);
+    boolean isAutoDeprecateEnableForEmailUsingHash(String emailHash);
     
     boolean isPrimaryEmail(String email);
     
@@ -73,5 +73,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     List<String> getEmailsToHash(Integer batchSize); 
     
-    boolean populateEmailHash(String email, String emailHash);   
+    boolean populateEmailHash(String email, String emailHash); 
+    
+    Integer clearEmailsAfterReactivation(String orcid);
 }

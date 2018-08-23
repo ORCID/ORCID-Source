@@ -420,6 +420,13 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         item.setPutCode(String.valueOf(workEntity.getId()));
         return Arrays.asList(item);
     }
+    
+    @Override
+    public void setPreferredAndCreateGroup(Long preferredId, List<Long> workIds, String orcid) {
+        updateToMaxDisplay(orcid, preferredId);
+        workIds.add(preferredId);
+        createNewWorkGroup(workIds, orcid);
+    }
 
     @Override
     public void createNewWorkGroup(List<Long> workIds, String orcid) {
@@ -447,7 +454,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);
         if (userVersion != null) {
-            userVersion.setExternalIdentifiersJson(externalIDsJson);
+            WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
+            userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);
+            workDao.merge(userVersionFullEntity);
         } else {
             WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
             allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);

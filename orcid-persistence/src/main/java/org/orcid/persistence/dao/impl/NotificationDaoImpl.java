@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -248,6 +249,52 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public Integer archiveOffsetNotifications(Integer offset) {
+        Query selectQuery = entityManager.createNativeQuery("SELECT orcid FROM notification WHERE archived_date IS NULL group by orcid having count(*) > :offset");
+        selectQuery.setParameter("offset", offset);
+        @SuppressWarnings("unchecked")
+        List<String> ids = selectQuery.getResultList();
+        if (ids.isEmpty()) {
+            return 0;
+        }
+        
+        int result = 0;
+        
+        for(String orcid : ids) {
+            Query archiveQuery = entityManager.createNativeQuery("UPDATE notification SET archived_date=now() WHERE id in (SELECT id FROM notification WHERE orcid=:orcid AND archived_date IS NULL order by date_created desc OFFSET :offset)");
+            archiveQuery.setParameter("orcid", orcid);
+            archiveQuery.setParameter("offset", offset);
+            result += archiveQuery.executeUpdate();
+        }
+        
+        return result;
+    }
+
+    @Override
+    public List<Object[]> findNotificationsToDeleteByOffset(Integer offset, Integer recordsPerBatch) {
+        Query selectQuery = entityManager.createNativeQuery("SELECT orcid FROM notification group by orcid having count(*) > :offset order by count(*) desc limit :limit");
+        selectQuery.setParameter("offset", offset);
+        selectQuery.setParameter("limit", recordsPerBatch);
+        @SuppressWarnings("unchecked")
+        List<String> ids = selectQuery.getResultList();
+        if (ids.isEmpty()) {
+            return new ArrayList<Object[]>();
+        }
+        
+        List<Object[]> results = new ArrayList<Object[]>();
+        
+        for(String orcid : ids) {
+            Query archiveQuery = entityManager.createNativeQuery("SELECT id, orcid FROM notification WHERE orcid=:orcid order by date_created desc OFFSET :offset");
+            archiveQuery.setParameter("orcid", orcid);
+            archiveQuery.setParameter("offset", offset);
+            results.addAll(archiveQuery.getResultList());
+        }
+        
+        return results;
     }
 
 }

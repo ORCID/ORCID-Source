@@ -43,7 +43,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         assertNotNull(entity.getDateCreated());
         assertNotNull(entity.getLastModified());
-        assertEquals("user1@email.com", entity.getId());
+        assertEquals("user1@email.com", entity.getEmail());
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), entity.getVisibility());
         
         // Source
@@ -73,7 +73,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
     
     private EmailEntity getEmailEntity() {
         EmailEntity result = new EmailEntity();
-        result.setId("email@test.orcid.org");
+        result.setEmail("email@test.orcid.org");
         result.setCurrent(true);
         result.setPrimary(true);
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));

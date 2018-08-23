@@ -88,6 +88,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workImportWizardsOriginal: any;
     workType: any;
     worksFromBibtex: any;
+    allSelected: boolean;
 
     constructor( 
         private commonSrvc: CommonService,
@@ -260,10 +261,41 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.bulkDeleteCount++;
             }
         }
-        this.worksService.notifyOther({bulkDeleteCount:this.bulkDeleteCount, bulkEditMap:this.bulkEditMap});
-        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
+        
+        if (this.bulkDeleteCount > 0) {
+            this.worksService.notifyOther({bulkDeleteCount:this.bulkDeleteCount, bulkEditMap:this.bulkEditMap});
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
+        }
     };
-
+    
+    mergeConfirm(): void {
+        var idx: any;
+        var mergeCount = 0;       
+        for (idx in this.worksService.groups){
+            if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){
+                mergeCount++;
+            }
+        }
+        
+        if (mergeCount > 1) {
+            var worksToMerge = new Array();
+            var externalIdsPresent = false;
+            for (var putCode in this.bulkEditMap) {
+                if (this.bulkEditMap[putCode]) {
+                    var work = this.worksService.getWork(putCode);
+                    worksToMerge.push({ work: work, preferred: false});
+                    if (work.workExternalIdentifiers.length > 0) {
+                        externalIdsPresent = true;
+                    }
+                }
+            }
+            this.worksService.notifyOther({worksToMerge:worksToMerge});      
+            this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
+            this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+        }
+    };
+    
     deleteWorkConfirm(putCode, deleteGroup): void {
         this.emailService.getEmails()
         .pipe(    
@@ -945,6 +977,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     toggleSelectMenu(): void {                   
         this.bulkDisplayToggle = !this.bulkDisplayToggle;                    
     };
+    
+    toggleSelectAll(): void {
+        this.allSelected = !this.allSelected;
+        this.bulkChangeAll(this.allSelected);
+    }
 
     toggleWizardDesc(id): void {
         this.wizardDescExpanded[id] = !this.wizardDescExpanded[id];
@@ -966,6 +1003,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                    }
+                } 
+                if(res.action == 'merge') {
+                    if(res.successful == true) {
+                        this.closeAllMoreInfo();
+                        this.refreshWorkGroups();
+                        this.allSelected = false;
+                        this.bulkEditMap = {};
                     }
                 } 
                 if(res.action == 'deleteBulk') {

@@ -30,11 +30,18 @@
                                     <span class="glyphicon glyphicon-sort"></span>
                                     <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                     <ul class="menu-options sort">
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
-                                            <a (click)="sort('date');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-                                                <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
-                                                <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
+                                        <li [ngClass]="{'checked':sortState.predicateKey=='startDate'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
+                                            <a (click)="sort('startDate');" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
+                                                <span *ngIf="sortState.reverseKey['startDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='startDate'}"></span>
+                                                <span *ngIf="sortState.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
+                                            </a>                                                                                    
+                                        </li>
+                                        <li [ngClass]="{'checked':sortState.predicateKey=='endDate'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
+                                            <a (click)="sort('endDate');" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
+                                                <span *ngIf="sortState.reverseKey['endDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='endDate'}"></span>
+                                                <span *ngIf="sortState.reverseKey['endDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='endDate'}"></span>
                                             </a>                                                                                    
                                         </li>
                                         <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="sortHideOption != null">

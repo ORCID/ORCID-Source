@@ -237,9 +237,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
         String email = registration.getEmail().getValue().trim();
-        emailEntity.setId(email);
+        emailEntity.setEmail(email);
         try {
-            emailEntity.setEmailHash(encryptionManager.sha256Hash(email.toLowerCase()));
+            emailEntity.setId(encryptionManager.sha256Hash(email.toLowerCase()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -258,9 +258,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
             if(!PojoUtil.isEmpty(emailAdditional)){
                 EmailEntity emailAdditionalEntity = new EmailEntity();
                 String emailValue = emailAdditional.getValue().trim();
-                emailAdditionalEntity.setId(emailValue);
+                emailAdditionalEntity.setEmail(emailValue);
                 try {
-                    emailAdditionalEntity.setEmailHash(encryptionManager.sha256Hash(emailValue.toLowerCase()));
+                    emailAdditionalEntity.setId(encryptionManager.sha256Hash(emailValue.toLowerCase()));
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }

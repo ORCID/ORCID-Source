@@ -158,11 +158,11 @@
                 <div *ngIf="loading" class="text-center">
                     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                 </div>
-                <div *ngIf="loading == false && groups.length == 0" class="" >
+                <div *ngIf="fundingService?.loading == false && groups.length == 0">
                     <strong>
                         <#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' />
                             <#if fundingImportWizards?has_content>
-                                <a (click)="showTemplateInModal('import-funding-modal')"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
+                                <a (click)="showFundingImportWizard()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
                             <#else>
                                 <span><@orcid.msg 'workspace_fundings_body_list.addsomenow'/></span>
                             </#if>

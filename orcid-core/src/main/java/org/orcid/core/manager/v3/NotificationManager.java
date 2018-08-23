@@ -101,4 +101,8 @@ public interface NotificationManager {
     void processUnverifiedEmails7Days();
     
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
+
+    Integer archiveOffsetNotifications();
+    
+    Integer deleteOffsetNotifications();
 }

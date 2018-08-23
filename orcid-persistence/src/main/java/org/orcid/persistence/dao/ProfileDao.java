@@ -105,7 +105,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public boolean getClaimedStatus(String orcid);
     
-    public boolean getClaimedStatusByEmail(String email);
+    public boolean getClaimedStatusByEmailHash(String email);
 
     String getClientType(String orcid);
 

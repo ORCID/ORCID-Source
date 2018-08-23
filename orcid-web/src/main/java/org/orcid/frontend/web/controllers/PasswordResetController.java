@@ -5,6 +5,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +30,6 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -37,6 +37,7 @@ import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Reactivation;
 import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -257,20 +258,20 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)    
-    public ResponseEntity<?> sendReactivation(@RequestParam("email") String orcidOrEmail) throws UnsupportedEncodingException {
+    public ResponseEntity<?> sendReactivation(@RequestParam("email") String email) throws UnsupportedEncodingException {
+        email = URLDecoder.decode(email, "UTF-8");
         String orcid = null;
-        String email = null;
-        orcidOrEmail = URLDecoder.decode(orcidOrEmail, "UTF-8");
-        if(orcidOrEmail.contains("@")) {
-            orcid = emailManager.findOrcidIdByEmail(orcidOrEmail);
-            email = orcidOrEmail;
+        if(!email.contains("@")) {
+            String error = getMessage("Email.personalInfoForm.email");
+            return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
         } else {
-            orcid = orcidOrEmail;
+            orcid = emailManager.findOrcidIdByEmail(email);            
         }
-        //If email is null it means the user used the orcid id to login, so, retrieve the email from the DB
-        if(email == null) {
-            Email entity = emailManager.findPrimaryEmail(orcid);
-            email = entity.getEmail();
+        
+        ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
+        if(entity.getDeactivationDate() == null) {
+            String error = getMessage("orcid.frontend.reactivate.error.already_active");
+            return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
         }
         
         notificationManager.sendReactivationEmail(email, orcid);
@@ -282,9 +283,9 @@ public class PasswordResetController extends BaseController {
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetParams);
         ModelAndView mav = new ModelAndView("reactivation");
         if (isTokenExpired(passwordResetToken)) {
-            mav.addObject("reactivationLinkExpired", true);
-            mav.addObject("email", passwordResetToken.getEmail());
+            mav.addObject("reactivationLinkExpired", true);            
         }
+        mav.addObject("email", passwordResetToken.getEmail());
         mav.addObject("resetParams", resetParams);
         return mav;
     }
@@ -339,19 +340,39 @@ public class PasswordResetController extends BaseController {
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
+        
+        // validate email addresses are available
+        if(reg.getEmailsAdditional() != null && !reg.getEmailsAdditional().isEmpty()) {
+            regEmailAdditionalValidate(request, reg);           
+        }
+    }
+    
+    @RequestMapping(value = "/reactivateAdditionalEmailsValidate.json", method = RequestMethod.POST)
+    public @ResponseBody Registration regEmailAdditionalValidate(HttpServletRequest request, @RequestBody Registration reg) {
+        String orcid = emailManagerReadOnly.findOrcidIdByEmail(reg.getEmail().getValue());
+        Iterator<Text> it = reg.getEmailsAdditional().iterator();
+        while(it.hasNext()) {
+            Text email = it.next();
+            if(PojoUtil.isEmpty(email)) {
+                it.remove();
+            } else {
+                additionalEmailValidateOnReactivate(request, reg, email, orcid);
+                copyErrors(email, reg);
+            }
+        }
+        return reg;
     }
 
-    public void reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
+    private void reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
         PasswordResetToken resetParams = buildResetTokenFromEncryptedLink(reactivation.getResetParams());
         String email = resetParams.getEmail();
         String orcid = emailManager.findOrcidIdByEmail(email);
-        LOGGER.info("About to reactivate record, orcid={}, email={}", orcid, email);
         String password = reactivation.getPassword().getValue();
-        // Reactivate user
-        profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password,
-                reactivation.getActivitiesVisibilityDefault().getVisibility());
-        // Verify email used to reactivate
-        emailManager.verifyEmail(email, orcid);
+        
+        // Reactivate the user
+        profileEntityManager.reactivate(orcid, email, reactivation);
+        
+        // Log user in
         registrationController.logUserIn(request, response, orcid, password);
-    }
+    }        
 }

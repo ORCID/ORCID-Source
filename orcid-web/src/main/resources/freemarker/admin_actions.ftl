@@ -439,11 +439,15 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="reactivation_modal" style="display:none;">					    		
 	    		<div class="form-group">
 					<label for="orcid_to_reactivate"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
-					<input type="text" id="orcid_to_reactivate" ng-enter="confirmReactivateAccount()" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="form-control" />
-					<div ng-show="reactivatedAccount.errors.length">
-						<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html="error"></span><br />
-					</div>
+					<input type="text" id="orcid_to_reactivate" ng-enter="confirmReactivateAccount()" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="form-control" />					
 				</div>
+				<div class="form-group">
+                    <label for="primary_email"><@orcid.msg 'admin.profile_reactivation.primary_email' /></label>
+                    <input type="text" id="orcid_to_reactivate" ng-enter="confirmReactivateAccount()" ng-model="primaryEmail" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.primary_email' />" class="form-control" />
+                    <div ng-show="reactivatedAccount.errors.length">
+                        <span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html="error"></span><br />
+                    </div>
+                </div>            
 				<div class="controls save-btns pull-left">
 					<span id="bottom-confirm-reactivate-profile" ng-click="confirmReactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>		
 				</div>

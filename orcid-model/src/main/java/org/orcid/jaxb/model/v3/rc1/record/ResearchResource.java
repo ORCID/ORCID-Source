@@ -19,7 +19,7 @@ import org.orcid.jaxb.model.v3.rc1.common.Source;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "proposal", "resourceItems" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "proposal", "resourceItems", "displayIndex" })
 @XmlRootElement(name = "research-resource", namespace = "http://www.orcid.org/ns/research-resource")
 public class ResearchResource implements Filterable, Activity, Serializable, SourceAware {
 
@@ -44,6 +44,8 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
 
     public ResearchResourceProposal getProposal() {
         return proposal;
@@ -109,6 +111,14 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+    
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override

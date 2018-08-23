@@ -202,7 +202,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         emailsAdditionalList.add(emailAdditional02);
         reg.setEmailsAdditional(emailsAdditionalList);
         
-        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        registrationController.additionalEmailsValidateOnRegister(servletRequest, reg);
         
         assertNotNull(reg);
         assertNotNull(reg.getEmailsAdditional());
@@ -252,7 +252,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         emailsAdditionalList.add(emailAdditional);
         reg.setEmailsAdditional(emailsAdditionalList);
         
-        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        registrationController.additionalEmailsValidateOnRegister(servletRequest, reg);
         
         assertNotNull(reg);
         //No errors, since the account can be auto deprecated
@@ -305,7 +305,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         emailAdditional.setValue(additionalEmail);
         emailsAdditionalList.add(emailAdditional);
         reg.setEmailsAdditional(emailsAdditionalList);
-        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        registrationController.additionalEmailsValidateOnRegister(servletRequest, reg);
          
         assertNotNull(reg);
         assertNotNull(reg.getEmailsAdditional());
@@ -354,7 +354,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         emailAdditional.setValue(additionalEmail);
         emailsAdditionalList.add(emailAdditional);
         reg.setEmailsAdditional(emailsAdditionalList);
-        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        registrationController.additionalEmailsValidateOnRegister(servletRequest, reg);
          
         assertNotNull(reg);
         assertNotNull(reg.getEmailsAdditional());
@@ -383,7 +383,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         emailAdditional.setValue(additionalEmail);
         emailsAdditionalList.add(emailAdditional);
         reg.setEmailsAdditional(emailsAdditionalList);
-        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        registrationController.additionalEmailsValidateOnRegister(servletRequest, reg);
     	
     	assertNotNull(reg);
         assertNotNull(reg.getEmailsAdditional());
@@ -435,7 +435,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         emailAdditional.setValue(additionalEmail);
         emailsAdditionalList.add(emailAdditional);
         reg.setEmailsAdditional(emailsAdditionalList);
-        reg = registrationController.regEmailsAdditionalValidate(servletRequest, reg, false, true);
+        registrationController.additionalEmailsValidateOnRegister(servletRequest, reg);
         
         assertNotNull(reg);
         assertNotNull(reg.getEmailsAdditional());

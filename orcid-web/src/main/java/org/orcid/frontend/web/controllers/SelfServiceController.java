@@ -221,7 +221,7 @@ public class SelfServiceController extends BaseController {
     @RequestMapping(value = "/add-contact-by-email.json")
     public @ResponseBody Contact addContactByEmail(@RequestBody Contact contact) {
         checkFullAccess(contact.getAccountId());
-        EmailEntity emailEntity = emailManager.findCaseInsensitive(contact.getEmail());
+        EmailEntity emailEntity = emailManager.find(contact.getEmail());
         contact.setOrcid(emailEntity.getProfile().getId());
         RecordNameEntity recordNameEntity = emailEntity.getProfile().getRecordNameEntity();
         if (Visibility.PUBLIC.equals(recordNameEntity.getVisibility())) {

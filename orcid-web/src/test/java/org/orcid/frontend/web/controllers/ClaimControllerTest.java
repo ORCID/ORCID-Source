@@ -148,7 +148,7 @@ public class ClaimControllerTest {
         entity.setClaimed(claimed);
         Set<EmailEntity> emails = new HashSet<EmailEntity>();
         EmailEntity email = new EmailEntity();
-        email.setId("billie@holiday.com");
+        email.setEmail("billie@holiday.com");
         email.setPrimary(true);
         entity.setEmails(emails);
         return entity;
@@ -160,7 +160,7 @@ public class ClaimControllerTest {
         entity.setClaimed(claimed);
         Set<EmailEntity> emails = new HashSet<EmailEntity>();
         EmailEntity email = new EmailEntity();
-        email.setId("public_0000-0000-0000-0001@test.orcid.org");
+        email.setEmail("public_0000-0000-0000-0001@test.orcid.org");
         email.setPrimary(true);
         entity.setEmails(emails);
         return entity;

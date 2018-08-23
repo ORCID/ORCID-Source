@@ -28,27 +28,27 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
     private Boolean current;
     private Boolean verified;
     private String visibility;    
-
+    
     @Override
     @Id
-    @Column(name = "email", length = 350)
-    public String getId() {
-        return email;
-    }
-
-    public void setId(String email) {
-        this.email = email;
-    }
-
     @Column(name = "email_hash")
-    public String getEmailHash() {
+    public String getId() {
         return emailHash;
     }
-
-    public void setEmailHash(String emailHash) {
+    
+    public void setId(String emailHash) {
         this.emailHash = emailHash;
     }
     
+    @Column(name = "email", length = 350)
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getProfile() {
@@ -98,7 +98,7 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
     public static Map<String, EmailEntity> mapByLowerCaseEmail(Collection<EmailEntity> emailEntities) {
         Map<String, EmailEntity> map = new HashMap<>();
         for (EmailEntity existingEmail : emailEntities) {
-            map.put(existingEmail.getId().toLowerCase(), existingEmail);
+            map.put(existingEmail.getEmail().toLowerCase(), existingEmail);
         }
         return map;
     }
@@ -113,6 +113,5 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
         visibility= null;
         verified = null;
         visibility = null;
-    }
-
+    }     
 }
