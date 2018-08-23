@@ -1,23 +1,27 @@
 package org.orcid.core.utils.v3.identifiers.resolvers;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
+import org.orcid.jaxb.model.v3.rc1.common.Subtitle;
+import org.orcid.jaxb.model.v3.rc1.common.Title;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
 import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class DOIResolver implements LinkResolver, MetadataResolver {
@@ -42,7 +46,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
 
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
         if (!StringUtils.isEmpty(normUrl)) {
-            if (cache.isValidDOI(normUrl)){
+            if (cache.isValidDOI(normUrl)){                
                 return new PIDResolutionResult(true,true,true,normUrl);                
             }else{
                 return new PIDResolutionResult(false,true,true,null);
@@ -89,13 +93,46 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             con.addRequestProperty("Accept", "application/vnd.citationstyles.csl+json");
             con.setRequestMethod("GET");
             con.setInstanceFollowRedirects(true);
-            if (con.getResponseCode() == 200){
-                //TODO: turn the response into a work and return it
+            if (con.getResponseCode() == 200) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                
+                StringBuffer response = new StringBuffer();
+                in.lines().forEach(i -> response.append(i));
+                in.close();
+                
+                //Read JSON response and print
+                JSONObject myResponse = new JSONObject(response.toString());
+                
+                if(myResponse != null) {
+                    
+                }
             }
-        } catch (IOException e) {
-            //nope.
+        } catch (IOException | JSONException e) {
+            return null;
         } 
         return null;
+    }
+    
+    private Work getWork(JSONObject json) throws JSONException {
+        Work result = new Work();
+        WorkTitle workTitle = new WorkTitle();
+        if(json.has("title")) {
+            workTitle.setTitle(new Title(json.getString("title")));            
+        } 
+        
+        if(json.has("subtitle")) {
+            workTitle.setSubtitle(new Subtitle(json.getString("subtitle")));
+        }
+        
+        result.setWorkTitle(workTitle);
+        
+        if(json.has("URL")) {
+            result.setUrl(new Url(json.getString("URL")));
+        }
+        
+        
+        
+        return result;
     }
 
 }
