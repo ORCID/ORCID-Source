@@ -246,10 +246,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    closeMoreInfo(key): void {
-        this.moreInfo[key]=false;
-    };
-
     createNew(work): void {
         var cloneF = JSON.parse(JSON.stringify(work));
         cloneF.source = null;
@@ -619,6 +615,12 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
                         if(this.editFunding.externalIdentifiers.length == 0) {
                             this.addFundingExternalIdentifier();
+                        } else {
+                            for (var i in this.editFunding.externalIdentifiers){
+                                if(!this.editFunding.externalIdentifiers[i].url){
+                                    this.editFunding.externalIdentifiers[i].url = ""; 
+                                }
+                            }
                         }
                     }
 
