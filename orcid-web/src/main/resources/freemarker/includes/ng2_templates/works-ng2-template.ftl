@@ -320,7 +320,7 @@
                     </div>
                 </div>
             </div> 
-            <div class="bottomBuffer" *ngIf="bibtexImportLoading && !bibtexParsingError" >
+            <div class="bottomBuffer text-center" *ngIf="bibtexImportLoading && !bibtexParsingError" >
                 <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
             </div>          
             <div class="alert alert-block" *ngIf="bibtexParsingError">

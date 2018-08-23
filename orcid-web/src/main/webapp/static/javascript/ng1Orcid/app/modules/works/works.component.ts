@@ -520,10 +520,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                 )
                                 .subscribe(
                                     data => {
-                                        for (var i in data) {
-                                            console.log(data[i]);                           
+                                        for (var i in data) {                          
                                             this.worksFromBibtex.push(data[i]);
                                         }
+                                        this.bibtexImportLoading = false; 
                                     },
                                     error => {
                                         console.log('worksValidateError', error);
@@ -535,7 +535,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             } 
                         );
                     }.bind(this);
-                    this.bibtexImportLoading = false; 
+                    
                     this.bibtexParsingError = false;  
             }  
         } catch (err) {
