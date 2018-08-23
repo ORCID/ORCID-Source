@@ -2,6 +2,7 @@ declare var $: any;
 declare var ActSortState: any;
 declare var GroupedActivities: any;
 declare var groupedActivitiesUtil: any;
+declare var openImportWizardUrl: any;
 declare var sortState: any;
 declare var typeahead: any;
 
@@ -68,6 +69,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     sortHideOption: boolean;
     sortState: any;
+    wizardDescExpanded: any;
 
     constructor(
         private elementRef: ElementRef,
@@ -159,6 +161,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
+        this.wizardDescExpanded = {};
     }
 
     addFunding(): void {
@@ -393,6 +396,10 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.addFundingModal(data);
     }
 
+    openImportWizardUrl(url): void {
+        openImportWizardUrl(url);
+    };
+
     removeDisambiguatedFunding(): void {
         if (this.disambiguatedFunding != undefined) {
             delete this.disambiguatedFunding;
@@ -520,6 +527,10 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 //console.log('getEmails', error);
             } 
         );
+    };
+
+    toggleWizardDesc(id): void{
+        this.wizardDescExpanded[id] = !this.wizardDescExpanded[id];
     };
 
     userIsSource(funding): boolean {
