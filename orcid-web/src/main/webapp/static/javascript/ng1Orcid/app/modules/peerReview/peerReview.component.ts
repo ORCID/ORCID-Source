@@ -1,5 +1,10 @@
 declare var $: any;
 declare var ActSortState: any;
+declare var getBaseUri: any;
+declare var logAjaxError: any;
+declare var openImportWizardUrl: any;
+declare var orcidVar: any;
+declare var workIdLinkJs: any;
 declare var GroupedActivities: any;
 
 //Import all the angular components
@@ -33,8 +38,8 @@ import { OrgDisambiguated }
     from '../orgIdentifierPopover/orgDisambiguated.ts';
     
 @Component({
-    selector: 'research-resource-ng2',
-    template:  scriptTmpl("research-resource-ng2-template")
+    selector: 'peer-review-ng2',
+    template:  scriptTmpl("peer-review-ng2-template")
 })
 
 export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
@@ -46,7 +51,9 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     emails: any;
     moreInfo: any;
     moreInfoOpen: boolean;
+    noLinkFlag: boolean;
     orgDisambiguatedDetails: any;
+    peerReviewImportWizardList: any;
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
@@ -66,12 +73,13 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
         this.moreInfo = {};
         this.moreInfoOpen = false;
+        this.noLinkFlag = true;
         this.orgDisambiguatedDetails = new Array();
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.showResourceItemDetails = {};
-        this.sortState = this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);
+        this.sortState = this.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 
@@ -109,8 +117,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getPeerReviewGroups(): void {
         if(this.publicView === "true") {
-            this.peerReviewService.getPublicPeerReviewPage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.peerReviewService.getPublicPeerReviewGroups(!this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -125,8 +132,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
                     } 
             );
         } else {
-            this.peerReviewService.getPeerReviewPage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.peerReviewService.getPeerReviewGroups(!this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -155,6 +161,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(data == null || data.length == 0) {
                         this.noLinkFlag = false;
                     }
+                },
                 error => {
                     console.log('getDetailsError', error);
                 } 
@@ -232,12 +239,16 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-    setGroupPrivacy = function(group, priv, $event): void {
+    setGroupPrivacy(group, priv, $event): void {
         $event.preventDefault();
         var putCodes = new Array();
-        for (var idx in group.peerReviews) {
-            putCodes.push(group.peerReviews[idx].putCode);
-            group.peerReviews[idx].visibility = priv;
+        for (var x in group.peerReviewDuplicateGroups) {
+            var duplicateGroup = group.peerReviewDuplicateGroups[x];
+            for (var y in duplicateGroup.peerReviews) {
+                var peerReview = duplicateGroup.peerReviews[y];
+                putCodes.push(peerReview.putCode.value);
+                peerReview.visibility.visibility = priv;
+            }
         }
         group.activeVisibility = priv;
         this.peerReviewService.updateVisibility(putCodes, priv)
@@ -247,7 +258,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 if (putCodes.length > 0) {
-                    this.researchReourceService.updateVisibility(putCodes, priv);   
+                    this.peerReviewService.updateVisibility(putCodes, priv);   
                 }
                 
             },
@@ -294,8 +305,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         this.sortState.sortBy(key);
         this.peerReviewService.resetGroups();
         if(this.publicView === "true") {
-            this.peerReviewService.getPublicPeerReviewPage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[key]).pipe(    
+            this.peerReviewService.getPublicPeerReviewGroups(!this.sortState.reverseKey[key]).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -310,8 +320,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
                     } 
             );
         } else {
-            this.peerReviewService.getPeerReviewPage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[key]).pipe(    
+            this.peerReviewService.getPeerReviewGroups(!this.sortState.reverseKey[key]).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -373,5 +382,6 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getPeerReviewGroups();
+        this.loadPeerReviewImportWizards();
     };
 }

@@ -173,11 +173,8 @@
         <works-ng2></works-ng2>
 
         <!--Peer review-->
-        <div ng-controller="PeerReviewCtrl">
-          <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
-            <#include "workspace_peer_review_body_list.ftl"/>
-          </div>
-        </div>
+        <#include "/includes/ng2_templates/peer-review-ng2-template.ftl">
+        <peer-review-ng2 publicView="false"></peer-review-ng2>
       </div>
     </div>
   </div>    

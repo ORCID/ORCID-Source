@@ -26,6 +26,7 @@ export class PeerReviewService {
     public offset: any;
     public orgDisambiguatedDetails: any;
     public peerReview: any;
+    public peerReviewCount: any;
     public showLoadMore: boolean;
     public type: string;
     
@@ -55,9 +56,12 @@ export class PeerReviewService {
     }
 
     consistentVis(group): boolean {
-        for(let i = 0; i < group.peerReviews.length; i++) {
-            if (group.peerReviews[i].visibility.visibility != group.activeVisibility) {
-                return false;
+        var visibility = group.peerReviewDuplicateGroups[0].peerReviews[0].visibility.visibility;
+        for(var i = 0; i < group.peerReviewDuplicateGroups.length; i++) {
+            for(var x = 0; x < group.peerReviewDuplicateGroups[i].peerReviews.length; x++) {
+                if (group.peerReviewDuplicateGroups[i].peerReviews[x].visibility.visibility != visibility) {
+                    return false;
+                }
             }
         }
         return true;
@@ -65,21 +69,21 @@ export class PeerReviewService {
 
     deletePeerReviews(putCodes): Observable<any> {
         return this.http.delete( 
-            getBaseUri() + '/research-resources/' + putCodes.splice(0,150).join(),             
+            getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join(),             
             { headers: this.headers }
         ) 
     }
 
-    getPeerReviewPage(sort, sortAsc): Observable<any> {
+    getPeerReviewGroups(sortAsc): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/research-resources/peerReviewPage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc
+            getBaseUri() + '/peer-reviews/peer-reviews.json?sortAsc=' + sortAsc
         );
     }
 
     getPeerReviewById( putCode ): Observable<any> {
         return this.http.get(
-            getBaseUri() + '/research-resources/peerReview.json?id=' + putCode
+            getBaseUri() + '/peer-reviews/peer-review.json?putCode=' + putCode
         );
     }
 
@@ -91,34 +95,38 @@ export class PeerReviewService {
 
     getPublicPeerReviewById( putCode ): Observable<any> {
         return this.http.get(
-            getBaseUri() + '/' + orcidVar.orcidId + '/peerReview.json?id=' + putCode
+            getBaseUri() + '/' + orcidVar.orcidId + '/peer-review.json?putCode=' + putCode
         );
     }
 
-    getPublicPeerReviewPage(sort, sortAsc): Observable<any> {
+    getPublicPeerReviewGroups(sortAsc): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/' + orcidVar.orcidId + '/peerReviewPage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc
+            getBaseUri() + '/' + orcidVar.orcidId + '/peer-reviews.json?offset=' + '&sortAsc=' + sortAsc
         );
     }
 
-    //remove callback if not needed
-    handleGroupData(data, callback?): void {
+    handleGroupData(data): void {
+        console.log(data);
         this.groups = new Array();
-        this.groups = this.groups.concat(data.groups);
-        this.groupsLabel = this.groups.length + " of " + data.totalGroups;
-        this.showLoadMore = this.groups.length < data.totalGroups;
-        this.loading = false;
-        this.offset = data.nextOffset;
-        if (callback != undefined) {
-            callback();
-        }
+        this.groups = this.groups.concat(data);
+        this.peerReviewCount = this.getPeerReviewCount();
+        
     }
 
     notifyOther(data: any): void {
         if (data) {
             this.notify.next(data);
         }
+    }
+
+    getPeerReviewCount(): number {
+        console.log(this.groups);
+        var count = 0;
+        for (var idx in this.groups) {
+            count += this.groups[idx].peerReviewDuplicateGroups.length;
+        }
+        return count;
     }
 
     resetGroups(): void {
@@ -128,12 +136,12 @@ export class PeerReviewService {
 
     updateToMaxDisplay(putCode): Observable<any> {
         return this.http.get(
-            getBaseUri() + '/research-resources/updateToMaxDisplay.json?putCode=' + putCode
+            getBaseUri() + '/peer-reviews/updateToMaxDisplay.json?putCode=' + putCode
         )
     }
 
     updateVisibility(putCodes, priv): Observable<any> {
-        let url = getBaseUri() + '/research-resources/' + putCodes.splice(0,150).join() + '/visibility/'+priv;
+        let url = getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join() + '/visibility/'+priv;
 
         return this.http.get(
             url
