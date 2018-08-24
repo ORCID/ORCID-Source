@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc1.common.Day;
 import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
@@ -14,7 +15,7 @@ import org.orcid.jaxb.model.v3.rc1.common.Month;
 import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.utils.DateUtils;
 
-public class Date implements ErrorsInterface, Required, Serializable {
+public class Date implements ErrorsInterface, Required, Serializable, Comparable<Date> {
 
     private static final long serialVersionUID = -1379185374840409915L;
     private List<String> errors = new ArrayList<String>();
@@ -24,18 +25,18 @@ public class Date implements ErrorsInterface, Required, Serializable {
 
     private boolean required = true;
     private String getRequiredMessage;
-    
+
     public static Date valueOf(FuzzyDate fuzzyDate) {
         Date d = new Date();
-        if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
+        if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() != null)
             d.setDay(fuzzyDate.getDay().getValue());
-        if (fuzzyDate.getMonth() != null && fuzzyDate.getMonth().getValue() !=null)
+        if (fuzzyDate.getMonth() != null && fuzzyDate.getMonth().getValue() != null)
             d.setMonth(fuzzyDate.getMonth().getValue());
-        if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
+        if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() != null)
             d.setYear(fuzzyDate.getYear().getValue());
         return d;
-    }       
-    
+    }
+
     public FuzzyDate toFuzzyDate() {
         FuzzyDate fd = new FuzzyDate();
         if (!PojoUtil.isEmpty(this.getDay()))
@@ -45,8 +46,8 @@ public class Date implements ErrorsInterface, Required, Serializable {
         if (!PojoUtil.isEmpty(this.getYear()))
             fd.setYear(new Year(new Integer(this.getYear())));
         return fd;
-    }        
-    
+    }
+
     public org.orcid.jaxb.model.v3.rc1.common.FuzzyDate toV3FuzzyDate() {
         org.orcid.jaxb.model.v3.rc1.common.FuzzyDate fd = new org.orcid.jaxb.model.v3.rc1.common.FuzzyDate();
         if (!PojoUtil.isEmpty(this.getDay()))
@@ -56,8 +57,8 @@ public class Date implements ErrorsInterface, Required, Serializable {
         if (!PojoUtil.isEmpty(this.getYear()))
             fd.setYear(new org.orcid.jaxb.model.v3.rc1.common.Year(new Integer(this.getYear())));
         return fd;
-    }       
-    
+    }
+
     public static Date valueOf(java.util.Date date) {
         Date newDate = new Date();
         Calendar cal = Calendar.getInstance();
@@ -81,7 +82,7 @@ public class Date implements ErrorsInterface, Required, Serializable {
             return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
         return newDate;
     }
-    
+
     public java.util.Date toJavaDate() {
         Calendar gc = toCalendar();
         return gc.getTime();
@@ -97,17 +98,17 @@ public class Date implements ErrorsInterface, Required, Serializable {
             gc.set(Calendar.YEAR, Integer.parseInt(this.getYear()));
         return gc;
     }
-    
+
     public LastModifiedDate toLastModifiedDate() {
         GregorianCalendar cal = toCalendar();
-        return new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal));        
+        return new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal));
     }
-    
+
     public CreatedDate toCreatedDate() {
         GregorianCalendar cal = toCalendar();
-        return new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal));        
+        return new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal));
     }
-  
+
     public List<String> getErrors() {
         return errors;
     }
@@ -191,5 +192,20 @@ public class Date implements ErrorsInterface, Required, Serializable {
         } else if (!year.equals(other.year))
             return false;
         return true;
-    }        
+    }
+
+    @Override
+    public int compareTo(Date otherDate) {
+        StringBuilder dateString = new StringBuilder();
+        dateString.append(year != null ? year : "0000");
+        dateString.append(month != null ? StringUtils.leftPad(month, 2, "0") : "00");
+        dateString.append(day != null ? StringUtils.leftPad(day, 2, "0") : "00");
+
+        StringBuilder otherDateString = new StringBuilder();
+        otherDateString.append(otherDate.year != null ? otherDate.year : "0000");
+        otherDateString.append(otherDate.month != null ? StringUtils.leftPad(otherDate.month, 2, "0") : "00");
+        otherDateString.append(otherDate.day != null ? StringUtils.leftPad(otherDate.day, 2, "0") : "00");
+
+        return dateString.toString().compareTo(otherDateString.toString());
+    }
 }

@@ -20,22 +20,12 @@ public class WorkGroup extends ActivityGroup {
 
     private List<WorkForm> works;
 
-    private WorkForm defaultWork;
-
     public List<WorkForm> getWorks() {
         return works;
     }
 
     public void setWorks(List<WorkForm> works) {
         this.works = works;
-    }
-
-    public WorkForm getDefaultWork() {
-        return defaultWork;
-    }
-
-    public void setDefaultWork(WorkForm defaultWork) {
-        this.defaultWork = defaultWork;
     }
 
     public static WorkGroup valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup workGroup, int id, String orcid) {
@@ -55,8 +45,8 @@ public class WorkGroup extends ActivityGroup {
             if (maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
                 maxDisplayIndex = displayIndex;
                 group.setActivePutCode(workSummary.getPutCode());
+                group.setDefaultPutCode(workSummary.getPutCode());
                 group.setActiveVisibility(workSummary.getVisibility().name());
-                group.setDefaultWork(workForm);
             }
 
             if (workSummary.getSource().retrieveSourcePath().equals(orcid)) {

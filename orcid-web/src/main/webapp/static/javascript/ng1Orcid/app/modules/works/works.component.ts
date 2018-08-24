@@ -470,6 +470,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     hideSources(group): void {
         this.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
     };
 
     hideTooltip(key): void {        
@@ -643,8 +644,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                group.defaultWork = this.worksService.getWork(putCode);
-                group.activePutCode = group.defaultWork.putCode.value;  
+                group.defaultPutCode = putCode;
+                group.activePutCode = putCode;  
             },
             error => {
                 console.log('makeDefault', error);

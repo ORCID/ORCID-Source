@@ -3,8 +3,6 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -31,16 +29,14 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
+import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.Rollback;
@@ -350,49 +346,23 @@ public class FundingsControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testGetFundings() {
+    public void testGetFundingsJson() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
 
-        List<String> fundingIds = fundingController.getFundingsIds(servletRequest);
-        assertNotNull(fundingIds);
-
-        assertTrue(fundingIds.contains("1"));
-        assertTrue(fundingIds.contains("2"));
-        assertTrue(fundingIds.contains("3"));
-    }
-
-    @Test
-    public void testGetFundingsJson() {
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        request.setSession(session);
-        request.addPreferredLocale(new Locale("us", "EN"));
-        List<FundingForm> fundings = fundingController.getFundingsJson(request, "1");
+        List<FundingGroup> fundings = fundingController.getFundingsJson("title", true);
         assertNotNull(fundings);
-        assertEquals(1, fundings.size());
-
-        FundingForm funding = fundings.get(0);
-        List<Contributor> contributors = funding.getContributors();
-
-        Contributor contributor = contributors.get(0);
-        assertNull(contributor.getEmail());
-        assertEquals("Jaylen Kessler", contributor.getCreditName().getValue());
-
-        contributor = contributors.get(1);
-        assertNull(contributor.getEmail());
-        assertEquals("John Smith", contributor.getCreditName().getValue());
-
-        contributor = contributors.get(2);
-        assertNull(contributor.getEmail());
-        assertEquals("Credit Name", contributor.getCreditName().getValue());
-
-        // contributor is an ORCID user with private name
-        contributor = contributors.get(3);
-        assertNull(contributor.getEmail());
-        assertNull(contributor.getCreditName().getValue());
+        assertEquals(3, fundings.size());
+        assertEquals(1l, fundings.get(0).getGroupId());
+        assertEquals(1, fundings.get(0).getFundings().size());
+        assertEquals(Text.valueOf(1l), fundings.get(0).getFundings().get(0).getPutCode());
+        assertEquals(2l, fundings.get(1).getGroupId());
+        assertEquals(1, fundings.get(1).getFundings().size());
+        assertEquals(Text.valueOf(2l), fundings.get(1).getFundings().get(0).getPutCode());
+        assertEquals(3l, fundings.get(2).getGroupId());
+        assertEquals(1, fundings.get(2).getFundings().size());
+        assertEquals(Text.valueOf(3l), fundings.get(2).getFundings().get(0).getPutCode());
     }
 
     @Test
