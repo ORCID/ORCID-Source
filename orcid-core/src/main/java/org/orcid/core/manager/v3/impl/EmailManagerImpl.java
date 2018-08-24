@@ -129,33 +129,13 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public void updateEmails(HttpServletRequest request, String orcid, Emails emails) {
-        Email currentPrimaryEmail = findPrimaryEmail(orcid);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                boolean primaryFound = false;
-                Email newPrimaryEmail = null;
                 if (emails != null && !emails.getEmails().isEmpty()) {
                     for (Email email : emails.getEmails()) {
-                        emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), email.getVisibility().name());
-                        if (email.isPrimary()) {
-                            if (primaryFound) {
-                                throw new IllegalArgumentException("More than one primary email specified");
-                            } else {
-                                primaryFound = true;
-                                newPrimaryEmail = email;
-                            }
-                            emailDao.updatePrimary(orcid, email.getEmail());
-                        }
+                        emailDao.updateEmail(orcid, email.getEmail().trim(), email.isCurrent(), email.getVisibility().name());
                     }
-                }
-                
-                if(!StringUtils.equals(currentPrimaryEmail.getEmail(), newPrimaryEmail.getEmail())) {
-                    notificationManager.sendEmailAddressChangedNotification(orcid, newPrimaryEmail.getEmail(), currentPrimaryEmail.getEmail());
-                    if (!newPrimaryEmail.isVerified()) {
-                        notificationManager.sendVerificationEmail(orcid, newPrimaryEmail.getEmail());
-                        request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                    }
-                }
+                }                
             }
         });        
     }
