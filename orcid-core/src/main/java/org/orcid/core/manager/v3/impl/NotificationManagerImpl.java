@@ -196,7 +196,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Value("${org.orcid.notifications.archive.offset:100}")
     private Integer notificationArchiveOffset;
     
-    @Value("${org.orcid.notifications.delete.offset:100}")
+    @Value("${org.orcid.notifications.delete.offset:10000}")
     private Integer notificationDeleteOffset;
     
     @Value("${org.orcid.notifications.delete.offset.records:10}")
@@ -1254,6 +1254,8 @@ public class NotificationManagerImpl implements NotificationManager {
                 String orcid = (String) o[1];            
                 LOGGER.info("About to delete old notification: id={}, orcid={}",
                             new Object[] { id, orcid });
+                    notificationDao.deleteNotificationItemByNotificationId(id);
+                    notificationDao.deleteNotificationWorkByNotificationId(id);
                     notificationDao.deleteNotificationById(id);            
             }         
             deleted += toDelete.size();

@@ -615,9 +615,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
         if(orcid.equals(owner)) {            
             // Sets the given user as primary
-            emailManager.setPrimary(orcid, email.getValue(), request);   
-            // Updates the last modified of the record
-            profileEntityManager.updateLastModifed(orcid);
+            emailManager.setPrimary(orcid, email.getValue().trim(), request);               
         }
         return email;
     }

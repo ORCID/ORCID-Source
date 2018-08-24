@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Client;
@@ -245,6 +246,7 @@ public class ClientsControllerTest extends BaseControllerTest {
 
         Client client = new Client();
         client.setAllowAutoDeprecate(Checkbox.valueOf(true));
+        client.setType(Text.valueOf(ClientType.CREATOR.name()));
         client.setClientId(Text.valueOf("XXXXXX"));
         client.setDisplayName(Text.valueOf("My client name"));
         client.setMemberId(Text.valueOf("0000-0000-0000-0000"));
@@ -257,7 +259,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         redirectUris.add(r1);
         client.setRedirectUris(redirectUris);
         client.setShortDescription(Text.valueOf("My short description"));
-        client.setWebsite(Text.valueOf("http://orcid.org"));
+        client.setWebsite(Text.valueOf("http://orcid.org"));        
         client = controller.createClient(client);
         assertTrue(client.getErrors().isEmpty());
         assertNotNull(client);

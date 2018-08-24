@@ -21,13 +21,6 @@
 </div>
 </#if>
 
-<#if invalidVerifyUrl?? && invalidVerifyUrl>
-<div class="alert alert-success">
-    <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
-</div>
-</#if>
-
-
 <#if invalidOrcid?? && invalidOrcid>
 <div class="alert alert-success">
     <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
@@ -381,13 +374,6 @@
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
-
-
-
-<#include "/includes/ng2_templates/works-merge-ng2-template.ftl">
-<modalngcomponent elementHeight="180" elementId="modalWorksMerge" elementWidth="600">
-    <works-merge-ng2></works-merge-ng2>
-</modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/works-merge-choose-preferred-version-ng2-template.ftl">
 <modalngcomponent elementHeight="280" elementId="modalWorksMergeChoosePreferredVersion" elementWidth="600">

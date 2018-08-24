@@ -49,8 +49,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     addingWork: boolean;
     bibtexExportError: boolean;
-    bibtexLoading: boolean;
+    bibtexImportLoading: boolean;
     bibtexParsingError: boolean;
+    bibtexExportLoading: boolean;
     bibtexWork: boolean;
     bibtexWorkIndex: any;
     bulkChecked: any;
@@ -103,7 +104,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
         this.addingWork = false;
         this.bibtexExportError = false;
-        this.bibtexLoading = false;
+        this.bibtexExportLoading = false;
+        this.bibtexImportLoading = false;
         this.bibtexParsingError = false;
         this.bibtexWork = false;
         this.bibtexWorkIndex = null;
@@ -292,7 +294,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             this.worksService.notifyOther({worksToMerge:worksToMerge});      
             this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
             this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
         }
     };
     
@@ -337,7 +339,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     fetchBibtexExport(){
-        this.bibtexLoading = true;
+        this.bibtexExportLoading = true;
         this.bibtexExportError = false; 
         this.worksService.getBibtexExport()
         .pipe(    
@@ -345,7 +347,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.bibtexLoading = false;
+                this.bibtexExportLoading = false;
                 if(window.navigator.msSaveOrOpenBlob) {
                     var fileData = [data];
                     blobObject = new Blob(fileData, {type: 'text/plain'});
@@ -480,9 +482,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     loadBibtexJs($event): void {
-
+        this.bibtexImportLoading = true;
         this.textFiles = $event.target.files; 
-
         try {
             this.worksFromBibtex = new Array();
             for (let bibtex of this.textFiles) {
@@ -520,9 +521,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                 )
                                 .subscribe(
                                     data => {
-                                        for (var i in data) {                           
+                                        for (var i in data) {                          
                                             this.worksFromBibtex.push(data[i]);
                                         }
+                                        this.bibtexImportLoading = false; 
                                     },
                                     error => {
                                         console.log('worksValidateError', error);
@@ -534,9 +536,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             } 
                         );
                     }.bind(this);
+                    
                     this.bibtexParsingError = false;  
-            }    
+            }  
         } catch (err) {
+            this.bibtexImportLoading = false;
             this.bibtexParsingError = true;
             console.log('parseBibtexError', err);
         }
@@ -918,7 +922,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleBibtexExport(): void{
         this.bibtexExportError = false;
-        this.bibtexLoading = false;
+        this.bibtexExportLoading = false;
         this.bibtexParsingError = false;
         this.bulkEditShow = false;        
         this.loadingScripts = false;

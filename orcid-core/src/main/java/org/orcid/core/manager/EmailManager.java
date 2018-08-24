@@ -1,9 +1,6 @@
 package org.orcid.core.manager;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.record_v2.Emails;
 
 
 /**
@@ -12,8 +9,6 @@ import org.orcid.jaxb.model.record_v2.Emails;
  *
  */
 public interface EmailManager extends EmailManagerReadOnly {
-
-    void updateEmails(HttpServletRequest request, String orcid, Emails emails);
 
     void removeEmail(String orcid, String email);
 

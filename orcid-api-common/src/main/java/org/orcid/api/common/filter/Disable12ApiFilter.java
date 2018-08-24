@@ -62,7 +62,7 @@ public class Disable12ApiFilter extends OncePerRequestFilter {
         String version = (String) request.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME);
         if (PojoUtil.isEmpty(version)) {
             filterChain.doFilter(request, response);
-        } else if (version.equals(API_12_version) && feature.isActive()) {
+        } else if (version.startsWith(API_12_version) && feature.isActive()) {
             String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
             if (membersToKeepItActive.contains(clientId)) {
                 filterChain.doFilter(request, response);
