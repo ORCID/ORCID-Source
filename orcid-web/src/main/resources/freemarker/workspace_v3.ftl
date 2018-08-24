@@ -21,13 +21,6 @@
 </div>
 </#if>
 
-<#if invalidVerifyUrl?? && invalidVerifyUrl>
-<div class="alert alert-success">
-    <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
-</div>
-</#if>
-
-
 <#if invalidOrcid?? && invalidOrcid>
 <div class="alert alert-success">
     <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>

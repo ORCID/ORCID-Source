@@ -31,7 +31,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -39,10 +38,14 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.Biography;
@@ -59,12 +62,15 @@ import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.ModelAndView;
@@ -108,6 +114,15 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Mock
     private EmailManagerReadOnly emailManagerReadOnlyMock;
     
+    @Mock
+    private ProfileEntityCacheManager profileEntityCacheManagerMock;
+    
+    @Mock
+    private OrcidUserDetailsService orcidUserDetailsServiceMock;
+    
+    @Mock
+    private AuthenticationManager authenticationManagerMock; 
+    
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
     
@@ -130,8 +145,40 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "orcidProfileManager", orcidProfileManager);
         TargetProxyHelper.injectIntoProxy(registrationController, "encryptionManager", encryptionManagerMock);
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManagerReadOnly", emailManagerReadOnlyMock);
+        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityCacheManager", profileEntityCacheManagerMock); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "orcidUserDetailsService", orcidUserDetailsServiceMock); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "authenticationManager", authenticationManagerMock); 
         
         when(servletRequest.getLocale()).thenReturn(Locale.ENGLISH);
+        
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        
+        when(profileEntityCacheManagerMock.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
+            @Override
+            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
+                ProfileEntity p = new ProfileEntity(invocation.getArgument(0));
+                p.setClaimed(true);
+                return p;
+            }
+        });
+        
+        when(orcidUserDetailsServiceMock.loadUserByProfile(Mockito.any(ProfileEntity.class))).thenAnswer(new Answer<OrcidProfileUserDetails>() {
+            @Override
+            public OrcidProfileUserDetails answer(InvocationOnMock invocation) throws Throwable {
+                return new OrcidProfileUserDetails("0000-0000-0000-0000", "user_1@test.orcid.org", "pwd");
+            }
+        });
+        
+        when(authenticationManagerMock.authenticate(Mockito.any())).thenAnswer(new Answer<UsernamePasswordAuthenticationToken>() {
+            @Override
+            public UsernamePasswordAuthenticationToken answer(InvocationOnMock invocation) throws Throwable {
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("0000-0000-0000-0000", "pwd", Arrays.asList(OrcidWebRole.ROLE_USER));
+                auth.setDetails(new OrcidProfileUserDetails("0000-0000-0000-0000", "user_1@test.orcid.org", "pwd"));
+                return auth;
+            }
+        });
+        
         
         // Disable all features by default
         togglzRule.disableAll();
@@ -139,11 +186,9 @@ public class RegistrationControllerTest extends DBUnitTest {
     
     @Test
     public void testStripHtmlFromNames() throws UnsupportedEncodingException {
-        HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);
         Text email = Text.valueOf(System.currentTimeMillis() + "@test.orcid.org");
         
-        when(registrationManager.createMinimalRegistration(Matchers.any(Registration.class), eq(false), Matchers.any(java.util.Locale.class), Matchers.anyString())).thenAnswer(new Answer<String>(){
+        when(registrationManager.createMinimalRegistration(Mockito.any(Registration.class), eq(false), Mockito.any(java.util.Locale.class), Mockito.anyString())).thenAnswer(new Answer<String>(){
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return "0000-0000-0000-0000";                
@@ -508,7 +553,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
         
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
         assertEquals("redirect:/my-orcid", mav.getViewName());
         assertTrue(ra.getFlashAttributes().containsKey("emailVerified"));
@@ -516,32 +561,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(email, orcid);
     }
-    
-    @Test
-    public void verifyEmail_InvalidUserTest() throws UnsupportedEncodingException {
-        String orcid = "0000-0000-0000-0000";
-        String otherOrcid = "0000-0000-0000-0001";
-        String email = "user_1@test.orcid.org";
-        String otherEmail = "user_2@test.orcid.org";
-        SecurityContextTestUtils.setupSecurityContextForWebUser(otherOrcid, otherEmail);
-        String encodedEmail = new String(Base64.encodeBase64(email.getBytes()));
-        when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
-        when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
-        when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
-        when(emailManager.verifyEmail(email, orcid)).thenReturn(true);
-        when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
-        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
-        assertNotNull(mav);
-        assertEquals("wrong_user", mav.getViewName());
-        assertFalse(ra.getFlashAttributes().containsKey("emailVerified"));
-        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
-        verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
-    }
-    
     @Test
     public void verifyEmail_InvalidEmailTest() throws UnsupportedEncodingException {
         String orcid = "0000-0000-0000-0000";
@@ -558,9 +578,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
         
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
-        assertEquals("redirect:/my-orcid", mav.getViewName());
+        assertEquals("redirect:/signin", mav.getViewName());
         assertFalse(ra.getFlashAttributes().containsKey("emailVerified"));
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
@@ -582,7 +602,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
         
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
         assertEquals("redirect:/my-orcid", mav.getViewName());
         assertTrue(ra.getFlashAttributes().containsKey("emailVerified"));
@@ -601,9 +621,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
         
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
-        assertEquals("redirect:/my-orcid", mav.getViewName());
+        assertEquals("redirect:/signin", mav.getViewName());
         assertTrue(ra.getFlashAttributes().containsKey("invalidVerifyUrl"));
         assertTrue((Boolean) ra.getFlashAttributes().get("invalidVerifyUrl"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
