@@ -88,8 +88,9 @@ public class PIDResolverService {
         
         for (LinkResolver r : linkResolverMap.get(apiTypeName)) {
             result = r.resolve(apiTypeName, value);
-            if (result.isResolved())
+            if (result.isResolved()) {                
                 return result;
+            }
         } 
         return result;
     }
