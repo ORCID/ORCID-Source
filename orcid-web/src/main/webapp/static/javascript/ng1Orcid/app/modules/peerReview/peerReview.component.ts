@@ -57,6 +57,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
+    showPeerReviewDetails: any;
     showResourceItemDetails: any;
     sortState: any;
 
@@ -78,6 +79,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.showElement = {};
+        this.showPeerReviewDetails = new Array();
         this.showResourceItemDetails = {};
         this.sortState = this.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
@@ -214,15 +216,6 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = false;
     };
 
-    loadDetails(putCode, event): void {
-        this.closePopover(event);
-        this.moreInfoOpen = true;
-        $(event.target).next().css('display','inline');
-        if(this.peerReviewService.details[putCode] == undefined){
-            this.getDetails(putCode);
-        }
-    };
-
     makeDefault(group, peerReview, putCode): any {
         this.peerReviewService.updateToMaxDisplay(putCode)
         .pipe(    
@@ -268,25 +261,20 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-    showDetailsMouseClick = function(group, $event) {
-        $event.stopPropagation();
+    showDetailsMouseClick(group, $event): void{
+        $event.stopPropagation(group.groupId);
         this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
-        if(this.moreInfo[group.groupId] == true){
-            for (var idx in group.peerReviews){
-                this.loadDetails(group.peerReviews[idx].putCode, $event);
-            }
-        } else {
-            for (var idx in group.peerReviews){
-                console.log(group.peerReviews[idx]);
+    };
 
-                for(var idy in this.peerReviewService.details[group.peerReviews[idx].putCode].items){
-                    var id = group.peerReviews[idx].putCode + 'resourceItem' + idy;
-                    console.log(id);
-                    console.log(this.showResourceItemDetails[id]);
-                    this.showResourceItemDetails[id] = false;
-                    console.log(this.showResourceItemDetails[id]);
-                    this.cdr.detectChanges();
-                }
+    showMoreDetails(putCode, $event) {
+        $event.stopPropagation();
+        this.showPeerReviewDetails[putCode] = !this.showPeerReviewDetails[putCode];
+        if(this.showPeerReviewDetails[putCode] == true){
+            this.closePopover($event);
+            this.moreInfoOpen = true;
+            $(event.target).next().css('display','inline');
+            if(this.peerReviewService.details[putCode] == undefined){
+                this.getDetails(putCode);
             }
         }
     };
