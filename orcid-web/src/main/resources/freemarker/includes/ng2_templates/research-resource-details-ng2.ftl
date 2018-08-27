@@ -160,10 +160,10 @@
                                     <span *ngIf="host?.city">{{host?.city}}</span><span *ngIf="host?.region">, </span><span>{{host?.region}}</span><span *ngIf="host?.country">, </span><span>{{host?.country}}</span>
                                     <span *ngIf="host?.city || host?.region  || host?.country">)</span>
                                     <!--Org ids-->
-                                    <div class="org-ids" *ngIf="host?.orgDisambiguatedId">
+                                    <div class="org-ids" *ngIf="host.orgDisambiguatedId">
                                         <div class="col-md-12">   
                                             <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
-                                            <org-identifier-popover-ng2 [value]="host?.orgDisambiguatedId" [putCode]="researchResource.putCode+i" [type]="host?.disambiguationSource"></org-identifier-popover-ng2>
+                                            <org-identifier-popover-ng2 [value]="host.orgDisambiguatedId" [putCode]="researchResource.putCode+i" [type]="host.disambiguationSource"></org-identifier-popover-ng2>
                                         </div>
                                     </div><!--org-ids-->
                                 </div>
@@ -259,11 +259,11 @@
                                                         <span *ngIf="host?.city">{{host?.city}}</span><span *ngIf="host?.region">, </span><span>{{host?.region}}</span><span *ngIf="host?.country">, </span><span>{{host?.country}}</span>
                                                         <span *ngIf="host?.city || host?.region  || host?.country">)</span>
                                                         <!--Org ids-->
-                                                        <div class="org-ids" *ngIf="host?.orgDisambiguatedId
+                                                        <div class="org-ids" *ngIf="host.orgDisambiguatedId
 ">
                                                             <div class="col-md-12">   
                                                                 <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
-                                                                <org-identifier-popover-ng2 [value]="host?.orgDisambiguatedId" [putCode]="researchResource.putCode+i" [type]="host?.disambiguationSource"></org-identifier-popover-ng2>
+                                                                <org-identifier-popover-ng2 [value]="host.orgDisambiguatedId" [putCode]="researchResource.putCode+i" [type]="host.disambiguationSource"></org-identifier-popover-ng2>
                                                             </div>
                                                         </div><!--org-ids-->
                                                     </div>
