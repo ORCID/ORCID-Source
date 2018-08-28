@@ -93,7 +93,9 @@ export class OrgIdentifierPopoverComponent implements OnInit {
             
         } 
         if(this.type && this.value){
-            this.getDisambiguatedOrgDetails(this.type, this.value);
+            if(!this.commonSrvc.orgDisambiguatedDetails[this.type + this.value]){
+                this.getDisambiguatedOrgDetails(this.type, this.value);
+            }
         }
           
     }; 

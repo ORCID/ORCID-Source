@@ -72,7 +72,6 @@ import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
@@ -83,6 +82,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.ResearchResource;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
@@ -641,10 +641,10 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResource.json", method = RequestMethod.GET)
     public @ResponseBody ResearchResource getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
-        ResearchResource r = this.researchResourceManager.getResearchResource(orcid, Long.valueOf(id));
+        org.orcid.jaxb.model.v3.rc1.record.ResearchResource r = this.researchResourceManager.getResearchResource(orcid, Long.valueOf(id));
         validateVisibility(r.getVisibility());
         sourceUtils.setSourceName(r);
-        return r;
+        return ResearchResource.fromValue(r);
     }
 
     /**
@@ -754,6 +754,32 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!Visibility.PUBLIC.equals(v)) {
             throw new IllegalArgumentException("Invalid request");
         }
+    }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationDetails.json", method = RequestMethod.GET)
+    public @ResponseBody AffiliationForm getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") long id, @RequestParam("type") String type) {        
+        Affiliation aff; 
+        if (type.equals("distinction")) {
+            aff = affiliationsManager.getDistinctionAffiliation(orcid, id);
+        } else if (type.equals("education")) {
+            aff = affiliationsManager.getEducationAffiliation(orcid, id);
+        } else if (type.equals("employment")) {
+            aff = affiliationsManager.getEmploymentAffiliation(orcid, id);
+        } else if (type.equals("invited-position")) {
+            aff = affiliationsManager.getInvitedPositionAffiliation(orcid, id);
+        } else if (type.equals("membership")) {
+            aff = affiliationsManager.getMembershipAffiliation(orcid, id);
+        } else if (type.equals("qualification")) {
+            aff = affiliationsManager.getQualificationAffiliation(orcid, id);
+        } else if (type.equals("service")) {
+            aff = affiliationsManager.getServiceAffiliation(orcid, id);
+        } else {
+            throw new IllegalArgumentException("Invalid affiliation type: " + type);
+        }
+        
+        validateVisibility(aff.getVisibility());
+        sourceUtils.setSourceName(aff);
+        return AffiliationForm.valueOf(aff);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)

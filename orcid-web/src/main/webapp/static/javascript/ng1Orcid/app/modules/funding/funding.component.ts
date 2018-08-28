@@ -69,6 +69,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     sortHideOption: boolean;
     sortState: any;
+    fundingMoreInfo: any;
     wizardDescExpanded: any;
 
     constructor(
@@ -161,6 +162,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
+        this.fundingMoreInfo = {};
         this.wizardDescExpanded = {};
     }
 
@@ -234,84 +236,57 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    getFundingsById( ids ): any {
-        this.fundingService.getFundingsById( ids ).pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                for (let i in data) {
-                    groupedActivitiesUtil.group(data[i],GroupedActivities.FUNDING, this.groups);
-                };
-                for (let j in this.groups){
-                    let activitiesObjConvertedToArray = [];
-                    for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
-                        let tmpObj = new Object();
-                        tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
-                        tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
-                        activitiesObjConvertedToArray.push(tmpObj);
-                    }
-                    this.groups[j]['activitiesArray'] = activitiesObjConvertedToArray; 
-                }
-                this.fundingService.loading = false;
-            },
-            error => {
-                console.log('getFundingsByIdError', error);
-                this.fundingService.loading = false;
-            } 
-        );
-    }
-
     getFundings(): any {
-        //Be sure all arrays are empty
         this.groups = new Array();
         if(this.publicView === "true") {
-             this.getPublicFundingsById();
-        } else {
-            this.fundingService.getFundingsId()
-            .pipe(    
+            this.fundingService.getPublicFundings(this.sortState.predicateKey, !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
                 data => {
-                    if( data.length != 0 ) {
-                        var fundingIds = data.splice(0,20).join()
-                        this.getFundingsById( fundingIds );
-                    } else {
-                        this.fundingService.loading = false;
-                    }
+                   this.groups = data;
                 },
                 error => {
-                    //console.log('getFundingsError', error);
+                    console.log('getFundingsByIdError', error);
+                } 
+            );
+        } else {
+            this.fundingService.getFundings(this.sortState.predicateKey, !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                   this.groups = data;
+                },
+                error => {
+                    console.log('getFundingsByIdError', error);
                 } 
             );
         }
-    };
-
-    getPublicFundingsById(): any {
-        this.fundingService.getPublicFundingsById( orcidVar.fundingIdsJson ).pipe(    
+    }
+    
+    getFundingMoreInfo(putCode): any {
+        this.fundingService.getFullFunding(putCode).pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                for (let i in data) {
-                    groupedActivitiesUtil.group(data[i],GroupedActivities.FUNDING, this.groups);
-                };
-                for (let j in this.groups){
-                    let activitiesObjConvertedToArray = [];
-                    for(let k = 0; k < Object.keys(this.groups[j]['activities']).length; k++) {
-                        let tmpObj = new Object();
-                        tmpObj['key'] = Object.keys(this.groups[j]['activities'])[k];
-                        tmpObj['value'] = this.groups[j]['activities'][Object.keys(this.groups[j]['activities'])[k]];
-                        activitiesObjConvertedToArray.push(tmpObj);
-                    }
-                    this.groups[j]['activitiesArray'] = activitiesObjConvertedToArray; 
-                }
+               this.fundingMoreInfo = data;
             },
             error => {
                 console.log('getFundingsByIdError', error);
             } 
         );
+    }
+    
+    consistentVis(group): boolean {
+        var vis = group.fundings[0].visibility.visibility;
+        for(let i = 0; i < group.fundings.length; i++) {
+            if (group.fundings[i].visibility.visibility != vis) {
+                return false;
+            }
+        }
+        return true;
     }
 
     hideAllTooltip(): void {
@@ -370,8 +345,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                group.defaultPutCode = putCode;
                 group.activePutCode = putCode;   
+                group.defaultPutCode = putCode;
             },
             error => {
                 console.log('makeDefault', error);
@@ -458,8 +433,14 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     showDetailsMouseClick = function(group, $event) {
-        $event.stopPropagation();
-        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        var showing = this.moreInfo[group.groupId];
+        this.moreInfo = {}; 
+        this.fundingMoreInfo = {};
+        if (!showing) {
+            this.getFundingMoreInfo(group.activePutCode);
+            $event.stopPropagation();
+            this.moreInfo[group.groupId] = true;
+        }
     };
 
     showFundingImportWizard(): void {
@@ -478,6 +459,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     sort(key): void {       
         this.sortState.sortBy(key);
+        this.getFundings();
     };
 
     showURLPopOver(id): void {

@@ -286,10 +286,10 @@
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
                         <div *ngIf="editSources[group.groupId]">
-                            <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultWork.putCode.value"></span><span *ngIf="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                            <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultPutCode"></span><span *ngIf="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                             
                             <#if !(isPublicProfile??)>
-                            <a (click)="makeDefault(group, work.putCode.value)" *ngIf="work.putCode.value != group.defaultWork.putCode.value">
+                            <a (click)="makeDefault(group, work.putCode.value)" *ngIf="work.putCode.value != group.defaultPutCode">
                                 <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
                             </#if>
@@ -338,8 +338,8 @@
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
                         <#if !(isPublicProfile??)>
-                        <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultWork.putCode.value"></span><span *ngIf="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                        <a (click)="makeDefault(group, work.putCode.value); " *ngIf="work.putCode.value != group.defaultWork.putCode.value">
+                        <span class="glyphicon glyphicon-check" *ngIf="work.putCode.value == group.defaultPutCode"></span><span *ngIf="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <a (click)="makeDefault(group, work.putCode.value); " *ngIf="work.putCode.value != group.defaultPutCode">
                             <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
                         </#if>
