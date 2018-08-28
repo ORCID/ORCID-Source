@@ -1,7 +1,5 @@
 package org.orcid.core.manager.v3;
 
-import java.util.List;
-
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
@@ -11,8 +9,12 @@ public interface GroupingSuggestionManager extends GroupingSuggestionManagerRead
 
     void generateGroupingSuggestionsForProfile(String orcid, Work work, Works groupedWorks);
     
-    List<WorkGroupingSuggestion> filterSuggestionsNoLongerApplicable(List<WorkGroupingSuggestion> suggestions, Works workGroups);
+    void markGroupingSuggestionAsAccepted(String orcid, Long id);
     
-    void markGroupingSuggestionAsAccepted(Long id);
+    void markGroupingSuggestionAsRejected(String orcid, Long id);
+
+    boolean suggestionValid(WorkGroupingSuggestion suggestion, Works workGroups);
+    
+    void removeSuggestion(WorkGroupingSuggestion workGroupingSuggestion);
 
 }

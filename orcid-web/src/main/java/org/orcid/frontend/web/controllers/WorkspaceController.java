@@ -26,7 +26,6 @@ import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
@@ -55,7 +54,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WebsiteForm;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
-import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.utils.FunctionsOverCollections;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
@@ -281,11 +279,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         
         return form;
-    }
-    
-    @RequestMapping(value = "/my-orcid/groupingSuggestions.json", method = RequestMethod.GET)
-    public @ResponseBody List<WorkGroupingSuggestion> getGroupingSuggestions(HttpServletRequest request) {     
-        return workManager.getGroupingSuggestions(getCurrentUserOrcid());
     }
     
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
