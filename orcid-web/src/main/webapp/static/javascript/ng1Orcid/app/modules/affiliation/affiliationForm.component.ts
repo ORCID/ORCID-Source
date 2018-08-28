@@ -1,8 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
-declare var groupedActivitiesUtil: any;
-declare var sortState: any;
 declare var typeahead: any;
 
 //Import all the angular components
@@ -122,7 +118,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         };
     }
     
-     addAffiliation(): void {
+    addAffiliation(): void {
         if (this.addingAffiliation == true) {
             return; // don't process if adding affiliation
         }

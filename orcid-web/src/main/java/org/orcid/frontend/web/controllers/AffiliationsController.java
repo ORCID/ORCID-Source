@@ -169,7 +169,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/affiliationDetails.json", method = RequestMethod.GET)
-    public @ResponseBody AffiliationForm getAffiliationDetails(@RequestParam("id") long id, @RequestParam("type") String type) {
+    public @ResponseBody AffiliationForm getAffiliationDetails(@RequestParam("id") Long id, @RequestParam("type") String type) {
         String orcid = getCurrentUserOrcid();       
         
         if (type.equals("distinction")) {

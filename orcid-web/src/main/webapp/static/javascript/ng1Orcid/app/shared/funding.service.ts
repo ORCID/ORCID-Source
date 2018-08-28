@@ -17,6 +17,7 @@ export class FundingService {
     private notify = new Subject<any>();
     private fundingToEdit: any;
     
+    public details: any;
     public groups: any;
     public loading: any;
 
@@ -30,6 +31,7 @@ export class FundingService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
+        this.details = new Array();
         this.groups = null;
         this.fundingToEdit = {};
     }
@@ -38,6 +40,15 @@ export class FundingService {
         if (data) {
             this.notify.next(data);
         }
+    }
+
+    consistentVis(group): boolean {
+        for(let i = 0; i < group.fundings.length; i++) {
+            if (group.fundings[i].visibility.visibility != group.activeVisibility) {
+                return false;
+            }
+        }
+        return true;
     }
 
     createNew(obj): any {
@@ -55,44 +66,6 @@ export class FundingService {
             getBaseUri() + '/fundings/disambiguated/id/' + id
         );
     }
-
-    getEditable( putCode, groups ): any {
-        // first check if they are the current source
-        var funding = this.getFunding(putCode, groups);
-
-        if (funding.source == orcidVar.orcidId){
-            return funding;
-        } else {
-            var bestMatch = null;
-            var group = this.getGroup(putCode, groups);
-            for (var idx in group.activities) {
-                if (group.activities[idx].source == orcidVar.orcidId) {
-                    bestMatch = group.activities[idx];
-                    break;
-                }
-            }
-            if (bestMatch == null) {
-                bestMatch = this.createNew(funding);
-            }
-            return bestMatch;
-        }
-
-    }
-
-    getFunding(putCode?, groups?): any {
-        if( putCode ){
-            for (var idx in groups) {
-                if (groups[idx].hasPut(putCode)){
-                    return groups[idx].getByPut(putCode);
-                }
-            }
-            return null;
-            
-        } else {
-            this.getFundingEmpty();
-
-        }
-    }
     
     getFundingEmpty(): Observable<any> {
         return this.http.get(
@@ -100,37 +73,31 @@ export class FundingService {
         )
     }
 
-    getFundings(sort, sortAsc): Observable<any> {
+    getFundingGroups(sort, sortAsc): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/fundings/fundings.json?sort=' + sort + '&sortAsc=' + sortAsc
+            getBaseUri() + '/fundings/fundingGroups.json?sort=' + sort + '&sortAsc=' + sortAsc
         )    
     }
     
-    getFullFunding(putCode): Observable<any> {
+    getFundingDetails(putCode): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/fundings/getFunding.json?fundingId=' + putCode
+            getBaseUri() + '/fundings/fundingDetails.json?fundingId=' + putCode
         )    
     }
 
-    getFundingToEdit(): any {
-        return this.fundingToEdit;
-    }
-
-    getGroup(putCode, groups): any {
-        for (var idx in groups) {
-            if (groups[idx].hasPut(putCode)){
-                return groups[idx];
-            }
-        }
-        return null;
-    }
-
-    getPublicFundings(sort, sortAsc): Observable<any> {
+    getPublicFundingDetails(putCode): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/' + orcidVar.orcidId + '/fundings.json?sort=' + sort + '&sortAsc=' + sortAsc
+            getBaseUri() + '/' + orcidVar.orcidId + '/fundingDetails.json?fundingId=' + putCode
+        )    
+    }
+
+    getPublicFundingGroups(sort, sortAsc): Observable<any> {
+        this.loading = true;
+        return this.http.get(
+            getBaseUri() + '/' + orcidVar.orcidId + '/fundingGroups.json?sort=' + sort + '&sortAsc=' + sortAsc
         )
     }
 
@@ -140,22 +107,13 @@ export class FundingService {
         )
     }
 
-    putFunding(obj) {
+    putFunding(obj): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         return this.http.post( 
             getBaseUri() + '/fundings/funding.json',
             encoded_data,         
             { headers: this.headers }
         )
-        .pipe(
-            tap(
-                (data) => {
-                    //this.getData();
-                    //groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);                      
-                }
-            )
-        )  
-        ;
     }
 
     deleteFunding(obj): Observable<any> {
@@ -172,27 +130,6 @@ export class FundingService {
             encoded_data, 
             { headers: this.headers }
         );
-    }
-
-    setFundingToEdit(obj): void {
-        this.fundingToEdit = obj;
-    }
-
-    updateProfileFunding(obj) {
-        let encoded_data = JSON.stringify(obj);
-
-        return this.http.post( 
-            getBaseUri() + '/fundings/funding.json', 
-            encoded_data,           
-            { headers: this.headers }
-        )
-        .pipe(
-            tap(
-                (data) => {                    
-                }
-            )
-        )  
-        ;
     }
 
     updateVisibility(putCodes, priv): Observable<any> {

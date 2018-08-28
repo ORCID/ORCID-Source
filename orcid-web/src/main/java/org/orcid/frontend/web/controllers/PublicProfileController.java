@@ -39,6 +39,7 @@ import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.PersonalDetailsManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
@@ -121,6 +122,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "peerReviewManagerReadOnlyV3")
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
+    
+    @Resource(name = "profileFundingManagerV3")
+    private ProfileFundingManager profileFundingManager;
 
     @Resource
     private WorksPaginator worksPaginator;
@@ -261,7 +265,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             return mav;
         }
 
-        long lastModifiedTime = getLastModifiedTime(orcid);
+        Long lastModifiedTime = getLastModifiedTime(orcid);
 
         ModelAndView mav = null;
         if (request.getRequestURI().contains("/print")) {
@@ -591,8 +595,41 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         return affs;
     }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundingDetails.json", method = RequestMethod.GET)
+    public @ResponseBody FundingForm getFundingDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id) {        
+        if (id == null)
+            return null;        
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
+        Funding funding = profileFundingManager.getFunding(orcid, id);
+        if (funding != null) {
+            validateVisibility(funding.getVisibility());
+            sourceUtils.setSourceName(funding);
+            FundingForm form = FundingForm.valueOf(funding);
+                   
+            if (funding.getType() != null) {
+                form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, funding.getType().value())));
+            }
+            // Set translated title language name
+            if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
+                String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
+                form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
+            }
+    
+            // Set the formatted amount
+            if (funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
+                BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
+                String formattedAmount = formatAmountString(bigDecimal);
+                form.setAmount(Text.valueOf(formattedAmount));
+            }
+    
+            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
+            return form;
+        }
+        return null;
+    }
 
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundings.json")
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundingGroups.json")
     public @ResponseBody List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
             @RequestParam(value = "fundingIds") String fundingIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
@@ -700,7 +737,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-review.json", method = RequestMethod.GET)
-    public @ResponseBody PeerReviewForm getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") long putCode) {
+    public @ResponseBody PeerReviewForm getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") Long putCode) {
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         validateVisibility(peerReview.getVisibility());
         sourceUtils.setSourceName(peerReview);
@@ -757,7 +794,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationDetails.json", method = RequestMethod.GET)
-    public @ResponseBody AffiliationForm getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") long id, @RequestParam("type") String type) {        
+    public @ResponseBody AffiliationForm getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id, @RequestParam("type") String type) {        
         Affiliation aff; 
         if (type.equals("distinction")) {
             aff = affiliationsManager.getDistinctionAffiliation(orcid, id);
