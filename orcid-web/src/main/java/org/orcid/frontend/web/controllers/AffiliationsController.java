@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.ResearchResource;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
@@ -165,6 +166,29 @@ public class AffiliationsController extends BaseWorkspaceController {
         affiliationForm.setUrl(new Text());
 
         return affiliationForm;
+    }
+    
+    @RequestMapping(value = "/affiliationDetails.json", method = RequestMethod.GET)
+    public @ResponseBody AffiliationForm getAffiliationDetails(@RequestParam("id") long id, @RequestParam("type") String type) {
+        String orcid = getCurrentUserOrcid();       
+        
+        if (type.equals("distinction")) {
+            return AffiliationForm.valueOf(affiliationsManager.getDistinctionAffiliation(orcid, id));
+        } else if (type.equals("education")) {
+            return AffiliationForm.valueOf(affiliationsManager.getEducationAffiliation(orcid, id));
+        } else if (type.equals("employment")) {
+            return AffiliationForm.valueOf(affiliationsManager.getEmploymentAffiliation(orcid, id));
+        } else if (type.equals("invited-position")) {
+            return AffiliationForm.valueOf(affiliationsManager.getInvitedPositionAffiliation(orcid, id));
+        } else if (type.equals("membership")) {
+            return AffiliationForm.valueOf(affiliationsManager.getMembershipAffiliation(orcid, id));
+        } else if (type.equals("qualification")) {
+            return AffiliationForm.valueOf(affiliationsManager.getQualificationAffiliation(orcid, id));
+        } else if (type.equals("service")) {
+            return AffiliationForm.valueOf(affiliationsManager.getServiceAffiliation(orcid, id));
+        } else {
+            throw new IllegalArgumentException("Invalid affiliation type: " + type);
+        }
     }
 
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.POST)

@@ -755,6 +755,32 @@ public class PublicProfileController extends BaseWorkspaceController {
             throw new IllegalArgumentException("Invalid request");
         }
     }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationDetails.json", method = RequestMethod.GET)
+    public @ResponseBody AffiliationForm getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") long id, @RequestParam("type") String type) {        
+        Affiliation aff; 
+        if (type.equals("distinction")) {
+            aff = affiliationsManager.getDistinctionAffiliation(orcid, id);
+        } else if (type.equals("education")) {
+            aff = affiliationsManager.getEducationAffiliation(orcid, id);
+        } else if (type.equals("employment")) {
+            aff = affiliationsManager.getEmploymentAffiliation(orcid, id);
+        } else if (type.equals("invited-position")) {
+            aff = affiliationsManager.getInvitedPositionAffiliation(orcid, id);
+        } else if (type.equals("membership")) {
+            aff = affiliationsManager.getMembershipAffiliation(orcid, id);
+        } else if (type.equals("qualification")) {
+            aff = affiliationsManager.getQualificationAffiliation(orcid, id);
+        } else if (type.equals("service")) {
+            aff = affiliationsManager.getServiceAffiliation(orcid, id);
+        } else {
+            throw new IllegalArgumentException("Invalid affiliation type: " + type);
+        }
+        
+        validateVisibility(aff.getVisibility());
+        sourceUtils.setSourceName(aff);
+        return AffiliationForm.valueOf(aff);
+    }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)
     public @ResponseBody AffiliationGroupContainer getGroupedAffiliations(@PathVariable("orcid") String orcid) {        
