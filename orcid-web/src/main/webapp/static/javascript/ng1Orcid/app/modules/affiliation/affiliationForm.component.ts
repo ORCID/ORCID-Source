@@ -141,6 +141,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                     this.editAffiliation = data;
                     this.commonSrvc.copyErrorsLeft(this.editAffiliation, data);
                 } else {
+                    this.unbindTypeahead();
                     this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationForm'});
                     this.removeDisambiguatedAffiliation();
                     this.editAffiliation = this.getEmptyAffiliation();
@@ -189,6 +190,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     cancelEdit(): void {
+        this.unbindTypeahead();
         this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationForm'});
         this.affiliationService.notifyOther({action:'cancel', successful:true});
     };
