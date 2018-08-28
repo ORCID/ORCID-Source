@@ -106,10 +106,12 @@ public enum WorkType implements Serializable {
         
         // Known maps
         switch (v) {
-        case "dataset":
-            return WorkType.DATA_SET;
         case "chapter":
             return WorkType.BOOK_CHAPTER;
+        case "dataset":
+            return WorkType.DATA_SET;
+        case "standard":
+            return WorkType.STANDARDS_AND_POLICY;
         }        
         
         throw new IllegalArgumentException(v);
