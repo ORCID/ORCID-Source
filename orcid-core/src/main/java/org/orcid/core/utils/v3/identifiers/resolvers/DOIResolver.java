@@ -185,8 +185,27 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 }
             } catch(Exception e) {
                 
-            }            
+            }
         }
+        if(json.has("ISSN")) {
+            try {
+                JSONArray isbns = json.getJSONArray("ISSN");
+                for(int i = 0; i < isbns.length(); i++) {
+                    String isbn = isbns.getString(i);
+                    ExternalID extId = new ExternalID();
+                    extId.setType("ISSN");
+                    extId.setRelationship(Relationship.SELF);
+                    extId.setValue(isbn);
+                    IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("ISSN", localeManager.getLocale());
+                    if(idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
+                        extId.setUrl(new Url(idType.getResolutionPrefix() + isbn));
+                    }
+                    result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
+                }
+            } catch(Exception e) {
+                
+            }
+        }        
         
         if(json.has("abstract")) {
             String description = json.getString("abstract");

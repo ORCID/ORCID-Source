@@ -7,13 +7,14 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
 @Component
-public class ISBNOCLCResolver implements LinkResolver {
+public class ISBNOCLCResolver implements LinkResolver, MetadataResolver {
 
     @Resource
     PIDNormalizationService normalizationService;
@@ -45,6 +46,17 @@ public class ISBNOCLCResolver implements LinkResolver {
             }
         }
         return new PIDResolutionResult(false,false,true,null);//unreachable?
+    }
+
+    @Override
+    public Work resolveMetadata(String apiTypeName, String value) {
+        PIDResolutionResult rr = this.resolve(apiTypeName, value);
+        if (!rr.isResolved())
+            return null;
+        
+        //TODO
+        
+        return null;
     }
 
 }
