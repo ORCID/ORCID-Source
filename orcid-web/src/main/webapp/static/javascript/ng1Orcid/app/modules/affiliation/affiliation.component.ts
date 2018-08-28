@@ -415,12 +415,12 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-    showDetailsMouseClick(group, $event): void {
+    showDetailsMouseClick(group,$event): void {
         $event.stopPropagation();
         this.moreInfo[group.activePutCode] = !this.moreInfo[group.activePutCode];
         if(this.moreInfo[group.activePutCode] == true){
             for (var idx in group.affiliations){
-                $(event.target).next().css('display','inline');
+                $($event.target).next().css('display','inline');
                 if(this.affiliationService.details[group.affiliations[idx].putCode.value] == undefined){
                     this.getDetails(group.affiliations[idx].putCode.value, group.affiliations[idx].affiliationType.value);
                 }
