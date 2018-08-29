@@ -493,13 +493,13 @@ public class RegistrationController extends BaseController {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
                             redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
                         }
-                    }
-                    
-                    if(currentUser != null && currentUser.equals(orcid)) {
-                        redirect = "redirect:/my-orcid";
-                    }
+                    }                   
                 } else {
                     redirectAttributes.addFlashAttribute("emailVerified", false);
+                }
+                
+                if(currentUser != null && currentUser.equals(orcid)) {
+                    redirect = "redirect:/my-orcid";
                 }
             }            
         } catch (EncryptionOperationNotPossibleException eonpe) {
