@@ -309,39 +309,7 @@ kind of variable. This temp value is only used in this macro lib -->
               </span>
         </div>
     </div>
-</#macro>  
-
-<#macro editActivityIconNg2BackendGrouping activity click toolTipSuffix toolTipClass>  
-    <a *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
-        <span class="glyphicon glyphicon-pencil"></span>
-    </a>
-    <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group,$event)" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
-        <span class="glyphicons git_create grey"></span>
-    </a>
-    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
-        <span class="glyphicons git_create"></span>
-    </a>
-
-    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
-        <span class="glyphicons git_create grey"></span>
-    </a>
-    <div class="${toolTipClass}" *ngIf="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" [ngClass]="{'two-lines' : (!userIsSource(${activity}) && group.userVersionPresent) || (!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0)}">
-        <div class="arrow"></div>
-        <div class="popover-content">              
-            <span *ngIf="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
-            <span *ngIf="!userIsSource(${activity}) && group.userVersionPresent">
-                <@orcid.msg 'groups.common.open_source_to_1' /><br />
-                <@orcid.msg 'groups.common.open_source_to_2' />
-            </span>
-            <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
-            <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0">
-                <@orcid.msg 'groups.common.items_must_have_1' />
-                <br />
-                <@orcid.msg 'groups.common.items_must_have_2' />
-            </span>
-        </div>
-    </div>
-</#macro>   
+</#macro>    
 
 <#macro editWorkIcon activity click toolTipSuffix toolTipClass>   
     <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">

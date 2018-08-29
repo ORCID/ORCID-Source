@@ -167,29 +167,36 @@ public class FundingsController extends BaseWorkspaceController {
         return errors;
     }
 
-    @RequestMapping(value = "/fundings.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/fundingGroups.json", method = RequestMethod.GET)
     public @ResponseBody List<FundingGroup> getFundingsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         List<FundingGroup> fundingGroups = new ArrayList<>();
         List<FundingSummary> summaries = profileFundingManager.getFundingSummaryList(getEffectiveUserOrcid());
         Fundings fundings = profileFundingManager.groupFundings(summaries, false);
         for (org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup group : fundings.getFundingGroup()) {
             FundingGroup fundingGroup = FundingGroup.valueOf(group);
+            for(org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary summary : summaries) {
+                if(summary.getSource().retrieveSourcePath().equals(getCurrentUserOrcid())) {
+                    fundingGroup.setUserVersionPresent(true);
+                    break;
+                }
+            }
             fundingGroups.add(fundingGroup);
         }
+
         fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
         return fundingGroups;
     }
     
     /**
-     * List fundings associated with a profile
+     * Get a funding item by put code
      * */
-    @RequestMapping(value = "/getFunding.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/fundingDetails.json", method = RequestMethod.GET)
     public @ResponseBody
-    FundingForm getFundingJson(@RequestParam(value = "fundingId") Long fundingId) {
-        if (fundingId == null)
+    FundingForm getFundingJson(@RequestParam(value = "id") Long id) {
+        if (id == null)
             return null;        
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
-        Funding funding = profileFundingManager.getFunding(getEffectiveUserOrcid(), fundingId);
+        Funding funding = profileFundingManager.getFunding(getEffectiveUserOrcid(), id);
         FundingForm form = FundingForm.valueOf(funding);
                
         if (funding.getType() != null) {

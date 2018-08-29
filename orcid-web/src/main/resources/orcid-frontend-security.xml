@@ -273,8 +273,10 @@
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationDetails.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />		
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationGroups.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />			
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundings.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundingDetails.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />				
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundingGroups.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/getWorkInfo.json(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 

@@ -225,8 +225,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
-                    this.affiliationService.details[putCode] = data; 
-                    console.log(this.affiliationService.details[putCode]);  
+                    this.affiliationService.details[putCode] = data;  
                 },
                 error => {
                     console.log('getDetailsError', error);
@@ -312,7 +311,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.addAffiliationModal(affiliation.affiliationType.value, this.affiliationService.details[bestMatchPutCode]);
             }
         } else {
-            //otherwise make a 
+            //otherwise make a copy 
             if(this.affiliationService.details[affiliation.putCode.value] == undefined){
                 this.affiliationService.getAffiliationDetails(affiliation.putCode.value, affiliation.affiliationType.value)
                     .pipe(    
