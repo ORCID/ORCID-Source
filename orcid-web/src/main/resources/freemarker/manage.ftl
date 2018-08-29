@@ -393,7 +393,7 @@
                             </tbody>
                         </table>
                         <div id="show-more-button-container">
-                            <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
+                            <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
                             <span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
                         </div>
                     </div>
