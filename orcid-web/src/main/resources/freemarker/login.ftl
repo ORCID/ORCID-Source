@@ -6,6 +6,13 @@
             </div>
         </div>
     </#if>
+    <#if emailVerified?? && emailVerified>
+        <div class="alert alert-success">
+            <strong>
+                <@spring.message "orcid.frontend.web.email_verified"/>                
+            </strong>
+        </div>
+    </#if>
     <div class="row">
         <@spring.bind "loginForm" />
         <@spring.showErrors "<br/>" "error" /> 
