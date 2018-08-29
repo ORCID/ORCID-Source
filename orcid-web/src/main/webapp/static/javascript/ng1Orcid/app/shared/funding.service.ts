@@ -83,14 +83,14 @@ export class FundingService {
     getFundingDetails(putCode): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/fundings/fundingDetails.json?fundingId=' + putCode
+            getBaseUri() + '/fundings/fundingDetails.json?id=' + putCode
         )    
     }
 
     getPublicFundingDetails(putCode): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/' + orcidVar.orcidId + '/fundingDetails.json?fundingId=' + putCode
+            getBaseUri() + '/' + orcidVar.orcidId + '/fundingDetails.json?id=' + putCode
         )    
     }
 

@@ -192,11 +192,11 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/fundingDetails.json", method = RequestMethod.GET)
     public @ResponseBody
-    FundingForm getFundingJson(@RequestParam(value = "fundingId") Long fundingId) {
-        if (fundingId == null)
+    FundingForm getFundingJson(@RequestParam(value = "id") Long id) {
+        if (id == null)
             return null;        
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
-        Funding funding = profileFundingManager.getFunding(getEffectiveUserOrcid(), fundingId);
+        Funding funding = profileFundingManager.getFunding(getEffectiveUserOrcid(), id);
         FundingForm form = FundingForm.valueOf(funding);
                
         if (funding.getType() != null) {
