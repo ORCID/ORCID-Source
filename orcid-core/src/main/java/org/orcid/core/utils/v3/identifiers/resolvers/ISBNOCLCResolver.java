@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 @Component
-public class ISBNOCLCResolver implements LinkResolver, MetadataResolver {
+public class ISBNOCLCResolver implements LinkResolver {
 
     @Resource
     PIDNormalizationService normalizationService;
@@ -47,16 +47,4 @@ public class ISBNOCLCResolver implements LinkResolver, MetadataResolver {
         }
         return new PIDResolutionResult(false,false,true,null);//unreachable?
     }
-
-    @Override
-    public Work resolveMetadata(String apiTypeName, String value) {
-        PIDResolutionResult rr = this.resolve(apiTypeName, value);
-        if (!rr.isResolved())
-            return null;
-        
-        //TODO
-        
-        return null;
-    }
-
 }

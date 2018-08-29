@@ -20,14 +20,13 @@ public class Http200Resolver implements LinkResolver {
 
     @Resource
     PIDResolverCache cache;
-
+    
     List<String> types;
 
     @PostConstruct
     public void init() {
         types = new ArrayList<String>();
         //These types reliably return 200 if found.
-        types.add("arxiv");
         types.add("pmid");
         types.add("pmc");
         types.add("rrid");
@@ -63,5 +62,5 @@ public class Http200Resolver implements LinkResolver {
         
         return new PIDResolutionResult(false,false,true,null);//unreachable?        
     }
-
+    
 }
