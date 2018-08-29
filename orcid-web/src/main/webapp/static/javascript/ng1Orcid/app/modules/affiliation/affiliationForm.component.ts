@@ -141,6 +141,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                     this.editAffiliation = data;
                     this.commonSrvc.copyErrorsLeft(this.editAffiliation, data);
                 } else {
+                    this.unbindTypeahead();
                     this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationForm'});
                     this.removeDisambiguatedAffiliation();
                     this.editAffiliation = this.getEmptyAffiliation();
@@ -189,6 +190,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     cancelEdit(): void {
+        this.unbindTypeahead();
         this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationForm'});
         this.affiliationService.notifyOther({action:'cancel', successful:true});
     };
@@ -243,21 +245,21 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     removeDisambiguatedAffiliation(): void {
-        this.bindTypeahead();
-        
+        this.unbindTypeahead();
         if (this.disambiguatedAffiliation != undefined) {
-            delete this.disambiguatedAffiliation;
+            this.disambiguatedAffiliation = null;
         }
         
         if (this.editAffiliation != undefined && this.editAffiliation.disambiguatedAffiliationSourceId != undefined) {
-            delete this.editAffiliation.disambiguatedAffiliationSourceId;
+            this.editAffiliation.disambiguatedAffiliationSourceId = null;
         }
         
         if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {
-            delete this.editAffiliation.orgDisambiguatedId;
+            this.editAffiliation.orgDisambiguatedId.value = null;
         }
 
         this.disambiguatedAffiliation = null;
+        this.bindTypeahead();
     };
 
     selectAffiliation(datum): void {        
@@ -346,6 +348,10 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                     this.editAffiliation = res.affiliation;
                     if(this.editAffiliation.orgDisambiguatedId != null){
                         this.getDisambiguatedAffiliation(this.editAffiliation.orgDisambiguatedId.value);
+                    } else {
+                        this.editAffiliation.orgDisambiguatedId = {
+                                value: ""
+                            }
                     }
                 } else {
                     this.editAffiliation = this.getEmptyAffiliation();
