@@ -9,7 +9,7 @@
     <#if emailVerified?? && emailVerified>
         <div class="alert alert-success">
             <strong>
-                <@spring.message "orcid.frontend.web.email_verified"/>                
+                ${emailVerifiedMessage}                
             </strong>
         </div>
     </#if>

@@ -12,7 +12,7 @@
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
     <strong>
-        <@spring.message "orcid.frontend.web.email_verified"/>
+        ${emailVerifiedMessage}
         <#if primaryEmailUnverified?? && primaryEmailUnverified>
         <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
         <thanks-for-verifying-ng2></thanks-for-verifying-ng2>

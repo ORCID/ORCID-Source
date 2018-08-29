@@ -486,6 +486,8 @@ public class RegistrationController extends BaseController {
                 if(verified) {                    
                     profileEntityManager.updateLocale(decryptedEmail, org.orcid.jaxb.model.v3.rc1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
+                    redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
+                    redirectAttributes.addFlashAttribute("emailVerifiedMessage", getMessage("orcid.frontend.web.email_verified", decryptedEmail));
                     
                     if(!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
