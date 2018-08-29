@@ -57,7 +57,7 @@
         <div class="col-md-6 col-md-offset-3">
             <div class="login">         
                 <p class="title" *ngIf="!showRegisterForm" >${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a id="switch-to-register-form" (click)="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
-                <p class="title" *ngIf="showRegisterForm" >Already have an ORCID iD? <a id = "switch-to-login-form" (click)="switchForm()">Sign In</a></p>
+                <p class="title" *ngIf="showRegisterForm" >${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account")} <a id = "switch-to-login-form" (click)="switchForm()">${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account.link.text")}</a></p>
                 <div *ngIf="!showRegisterForm">
                     <div class="personal-login" >
                         <#if shibbolethEnabled>
