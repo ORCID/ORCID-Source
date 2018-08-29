@@ -1840,12 +1840,12 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     line-height: 31px;
 }
 
-.workspace-accordion-header i.glyphicon-question-sign {
+.popover-help-container i.glyphicon-question-sign {
     color: #338caf;
     cursor: pointer;
 }
 
-.workspace-accordion-header i.glyphicon-question-sign:hover {
+.popover-help-container i.glyphicon-question-sign:hover {
     color: #a6ce39;
 }
 
