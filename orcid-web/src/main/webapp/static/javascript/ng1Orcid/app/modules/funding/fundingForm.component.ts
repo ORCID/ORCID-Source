@@ -50,6 +50,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     addFundingExternalIdentifier(): void {
+        console.log
         this.editFunding.externalIdentifiers.push(
             {
                 externalIdentifierType: {
@@ -189,86 +190,55 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    getEmptyExtId(): any {
-        return {
-            "errors": [],
-            "type": {
-                "errors": [],
-                "value": "award",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "value": {
-                "errors": [],
-                "value": "",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "url": {
-                "errors": [],
-                "value": "",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "putCode": null,
-            "relationship": {
-                "errors": [],
-                "value": "self",
-                "required": true,
-                "getRequiredMessage": null
-            }
-        };
-    }
-
     getEmptyFunding(): any {
         return {
             amount: {
-                errors: {},
+                errors: [],
                 value: null
             },
             city: {
-                errors: {},
+                errors: [],
                 value: null
             },
             country: {
-                errors: {},
+                errors: [],
                 value: null
             },
             currencyCode: {
-                errors: {}
+                errors: []
             },
             description: {
-                errors: {},
+                errors: [],
                 value: null
             },
             endDate: {
                 day: "",
                 month: "",
                 year: "",
-                errors: {},
+                errors: [],
             },
-            errors: {},
+            errors: [],
             fundingName: {
-                errors: {},
+                errors: [],
                 value: null
             },
             fundingTitle: {
                 title: {
-                    errors: {},
+                    errors: [],
                     value: null
                 },
                 translatedTitle: {
                     content: null,
-                    errors: {}
+                    errors: []
                 }
             },
             fundingType: {
-                errors: {},
+                errors: [],
                 value: null
             },
             organizationDefinedFundingSubType: {
                 subtype: {
-                    errors: {},
+                    errors: [],
                     value: null
                 }
             },
@@ -276,20 +246,35 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 value: null
             },
             region: {
-                errors: {},
+                errors: [],
                 value: null
             },
             startDate: {
                 day: "",
                 month: "",
                 year: "",
-                errors: {},
+                errors: [],
             },
             url: {
-                errors: {},
+                errors: [],
                 value: null
             },
-            externalIdentifiers: [],
+            externalIdentifiers: [
+                {
+                    externalIdentifierType: {
+                        value: ""
+                    }, 
+                    externalIdentifierId: {
+                        value: ""
+                    }, 
+                    url: {
+                        value: ""
+                    }, 
+                    relationship: {
+                        value: "self"
+                    } 
+                } 
+            ]
         };
     }
 
@@ -495,7 +480,6 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.fundingService.notifyObservable$.subscribe(
             (res) => {
-                console.log(res.funding);
                 this.bindTypeaheadForOrgs();
                 this.bindTypeaheadForSubTypes();
                 if( res.funding != undefined ) {
@@ -563,6 +547,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         }
                     }
                 }
+                console.log(this.editFunding);
             }
         );
         
