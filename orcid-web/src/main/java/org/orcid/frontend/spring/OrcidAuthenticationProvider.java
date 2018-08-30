@@ -1,7 +1,6 @@
 package org.orcid.frontend.spring;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.BackupCodeManager;
@@ -9,12 +8,11 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
-import org.orcid.persistence.dao.EmailDao;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
@@ -32,8 +30,8 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
-    private EmailDao emailDaoReadOnly;
+    @Resource(name = "emailManagerReadOnlyV3")
+    protected EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -90,9 +88,9 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
             if (OrcidStringUtils.isValidOrcid(username)) {
                 profile = profileEntityCacheManager.retrieve(username);
             } else {
-                EmailEntity emailEntity = emailDaoReadOnly.findByEmail(username);
-                if (emailEntity != null) {
-                    profile = emailEntity.getProfile();
+                String orcid = emailManagerReadOnly.findOrcidIdByEmail(username);
+                if (orcid != null) {
+                    profile = profileEntityCacheManager.retrieve(orcid);
                 }
             }
         }

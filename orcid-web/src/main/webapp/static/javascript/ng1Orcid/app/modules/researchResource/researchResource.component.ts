@@ -220,7 +220,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         var putCodes = new Array();
         for (var idx in group.researchResources) {
             putCodes.push(group.researchResources[idx].putCode);
-            group.researchResources[idx].visibility = priv;
+            group.researchResources[idx].visibility.visibility = priv;
         }
         group.activeVisibility = priv;
         this.researchResourceService.updateVisibility(putCodes, priv)

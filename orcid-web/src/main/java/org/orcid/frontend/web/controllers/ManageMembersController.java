@@ -9,9 +9,9 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.MembersManager;
-import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.salesforce.model.Contact;

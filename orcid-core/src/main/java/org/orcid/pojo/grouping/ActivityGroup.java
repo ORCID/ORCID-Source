@@ -11,14 +11,24 @@ public abstract class ActivityGroup implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long activePutCode;
+    
+    private Long defaultPutCode;
 
-    private int groupId;
+    private long groupId;
 
     public String activeVisibility;
 
     private boolean userVersionPresent;
 
     private List<ActivityExternalIdentifier> externalIdentifiers = new ArrayList<>();
+
+    public Long getDefaultPutCode() {
+        return defaultPutCode;
+    }
+
+    public void setDefaultPutCode(Long defaultPutCode) {
+        this.defaultPutCode = defaultPutCode;
+    }
 
     public Long getActivePutCode() {
         return activePutCode;
@@ -28,11 +38,11 @@ public abstract class ActivityGroup implements Serializable {
         this.activePutCode = activePutCode;
     }
 
-    public int getGroupId() {
+    public long getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(int groupId) {
+    public void setGroupId(long groupId) {
         this.groupId = groupId;
     }
 

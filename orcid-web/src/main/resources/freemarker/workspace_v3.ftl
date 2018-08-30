@@ -12,7 +12,7 @@
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
     <strong>
-        <@spring.message "orcid.frontend.web.email_verified"/>
+        ${emailVerifiedMessage}
         <#if primaryEmailUnverified?? && primaryEmailUnverified>
         <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
         <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
@@ -20,13 +20,6 @@
     </strong>
 </div>
 </#if>
-
-<#if invalidVerifyUrl?? && invalidVerifyUrl>
-<div class="alert alert-success">
-    <strong><@spring.message "orcid.frontend.web.invalid_verify_link"/></strong>
-</div>
-</#if>
-
 
 <#if invalidOrcid?? && invalidOrcid>
 <div class="alert alert-success">
@@ -441,6 +434,9 @@
 <modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="820">
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
+
+<!--Org ID popover template used in v3 affiliations and research resources-->
+<#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
 
 
 <!-- Ng1 directive -->

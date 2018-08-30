@@ -73,7 +73,7 @@
             <br/><br/>
         </div>   
         <div ng-cloak>
-            <button ng-show="areMore() && notificationsSrvc.loadingMore == false" ng-click="showMore()" class="btn" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
+            <button ng-show="areMore() && notificationsSrvc.loadingMore == false" ng-click="showMore()" class="btn btn-primary" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
         </div>
         <div ng-cloak ng-show="notificationsSrvc.loadingMore == true" id="moreNotificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->

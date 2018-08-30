@@ -309,7 +309,7 @@ kind of variable. This temp value is only used in this macro lib -->
               </span>
         </div>
     </div>
-</#macro>   
+</#macro>    
 
 <#macro editWorkIcon activity click toolTipSuffix toolTipClass>   
     <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">

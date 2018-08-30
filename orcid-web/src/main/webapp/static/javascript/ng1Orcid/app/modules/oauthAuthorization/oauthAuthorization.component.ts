@@ -218,6 +218,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     switchForm(): void {
+        this.showDeactivatedError = false;
+        this.showReactivationSent = false; 
         var re = new RegExp("(/register)(.*)?$");
         if (this.registrationForm.linkType=="social") {
             window.location.href = getBaseUri() + "/social/access";
@@ -445,8 +447,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }  
     };
 
-    sendReactivationEmail(): void {
-        this.oauthService.sendReactivationEmail(this.initReactivationRequest.email)
+    sendReactivationEmail(email): void {
+        this.oauthService.sendReactivationEmail(email)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )

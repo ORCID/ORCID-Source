@@ -163,9 +163,9 @@
                           <div class="col-md-3 col-sm-3 col-xs-10" ng-if="editSources[group.groupId]">
 
                             <div ng-if="editSources[group.groupId]">
-                                <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultWork.putCode.value"></span><span ng-if="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                 <#if !(isPublicProfile??)>
-                                    <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-if="work.putCode.value != group.defaultWork.putCode.value">
+                                    <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-if="work.putCode.value != group.defaultPutCode">
                                          <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                     </a>
                                 </#if>
@@ -178,7 +178,7 @@
                                 <ul class="sources-actions">
                                     <#if RequestParameters['combine']??>
                                         <li ng-if="canBeCombined(work)">
-                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.defaultWork)" ng-mouseenter="showTooltip(work.putCode.value+'-combineActiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineActiveDuplicates')"></a>
+                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.defaultPutCode)" ng-mouseenter="showTooltip(work.putCode.value+'-combineActiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineActiveDuplicates')"></a>
 
                                             <div class="popover popover-tooltip top combine-activeDuplicates-popover" ng-if="showElement[work.putCode.value+'-combineActiveDuplicates']">
                                                 <div class="arrow"></div>
@@ -227,8 +227,8 @@
                         
                         <div class="col-md-3 col-sm-3 col-xs-10">
                              <#if !(isPublicProfile??)>
-                                <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultWork.putCode.value"></span><span ng-if="work.putCode.value == group.defaultWork.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-if="work.putCode.value != group.defaultWork.putCode.value">
+                                <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-if="work.putCode.value != group.defaultPutCode">
                                    <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                 </a>
                             </#if>
@@ -238,7 +238,7 @@
                                 <ul class="sources-actions">
                                     <#if RequestParameters['combine']??>
                                         <li ng-if="canBeCombined(work)">
-                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.defaultWork)" ng-mouseenter="showTooltip(work.putCode.value+'-combineInactiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineInactiveDuplicates')"></a>
+                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.defaultPutCode)" ng-mouseenter="showTooltip(work.putCode.value+'-combineInactiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineInactiveDuplicates')"></a>
 
                                             <div class="popover popover-tooltip top combine-inactiveDuplicates-popover" ng-if="showElement[work.putCode.value+'-combineInactiveDuplicates'] == true">
                                                 <div class="arrow"></div>
@@ -297,7 +297,7 @@
                                 <#if !(isPublicProfile??)>
                                     <#if RequestParameters['combine']??>
                                         <li ng-if="canBeCombined(work)">
-                                            <a ng-click="showCombineMatches(group.defaultWork)" title="<@orcid.msg 'groups.common.combine_duplicates' />" ng-mouseenter="showTooltip(group.groupId+'-combineDuplicates')" ng-mouseleave="hideTooltip(group.groupId+'-combineDuplicates')">
+                                            <a ng-click="showCombineMatches(group.defaultPutCode)" title="<@orcid.msg 'groups.common.combine_duplicates' />" ng-mouseenter="showTooltip(group.groupId+'-combineDuplicates')" ng-mouseleave="hideTooltip(group.groupId+'-combineDuplicates')">
                                                 <span class="glyphicons git_pull_request"></span>
                                             </a>
 

@@ -1,4 +1,4 @@
-package org.orcid.core.manager;
+package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,12 +28,14 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
-import org.orcid.core.manager.read_only.ClientManagerReadOnly;
-import org.orcid.jaxb.model.client_v2.Client;
-import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.jaxb.model.v3.rc1.client.ClientRedirectUri;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -50,10 +52,10 @@ public class ClientManagerTest extends BaseTest {
     
     private static final String MEMBER_ID="5555-5555-5555-5558";
     
-    @Resource
+    @Resource(name = "clientManagerV3")
     private ClientManager clientManager;
 
-    @Resource
+    @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
     
     @Resource

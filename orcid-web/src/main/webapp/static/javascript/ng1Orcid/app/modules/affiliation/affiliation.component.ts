@@ -204,6 +204,36 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    getDetails(putCode, type): void {
+        if(this.publicView === "true"){
+            this.affiliationService.getPublicAffiliationDetails(putCode, type)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.affiliationService.details[putCode] = data;  
+                },
+                error => {
+                    console.log('getDetailsError', error);
+                } 
+            );
+        } else {
+            this.affiliationService.getAffiliationDetails(putCode, type)
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.affiliationService.details[putCode] = data;  
+                },
+                error => {
+                    console.log('getDetailsError', error);
+                } 
+            );
+        }
+    }
+
     getDisambiguatedAffiliation = function(id) {
         this.affiliationService.getDisambiguatedAffiliation(id)
         .pipe(    
@@ -251,24 +281,53 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openEditAffiliation(affiliation, group): void {
-        // first check if user is current source
-        if (affiliation.source == orcidVar.orcidId){
-            this.addAffiliationModal(affiliation.affiliationType.value, affiliation);
-        } else{
-            // in this case we want to open their version
-            // if they don't have a version yet then copy
-            // the current one
-            var bestMatch = null;
-            for (var idx in group) {    
-                if (group[idx].source == orcidVar.orcidId) {
-                    bestMatch = group[idx];
+        var bestMatchPutCode = null;
+        //check for user source version
+        if(affiliation.source == orcidVar.orcidId){
+            bestMatchPutCode = affiliation.putCode.value;
+        } else {
+            for (var idx in group.affiliations) {    
+                if (group.affiliations[idx].source == orcidVar.orcidId) {
+                    bestMatchPutCode = group.affiliations[idx].putCode.value;
                     break;
                 }
             }
-            if (bestMatch == null) {
-                bestMatch = this.affiliationService.createNew(affiliation);
+        }
+        if(bestMatchPutCode != null){
+            if(this.affiliationService.details[bestMatchPutCode] == undefined){
+                this.affiliationService.getAffiliationDetails(bestMatchPutCode, affiliation.affiliationType.value)
+                .pipe(    
+                    takeUntil(this.ngUnsubscribe)
+                )
+                .subscribe(
+                    data => {
+                            this.addAffiliationModal(data.affiliationType.value, data);
+                    },
+                    error => {
+                        console.log('openEditAffiliationError', error);
+                    } 
+                );
+            } else {
+                this.addAffiliationModal(affiliation.affiliationType.value, this.affiliationService.details[bestMatchPutCode]);
             }
-            this.addAffiliationModal(bestMatch.affiliationType.value, bestMatch);
+        } else {
+            //otherwise make a copy 
+            if(this.affiliationService.details[affiliation.putCode.value] == undefined){
+                this.affiliationService.getAffiliationDetails(affiliation.putCode.value, affiliation.affiliationType.value)
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                                this.addAffiliationModal(affiliation.affiliationType.value, this.affiliationService.createNew(data));
+                        },
+                        error => {
+                            console.log('openEditAffiliationError', error);
+                        } 
+                );
+            } else {
+                this.addAffiliationModal(affiliation.affiliationType.value,  this.affiliationService.createNew(this.affiliationService.details[affiliation.putCode.value]));
+            }
         }
     };
 
@@ -355,9 +414,17 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-    showDetailsMouseClick(group, $event): void {
+    showDetailsMouseClick(group,$event): void {
         $event.stopPropagation();
         this.moreInfo[group.activePutCode] = !this.moreInfo[group.activePutCode];
+        if(this.moreInfo[group.activePutCode] == true){
+            for (var idx in group.affiliations){
+                $($event.target).next().css('display','inline');
+                if(this.affiliationService.details[group.affiliations[idx].putCode.value] == undefined){
+                    this.getDetails(group.affiliations[idx].putCode.value, group.affiliations[idx].affiliationType.value);
+                }
+            }
+        }
     };
 
 
@@ -453,26 +520,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             this.privacyHelp[key]=!this.privacyHelp[key];
         }
 
-    };
-
-    toggleEdit(): void {
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    //this.showEdit = !this.showEdit;
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
     };
 
     userIsSource(affiliation): boolean {

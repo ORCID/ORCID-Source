@@ -71,7 +71,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -193,7 +192,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
-    public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) {
         String orcid = getCurrentUserOrcid();
         List<UserconnectionEntity> userConnectionEntities = userConnectionManager.findByOrcid(orcid);
         return userConnectionEntities;
@@ -519,7 +518,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmails(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {                                
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmails(HttpServletRequest request) {                                
         Emails v2Emails = emailManager.getEmails(getCurrentUserOrcid());       
         return org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails);
     }
@@ -615,15 +614,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
         if(orcid.equals(owner)) {            
             // Sets the given user as primary
-            emailManager.setPrimary(orcid, email.getValue(), request);   
-            // Updates the last modified of the record
-            profileEntityManager.updateLastModifed(orcid);
+            emailManager.setPrimary(orcid, email.getValue().trim(), request);               
         }
         return email;
     }
     
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
-    public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) {
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
         AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
@@ -647,8 +644,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
-    public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm)
-            throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm) {
         addressesForm.setErrors(new ArrayList<String>());
         Map<String, String> countries = retrieveIsoCountries();
         if (addressesForm != null) {
@@ -679,14 +675,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
-    public @ResponseBody NamesForm getNameForm() throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody NamesForm getNameForm() {
         String currentOrcid = getCurrentUserOrcid();
         Name name = recordNameManager.getRecordName(currentOrcid);
         return NamesForm.valueOf(name);
     }
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)
-    public @ResponseBody NamesForm setNameFormJson(@RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody NamesForm setNameFormJson(@RequestBody NamesForm nf) {
         nf.setErrors(new ArrayList<String>());
 
         // Strip any html code from names before validating them
@@ -879,33 +875,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Deprecated
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
-        org.orcid.pojo.ajaxForm.Email newPrime = null;
-        List<String> allErrors = new ArrayList<String>();
-
-        for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
-            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-            validateEmailAddress(email.getValue(), request, mbr);
-            List<String> emailErrors = new ArrayList<String>();
-            for (ObjectError oe : mbr.getAllErrors()) {
-                String msg = getMessage(oe.getCode(), email.getValue());
-                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
-                allErrors.add(msg);
-            }
-            email.setErrors(emailErrors);
-            if (email.isPrimary())
-                newPrime = email;
-        }
-
-        if (newPrime == null) {
-            allErrors.add("A Primary Email Must be selected");
-        }
-
-        emails.setErrors(allErrors);
-        if (allErrors.size() == 0) {
-            emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
-            
-        }
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {       
+        emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
         return emails;
     }
 }

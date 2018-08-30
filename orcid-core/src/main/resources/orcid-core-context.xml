@@ -329,8 +329,6 @@
 	<bean id="emailFrequencyManager" class="org.orcid.core.common.manager.impl.EmailFrequencyManagerImpl" />	
 	
 	<!-- Client Managers -->
-	<bean id="clientManager" class="org.orcid.core.manager.impl.ClientManagerImpl" />
-	
 	<bean id="clientManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ClientManagerReadOnlyImpl">
 		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
 	</bean>

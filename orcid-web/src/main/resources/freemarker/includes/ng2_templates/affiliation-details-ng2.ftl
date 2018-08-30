@@ -136,7 +136,10 @@
                 </div><!--Identifiers-->
                 <!--More info-->
                 <div class="more-info" *ngIf="moreInfo[group?.activePutCode] && group.activePutCode == affiliation.putCode.value">
-                    <div class="content">   
+                    <div id="ajax-loader" *ngIf="affiliationService.details[affiliation.putCode.value] == undefined">
+                        <span id="ajax-loader"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x4 green"></i></span>
+                    </div> 
+                    <div class="content" *ngIf="affiliationService.details[affiliation.putCode.value] != undefined">   
                         <span class="dotted-bar"></span>
                         <div class="row"> 
                             <!--Org id-->
@@ -147,10 +150,10 @@
                                 </div>
                             </div><!--org-ids-->
                             <!--URL-->
-                            <div class="col-md-6" *ngIf="affiliation?.url?.value">
+                            <div class="col-md-6" *ngIf="affiliationService.details[affiliation.putCode.value]?.url?.value">
                                 <div class="bottomBuffer">
                                     <strong><@orcid.msg 'common.url'/></strong><br> 
-                                    <a href="{{affiliation?.url?.value}}" target="affiliation.url.value">{{affiliation?.url.value}}</a>
+                                    <a href="{{affiliationService.details[affiliation.putCode.value]?.url?.value}}" target="affiliation.url.value">{{affiliationService.details[affiliation.putCode.value]?.url?.value}}</a>
                                 </div>
                             </div>          
                         </div><!--row--> 
