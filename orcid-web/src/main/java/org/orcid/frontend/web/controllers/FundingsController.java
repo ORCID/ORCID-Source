@@ -174,7 +174,7 @@ public class FundingsController extends BaseWorkspaceController {
         Fundings fundings = profileFundingManager.groupFundings(summaries, false);
         for (org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup group : fundings.getFundingGroup()) {
             FundingGroup fundingGroup = FundingGroup.valueOf(group);
-            for(org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary summary : summaries) {
+            for(org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary summary : group.getFundingSummary()) {
                 if(summary.getSource().retrieveSourcePath().equals(getCurrentUserOrcid())) {
                     fundingGroup.setUserVersionPresent(true);
                     break;
