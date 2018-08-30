@@ -98,7 +98,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                 //Read XML response and print
                 //TODO
             }
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             return null;
         } 
         

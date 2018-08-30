@@ -106,6 +106,8 @@ public enum WorkType implements Serializable {
         
         // Known maps
         switch (v) {
+        case "article-journal":
+            return WorkType.JOURNAL_ARTICLE;
         case "chapter":
             return WorkType.BOOK_CHAPTER;
         case "dataset":
