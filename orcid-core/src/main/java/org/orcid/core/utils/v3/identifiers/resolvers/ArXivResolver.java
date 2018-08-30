@@ -137,6 +137,25 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                 if(currentElementName.equals("entry")) {
                     isOnEntry = true;
                 } 
+                
+                if(currentElementName.equals("link")) {
+                    int typeIndex = attributes.getIndex("title");
+                    if(typeIndex >= 0) {
+                        String type = attributes.getValue(typeIndex);
+                        if(type.equals("doi")) {
+                            String extId = attributes.getValue(attributes.getIndex("href"));
+                            if(work.getExternalIdentifiers() == null) {
+                                work.setWorkExternalIdentifiers(new ExternalIDs());
+                            }
+                            ExternalID extID = new ExternalID();
+                            extID.setRelationship(Relationship.SELF);
+                            extID.setType("DOI");
+                            extID.setValue(extId.replace("http://dx.doi.org/", ""));
+                            extID.setUrl(new Url(extId));
+                            work.getWorkExternalIdentifiers().getExternalIdentifier().add(extID);
+                        }
+                    }
+                }
             }
 
             public void endElement(String uri, String localName, String currentElementName) throws SAXException {
@@ -156,14 +175,15 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                 
                 if(isOnEntry) {
                     if(currentElement.equals("id")) {
-                        ExternalIDs extIds = new ExternalIDs();
+                        if(work.getExternalIdentifiers() == null) {
+                            work.setWorkExternalIdentifiers(new ExternalIDs());
+                        }
                         ExternalID extID = new ExternalID();
                         extID.setRelationship(Relationship.SELF);
                         extID.setType("ARXIV");
                         extID.setValue(value.substring(value.lastIndexOf('/') + 1));
                         extID.setUrl(new Url(value));
-                        extIds.getExternalIdentifier().add(extID);
-                        work.setWorkExternalIdentifiers(extIds);
+                        work.getWorkExternalIdentifiers().getExternalIdentifier().add(extID);
                     }
                     
                     if(currentElement.equals("title")) {
