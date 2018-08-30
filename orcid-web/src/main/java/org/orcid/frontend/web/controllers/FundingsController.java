@@ -180,6 +180,11 @@ public class FundingsController extends BaseWorkspaceController {
                     break;
                 }
             }
+            for(FundingForm summaryForm : fundingGroup.getFundings()) {
+                 if(summaryForm.getFundingType().getValue() != null) {
+                     summaryForm.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, summaryForm.getFundingType().getValue())));
+                 }         
+            }
             fundingGroups.add(fundingGroup);
         }
 
