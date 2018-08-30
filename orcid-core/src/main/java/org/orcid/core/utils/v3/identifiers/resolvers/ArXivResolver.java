@@ -3,6 +3,7 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -89,11 +90,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             con.setRequestMethod("GET");
             con.setInstanceFollowRedirects(true);
             if (con.getResponseCode() == 200) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                
-                StringBuffer response = new StringBuffer();
-                in.lines().forEach(i -> response.append(i));
-                in.close();
+                Reader reader = new InputStreamReader(con.getInputStream(), "UTF-8");
                 
                 //Read XML response and print
                 //TODO
