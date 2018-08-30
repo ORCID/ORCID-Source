@@ -55,7 +55,7 @@ public class ActivitiesGroupGenerator {
                         }
                     }                        
                 }
-                for (GroupAble g :thisGroup.getGroupKeys()){
+                for (GroupAble g :firstGroup.getGroupKeys()){
                     lookup.put(g, firstGroup);
                 }
             }
