@@ -1,38 +1,46 @@
 package org.orcid.core.utils.v3.identifiers.resolvers;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Stack;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.ext.com.google.common.collect.Lists;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
-import org.orcid.jaxb.model.v3.rc1.common.Subtitle;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
-import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Component;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 @Component
 public class ArXivResolver implements LinkResolver, MetadataResolver {
@@ -42,12 +50,14 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
     @Resource
     PIDResolverCache cache;
-    
+
     @Resource
     private IdentifierTypeManager identifierTypeManager;
-    
+
     @Resource
     protected LocaleManager localeManager;
+    
+    private String metadataEndpoint = "https://export.arxiv.org/api/query?id_list=";
 
     List<String> types = Lists.newArrayList("arxiv");
 
@@ -57,8 +67,8 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
     }
 
     /**
-     * Checks for a http 200 
-     * normalizing the value and creating a URL using the resolution prefix
+     * Checks for a http 200 normalizing the value and creating a URL using the
+     * resolution prefix
      * 
      */
     @Override
@@ -68,124 +78,135 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
         if (!StringUtils.isEmpty(normUrl)) {
-            if (cache.isHttp200(normUrl)){
-                return new PIDResolutionResult(true,true,true,normUrl);                
-            }else{
-                return new PIDResolutionResult(false,true,true,null);
+            if (cache.isHttp200(normUrl)) {
+                return new PIDResolutionResult(true, true, true, normUrl);
+            } else {
+                return new PIDResolutionResult(false, true, true, null);
             }
         }
-        
-        return new PIDResolutionResult(false,false,true,null);//unreachable?        
+
+        return new PIDResolutionResult(false, false, true, null);// unreachable?
     }
-    
+
     @Override
     public Work resolveMetadata(String apiTypeName, String value) {
         PIDResolutionResult rr = this.resolve(apiTypeName, value);
         if (!rr.isResolved())
             return null;
-        
+
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL(rr.getGeneratedUrl()).openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(metadataEndpoint + value).openConnection();
             con.addRequestProperty("Accept", "application/vnd.citationstyles.csl+json");
             con.setRequestMethod("GET");
             con.setInstanceFollowRedirects(true);
             if (con.getResponseCode() == 200) {
                 Reader reader = new InputStreamReader(con.getInputStream(), "UTF-8");
+                InputSource is = new InputSource(reader);
+                is.setEncoding("UTF-8");
+
+                SAXParserFactory factory = SAXParserFactory.newInstance();
+                SAXParser saxParser = factory.newSAXParser();
+
+                WorksHandler handler = new WorksHandler();
                 
-                //Read XML response and print
-                //TODO
+                saxParser.parse(is, handler);
+                Work w = handler.getWork();
+                return w;
             }
         } catch (IOException e) {
             return null;
-        } 
-        
+        } catch (ParserConfigurationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SAXException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         return null;
     }
-    
-    private Work getWork(JSONObject json) throws JSONException {
-        Work result = new Work();
-        
-        if(json.has("type")) {
-            try {
-                result.setWorkType(WorkType.fromValue(json.getString("type")));
-            } catch(IllegalArgumentException e) {
-                
-            }
-        }
-        
-        WorkTitle workTitle = new WorkTitle();
-        if(json.has("title")) {
-            workTitle.setTitle(new Title(json.getString("title")));            
-        } 
-        
-        if(json.has("subtitle")) {
-            workTitle.setSubtitle(new Subtitle(json.getString("subtitle")));
-        }
-        
-        result.setWorkTitle(workTitle);
-        
-        if(json.has("URL")) {
-            result.setUrl(new Url(json.getString("URL")));
-        }
-        
-        // Populate other external identifiers
-        result.setWorkExternalIdentifiers(new ExternalIDs());
-        if(json.has("DOI")) {
-            String doi = json.getString("DOI");
-            ExternalID extId = new ExternalID();
-            extId.setType("DOI");
-            extId.setRelationship(Relationship.SELF);
-            extId.setValue(doi);
-            IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("DOI", localeManager.getLocale());
-            if(idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
-                extId.setUrl(new Url(idType.getResolutionPrefix() + doi));
-            }
-            result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
-        }
-        if(json.has("ISBN")) {
-            try {
-                JSONArray isbns = json.getJSONArray("ISBN");
-                for(int i = 0; i < isbns.length(); i++) {
-                    String isbn = isbns.getString(i);
-                    ExternalID extId = new ExternalID();
-                    extId.setType("ISBN");
-                    extId.setRelationship(Relationship.SELF);
-                    extId.setValue(isbn);
-                    IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("ISBN", localeManager.getLocale());
-                    if(idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
-                        extId.setUrl(new Url(idType.getResolutionPrefix() + isbn));
-                    }
-                    result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
-                }
-            } catch(Exception e) {
-                
-            }
-        }
-        if(json.has("ISSN")) {
-            try {
-                JSONArray isbns = json.getJSONArray("ISSN");
-                for(int i = 0; i < isbns.length(); i++) {
-                    String isbn = isbns.getString(i);
-                    ExternalID extId = new ExternalID();
-                    extId.setType("ISSN");
-                    extId.setRelationship(Relationship.SELF);
-                    extId.setValue(isbn);
-                    IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("ISSN", localeManager.getLocale());
-                    if(idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
-                        extId.setUrl(new Url(idType.getResolutionPrefix() + isbn));
-                    }
-                    result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
-                }
-            } catch(Exception e) {
-                
-            }
-        }        
-        
-        if(json.has("abstract")) {
-            String description = json.getString("abstract");
-            result.setShortDescription(description);
-        }
-        return result;
-    }
 
+    private class WorksHandler extends DefaultHandler {
+            private Work work = new Work();
+            private Stack<String> elementStack = new Stack<String>();
+            boolean isOnEntry = false;            
+            StringBuffer description = new StringBuffer();
+            
+            public void startElement(String uri, String localName, String currentElementName, Attributes attributes) throws SAXException {                        
+                this.elementStack.push(currentElementName);
+                if(currentElementName.equals("entry")) {
+                    isOnEntry = true;
+                } 
+            }
+
+            public void endElement(String uri, String localName, String currentElementName) throws SAXException {
+                this.elementStack.pop();
+                if(currentElementName.equals("entry")) {
+                    isOnEntry = false;
+                } else if(currentElementName.equals("summary")) {
+                    if(this.description.length() > 0) {
+                        work.setShortDescription(this.description.toString());
+                    }                    
+                }
+            }
+
+            public void characters(char ch[], int start, int length) throws SAXException {
+                String currentElement = this.elementStack.peek();
+                String value = new String(ch, start, length).trim();
+                
+                if(isOnEntry) {
+                    if(currentElement.equals("id")) {
+                        ExternalIDs extIds = new ExternalIDs();
+                        ExternalID extID = new ExternalID();
+                        extID.setRelationship(Relationship.SELF);
+                        extID.setType("ARXIV");
+                        extID.setValue(value.substring(value.lastIndexOf('/') + 1));
+                        extID.setUrl(new Url(value));
+                        extIds.getExternalIdentifier().add(extID);
+                        work.setWorkExternalIdentifiers(extIds);
+                    }
+                    
+                    if(currentElement.equals("title")) {
+                        WorkTitle title = new WorkTitle();
+                        title.setTitle(new Title(value));
+                        work.setWorkTitle(title);
+                    }
+                    
+                    if(currentElement.equals("summary")) {
+                        if(!PojoUtil.isEmpty(value)) {
+                            // In case of multiline content, add a space before appending the next line content
+                            if(this.description.length() > 0 && this.description.charAt(this.description.length() - 1) != ' ') {
+                                this.description.append(' ');
+                            }
+                            this.description.append(value);
+                        }
+                    }
+                    
+                    if(currentElement.equals("published")) {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        Date date = null;
+                        try {
+                            date = dateFormat.parse(value);
+                            Calendar c = Calendar.getInstance();
+                            c.setTime(date);
+                            PublicationDate publicationDate = new PublicationDate();
+                            work.setPublicationDate(publicationDate);
+                            publicationDate.setDay(new Day(c.get(Calendar.DAY_OF_MONTH)));
+                            // January = 0
+                            publicationDate.setMonth(new Month(c.get(Calendar.MONTH) + 1));
+                            publicationDate.setYear(new Year(c.get(Calendar.YEAR)));
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            
+            public Work getWork() {
+                return work;
+            }
+       
+    }
+    
 }
