@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.pojo.PIDResolutionResult;
 
-public interface Resolver {
+public interface LinkResolver {
 
     public static final List<String> CAN_HANDLE_EVERYTHING = Lists.newArrayList();
 

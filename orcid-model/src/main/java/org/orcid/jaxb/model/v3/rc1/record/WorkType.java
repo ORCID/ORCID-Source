@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public enum WorkType implements Serializable {
     @XmlEnumValue("artistic-performance")
     ARTISTIC_PERFORMANCE("artistic-performance"),
@@ -105,6 +103,19 @@ public enum WorkType implements Serializable {
                 return c;
             }
         }
+        
+        // Known maps
+        switch (v) {
+        case "article-journal":
+            return WorkType.JOURNAL_ARTICLE;
+        case "chapter":
+            return WorkType.BOOK_CHAPTER;
+        case "dataset":
+            return WorkType.DATA_SET;
+        case "standard":
+            return WorkType.STANDARDS_AND_POLICY;
+        }        
+        
         throw new IllegalArgumentException(v);
     }
 }

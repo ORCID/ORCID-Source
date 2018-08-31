@@ -824,4 +824,9 @@ public class WorksController extends BaseWorkspaceController {
         return resolverService.resolve(type, value);
     }
 
+    @RequestMapping(value = "/resolve/{type}", method = RequestMethod.GET)
+    public @ResponseBody WorkForm fetchWorkData(@PathVariable("type") String type, @RequestParam("value") String value){        
+        Work w = resolverService.resolveMetadata(type, value);
+        return WorkForm.valueOf(w);
+    }
 }
