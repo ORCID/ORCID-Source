@@ -1023,7 +1023,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.allSelected = !this.allSelected;
         this.bulkChangeAll(this.allSelected);
     }
-
+    
     toggleWizardDesc(id): void {
         this.wizardDescExpanded[id] = !this.wizardDescExpanded[id];
     };
@@ -1044,6 +1044,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                        this.allSelected = false;
+                        this.bulkEditMap = {};
                     }
                 } 
                 if(res.action == 'merge') {
@@ -1059,13 +1061,17 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.bulkEditShow = false;
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                        this.allSelected = false;
+                        this.bulkEditMap = {};
                     }
                 } 
-                if(res.action == 'add' || res.action == 'cancel') {
+                if(res.action == 'add') {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
                         this.loadMore();
+                        this.allSelected = false;
+                        this.bulkEditMap = {};
                     }
                     if(res.bibtex==true){
                         this.worksFromBibtex.splice(this.bibtexWorkIndex, 1);
