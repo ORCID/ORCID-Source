@@ -132,27 +132,6 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             if (currentElementName.equals("entry")) {
                 isOnEntry = true;
             }
-
-            if (isOnEntry) {
-                if (currentElementName.equals("link")) {
-                    int typeIndex = attributes.getIndex("title");
-                    if (typeIndex >= 0) {
-                        String type = attributes.getValue(typeIndex);
-                        if (type.equals("doi")) {
-                            String extId = attributes.getValue(attributes.getIndex("href"));
-                            if (work.getExternalIdentifiers() == null) {
-                                work.setWorkExternalIdentifiers(new ExternalIDs());
-                            }
-                            ExternalID extID = new ExternalID();
-                            extID.setRelationship(Relationship.SELF);
-                            extID.setType("DOI");
-                            extID.setValue(normalizationService.normalise("doi", extId));
-                            extID.setUrl(new Url(extId));
-                            work.getWorkExternalIdentifiers().getExternalIdentifier().add(extID);
-                        }
-                    }
-                }
-            }
         }
 
         public void endElement(String uri, String localName, String currentElementName) throws SAXException {
@@ -177,8 +156,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
         }
 
         public void characters(char ch[], int start, int length) throws SAXException {
-            String currentElement = this.elementStack.peek();
-            System.out.println("current element: " + currentElement);
+            String currentElement = this.elementStack.peek();            
             String value = new String(ch, start, length).trim();
 
             if (isOnEntry && !PojoUtil.isEmpty(value)) {
@@ -187,12 +165,12 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                     if (work.getExternalIdentifiers() == null) {
                         work.setWorkExternalIdentifiers(new ExternalIDs());
                     }
-                    ExternalID extID = new ExternalID();
-                    extID.setRelationship(Relationship.SELF);
-                    extID.setType("ARXIV");
-                    extID.setValue(normalizationService.normalise("arxiv", value));
-                    extID.setUrl(new Url(value));
-                    work.getWorkExternalIdentifiers().getExternalIdentifier().add(extID);
+                    ExternalID arxiv = new ExternalID();
+                    arxiv.setRelationship(Relationship.SELF);
+                    arxiv.setType("ARXIV");
+                    arxiv.setValue(normalizationService.normalise("arxiv", value));
+                    arxiv.setUrl(new Url(value));
+                    work.getWorkExternalIdentifiers().getExternalIdentifier().add(arxiv);
                     break;
                 case "title":
                     // In case of multiline content, add a space before
@@ -234,6 +212,14 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                         this.journalTitle.append(' ');
                     }
                     this.journalTitle.append(value);
+                    break;
+                case "arxiv:doi":
+                    ExternalID doi = new ExternalID();
+                    doi.setRelationship(Relationship.SELF);
+                    doi.setType("DOI");
+                    doi.setValue(normalizationService.normalise("doi", value));
+                    doi.setUrl(new Url(normalizationService.generateNormalisedURL("doi", value)));
+                    work.getWorkExternalIdentifiers().getExternalIdentifier().add(doi);
                     break;
                 }
             }
