@@ -58,7 +58,7 @@
 		"timestamp": 0000000000000
 	},
 	"score": 1.0,
-	"subtitle": [],
+	"subtitle": "Subtitle",
 	"short-title": [],
 	"issued": {
 		"date-parts": [
@@ -83,6 +83,9 @@
 	"relation": {
 		"cites": []
 	},
-	"ISSN": ["0000-0000", "0000-0001"],
-	"container-title-short": "Science"
+	"ISSN": ["ISSN-0000-0000", "ISSN-0000-0001"],
+	"ISBN": ["ISBN-0000-0000", "ISBN-0000-0001"],
+	"container-title-short": "Science",
+	"abstract": "This is a description",
+	"journal-title": "Journal title"
 }
