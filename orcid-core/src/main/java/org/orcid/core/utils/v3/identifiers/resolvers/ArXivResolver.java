@@ -18,6 +18,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.ext.com.google.common.collect.Lists;
+import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
@@ -95,26 +96,24 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
         try {
             InputStream inputStream = cache.get(metadataEndpoint + value, "application/atom+xml");
-                Reader reader = new InputStreamReader(inputStream, "UTF-8");
-                InputSource is = new InputSource(reader);
-                is.setEncoding("UTF-8");
+            Reader reader = new InputStreamReader(inputStream, "UTF-8");
+            InputSource is = new InputSource(reader);
+            is.setEncoding("UTF-8");
 
-                SAXParserFactory factory = SAXParserFactory.newInstance();
-                SAXParser saxParser = factory.newSAXParser();
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
 
-                WorksHandler handler = new WorksHandler();
+            WorksHandler handler = new WorksHandler();
 
-                saxParser.parse(is, handler);
-                Work w = handler.getWork();
-                return w;            
-        } catch (IOException e) {
+            saxParser.parse(is, handler);
+            Work w = handler.getWork();
+            return w;
+        } catch (UnexpectedResponseCodeException e) {
+            // TODO: For future projects, we might want to retry when
+            // e.getReceivedCode() tell us that we can retry later, like 503 or
+            // 504
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             return null;
-        } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SAXException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
 
         return null;
@@ -124,7 +123,9 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
         private Work work = new Work();
         private Stack<String> elementStack = new Stack<String>();
         boolean isOnEntry = false;
+        StringBuffer title = new StringBuffer();
         StringBuffer description = new StringBuffer();
+        StringBuffer journalTitle = new StringBuffer();
 
         public void startElement(String uri, String localName, String currentElementName, Attributes attributes) throws SAXException {
             this.elementStack.push(currentElementName);
@@ -158,18 +159,29 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             this.elementStack.pop();
             if (currentElementName.equals("entry")) {
                 isOnEntry = false;
+            } else if (currentElementName.equals("title")) {
+                if (this.title.length() > 0) {
+                    WorkTitle workTitle = new WorkTitle();
+                    workTitle.setTitle(new Title(title.toString()));
+                    work.setWorkTitle(workTitle);
+                }
             } else if (currentElementName.equals("summary")) {
                 if (this.description.length() > 0) {
                     work.setShortDescription(this.description.toString());
+                }
+            } else if (currentElementName.equals("arxiv:journal_ref")) {
+                if (this.journalTitle.length() > 0) {
+                    work.setJournalTitle(new Title(this.journalTitle.toString()));
                 }
             }
         }
 
         public void characters(char ch[], int start, int length) throws SAXException {
             String currentElement = this.elementStack.peek();
+            System.out.println("current element: " + currentElement);
             String value = new String(ch, start, length).trim();
 
-            if (isOnEntry) {
+            if (isOnEntry && !PojoUtil.isEmpty(value)) {
                 switch (currentElement) {
                 case "id":
                     if (work.getExternalIdentifiers() == null) {
@@ -183,19 +195,20 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                     work.getWorkExternalIdentifiers().getExternalIdentifier().add(extID);
                     break;
                 case "title":
-                    WorkTitle title = new WorkTitle();
-                    title.setTitle(new Title(value));
-                    work.setWorkTitle(title);
+                    // In case of multiline content, add a space before
+                    // appending the next line content
+                    if (this.title.length() > 0 && this.title.charAt(this.title.length() - 1) != ' ') {
+                        this.title.append(' ');
+                    }
+                    this.title.append(value);
                     break;
                 case "summary":
-                    if (!PojoUtil.isEmpty(value)) {
-                        // In case of multiline content, add a space before
-                        // appending the next line content
-                        if (this.description.length() > 0 && this.description.charAt(this.description.length() - 1) != ' ') {
-                            this.description.append(' ');
-                        }
-                        this.description.append(value);
+                    // In case of multiline content, add a space before
+                    // appending the next line content
+                    if (this.description.length() > 0 && this.description.charAt(this.description.length() - 1) != ' ') {
+                        this.description.append(' ');
                     }
+                    this.description.append(value);
                     break;
                 case "published":
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -215,7 +228,12 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                     }
                     break;
                 case "arxiv:journal_ref":
-                    work.setJournalTitle(new Title(value));
+                    // In case of multiline content, add a space before
+                    // appending the next line content
+                    if (this.journalTitle.length() > 0 && this.journalTitle.charAt(this.journalTitle.length() - 1) != ' ') {
+                        this.journalTitle.append(' ');
+                    }
+                    this.journalTitle.append(value);
                     break;
                 }
             }
