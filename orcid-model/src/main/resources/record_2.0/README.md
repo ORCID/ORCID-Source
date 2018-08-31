@@ -136,6 +136,8 @@ With 2.0 the address field can be repeated
 - [write simple work-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/work-simple-2.0.xml)
 - [read works-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/works-2.0.xml)
 
+For working with json see [ORCID conversion util](https://github.com/ORCID/orcid-conversion-lib)
+
 ## REST API Reference
 
 ### Swagger

@@ -227,12 +227,11 @@
                 <div class="control-group no-margin-bottom">
                     <strong id="funding-ext-ids-title"><@orcid.msg 'manual_funding_form_contents.title_external_identifier'/></strong>
                 </div>
-                
                 <div class="control-group" *ngFor="let externalIdentifier of  editFunding.externalIdentifiers;let last=last;let first=first;let i=index;trackBy:trackByIndex">
                     <!-- Value -->
                     <div class="form-group">
                         <label id="funding-ext-ids-value-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_value'/></label>                        
-                        <input name="fundingIdValue{{i}}" id="funding-ext-ids-value-input{{i}}" type="text" class="form-control" [(ngModel)]="editFunding.externalIdentifiers[i].externalIdentifierId.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" />
+                        <input name="fundingIdValue{{i}}" id="funding-ext-ids-value-input{{i}}" type="text" class="form-control" [(ngModel)]="editFunding.externalIdentifiers[i]?.externalIdentifierId.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.value'/>" />
                         <span class="orcid-error" *ngIf="editFunding?.externalIdentifiers[i]?.externalIdentifierId?.errors?.length > 0">
                             <div *ngFor='let error of editFunding.externalIdentifiers[i].externalIdentifierId.errors' [innerHtml]="error"></div>
                         </span>

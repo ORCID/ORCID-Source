@@ -181,9 +181,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 .subscribe(
                     data => {
                         this.parseAffiliationGroups(data);
+                        this.affiliationService.loading = false; 
                         this.cdr.detectChanges();
                     },
                     error => {
+                        this.affiliationService.loading = false; 
                         console.log('getPublicAffiliationGroups error', error);
                     } 
             );
@@ -194,9 +196,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
                 .subscribe(
                     data => {
                         this.parseAffiliationGroups(data);
+                        this.affiliationService.loading = false; 
                         this.cdr.detectChanges();
                     },
                     error => {
+                        this.affiliationService.loading = false; 
                         console.log('getAffiliationGroups error', error);
                     } 
             );
@@ -212,9 +216,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
+                    this.affiliationService.loading = false;
                     this.affiliationService.details[putCode] = data;  
                 },
                 error => {
+                    this.affiliationService.loading = false;
                     console.log('getDetailsError', error);
                 } 
             );
@@ -225,9 +231,11 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
+                    this.affiliationService.loading = false;
                     this.affiliationService.details[putCode] = data;  
                 },
                 error => {
+                    this.affiliationService.loading = false;
                     console.log('getDetailsError', error);
                 } 
             );
@@ -355,7 +363,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
             this.sectionOneElements = this.educationsAndQualifications;
         } else {
             this.sectionOneElements = this.educations;
-        } 
+        }
     }
 
     selectAffiliation(datum): void {

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkPutCodes;
 import org.orcid.core.manager.GroupingSuggestionManager;
-import org.orcid.core.manager.read_only.impl.GroupingSuggestionManagerReadOnlyImpl;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
@@ -16,7 +15,7 @@ import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.persistence.dao.GroupingSuggestionDao;
 import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;
 
-public class GroupingSuggestionManagerImpl extends GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestionManager {
+public class GroupingSuggestionManagerImpl implements GroupingSuggestionManager {
 
     private GroupingSuggestionDao groupingSuggestionDao;
 

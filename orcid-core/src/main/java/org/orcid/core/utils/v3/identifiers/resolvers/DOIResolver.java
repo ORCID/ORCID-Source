@@ -128,7 +128,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             con.setRequestMethod("GET");
             con.setInstanceFollowRedirects(true);
             if (con.getResponseCode() == 200) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
 
                 StringBuffer response = new StringBuffer();
                 in.lines().forEach(i -> response.append(i));

@@ -141,9 +141,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
-                   this.groups = data;
+                    this.fundingService.loading = false;
+                    this.groups = data;
                 },
                 error => {
+                    this.fundingService.loading = false;
                     console.log('getFundingGroups', error);
                 } 
             );
@@ -153,9 +155,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
-                   this.groups = data;
+                    this.fundingService.loading = false;
+                    this.groups = data;
                 },
                 error => {
+                    this.fundingService.loading = false;
                     console.log('getFundingGroups', error);
                 } 
             );
@@ -169,9 +173,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
-                   this.fundingService.details[putCode] = data; 
+                    this.fundingService.loading = false;
+                    this.fundingService.details[putCode] = data; 
                 },
                 error => {
+                    this.fundingService.loading = false;
                     console.log('getFundingsByIdError', error);
                 } 
             );
@@ -181,9 +187,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
-                   this.fundingService.details[putCode] = data; 
+                    this.fundingService.loading = false;
+                    this.fundingService.details[putCode] = data; 
                 },
                 error => {
+                    this.fundingService.loading = false;
                     console.log('getFundingsByIdError', error);
                 } 
             );
