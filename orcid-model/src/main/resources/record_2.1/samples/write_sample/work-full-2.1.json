@@ -1,0 +1,73 @@
+{
+  "language-code": "en", 
+  "contributors": {
+    "contributor": [
+      {
+        "contributor-orcid": {
+          "path": "0000-0001-5109-3700", 
+          "host": "orcid.org", 
+          "uri": "https://orcid.org/0000-0001-5109-3700"
+        }, 
+        "contributor-attributes": {
+          "contributor-role": "AUTHOR", 
+          "contributor-sequence": "FIRST"
+        }, 
+        "credit-name": {
+          "value": "Laure L. Haak"
+        }, 
+        "contributor-email": null
+      }
+    ]
+  }, 
+  "title": {
+    "translated-title": {
+      "language-code": "en", 
+      "value": "Translated-title"
+    }, 
+    "subtitle": {
+      "value": "Sub title"
+    }, 
+    "title": {
+      "value": "Work Title"
+    }
+  }, 
+  "url": {
+    "value": "http://alt-uri.org"
+  }, 
+  "external-ids": {
+    "external-id": [
+      {
+        "external-id-value": "10.1087/20120404", 
+        "external-id-relationship": "SELF", 
+        "external-id-url": {
+          "value": "https://doi.org/10.1087/20120404"
+        }, 
+        "external-id-type": "doi"
+      }
+    ]
+  }, 
+  "citation": {
+    "citation-type": "BIBTEX", 
+    "citation-value": "\n\t\t\t@article {ORCID2012,\n\t\t\ttitle = \"ORCID: a system to uniquely identify researchers\",\n\t\t\tjournal = \"Leanred Publishing\",\n\t\t\tyear = \"2012\",\n\t\t\tdoi = \"doi:10.1087/20120404\"\n\t\t\t}"
+  }, 
+  "publication-date": {
+    "month": {
+      "value": "10"
+    }, 
+    "day": {
+      "value": "01"
+    }, 
+    "media-type": null, 
+    "year": {
+      "value": "2012"
+    }
+  }, 
+  "journal-title": {
+    "value": "Journal Title"
+  }, 
+  "country": {
+    "value": "US"
+  }, 
+  "short-description": "Short description", 
+  "type": "JOURNAL_ARTICLE"
+}
