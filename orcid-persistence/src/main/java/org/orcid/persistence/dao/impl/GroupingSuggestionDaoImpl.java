@@ -17,10 +17,12 @@ public class GroupingSuggestionDaoImpl extends GenericDaoImpl<GroupingSuggestion
     }
     
     @Override
-    public List<GroupingSuggestionEntity> getGroupingSuggestions(String orcid) {
-        TypedQuery<GroupingSuggestionEntity> query = entityManager.createQuery("FROM GroupingSuggestionEntity WHERE orcid = :orcid and dismissedDate IS NULL", GroupingSuggestionEntity.class);
+    public GroupingSuggestionEntity getNextGroupingSuggestion(String orcid) {
+        TypedQuery<GroupingSuggestionEntity> query = entityManager.createQuery("FROM GroupingSuggestionEntity WHERE orcid = :orcid and dismissedDate IS NULL and acceptedDate IS NULL order by dateCreated desc", GroupingSuggestionEntity.class);
         query.setParameter("orcid", orcid);
-        return query.getResultList();
+        query.setMaxResults(1);
+        List<GroupingSuggestionEntity> suggestions = query.getResultList();
+        return !suggestions.isEmpty() ? suggestions.get(0) : null;
     }
     
     @SuppressWarnings("unchecked")
@@ -55,6 +57,14 @@ public class GroupingSuggestionDaoImpl extends GenericDaoImpl<GroupingSuggestion
         query.setParameter("orcid", orcid);
         List<GroupingSuggestionEntity> result = query.getResultList();
         return result.size() > 0 ? result.get(0) : null;
+    }
+
+    @Override
+    public GroupingSuggestionEntity getGroupingSuggestion(String orcid, Long id) {
+        TypedQuery<GroupingSuggestionEntity> query = entityManager.createQuery("FROM GroupingSuggestionEntity WHERE orcid = :orcid and id = :id", GroupingSuggestionEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        return query.getSingleResult();
     }
 
 }

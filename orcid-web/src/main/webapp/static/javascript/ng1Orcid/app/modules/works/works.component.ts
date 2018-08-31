@@ -293,7 +293,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             this.worksService.notifyOther({worksToMerge:worksToMerge});      
             this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
-            this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
+            this.worksService.notifyOther({mergeCount:mergeCount});
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
         }
     };
@@ -594,6 +594,42 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.formData = data;
                     this.worksService.handleWorkGroupData( this.formData );
                     this.worksService.loading = false;
+                    this.loadGroupingSuggestions();
+                },
+                error => {
+                    this.worksService.loading = false;
+                    console.log('worksLoadMore', error);
+                } 
+            );
+        }
+    };
+    
+    loadGroupingSuggestions(): void {
+        if(this.publicView != "true") {
+            this.worksService.getWorksGroupingSuggestions(
+            )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if (data) {
+                        var worksToMerge = new Array();
+                        var externalIdsPresent = false;
+                        for (var i in data.putCodes.workPutCodes) {
+                            var workPutCode = data.putCodes.workPutCodes[i];
+                            var work = this.worksService.getWork(workPutCode);
+                            worksToMerge.push({ work: work, preferred: false});
+                            if (work.workExternalIdentifiers.length > 0) {
+                                externalIdsPresent = true;
+                            }
+                        }
+                        this.worksService.notifyOther({suggestionId:data.id});
+                        this.worksService.notifyOther({worksToMerge:worksToMerge});
+                        this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
+                        this.worksService.notifyOther({mergeCount:worksToMerge.length});
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeSuggestions'});
+                    }
                 },
                 error => {
                     this.worksService.loading = false;
@@ -1052,6 +1088,5 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.loadMore();
         this.loadWorkImportWizardList();
-
     };
 }

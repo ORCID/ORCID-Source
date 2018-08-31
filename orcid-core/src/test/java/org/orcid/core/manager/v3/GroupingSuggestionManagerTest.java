@@ -1,12 +1,10 @@
 package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -122,7 +120,7 @@ public class GroupingSuggestionManagerTest {
     }
 
     @Test
-    public void testFilterSuggestionsNoLongerApplicable() {
+    public void testSuggestionValid() {
         Mockito.when(workDao.find(Mockito.eq(1L))).thenReturn(getWorkEntity("w o R K T I t le"));
         Mockito.when(workDao.find(Mockito.eq(2L))).thenReturn(getWorkEntity("worktitle"));
         Mockito.when(workDao.find(Mockito.eq(3L))).thenReturn(null);
@@ -140,15 +138,11 @@ public class GroupingSuggestionManagerTest {
         WorkGroupingSuggestion suggestion5 = new WorkGroupingSuggestion(new JSONWorkPutCodes(new Long[] { 1L, 2L, 3L, 4L })); // invalid
         suggestion5.setId(5L);
         
-        List<WorkGroupingSuggestion> suggestions = groupingSuggestionManager
-                .filterSuggestionsNoLongerApplicable(Arrays.asList(suggestion1, suggestion2, suggestion3, suggestion4, suggestion5), new Works());
-        assertEquals(1, suggestions.size());
-        WorkGroupingSuggestion remainingSuggestion = suggestions.get(0);
-        assertEquals(2, remainingSuggestion.getPutCodes().getWorkPutCodes().length);
-        assertEquals(Long.valueOf(1l), remainingSuggestion.getPutCodes().getWorkPutCodes()[0]);
-        assertEquals(Long.valueOf(2l), remainingSuggestion.getPutCodes().getWorkPutCodes()[1]);
-
-        Mockito.verify(groupingSuggestionDao, Mockito.times(4)).remove(Mockito.anyLong());
+        assertTrue(groupingSuggestionManager.suggestionValid(suggestion1, new Works()));
+        assertFalse(groupingSuggestionManager.suggestionValid(suggestion2, new Works()));
+        assertFalse(groupingSuggestionManager.suggestionValid(suggestion3, new Works()));
+        assertFalse(groupingSuggestionManager.suggestionValid(suggestion4, new Works()));
+        assertFalse(groupingSuggestionManager.suggestionValid(suggestion5, new Works()));
     }
 
     @Test
@@ -173,38 +167,39 @@ public class GroupingSuggestionManagerTest {
         workGroup.getWorkSummary().add(summary3);
         works.getWorkGroup().add(workGroup);
 
-        List<WorkGroupingSuggestion> suggestions = groupingSuggestionManager.filterSuggestionsNoLongerApplicable(Arrays.asList(suggestion1), works);
-        assertEquals(0, suggestions.size());
-
-        Mockito.verify(groupingSuggestionDao, Mockito.times(1)).remove(Mockito.anyLong());
+        assertFalse(groupingSuggestionManager.suggestionValid(suggestion1, works));
     }
 
     @Test
-    public void testGetGroupingSuggestions() {
-        List<GroupingSuggestionEntity> entities = Arrays.asList(getGroupingSuggestionEntity(1L, new Long[] { 1L, 2L }),
-                getGroupingSuggestionEntity(2L, new Long[] { 5L, 6L }), getGroupingSuggestionEntity(3L, new Long[] { 3L, 4L }));
-        Mockito.when(groupingSuggestionDao.getGroupingSuggestions(Mockito.eq("orcid"))).thenReturn(entities);
-        List<WorkGroupingSuggestion> retrieved = groupingSuggestionManager.getGroupingSuggestions("orcid");
-        assertEquals(3, retrieved.size());
-        assertEquals(Long.valueOf(1l), retrieved.get(0).getId());
-        assertEquals(Long.valueOf(1l), retrieved.get(0).getPutCodes().getWorkPutCodes()[0]);
-        assertEquals(Long.valueOf(2l), retrieved.get(0).getPutCodes().getWorkPutCodes()[1]);
-        assertEquals(Long.valueOf(2l), retrieved.get(1).getId());
-        assertEquals(Long.valueOf(5l), retrieved.get(1).getPutCodes().getWorkPutCodes()[0]);
-        assertEquals(Long.valueOf(6l), retrieved.get(1).getPutCodes().getWorkPutCodes()[1]);
-        assertEquals(Long.valueOf(3l), retrieved.get(2).getId());
-        assertEquals(Long.valueOf(3l), retrieved.get(2).getPutCodes().getWorkPutCodes()[0]);
-        assertEquals(Long.valueOf(4l), retrieved.get(2).getPutCodes().getWorkPutCodes()[1]);
+    public void testGetGroupingSuggestion() {
+        GroupingSuggestionEntity suggestion = getGroupingSuggestionEntity(1L, new Long[] { 1L, 2L });
+        Mockito.when(groupingSuggestionDao.getNextGroupingSuggestion(Mockito.eq("orcid"))).thenReturn(suggestion);
+        WorkGroupingSuggestion retrieved = groupingSuggestionManager.getGroupingSuggestion("orcid");
+        assertNotNull(retrieved);
+        assertEquals(Long.valueOf(1l), retrieved.getId());
+        assertEquals(Long.valueOf(1l), retrieved.getPutCodes().getWorkPutCodes()[0]);
+        assertEquals(Long.valueOf(2l), retrieved.getPutCodes().getWorkPutCodes()[1]);
     }
     
     @Test
     public void testMarkGroupingSuggestionAsAccepted() {
         GroupingSuggestionEntity entity = getGroupingSuggestionEntity(1L, new Long[] {1L, 2L});
-        Mockito.when(groupingSuggestionDao.find(Mockito.anyLong())).thenReturn(entity);
+        Mockito.when(groupingSuggestionDao.getGroupingSuggestion(Mockito.anyString(), Mockito.anyLong())).thenReturn(entity);
         Mockito.when(groupingSuggestionDao.merge(Mockito.any(GroupingSuggestionEntity.class))).thenReturn(null);
-        groupingSuggestionManager.markGroupingSuggestionAsAccepted(1L);
+        groupingSuggestionManager.markGroupingSuggestionAsAccepted("orcid", 1L);
         assertNotNull(entity.getAcceptedDate());
-        Mockito.verify(groupingSuggestionDao, Mockito.times(1)).find(Mockito.eq(1L));
+        Mockito.verify(groupingSuggestionDao, Mockito.times(1)).getGroupingSuggestion(Mockito.eq("orcid"), Mockito.eq(1L));
+        Mockito.verify(groupingSuggestionDao, Mockito.times(1)).merge(Mockito.any(GroupingSuggestionEntity.class));
+    }
+    
+    @Test
+    public void testMarkGroupingSuggestionAsRejected() {
+        GroupingSuggestionEntity entity = getGroupingSuggestionEntity(1L, new Long[] {1L, 2L});
+        Mockito.when(groupingSuggestionDao.getGroupingSuggestion(Mockito.anyString(), Mockito.anyLong())).thenReturn(entity);
+        Mockito.when(groupingSuggestionDao.merge(Mockito.any(GroupingSuggestionEntity.class))).thenReturn(null);
+        groupingSuggestionManager.markGroupingSuggestionAsRejected("orcid", 1L);
+        assertNotNull(entity.getDismissedDate());
+        Mockito.verify(groupingSuggestionDao, Mockito.times(1)).getGroupingSuggestion(Mockito.eq("orcid"), Mockito.eq(1L));
         Mockito.verify(groupingSuggestionDao, Mockito.times(1)).merge(Mockito.any(GroupingSuggestionEntity.class));
     }
 

@@ -383,24 +383,17 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
     
     @Override
-    public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid) {
-        List<WorkGroupingSuggestion> suggestions = groupingSuggestionManagerReadOnly.getGroupingSuggestions(orcid);
-        Map<Long, Object> distinctPutCodes = new HashMap<>();
-        for (WorkGroupingSuggestion workGroupingSuggestion : suggestions) {
-            for (Long putCode : workGroupingSuggestion.getPutCodes().getWorkPutCodes()) {
-                distinctPutCodes.put(putCode, null);
+    public WorkGroupingSuggestion getGroupingSuggestion(String orcid) {
+        WorkGroupingSuggestion suggestion = groupingSuggestionManagerReadOnly.getGroupingSuggestion(orcid);
+        if (suggestion != null) {
+            List<WorkSummary> summaries = getWorksSummaryList(orcid, Arrays.asList(suggestion.getPutCodes().getWorkPutCodes()));
+            Works groupedWorks = groupWorks(summaries, false);
+            while (suggestion != null && !groupingSuggestionManager.suggestionValid(suggestion, groupedWorks)) {
+                groupingSuggestionManager.removeSuggestion(suggestion);
+                suggestion = groupingSuggestionManager.getGroupingSuggestion(orcid);
             }
         }
-        List<WorkSummary> summaries = getWorksSummaryList(orcid, Arrays.asList(distinctPutCodes.keySet().toArray(new Long[0])));
-        Works groupedWorks = groupWorks(summaries, false);
-        suggestions = groupingSuggestionManager.filterSuggestionsNoLongerApplicable(suggestions, groupedWorks);
-        return suggestions;
-    }
-
-    @Override
-    public void acceptGroupingSuggestion(WorkGroupingSuggestion groupingSuggestion) {
-        createNewWorkGroup(Arrays.asList(groupingSuggestion.getPutCodes().getWorkPutCodes()), groupingSuggestion.getOrcid());
-        groupingSuggestionManager.markGroupingSuggestionAsAccepted(groupingSuggestion.getId());
+        return suggestion;
     }
 
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {

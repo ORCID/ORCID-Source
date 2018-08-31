@@ -205,6 +205,9 @@ import { ResendClaimModule }
 import { WorksMergeChoosePreferredVersionModule } 
     from './works/worksMergeChoosePreferredVersion.ts';
     
+import { WorksMergeSuggestionsModule } 
+    from './works/worksMergeSuggestions.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -275,7 +278,8 @@ export const orcidApp = angular.module(
         UnsubscribeModule.name,
         DelegatorsModule.name,
         ResendClaimModule.name,
-        WorksMergeChoosePreferredVersionModule.name
+        WorksMergeChoosePreferredVersionModule.name,
+        WorksMergeSuggestionsModule.name
     ]
 );
 
