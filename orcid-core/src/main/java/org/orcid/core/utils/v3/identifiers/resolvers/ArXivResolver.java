@@ -3,7 +3,7 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Stack;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -95,10 +96,9 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             return null;
 
         try {
-            InputStream inputStream = cache.get(metadataEndpoint + value, "application/atom+xml");
-            Reader reader = new InputStreamReader(inputStream, "UTF-8");
-            InputSource is = new InputSource(reader);
-            is.setEncoding("UTF-8");
+            InputStream inputStream = cache.get(metadataEndpoint + value, MediaType.APPLICATION_ATOM_XML);
+            InputSource is = new InputSource(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
+            is.setEncoding(StandardCharsets.UTF_8.name());
 
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
