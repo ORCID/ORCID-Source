@@ -181,7 +181,13 @@ v3.0_rc1 is the current development release of the ORCID API.
 - [write simple work-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/work-simple-3.0_rc1.xml)
 - [read works-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/works-3.0_rc1.xml)
 
+For working with json see [ORCID conversion util](https://github.com/ORCID/orcid-conversion-lib)
+
 ## REST API Reference
+
+### API Tutorials
+- [General guide to the ORCID API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
+- [Tutorials for reading and writing to ORCID records](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web/tutorial)
 
 ### Swagger
 
