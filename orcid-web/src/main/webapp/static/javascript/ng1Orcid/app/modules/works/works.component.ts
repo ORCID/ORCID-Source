@@ -603,38 +603,40 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    loadWorkImportWizardList(): void {
-        this.worksService.loadWorkImportWizardList()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data == null || data.length == 0) {
-                    this.noLinkFlag = false;
-                }
-                this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
-                this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
-                this.workImportWizardsOriginal = data;
-                this.bulkEditShow = false;
-                this.showBibtexImportWizard = false;
-                for(var idx in data) {                            
-                    for(var i in data[idx].actTypes) {
-                        if(!this.commonSrvc.contains(this.workType, data[idx].actTypes[i])) {
-                            this.workType.push(data[idx].actTypes[i]);
-                        }                                
+    loadWorkImportWizardList(): void {        
+        if(this.publicView != "true") {
+            this.worksService.loadWorkImportWizardList()
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if(data == null || data.length == 0) {
+                        this.noLinkFlag = false;
                     }
-                    for(var j in data[idx].geoAreas) {
-                        if(!this.commonSrvc.contains(this.geoArea, data[idx].geoAreas[j])) {
-                            this.geoArea.push(data[idx].geoAreas[j]);
-                        }                                
-                    }                            
-                }
-            },
-            error => {
-                console.log('WorkImportWizardError', error);
-            } 
-        );
+                    this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+                    this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+                    this.workImportWizardsOriginal = data;
+                    this.bulkEditShow = false;
+                    this.showBibtexImportWizard = false;
+                    for(var idx in data) {                            
+                        for(var i in data[idx].actTypes) {
+                            if(!this.commonSrvc.contains(this.workType, data[idx].actTypes[i])) {
+                                this.workType.push(data[idx].actTypes[i]);
+                            }                                
+                        }
+                        for(var j in data[idx].geoAreas) {
+                            if(!this.commonSrvc.contains(this.geoArea, data[idx].geoAreas[j])) {
+                                this.geoArea.push(data[idx].geoAreas[j]);
+                            }                                
+                        }                            
+                    }
+                },
+                error => {
+                    console.log('WorkImportWizardError', error);
+                } 
+            );
+        }                
     };
 
     makeDefault(group, putCode): any {
