@@ -61,6 +61,7 @@ import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.Educations;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_v2.Employments;
 import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_v2.Fundings;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
@@ -254,7 +255,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENTS)
-    @ApiOperation(value = "Fetch all employments", response = Fundings.class)    
+    @ApiOperation(value = "Fetch all employments", response = Employments.class)    
     public Response viewEmployments(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmployments(orcid);
     }
