@@ -1,10 +1,9 @@
 package org.orcid.core.utils.v3.identifiers.resolvers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -95,12 +94,8 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             return null;
 
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL(metadataEndpoint + value).openConnection();
-            con.addRequestProperty("Accept", "application/vnd.citationstyles.csl+json");
-            con.setRequestMethod("GET");
-            con.setInstanceFollowRedirects(true);
-            if (con.getResponseCode() == 200) {
-                Reader reader = new InputStreamReader(con.getInputStream(), "UTF-8");
+            InputStream inputStream = cache.get(metadataEndpoint + value, "application/atom+xml");
+                Reader reader = new InputStreamReader(inputStream, "UTF-8");
                 InputSource is = new InputSource(reader);
                 is.setEncoding("UTF-8");
 
@@ -111,8 +106,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
                 saxParser.parse(is, handler);
                 Work w = handler.getWork();
-                return w;
-            }
+                return w;            
         } catch (IOException e) {
             return null;
         } catch (ParserConfigurationException e) {
