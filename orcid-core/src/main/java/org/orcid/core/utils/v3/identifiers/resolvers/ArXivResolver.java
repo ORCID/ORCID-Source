@@ -56,7 +56,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
     @Resource
     protected LocaleManager localeManager;
-    
+
     private String metadataEndpoint = "https://export.arxiv.org/api/query?id_list=";
 
     List<String> types = Lists.newArrayList("arxiv");
@@ -108,7 +108,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                 SAXParser saxParser = factory.newSAXParser();
 
                 WorksHandler handler = new WorksHandler();
-                
+
                 saxParser.parse(is, handler);
                 Work w = handler.getWork();
                 return w;
@@ -127,106 +127,110 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
     }
 
     private class WorksHandler extends DefaultHandler {
-            private Work work = new Work();
-            private Stack<String> elementStack = new Stack<String>();
-            boolean isOnEntry = false;            
-            StringBuffer description = new StringBuffer();
-            
-            public void startElement(String uri, String localName, String currentElementName, Attributes attributes) throws SAXException {                        
-                this.elementStack.push(currentElementName);
-                if(currentElementName.equals("entry")) {
-                    isOnEntry = true;
-                } 
-                
-                if(currentElementName.equals("link")) {
+        private Work work = new Work();
+        private Stack<String> elementStack = new Stack<String>();
+        boolean isOnEntry = false;
+        StringBuffer description = new StringBuffer();
+
+        public void startElement(String uri, String localName, String currentElementName, Attributes attributes) throws SAXException {
+            this.elementStack.push(currentElementName);
+            if (currentElementName.equals("entry")) {
+                isOnEntry = true;
+            }
+
+            if (isOnEntry) {
+                if (currentElementName.equals("link")) {
                     int typeIndex = attributes.getIndex("title");
-                    if(typeIndex >= 0) {
+                    if (typeIndex >= 0) {
                         String type = attributes.getValue(typeIndex);
-                        if(type.equals("doi")) {
+                        if (type.equals("doi")) {
                             String extId = attributes.getValue(attributes.getIndex("href"));
-                            if(work.getExternalIdentifiers() == null) {
+                            if (work.getExternalIdentifiers() == null) {
                                 work.setWorkExternalIdentifiers(new ExternalIDs());
                             }
                             ExternalID extID = new ExternalID();
                             extID.setRelationship(Relationship.SELF);
                             extID.setType("DOI");
-                            extID.setValue(extId.replace("http://dx.doi.org/", ""));
+                            extID.setValue(normalizationService.normalise("doi", extId));
                             extID.setUrl(new Url(extId));
                             work.getWorkExternalIdentifiers().getExternalIdentifier().add(extID);
                         }
                     }
                 }
             }
+        }
 
-            public void endElement(String uri, String localName, String currentElementName) throws SAXException {
-                this.elementStack.pop();
-                if(currentElementName.equals("entry")) {
-                    isOnEntry = false;
-                } else if(currentElementName.equals("summary")) {
-                    if(this.description.length() > 0) {
-                        work.setShortDescription(this.description.toString());
-                    }                    
+        public void endElement(String uri, String localName, String currentElementName) throws SAXException {
+            this.elementStack.pop();
+            if (currentElementName.equals("entry")) {
+                isOnEntry = false;
+            } else if (currentElementName.equals("summary")) {
+                if (this.description.length() > 0) {
+                    work.setShortDescription(this.description.toString());
                 }
             }
+        }
 
-            public void characters(char ch[], int start, int length) throws SAXException {
-                String currentElement = this.elementStack.peek();
-                String value = new String(ch, start, length).trim();
-                
-                if(isOnEntry) {
-                    if(currentElement.equals("id")) {
-                        if(work.getExternalIdentifiers() == null) {
-                            work.setWorkExternalIdentifiers(new ExternalIDs());
+        public void characters(char ch[], int start, int length) throws SAXException {
+            String currentElement = this.elementStack.peek();
+            String value = new String(ch, start, length).trim();
+
+            if (isOnEntry) {
+                switch (currentElement) {
+                case "id":
+                    if (work.getExternalIdentifiers() == null) {
+                        work.setWorkExternalIdentifiers(new ExternalIDs());
+                    }
+                    ExternalID extID = new ExternalID();
+                    extID.setRelationship(Relationship.SELF);
+                    extID.setType("ARXIV");
+                    extID.setValue(normalizationService.normalise("arxiv", value));
+                    extID.setUrl(new Url(value));
+                    work.getWorkExternalIdentifiers().getExternalIdentifier().add(extID);
+                    break;
+                case "title":
+                    WorkTitle title = new WorkTitle();
+                    title.setTitle(new Title(value));
+                    work.setWorkTitle(title);
+                    break;
+                case "summary":
+                    if (!PojoUtil.isEmpty(value)) {
+                        // In case of multiline content, add a space before
+                        // appending the next line content
+                        if (this.description.length() > 0 && this.description.charAt(this.description.length() - 1) != ' ') {
+                            this.description.append(' ');
                         }
-                        ExternalID extID = new ExternalID();
-                        extID.setRelationship(Relationship.SELF);
-                        extID.setType("ARXIV");
-                        extID.setValue(value.substring(value.lastIndexOf('/') + 1));
-                        extID.setUrl(new Url(value));
-                        work.getWorkExternalIdentifiers().getExternalIdentifier().add(extID);
+                        this.description.append(value);
                     }
-                    
-                    if(currentElement.equals("title")) {
-                        WorkTitle title = new WorkTitle();
-                        title.setTitle(new Title(value));
-                        work.setWorkTitle(title);
+                    break;
+                case "published":
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    Date date = null;
+                    try {
+                        date = dateFormat.parse(value);
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(date);
+                        PublicationDate publicationDate = new PublicationDate();
+                        work.setPublicationDate(publicationDate);
+                        publicationDate.setDay(new Day(c.get(Calendar.DAY_OF_MONTH)));
+                        // January = 0
+                        publicationDate.setMonth(new Month(c.get(Calendar.MONTH) + 1));
+                        publicationDate.setYear(new Year(c.get(Calendar.YEAR)));
+                    } catch (ParseException e) {
+
                     }
-                    
-                    if(currentElement.equals("summary")) {
-                        if(!PojoUtil.isEmpty(value)) {
-                            // In case of multiline content, add a space before appending the next line content
-                            if(this.description.length() > 0 && this.description.charAt(this.description.length() - 1) != ' ') {
-                                this.description.append(' ');
-                            }
-                            this.description.append(value);
-                        }
-                    }
-                    
-                    if(currentElement.equals("published")) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                        Date date = null;
-                        try {
-                            date = dateFormat.parse(value);
-                            Calendar c = Calendar.getInstance();
-                            c.setTime(date);
-                            PublicationDate publicationDate = new PublicationDate();
-                            work.setPublicationDate(publicationDate);
-                            publicationDate.setDay(new Day(c.get(Calendar.DAY_OF_MONTH)));
-                            // January = 0
-                            publicationDate.setMonth(new Month(c.get(Calendar.MONTH) + 1));
-                            publicationDate.setYear(new Year(c.get(Calendar.YEAR)));
-                        } catch (ParseException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
+                    break;
+                case "arxiv:journal_ref":
+                    work.setJournalTitle(new Title(value));
+                    break;
                 }
             }
-            
-            public Work getWork() {
-                return work;
-            }
-       
+        }
+
+        public Work getWork() {
+            return work;
+        }
+
     }
-    
+
 }
