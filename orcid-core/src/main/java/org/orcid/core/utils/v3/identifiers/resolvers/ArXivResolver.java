@@ -20,8 +20,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.jaxb.model.v3.rc1.common.Day;
@@ -51,12 +49,6 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
     @Resource
     PIDResolverCache cache;
-
-    @Resource
-    private IdentifierTypeManager identifierTypeManager;
-
-    @Resource
-    protected LocaleManager localeManager;
 
     private String metadataEndpoint = "https://export.arxiv.org/api/query?id_list=";
 

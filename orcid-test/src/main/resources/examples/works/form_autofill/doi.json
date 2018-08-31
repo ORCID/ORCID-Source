@@ -1,0 +1,88 @@
+{
+	"indexed": {
+		"date-parts": [
+			[2018, 1, 1]
+		],
+		"date-time": "2018-02-01T00:00:00Z",
+		"timestamp": 0000000000000
+	},
+	"reference-count": 0,
+	"publisher": "ORCID",
+	"issue": "1",
+	"content-domain": {
+		"domain": [],
+		"crossmark-restriction": false
+	},
+	"published-print": {
+		"date-parts": [
+			[2018, 12, 31]
+		]
+	},
+	"DOI": "10.000/0000.0000",
+	"type": "article-journal",
+	"created": {
+		"date-parts": [
+			[2018, 1, 1]
+		],
+		"date-time": "2018-01-01T00:00:00Z",
+		"timestamp": 0000000000000
+	},
+	"page": "1-2",
+	"source": "ORCID",
+	"is-referenced-by-count": 0,
+	"title": "DOI title",
+	"prefix": "0000.0000",
+	"volume": "0",
+	"author": [{
+		"given": "A. E.",
+		"family": "Montenegro",
+		"sequence": "first",
+		"affiliation": []
+	}],
+	"member": "1",
+	"published-online": {
+		"date-parts": [
+			[2018, 12, 31]
+		]
+	},
+	"reference": [],
+	"container-title": "Science",
+	"original-title": [],
+	"language": "en",
+	"link": [],
+	"deposited": {
+		"date-parts": [
+			[2018, 1, 1]
+		],
+		"date-time": "2018-01-01T00:00:00Z",
+		"timestamp": 0000000000000
+	},
+	"score": 1.0,
+	"subtitle": [],
+	"short-title": [],
+	"issued": {
+		"date-parts": [
+			[2018, 1, 1]
+		]
+	},
+	"references-count": 1,
+	"journal-issue": {
+		"published-online": {
+			"date-parts": [
+				[2018, 1, 1]
+			]
+		},
+		"published-print": {
+			"date-parts": [
+				[2018, 1, 1]
+			]
+		},
+		"issue": "1"
+	},
+	"URL": "http://dx.doi.org/10.000/0000.0000",
+	"relation": {
+		"cites": []
+	},
+	"ISSN": ["0000-0000", "0000-0001"],
+	"container-title-short": "Science"
+}
