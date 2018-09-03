@@ -76,6 +76,11 @@
         orcidVar.memberSlug = "${(memberSlug?js_string)!}";
         
         orcidVar.loginId = "${(request.getParameter('loginId'))!}";
+        
+        <#if verifiedEmail??>
+            orcidVar.loginId = "${verifiedEmail}";
+        </#if>
+        
     </script>
 
     <#include "/macros/orcid_ga.ftl">

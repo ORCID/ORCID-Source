@@ -27,7 +27,6 @@ v3.0_rc1 is the current development release of the ORCID API.
 - service/services
 - work/works
 
-
 ## XSDs and current state (all stable)
 - [activities-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/activities-3.0_rc1.xsd)
 **stable**
@@ -78,6 +77,12 @@ v3.0_rc1 is the current development release of the ORCID API.
 - [work-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/work-3.0_rc1.xsd)
 **stable**
 
+## Tutorials
+
+- [General guide to the ORCID API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
+- [Tutorials for reading and writing to ORCID records](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web/tutorial)
+
+
 ## Changes from Version 2.1:
 
 ### JSON
@@ -87,7 +92,7 @@ v3.0_rc1 is the current development release of the ORCID API.
 - Addition of *common:external-id-normalized* for work and peer-review identifiers. The common:external-id-normalized field is a transient, system generated field which expresses the identifier in a standard format that is used for grouping. In general, normalized identifiers trim extraneous text such as the identifier type or the expression of the identifier as a url. Additional normalization is done based on the rules of the identifier type and may include setting all alpha characters to lower case,  or transforming spaces, dashes, periods and other characters that can be treated as equivalent. [See the full normalization rules](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/java/org/orcid/core/utils/v3/identifiers). Identifiers which can not be normalized will return a error message when reading them.
 
 ### Affiliations
-- Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections.
+- Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections. For more information see [Affiliations tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/affiliations.md)
 - Summary information now available for each section including affiliation source, role-title, department-name, dates, organization and external-ids
 - *common:start-date* is required when writing items
 - Addition of optional element *common:url* for recording links about the affiliation
@@ -95,17 +100,19 @@ v3.0_rc1 is the current development release of the ORCID API.
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
 - Use of common namespace for *common:department-name*, *common:role-title* and *common:organization*
 
-### Research-resource
+### Research-resources
 - This new section of the ORCID record captures information about things that researchers use for their research which require a specific proposal process or credential to access, such as collections, equipment, infrastructure, and services. For more information see the [Research-resource tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/research-resources.md).
 
 ### Works
 - *work:journal-title* field is returned with the work summary
 - Addition of *common:external-id-normalized* when reading works for normalized work identifiers
 - Addition of *software* to the list of [supported work types](https://members.orcid.org/api/resources/work-types)
+- Use of common namespace for *common:url* replacing *work:url* and this field is now returned in the work summary
 
 ### Fundings
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
 - Use of common namespace for *common:organization*, replacing *funding:organization*
+- Use of common namespace for *common:url* replacing *funding:url* and this field is now returned in the funding summary
 
 ### Peer-review
 - *reviewer-role* and *review-type* are returned with the peer-review summary
@@ -174,7 +181,13 @@ v3.0_rc1 is the current development release of the ORCID API.
 - [write simple work-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/work-simple-3.0_rc1.xml)
 - [read works-3.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/works-3.0_rc1.xml)
 
+For working with json see [ORCID conversion util](https://github.com/ORCID/orcid-conversion-lib)
+
 ## REST API Reference
+
+### API Tutorials
+- [General guide to the ORCID API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
+- [Tutorials for reading and writing to ORCID records](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web/tutorial)
 
 ### Swagger
 
@@ -243,8 +256,8 @@ The swagger interfaces to the API available at:
 
 **Notes:**
 - biography, email, person and personal-details sections are read only
-- when reading multiple works a maximum of 50 works can be accessed with a single call, when posting multiple works a maximum of 100 works can be posted with a single call.
-- When searching by default a maximum of 100 results will be returned. The `rows` parameter can be used to increase the number or results, but only up to 200. The `start` parameter (integer pointing to the zero-based position of the first result to be returned) can be used to page through larger results sets. For help with SOLR searching see [https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser](https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser)
+- when reading and posting multiple works a maximum of 100 works can be accessed with a single call.
+- When searching by default a maximum of 100 results will be returned. The `rows` parameter can be used to increase the number or results, but only up to 200. The `start` parameter (integer pointing to the zero-based position of the first result to be returned) can be used to page through larger results sets. See [Searching the API tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/search.md)
 
 ## Examples
 

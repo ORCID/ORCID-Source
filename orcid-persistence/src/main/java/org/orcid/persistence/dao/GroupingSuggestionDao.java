@@ -6,8 +6,15 @@ import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;
 
 public interface GroupingSuggestionDao extends GenericDao<GroupingSuggestionEntity, Long> {
 
-    List<GroupingSuggestionEntity> getGroupingSuggestions(String orcid);
+    /**
+     * Returns most recently generated grouping suggestion
+     * @param orcid
+     * @return
+     */
+    GroupingSuggestionEntity getNextGroupingSuggestion(String orcid);
 
     GroupingSuggestionEntity findGroupingSuggestionIdByPutCodes(String orcid, Long workPutCode, List<Long> comparisonPutCodes);
+
+    GroupingSuggestionEntity getGroupingSuggestion(String orcid, Long id);
     
 }

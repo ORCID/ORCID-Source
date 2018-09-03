@@ -12,7 +12,7 @@
 <#if emailVerified?? && emailVerified>
 <div class="alert alert-success">
     <strong>
-        <@spring.message "orcid.frontend.web.email_verified"/>
+        ${emailVerifiedMessage}
         <#if primaryEmailUnverified?? && primaryEmailUnverified>
         <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
         <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
@@ -378,6 +378,11 @@
 <#include "/includes/ng2_templates/works-merge-choose-preferred-version-ng2-template.ftl">
 <modalngcomponent elementHeight="280" elementId="modalWorksMergeChoosePreferredVersion" elementWidth="600">
     <works-merge-choose-preferred-version-ng2></works-merge-choose-preferred-version-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/works-merge-suggestions-ng2-template.ftl">
+<modalngcomponent elementHeight="320" elementId="modalWorksMergeSuggestions" elementWidth="600">
+    <works-merge-suggestions-ng2></works-merge-suggestions-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/works-delete-ng2-template.ftl">

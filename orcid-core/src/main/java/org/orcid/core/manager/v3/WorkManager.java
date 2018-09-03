@@ -97,18 +97,11 @@ public interface WorkManager extends WorkManagerReadOnly {
     void createNewWorkGroup(List<Long> workIds, String orcid);    
     
     /**
-     * Returns work grouping suggestions for a profile
+     * Returns a valid work grouping suggestion for a profile
      * @param orcid
-     * @return List of WorkGroupingSuggestion objects
+     * @return WorkGroupingSuggestion object
      */
-    List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid);
-    
-    /**
-     * Groups the specified works and marks the grouping suggestion as accepted
-     * @param groupingSuggestion
-     */
-    void acceptGroupingSuggestion(WorkGroupingSuggestion groupingSuggestion);
-
+    WorkGroupingSuggestion getGroupingSuggestion(String orcid);
     
     /** 
      * For user driven grouping - user chooses preferred work and then groups

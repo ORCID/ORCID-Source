@@ -32,6 +32,7 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
     delCountVerify: number;
     preferredNotSelected: boolean;
     externalIdsPresent: boolean;
+    suggestionId: any;
 
     constructor(
         private worksService: WorksService,
@@ -45,7 +46,6 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
         this.delCountVerify = 0;
         this.mergeSubmit = false;
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
-        this.worksService.notifyOther({action:'cancel', successful:true});
     };
 
     merge(): void {
@@ -70,8 +70,24 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
             )
             .subscribe(
                 data => {
-                    this.worksService.notifyOther({action:'merge', successful:true});
-                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+                    if (this.suggestionId) {
+                        this.worksService.markSuggestionAccepted(this.suggestionId)
+                        .pipe(    
+                            takeUntil(this.ngUnsubscribe)
+                        )
+                        .subscribe(
+                            data => {
+                                this.worksService.notifyOther({action:'merge', successful:true});
+                                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+                            },
+                            error => {
+                                console.log('error marking suggestion as accepted', error);
+                            } 
+                        );
+                    } else {
+                        this.worksService.notifyOther({action:'merge', successful:true});
+                        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+                    }
                 },
                 error => {
                     console.log('error calling mergeWorks', error);
@@ -103,6 +119,9 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
                 }
                 if( res.externalIdsPresent ) {
                     this.externalIdsPresent = res.externalIdsPresent;
+                }
+                if( res.suggestionId ) {
+                    this.suggestionId = res.suggestionId;
                 }
             }
         );

@@ -404,6 +404,12 @@ export class WorksService {
             url
         )       
     }
+    
+    getWorksGroupingSuggestions(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/works/groupingSuggestions.json'
+        )   
+    }
 
     handleWorkGroupData(data, callback?): void {
         if (this.groups == undefined) {
@@ -490,6 +496,22 @@ export class WorksService {
     mergeWorks(putCodesAsString): any {
         return this.http.post( 
             getBaseUri() + '/works/group/' + putCodesAsString, 
+            {}, 
+            { headers: this.headers }
+        );
+    }
+    
+    markSuggestionAccepted(suggestionId): any {
+        return this.http.post( 
+            getBaseUri() + '/works/acceptGroupingSuggestion/' + suggestionId, 
+            {}, 
+            { headers: this.headers }
+        );
+    }
+    
+    markSuggestionRejected(suggestionId): any {
+        return this.http.post( 
+            getBaseUri() + '/works/rejectGroupingSuggestion/' + suggestionId, 
             {}, 
             { headers: this.headers }
         );

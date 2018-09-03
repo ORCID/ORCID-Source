@@ -100,6 +100,8 @@ Example of a source ORCID iD in 2.1
 - [write simple work-2.1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/work-simple-2.1.xml)
 - [read works-2.1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/works-2.1.xml)
 
+For working with json see [ORCID conversion util](https://github.com/ORCID/orcid-conversion-lib)
+
 ## REST API Reference
 
 ### Swagger
