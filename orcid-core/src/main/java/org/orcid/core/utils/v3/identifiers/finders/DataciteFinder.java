@@ -1,13 +1,13 @@
 package org.orcid.core.utils.v3.identifiers.finders;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
 import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
@@ -19,41 +19,34 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class DataciteFinder implements Finder{
+public class DataciteFinder implements Finder {
 
     @Resource
     DOINormalizer norm;
-    
+
+    @Resource
+    PIDResolverCache cache;
+
     private static final String serviceName = "datacite";
     private static final String metadataEndpoint = "https://api.datacite.org/works?query=";
-   
-    //https://api.datacite.org/works?query=0000-0003-1419-2405 
-    
+
     @Override
     public FindMyStuffResult find(String orcid, ExternalIDs existingIDs) {
         FindMyStuffResult result = new FindMyStuffResult();
         result.setServiceName(getServiceName());
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL(metadataEndpoint + orcid).openConnection();
-            con.addRequestProperty("Accept", "application/json");
-            con.setRequestMethod("GET");
-            con.setInstanceFollowRedirects(true);
-            if (con.getResponseCode() == 200) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                DataciteSearchResult dcResult = objectMapper.readValue(con.getInputStream(), DataciteSearchResult.class);  
-                for (DataciteSimpleWork w : dcResult.data){
-                    if (!existingIDs.getExternalIdentifier().contains(w.getExternalID())){
-                        result.getResults().add(new FindMyStuffResult.Result(w.id, "doi", w.title));
-                    }
+            InputStream is = cache.get(metadataEndpoint + orcid, "application/json");
+            ObjectMapper objectMapper = new ObjectMapper();
+            DataciteSearchResult dcResult = objectMapper.readValue(is, DataciteSearchResult.class);
+            for (DataciteSimpleWork w : dcResult.data) {
+                if (!existingIDs.getExternalIdentifier().contains(w.attributes.getExternalID())) {
+                    result.getResults().add(new FindMyStuffResult.Result(w.attributes.doi, "doi", w.attributes.title));
                 }
             }
-            
         } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // do nothing
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // do nothing
         }
         return result;
     }
@@ -62,29 +55,38 @@ public class DataciteFinder implements Finder{
     public String getServiceName() {
         return serviceName;
     }
-    
-    //query datacite
-    //{data:[
-    //  {attributes":{"doi":"","title":""}},
-    //  {attributes":{"doi":"","title":""}}
-    // ]}
+
+    // MODELS
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class DataciteSearchResult{
-        public List<DataciteSimpleWork> data; 
-        public DataciteSearchResult(){};
+    public static class DataciteSearchResult {
+        public List<DataciteSimpleWork> data;
+
+        public DataciteSearchResult() {
+        };
     }
-    
+
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class DataciteSimpleWork{
-        public String id;
+    public static class DataciteSimpleWork {
+        public DataciteSimpleWorkAttributes attributes;
+
+        public DataciteSimpleWork() {
+        };
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class DataciteSimpleWorkAttributes {
+        public String doi;
         public String title;
-        public DataciteSimpleWork(){};
-        public ExternalID getExternalID(){
+
+        public DataciteSimpleWorkAttributes() {
+        };
+
+        public ExternalID getExternalID() {
             ExternalID eid = new ExternalID();
             eid.setType("doi");
-            eid.setValue(id);
-            eid.setNormalized(new TransientNonEmptyString(id));
+            eid.setValue(doi);
+            eid.setNormalized(new TransientNonEmptyString(doi));
             return eid;
         }
     }
