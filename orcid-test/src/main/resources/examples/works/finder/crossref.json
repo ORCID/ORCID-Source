@@ -1,0 +1,29 @@
+[
+  {
+    "doi": "http://dx.doi.org/10.7287/peerj.preprints.26505",
+    "score": 12.845928,
+    "normalizedScore": 100,
+    "title": "Code of practice for research data usage metrics release 1",
+    "fullCitation": "Martin Fenner, Daniella Lowenberg, Matt Jones, Paul Needham, Dave Vieglais, Stephen Abrams, Patricia Cruse, John Chodacki, 2018, 'Code of practice for research data usage metrics release 1'",
+    "coins": "ctx_ver=Z39.88-2004&amp;rft_id=info%3Adoi%2Fhttp%3A%2F%2Fdx.doi.org%2F10.7287%2Fpeerj.preprints.26505&amp;rfr_id=info%3Asid%2Fcrossref.org%3Asearch&amp;rft.atitle=Code+of+practice+for+research+data+usage+metrics+release+1&amp;rft.date=2018&amp;rft.aufirst=Martin&amp;rft.aulast=Fenner&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aunknown&amp;rft.genre=unknown&amp;rft.au=Martin+Fenner&amp;rft.au=+Daniella+Lowenberg&amp;rft.au=+Matt+Jones&amp;rft.au=+Paul+Needham&amp;rft.au=+Dave+Vieglais&amp;rft.au=+Stephen+Abrams&amp;rft.au=+Patricia+Cruse&amp;rft.au=+John+Chodacki",
+    "year": "2018"
+  },
+  {
+    "doi": "http://dx.doi.org/10.7287/peerj.preprints.26505v1",
+    "score": 12.845928,
+    "normalizedScore": 100,
+    "title": "Code of practice for research data usage metrics release 1",
+    "fullCitation": "Martin Fenner, Daniella Lowenberg, Matt Jones, Paul Needham, Dave Vieglais, Stephen Abrams, Patricia Cruse, John Chodacki, 2018, 'Code of practice for research data usage metrics release 1'",
+    "coins": "ctx_ver=Z39.88-2004&amp;rft_id=info%3Adoi%2Fhttp%3A%2F%2Fdx.doi.org%2F10.7287%2Fpeerj.preprints.26505v1&amp;rfr_id=info%3Asid%2Fcrossref.org%3Asearch&amp;rft.atitle=Code+of+practice+for+research+data+usage+metrics+release+1&amp;rft.date=2018&amp;rft.aufirst=Martin&amp;rft.aulast=Fenner&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aunknown&amp;rft.genre=unknown&amp;rft.au=Martin+Fenner&amp;rft.au=+Daniella+Lowenberg&amp;rft.au=+Matt+Jones&amp;rft.au=+Paul+Needham&amp;rft.au=+Dave+Vieglais&amp;rft.au=+Stephen+Abrams&amp;rft.au=+Patricia+Cruse&amp;rft.au=+John+Chodacki",
+    "year": "2018"
+  },
+  {
+    "doi": "http://dx.doi.org/10.1101/097196",
+    "score": 12.845928,
+    "normalizedScore": 100,
+    "title": "A Data Citation Roadmap for Scholarly Data Repositories",
+    "fullCitation": "Martin Fenner, Mercè Crosas, Jeffrey Grethe, David Kennedy, Henning Hermjakob, Philippe Rocca-Serra, Gustavo Durand, Robin Berjon, Sebastian Karcher, Maryann Martone, Timothy Clark, 2016, 'A Data Citation Roadmap for Scholarly Data Repositories'",
+    "coins": "ctx_ver=Z39.88-2004&amp;rft_id=info%3Adoi%2Fhttp%3A%2F%2Fdx.doi.org%2F10.1101%2F097196&amp;rfr_id=info%3Asid%2Fcrossref.org%3Asearch&amp;rft.atitle=A+Data+Citation+Roadmap+for+Scholarly+Data+Repositories&amp;rft.date=2016&amp;rft.aufirst=Martin&amp;rft.aulast=Fenner&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aunknown&amp;rft.genre=unknown&amp;rft.au=Martin+Fenner&amp;rft.au=+Merc%C3%A8+Crosas&amp;rft.au=+Jeffrey+Grethe&amp;rft.au=+David+Kennedy&amp;rft.au=+Henning+Hermjakob&amp;rft.au=+Philippe+Rocca-Serra&amp;rft.au=+Gustavo+Durand&amp;rft.au=+Robin+Berjon&amp;rft.au=+Sebastian+Karcher&amp;rft.au=+Maryann+Martone&amp;rft.au=+Timothy+Clark",
+    "year": "2016"
+  }
+]
