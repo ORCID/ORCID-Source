@@ -13,7 +13,7 @@ import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Http200Resolver implements Resolver {
+public class Http200Resolver implements LinkResolver {
 
     @Resource
     PIDNormalizationService normalizationService;

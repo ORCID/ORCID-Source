@@ -12,7 +12,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.core.utils.v3.identifiers.resolvers.Resolver;
+import org.orcid.core.utils.v3.identifiers.resolvers.LinkResolver;
+import org.orcid.core.utils.v3.identifiers.resolvers.MetadataResolver;
+import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
@@ -21,30 +23,53 @@ import org.springframework.stereotype.Component;
 public class PIDResolverService {
 
     @Resource
-    List<Resolver> Resolvers = new ArrayList<Resolver>();
+    List<LinkResolver> linkResolvers = new ArrayList<LinkResolver>();
+
+    @Resource
+    List<MetadataResolver> metaResolvers = new ArrayList<MetadataResolver>();
 
     @Resource
     IdentifierTypeManager idman;
 
-    Map<String, LinkedList<Resolver>> map = new HashMap<String, LinkedList<Resolver>>();
+    Map<String, LinkedList<LinkResolver>> linkResolverMap = new HashMap<String, LinkedList<LinkResolver>>();
+    Map<String, LinkedList<MetadataResolver>> metaResolverMap = new HashMap<String, LinkedList<MetadataResolver>>();
 
     @PostConstruct
     public void init() {
-        Collections.sort(Resolvers, AnnotationAwareOrderComparator.INSTANCE);
+        Collections.sort(linkResolvers, AnnotationAwareOrderComparator.INSTANCE);
+        
+        //initialise lookup
         for (String type : idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).keySet()) {
-            map.put(type, new LinkedList<Resolver>());
+            linkResolverMap.put(type, new LinkedList<LinkResolver>());
+            metaResolverMap.put(type, new LinkedList<MetadataResolver>());
         }
-        for (Resolver n : Resolvers) {
+        
+        //populate lookup maps for link checking
+        for (LinkResolver n : linkResolvers) {
             List<String> supported = n.canHandle();
-            if (supported.isEmpty()) {
-                for (String type : map.keySet())
-                    map.get(type).add(n);
+            if (supported.equals(LinkResolver.CAN_HANDLE_EVERYTHING)) {
+                for (String type : linkResolverMap.keySet())
+                    linkResolverMap.get(type).add(n);
             } else {
                 for (String type : supported) {
-                    map.get(type).add(n);
+                    linkResolverMap.get(type).add(n);
                 }
             }
         }
+        
+        //populate lookup maps for metadata resolution
+        for (MetadataResolver n : metaResolvers) {
+            List<String> supported = n.canHandle();
+            if (supported.equals(MetadataResolver.CAN_HANDLE_EVERYTHING)) {
+                for (String type : metaResolverMap.keySet())
+                    metaResolverMap.get(type).add(n);
+            } else {
+                for (String type : supported) {
+                    metaResolverMap.get(type).add(n);
+                }
+            }
+        }
+
     }
 
     /**
@@ -61,9 +86,30 @@ public class PIDResolverService {
         if (apiTypeName == null || value == null)
             return result;
         
-        for (Resolver r : map.get(apiTypeName)) {
+        for (LinkResolver r : linkResolverMap.get(apiTypeName)) {
             result = r.resolve(apiTypeName, value);
             if (result.isResolved())
+                return result;
+        } 
+        return result;
+    }
+    
+    /** Returns a Work populated with metadata attached to the PID
+     * NOTE: may only be semi-populated.
+     * Ensure this is the API type name, not the DB type name.
+     * 
+     * @param type the api type name
+     * @param value the url value
+     * @return a work containing all the available metadata we could find or NULL if none found.
+     */
+    public Work resolveMetadata(String apiTypeName, String value) {
+        Work result = null;
+        if (apiTypeName == null || value == null)
+            return result;
+        
+        for (MetadataResolver r : metaResolverMap.get(apiTypeName)) {
+            result = r.resolveMetadata(apiTypeName, value);
+            if (result != null)
                 return result;
         } 
         return result;

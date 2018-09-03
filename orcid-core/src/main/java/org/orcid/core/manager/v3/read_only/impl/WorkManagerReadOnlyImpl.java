@@ -19,6 +19,7 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
@@ -230,6 +231,20 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             result.add(jpaJaxbWorkAdapter.toWork(entity));
         }
         return result;
+    }
+
+    @Override
+    public ExternalIDs getAllExternalIDs(String orcid) {
+        List<WorkSummary> summaries = getWorksSummaryList(orcid);
+        ExternalIDs ids = new ExternalIDs();
+        for (WorkSummary s:summaries){
+            for (ExternalID id: s.getExternalIdentifiers().getExternalIdentifier()){
+                if (!ids.getExternalIdentifier().contains(id)){
+                    ids.getExternalIdentifier().add(id);
+                }
+            }
+        }
+        return null;
     }
 
 }
