@@ -960,13 +960,13 @@ the software.
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
-                <version>3.8.1</version>
+                <version>3.14.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.paulhammant</groupId>
                 <artifactId>ngwebdriver</artifactId>
-                <version>0.9.6</version>
+                <version>1.1.4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
