@@ -77,7 +77,7 @@
         </div>         
     </span> 
     <span *ngIf="showReactivationSent">
-        <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /><a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
+        <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /> <a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
     </span>
 </div>
 <div id="loginErrors"></div>
