@@ -377,4 +377,8 @@ public class BBBUtil {
     public static void colorBoxIsClosed(WebDriverWait wait) {
         wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='colorbox']"))));
     }
+
+    public static void blurElement(WebElement element) {
+        executeJavaScript("arguments[0].dispatchEvent(new Event('blur'))", element);
+    }
 }
