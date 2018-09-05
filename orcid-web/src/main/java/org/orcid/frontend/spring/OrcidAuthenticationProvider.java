@@ -4,9 +4,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.BackupCodeManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.security.OrcidUserDetailsService;
@@ -15,8 +13,6 @@ import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,8 +21,6 @@ import org.springframework.security.core.AuthenticationException;
 
 public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthenticationProvider.class);
-    
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
@@ -34,14 +28,8 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
     protected EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource
-    private EncryptionManager encryptionManager;
-
-    @Resource
     private BackupCodeManager backupCodeManager;
     
-    @Resource
-    private SlackManager slackManager;
-
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
     
