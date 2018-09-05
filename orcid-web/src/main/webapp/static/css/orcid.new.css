@@ -1840,6 +1840,16 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     line-height: 31px;
 }
 
+.work-bulk-actions .popover-help-container {
+    margin-left: 6px;
+    line-height: 31px;
+}
+
+.work-bulk-actions .bulk-edit-privacy-help-container {
+    margin-left: 0;
+    line-height: 0;
+}
+
 .popover-help-container i.glyphicon-question-sign {
     color: #338caf;
     cursor: pointer;
@@ -2478,6 +2488,22 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     max-width: none;
     background-color: #fff;
     font-size: 14px
+}
+
+.work-bulk-actions .popover-help-container .bulk-works-privacy-popover {
+    display: none;
+    position: absolute;
+    left: -86px;
+}
+
+.work-bulk-actions .popover-help-container .bulk-actions-popover {
+	display: none;
+    position: absolute;
+    left: -246px;
+}
+
+.helpPopoverMergeHeading, .helpPopoverDeleteBulkEditHeading {
+	font-weight: bold;
 }
 
 .popover-pos {
@@ -5043,7 +5069,15 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
     width: auto;
 }
 
-.popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3,
+.work-bulk-actions .privacy-bulk-works {
+	bottom: 45px;
+    right: -5px;
+    width: auto;
+    top: -150px;
+    left: 186px;
+}
+
+.popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3, .privacy-bulk-works 
 .popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
     bottom: inherit;
 }
