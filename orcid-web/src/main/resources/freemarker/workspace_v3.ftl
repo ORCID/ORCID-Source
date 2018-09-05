@@ -58,16 +58,22 @@
 
             <div class="qrcode-container">
                 <a href="<@orcid.rootPath "/qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
-                    <div class="popover-help-container">
-                        <i class="glyphicon glyphicon-question-sign"></i>
-                        <div id="qrcode-help" class="popover bottom">
-                            <div class="arrow"></div>
-                            <div class="popover-content">
-                                <p><@orcid.msg 'workspace.qrcode.help'/><a href="https://support.orcid.org/knowledgebase/articles/116878"><@orcid.msg 'common.learn_more'/></a></p>
-                            </div>
+                <div class="popover-help-container"></a>
+                    <i class="glyphicon glyphicon-question-sign"></i>
+                    <div id="qrcode-help" class="popover bottom">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <p><@orcid.msg 'workspace.qrcode.help'/> 
+                            <@orcid.checkFeatureStatus 'SUPPORT_MIGRATION'>
+                                <a href="<@orcid.msg 'common.kb_uri_default'/>360006897654" target="qrcode.help"><@orcid.msg 'common.learn_more'/></a>
+                            </@orcid.checkFeatureStatus>  
+                            <@orcid.checkFeatureStatus featureName='SUPPORT_MIGRATION' enabled=false>
+                              <a href="https://support.orcid.org/knowledgebase/articles/116878"><@orcid.msg 'common.learn_more'/></a>
+                            </@orcid.checkFeatureStatus>  
+                            </p>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
 
             <!-- Person -->
@@ -132,7 +138,14 @@
         <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
       <div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
         <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
-          <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/><a href="https://support.orcid.org/knowledgebase/articles/460004" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a><@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
+          <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/>
+          <@orcid.checkFeatureStatus 'SUPPORT_MIGRATION'>
+              <a href="<@orcid.msg 'common.kb_uri_default'/>360006896894" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a>
+          </@orcid.checkFeatureStatus>  
+          <@orcid.checkFeatureStatus featureName='SUPPORT_MIGRATION' enabled=false>
+            <a href="https://support.orcid.org/knowledgebase/articles/460004" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a>
+          </@orcid.checkFeatureStatus> 
+          <@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
         </div>                
       </div>
       </@orcid.checkFeatureStatus>  
