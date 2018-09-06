@@ -497,7 +497,7 @@ kind of variable. This temp value is only used in this macro lib -->
 <div>   
     <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
     <label class="control-label dark-label">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/1807645-notifications-preferences" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="<@orcid.msg 'common.kb_uri_default'/>360006972953" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
     </label>
     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
         class="input-xlarge"
@@ -513,7 +513,7 @@ kind of variable. This temp value is only used in this macro lib -->
 <div>   
     <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
     <label class="control-label dark-label">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/1807645-notifications-preferences" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="<@orcid.msg 'common.kb_uri_default'/>360006972953" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
     </label>
     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
         class="input-xlarge"

@@ -15,7 +15,7 @@
                             <div id="research-resource-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><strong><@orcid.msg 'manage.research_resources'/></strong> <@orcid.msg 'manage.research_resources.helpPopover'/> <a href="${knowledgeBaseUri}/articles" target="manage.research_resources.helpPopover"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p><strong><@orcid.msg 'manage.research_resources'/></strong> <@orcid.msg 'manage.research_resources.helpPopover'/> <a href="<@orcid.msg 'common.kb_uri_default'/>" target="manage.research_resources.helpPopover"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div>

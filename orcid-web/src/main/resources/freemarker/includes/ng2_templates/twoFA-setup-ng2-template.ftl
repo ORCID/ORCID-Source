@@ -9,7 +9,8 @@
                     <p>
                         ${springMacroRequestContext.getMessage("2FA.setup.details")}
                         <br />
-                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673" target="2FA.setup.see.knowledgebase">${springMacroRequestContext.getMessage("2FA.setup.see.knowledgebase")}</a>
+                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673"
+                            target="2FA.setup.see.knowledgebase">${springMacroRequestContext.getMessage("2FA.setup.see.knowledgebase")}</a>
                     </p>
                     <ul id="2FASetupSteps" class="twoFactorAuthSetup">
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step1")}</li>
