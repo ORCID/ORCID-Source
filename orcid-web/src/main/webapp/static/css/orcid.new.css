@@ -2493,7 +2493,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 .work-bulk-actions .popover-help-container .bulk-works-privacy-popover {
     display: none;
     position: absolute;
-    left: -86px;
+    left: -75px;
 }
 
 .work-bulk-actions .popover-help-container .bulk-actions-popover {
@@ -5072,9 +5072,15 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 .work-bulk-actions .privacy-bulk-works {
 	bottom: 45px;
     right: -5px;
-    width: auto;
-    top: -150px;
+    top: -170px;
     left: 186px;
+    min-width: 247px;
+}
+
+.work-bulk-actions .privacy-bulk-works ul li {
+    display: list-item;
+    padding: 0 0 0 27px;
+    margin: 0 0 0 15px;
 }
 
 .popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3, .privacy-bulk-works 
@@ -5084,7 +5090,7 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 
 .popover-help-container>.privacy-myorcid3>.arrow {
     left: 186px
-}
+}   
 
 .source-line .sources-popover {
     top: -35px;
