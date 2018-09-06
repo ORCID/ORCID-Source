@@ -17,7 +17,7 @@
                                 <div id="social-login-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p>${springMacroRequestContext.getMessage("2FA.social_inst.text")} <a href="${knowledgeBaseUri}/articles/1190068" target="common.learn_more">${springMacroRequestContext.getMessage("common.learn_more")}</a></p>
+                                        <p>${springMacroRequestContext.getMessage("2FA.social_inst.text")} <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673" target="common.learn_more">${springMacroRequestContext.getMessage("common.learn_more")}</a></p>
                                     </div>
                                 </div>
                             </div>
