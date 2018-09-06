@@ -426,17 +426,13 @@ public class PublicProfileController extends BaseWorkspaceController {
             e.printStackTrace();
         }
 
-        if (!profile.isReviewed()) {
-            if (isProfileValidForIndex(profile)) {
-                if (!profile.isAccountNonLocked() || !orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)
-                        || (!CreationMethod.WEBSITE.value().equals(profile.getCreationMethod()) && !CreationMethod.DIRECT.value().equals(profile.getCreationMethod()))) {
-                    mav.addObject("noIndex", true);
-                }
-            } else {
+        if (!profile.isAccountNonLocked()) {
+            mav.addObject("noIndex", true);
+        } else if (!profile.isReviewed()) {
+            if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {
                 mav.addObject("noIndex", true);
             }
-        }
-
+        } 
         return mav;
     }
 
@@ -550,26 +546,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         return groups;
-    }
-
-    private boolean isProfileValidForIndex(ProfileEntity profile) {
-        String orcid = profile.getId();
-        if (orcid != null) {
-            int validAge = 3 + (Character.getNumericValue(orcid.charAt(orcid.length() - 2))) / 2;
-            if (profile.getSubmissionDate() != null) {
-                Date profileCreationDate = profile.getSubmissionDate();
-                Date currentDate = new Date();
-
-                Calendar temp = Calendar.getInstance();
-                temp.setTime(profileCreationDate);
-                temp.add(Calendar.DATE, validAge);
-                profileCreationDate = temp.getTime();
-                if (profileCreationDate.before(currentDate)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
