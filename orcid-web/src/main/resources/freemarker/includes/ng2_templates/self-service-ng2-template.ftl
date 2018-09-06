@@ -172,7 +172,7 @@
                                             <div class="arrow"></div>
                                             <div class="popover-content">
                                                 <p><@spring.message "manage_consortium.this_contact_does_not_1"/></p>
-                                                <p><@spring.message "manage_consortium.this_contact_does_not_2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="<@orcid.msg 'common.kb_uri_default'/>/360006897554" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
+                                                <p><@spring.message "manage_consortium.this_contact_does_not_2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897554" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
                                             </div>
                                         </div>
                                     </div>
