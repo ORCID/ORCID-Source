@@ -153,6 +153,12 @@ import { SelfServiceRemoveSubMemberModule }
 
 import { Social2FAModule }
     from './social2FA/social2FA.ts';
+    
+import { InstTwoFactorAuthModule }
+    from './inst2FA/inst2FA.ts';
+    
+import { Institutional2FAModule }
+    from './institutional2FA/institutional2FA.ts';
 
 import { SwitchUserModule }
     from './switchUser/switchUser.ts';
@@ -237,6 +243,7 @@ export const orcidApp = angular.module(
         FundingModule.name,
         HomeModule.name,
         HeaderModule.name,
+        Institutional2FAModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
         ModalModule.name,
@@ -262,6 +269,7 @@ export const orcidApp = angular.module(
         SelfServiceRemoveContactModule.name,
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
+        InstTwoFactorAuthModule.name,
         SwitchUserModule.name,
         ThanksForRegisteringModule.name,
         ThanksForVerifyingModule.name,

@@ -1,4 +1,4 @@
-<script type="text/ng-template" id="institutional2-f-a-ng2">
+<script type="text/ng-template" id="institutional2-F-A-ng2-template">
     <div>
         <form class="form-social-sign-in" (ngSubmit)="submitCode()" method="post">
             <div class="row">

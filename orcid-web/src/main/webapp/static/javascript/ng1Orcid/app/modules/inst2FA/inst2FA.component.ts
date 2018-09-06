@@ -1,3 +1,5 @@
+declare var $window: any;
+
 //Import all the angular components
 
 import { NgForOf, NgIf } 
@@ -11,27 +13,23 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
-import { ShibbolethService } 
-    from '../../shared/shibboleth.service.ts'; 
-
-import { PreferencesService } 
-    from '../../shared/preferences.service.ts'; 
+import { TwoFAStateService } 
+    from '../../shared/twoFAState.service.ts';
 
 
 @Component({
-    selector: 'institutional2-F-A-ng2',
-    template:  scriptTmpl("institutional2-F-A-ng2-template")
+    selector: 'insttwofactorauthng2',
+    template:  scriptTmpl("insttwofactorauthng2-template")
 })
-export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnInit {
+export class InstTwoFactorAuthComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     codes: any;
-    verificationCode: any;
-    recoveryCode: any;
+    verificationCode: string;
+    recoveryCode: string;
 
     constructor(
-        private shibbolethService: ShibbolethService,
-        private prefsSrvc: PreferencesService
+        private twoFAStateService: TwoFAStateService
     ) {
         this.codes = {};
         this.verificationCode = "";
@@ -43,7 +41,7 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
             $('#recoveryCodeSignin').show();
         });
 
-        this.shibbolethService.init()
+        this.twoFAStateService.init()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -52,14 +50,13 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
                 this.codes = data;
             },
             error => {
-                //console.log('getAlsoKnownAsFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };
 
     submitCode(): void {
-
-        this.shibbolethService.submitCode( this.codes )
+        this.twoFAStateService.submitCode( this.codes )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -68,18 +65,16 @@ export class Institutional2FAComponent implements AfterViewInit, OnDestroy, OnIn
                 this.codes = data;
                 if (data.errors.length == 0) {
                     window.location.href = data.redirectUrl;
-
                 } else {
                     this.verificationCode = "";
                     this.recoveryCode = "";
                 }
             },
             error => {
-                //console.log('getAlsoKnownAsFormError', error);
+                //console.log('getWebsitesFormError', error);
             } 
         );
     };
-
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

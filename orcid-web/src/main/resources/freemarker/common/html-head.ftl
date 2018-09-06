@@ -154,7 +154,6 @@
 
     <!-- NG2: QA -->
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>  
-        <#include "/includes/ng2_templates/social-2FA-ng2-template.ftl"> 
         <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
             <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
         </#if>

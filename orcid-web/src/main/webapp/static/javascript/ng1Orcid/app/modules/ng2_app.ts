@@ -172,6 +172,12 @@ import { SelfServiceRemoveSubMemberNg2Module }
 
 import { Social2FANg2Module }
     from './social2FA/social2FA.ts';
+    
+import { InstTwoFactorAuthNg2Module }
+    from './inst2FA/inst2FA.ts';
+    
+import { Institutional2FANg2Module }
+    from './institutional2FA/institutional2FA.ts';
 
 import { SwitchUserNg2Module }
     from './switchUser/switchUser.ts';
@@ -343,6 +349,7 @@ export class RootCmp {
         FundingFormNg2Module,
         FundingNg2Module,
         HomeNg2Module,
+        Institutional2FANg2Module,
         LanguageNg2Module,
         LinkAccountNg2Module,
         ModalNg2Module, //Approved
@@ -368,6 +375,7 @@ export class RootCmp {
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
+        InstTwoFactorAuthNg2Module,
         SwitchUserNg2Module,
         ThanksForRegisteringNg2Module,
         ThanksForVerifyingNg2Module,
