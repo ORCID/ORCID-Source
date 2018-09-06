@@ -32,9 +32,9 @@ export class MembersListComponent {
     alphabet: Array<string> = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
     
     constructor(
-        private commonSrvc: CommonService,
-        private membersListService: MembersListService,
-        private featuresService: FeaturesService,
+        protected commonSrvc: CommonService,
+        protected membersListService: MembersListService,
+        protected featuresService: FeaturesService,
     ) {}
     
     getCommunityTypes() {
@@ -51,14 +51,22 @@ export class MembersListComponent {
     getMembersList() {
         this.membersListService.getMembersList()
             .subscribe(data => {
-                data.sort(function(a, b){ return a.publicDisplayName.localeCompare(b.publicDisplayName); });
-                this.unfilteredMembersList = data;
-                this.membersList = this.unfilteredMembersList.slice();
+                this.initMembersList(data);
             },
             error => {
                 //console.log('getMembersList error', error);
             } 
         );
+    }
+    
+    initMembersList(members: Array<any>) : void {
+        this.sortMembers(members);
+        this.unfilteredMembersList = members;
+        this.membersList = this.unfilteredMembersList.slice();
+    }
+    
+    sortMembers(members: Array<any>) : void {
+        members.sort(function(a, b){ return a.publicDisplayName.localeCompare(b.publicDisplayName); });
     }
     
     getMemberPageUrl(slug: string) : string {

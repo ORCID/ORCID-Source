@@ -19,8 +19,8 @@ import { CommonNg2Module }
 import { UniquePipe }
     from '../../pipes/uniqueNg2.ts';
 
-//In the end only membersListNg2 should remain
 import { MembersListComponent } from './membersList.component.ts';
+import { ConsortiaListComponent } from './consortiaList.component.ts';
 
 // This is the Angular 1 part of the module
 export const MembersListModule = angular.module(
@@ -33,10 +33,12 @@ export const MembersListModule = angular.module(
     {
         declarations: [ 
             MembersListComponent,
+            ConsortiaListComponent,
             UniquePipe
         ],
         entryComponents: [ 
-            MembersListComponent 
+            MembersListComponent,
+            ConsortiaListComponent
         ],
         imports: [
             CommonModule,
@@ -55,7 +57,13 @@ MembersListModule.directive(
     <any>downgradeComponent(
         {
             component: MembersListComponent,
-            //inputs: ['text']
+        }
+    )
+    ).directive(
+    'consortiaListNg2', 
+    <any>downgradeComponent(
+        {
+            component: ConsortiaListComponent,
         }
     )
 );
