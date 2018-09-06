@@ -66,7 +66,7 @@ public class CrossrefFinderTest {
     @Test
     public void testSimple(){
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", new ExternalIDs());
-        assertEquals("crossref",result.getServiceName());
+        assertEquals("crossref",result.getFinderName());
         assertEquals(3,result.getResults().size());
     }
     
@@ -80,7 +80,7 @@ public class CrossrefFinderTest {
         ids.getExternalIdentifier().add(id);
         
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", ids);
-        assertEquals("crossref",result.getServiceName());
+        assertEquals("crossref",result.getFinderName());
         assertEquals(2,result.getResults().size());
     }
     
@@ -104,7 +104,7 @@ public class CrossrefFinderTest {
         ids.getExternalIdentifier().add(id2);
         ids.getExternalIdentifier().add(id3);
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", ids);
-        assertEquals("crossref",result.getServiceName());
+        assertEquals("crossref",result.getFinderName());
         assertEquals(0,result.getResults().size());
     }
 }

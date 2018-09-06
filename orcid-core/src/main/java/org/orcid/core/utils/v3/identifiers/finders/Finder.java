@@ -6,6 +6,7 @@ import org.orcid.pojo.FindMyStuffResult;
 public interface Finder {
 
     public FindMyStuffResult find(String orcid,ExternalIDs existingIDs);
-    public String getServiceName();
+    public String getFinderName();
+    public String getRelatedClientId();
     
 }

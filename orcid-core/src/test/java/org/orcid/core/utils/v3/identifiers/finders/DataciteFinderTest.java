@@ -70,7 +70,7 @@ public class DataciteFinderTest {
     @Test
     public void testSimple(){
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", new ExternalIDs());
-        assertEquals("datacite",result.getServiceName());
+        assertEquals("datacite",result.getFinderName());
         assertEquals(25,result.getResults().size());
     }
     
@@ -84,7 +84,7 @@ public class DataciteFinderTest {
         ids.getExternalIdentifier().add(id);
         
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", ids);
-        assertEquals("datacite",result.getServiceName());
+        assertEquals("datacite",result.getFinderName());
         assertEquals(24,result.getResults().size());
     }
     
@@ -103,7 +103,7 @@ public class DataciteFinderTest {
         ids.getExternalIdentifier().add(id);
         ids.getExternalIdentifier().add(id2);
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", ids);
-        assertEquals("datacite",result.getServiceName());
+        assertEquals("datacite",result.getFinderName());
         assertEquals(23,result.getResults().size());
     }
 }

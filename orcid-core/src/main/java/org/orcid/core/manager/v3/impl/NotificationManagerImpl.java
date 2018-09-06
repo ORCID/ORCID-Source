@@ -54,6 +54,7 @@ import org.orcid.jaxb.model.v3.rc1.notification.permission.Items;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
 import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.model.v3.rc1.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -66,6 +67,7 @@ import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -1055,6 +1057,25 @@ public class NotificationManagerImpl implements NotificationManager {
         return notificationAdapter.toNotification(notificationEntity);
     }
 
+    /** Create a basic notification.  No details, basically says this service has found some stuff.  Includes actionable url.
+     * 
+     * @param userOrcid
+     * @param clientId
+     * @param authorizationUrl
+     */
+    @Override
+    public NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl){
+        NotificationFindMyStuff notification = new NotificationFindMyStuff();
+        notification.setNotificationType(NotificationType.FIND_MY_STUFF);
+        notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
+        NotificationFindMyStuffEntity notificationEntity = (NotificationFindMyStuffEntity) notificationAdapter
+                .toNotificationEntity(notification);
+        notificationEntity.setProfile(new ProfileEntity(userOrcid));
+        notificationEntity.setClientSourceId(clientId);
+        notificationDao.persist(notificationEntity);   
+        return notificationEntity;
+    }
+    
     @Override
     public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
         Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userOrcid);

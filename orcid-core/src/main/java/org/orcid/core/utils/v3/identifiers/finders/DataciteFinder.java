@@ -27,13 +27,13 @@ public class DataciteFinder implements Finder {
     @Resource
     PIDResolverCache cache;
 
-    private static final String serviceName = "datacite";
+    private static final String clientID = "APP";
     private static final String metadataEndpoint = "https://api.datacite.org/works?query=";
 
     @Override
     public FindMyStuffResult find(String orcid, ExternalIDs existingIDs) {
         FindMyStuffResult result = new FindMyStuffResult();
-        result.setServiceName(getServiceName());
+        result.setFinderName(getFinderName());
         try {
             InputStream is = cache.get(metadataEndpoint + orcid, "application/json");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -52,8 +52,13 @@ public class DataciteFinder implements Finder {
     }
 
     @Override
-    public String getServiceName() {
-        return serviceName;
+    public String getFinderName() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String getRelatedClientId() {
+        return clientID;
     }
 
     // MODELS

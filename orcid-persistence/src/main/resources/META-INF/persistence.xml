@@ -59,6 +59,7 @@
         <class>org.orcid.persistence.jpa.entities.EmailFrequencyEntity</class>     
         <class>org.orcid.persistence.jpa.entities.ResearchResourceEntity</class>
         <class>org.orcid.persistence.jpa.entities.ResearchResourceItemEntity</class>
+        <class>org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity</class>
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>

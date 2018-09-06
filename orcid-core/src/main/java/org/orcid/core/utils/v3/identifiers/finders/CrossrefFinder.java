@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class CrossrefFinder implements Finder{
+public class CrossrefFinder implements Finder {
 
     @Resource
     DOINormalizer norm;
@@ -26,17 +26,18 @@ public class CrossrefFinder implements Finder{
     @Resource
     PIDResolverCache cache;
 
-    private static final String serviceName = "crossref";
+    private static final String clientId = "APP";
     private static final String metadataEndpoint = "https://search.crossref.org/dois?q=";
 
     @Override
     public FindMyStuffResult find(String orcid, ExternalIDs existingIDs) {
         FindMyStuffResult result = new FindMyStuffResult();
-        result.setServiceName(getServiceName());
+        result.setFinderName(getFinderName());
         try {
             InputStream is = cache.get(metadataEndpoint + orcid, "application/json");
             ObjectMapper objectMapper = new ObjectMapper();
-            List<CrossrefSearchResult> crResult = objectMapper.readValue(is, new TypeReference<List<CrossrefSearchResult>>(){});
+            List<CrossrefSearchResult> crResult = objectMapper.readValue(is, new TypeReference<List<CrossrefSearchResult>>() {
+            });
             for (CrossrefSearchResult w : crResult) {
                 if (!existingIDs.getExternalIdentifier().contains(w.getExternalID(norm))) {
                     result.getResults().add(new FindMyStuffResult.Result(w.doi, "doi", w.title));
@@ -51,12 +52,17 @@ public class CrossrefFinder implements Finder{
     }
 
     @Override
-    public String getServiceName() {
-        return serviceName;
+    public String getFinderName() {
+        return this.getClass().getSimpleName();
     }
-    
-    //MODELS
-    
+
+    @Override
+    public String getRelatedClientId() {
+        return clientId;
+    }
+
+    // MODELS
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CrossrefSearchResult {
         public String doi;
@@ -64,7 +70,7 @@ public class CrossrefFinder implements Finder{
 
         public CrossrefSearchResult() {
         };
-        
+
         public ExternalID getExternalID(DOINormalizer norm) {
             ExternalID eid = new ExternalID();
             eid.setType("doi");
@@ -73,5 +79,5 @@ public class CrossrefFinder implements Finder{
             return eid;
         }
     }
-    
+
 }
