@@ -9,14 +9,13 @@
                     <p>
                         ${springMacroRequestContext.getMessage("2FA.setup.details")}
                         <br />
-                        <a href="${knowledgeBaseUri}/articles/1190068"
-                            target="2FA.setup.see.knowledgebase">${springMacroRequestContext.getMessage("2FA.setup.see.knowledgebase")}</a>
+                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673" target="2FA.setup.see.knowledgebase">${springMacroRequestContext.getMessage("2FA.setup.see.knowledgebase")}</a>
                     </p>
                     <ul id="2FASetupSteps" class="twoFactorAuthSetup">
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step1")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details")}</p>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_2")}<a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="2fa-otp">${springMacroRequestContext.getMessage("2FA.setup.step1.details.googleAuthenticator")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.list_separator")}<a href="https://freeotp.github.io" target="2fa-otp">${springMacroRequestContext.getMessage("2FA.setup.step1.details.freeOTP")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.list_separator")}${springMacroRequestContext.getMessage("2FA.setup.step1.details.or")}<a href="https://authy.com" target="2fa-otp">${springMacroRequestContext.getMessage("2FA.setup.step1.details.authy")}</a>${springMacroRequestContext.getMessage("2FA.setup.step1.details.end")}</p>
-                        <p><a href="https://support.orcid.org/knowledgebase/articles/1190068">${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_3")}</a></p>
+                        <p><a href="<@orcid.msg 'common.kb_uri_default'/>360006971673" target="2FA.setup.step1.details.part_3">${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_3")}</a></p>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step1.details.part_4")}</p>
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
@@ -40,7 +39,7 @@
                     <p>
                         ${springMacroRequestContext.getMessage("2FA.recoveryCodes.details")}
                         <br />
-                        <a href="${knowledgeBaseUri}/articles/1190068" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.recoveryCodes.learn_more")}</a>
+                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.recoveryCodes.learn_more")}</a>
                     </p>
                     <div id="recoveryCodes">
                         <span *ngFor="let recoveryCode of recoveryCodes">{{recoveryCode}}<br></span>
