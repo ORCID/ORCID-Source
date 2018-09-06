@@ -16,7 +16,7 @@
                             <div id="works-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><@orcid.msg 'manage_works_settings.helpPopoverWorks'/> <a href="${knowledgeBaseUri}/articles/462032" target="manage_works_settings.helpPopoverWorks"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p><@orcid.msg 'manage_works_settings.helpPopoverWorks'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006973133" target="manage_works_settings.helpPopoverWorks"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div> 
@@ -306,7 +306,7 @@
                 <div class="row full-height-row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
                         <p>
-                            <@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="${knowledgeBaseUri}/articles/390530#2import" target="workspace.bibtexImporter.learnMore"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
+                            <@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="<@orcid.msg 'common.kb_uri_default'/>360006973353" target="workspace.bibtexImporter.learnMore"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
                         </p> 
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-4">

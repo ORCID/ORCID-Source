@@ -9,7 +9,7 @@
                     <p>
                         ${springMacroRequestContext.getMessage("2FA.setup.details")}
                         <br />
-                        <a href="${knowledgeBaseUri}/articles/1190068"
+                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673"
                             target="2FA.setup.see.knowledgebase">${springMacroRequestContext.getMessage("2FA.setup.see.knowledgebase")}</a>
                     </p>
                     <ul id="2FASetupSteps" class="twoFactorAuthSetup">
@@ -40,7 +40,7 @@
                     <p>
                         ${springMacroRequestContext.getMessage("2FA.recoveryCodes.details")}
                         <br />
-                        <a href="${knowledgeBaseUri}/articles/1190068" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.recoveryCodes.learn_more")}</a>
+                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673" target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.recoveryCodes.learn_more")}</a>
                     </p>
                     <div id="recoveryCodes">
                         <span *ngFor="let recoveryCode of recoveryCodes">{{recoveryCode}}<br></span>
