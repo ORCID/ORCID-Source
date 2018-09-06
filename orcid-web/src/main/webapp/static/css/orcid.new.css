@@ -6387,7 +6387,7 @@ a#reset-password-toggle-text:hover:active {
 }
 
 .member-list select,.self-service select {
-    margin: 0
+    margin: 0 4px 0 0
 }
 
 .member-list .btn-primary {
@@ -6409,7 +6409,7 @@ a#reset-password-toggle-text:hover:active {
 
 .member-list .filter li {
     display: inline;
-    padding: 3px
+    padding: 3px;
 }
 
 .member-list ul.filter {

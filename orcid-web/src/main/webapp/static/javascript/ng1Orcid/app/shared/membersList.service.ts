@@ -1,0 +1,40 @@
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+import { Injectable } 
+    from '@angular/core';
+
+import { Observable, Subject } 
+    from 'rxjs';
+
+@Injectable()
+export class MembersListService {
+    
+    private headers: HttpHeaders;
+    private notify = new Subject<any>();
+    notifyObservable$ = this.notify.asObservable();
+    
+    private communityTypesUrl: string;
+    private membersListUrl: string;
+    
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+            }
+        );
+        this.communityTypesUrl = getBaseUri() + '/members/communityTypes.json';
+        this.membersListUrl = getBaseUri() + '/members/members.json';
+    }
+    
+    getCommunityTypes(): Observable<any> {
+        return this.http.get(this.communityTypesUrl);
+    }
+    
+    getMembersList(): Observable<any> {
+        return this.http.get(this.membersListUrl);
+    }
+    
+}
