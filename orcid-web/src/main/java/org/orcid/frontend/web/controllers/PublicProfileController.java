@@ -274,7 +274,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         ModelAndView mav = null;
         if (request.getRequestURI().contains("/print")) {
             mav = new ModelAndView("print_public_record");
-            mav.addObject("hideUserVoiceScript", true);
+            mav.addObject("hideSupportWidget", true);
         } else {
             mav = new ModelAndView("public_profile_v3");
         }

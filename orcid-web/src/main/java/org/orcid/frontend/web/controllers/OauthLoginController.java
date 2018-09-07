@@ -104,7 +104,7 @@ public class OauthLoginController extends OauthControllerBase {
             }
         }
         
-        mav.addObject("hideUserVoiceScript", true);
+        mav.addObject("hideSupportWidget", true);
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.addObject("originalOauth2Process", true);
         mav.setViewName("oauth_login");
