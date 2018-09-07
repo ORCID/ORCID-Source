@@ -97,7 +97,10 @@ public enum Features implements Feature {
     MANUAL_WORK_GROUPING,
 
     @Label("Verbos work group logging")
-    WORK_GROUP_LOGGING;
+    WORK_GROUP_LOGGING,
+    
+    @Label("Grouping suggestions")
+    GROUPING_SUGGESTIONS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
