@@ -98,6 +98,7 @@ public class FindMyStuffManagerTest extends DBUnitTest{
         FindMyStuffItem result1 = new FindMyStuffItem("id1", "doi", "");
         r.getResults().add(result1);
         when(dataciteFinder.getRelatedClientId()).thenReturn("x");
+        when(dataciteFinder.isEnabled()).thenReturn(true);
         when(dataciteFinder.getFinderName()).thenReturn("DataciteFinder");
         when(dataciteFinder.find(Matchers.anyString(), Matchers.any())).thenReturn(r);
         TargetProxyHelper.injectIntoProxy(findMyStuffManager, "finders", f);
