@@ -49,7 +49,7 @@
         * Public API:   https://pub.sandbox.orcid.org/v2.0_rcX/
         * Member API:   https://api.sandbox.orcid.org/v2.0_rcX/
 
-* **[ORCID Message 1.2](https://github.com/ORCID/ORCID-Sßource/blob/master/orcid-model/src/main/resources/orcid-message-1.2.xsd)**
+* **[ORCID Message 1.2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2.xsd)**
     * API Base URLs - PRODUCTION
         * Public API:   https://pub.orcid.org/v1.2/
         * Member API:   https://api.orcid.org/v1.2/
@@ -66,8 +66,8 @@
 
 _NOTE:<br />API calls for member to ORCID iD holder authorization using OAuth are not affected by XSD versions. Regardless of the XSD version used, the OAuth endpoints are:_
 
-* _[http://orcid.org/oauth/authorize](http://support.orcid.org/knowledgebase/articles/120107)_
-* _[https://orcid.org/oauth/token](http://support.orcid.org/knowledgebase/articles/119985)_
+* _[http://orcid.org/oauth/authorize](https://members.orcid.org/api/oauth/get-oauthauthorize)_
+* _[https://orcid.org/oauth/token](https://members.orcid.org/api/oauth/3legged-oauth)_
 
 
 # About XSD Updates and Versioning
@@ -97,7 +97,7 @@ The deprecated version(s) of the XSD are former versions of the XSD. If you are 
 * Developers on deprecated versions should refer to the migration notes to assist in moving to the latest release version.
 * Future functionality will not be supported in deprecated versions.
 * Future versions may not be backward compatible with deprecated versions.
-* Deprecated versions will have a “sunset date”, after which they will no longer be supported. Developers experiencing problems with deprecated versions will be directed to move to the release version.
+* Deprecated versions will have a "sunset date", after which they will no longer be supported. Developers experiencing problems with deprecated versions will be directed to move to the release version.
 
 ### <a name="releaseVersion"></a>Release version(s)
 
@@ -111,7 +111,7 @@ Release versions of the XSD are fully documented, tested, supported and encourag
 
 Release candidate versions of the XSD contain elements and data structures for future functionality, potential changes and other enhancements. Of note about release candidates:
 
-* The version number of release candidates will contain ‘rc’ to indicate that they are release candidates (for example, version 1.2_rc1). The first two numbers indicate the target release version for the candidate. For example, the changes and enhancements in version 1.2_rc1 are being considered for inclusion with release version 1.2.
+* The version number of release candidates will contain "rc" to indicate that they are release candidates (for example, version 1.2_rc1). The first two numbers indicate the target release version for the candidate. For example, the changes and enhancements in version 1.2_rc1 are being considered for inclusion with release version 1.2.
 * Release candidates are generally unsupported, and have limited documentation.
 * Elements and data structure within a release candidate XSD could change at any time based on development needs and feedback from early adopters.
 * We welcome feedback from any developers working with current release candidates.
