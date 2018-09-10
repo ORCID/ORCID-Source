@@ -19,7 +19,6 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidApiException;
-import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
@@ -211,7 +210,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
         } else if (ExceedMaxNumberOfElementsException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity(
-                    "The maximum number of works that can be connected to an ORCID record is 10,000 and you have now exceeded this limit. Please remove some works and try again. For more information, see https://support.orcid.org/knowledgebase/articles/462032-add-works-to-your-orcid-record", null);
+                    "The maximum number of works that can be connected to an ORCID record is 10,000 and you have now exceeded this limit. Please remove some works and try again. For more information, see https://support.orcid.org/hc/articles/360006973133", null);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else if(DeactivatedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account deactivated : ", t);
