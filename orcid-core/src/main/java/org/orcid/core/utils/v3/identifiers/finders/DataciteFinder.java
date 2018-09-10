@@ -12,7 +12,9 @@ import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
 import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.pojo.FindMyStuffItem;
 import org.orcid.pojo.FindMyStuffResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,21 +28,27 @@ public class DataciteFinder implements Finder {
 
     @Resource
     PIDResolverCache cache;
-
-    private static final String clientID = "APP";
-    private static final String metadataEndpoint = "https://api.datacite.org/works?query=";
+    
+    @Value("${org.orcid.core.finder.datacite.enabled}")
+    private Boolean isEnabled;
+    @Value("${org.orcid.core.finder.datacite.clientid}")//"0000-0001-8099-6984"
+    private String clientId;
+    @Value("${org.orcid.core.finder.datacite.endpoint}")//"https://api.datacite.org/works?query="
+    private String metadataEndpoint;
 
     @Override
     public FindMyStuffResult find(String orcid, ExternalIDs existingIDs) {
         FindMyStuffResult result = new FindMyStuffResult();
         result.setFinderName(getFinderName());
+        if (!isEnabled())
+            return result;
         try {
             InputStream is = cache.get(metadataEndpoint + orcid, "application/json");
             ObjectMapper objectMapper = new ObjectMapper();
             DataciteSearchResult dcResult = objectMapper.readValue(is, DataciteSearchResult.class);
             for (DataciteSimpleWork w : dcResult.data) {
                 if (!existingIDs.getExternalIdentifier().contains(w.attributes.getExternalID())) {
-                    result.getResults().add(new FindMyStuffResult.Result(w.attributes.doi, "doi", w.attributes.title));
+                    result.getResults().add(new FindMyStuffItem(w.attributes.doi, "doi", w.attributes.title));
                 }
             }
         } catch (MalformedURLException e) {
@@ -58,7 +66,7 @@ public class DataciteFinder implements Finder {
 
     @Override
     public String getRelatedClientId() {
-        return clientID;
+        return clientId;
     }
 
     // MODELS
@@ -96,4 +104,8 @@ public class DataciteFinder implements Finder {
         }
     }
 
+    @Override
+    public boolean isEnabled() {
+        return (getRelatedClientId() != null && metadataEndpoint != null && isEnabled !=null && isEnabled);
+    }
 }

@@ -50,6 +50,4 @@ public class FindMyStuffController extends BaseController{
         return results;
     }
     
-    
-    
 }

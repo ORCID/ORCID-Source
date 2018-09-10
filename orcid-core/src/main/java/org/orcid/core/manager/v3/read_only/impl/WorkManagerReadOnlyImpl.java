@@ -244,7 +244,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 }
             }
         }
-        return null;
+        return ids;
     }
 
 }

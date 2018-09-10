@@ -8,5 +8,6 @@ public interface Finder {
     public FindMyStuffResult find(String orcid,ExternalIDs existingIDs);
     public String getFinderName();
     public String getRelatedClientId();
+    public boolean isEnabled();
     
 }

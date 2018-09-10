@@ -31,6 +31,8 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class CrossrefFinderTest {
 
     @Mock
@@ -39,7 +41,8 @@ public class CrossrefFinderTest {
     @Mock
     PIDResolverCache cache;
     
-    CrossrefFinder finder = new CrossrefFinder();
+    @Resource
+    CrossrefFinder finder;
     
     @Before
     public void setUp() throws IOException {
@@ -66,7 +69,7 @@ public class CrossrefFinderTest {
     @Test
     public void testSimple(){
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", new ExternalIDs());
-        assertEquals("crossref",result.getFinderName());
+        assertEquals("CrossrefFinder",result.getFinderName());
         assertEquals(3,result.getResults().size());
     }
     
@@ -80,7 +83,7 @@ public class CrossrefFinderTest {
         ids.getExternalIdentifier().add(id);
         
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", ids);
-        assertEquals("crossref",result.getFinderName());
+        assertEquals("CrossrefFinder",result.getFinderName());
         assertEquals(2,result.getResults().size());
     }
     
@@ -104,7 +107,7 @@ public class CrossrefFinderTest {
         ids.getExternalIdentifier().add(id2);
         ids.getExternalIdentifier().add(id3);
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", ids);
-        assertEquals("crossref",result.getFinderName());
+        assertEquals("CrossrefFinder",result.getFinderName());
         assertEquals(0,result.getResults().size());
     }
 }

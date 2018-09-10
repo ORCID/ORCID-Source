@@ -12,12 +12,16 @@ import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
 import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.pojo.FindMyStuffItem;
 import org.orcid.pojo.FindMyStuffResult;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Component
 public class CrossrefFinder implements Finder {
 
     @Resource
@@ -26,13 +30,20 @@ public class CrossrefFinder implements Finder {
     @Resource
     PIDResolverCache cache;
 
-    private static final String clientId = "APP";
-    private static final String metadataEndpoint = "https://search.crossref.org/dois?q=";
+    
+    @Value("${org.orcid.core.finder.crossref.enabled}")
+    private Boolean isEnabled;
+    @Value("${org.orcid.core.finder.crossref.clientid}")//"0000-0001-9884-1913";
+    private String clientId;
+    @Value("${org.orcid.core.finder.crossref.endpoint}")//"https://search.crossref.org/dois?q="
+    private String metadataEndpoint;
 
     @Override
     public FindMyStuffResult find(String orcid, ExternalIDs existingIDs) {
         FindMyStuffResult result = new FindMyStuffResult();
         result.setFinderName(getFinderName());
+        if (!isEnabled())
+            return result;
         try {
             InputStream is = cache.get(metadataEndpoint + orcid, "application/json");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -40,7 +51,7 @@ public class CrossrefFinder implements Finder {
             });
             for (CrossrefSearchResult w : crResult) {
                 if (!existingIDs.getExternalIdentifier().contains(w.getExternalID(norm))) {
-                    result.getResults().add(new FindMyStuffResult.Result(w.doi, "doi", w.title));
+                    result.getResults().add(new FindMyStuffItem(w.doi, "doi", w.title));
                 }
             }
         } catch (MalformedURLException e) {
@@ -78,6 +89,11 @@ public class CrossrefFinder implements Finder {
             eid.setNormalized(new TransientNonEmptyString(norm.normalise("doi", doi)));
             return eid;
         }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return (getRelatedClientId() != null && metadataEndpoint != null && isEnabled !=null && isEnabled);
     }
 
 }

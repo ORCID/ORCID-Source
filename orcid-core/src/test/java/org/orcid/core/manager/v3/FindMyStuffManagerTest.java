@@ -36,6 +36,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
+import org.orcid.pojo.FindMyStuffItem;
 import org.orcid.pojo.FindMyStuffResult;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -94,7 +95,7 @@ public class FindMyStuffManagerTest extends DBUnitTest{
         FindMyStuffResult r = new FindMyStuffResult();
         r.setFinderName("DataciteFinder");
         r.setResults(Lists.newArrayList());
-        FindMyStuffResult.Result result1 = new FindMyStuffResult.Result("id1", "doi", "");
+        FindMyStuffItem result1 = new FindMyStuffItem("id1", "doi", "");
         r.getResults().add(result1);
         when(dataciteFinder.getRelatedClientId()).thenReturn("x");
         when(dataciteFinder.getFinderName()).thenReturn("DataciteFinder");

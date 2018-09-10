@@ -74,7 +74,8 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
         Map<String, FindMyStuffResult> result = new HashMap<String, FindMyStuffResult>();
         ExternalIDs existingIDs = workManagerReadOnly.getAllExternalIDs(orcid);
         for (Finder f : finders) {
-            result.put(f.getFinderName(), f.find(orcid, existingIDs));
+            if (f.isEnabled())
+                result.put(f.getFinderName(), f.find(orcid, existingIDs));
         }
         return result;
     }
@@ -97,19 +98,21 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
         List<FindMyStuffHistoryEntity> history = getHistory(orcid);
         Set<String> skipServices = Sets.newHashSet();
         Map<String, FindMyStuffHistoryEntity> existingHistories = Maps.newHashMap();
-        for (FindMyStuffHistoryEntity h : history) {
-            existingHistories.put(h.getFinderName(), h);
-            // opted out
-            if (h.getOptOut()) {
-                skipServices.add(h.getFinderName());
-            }
-            // note we don't check for actioned here - instead we look at
-            // permissions below (action may have been initiated but not
-            // followed through)
+        if (history != null){
+            for (FindMyStuffHistoryEntity h : history) {
+                existingHistories.put(h.getFinderName(), h);
+                // opted out
+                if (h.getOptOut()) {
+                    skipServices.add(h.getFinderName());
+                }
+                // note we don't check for actioned here - instead we look at
+                // permissions below (action may have been initiated but not
+                // followed through)
+            }            
         }
         // check for existing permissions
         for (Finder f : finders) {
-            if (orcidOauth2TokenDetailService.doesClientKnowUser(f.getRelatedClientId(), orcid))
+            if (f.isEnabled() && orcidOauth2TokenDetailService.doesClientKnowUser(f.getRelatedClientId(), orcid))
                 skipServices.add(f.getFinderName());
         }
 
@@ -117,7 +120,7 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
         List<FindMyStuffResult> result = Lists.newArrayList();
         ExternalIDs existingIDs = workManagerReadOnly.getAllExternalIDs(orcid);
         for (Finder f : finders) {
-            if (!skipServices.contains(f.getFinderName())) {
+            if (f.isEnabled() && !skipServices.contains(f.getFinderName())) {
                 FindMyStuffResult r = f.find(orcid, existingIDs);
                 // if found, update history, create notification, return details
                 // & notification

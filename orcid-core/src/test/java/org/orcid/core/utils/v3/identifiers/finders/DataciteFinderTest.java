@@ -31,6 +31,8 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class DataciteFinderTest {
 
     @Mock
@@ -39,7 +41,8 @@ public class DataciteFinderTest {
     @Mock
     PIDResolverCache cache;
     
-    DataciteFinder finder = new DataciteFinder();
+    @Resource
+    DataciteFinder finder;
     
     @Before
     public void setUp() throws IOException {
@@ -70,7 +73,7 @@ public class DataciteFinderTest {
     @Test
     public void testSimple(){
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", new ExternalIDs());
-        assertEquals("datacite",result.getFinderName());
+        assertEquals("DataciteFinder",result.getFinderName());
         assertEquals(25,result.getResults().size());
     }
     
@@ -84,7 +87,7 @@ public class DataciteFinderTest {
         ids.getExternalIdentifier().add(id);
         
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", ids);
-        assertEquals("datacite",result.getFinderName());
+        assertEquals("DataciteFinder",result.getFinderName());
         assertEquals(24,result.getResults().size());
     }
     
@@ -103,7 +106,7 @@ public class DataciteFinderTest {
         ids.getExternalIdentifier().add(id);
         ids.getExternalIdentifier().add(id2);
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", ids);
-        assertEquals("datacite",result.getFinderName());
+        assertEquals("DataciteFinder",result.getFinderName());
         assertEquals(23,result.getResults().size());
     }
 }
