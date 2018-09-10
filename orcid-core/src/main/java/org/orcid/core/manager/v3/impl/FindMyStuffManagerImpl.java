@@ -165,7 +165,7 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
                         return nfms;
                 }
             }
-        NotificationFindMyStuffEntity entity = notificationManager.createFindMyStuffNotification(orcid, finder.getFinderName(),
+        NotificationFindMyStuffEntity entity = notificationManager.createFindMyStuffNotification(orcid, finder.getRelatedClientId(),
                 buildAuthorizationUrl(finder.getRelatedClientId()));
         return (NotificationFindMyStuff) notificationAdapter.toNotification(entity);
     }

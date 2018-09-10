@@ -1070,7 +1070,12 @@ public class NotificationManagerImpl implements NotificationManager {
         notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
         NotificationFindMyStuffEntity notificationEntity = (NotificationFindMyStuffEntity) notificationAdapter
                 .toNotificationEntity(notification);
-        notificationEntity.setProfile(new ProfileEntity(userOrcid));
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        if (profile == null) {
+            throw OrcidNotFoundException.newInstance(userOrcid);
+        }
+        notificationEntity.setProfile(profile);
+        //notificationEntity.setProfile(new ProfileEntity(userOrcid));
         notificationEntity.setClientSourceId(clientId);
         notificationDao.persist(notificationEntity);   
         return notificationEntity;

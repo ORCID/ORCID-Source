@@ -27,6 +27,7 @@
         <class>org.orcid.persistence.jpa.entities.NotificationCustomEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationWorkEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity</class>
         <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity</class>        
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>

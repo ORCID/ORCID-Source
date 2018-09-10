@@ -40,6 +40,7 @@ public class CrossrefFinder implements Finder {
 
     @Override
     public FindMyStuffResult find(String orcid, ExternalIDs existingIDs) {
+        orcid = "0000-0003-1419-2405";
         FindMyStuffResult result = new FindMyStuffResult();
         result.setFinderName(getFinderName());
         if (!isEnabled())
