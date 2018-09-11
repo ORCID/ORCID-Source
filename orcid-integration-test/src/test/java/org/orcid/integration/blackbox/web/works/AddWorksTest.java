@@ -76,7 +76,7 @@ public class AddWorksTest extends BlackBoxBase {
     }
 
     public static By byWorkTitle(String workName) {
-        return By.xpath("//h3[@class='workspace-title']//span[text()='" + workName + "']");
+        return By.xpath("//h3[contains(@class, 'workspace-title')]//span[text()='" + workName + "']");
     }
     
     

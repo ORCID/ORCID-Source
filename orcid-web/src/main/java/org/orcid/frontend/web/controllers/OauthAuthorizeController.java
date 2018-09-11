@@ -179,7 +179,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
             }
         }
         
-        mav.addObject("hideUserVoiceScript", true);
+        mav.addObject("hideSupportWidget", true);
         mav.addObject("originalOauth2Process", true);
         mav.setViewName("confirm-oauth-access");        
         return mav;

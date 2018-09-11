@@ -11,7 +11,7 @@
               <@orcid.msg 'groups.merge.confirm.line_2'/>
             </p>
             <p *ngIf="!externalIdsPresent">
-              <@orcid.msg 'groups.merge.no_external_ids'/>
+              <@orcid.msg 'groups.merge.no_external_ids_1'/><a href="https://support.orcid.org/knowledgebase/articles/1807567-display-grouped-works"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
             </p>
           </div>
         </div>

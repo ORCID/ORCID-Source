@@ -94,74 +94,7 @@ public class EmailManagerTest extends BaseTest {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
         Collections.reverse(reversedDataFiles);
         removeDBUnitData(reversedDataFiles);
-    }
-    
-    @Test
-    public void emailExistsTest() {
-        assertTrue(emailManager.emailExists("spike@milligan.com"));
-        assertTrue(emailManager.emailExists("1@deprecate.com"));
-        assertTrue(emailManager.emailExists("4444-4444-4444-4498@milligan.com"));
-        assertTrue(emailManager.emailExists("MiXeD@cASe.com"));
-        assertTrue(emailManager.emailExists("public_0000-0000-0000-0001@test.orcid.org"));
-        assertTrue(emailManager.emailExists("test@test.com"));
-        
-        assertFalse(emailManager.emailExists("0000-0000-0000-0001@test.orcid.org"));
-        assertFalse(emailManager.emailExists("public_0000-0000-0000-0001@test.orcid"));
-    }
-    
-    @Test
-    public void isPrimaryEmailVerifiedTest() {        
-        assertFalse(emailManager.isPrimaryEmailVerified("4444-4444-4444-4445"));
-        assertFalse(emailManager.isPrimaryEmailVerified("0000-0000-0000-0001"));
-        assertTrue(emailManager.isPrimaryEmailVerified("0000-0000-0000-0003"));
-        assertTrue(emailManager.isPrimaryEmailVerified("4444-4444-4444-4499"));
-    }
-    
-    @Test
-    public void haveAnyEmailVerifiedTest() {
-        assertTrue(emailManager.haveAnyEmailVerified("0000-0000-0000-0003"));
-        assertTrue(emailManager.haveAnyEmailVerified("4444-4444-4444-4442"));
-        assertFalse(emailManager.haveAnyEmailVerified("0000-0000-0000-0001"));
-        assertFalse(emailManager.haveAnyEmailVerified("4444-4444-4444-4445"));
-    }
-    
-    @Test
-    public void getEmailsTest() {
-        Emails emails = emailManager.getEmails("0000-0000-0000-0003");
-        assertNotNull(emails);
-        assertNotNull(emails.getEmails());
-        assertEquals(5, emails.getEmails().size());
-        boolean found1 = false, found2 = false, found3 = false, found4=false, found5 = false;
-        for(Email email : emails.getEmails()) {
-            if(email.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                found1 = true;
-            } else if(email.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                found2 = true;
-            } else if(email.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                found3 = true;
-            } else if(email.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
-                found4 = true;
-            } else if(email.getEmail().equals("self_private_0000-0000-0000-0003@test.orcid.org")) {
-                found5 = true;
-            } else {
-                fail("Invalid email found: " + email.getEmail());
-            }
-        }
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        assertTrue(found5);
-    }
-    
-    @Test
-    public void getPublicEmailsTest() {
-        Emails emails = emailManager.getPublicEmails("0000-0000-0000-0003");
-        assertNotNull(emails);
-        assertNotNull(emails.getEmails());
-        assertEquals(1, emails.getEmails().size());
-        assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
-    }
+    }        
     
     @Test
     public void removeEmailTest() {

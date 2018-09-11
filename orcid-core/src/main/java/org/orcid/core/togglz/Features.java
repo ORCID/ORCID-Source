@@ -93,11 +93,17 @@ public enum Features implements Feature {
     @Label("Enable group affiliations")
     GROUP_AFFILIATIONS,
     
+    @Label("Support migration UV to Zendesk")
+    SUPPORT_MIGRATION,
+    
     @Label("Enable manual work grouping")
     MANUAL_WORK_GROUPING,
 
     @Label("Verbos work group logging")
-    WORK_GROUP_LOGGING;
+    WORK_GROUP_LOGGING,
+    
+    @Label("Grouping suggestions")
+    GROUPING_SUGGESTIONS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

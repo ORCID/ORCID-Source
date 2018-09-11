@@ -139,6 +139,9 @@ import { LanguageService }
 import { ManageMembersService } 
     from '../../shared/manageMembers.service.ts';
 
+import { MembersListService }
+    from '../../shared/membersList.service.ts'
+
 import { ModalService } 
     from '../../shared/modal.service.ts';
 
@@ -271,6 +274,7 @@ import { ResendClaimService }
             GenericService,
             LanguageService,
             ManageMembersService,
+            MembersListService,
             ModalService,
             NotificationsService,
             OauthService,

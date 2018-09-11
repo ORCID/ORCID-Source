@@ -392,7 +392,7 @@
         <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
             <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
                 <#if !(isPublicProfile??)>
-                    <div class="row" *ngIf="worksService?.groups?.length">
+                    <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <ul class="sources-actions">
                                 <li>
@@ -418,13 +418,27 @@
                                 </li>
                                 <li>
                                     <div class="bulk-edit-privacy-control left leftBuffer">
-                                        <@orcid.privacyToggle2Ng2 angularModel="none" elementId="none" 
+                                        <@orcid.privacyToggleBulkWorksNg2 angularModel="none" elementId="none" 
                                         questionClick=""
                                         clickedClassCheck=""
                                         publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
                                         limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
                                         privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
                                     </div>
+                                </li>
+                                <li>
+                                    <div class="popover-help-container">
+                                        <i class="glyphicon glyphicon-question-sign"></i>
+                                        <div class="bulk-actions-popover popover bottom">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <p>
+                                                    <span class="helpPopoverMergeHeading"><@orcid.msg 'groups.merge.helpPopoverMergeHeading'/></span><@orcid.msg 'groups.merge.helpPopoverMerge'/><br />
+                                                    <span class="helpPopoverDeleteBulkEditHeading"><@orcid.msg 'groups.merge.helpPopoverDeleteBulkEditHeading'/></span><@orcid.msg 'groups.merge.helpPopoverDeleteBulkEdit'/>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div> 
                                 </li>
                             </ul>
                         </div>
