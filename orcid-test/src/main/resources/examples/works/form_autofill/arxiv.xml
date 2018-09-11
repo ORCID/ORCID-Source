@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <link href="http://arxiv.org/api/query?search_query%3D%26id_list%3D0000.0000%26start%3D0%26max_results%3D10" rel="self" type="application/atom+xml"/>
+  <title type="html">ArXiv Query: search_query=&amp;id_list=0000.0000&amp;start=0&amp;max_results=10</title>
+  <id>http://arxiv.org/api/xxxxxxxxxx</id>
+  <updated>2018-08-31T00:00:00-04:00</updated>
+  <opensearch:totalResults xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">1</opensearch:totalResults>
+  <opensearch:startIndex xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">0</opensearch:startIndex>
+  <opensearch:itemsPerPage xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">10</opensearch:itemsPerPage>
+  <entry>
+    <id>https://arxiv.org/abs/0000.0000</id>
+    <updated>2018-01-02T00:00:00Z</updated>
+    <published>2018-01-02T00:00:00Z</published>
+    <title>Multiline
+    Title
+    Example</title>
+    <summary>This is a multiline 
+    summary example
+    for testing purposes 
+</summary>
+    <author>
+      <name>Author</name>
+    </author>
+    <arxiv:doi xmlns:arxiv="http://arxiv.org/schemas/atom">10.0000/test/a0000-00000-x</arxiv:doi>
+    <link title="doi" href="http://dx.doi.org/10.0000/test/a0000-00000-x" rel="related"/>
+    <arxiv:comment xmlns:arxiv="http://arxiv.org/schemas/atom">This is a comment</arxiv:comment>
+    <arxiv:journal_ref xmlns:arxiv="http://arxiv.org/schemas/atom">Journal title</arxiv:journal_ref>
+    <link href="http://arxiv.org/abs/0000.0000" rel="alternate" type="text/html"/>
+    <link title="pdf" href="http://arxiv.org/pdf/xxx" rel="related" type="application/pdf"/>
+    <arxiv:primary_category xmlns:arxiv="http://arxiv.org/schemas/atom" term="hep-ex" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="hep-ex" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+</feed>
