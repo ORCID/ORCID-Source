@@ -12,7 +12,7 @@
                         <div id="works-help" class="popover bottom">
                             <div class="arrow"></div>
                             <div class="popover-content">
-                                <p><@orcid.msg 'manage_works_settings.helpPopoverWorks'/> <a href="${knowledgeBaseUri}/articles/462032" target="manage_works_settings.helpPopoverWorks"><@orcid.msg 'common.learn_more'/></a></p>
+                                <p><@orcid.msg 'manage_works_settings.helpPopoverWorks'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006973133" target="manage_works_settings.helpPopoverWorks"><@orcid.msg 'common.learn_more'/></a></p>
                             </div>
                         </div>
                     </div> 

@@ -45,7 +45,7 @@
                                     <p><@orcid.msg ''/></p>
                                     <p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
                                     <p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
-                                    <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="orcid.frontend.register.help.more_info.link.text"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
+                                    <a href="<@orcid.msg 'common.kb_uri_default'/>360006973853" target="orcid.frontend.register.help.more_info.link.text"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
                                             <li class="limited" style="color: #ffb027;"><@orcid.msg "privacyToggle.help.trusted_parties" /></li>
                                             <li class="private" style="color: #990000;"><@orcid.msg "privacyToggle.help.only_me" /></li>
                                         </ul>
-                                        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg "privacyToggle.help.more_information" /></a>
+                                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information"><@orcid.msg "privacyToggle.help.more_information" /></a>
                                     </div>
                                 </div>
                             </div>

@@ -38,7 +38,7 @@ MORE INFO: https://testserver.orcid.org/inbox#3
 
 
 VIEW YOUR ORCID INBOX: https://testserver.orcid.org/inbox
-You have received this message because you opted in to receive inbox notifications about your ORCID record. Learn more about how the Inbox works (https://support.orcid.org/knowledgebase/articles/1807645-notifications-preferences).
+You have received this message because you opted in to receive inbox notifications about your ORCID record. Learn more about how the Inbox works (https://support.orcid.org/hc/articles/360006972953).
 You may adjust your email frequency and subscription preferences in your account settings (https://testserver.orcid.org/account).
 
 ---

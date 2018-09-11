@@ -87,7 +87,7 @@
                                             <div id="social-login-help" class="popover bottom">
                                                 <div class="arrow"></div>
                                                 <div class="popover-content">
-                                                    <p><@orcid.msg 'login.signinwithasocialaccount.help.1'/><a href="${knowledgeBaseUri}/articles/892920" target="login.signinviayourinstitution.help.2"><@orcid.msg 'login.signinwithasocialaccount.help.2'/></a><@orcid.msg 'login.signinwithasocialaccount.help.3'/></p>
+                                                    <p><@orcid.msg 'login.signinwithasocialaccount.help.1'/><a href="<@orcid.msg 'common.kb_uri_default'/>360006972693" target="login.signinviayourinstitution.help.2"><@orcid.msg 'login.signinwithasocialaccount.help.2'/></a><@orcid.msg 'login.signinwithasocialaccount.help.3'/></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -133,7 +133,7 @@
                                         <div id="institution-login-help" class="popover bottom">
                                             <div class="arrow"></div>
                                             <div class="popover-content">
-                                                <p><@orcid.msg 'login.signinviayourinstitution.help.1'/><a href="${knowledgeBaseUri}/articles/892920" target="login.signinviayourinstitution.help.2"><@orcid.msg 'login.signinviayourinstitution.help.2'/></a><@orcid.msg 'login.signinviayourinstitution.help.3'/></p>
+                                                <p><@orcid.msg 'login.signinviayourinstitution.help.1'/><a href="<@orcid.msg 'common.kb_uri_default'/>360006972693" target="login.signinviayourinstitution.help.2"><@orcid.msg 'login.signinviayourinstitution.help.2'/></a><@orcid.msg 'login.signinviayourinstitution.help.3'/></p>
                                             </div>
                                         </div>
                                     </div>

@@ -470,7 +470,7 @@ $(function() {
             wHtml = wHtml + '<p>';
             wHtml = wHtml + om.get('common.old.browser_1');
             wHtml = wHtml + om.get('common.old_browser_2');
-            wHtml = wHtml + ' <a href="https://support.orcid.org/knowledgebase/articles/1804765-technical-requirements-for-using-the-orcid-site" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
+            wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
             wHtml = wHtml + '</p>';
             wHtml = wHtml
                     + ' <button class="btn btn-primary" id="browser-warn-dismiss">'

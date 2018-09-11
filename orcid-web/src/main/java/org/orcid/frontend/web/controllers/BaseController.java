@@ -95,9 +95,7 @@ public class BaseController {
 
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
-    private String aboutUri;
-
-    private String knowledgeBaseUri;
+    private String aboutUri;    
 
     private boolean reducedFunctionalityMode;
 
@@ -192,16 +190,6 @@ public class BaseController {
     @ModelAttribute("aboutUri")
     public String getAboutUri() {
         return aboutUri;
-    }
-
-    @ModelAttribute("knowledgeBaseUri")
-    public String getKnowledgeBaseUri() {
-        return knowledgeBaseUri;
-    }
-
-    @Value("${org.orcid.core.knowledgeBaseUri:https://support.orcid.org/knowledgebase}")
-    public void setKnowledgeBaseUri(String knowledgeBaseUri) {
-        this.knowledgeBaseUri = knowledgeBaseUri;
     }
 
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")

@@ -12,7 +12,7 @@
                     <div id="education-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">
-                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></a></p>
+                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006971493" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></a></p>
                         </div>
                     </div>
                 </div>  

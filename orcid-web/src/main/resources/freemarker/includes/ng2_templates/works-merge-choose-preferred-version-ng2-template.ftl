@@ -19,7 +19,7 @@
          <@orcid.msg 'groups.merge.preferred_not_selected'/>
       </div>
       <div class="orcid-error" *ngIf='!externalIdsPresent'>
-         <@orcid.msg 'groups.merge.no_external_ids_1'/><a href="https://support.orcid.org/knowledgebase/articles/1807567-display-grouped-works"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
+         <@orcid.msg 'groups.merge.no_external_ids_1'/><a href="https://support.orcid.org/hc/articles/360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
          <div class="row"> 
             <div class="right">     
                 <a (click)="cancelEdit()">

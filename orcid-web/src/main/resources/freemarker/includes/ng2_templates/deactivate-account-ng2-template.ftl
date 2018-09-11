@@ -5,7 +5,7 @@
         <h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
         <p>
             ${springMacroRequestContext.getMessage("deactivate_orcid.gdpr_once")} <a
-                href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
+                href="<@orcid.msg 'common.kb_uri_default'/>360006973813"
                 target="deactivate_orcid.close_an">${springMacroRequestContext.getMessage("deactivate_orcid.gdpr_learn_more")}</a>
         </p>
         
@@ -13,7 +13,7 @@
         <p>
             ${springMacroRequestContext.getMessage("deactivate_orcid.gdpr_if_you_have")}&nbsp;<strong>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}</strong>
             <a
-                href="${knowledgeBaseUri}/articles/580410"
+                href="<@orcid.msg 'common.kb_uri_default'/>360006896634"
                 target="deprecate_orcid.learn_more_link" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
         </p>
         <h4>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</h4>
