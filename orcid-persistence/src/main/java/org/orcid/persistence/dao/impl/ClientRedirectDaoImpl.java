@@ -39,6 +39,17 @@ public class ClientRedirectDaoImpl extends GenericDaoImpl<ClientRedirectUriEntit
         query.setParameter("redirectUri", redirectUri);
         query.executeUpdate();
     }
+    
+    @Override
+    @Transactional
+    public void addClientRedirectUri(String clientId, String redirectUri, String type) {
+        Query query = entityManager
+                .createNativeQuery("INSERT INTO client_redirect_uri (date_created, last_modified, client_details_id, redirect_uri,redirect_uri_type) VALUES (now(), now(), :clientId, :redirectUri, :type)");
+        query.setParameter("clientId", clientId);
+        query.setParameter("redirectUri", redirectUri);
+        query.setParameter("type", type);
+        query.executeUpdate();
+    }
 
     @Override
     @Transactional
@@ -49,4 +60,6 @@ public class ClientRedirectDaoImpl extends GenericDaoImpl<ClientRedirectUriEntit
         query.setParameter("redirectUri", redirectUri);
         query.executeUpdate();
     }
+
+
 }

@@ -5,8 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -54,7 +52,6 @@ import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.record.Address;
@@ -88,7 +85,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ResearchResource;
 import org.orcid.pojo.ResearchResourceGroupPojo;
-import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
@@ -101,6 +97,7 @@ import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
+import org.orcid.pojo.grouping.WorkGroup;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -229,7 +226,6 @@ public class PublicProfileController extends BaseWorkspaceController {
             ModelAndView mav = new ModelAndView("public_profile_unavailable");
             mav.addObject("effectiveUserOrcid", orcid);
             String displayName = "";
-
             if (e instanceof OrcidDeprecatedException) {
                 PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
                 if (publicPersonalDetails.getName() != null) {
@@ -256,6 +252,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("isPublicProfile", true);
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
+                mav.addObject("noIndex", true);
             } else {
                 mav.addObject("deactivated", true);
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
@@ -274,7 +271,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         ModelAndView mav = null;
         if (request.getRequestURI().contains("/print")) {
             mav = new ModelAndView("print_public_record");
-            mav.addObject("hideUserVoiceScript", true);
+            mav.addObject("hideSupportWidget", true);
         } else {
             mav = new ModelAndView("public_profile_v3");
         }
@@ -427,16 +424,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         if (!profile.isReviewed()) {
-            if (isProfileValidForIndex(profile)) {
-                if (!profile.isAccountNonLocked() || !orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)
-                        || (!CreationMethod.WEBSITE.value().equals(profile.getCreationMethod()) && !CreationMethod.DIRECT.value().equals(profile.getCreationMethod()))) {
-                    mav.addObject("noIndex", true);
-                }
-            } else {
+            if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {
                 mav.addObject("noIndex", true);
             }
-        }
-
+        } 
         return mav;
     }
 
@@ -550,26 +541,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         return groups;
-    }
-
-    private boolean isProfileValidForIndex(ProfileEntity profile) {
-        String orcid = profile.getId();
-        if (orcid != null) {
-            int validAge = 3 + (Character.getNumericValue(orcid.charAt(orcid.length() - 2))) / 2;
-            if (profile.getSubmissionDate() != null) {
-                Date profileCreationDate = profile.getSubmissionDate();
-                Date currentDate = new Date();
-
-                Calendar temp = Calendar.getInstance();
-                temp.setTime(profileCreationDate);
-                temp.add(Calendar.DATE, validAge);
-                profileCreationDate = temp.getTime();
-                if (profileCreationDate.before(currentDate)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")

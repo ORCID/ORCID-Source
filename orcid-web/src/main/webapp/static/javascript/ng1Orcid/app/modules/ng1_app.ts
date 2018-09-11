@@ -85,6 +85,9 @@ import { LanguageModule }
 import { LinkAccountModule } 
     from './linkAccount/linkAccount.ts';
 
+import { MembersListModule } 
+    from './membersList/membersList.ts';
+
 import { ModalModule } 
     from './modalNg2/modal-ng.ts';
 
@@ -246,6 +249,7 @@ export const orcidApp = angular.module(
         Institutional2FAModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
+        MembersListModule.name,
         ModalModule.name,
         NameModule.name,
         OauthAuthorizationModule.name,
