@@ -104,6 +104,9 @@ import { LanguageNg2Module }
 import { LinkAccountNg2Module } 
     from './linkAccount/linkAccount.ts';
 
+import { MembersListNg2Module } 
+    from './membersList/membersList.ts';
+
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 
@@ -345,6 +348,7 @@ export class RootCmp {
         HomeNg2Module,
         LanguageNg2Module,
         LinkAccountNg2Module,
+        MembersListNg2Module, //Approved
         ModalNg2Module, //Approved
         NameNg2Module, //Approved
         NotificationsNg2Module,
