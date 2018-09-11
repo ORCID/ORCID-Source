@@ -4,7 +4,7 @@
             <h2><@orcid.msg 'manage.email.email_frequency.unsubscribe.title' /></h2>
             <div class="control-group">
                 <p><@orcid.msg 'manage.email.email_frequency.unsubscribe.1.1' /> ${email_address} <@orcid.msg 'manage.email.email_frequency.unsubscribe.1.2' /></p>
-                <p><@orcid.msg 'manage.email.email_frequency.unsubscribe.2' /> <a href="https://orcid.org/account" target="_blank"><@orcid.msg 'manage.email.email_frequency.unsubscribe.2.url.text' /></a> <@orcid.msg 'manage.email.email_frequency.unsubscribe.3' /> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894514" target="manage.email.email_frequency.unsubscribe.3.url.text"><@orcid.msg 'manage.email.email_frequency.unsubscribe.3.url.text' /></a></p>
+                <p><@orcid.msg 'manage.email.email_frequency.unsubscribe.2' /> <a href="https://orcid.org/account" target="_blank"><@orcid.msg 'manage.email.email_frequency.unsubscribe.2.url.text' /></a> <@orcid.msg 'manage.email.email_frequency.unsubscribe.3' /> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894514" target="_blank"><@orcid.msg 'manage.email.email_frequency.unsubscribe.3.url.text' /></a></p>
                 <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.header' /></p>                                            
             </div>
             <div class="control-group">
