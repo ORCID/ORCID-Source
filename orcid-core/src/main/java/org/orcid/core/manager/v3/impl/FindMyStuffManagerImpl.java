@@ -207,8 +207,12 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
     }
 
     @Override
-    public void markAsActioned(String orcid, String finderName) {
-        findMyStuffHistoryDao.markActioned(orcid, finderName);
+    public void markAsActioned(String orcid, String clientID) {
+        for (Finder f: finders){
+            if (f.getRelatedClientId().equals(clientID)){
+                findMyStuffHistoryDao.markActioned(orcid, f.getFinderName());                                
+            }
+        }
     }
 
     @Override

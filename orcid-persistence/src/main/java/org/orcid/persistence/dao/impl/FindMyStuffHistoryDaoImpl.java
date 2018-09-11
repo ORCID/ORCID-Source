@@ -17,14 +17,6 @@ public class FindMyStuffHistoryDaoImpl extends GenericDaoImpl<FindMyStuffHistory
     } 
 
     @Override
-    @Transactional
-    public void setOptOut(String orcid, String finderName, boolean optOut) {
-        FindMyStuffHistoryEntity e = super.find(new FindMyStuffHistoryEntityPk(orcid,finderName));
-        e.setOptOut(optOut);
-        super.persist(e);
-    }
-
-    @Override
     public List<FindMyStuffHistoryEntity> findAll(String orcid) {
         TypedQuery<FindMyStuffHistoryEntity> query = entityManager.createQuery("from FindMyStuffHistoryEntity where orcid = :orcid", FindMyStuffHistoryEntity.class);
         query.setParameter("orcid", orcid);
@@ -34,10 +26,14 @@ public class FindMyStuffHistoryDaoImpl extends GenericDaoImpl<FindMyStuffHistory
 
     @Override
     @Transactional
-    public void markActioned(String orcid, String finderName) {
+    public boolean markActioned(String orcid, String finderName) {
         FindMyStuffHistoryEntity e = super.find(new FindMyStuffHistoryEntityPk(orcid,finderName));
-        e.setActioned(true);
-        super.persist(e);
+        if (e != null){
+            e.setActioned(true);
+            super.persist(e);
+            return true;
+        }
+        return false;
     }
 
     @Override

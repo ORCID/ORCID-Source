@@ -35,12 +35,12 @@ public interface FindMyStuffManager {
      */
     List<FindMyStuffHistoryEntity> getHistory(String orcid);
 
-    /** Marks a finder as actioned in the DB (used for reporting)
+    /** Marks a finder as actioned in the DB (used for reporting).  Looks up by client ID.
      * 
      * @param orcid
-     * @param finderName
+     * @param clientID - NOTE THIS IS THE CLIENT, NOT FINDER NAME.
      */
-    void markAsActioned(String orcid, String finderName);
+    void markAsActioned(String orcid, String clientID);
     
     String buildAuthorizationUrl(String clientId);
 

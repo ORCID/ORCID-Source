@@ -7,9 +7,8 @@ import org.orcid.persistence.jpa.entities.keys.FindMyStuffHistoryEntityPk;
 
 public interface FindMyStuffHistoryDao extends GenericDao<FindMyStuffHistoryEntity, FindMyStuffHistoryEntityPk>{
 
-    public void setOptOut(String orcid, String finderName, boolean optOut);
     public List<FindMyStuffHistoryEntity> findAll(String orcid);
-    public void markActioned(String orcid, String finderName);
+    public boolean markActioned(String orcid, String finderName);
     public void markOptOut(String orcid, String finderName, boolean state);
     
 }
