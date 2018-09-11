@@ -142,6 +142,7 @@ public class DBUnitTest {
         dataSet.addTable("invalid_record_data_changes");
         dataSet.addTable("email_frequency");
         dataSet.addTable("research_resource");
+        dataSet.addTable("find_my_stuff_history");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);

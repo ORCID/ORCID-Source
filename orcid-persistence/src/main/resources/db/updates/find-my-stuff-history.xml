@@ -1,0 +1,33 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE-FIND-MY-STUFF-HISTORY-TABLE" author="TomDemeranville">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="find_my_stuff_history" />
+			</not>
+		</preConditions>	
+		<createTable tableName="find_my_stuff_history">
+			<column name="orcid" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="finder_name" type="VARCHAR(255)"/>
+			<column name="last_count" type="integer"/>
+			<column name="opt_out" type="boolean"/>
+			<column name="actioned" type="boolean"/>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
+		</createTable>
+		<addForeignKeyConstraint constraintName="find_my_stuff_history_orcid_fk" baseTableName="find_my_stuff_history" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+		<addPrimaryKey constraintName="find_my_stuff_history_pkey" tableName="find_my_stuff_history" columnNames="orcid,finder_name"/>		
+	</changeSet>
+		
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-FMSH" author="Tom Demeranville" dbms="postgresql">
+		<preConditions>
+			<sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+		</preConditions>
+		<sql>GRANT SELECT ON find_my_stuff_history to orcidro;</sql>
+	</changeSet>
+	
+</databaseChangeLog>

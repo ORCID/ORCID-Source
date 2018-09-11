@@ -88,6 +88,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.model.v3.rc1.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -104,6 +105,7 @@ import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
+import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
@@ -265,6 +267,33 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             }
                         })).register();
         
+        // Find my stuff notification
+        ClassMapBuilder<NotificationFindMyStuff, NotificationFindMyStuffEntity> findMyStuffNotificationClassMap = mapperFactory.classMap(NotificationFindMyStuff.class, NotificationFindMyStuffEntity.class);
+        registerSourceConverters(mapperFactory, institutionalConnectionNotificationClassMap); 
+        mapCommonFields(
+                findMyStuffNotificationClassMap.field("authorizationUrl.uri", "authorizationUrl")
+                        .customize(new CustomMapper<NotificationFindMyStuff, NotificationFindMyStuffEntity>() {
+                            @Override
+                            public void mapAtoB(NotificationFindMyStuff notification, NotificationFindMyStuffEntity entity, MappingContext context) {
+                                if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
+                                    String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
+                                    // validate
+                                    validateAndConvertToURI(authUrl);
+                                    entity.setAuthorizationUrl(authUrl);
+                                    entity.setAuthenticationProviderId(notification.getServiceProviderId());
+                                }                                
+                            }
+
+                            @Override
+                            public void mapBtoA(NotificationFindMyStuffEntity entity, NotificationFindMyStuff notification, MappingContext context) {
+                                AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+                                if (authUrl != null) {
+                                    authUrl.setPath(extractFullPath(authUrl.getUri()));
+                                    authUrl.setHost(orcidUrlManager.getBaseHost());
+                                }
+                                notification.setServiceProviderId(entity.getAuthenticationProviderId());
+                            }
+                        })).register();
         
         // Amend notification
         ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class, NotificationAmendedEntity.class);

@@ -519,4 +519,5 @@
 	
 	<util:properties id="notification_queries" location="classpath:queries/notifications.xml" />
 	<bean id="researchResourceDao" class="org.orcid.persistence.dao.impl.ResearchResourceDaoImpl"/>
+	<bean id="findMyStuffHistoryDao" class="org.orcid.persistence.dao.impl.FindMyStuffHistoryDaoImpl"/>
 </beans>

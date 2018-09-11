@@ -20,6 +20,7 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.read_only.impl.ClientDetailsManagerReadOnlyImpl;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientAuthorizedGrantTypeDao;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -117,6 +118,12 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     @Override
     public void addClientRedirectUri(String clientId, String uri) {
         clientRedirectDao.addClientRedirectUri(clientId, uri);
+        clientDetailsDao.updateLastModified(clientId);
+    }
+    
+    @Override
+    public void addClientRedirectUri(String clientId, String uri, RedirectUriType uriType) {
+        clientRedirectDao.addClientRedirectUri(clientId, uri,uriType.value());
         clientDetailsDao.updateLastModified(clientId);
     }
 

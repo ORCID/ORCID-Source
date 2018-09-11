@@ -1621,4 +1621,7 @@
 	<bean id="orgAffiliationRelationEntityRetriver" class="org.orcid.core.cache.impl.OrgAffiliationRelationEntityRetriver">
         <property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
     </bean>
+    
+    <bean id="findMyStuffManager" class="org.orcid.core.manager.v3.impl.FindMyStuffManagerImpl" />
+    
 </beans>
