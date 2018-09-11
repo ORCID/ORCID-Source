@@ -85,7 +85,7 @@
                         'public-layout.edit_your_record'/></a></li>
                     <li><a href="<@orcid.rootPath "/about" />"><@orcid.msg
                         'public-layout.about_orcid'/></a></li>
-                    <li><a href="<@orcid.rootPath "/contact-us" />"><@orcid.msg
+                    <li><a href="<@orcid.rootPath "/help/contact-us" />"><@orcid.msg
                         'public-layout.contact_us'/></a></li>
                     <li><a href="<@orcid.rootPath "/help" />"><@orcid.msg
                         'public-layout.help'/></a></li>
