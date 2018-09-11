@@ -40,4 +40,12 @@ public class FindMyStuffHistoryDaoImpl extends GenericDaoImpl<FindMyStuffHistory
         super.persist(e);
     }
 
+    @Override
+    @Transactional
+    public void markOptOut(String orcid, String finderName, boolean state) {
+        FindMyStuffHistoryEntity e = super.find(new FindMyStuffHistoryEntityPk(orcid,finderName));
+        e.setOptOut(state);
+        super.persist(e);
+    }
+
 }

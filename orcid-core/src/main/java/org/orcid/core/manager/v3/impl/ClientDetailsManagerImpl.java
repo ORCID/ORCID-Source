@@ -122,8 +122,8 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
     
     @Override
-    public void addClientRedirectUri(String clientId, String uri, RedirectUriType uriType) {
-        clientRedirectDao.addClientRedirectUri(clientId, uri,uriType.value());
+    public void addClientRedirectUri(String clientId, String uri, RedirectUriType uriType, ScopePathType scope) {
+        clientRedirectDao.addClientRedirectUri(clientId, uri,uriType.value(),scope.value());
         clientDetailsDao.updateLastModified(clientId);
     }
 

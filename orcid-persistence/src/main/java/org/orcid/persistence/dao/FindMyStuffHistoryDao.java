@@ -10,5 +10,6 @@ public interface FindMyStuffHistoryDao extends GenericDao<FindMyStuffHistoryEnti
     public void setOptOut(String orcid, String finderName, boolean optOut);
     public List<FindMyStuffHistoryEntity> findAll(String orcid);
     public void markActioned(String orcid, String finderName);
+    public void markOptOut(String orcid, String finderName, boolean state);
     
 }

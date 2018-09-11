@@ -15,7 +15,10 @@ import org.orcid.model.v3.rc1.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity;
 import org.orcid.pojo.FindMyStuffResult;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -48,6 +51,17 @@ public class FindMyStuffController extends BaseController{
         String orcid = getCurrentUserOrcid();
         List<FindMyStuffResult> results = findMyStuff.findIfAppropriate(orcid);
         return results;
+    }
+    
+    /** Marks a finder as opted out (so no more finding for that user)
+     * 
+     * @param finderName
+     */
+    @RequestMapping(value = "/opt-out/{finderName}")
+    public @ResponseBody Boolean markOptOut(@PathVariable("finderName") String finderName, @RequestParam(value = "value") boolean state){
+        String orcid = getCurrentUserOrcid(); 
+        findMyStuff.markOptOut(orcid, finderName, state);
+        return true;
     }
     
 }

@@ -44,4 +44,6 @@ public interface FindMyStuffManager {
     
     String buildAuthorizationUrl(String clientId);
 
+    void markOptOut(String orcid, String finderName, boolean state);
+
 }
