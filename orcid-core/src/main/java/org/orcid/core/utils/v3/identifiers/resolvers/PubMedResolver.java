@@ -4,12 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +49,8 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     protected LocaleManager localeManager;
 
     List<String> types = Lists.newArrayList("pmc", "pmid");
+    
+    private String metadataEndpoint = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary?db={db}&id={id}&retmode=json";        
 
     @Override
     public List<String> canHandle() {
@@ -87,7 +86,13 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             return null;
         
         try {
-            InputStream inputStream = cache.get(rr.getGeneratedUrl(), "application/json");
+            String endpoint = metadataEndpoint.replace("{id}", "value");
+            if(apiTypeName.equals("pmid")) {
+                endpoint = endpoint.replaceAll("{db}", "pubmed");
+            } else {
+                endpoint = endpoint.replaceAll("{db}", "pmc");
+            }
+            InputStream inputStream = cache.get(endpoint, "application/json");
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
 
             StringBuffer response = new StringBuffer();

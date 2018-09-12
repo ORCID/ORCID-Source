@@ -26,9 +26,7 @@ public class Http200Resolver implements LinkResolver {
     @PostConstruct
     public void init() {
         types = new ArrayList<String>();
-        //These types reliably return 200 if found.
-        types.add("pmid");
-        types.add("pmc");
+        //These types reliably return 200 if found.        
         types.add("rrid");
         types.add("rfc");
         types.add("pdb");
