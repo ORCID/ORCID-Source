@@ -111,6 +111,16 @@ public class PubMedResolverTest {
                     }
 
                 });
+        
+        when(cache.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary?db=pubmed&id=pmid1&retmode=json", MediaType.APPLICATION_JSON))
+        .thenAnswer(new Answer<InputStream>() {
+
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return PubMedResolverTest.class.getResourceAsStream("/examples/works/form_autofill/pmid.json");
+            }
+
+        });
     }
 
     @Test

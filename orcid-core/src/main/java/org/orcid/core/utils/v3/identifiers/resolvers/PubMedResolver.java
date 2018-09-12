@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -195,6 +196,32 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                     }
 
                     result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
+                }
+            }
+            
+            if(metadata.has("issn")) {
+                String value = metadata.getString("issn");
+                if(!PojoUtil.isEmpty(value)) {
+                    if(result.getWorkExternalIdentifiers() == null) {
+                        result.setWorkExternalIdentifiers(new ExternalIDs());                       
+                    }
+                    ExternalID extId = new ExternalID();
+                    extId.setRelationship(Relationship.SELF);
+                    extId.setType("ISSN");
+                    extId.setValue(value);
+                    IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("ISSN", locale);
+                    if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
+                        extId.setUrl(new Url(idType.getResolutionPrefix() + value));
+                    }
+                    result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
+                }
+            }
+            
+            if(metadata.has("pubtype")) {
+                try {
+                    result.setWorkType(WorkType.fromValue(json.getString("pubType")));
+                } catch (IllegalArgumentException e) {
+
                 }
             }
         }

@@ -1,0 +1,143 @@
+{
+    "header": {
+        "type": "esummary",
+        "version": "0.3"
+    },
+    "result": {
+        "uids": [
+            "27211532"
+        ],
+        "27211532": {
+            "uid": "27211532",
+            "pubdate": "2016 Apr",
+            "epubdate": "2016 Mar 17",
+            "source": "EBioMedicine",
+            "authors": [
+                {
+                    "name": "Lee ATJ",
+                    "authtype": "Author",
+                    "clusterid": ""
+                },
+                {
+                    "name": "Huang PH",
+                    "authtype": "Author",
+                    "clusterid": ""
+                },
+                {
+                    "name": "Pollack SM",
+                    "authtype": "Author",
+                    "clusterid": ""
+                },
+                {
+                    "name": "Jones RL",
+                    "authtype": "Author",
+                    "clusterid": ""
+                }
+            ],
+            "lastauthor": "Jones RL",
+            "title": "Drug repositioning in sarcomas and other rare tumors.",
+            "sorttitle": "drug repositioning in sarcomas and other rare tumors",
+            "volume": "6",
+            "issue": "",
+            "pages": "4-5",
+            "lang": [
+                "eng"
+            ],
+            "nlmuniqueid": "101647039",
+            "issn": "",
+            "essn": "2352-3964",
+            "pubtype": [
+                "Journal Article"
+            ],
+            "recordstatus": "PubMed - indexed for MEDLINE",
+            "pubstatus": "256",
+            "articleids": [
+                {
+                    "idtype": "pubmed",
+                    "idtypen": 1,
+                    "value": "27211532"
+                },
+                {
+                    "idtype": "pii",
+                    "idtypen": 4,
+                    "value": "S2352-3964(16)30107-4"
+                },
+                {
+                    "idtype": "doi",
+                    "idtypen": 3,
+                    "value": "10.1016/j.ebiom.2016.03.021"
+                },
+                {
+                    "idtype": "pmc",
+                    "idtypen": 8,
+                    "value": "PMC4856775"
+                },
+                {
+                    "idtype": "rid",
+                    "idtypen": 8,
+                    "value": "27211532"
+                },
+                {
+                    "idtype": "eid",
+                    "idtypen": 8,
+                    "value": "27211532"
+                },
+                {
+                    "idtype": "pmcid",
+                    "idtypen": 5,
+                    "value": "pmc-id: PMC4856775;"
+                }
+            ],
+            "history": [
+                {
+                    "pubstatus": "received",
+                    "date": "2016/03/15 00:00"
+                },
+                {
+                    "pubstatus": "accepted",
+                    "date": "2016/03/15 00:00"
+                },
+                {
+                    "pubstatus": "entrez",
+                    "date": "2016/05/24 06:00"
+                },
+                {
+                    "pubstatus": "pubmed",
+                    "date": "2016/05/24 06:00"
+                },
+                {
+                    "pubstatus": "medline",
+                    "date": "2017/03/07 06:00"
+                }
+            ],
+            "references": [
+            ],
+            "attributes": [
+            ],
+            "pmcrefcount": "",
+            "fulljournalname": "EBioMedicine",
+            "elocationid": "doi: 10.1016/j.ebiom.2016.03.021",
+            "doctype": "citation",
+            "srccontriblist": [
+            ],
+            "booktitle": "",
+            "medium": "",
+            "edition": "",
+            "publisherlocation": "",
+            "publishername": "",
+            "srcdate": "",
+            "reportnumber": "",
+            "availablefromurl": "",
+            "locationlabel": "",
+            "doccontriblist": [
+            ],
+            "docdate": "",
+            "bookname": "",
+            "chapter": "",
+            "sortpubdate": "2016/04/01 00:00",
+            "sortfirstauthor": "Lee ATJ",
+            "vernaculartitle": ""
+        }
+    }
+}
+
