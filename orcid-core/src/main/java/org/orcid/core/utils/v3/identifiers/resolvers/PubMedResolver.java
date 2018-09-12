@@ -86,11 +86,18 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             return null;
         
         try {
-            String endpoint = metadataEndpoint.replace("{id}", "value");
-            if(apiTypeName.equals("pmid")) {
-                endpoint = endpoint.replaceAll("{db}", "pubmed");
+            String endpoint = null;
+            
+            if(value.startsWith("PMC") || value.startsWith("pmc")) {
+                endpoint = metadataEndpoint.replace("{id}", value.substring(3));
             } else {
-                endpoint = endpoint.replaceAll("{db}", "pmc");
+                endpoint = metadataEndpoint.replace("{id}", value);
+            }
+            
+            if(apiTypeName.equals("pmid")) {
+                endpoint = endpoint.replace("{db}", "pubmed");
+            } else {
+                endpoint = endpoint.replace("{db}", "pmc");
             }
             InputStream inputStream = cache.get(endpoint, "application/json");
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
@@ -118,22 +125,18 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     private Work getWork(JSONObject json) throws JSONException {
         Work result = new Work();
         
-        if(json.has("type")) {
-            try {
-                result.setWorkType(WorkType.fromValue(json.getString("type")));
-            } catch(IllegalArgumentException e) {
-                
-            }
+        JSONObject results = json.getJSONObject("result");
+        
+        if(results != null) {
+            JSONArray uids = json.getJSONArray("uids");
+            String id1 = uids.getString(0);
         }
+        
         
         WorkTitle workTitle = new WorkTitle();
         if(json.has("title")) {
             workTitle.setTitle(new Title(json.getString("title")));            
         } 
-        
-        if(json.has("subtitle")) {
-            workTitle.setSubtitle(new Subtitle(json.getString("subtitle")));
-        }
         
         result.setWorkTitle(workTitle);
         
@@ -193,11 +196,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                 
             }
         }        
-        
-        if(json.has("abstract")) {
-            String description = json.getString("abstract");
-            result.setShortDescription(description);
-        }
+              
         return result;
     }
 
