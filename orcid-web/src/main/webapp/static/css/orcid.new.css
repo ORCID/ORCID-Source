@@ -6297,7 +6297,8 @@ a#reset-password-toggle-text:hover:active {
 
 .public-profile .workspace-section .public-content {
     float: left;
-    width: 100%
+    width: 100%;
+    word-wrap: break-word;
 }
 
 .public-profile .workspace-section .workspace-section-header .inline-list .right .popover {
