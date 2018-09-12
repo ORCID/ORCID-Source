@@ -64,6 +64,7 @@ public class CrossrefFinderTest {
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", new ExternalIDs());
         assertEquals("CrossrefFinder",result.getFinderName());
         assertEquals(3,result.getResults().size());
+        assertEquals(3,result.getTotal());
     }
     
     @Test

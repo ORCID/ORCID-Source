@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,6 +56,7 @@ public class CrossrefFinder implements Finder {
                     result.getResults().add(new FindMyStuffItem(w.DOI, "doi", title));
                 }
             }
+            result.setTotal(crResult.message.totalResults);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -83,6 +85,7 @@ public class CrossrefFinder implements Finder {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CrossrefMessage{
         public List<CrossrefItem> items;
+        @JsonProperty("total-results")
         public int totalResults;
     }
     
