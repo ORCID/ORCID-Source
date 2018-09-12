@@ -5,7 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -15,15 +20,22 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
+import org.orcid.jaxb.model.v3.rc1.common.Day;
+import org.orcid.jaxb.model.v3.rc1.common.Month;
+import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
+import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
+import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Component;
@@ -39,7 +51,12 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     @Resource
     private IdentifierTypeManager identifierTypeManager;
+    
+    @Resource
+    protected LocaleManager localeManager;
 
+    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy MMM dd");
+    
     List<String> types = Lists.newArrayList("pmc", "pmid");
 
     private String metadataEndpoint = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary?db={db}&id={id}&retmode=json";
@@ -108,15 +125,15 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             // TODO: For future projects, we might want to retry when
             // e.getReceivedCode() tell us that we can retry later, like 503 or
             // 504
-        } catch (IOException | JSONException e) {
-            return null;
+        } catch (IOException | JSONException | ParseException e) {                    
+            throw new RuntimeException(e);
         }
         return null;
     }
 
-    private Work getWork(JSONObject json) throws JSONException {
+    private Work getWork(JSONObject json) throws JSONException, ParseException {
         Work result = new Work();
-
+        Locale locale = localeManager.getLocale();
         JSONObject results = json.getJSONObject("result");
 
         if (results != null) {
@@ -133,8 +150,22 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             if (metadata.has("fulljournalname")) {
                 result.setJournalTitle(new Title(metadata.getString("fulljournalname")));
             }
+            
+            if(metadata.has("pubdate")) {
+                String publicationDateString = metadata.getString("pubdate");
+                Date date = dateFormat.parse(publicationDateString);
+                Calendar c = Calendar.getInstance();
+                c.setTime(date);
+                PublicationDate publicationDate = new PublicationDate();
+                result.setPublicationDate(publicationDate);
+                publicationDate.setDay(new Day(c.get(Calendar.DAY_OF_MONTH)));
+                // January = 0
+                publicationDate.setMonth(new Month(c.get(Calendar.MONTH) + 1));
+                publicationDate.setYear(new Year(c.get(Calendar.YEAR)));
+            }
 
             if (metadata.has("articleids")) {
+                result.setWorkExternalIdentifiers(new ExternalIDs());
                 JSONArray extIdsMetadata = metadata.getJSONArray("articleids");
                 for (int i = 0; i < extIdsMetadata.length(); i++) {
                     JSONObject extIdMetadata = extIdsMetadata.getJSONObject(i);
@@ -142,20 +173,24 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                     String value = extIdMetadata.getString("value");
                     ExternalID extId = new ExternalID();
                     extId.setRelationship(Relationship.SELF);
+                    IdentifierType idType = null;
                     switch (type) {
                     case "doi":
+                        idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("DOI", locale);
                         extId.setType("DOI");
                         break;
                     case "pmid":
+                        idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("PMID", locale);
                         extId.setType("PMID");
                         break;
                     case "pmcid":
+                        idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("PMC", locale);
                         extId.setType("PMC");
                         break;
                     }
                     extId.setValue(value);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
-                        extId.setUrl(new Url(idType.getResolutionPrefix() + isbn));
+                        extId.setUrl(new Url(idType.getResolutionPrefix() + value));
                     }
 
                     result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
