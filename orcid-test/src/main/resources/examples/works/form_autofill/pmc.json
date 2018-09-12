@@ -1,0 +1,43 @@
+{
+    "header": {
+        "type": "esummary",
+        "version": "0.3"
+    },
+    "result": {
+        "uids": [
+            "1234"
+        ],
+        "1234": {
+            "uid": "1234",
+            "pubdate": "2018 Jan 01",
+            "epubdate": "2018 Jan 01",
+            "printpubdate": "2018 Jan",
+            "source": "Source",
+            "authors": [
+                {
+                    "name": "Author name",
+                    "authtype": "Author"
+                }
+            ],
+            "title": "PMC title",
+            "volume": "1",
+            "issue": "1",
+            "pages": "1",
+            "articleids": [
+                {
+                    "idtype": "pmid",
+                    "value": "pmid1"
+                },
+                {
+                    "idtype": "doi",
+                    "value": "doi1"
+                },
+                {
+                    "idtype": "pmcid",
+                    "value": "pmcid1"
+                }
+            ],
+            "fulljournalname": "Journal title",
+        }
+    }
+}

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.ext.com.google.common.collect.Lists;
@@ -108,7 +109,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             } else {
                 endpoint = endpoint.replace("{db}", "pmc");
             }
-            InputStream inputStream = cache.get(endpoint, "application/json");
+            InputStream inputStream = cache.get(endpoint, MediaType.APPLICATION_JSON);
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
 
             StringBuffer response = new StringBuffer();
