@@ -1,29 +1,441 @@
-[
-  {
-    "doi": "http://dx.doi.org/10.7287/peerj.preprints.26505",
-    "score": 12.845928,
-    "normalizedScore": 100,
-    "title": "Code of practice for research data usage metrics release 1",
-    "fullCitation": "Martin Fenner, Daniella Lowenberg, Matt Jones, Paul Needham, Dave Vieglais, Stephen Abrams, Patricia Cruse, John Chodacki, 2018, 'Code of practice for research data usage metrics release 1'",
-    "coins": "ctx_ver=Z39.88-2004&amp;rft_id=info%3Adoi%2Fhttp%3A%2F%2Fdx.doi.org%2F10.7287%2Fpeerj.preprints.26505&amp;rfr_id=info%3Asid%2Fcrossref.org%3Asearch&amp;rft.atitle=Code+of+practice+for+research+data+usage+metrics+release+1&amp;rft.date=2018&amp;rft.aufirst=Martin&amp;rft.aulast=Fenner&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aunknown&amp;rft.genre=unknown&amp;rft.au=Martin+Fenner&amp;rft.au=+Daniella+Lowenberg&amp;rft.au=+Matt+Jones&amp;rft.au=+Paul+Needham&amp;rft.au=+Dave+Vieglais&amp;rft.au=+Stephen+Abrams&amp;rft.au=+Patricia+Cruse&amp;rft.au=+John+Chodacki",
-    "year": "2018"
-  },
-  {
-    "doi": "http://dx.doi.org/10.7287/peerj.preprints.26505v1",
-    "score": 12.845928,
-    "normalizedScore": 100,
-    "title": "Code of practice for research data usage metrics release 1",
-    "fullCitation": "Martin Fenner, Daniella Lowenberg, Matt Jones, Paul Needham, Dave Vieglais, Stephen Abrams, Patricia Cruse, John Chodacki, 2018, 'Code of practice for research data usage metrics release 1'",
-    "coins": "ctx_ver=Z39.88-2004&amp;rft_id=info%3Adoi%2Fhttp%3A%2F%2Fdx.doi.org%2F10.7287%2Fpeerj.preprints.26505v1&amp;rfr_id=info%3Asid%2Fcrossref.org%3Asearch&amp;rft.atitle=Code+of+practice+for+research+data+usage+metrics+release+1&amp;rft.date=2018&amp;rft.aufirst=Martin&amp;rft.aulast=Fenner&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aunknown&amp;rft.genre=unknown&amp;rft.au=Martin+Fenner&amp;rft.au=+Daniella+Lowenberg&amp;rft.au=+Matt+Jones&amp;rft.au=+Paul+Needham&amp;rft.au=+Dave+Vieglais&amp;rft.au=+Stephen+Abrams&amp;rft.au=+Patricia+Cruse&amp;rft.au=+John+Chodacki",
-    "year": "2018"
-  },
-  {
-    "doi": "http://dx.doi.org/10.1101/097196",
-    "score": 12.845928,
-    "normalizedScore": 100,
-    "title": "A Data Citation Roadmap for Scholarly Data Repositories",
-    "fullCitation": "Martin Fenner, Mercè Crosas, Jeffrey Grethe, David Kennedy, Henning Hermjakob, Philippe Rocca-Serra, Gustavo Durand, Robin Berjon, Sebastian Karcher, Maryann Martone, Timothy Clark, 2016, 'A Data Citation Roadmap for Scholarly Data Repositories'",
-    "coins": "ctx_ver=Z39.88-2004&amp;rft_id=info%3Adoi%2Fhttp%3A%2F%2Fdx.doi.org%2F10.1101%2F097196&amp;rfr_id=info%3Asid%2Fcrossref.org%3Asearch&amp;rft.atitle=A+Data+Citation+Roadmap+for+Scholarly+Data+Repositories&amp;rft.date=2016&amp;rft.aufirst=Martin&amp;rft.aulast=Fenner&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Aunknown&amp;rft.genre=unknown&amp;rft.au=Martin+Fenner&amp;rft.au=+Merc%C3%A8+Crosas&amp;rft.au=+Jeffrey+Grethe&amp;rft.au=+David+Kennedy&amp;rft.au=+Henning+Hermjakob&amp;rft.au=+Philippe+Rocca-Serra&amp;rft.au=+Gustavo+Durand&amp;rft.au=+Robin+Berjon&amp;rft.au=+Sebastian+Karcher&amp;rft.au=+Maryann+Martone&amp;rft.au=+Timothy+Clark",
-    "year": "2016"
-  }
-]
+{
+    "status" : "ok",
+    "message-type" : "work-list",
+    "message-version" : "1.0.0",
+    "message" : {
+        "facets" : {},
+        "total-results" : 3,
+        "items" : [
+                {
+                    "indexed" : {
+                        "date-parts" : [ [ 2018, 5, 11 ] ],
+                        "date-time" : "2018-05-11T13:43:42Z",
+                        "timestamp" : 1526046222571
+                    },
+                    "posted" : {
+                        "date-parts" : [ [ 2018, 2, 11 ] ]
+                    },
+                    "group-title" : "PeerJ Preprints",
+                    "reference-count" : 0,
+                    "publisher" : "PeerJ",
+                    "license" : [ {
+                        "URL" : "http:\/\/creativecommons.org\/licenses\/by\/4.0\/",
+                        "start" : {
+                            "date-parts" : [ [ 2018, 2, 11 ] ],
+                            "date-time" : "2018-02-11T00:00:00Z",
+                            "timestamp" : 1518307200000
+                        },
+                        "delay-in-days" : 0,
+                        "content-version" : "unspecified"
+                    } ],
+                    "content-domain" : {
+                        "domain" : [],
+                        "crossmark-restriction" : false
+                    },
+                    "abstract" : "<jats:p>The <jats:italic>Code of Practice for Research Data Usage Metrics<\/jats:italic> standardizes the generation and distribution of usage metrics for research data, enabling for the first time the consistent and credible reporting of research data usage. This is the first release of the Code of Practice and the recommendations are aligned as much as possible with the <jats:italic>COUNTER Code of Practice Release 5<\/jats:italic> that standardizes usage metrics for many scholarly resources, including journals and books. With the <jats:italic>Code of Practice for Research Data Usage Metrics<\/jats:italic> data repositories and platform providers can report usage metrics following common best practices and using a standard report format. This is an essential step towards realizing usage metrics as a critical component in our understanding of how publicly available research data are being reused. This complements ongoing work on establishing best practices and services for data citation.<\/jats:p>",
+                    "DOI" : "10.7287\/peerj.preprints.26505",
+                    "type" : "posted-content",
+                    "created" : {
+                        "date-parts" : [ [ 2018, 2, 11 ] ],
+                        "date-time" : "2018-02-11T13:33:59Z",
+                        "timestamp" : 1518356039000
+                    },
+                    "source" : "Crossref",
+                    "is-referenced-by-count" : 0,
+                    "title" : [ "Code of practice for research data usage metrics release 1" ],
+                    "prefix" : "10.7287",
+                    "author" : [
+                            {
+                                "ORCID" : "http:\/\/orcid.org\/0000-0003-1419-2405",
+                                "authenticated-orcid" : true,
+                                "given" : "Martin",
+                                "family" : "Fenner",
+                                "sequence" : "first",
+                                "affiliation" : [ {
+                                    "name" : "DataCite, Hannover, Germany"
+                                } ]
+                            },
+                            {
+                                "ORCID" : "http:\/\/orcid.org\/0000-0003-2255-1869",
+                                "authenticated-orcid" : true,
+                                "given" : "Daniella",
+                                "family" : "Lowenberg",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "California Digital Library, Oakland, California, United States"
+                                } ]
+                            },
+                            {
+                                "ORCID" : "http:\/\/orcid.org\/0000-0003-0077-4738",
+                                "authenticated-orcid" : true,
+                                "given" : "Matt",
+                                "family" : "Jones",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "National Center for Ecological Analysis and Synthesis, Santa Barbara, California, United States"
+                                } ]
+                            },
+                            {
+                                "given" : "Paul",
+                                "family" : "Needham",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "Cranfield University, Cranfield, United Kingdom"
+                                } ]
+                            },
+                            {
+                                "given" : "Dave",
+                                "family" : "Vieglais",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "Biodiversity Research Institute, University of Kansas, Lawrence, Kansas, United States"
+                                } ]
+                            },
+                            {
+                                "given" : "Stephen",
+                                "family" : "Abrams",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "California Digital Library, Oakland, California, United States"
+                                } ]
+                            },
+                            {
+                                "given" : "Patricia",
+                                "family" : "Cruse",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "DataCite, Hannover, Germany"
+                                } ]
+                            },
+                            {
+                                "ORCID" : "http:\/\/orcid.org\/0000-0002-7378-2408",
+                                "authenticated-orcid" : true,
+                                "given" : "John",
+                                "family" : "Chodacki",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "California Digital Library, Oakland, California, United States"
+                                } ]
+                            } ],
+                    "member" : "4443",
+                    "link" : [ {
+                        "URL" : "https:\/\/peerj.com\/preprints\/26505.pdf",
+                        "content-type" : "application\/pdf",
+                        "content-version" : "vor",
+                        "intended-application" : "text-mining"
+                    }, {
+                        "URL" : "https:\/\/peerj.com\/preprints\/26505.xml",
+                        "content-type" : "application\/xml",
+                        "content-version" : "vor",
+                        "intended-application" : "text-mining"
+                    }, {
+                        "URL" : "https:\/\/peerj.com\/preprints\/26505.html",
+                        "content-type" : "text\/html",
+                        "content-version" : "vor",
+                        "intended-application" : "text-mining"
+                    }, {
+                        "URL" : "https:\/\/peerj.com\/preprints\/26505.pdf",
+                        "content-type" : "unspecified",
+                        "content-version" : "vor",
+                        "intended-application" : "similarity-checking"
+                    } ],
+                    "deposited" : {
+                        "date-parts" : [ [ 2018, 2, 11 ] ],
+                        "date-time" : "2018-02-11T13:33:59Z",
+                        "timestamp" : 1518356039000
+                    },
+                    "score" : 1.0,
+                    "issued" : {
+                        "date-parts" : [ [ 2018, 2, 11 ] ]
+                    },
+                    "references-count" : 0,
+                    "URL" : "http:\/\/dx.doi.org\/10.7287\/peerj.preprints.26505",
+                    "subtype" : "preprint"
+                },
+                {
+                    "indexed" : {
+                        "date-parts" : [ [ 2018, 5, 11 ] ],
+                        "date-time" : "2018-05-11T13:43:42Z",
+                        "timestamp" : 1526046222571
+                    },
+                    "posted" : {
+                        "date-parts" : [ [ 2018, 2, 11 ] ]
+                    },
+                    "group-title" : "PeerJ Preprints",
+                    "reference-count" : 0,
+                    "publisher" : "PeerJ",
+                    "license" : [ {
+                        "URL" : "http:\/\/creativecommons.org\/licenses\/by\/4.0\/",
+                        "start" : {
+                            "date-parts" : [ [ 2018, 2, 11 ] ],
+                            "date-time" : "2018-02-11T00:00:00Z",
+                            "timestamp" : 1518307200000
+                        },
+                        "delay-in-days" : 0,
+                        "content-version" : "unspecified"
+                    } ],
+                    "content-domain" : {
+                        "domain" : [],
+                        "crossmark-restriction" : false
+                    },
+                    "abstract" : "<jats:p>The <jats:italic>Code of Practice for Research Data Usage Metrics<\/jats:italic> standardizes the generation and distribution of usage metrics for research data, enabling for the first time the consistent and credible reporting of research data usage. This is the first release of the Code of Practice and the recommendations are aligned as much as possible with the <jats:italic>COUNTER Code of Practice Release 5<\/jats:italic> that standardizes usage metrics for many scholarly resources, including journals and books. With the <jats:italic>Code of Practice for Research Data Usage Metrics<\/jats:italic> data repositories and platform providers can report usage metrics following common best practices and using a standard report format. This is an essential step towards realizing usage metrics as a critical component in our understanding of how publicly available research data are being reused. This complements ongoing work on establishing best practices and services for data citation.<\/jats:p>",
+                    "DOI" : "10.7287\/peerj.preprints.26505v1",
+                    "type" : "posted-content",
+                    "created" : {
+                        "date-parts" : [ [ 2018, 2, 11 ] ],
+                        "date-time" : "2018-02-11T13:33:54Z",
+                        "timestamp" : 1518356034000
+                    },
+                    "source" : "Crossref",
+                    "is-referenced-by-count" : 0,
+                    "title" : [ "Code of practice for research data usage metrics release 1" ],
+                    "prefix" : "10.7287",
+                    "author" : [
+                            {
+                                "ORCID" : "http:\/\/orcid.org\/0000-0003-1419-2405",
+                                "authenticated-orcid" : true,
+                                "given" : "Martin",
+                                "family" : "Fenner",
+                                "sequence" : "first",
+                                "affiliation" : [ {
+                                    "name" : "DataCite, Hannover, Germany"
+                                } ]
+                            },
+                            {
+                                "ORCID" : "http:\/\/orcid.org\/0000-0003-2255-1869",
+                                "authenticated-orcid" : true,
+                                "given" : "Daniella",
+                                "family" : "Lowenberg",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "California Digital Library, Oakland, California, United States"
+                                } ]
+                            },
+                            {
+                                "ORCID" : "http:\/\/orcid.org\/0000-0003-0077-4738",
+                                "authenticated-orcid" : true,
+                                "given" : "Matt",
+                                "family" : "Jones",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "National Center for Ecological Analysis and Synthesis, Santa Barbara, California, United States"
+                                } ]
+                            },
+                            {
+                                "given" : "Paul",
+                                "family" : "Needham",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "Cranfield University, Cranfield, United Kingdom"
+                                } ]
+                            },
+                            {
+                                "given" : "Dave",
+                                "family" : "Vieglais",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "Biodiversity Research Institute, University of Kansas, Lawrence, Kansas, United States"
+                                } ]
+                            },
+                            {
+                                "given" : "Stephen",
+                                "family" : "Abrams",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "California Digital Library, Oakland, California, United States"
+                                } ]
+                            },
+                            {
+                                "given" : "Patricia",
+                                "family" : "Cruse",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "DataCite, Hannover, Germany"
+                                } ]
+                            },
+                            {
+                                "ORCID" : "http:\/\/orcid.org\/0000-0002-7378-2408",
+                                "authenticated-orcid" : true,
+                                "given" : "John",
+                                "family" : "Chodacki",
+                                "sequence" : "additional",
+                                "affiliation" : [ {
+                                    "name" : "California Digital Library, Oakland, California, United States"
+                                } ]
+                            } ],
+                    "member" : "4443",
+                    "link" : [ {
+                        "URL" : "https:\/\/peerj.com\/preprints\/26505.pdf",
+                        "content-type" : "application\/pdf",
+                        "content-version" : "vor",
+                        "intended-application" : "text-mining"
+                    }, {
+                        "URL" : "https:\/\/peerj.com\/preprints\/26505.xml",
+                        "content-type" : "application\/xml",
+                        "content-version" : "vor",
+                        "intended-application" : "text-mining"
+                    }, {
+                        "URL" : "https:\/\/peerj.com\/preprints\/26505.html",
+                        "content-type" : "text\/html",
+                        "content-version" : "vor",
+                        "intended-application" : "text-mining"
+                    }, {
+                        "URL" : "https:\/\/peerj.com\/preprints\/26505.pdf",
+                        "content-type" : "unspecified",
+                        "content-version" : "vor",
+                        "intended-application" : "similarity-checking"
+                    } ],
+                    "deposited" : {
+                        "date-parts" : [ [ 2018, 2, 11 ] ],
+                        "date-time" : "2018-02-11T13:33:55Z",
+                        "timestamp" : 1518356035000
+                    },
+                    "score" : 1.0,
+                    "issued" : {
+                        "date-parts" : [ [ 2018, 2, 11 ] ]
+                    },
+                    "references-count" : 0,
+                    "URL" : "http:\/\/dx.doi.org\/10.7287\/peerj.preprints.26505v1",
+                    "subtype" : "preprint"
+                },
+                {
+                    "institution" : {
+                        "name" : "bioRxiv",
+                        "place" : [ "-" ],
+                        "acronym" : [ "-" ]
+                    },
+                    "indexed" : {
+                        "date-parts" : [ [ 2018, 8, 6 ] ],
+                        "date-time" : "2018-08-06T18:02:34Z",
+                        "timestamp" : 1533578554169
+                    },
+                    "posted" : {
+                        "date-parts" : [ [ 2016, 12, 28 ] ]
+                    },
+                    "group-title" : "Scientific Communication and Education",
+                    "reference-count" : 0,
+                    "publisher" : "Cold Spring Harbor Laboratory",
+                    "content-domain" : {
+                        "domain" : [],
+                        "crossmark-restriction" : false
+                    },
+                    "accepted" : {
+                        "date-parts" : [ [ 2017, 10, 9 ] ]
+                    },
+                    "abstract" : "<jats:p>This article presents a practical roadmap for scholarly data repositories to implement data citation in accordance with the Joint Declaration of Data Citation Principles, a synopsis and harmonization of the recommendations of major science policy bodies. The roadmap was developed by the Repositories Expert Group, as part of the Data Citation Implementation Pilot (DCIP) project, an initiative of FORCE11.org and the NIH BioCADDIE (https:\/\/biocaddie.org) program. The roadmap makes 11 specific recommendations, grouped into three phases of implementation: a) required steps needed to support the Joint Declaration of Data Citation Principles, b) recommended steps that facilitate article\/data publication workflows, and c) optional steps that further improve data citation support provided by data repositories.<\/jats:p>",
+                    "DOI" : "10.1101\/097196",
+                    "type" : "posted-content",
+                    "created" : {
+                        "date-parts" : [ [ 2016, 12, 29 ] ],
+                        "date-time" : "2016-12-29T06:10:15Z",
+                        "timestamp" : 1482991815000
+                    },
+                    "source" : "Crossref",
+                    "is-referenced-by-count" : 3,
+                    "title" : [ "A Data Citation Roadmap for Scholarly Data Repositories" ],
+                    "prefix" : "10.1101",
+                    "author" : [ {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0003-1419-2405",
+                        "authenticated-orcid" : false,
+                        "given" : "Martin",
+                        "family" : "Fenner",
+                        "sequence" : "first",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0003-1304-1939",
+                        "authenticated-orcid" : false,
+                        "given" : "Merc\u00e8",
+                        "family" : "Crosas",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0001-5212-7052",
+                        "authenticated-orcid" : false,
+                        "given" : "Jeffrey",
+                        "family" : "Grethe",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0002-9377-0797",
+                        "authenticated-orcid" : false,
+                        "given" : "David",
+                        "family" : "Kennedy",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0001-8479-0262",
+                        "authenticated-orcid" : false,
+                        "given" : "Henning",
+                        "family" : "Hermjakob",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0001-9853-5668",
+                        "authenticated-orcid" : false,
+                        "given" : "Philippe",
+                        "family" : "Rocca-Serra",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0002-2188-2570",
+                        "authenticated-orcid" : false,
+                        "given" : "Gustavo",
+                        "family" : "Durand",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0002-1731-5346",
+                        "authenticated-orcid" : false,
+                        "given" : "Robin",
+                        "family" : "Berjon",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0001-8249-7388",
+                        "authenticated-orcid" : false,
+                        "given" : "Sebastian",
+                        "family" : "Karcher",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0002-8406-3871",
+                        "authenticated-orcid" : false,
+                        "given" : "Maryann",
+                        "family" : "Martone",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    }, {
+                        "ORCID" : "http:\/\/orcid.org\/0000-0003-4060-7360",
+                        "authenticated-orcid" : false,
+                        "given" : "Timothy",
+                        "family" : "Clark",
+                        "sequence" : "additional",
+                        "affiliation" : []
+                    } ],
+                    "member" : "246",
+                    "link" : [ {
+                        "URL" : "https:\/\/syndication.highwire.org\/content\/doi\/10.1101\/097196",
+                        "content-type" : "unspecified",
+                        "content-version" : "vor",
+                        "intended-application" : "similarity-checking"
+                    } ],
+                    "deposited" : {
+                        "date-parts" : [ [ 2017, 10, 10 ] ],
+                        "date-time" : "2017-10-10T05:10:49Z",
+                        "timestamp" : 1507612249000
+                    },
+                    "score" : 1.0,
+                    "issued" : {
+                        "date-parts" : [ [ 2016, 12, 28 ] ]
+                    },
+                    "references-count" : 0,
+                    "URL" : "http:\/\/dx.doi.org\/10.1101\/097196",
+                    "subtype" : "preprint"
+                } ],
+        "items-per-page" : 20,
+        "query" : {
+            "start-index" : 0,
+            "search-terms" : null
+        }
+    }
+}

@@ -2,6 +2,7 @@ package org.orcid.core.utils.v3.identifiers.finders;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class CrossrefFinder implements Finder {
     private Boolean isEnabled;
     @Value("${org.orcid.core.finder.crossref.clientid}")//"0000-0001-9884-1913";
     private String clientId;
-    @Value("${org.orcid.core.finder.crossref.endpoint}")//"https://search.crossref.org/dois?q="
+    @Value("${org.orcid.core.finder.crossref.endpoint}")//"https://api.crossref.org/works?filter=orcid:" 0000-0003-1419-2405
     private String metadataEndpoint;
 
     @Override
@@ -47,17 +48,17 @@ public class CrossrefFinder implements Finder {
         try {
             InputStream is = cache.get(metadataEndpoint + orcid, "application/json");
             ObjectMapper objectMapper = new ObjectMapper();
-            List<CrossrefSearchResult> crResult = objectMapper.readValue(is, new TypeReference<List<CrossrefSearchResult>>() {
-            });
-            for (CrossrefSearchResult w : crResult) {
+            CrossrefSearchResult crResult = objectMapper.readValue(is, CrossrefSearchResult.class);
+            for (CrossrefItem w : crResult.message.items) {
                 if (!existingIDs.getExternalIdentifier().contains(w.getExternalID(norm))) {
-                    result.getResults().add(new FindMyStuffItem(w.doi, "doi", w.title));
+                    String title = (w.title!=null && !w.title.isEmpty())? w.title.get(0):"";
+                    result.getResults().add(new FindMyStuffItem(w.DOI, "doi", title));
                 }
             }
         } catch (MalformedURLException e) {
-            // do nothing
+            e.printStackTrace();
         } catch (IOException e) {
-            // do nothing
+            e.printStackTrace();
         }
         return result;
     }
@@ -76,17 +77,28 @@ public class CrossrefFinder implements Finder {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CrossrefSearchResult {
-        public String doi;
-        public String title;
+        public CrossrefMessage message;
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CrossrefMessage{
+        public List<CrossrefItem> items;
+        public int totalResults;
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CrossrefItem{
+        public String DOI;
+        public List<String> title;
 
-        public CrossrefSearchResult() {
+        public CrossrefItem() {
         };
 
         public ExternalID getExternalID(DOINormalizer norm) {
             ExternalID eid = new ExternalID();
             eid.setType("doi");
-            eid.setValue(doi);
-            eid.setNormalized(new TransientNonEmptyString(norm.normalise("doi", doi)));
+            eid.setValue(DOI);
+            eid.setNormalized(new TransientNonEmptyString(norm.normalise("doi", DOI)));
             return eid;
         }
     }
