@@ -9,48 +9,32 @@
         ],
         "27211532": {
             "uid": "27211532",
-            "pubdate": "2016 Apr",
-            "epubdate": "2016 Mar 17",
-            "source": "EBioMedicine",
+            "pubdate": "2018 Jan 01",
+            "epubdate": "2018 Jan 01",
+            "source": "Source",
             "authors": [
                 {
-                    "name": "Lee ATJ",
-                    "authtype": "Author",
-                    "clusterid": ""
-                },
-                {
-                    "name": "Huang PH",
-                    "authtype": "Author",
-                    "clusterid": ""
-                },
-                {
-                    "name": "Pollack SM",
-                    "authtype": "Author",
-                    "clusterid": ""
-                },
-                {
-                    "name": "Jones RL",
+                    "name": "Author name",
                     "authtype": "Author",
                     "clusterid": ""
                 }
             ],
-            "lastauthor": "Jones RL",
-            "title": "Drug repositioning in sarcomas and other rare tumors.",
-            "sorttitle": "drug repositioning in sarcomas and other rare tumors",
-            "volume": "6",
-            "issue": "",
-            "pages": "4-5",
+            "lastauthor": "Last author",
+            "title": "PMID title",
+            "volume": "1",
+            "issue": "1",
+            "pages": "1",
             "lang": [
                 "eng"
             ],
-            "nlmuniqueid": "101647039",
-            "issn": "",
-            "essn": "2352-3964",
+            "nlmuniqueid": "1",
+            "issn": "issn1",
+            "essn": "essn1",
             "pubtype": [
                 "Journal Article"
             ],
-            "recordstatus": "PubMed - indexed for MEDLINE",
-            "pubstatus": "256",
+            "recordstatus": "recordStatus",
+            "pubstatus": "1",
             "articleids": [
                 {
                     "idtype": "pubmed",
