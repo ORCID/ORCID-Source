@@ -2,7 +2,6 @@ package org.orcid.core.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -27,6 +26,7 @@ import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.resolvers.PubMedResolver;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.test.TargetProxyHelper;
 
@@ -65,6 +65,17 @@ public class PubMedResolverTest {
                 return argument1;
             }
         });
+        
+        when(normalizationService.normalise(eq("pmid"), anyString())).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                String argument1 = invocation.getArgument(1).toString();
+                if (argument1.contains("/")) {
+                    return argument1.substring(argument1.lastIndexOf("/") + 1);
+                }
+                return argument1;
+            }
+        });
 
         when(normalizationService.generateNormalisedURL(eq("pmc"), anyString())).thenAnswer(new Answer<String>() {
             @Override
@@ -73,11 +84,18 @@ public class PubMedResolverTest {
             }
         });
 
+        when(normalizationService.generateNormalisedURL(eq("pmid"), anyString())).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return "https://www.ncbi.nlm.nih.gov/pubmed/" + invocation.getArgument(1).toString();
+            }
+        });
+        
         when(identifierTypeManager.fetchIdentifierTypeByDatabaseName(eq("DOI"), Mockito.any(Locale.class))).thenAnswer(new Answer<IdentifierType>() {
             @Override
             public IdentifierType answer(InvocationOnMock invocation) throws Throwable {
                 IdentifierType i = new IdentifierType();
-                i.setResolutionPrefix("https://doi.org/");
+                i.setResolutionPrefix("https://doi/");
                 return i;
             }
         });
@@ -86,7 +104,7 @@ public class PubMedResolverTest {
             @Override
             public IdentifierType answer(InvocationOnMock invocation) throws Throwable {
                 IdentifierType i = new IdentifierType();
-                i.setResolutionPrefix("https://europepmc.org/articles/");
+                i.setResolutionPrefix("https://pmc/");
                 return i;
             }
         });
@@ -95,7 +113,16 @@ public class PubMedResolverTest {
             @Override
             public IdentifierType answer(InvocationOnMock invocation) throws Throwable {
                 IdentifierType i = new IdentifierType();
-                i.setResolutionPrefix("https://www.ncbi.nlm.nih.gov/pubmed/");
+                i.setResolutionPrefix("https://pmid/");
+                return i;
+            }
+        });
+        
+        when(identifierTypeManager.fetchIdentifierTypeByDatabaseName(eq("ISSN"), Mockito.any(Locale.class))).thenAnswer(new Answer<IdentifierType>() {
+            @Override
+            public IdentifierType answer(InvocationOnMock invocation) throws Throwable {
+                IdentifierType i = new IdentifierType();
+                i.setResolutionPrefix("https://issn/");
                 return i;
             }
         });
@@ -136,23 +163,57 @@ public class PubMedResolverTest {
         assertEquals(3, work.getExternalIdentifiers().getExternalIdentifier().size());
 
         assertEquals("PMID", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
-        assertEquals("https://www.ncbi.nlm.nih.gov/pubmed/pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("https://pmid/pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
 
         assertEquals("DOI", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
-        assertEquals("https://doi.org/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
 
         assertEquals("PMC", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
-        assertEquals("https://europepmc.org/articles/pmcid1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
+        assertEquals("https://pmc/pmcid1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
         assertEquals("pmcid1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(2).getRelationship());
     }
 
     @Test
     public void resolvePMIDMetadataTest() {
-        fail();
+        Work work = resolver.resolveMetadata("pmid", "pmid1");
+        assertNotNull(work);
+        assertEquals("PMID title", work.getWorkTitle().getTitle().getContent());
+        assertEquals("Journal title", work.getJournalTitle().getContent());
+        assertEquals("2018", work.getPublicationDate().getYear().getValue());
+        assertEquals("01", work.getPublicationDate().getMonth().getValue());
+        assertEquals("01", work.getPublicationDate().getDay().getValue());
+        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
+        
+        assertEquals(5, work.getExternalIdentifiers().getExternalIdentifier().size());
+
+        assertEquals("PMID", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("https://pmid/pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+
+        assertEquals("DOI", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+
+        assertEquals("PMC", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
+        assertEquals("https://pmc/pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
+        assertEquals("pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(2).getRelationship());
+        
+        assertEquals("PMC", work.getExternalIdentifiers().getExternalIdentifier().get(3).getType());
+        assertEquals("https://pmc/pmc-id: pcid2;", work.getExternalIdentifiers().getExternalIdentifier().get(3).getUrl().getValue());
+        assertEquals("pmc-id: pcid2;", work.getExternalIdentifiers().getExternalIdentifier().get(3).getValue());
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(3).getRelationship());
+        
+        assertEquals("ISSN", work.getExternalIdentifiers().getExternalIdentifier().get(4).getType());
+        assertEquals("https://issn/issn1", work.getExternalIdentifiers().getExternalIdentifier().get(4).getUrl().getValue());
+        assertEquals("issn1", work.getExternalIdentifiers().getExternalIdentifier().get(4).getValue());
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(4).getRelationship());
     }
 }

@@ -39,37 +39,37 @@
                 {
                     "idtype": "pubmed",
                     "idtypen": 1,
-                    "value": "27211532"
+                    "value": "pmid1"
                 },
                 {
                     "idtype": "pii",
                     "idtypen": 4,
-                    "value": "S2352-3964(16)30107-4"
+                    "value": "pii1"
                 },
                 {
                     "idtype": "doi",
                     "idtypen": 3,
-                    "value": "10.1016/j.ebiom.2016.03.021"
+                    "value": "doi1"
                 },
                 {
                     "idtype": "pmc",
                     "idtypen": 8,
-                    "value": "PMC4856775"
+                    "value": "pmc1"
                 },
                 {
                     "idtype": "rid",
                     "idtypen": 8,
-                    "value": "27211532"
+                    "value": "rid1"
                 },
                 {
                     "idtype": "eid",
                     "idtypen": 8,
-                    "value": "27211532"
+                    "value": "eid1"
                 },
                 {
                     "idtype": "pmcid",
                     "idtypen": 5,
-                    "value": "pmc-id: PMC4856775;"
+                    "value": "pmc-id: pcid2;"
                 }
             ],
             "history": [
@@ -99,8 +99,8 @@
             "attributes": [
             ],
             "pmcrefcount": "",
-            "fulljournalname": "EBioMedicine",
-            "elocationid": "doi: 10.1016/j.ebiom.2016.03.021",
+            "fulljournalname": "Journal title",
+            "elocationid": "doi: 10.0000/0.0000",
             "doctype": "citation",
             "srccontriblist": [
             ],

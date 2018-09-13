@@ -53,12 +53,12 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     @Resource
     private IdentifierTypeManager identifierTypeManager;
-    
+
     @Resource
     protected LocaleManager localeManager;
 
     static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy MMM dd");
-    
+
     List<String> types = Lists.newArrayList("pmc", "pmid");
 
     private String metadataEndpoint = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary?db={db}&id={id}&retmode=json";
@@ -127,7 +127,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             // TODO: For future projects, we might want to retry when
             // e.getReceivedCode() tell us that we can retry later, like 503 or
             // 504
-        } catch (IOException | JSONException | ParseException e) {                    
+        } catch (IOException | JSONException | ParseException e) {
             throw new RuntimeException(e);
         }
         return null;
@@ -152,8 +152,8 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             if (metadata.has("fulljournalname")) {
                 result.setJournalTitle(new Title(metadata.getString("fulljournalname")));
             }
-            
-            if(metadata.has("pubdate")) {
+
+            if (metadata.has("pubdate")) {
                 String publicationDateString = metadata.getString("pubdate");
                 Date date = dateFormat.parse(publicationDateString);
                 Calendar c = Calendar.getInstance();
@@ -171,10 +171,8 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                 JSONArray extIdsMetadata = metadata.getJSONArray("articleids");
                 for (int i = 0; i < extIdsMetadata.length(); i++) {
                     JSONObject extIdMetadata = extIdsMetadata.getJSONObject(i);
-                    String type = extIdMetadata.getString("idtype");
-                    String value = extIdMetadata.getString("value");
                     ExternalID extId = new ExternalID();
-                    extId.setRelationship(Relationship.SELF);
+                    String type = extIdMetadata.getString("idtype");
                     IdentifierType idType = null;
                     switch (type) {
                     case "doi":
@@ -182,14 +180,21 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                         extId.setType("DOI");
                         break;
                     case "pmid":
+                    case "pubmed":
                         idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("PMID", locale);
                         extId.setType("PMID");
                         break;
                     case "pmcid":
+                    case "pmc":
                         idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("PMC", locale);
                         extId.setType("PMC");
                         break;
+                    default:
+                        continue;
                     }
+
+                    String value = extIdMetadata.getString("value");
+                    extId.setRelationship(Relationship.SELF);
                     extId.setValue(value);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
                         extId.setUrl(new Url(idType.getResolutionPrefix() + value));
@@ -198,12 +203,12 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                     result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
                 }
             }
-            
-            if(metadata.has("issn")) {
+
+            if (metadata.has("issn")) {
                 String value = metadata.getString("issn");
-                if(!PojoUtil.isEmpty(value)) {
-                    if(result.getWorkExternalIdentifiers() == null) {
-                        result.setWorkExternalIdentifiers(new ExternalIDs());                       
+                if (!PojoUtil.isEmpty(value)) {
+                    if (result.getWorkExternalIdentifiers() == null) {
+                        result.setWorkExternalIdentifiers(new ExternalIDs());
                     }
                     ExternalID extId = new ExternalID();
                     extId.setRelationship(Relationship.SELF);
@@ -216,10 +221,11 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                     result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
                 }
             }
-            
-            if(metadata.has("pubtype")) {
+
+            if (metadata.has("pubtype")) {
                 try {
-                    result.setWorkType(WorkType.fromValue(json.getString("pubType")));
+                    JSONArray a = metadata.getJSONArray("pubtype");
+                    result.setWorkType(getWorkType(a.getString(0)));
                 } catch (IllegalArgumentException e) {
 
                 }
@@ -229,4 +235,47 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
         return result;
     }
 
+    /**
+     * Map pubmed publication types with the WorkType enum
+     * https://www.nlm.nih.gov/mesh/pubtypes.html
+     * */
+    private WorkType getWorkType(String pubmedValue) {
+        switch (pubmedValue) {
+        case "Caricatures":
+        case "Cartoons":
+            return WorkType.ARTISTIC_PERFORMANCE;
+        case "Account Books":
+            return WorkType.BOOK;
+        case "Book Reviews":
+            return WorkType.BOOK_REVIEW;
+        case "Clinical Conference":
+        case "Consensus Development Conference":
+        case "Consensus Development Conference, NIH":
+            return WorkType.CONFERENCE_PAPER;
+        case "Dataset":
+            return WorkType.DATA_SET;
+        case "Dictionary":
+            return WorkType.DICTIONARY_ENTRY;
+        case "Academic Dissertations":
+            return WorkType.DISSERTATION;
+        case "Introductory Journal Article":
+        case "Journal Article":
+            return WorkType.JOURNAL_ARTICLE;
+        case "Lecture Notes":
+        case "Lectures":
+            return WorkType.LECTURE_SPEECH;
+        case "Newspaper Article":
+            return WorkType.NEWSPAPER_ARTICLE;
+        case "Video-Audio Media":
+        case "Webcasts":
+            return WorkType.ONLINE_RESOURCE;
+        case "Annual Reports":
+            return WorkType.REPORT;
+        case "Database":
+            return WorkType.SOFTWARE;
+        case "Blogs":
+            return WorkType.WEBSITE;
+        }
+        return null;
+    }
 }
