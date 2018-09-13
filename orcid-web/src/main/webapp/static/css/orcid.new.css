@@ -406,8 +406,9 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 
 .container {
     margin-bottom: 0;
-    min-height: 90%;
+    min-height: 100%;
     clear: both;
+    
 }
 
 .container .content-wrapper {
@@ -1060,7 +1061,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     height: auto;
     background: #939598;
     font-size: 13px;
-    margin-top: -20px
+    margin-top: -20px;
 }
 
 .footer.fixed {
