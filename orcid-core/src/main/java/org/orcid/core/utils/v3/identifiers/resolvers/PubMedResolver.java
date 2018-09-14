@@ -61,7 +61,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     List<String> types = Lists.newArrayList("pmc", "pmid");
 
-    private String metadataEndpoint = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary?db={db}&id={id}&retmode=json";
+    private String metadataEndpoint = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={type}:{id}&resultType=core&format=json";    
 
     @Override
     public List<String> canHandle() {
@@ -97,18 +97,12 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             return null;
 
         try {
-            String endpoint = null;
-
-            if (value.startsWith("PMC") || value.startsWith("pmc")) {
-                endpoint = metadataEndpoint.replace("{id}", value.substring(3));
-            } else {
-                endpoint = metadataEndpoint.replace("{id}", value);
-            }
+            String endpoint = metadataEndpoint.replace("{id}", value);
 
             if (apiTypeName.equals("pmid")) {
-                endpoint = endpoint.replace("{db}", "pubmed");
+                endpoint = endpoint.replace("{type}", "EXT_ID");
             } else {
-                endpoint = endpoint.replace("{db}", "pmc");
+                endpoint = endpoint.replace("{type}", "PMCID");
             }
             InputStream inputStream = cache.get(endpoint, MediaType.APPLICATION_JSON);
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
