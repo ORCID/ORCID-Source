@@ -111,6 +111,7 @@ public class PIDResolverCache {
     
     public InputStream get(String url, String accept) throws IOException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");
         con.addRequestProperty("Accept", accept);
         con.setRequestMethod("GET");
         con.setInstanceFollowRedirects(true);

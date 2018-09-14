@@ -88,7 +88,7 @@ public class FindMyStuffDaoTest extends DBUnitTest{
         FindMyStuffHistoryEntity e1 = dao.find(new FindMyStuffHistoryEntityPk(USER_ORCID,"fn3"));
         assertEquals(false,e1.getOptOut());
         
-        dao.setOptOut(USER_ORCID, "fn3", true);
+        dao.markOptOut(USER_ORCID, "fn3", true);
 
         FindMyStuffHistoryEntity e2 = dao.find(new FindMyStuffHistoryEntityPk(USER_ORCID,"fn3"));
         assertEquals(true,e2.getOptOut());
