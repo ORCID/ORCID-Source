@@ -54,6 +54,8 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
     List<String> types = Lists.newArrayList("arxiv");
 
+    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    
     @Override
     public List<String> canHandle() {
         return types;
@@ -181,7 +183,6 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                     this.description.append(value);
                     break;
                 case "published":
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                     Date date = null;
                     try {
                         date = dateFormat.parse(value);
