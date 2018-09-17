@@ -53,6 +53,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showEdit: any;
     showElement: any;
     showEditEmail: boolean;
+    emailCurrentLabel: string;
+    emailPastLabel: string;
     emailsEditText: string;
     showUnverifiedEmailSetPrimaryBox: boolean;
     primaryEmail: string;
@@ -82,6 +84,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         private prefsSrvc: PreferencesService,
         private emailFrequencyService: EmailFrequencyService
     ) {
+        this.emailCurrentLabel = om.get("manage.email.current");
+        this.emailPastLabel = om.get("manage.email.past");
         this.verifyEmailObject = {};
         this.showEmailVerifBox = false;
         this.showEmailVerifBoxNewsTips = false;
@@ -121,11 +125,11 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.primaryEmail = '';
         this.emailStatusOptions = [
             {
-                label:'Current',
+                label: this.emailCurrentLabel,
                 val:true
             },
             {
-                label:'Past',
+                label: this.emailPastLabel,
                 val:false
             }
         ];

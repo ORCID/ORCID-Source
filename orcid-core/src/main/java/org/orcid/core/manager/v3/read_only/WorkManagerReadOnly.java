@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
@@ -84,4 +85,11 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
     List<Work> findWorks(String orcid, List<WorkLastModifiedEntity> elements);
 
     List<WorkSummary> getWorksSummaryList(String orcid, List<Long> putCodes);
+    
+    /** 
+     * Returns a list of ALL external ids for this ORCID
+     * @param orcid
+     * @return a compiled ExternalIDs object
+     */
+    ExternalIDs getAllExternalIDs(String orcid);
 }

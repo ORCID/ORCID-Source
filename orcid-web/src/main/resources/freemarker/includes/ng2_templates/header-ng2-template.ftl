@@ -427,10 +427,10 @@
                                 <a href="${aboutUri}/help/contact-us" title=""><@orcid.msg 'public-layout.contact_us'/></a>
                             </li>
                             <li class="leaf">
-                                <a href="http://orcid.uservoice.com/forums/175591-general" title=""><@orcid.msg 'public-layout.give_feedback'/></a>
+                                <a href="https://support.orcid.org/hc/en-us/community/topics" title=""><@orcid.msg 'public-layout.give_feedback'/></a>
                             </li>
                             <li class="last leaf">
-                                <a href="http://orcid.uservoice.com/knowledgebase" title=""><@orcid.msg 'public-layout.knowledge_base'/></a>
+                                <a href="https://zendesk.orcid.org/hc/" title=""><@orcid.msg 'public-layout.knowledge_base'/></a>
                             </li>
                         </ul>
                     </li>

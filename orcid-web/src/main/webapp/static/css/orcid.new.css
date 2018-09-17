@@ -1840,12 +1840,22 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     line-height: 31px;
 }
 
-.workspace-accordion-header i.glyphicon-question-sign {
+.work-bulk-actions .popover-help-container {
+    margin-left: 6px;
+    line-height: 31px;
+}
+
+.work-bulk-actions .bulk-edit-privacy-help-container {
+    margin-left: 0;
+    line-height: 0;
+}
+
+.popover-help-container i.glyphicon-question-sign {
     color: #338caf;
     cursor: pointer;
 }
 
-.workspace-accordion-header i.glyphicon-question-sign:hover {
+.popover-help-container i.glyphicon-question-sign:hover {
     color: #a6ce39;
 }
 
@@ -2478,6 +2488,22 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     max-width: none;
     background-color: #fff;
     font-size: 14px
+}
+
+.work-bulk-actions .popover-help-container .bulk-works-privacy-popover {
+    display: none;
+    position: absolute;
+    left: -75px;
+}
+
+.work-bulk-actions .popover-help-container .bulk-actions-popover {
+	display: none;
+    position: absolute;
+    left: -246px;
+}
+
+.helpPopoverMergeHeading, .helpPopoverDeleteBulkEditHeading {
+	font-weight: bold;
 }
 
 .popover-pos {
@@ -4228,7 +4254,6 @@ ul#body-membership-list>li {
 }
 
 .workspace-title {
-    float: left;
     display: block;
     color: #494a4c;
     font-weight: 400
@@ -5044,14 +5069,28 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
     width: auto;
 }
 
-.popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3,
+.work-bulk-actions .privacy-bulk-works {
+	bottom: 45px;
+    right: -5px;
+    top: -170px;
+    left: 186px;
+    min-width: 247px;
+}
+
+.work-bulk-actions .privacy-bulk-works ul li {
+    display: list-item;
+    padding: 0 0 0 27px;
+    margin: 0 0 0 15px;
+}
+
+.popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3, .privacy-bulk-works 
 .popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3:hover {
     bottom: inherit;
 }
 
 .popover-help-container>.privacy-myorcid3>.arrow {
     left: 186px
-}
+}   
 
 .source-line .sources-popover {
     top: -35px;
@@ -6388,7 +6427,7 @@ a#reset-password-toggle-text:hover:active {
 }
 
 .member-list select,.self-service select {
-    margin: 0
+    margin: 0 4px 0 0
 }
 
 .member-list .btn-primary {
@@ -6410,7 +6449,7 @@ a#reset-password-toggle-text:hover:active {
 
 .member-list .filter li {
     display: inline;
-    padding: 3px
+    padding: 3px;
 }
 
 .member-list ul.filter {

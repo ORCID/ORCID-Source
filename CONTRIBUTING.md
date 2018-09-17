@@ -1,7 +1,7 @@
 
 ### Making contributions, feature requests, and bug reports
 
-The ORCID Registry from its start has been imagined, defined, and developed by members of our community. That is why we developed the [ORCID iDeas Forum](https://support.orcid.org/forums/175591) for you to provide feedback, new feature ideas, bug reports, and improvement suggestions for consideration. We are also committed to an open development process where you can keep track of what we are working on; [learn how new features are decided](https://support.orcid.org/knowledgebase/articles/135210). We strongly encourage anyone who’s interested in using or contributing to the Registry to join the [ORCID API Users Group](https://groups.google.com/group/orcid-api-users).
+The ORCID Registry from its start has been imagined, defined, and developed by members of our community. That is why we developed the [ORCID iDeas Forum](https://support.orcid.org/hc/en-us/community/topics) for you to provide feedback, new feature ideas, bug reports, and improvement suggestions for consideration. We are also committed to an open development process where you can keep track of what we are working on; [learn how new features are decided](https://support.orcid.org/hc/articles/360006897594). We strongly encourage anyone who’s interested in using or contributing to the Registry to join the [ORCID API Users Group](https://groups.google.com/group/orcid-api-users).
 
 * **Check our [Trello boards](https://trello.com/orcid2) to see what we’re working on**
 
@@ -9,11 +9,11 @@ The ORCID Registry from its start has been imagined, defined, and developed by m
 
 * **Feature requests should be made in the iDeas Forum**
 
-    Search the [iDeas Forum](https://support.orcid.org/forums/175591) to see if your idea has already been suggested. If it has, you can vote and comment to show your support. If not, you can add a new idea.
+    Search the [iDeas Forum](https://support.orcid.org/hc/en-us/community/topics) to see if your idea has already been suggested. If it has, you can vote and comment to show your support. If not, you can add a new idea.
 
 * **Bug reports should be made in the iDeas Forum or directly to the ORCID team**
 
-    Report the bug to our support team for investigation; once confirmed, we add it to the Bugs board to be addressed. You can report the bug by posting in the [iDeas Forum](https://support.orcid.org/forums/175591) or by submitting a ticket via [our webform](https://orcid.org/help/contact-us) or via [email](mailto:support@orcid.org). 
+    Report the bug to our support team for investigation; once confirmed, we add it to the Bugs board to be addressed. You can report the bug by posting in the [iDeas Forum](https://support.orcid.org/hc/en-us/community/topics) or by submitting a ticket via [our webform](https://orcid.org/help/contact-us) or via [email](mailto:support@orcid.org). 
 
 * **Registry translations should be made in Transifex**
 

@@ -217,10 +217,6 @@
 	   <property name="groupingSuggestionDao" ref="groupingSuggestionDao" />
 	</bean>
 
-    <bean id="groupingSuggestionManagerReadOnly" class="org.orcid.core.manager.read_only.impl.GroupingSuggestionManagerReadOnlyImpl">
-       <property name="groupingSuggestionDao" ref="groupingSuggestionDaoReadOnly" />
-    </bean>
-
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl">
 		<property name="emailDao" ref="emailDao" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
@@ -329,8 +325,6 @@
 	<bean id="emailFrequencyManager" class="org.orcid.core.common.manager.impl.EmailFrequencyManagerImpl" />	
 	
 	<!-- Client Managers -->
-	<bean id="clientManager" class="org.orcid.core.manager.impl.ClientManagerImpl" />
-	
 	<bean id="clientManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ClientManagerReadOnlyImpl">
 		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
 	</bean>
@@ -1627,4 +1621,7 @@
 	<bean id="orgAffiliationRelationEntityRetriver" class="org.orcid.core.cache.impl.OrgAffiliationRelationEntityRetriver">
         <property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
     </bean>
+    
+    <bean id="findMyStuffManager" class="org.orcid.core.manager.v3.impl.FindMyStuffManagerImpl" />
+    
 </beans>

@@ -24,6 +24,7 @@ export class AffiliationService {
     private urlAffiliationDisambiguated: string;
     private urlAffiliations: string;
 
+    public details: any;
     public loading: boolean;
     public affiliationsToAddIds: any;
     public affiliation: any;
@@ -33,7 +34,8 @@ export class AffiliationService {
 	
     constructor( private http: HttpClient ){
         this.affiliation = null;
-        this.affiliationsToAddIds = null,
+        this.affiliationsToAddIds = null;
+        this.details = new Array();
         this.headers = new HttpHeaders(
             {
                 'Access-Control-Allow-Origin':'*',
@@ -98,6 +100,18 @@ export class AffiliationService {
         return this.http.get(
             this.urlAffiliationId
         );       
+    }
+
+    getAffiliationDetails( putCode, type ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/affiliations/affiliationDetails.json?id=' + putCode + '&type=' + type
+        );
+    }
+
+    getPublicAffiliationDetails( putCode, type ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/' + orcidVar.orcidId + '/affiliationDetails.json?id=' + putCode + '&type=' + type
+        );
     }
 
     getAffiliationsById( idList ): Observable<any> {

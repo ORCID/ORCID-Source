@@ -14,6 +14,7 @@ import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissio
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
@@ -105,4 +106,6 @@ public interface NotificationManager {
     Integer archiveOffsetNotifications();
     
     Integer deleteOffsetNotifications();
+
+    NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);
 }

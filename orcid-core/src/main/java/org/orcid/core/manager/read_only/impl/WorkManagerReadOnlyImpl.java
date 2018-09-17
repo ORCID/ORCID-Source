@@ -14,7 +14,6 @@ import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.activities.WorkComparators;
@@ -134,30 +133,24 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      */
     @Override
     public Works groupWorks(List<WorkSummary> works, boolean justPublic) {
-        groupDebug("Grouping works");
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         Works result = new Works();
         // Group all works
         for (WorkSummary work : works) {
-            groupDebug("Examining work summary " + work.toString() + " (" + work.getPutCode() + ")");
             if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
-                groupDebug("Work is not public, not including in groups");
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {
-                groupDebug("Sending work summary to group generator");
                 groupGenerator.group(work);
             }
         }
 
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
-        groupDebug("Received " + groups.size() + " activities groups from group generator");
 
         for (ActivitiesGroup group : groups) {
             Set<GroupAble> externalIdentifiers = group.getGroupKeys();
             Set<GroupableActivity> activities = group.getActivities();
             
-            groupDebug("Creating new workGroup based on activitiesGroup");
             WorkGroup workGroup = new WorkGroup();
             // Fill the work groups with the external identifiers
             if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
@@ -166,7 +159,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             } else {
                 for (GroupAble extId : externalIdentifiers) {
                     ExternalID workExtId = (ExternalID) extId;
-                    groupDebug("adding external id " + workExtId.getType() + " / " + workExtId.getValue() + " to group");
                     workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
                 }
             }
@@ -174,7 +166,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             // Fill the work group with the list of activities
             for (GroupableActivity activity : activities) {
                 WorkSummary workSummary = (WorkSummary) activity;
-                groupDebug("Adding work summary " + workSummary + " to group");
                 workGroup.getWorkSummary().add(workSummary);
             }
 
@@ -185,12 +176,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         // Sort the groups!
         result.getWorkGroup().sort(WorkComparators.GROUP);
         return result;
-    }
-
-    private void groupDebug(String string) {
-        if (Features.WORK_GROUP_LOGGING.isActive()) {
-            LOG.info("### WORKMANAGER GROUP LOGGING: " + string);
-        }
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -54,6 +55,7 @@ import org.orcid.jaxb.model.v3.rc1.notification.permission.Items;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
 import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.model.v3.rc1.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -66,6 +68,7 @@ import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -196,12 +199,15 @@ public class NotificationManagerImpl implements NotificationManager {
     @Value("${org.orcid.notifications.archive.offset:100}")
     private Integer notificationArchiveOffset;
     
-    @Value("${org.orcid.notifications.delete.offset:100}")
+    @Value("${org.orcid.notifications.delete.offset:10000}")
     private Integer notificationDeleteOffset;
     
     @Value("${org.orcid.notifications.delete.offset.records:10}")
     private Integer recordsPerBatch;
     
+    @Resource
+    FindMyStuffManager findMyStuffManager;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -1051,10 +1057,38 @@ public class NotificationManagerImpl implements NotificationManager {
             notificationEntity.setReadDate(now);
             notificationDao.merge(notificationEntity);
         }
+        
+        if (NotificationType.FIND_MY_STUFF.value().equals(notificationEntity.getNotificationType())){
+            findMyStuffManager.markAsActioned(orcid, notificationEntity.getClientSourceId());
+        }
 
         return notificationAdapter.toNotification(notificationEntity);
     }
 
+    /** Create a basic notification.  No details, basically says this service has found some stuff.  Includes actionable url.
+     * 
+     * @param userOrcid
+     * @param clientId
+     * @param authorizationUrl
+     */
+    @Override
+    public NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl){
+        NotificationFindMyStuff notification = new NotificationFindMyStuff();
+        notification.setNotificationType(NotificationType.FIND_MY_STUFF);
+        notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
+        NotificationFindMyStuffEntity notificationEntity = (NotificationFindMyStuffEntity) notificationAdapter
+                .toNotificationEntity(notification);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        if (profile == null) {
+            throw OrcidNotFoundException.newInstance(userOrcid);
+        }
+        notificationEntity.setProfile(profile);
+        //notificationEntity.setProfile(new ProfileEntity(userOrcid));
+        notificationEntity.setClientSourceId(clientId);
+        notificationDao.persist(notificationEntity);   
+        return notificationEntity;
+    }
+    
     @Override
     public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
         Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userOrcid);
@@ -1254,6 +1288,8 @@ public class NotificationManagerImpl implements NotificationManager {
                 String orcid = (String) o[1];            
                 LOGGER.info("About to delete old notification: id={}, orcid={}",
                             new Object[] { id, orcid });
+                    notificationDao.deleteNotificationItemByNotificationId(id);
+                    notificationDao.deleteNotificationWorkByNotificationId(id);
                     notificationDao.deleteNotificationById(id);            
             }         
             deleted += toDelete.size();

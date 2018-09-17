@@ -61,7 +61,7 @@
             <br/><br/>
         </div>   
         <div >
-            <button *ngIf="areMore() && notificationsSrvc?.loadingMore == false" (click)="showMore()" class="btn" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
+            <button *ngIf="areMore() && notificationsSrvc?.loadingMore == false" (click)="showMore()" class="btn btn-primary" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
         </div>
         <div  *ngIf="notificationsSrvc?.loadingMore == true" id="moreNotificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>

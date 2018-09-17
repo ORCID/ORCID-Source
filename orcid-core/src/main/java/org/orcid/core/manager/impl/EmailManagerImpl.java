@@ -3,22 +3,15 @@ package org.orcid.core.manager.impl;
 import java.util.Date;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl;
-import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -110,40 +103,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             throw new RuntimeException(e);
         }
     }
-
-    @Override
-    @Transactional
-    public void updateEmails(HttpServletRequest request, String orcid, Emails emails) {
-        Email currentPrimaryEmail = findPrimaryEmail(orcid);
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                boolean primaryFound = false;
-                Email newPrimaryEmail = null;
-                if (emails != null && !emails.getEmails().isEmpty()) {
-                    for (Email email : emails.getEmails()) {
-                        emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), email.getVisibility().name());
-                        if (email.isPrimary()) {
-                            if (primaryFound) {
-                                throw new IllegalArgumentException("More than one primary email specified");
-                            } else {
-                                primaryFound = true;
-                                newPrimaryEmail = email;
-                            }
-                            emailDao.updatePrimary(orcid, email.getEmail());
-                        }
-                    }
-                }
-                
-                if(!StringUtils.equals(currentPrimaryEmail.getEmail(), newPrimaryEmail.getEmail())) {
-                    notificationManager.sendEmailAddressChangedNotification(orcid, newPrimaryEmail.getEmail(), currentPrimaryEmail.getEmail());
-                    if (!newPrimaryEmail.isVerified()) {
-                        notificationManager.sendVerificationEmail(orcid, newPrimaryEmail.getEmail());
-                        request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                    }
-                }
-            }
-        });        
-    }    
 
     @Override
     public boolean hideAllEmails(String orcid) {

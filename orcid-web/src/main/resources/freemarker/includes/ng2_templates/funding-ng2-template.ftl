@@ -15,7 +15,7 @@
                                 <div id="funding-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="${knowledgeBaseUri}/articles/326033" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897214" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div> 
@@ -151,18 +151,18 @@
             </div>
             <div *ngIf="workspaceSrvc.displayFunding" class="workspace-accordion-content">
                 <ul *ngIf="groups.length > 0" class="workspace-fundings workspace-body-list bottom-margin-medium" >
-                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of (groups | orderBy: sortState.predicate:sortState.reverseKey[sortState.predicateKey])">
+                    <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups">
                         <#include "funding-details-ng2.ftl"/>                    
                     </li>
                 </ul>
                 <div *ngIf="loading" class="text-center">
                     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                 </div>
-                <div *ngIf="loading == false && groups.length == 0" class="" >
+                <div *ngIf="fundingService?.loading == false && groups.length == 0">
                     <strong>
                         <#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' />
                             <#if fundingImportWizards?has_content>
-                                <a (click)="showTemplateInModal('import-funding-modal')"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
+                                <a (click)="showFundingImportWizard()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
                             <#else>
                                 <span><@orcid.msg 'workspace_fundings_body_list.addsomenow'/></span>
                             </#if>

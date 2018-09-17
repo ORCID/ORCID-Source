@@ -16,6 +16,7 @@ import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.BibtexManager;
+import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -41,6 +42,7 @@ import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroup;
+import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -85,6 +87,9 @@ public class WorksController extends BaseWorkspaceController {
     @Resource(name = "bibtexManagerV3")
     private BibtexManager bibtexManager;
     
+    @Resource(name = "groupingSuggestionManagerV3")
+    private GroupingSuggestionManager groupingSuggestionManager;
+    
     @Resource
     PIDResolverService resolverService;
 
@@ -125,6 +130,23 @@ public class WorksController extends BaseWorkspaceController {
         WorkForm w = new WorkForm();
         initializeFields(w);
         return w;
+    }
+    
+    @RequestMapping(value = "/groupingSuggestions.json", method = RequestMethod.GET)
+    public @ResponseBody WorkGroupingSuggestion getGroupingSuggestion() {     
+        return workManager.getGroupingSuggestion(getCurrentUserOrcid());
+    }
+    
+    @RequestMapping(value = "/rejectGroupingSuggestion/{putCode}", method = RequestMethod.POST)
+    public @ResponseBody Boolean declineGroupingSuggestion(@PathVariable("putCode") Long putCode) {     
+        groupingSuggestionManager.markGroupingSuggestionAsRejected(getCurrentUserOrcid(), putCode);
+        return true;
+    }
+    
+    @RequestMapping(value = "/acceptGroupingSuggestion/{putCode}", method = RequestMethod.POST)
+    public @ResponseBody Boolean acceptGroupingSuggestion(@PathVariable("putCode") Long putCode) {     
+        groupingSuggestionManager.markGroupingSuggestionAsAccepted(getCurrentUserOrcid(), putCode);
+        return true;
     }
 
     private void initializeFields(WorkForm w) {
@@ -802,4 +824,9 @@ public class WorksController extends BaseWorkspaceController {
         return resolverService.resolve(type, value);
     }
 
+    @RequestMapping(value = "/resolve/{type}", method = RequestMethod.GET)
+    public @ResponseBody WorkForm fetchWorkData(@PathVariable("type") String type, @RequestParam("value") String value){        
+        Work w = resolverService.resolveMetadata(type, value);
+        return WorkForm.valueOf(w);
+    }
 }

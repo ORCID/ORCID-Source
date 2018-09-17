@@ -4,25 +4,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroupKey;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record_v2.ExternalIdentifiersContainer;
 import org.orcid.jaxb.model.record_v2.GroupAble;
 import org.orcid.jaxb.model.record_v2.GroupableActivity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ActivitiesGroup {
     private Set<GroupAble> groupKeys;
     private Set<GroupableActivity> activities;         
     
-    private static final Logger LOG = LoggerFactory.getLogger(ActivitiesGroup.class);
-    
     public ActivitiesGroup(GroupableActivity activity) {        
         groupKeys = new HashSet<GroupAble>();        
         activities = new HashSet<GroupableActivity>();
-        groupDebug("Creating new activities group");
         if(activity != null) {
             if(PeerReviewSummary.class.isAssignableFrom(activity.getClass())) {
                 PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
@@ -34,13 +28,11 @@ public class ActivitiesGroup {
                     // Dont add grouping keys that dont pass the validation
                     if (extId.isGroupAble()) {
                         groupKeys.add(extId);
-                        groupDebug("Adding external identifier " + extId.getGroupId() + " key");
                     }
                 }
             }
         }
         
-        groupDebug("Adding activity " + activity + " to group");
         activities.add(activity);
     }
             
@@ -57,7 +49,6 @@ public class ActivitiesGroup {
     }
 
     public void add(GroupableActivity activity) {    
-        groupDebug("Adding activity " + activity + " to group");
         if(PeerReviewSummary.class.isAssignableFrom(activity.getClass())) {
             //For peer review there is only one grouping key, so we dont need to add more keys to the groupKeys set
         }  else {
@@ -74,7 +65,6 @@ public class ActivitiesGroup {
                             if (groupKey.getGroupId() != null && groupKey.getGroupId().equals(extId.getGroupId()))
                                 hasId = true;
                         if (!hasId) {
-                            groupDebug("Adding external identifier " + extId.getGroupId() + " key");
                             groupKeys.add(extId);
                         }
                     }
@@ -151,7 +141,6 @@ public class ActivitiesGroup {
     }
     
     public void merge(ActivitiesGroup group) {
-        groupDebug("Merging group " + group + " to group " + this);
         Set<GroupableActivity> otherActivities = group.getActivities();
         Set<GroupAble> otherKeys = group.getGroupKeys();
         
@@ -163,16 +152,13 @@ public class ActivitiesGroup {
         //Merge group keys
         for(GroupAble otherKey: otherKeys) {
             if(!groupKeys.contains(otherKey)) {
-                groupDebug("Adding other groups key " + otherKey.getGroupId() + " to this group's keys");
                 groupKeys.add(otherKey);
             }
         }
         
         //Merge activities
-        groupDebug("Adding other group's activities to this group's activities");
         for(GroupableActivity activity : otherActivities) {
             //We assume the activity is not already there, anyway it is a set
-            groupDebug("Adding activity " + activity);
             activities.add(activity);
         }
     }
@@ -183,12 +169,6 @@ public class ActivitiesGroup {
                 if (existingKey.getGroupId().equals(key.getGroupId()))
                     return true;
         return false;
-    }
-    
-    private void groupDebug(String string) {
-        if (Features.WORK_GROUP_LOGGING.isActive()) {
-            LOG.info("### ACTIVITIESGROUP GROUP LOGGING: " + string);
-        }
     }
     
 }

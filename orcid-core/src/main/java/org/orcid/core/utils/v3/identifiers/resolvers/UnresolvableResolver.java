@@ -16,7 +16,7 @@ import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UnresolvableResolver implements Resolver{
+public class UnresolvableResolver implements LinkResolver{
 
     @Resource
     IdentifierTypeManager idman;

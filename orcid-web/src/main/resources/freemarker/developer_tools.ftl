@@ -53,7 +53,7 @@
 									<#if !hasVerifiedEmail>
 										<li><a href ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.link' /></a> <@orcid.msg 'developer_tools.public_member.verify.description' /></li>
 									</#if>
-									<li><a href="${knowledgeBaseUri}/articles/343182" target="developer_tools.public_member.read_more"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+									<li><a href="<@orcid.msg 'common.kb_uri_default'/>360006897174" target="developer_tools.public_member.read_more"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
 								</ul>
 							</div>
 						</div>													

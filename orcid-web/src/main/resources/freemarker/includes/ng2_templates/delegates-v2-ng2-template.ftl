@@ -113,7 +113,7 @@
                     </tbody>
                 </table>
                 <div id="show-more-button-container">
-                    <button id="show-more-button" type="submit" class=" btn" (click)="getMoreResults()" *ngIf="areMoreResults">Show more</button>
+                    <button id="show-more-button" type="submit" class=" btn" (click)="getMoreResults()" *ngIf="areMoreResults">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
                     <span id="ajax-loader" class="" *ngIf="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
                 </div>
         </div>

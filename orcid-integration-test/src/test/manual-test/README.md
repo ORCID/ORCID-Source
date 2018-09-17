@@ -13,24 +13,26 @@
     * Default privacy for new activities: Everyone
     * Subscribe to quarterly emails about new features
     * Accept terms and conditions
-3. Attempt to edit the biography of the record- check you get a warning message to verify your email address
-4. Visit https://qa.orcid.org/signout
-5. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
-6. Open message from support@verify.orcid.org with subject [ORCID] Welcome to ORCID
-7. Click (or copy/paste) email verification link
-8. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
-9. Replace [orcid id] in this document with the 16 digit iD from the record
-10. Visit https://qa.orcid.org/signout
+3. Click the link to resend the verify email message
+4. Attempt to edit the biography of the record- click the link to resend the verify email in the warning that comes up
+5. Visit https://qa.orcid.org/signout
+6. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
+7. Verify there are three messages, Thanks for registering and two reminders to verify your email address
+8. Open message from support@verify.orcid.org with subject [ORCID] Welcome to ORCID and click the email verification link
+9. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
+10. Replace [orcid id] in this document with the 16 digit iD from the record
+11. Visit https://qa.orcid.org/signout
 
 ## Reset password
 
-11. Click the Forgotten Your Password link
-12. Enter ma_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
-13. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
-14. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request
-15. Click (or copy/paste) password reset link
+12. Click the Forgotten Your Password link
+13. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
+14. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
+15. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request and click the password reset link
 16. Reset password with [DD][month][YYYY] (No need to fill challenge question)
-17. You will be forward to the sign in page, sign in using the new password
+17. You will be forward to the sign in page, sign in with:
+	Email: MA_TEST_[DD][month][YYYY]@mailinator.com
+	Password: [DD][month][YYYY]
 18. Visit https://qa.orcid.org/signout
 
 ## Sign In
@@ -116,7 +118,7 @@
 59. Visit https://qa.orcid.org/signin
 
 60. Sign into the account created earlier
-	* Email: ma_test_[DD][month][YYYY]@mailinator.com
+	* ORCID: [orcid id]
 	* Password: [DD][month][YYYY]
 
 61. Check that the information you entered earlier is present and items have been added by the Manual Testing Client

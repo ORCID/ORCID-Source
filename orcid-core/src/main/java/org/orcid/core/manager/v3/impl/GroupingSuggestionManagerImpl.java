@@ -93,20 +93,9 @@ public class GroupingSuggestionManagerImpl extends GroupingSuggestionManagerRead
         return workTitle == null || workTitle.getTitle() == null || workTitle.getTitle().getContent() == null || workTitle.getTitle().getContent().isEmpty();
     }
 
+    
     @Override
-    public List<WorkGroupingSuggestion> filterSuggestionsNoLongerApplicable(List<WorkGroupingSuggestion> suggestions, Works workGroups) {
-        List<WorkGroupingSuggestion> filtered = new ArrayList<>();
-        for (WorkGroupingSuggestion suggestion : suggestions) {
-            if (suggestionValid(suggestion, workGroups)) {
-                filtered.add(suggestion);
-            } else {
-                groupingSuggestionDao.remove(suggestion.getId());
-            }
-        }
-        return filtered;
-    }
-
-    private boolean suggestionValid(WorkGroupingSuggestion suggestion, Works workGroups) {
+    public boolean suggestionValid(WorkGroupingSuggestion suggestion, Works workGroups) {
         String match = null;
         for (Long id : suggestion.getPutCodes().getWorkPutCodes()) {
             // suggestion no longer valid if one work doesn't exist or not all titles match
@@ -147,9 +136,22 @@ public class GroupingSuggestionManagerImpl extends GroupingSuggestionManagerRead
     }
 
     @Override
-    public void markGroupingSuggestionAsAccepted(Long id) {
-        GroupingSuggestionEntity entity = groupingSuggestionDao.find(id);
+    public void markGroupingSuggestionAsAccepted(String orcid, Long id) {
+        GroupingSuggestionEntity entity = groupingSuggestionDao.getGroupingSuggestion(orcid, id);
         entity.setAcceptedDate(new Date());
         groupingSuggestionDao.merge(entity);
+    }
+    
+    @Override
+    public void markGroupingSuggestionAsRejected(String orcid, Long id) {
+        GroupingSuggestionEntity entity = groupingSuggestionDao.getGroupingSuggestion(orcid, id);
+        entity.setDismissedDate(new Date());
+        groupingSuggestionDao.merge(entity);
+    }
+
+    @Override
+    public void removeSuggestion(WorkGroupingSuggestion workGroupingSuggestion) {
+        GroupingSuggestionEntity entity = groupingSuggestionDao.find(workGroupingSuggestion.getId());
+        groupingSuggestionDao.remove(entity);
     }
 }

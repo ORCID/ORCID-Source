@@ -72,12 +72,12 @@
                 <span class="orcid-error" *ngIf="initReactivationRequest.error != null">
                     <div [innerHTML]="initReactivationRequest.error"></div>
                 </span>
-                <span class="btn btn-primary" (click)="sendReactivationEmail()"><@spring.message 'check_password_modal.submit' /></span>
+                <span class="btn btn-primary" (click)="sendReactivationEmail(initReactivationRequest.email)"><@spring.message 'check_password_modal.submit' /></span>
             </div>
         </div>         
     </span> 
     <span *ngIf="showReactivationSent">
-        <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /><a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
+        <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /> <a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
     </span>
 </div>
 <div id="loginErrors"></div>

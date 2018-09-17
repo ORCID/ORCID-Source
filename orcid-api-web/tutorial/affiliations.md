@@ -2,9 +2,23 @@
 
 This tutorial goes over editing information in the affiliations section of an ORCID record. Versions of the ORCID API before 3.0 include the Education and Employment affiliation sections. Versions 3.0 and greater include the following sections: Education, Employment, Distinction, Invited position, Membership, Qualification and Service.
 
-**To Do: copy in description of each section from support documentation**
-
 These calls can be used with Member API credentials on sandbox or the production servers.
+
+## Affiliation sections
+
+**Distinction**: An honorary or other award, distinction, or prize in recognition of your achievements, e.g. trophy, medal, honorary degree.
+
+**Education**: Participation in an academic higher education program to receive an undergraduate, graduate, or other degree, may be in progress or unfinished.
+
+**Employment**: formal employment relationship with an organization, e.g. staff, intern, researcher, contractor. Employment can be paid or unpaid.
+
+**Invited position**: An invited non-employment affiliation, e.g. honorary fellow, guest researcher, emeritus professor.
+
+**Membership**: Membership in a society or association, not including honorary memberships and fellowships.
+
+**Qualification**: Participation in a professional or vocational accreditation, certification, or training program, may be in progress or unfinished.
+
+**Service**: A significant donation of time, money, or other resource, e.g. volunteer society officer, elected board position, extension work.
 
 ## Overview
 

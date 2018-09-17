@@ -17,6 +17,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +60,7 @@ import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -116,6 +118,7 @@ public class SetUpClientsAndUsers {
     private static final String CLIENT_WEBSITE = "clientWebsite";
     private static final String CLIENT_TYPE = "clientType";
     private static final String ADD_ORCID_INTERNAL_SCOPES = "addInternalScopes";
+    private static final String ADD_AUTHORIZATION_END_POINT = "addFindMyStuffEndpoint";
 
     // Admin user
     @Value("${org.orcid.web.adminUser.username}")
@@ -348,6 +351,8 @@ public class SetUpClientsAndUsers {
         } else {
             clientDetailsManager.addAuthorizedGrantTypeToClient(Sets.newHashSet("implicit"), client1);
             clientDetailsManager.addScopesToClient(getScopes(client1Params, clientType), client1);
+            if (client1.getClientRegisteredRedirectUris().size() < 2) // find my stuff
+                clientDetailsManager.addClientRedirectUri(client1ClientId, client1Params.get(REDIRECT_URI),RedirectUriType.FIND_MY_STUFF, ScopePathType.ACTIVITIES_UPDATE);
         }
 
         // Create client 2
@@ -464,6 +469,7 @@ public class SetUpClientsAndUsers {
             params.put(CLIENT_WEBSITE, client1Website);
             params.put(CLIENT_TYPE, ClientType.PREMIUM_CREATOR.value());
             params.put(ADD_ORCID_INTERNAL_SCOPES, "true");
+            params.put(ADD_AUTHORIZATION_END_POINT, "true");
         } else if (userId.equals(client2ClientId)) {
             params.put(MEMBER_ID, member1Orcid);
             params.put(CLIENT_ID, client2ClientId);
@@ -696,6 +702,13 @@ public class SetUpClientsAndUsers {
         }
         redirectUrisToAdd.add(redirectUri);
         
+        //FindMyStuff for client1
+        if ("true".equals(params.get(ADD_AUTHORIZATION_END_POINT))){
+            RedirectUri redirectUri2 = new RedirectUri(params.get(REDIRECT_URI));
+            redirectUri2.setType(RedirectUriType.FIND_MY_STUFF); 
+            redirectUri2.setScope(Lists.newArrayList(ScopePathType.ACTIVITIES_UPDATE));
+            redirectUrisToAdd.add(redirectUri2);
+        }        
         
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_CLIENT");
@@ -771,7 +784,7 @@ public class SetUpClientsAndUsers {
         assertNotNull(existingClient);
         assertEquals(member1Orcid, existingClient.getGroupProfileId());
         assertNotNull(existingClient.getRegisteredRedirectUri());
-        assertEquals(1, existingClient.getRegisteredRedirectUri().size());
+        assertEquals(2, existingClient.getClientRegisteredRedirectUris().size());
         assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
         assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
         assertEquals(client1RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());

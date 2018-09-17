@@ -49,8 +49,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     addingWork: boolean;
     bibtexExportError: boolean;
-    bibtexLoading: boolean;
+    bibtexImportLoading: boolean;
     bibtexParsingError: boolean;
+    bibtexExportLoading: boolean;
     bibtexWork: boolean;
     bibtexWorkIndex: any;
     bulkChecked: any;
@@ -103,7 +104,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
         this.addingWork = false;
         this.bibtexExportError = false;
-        this.bibtexLoading = false;
+        this.bibtexExportLoading = false;
+        this.bibtexImportLoading = false;
         this.bibtexParsingError = false;
         this.bibtexWork = false;
         this.bibtexWorkIndex = null;
@@ -291,8 +293,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             this.worksService.notifyOther({worksToMerge:worksToMerge});      
             this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
-            this.worksService.notifyOther({mergeCount:mergeCount, bulkEditMap:this.bulkEditMap});
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+            this.worksService.notifyOther({mergeCount:mergeCount});
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
         }
     };
     
@@ -337,7 +339,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     fetchBibtexExport(){
-        this.bibtexLoading = true;
+        this.bibtexExportLoading = true;
         this.bibtexExportError = false; 
         this.worksService.getBibtexExport()
         .pipe(    
@@ -345,7 +347,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.bibtexLoading = false;
+                this.bibtexExportLoading = false;
                 if(window.navigator.msSaveOrOpenBlob) {
                     var fileData = [data];
                     blobObject = new Blob(fileData, {type: 'text/plain'});
@@ -468,6 +470,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     hideSources(group): void {
         this.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
     };
 
     hideTooltip(key): void {        
@@ -479,9 +482,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     loadBibtexJs($event): void {
-
+        this.bibtexImportLoading = true;
         this.textFiles = $event.target.files; 
-
         try {
             this.worksFromBibtex = new Array();
             for (let bibtex of this.textFiles) {
@@ -519,9 +521,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                 )
                                 .subscribe(
                                     data => {
-                                        for (var i in data) {                           
+                                        for (var i in data) {                          
                                             this.worksFromBibtex.push(data[i]);
                                         }
+                                        this.bibtexImportLoading = false; 
                                     },
                                     error => {
                                         console.log('worksValidateError', error);
@@ -533,9 +536,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             } 
                         );
                     }.bind(this);
+                    
                     this.bibtexParsingError = false;  
-            }    
+            }  
         } catch (err) {
+            this.bibtexImportLoading = false;
             this.bibtexParsingError = true;
             console.log('parseBibtexError', err);
         }
@@ -589,6 +594,42 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.formData = data;
                     this.worksService.handleWorkGroupData( this.formData );
                     this.worksService.loading = false;
+                    this.loadGroupingSuggestions();
+                },
+                error => {
+                    this.worksService.loading = false;
+                    console.log('worksLoadMore', error);
+                } 
+            );
+        }
+    };
+    
+    loadGroupingSuggestions(): void {
+        if(this.publicView != "true") {
+            this.worksService.getWorksGroupingSuggestions(
+            )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if (data) {
+                        var worksToMerge = new Array();
+                        var externalIdsPresent = false;
+                        for (var i in data.putCodes.workPutCodes) {
+                            var workPutCode = data.putCodes.workPutCodes[i];
+                            var work = this.worksService.getWork(workPutCode);
+                            worksToMerge.push({ work: work, preferred: false});
+                            if (work.workExternalIdentifiers.length > 0) {
+                                externalIdsPresent = true;
+                            }
+                        }
+                        this.worksService.notifyOther({suggestionId:data.id});
+                        this.worksService.notifyOther({worksToMerge:worksToMerge});
+                        this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
+                        this.worksService.notifyOther({mergeCount:worksToMerge.length});
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeSuggestions'});
+                    }
                 },
                 error => {
                     this.worksService.loading = false;
@@ -598,38 +639,40 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    loadWorkImportWizardList(): void {
-        this.worksService.loadWorkImportWizardList()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data == null || data.length == 0) {
-                    this.noLinkFlag = false;
-                }
-                this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
-                this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
-                this.workImportWizardsOriginal = data;
-                this.bulkEditShow = false;
-                this.showBibtexImportWizard = false;
-                for(var idx in data) {                            
-                    for(var i in data[idx].actTypes) {
-                        if(!this.commonSrvc.contains(this.workType, data[idx].actTypes[i])) {
-                            this.workType.push(data[idx].actTypes[i]);
-                        }                                
+    loadWorkImportWizardList(): void {        
+        if(this.publicView != "true") {
+            this.worksService.loadWorkImportWizardList()
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if(data == null || data.length == 0) {
+                        this.noLinkFlag = false;
                     }
-                    for(var j in data[idx].geoAreas) {
-                        if(!this.commonSrvc.contains(this.geoArea, data[idx].geoAreas[j])) {
-                            this.geoArea.push(data[idx].geoAreas[j]);
-                        }                                
-                    }                            
-                }
-            },
-            error => {
-                console.log('WorkImportWizardError', error);
-            } 
-        );
+                    this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+                    this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+                    this.workImportWizardsOriginal = data;
+                    this.bulkEditShow = false;
+                    this.showBibtexImportWizard = false;
+                    for(var idx in data) {                            
+                        for(var i in data[idx].actTypes) {
+                            if(!this.commonSrvc.contains(this.workType, data[idx].actTypes[i])) {
+                                this.workType.push(data[idx].actTypes[i]);
+                            }                                
+                        }
+                        for(var j in data[idx].geoAreas) {
+                            if(!this.commonSrvc.contains(this.geoArea, data[idx].geoAreas[j])) {
+                                this.geoArea.push(data[idx].geoAreas[j]);
+                            }                                
+                        }                            
+                    }
+                },
+                error => {
+                    console.log('WorkImportWizardError', error);
+                } 
+            );
+        }                
     };
 
     makeDefault(group, putCode): any {
@@ -639,8 +682,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                group.defaultWork = this.worksService.getWork(putCode);
-                group.activePutCode = group.defaultWork.putCode.value;  
+                group.defaultPutCode = putCode;
+                group.activePutCode = putCode;  
             },
             error => {
                 console.log('makeDefault', error);
@@ -917,7 +960,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     toggleBibtexExport(): void{
         this.bibtexExportError = false;
-        this.bibtexLoading = false;
+        this.bibtexExportLoading = false;
         this.bibtexParsingError = false;
         this.bulkEditShow = false;        
         this.loadingScripts = false;
@@ -982,7 +1025,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.allSelected = !this.allSelected;
         this.bulkChangeAll(this.allSelected);
     }
-
+    
     toggleWizardDesc(id): void {
         this.wizardDescExpanded[id] = !this.wizardDescExpanded[id];
     };
@@ -1003,6 +1046,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                        this.allSelected = false;
+                        this.bulkEditMap = {};
                     }
                 } 
                 if(res.action == 'merge') {
@@ -1018,13 +1063,17 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.bulkEditShow = false;
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                        this.allSelected = false;
+                        this.bulkEditMap = {};
                     }
                 } 
-                if(res.action == 'add' || res.action == 'cancel') {
+                if(res.action == 'add') {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
                         this.loadMore();
+                        this.allSelected = false;
+                        this.bulkEditMap = {};
                     }
                     if(res.bibtex==true){
                         this.worksFromBibtex.splice(this.bibtexWorkIndex, 1);
@@ -1047,6 +1096,5 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.loadMore();
         this.loadWorkImportWizardList();
-
     };
 }

@@ -34,7 +34,7 @@
             <a href="http://orcid.org/newsletter/subscriptions" target="subscribe">${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation_2")}</a>${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation_3")}
         </p>
         <p>
-            <a href="https://support.orcid.org/knowledgebase/articles/1807645-notifications-preferences" target="learnmore">
+            <a href="<@orcid.msg 'common.kb_uri_default'/>360006894514" target="learnmore">
             ${springMacroRequestContext.getMessage("change_notification_preferences.learn_more")}
             </a>
             ${springMacroRequestContext.getMessage("change_notification_preferences.about_inbox_notifications")}

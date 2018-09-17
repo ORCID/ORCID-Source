@@ -51,7 +51,6 @@
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
         orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
-        orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
         orcidVar.features = JSON.parse("${featuresJson}");
         orcidVar.providerId = '${(providerId)!}';
         
@@ -76,6 +75,11 @@
         orcidVar.memberSlug = "${(memberSlug?js_string)!}";
         
         orcidVar.loginId = "${(request.getParameter('loginId'))!}";
+        
+        <#if verifiedEmail??>
+            orcidVar.loginId = "${verifiedEmail}";
+        </#if>
+        
     </script>
 
     <#include "/macros/orcid_ga.ftl">

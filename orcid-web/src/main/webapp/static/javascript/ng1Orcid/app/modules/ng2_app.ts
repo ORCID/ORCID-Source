@@ -104,6 +104,9 @@ import { LanguageNg2Module }
 import { LinkAccountNg2Module } 
     from './linkAccount/linkAccount.ts';
 
+import { MembersListNg2Module } 
+    from './membersList/membersList.ts';
+
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 
@@ -230,11 +233,11 @@ import { DelegatorsNg2Module }
 import { ResendClaimNg2Module }
     from './resendClaim/resendClaim.ts';    
     
-import { WorksMergeNg2Module } 
-    from './works/worksMerge.ts';
-    
 import { WorksMergeChoosePreferredVersionNg2Module } 
     from './works/worksMergeChoosePreferredVersion.ts';
+    
+import { WorksMergeSuggestionsNg2Module } 
+    from './works/worksMergeSuggestions.ts';
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -348,6 +351,7 @@ export class RootCmp {
         HomeNg2Module,
         LanguageNg2Module,
         LinkAccountNg2Module,
+        MembersListNg2Module, //Approved
         ModalNg2Module, //Approved
         NameNg2Module, //Approved
         NotificationsNg2Module,
@@ -388,8 +392,8 @@ export class RootCmp {
         WorksPrivacyPreferencesNg2Module,
         DelegatorsNg2Module,
         ResendClaimNg2Module,
-        WorksMergeNg2Module,
-        WorksMergeChoosePreferredVersionNg2Module
+        WorksMergeChoosePreferredVersionNg2Module,
+        WorksMergeSuggestionsNg2Module
     ],
     providers: [
         { 

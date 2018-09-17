@@ -85,6 +85,9 @@ import { LanguageModule }
 import { LinkAccountModule } 
     from './linkAccount/linkAccount.ts';
 
+import { MembersListModule } 
+    from './membersList/membersList.ts';
+
 import { ModalModule } 
     from './modalNg2/modal-ng.ts';
 
@@ -205,11 +208,11 @@ import { DelegatorsModule }
 import { ResendClaimModule } 
     from './resendClaim/resendClaim.ts';
     
-import { WorksMergeModule } 
-    from './works/worksMerge.ts';
-    
 import { WorksMergeChoosePreferredVersionModule } 
     from './works/worksMergeChoosePreferredVersion.ts';
+    
+import { WorksMergeSuggestionsModule } 
+    from './works/worksMergeSuggestions.ts';
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -242,6 +245,7 @@ export const orcidApp = angular.module(
         HeaderModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
+        MembersListModule.name,
         ModalModule.name,
         NameModule.name,
         OauthAuthorizationModule.name,
@@ -282,8 +286,8 @@ export const orcidApp = angular.module(
         UnsubscribeModule.name,
         DelegatorsModule.name,
         ResendClaimModule.name,
-        WorksMergeModule.name,
-        WorksMergeChoosePreferredVersionModule.name
+        WorksMergeChoosePreferredVersionModule.name,
+        WorksMergeSuggestionsModule.name
     ]
 );
 

@@ -113,7 +113,7 @@
                         <@orcid.msg 'manage.get_my_data.details.p1' />
                     </p>
                     <p>
-                        <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="${knowledgeBaseUri}/articles/117225"><@orcid.msg 'common.learn_more' /></a>
+                        <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897634"><@orcid.msg 'common.learn_more' /></a>
                     </p>
                     <p>
                         <form ngNoForm action="${baseUri}/get-my-data" method="POST">

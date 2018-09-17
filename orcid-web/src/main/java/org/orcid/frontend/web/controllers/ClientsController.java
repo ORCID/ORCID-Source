@@ -19,6 +19,7 @@ import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -178,16 +179,18 @@ public class ClientsController extends BaseWorkspaceController {
         if (client.getRedirectUris() != null && client.getRedirectUris().size() > 0) {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
                 validateRedirectUri(redirectUri);
-                if (RedirectUriType.DEFAULT.value().equals(redirectUri.getType().getValue())) {
-                    // Clean all scopes from default redirect uri type
-                    if (redirectUri.getScopes() != null && !redirectUri.getScopes().isEmpty()) {
-                        redirectUri.setScopes(new ArrayList<String>());
-                    }
-                } else {
-                    if (redirectUri.getScopes() != null && redirectUri.getScopes().isEmpty()) {
-                        // If the redirect type is not default, the scopes must
-                        // not be emtpy
-                        setError(redirectUri, "manage.developer_tools.group.error.empty_scopes");
+                if(!ClientType.PUBLIC_CLIENT.value().equals(client.getType().getValue())) {
+                    if (RedirectUriType.DEFAULT.value().equals(redirectUri.getType().getValue())) {
+                        // Clean all scopes from default redirect uri type
+                        if (redirectUri.getScopes() != null && !redirectUri.getScopes().isEmpty()) {
+                            redirectUri.setScopes(new ArrayList<String>());
+                        }
+                    } else {
+                        if (redirectUri.getScopes() != null && redirectUri.getScopes().isEmpty()) {
+                            // If the redirect type is not default, the scopes must
+                            // not be emtpy
+                            setError(redirectUri, "manage.developer_tools.group.error.empty_scopes");
+                        }
                     }
                 }
             }
