@@ -430,7 +430,7 @@
                                 <a href="https://support.orcid.org/hc/en-us/community/topics" title=""><@orcid.msg 'public-layout.give_feedback'/></a>
                             </li>
                             <li class="last leaf">
-                                <a href="https://zendesk.orcid.org/hc/" title=""><@orcid.msg 'public-layout.knowledge_base'/></a>
+                                <a href="<@orcid.msg 'common.kb_uri_help_center_home'/>" title=""><@orcid.msg 'public-layout.knowledge_base'/></a>
                             </li>
                         </ul>
                     </li>
