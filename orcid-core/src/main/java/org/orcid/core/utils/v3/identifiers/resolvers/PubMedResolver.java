@@ -32,11 +32,9 @@ import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -57,11 +55,11 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     @Resource
     protected LocaleManager localeManager;
 
-    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy MMM dd");
+    static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     List<String> types = Lists.newArrayList("pmc", "pmid");
 
-    private String metadataEndpoint = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={type}:{id}&resultType=core&format=json";    
+    private String metadataEndpoint = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={type}:{id}&resultType=core&format=json";
 
     @Override
     public List<String> canHandle() {
@@ -128,148 +126,101 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     }
 
     private Work getWork(JSONObject json) throws JSONException, ParseException {
-        Work result = new Work();
+        Work work = new Work();
         Locale locale = localeManager.getLocale();
-        JSONObject results = json.getJSONObject("result");
+        JSONObject resultsList = json.getJSONObject("resultList");
 
-        if (results != null) {
-            JSONArray uids = results.getJSONArray("uids");
-            String elementId = uids.getString(0);
-            JSONObject metadata = results.getJSONObject(elementId);
+        if (resultsList != null && resultsList.has("result")) {
+            JSONArray results = resultsList.getJSONArray("result");
+            if (results != null && results.length() > 0) {
+                // Pick the first element always
+                JSONObject workMetadata = results.getJSONObject(0);
 
-            WorkTitle workTitle = new WorkTitle();
-            if (metadata.has("title")) {
-                workTitle.setTitle(new Title(metadata.getString("title")));
-            }
-            result.setWorkTitle(workTitle);
-
-            if (metadata.has("fulljournalname")) {
-                result.setJournalTitle(new Title(metadata.getString("fulljournalname")));
-            }
-
-            if (metadata.has("pubdate")) {
-                String publicationDateString = metadata.getString("pubdate");
-                Date date = dateFormat.parse(publicationDateString);
-                Calendar c = Calendar.getInstance();
-                c.setTime(date);
-                PublicationDate publicationDate = new PublicationDate();
-                result.setPublicationDate(publicationDate);
-                publicationDate.setDay(new Day(c.get(Calendar.DAY_OF_MONTH)));
-                // January = 0
-                publicationDate.setMonth(new Month(c.get(Calendar.MONTH) + 1));
-                publicationDate.setYear(new Year(c.get(Calendar.YEAR)));
-            }
-
-            if (metadata.has("articleids")) {
-                result.setWorkExternalIdentifiers(new ExternalIDs());
-                JSONArray extIdsMetadata = metadata.getJSONArray("articleids");
-                for (int i = 0; i < extIdsMetadata.length(); i++) {
-                    JSONObject extIdMetadata = extIdsMetadata.getJSONObject(i);
-                    ExternalID extId = new ExternalID();
-                    String type = extIdMetadata.getString("idtype");
-                    IdentifierType idType = null;
-                    switch (type) {
-                    case "doi":
-                        idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("DOI", locale);
-                        extId.setType("DOI");
-                        break;
-                    case "pmid":
-                    case "pubmed":
-                        idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("PMID", locale);
-                        extId.setType("PMID");
-                        break;
-                    case "pmcid":
-                    case "pmc":
-                        idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("PMC", locale);
-                        extId.setType("PMC");
-                        break;
-                    default:
-                        continue;
-                    }
-
-                    String value = extIdMetadata.getString("value");
-                    extId.setRelationship(Relationship.SELF);
-                    extId.setValue(value);
-                    if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
-                        extId.setUrl(new Url(idType.getResolutionPrefix() + value));
-                    }
-
-                    result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
+                // "title": "Peripheral blood derived mononuclear cells enhance
+                // osteoarthritic human chondrocyte migration.",
+                if (workMetadata.has("title")) {
+                    WorkTitle w = new WorkTitle();
+                    w.setTitle(new Title(workMetadata.getString("title")));
+                    work.setWorkTitle(w);
                 }
-            }
 
-            if (metadata.has("issn")) {
-                String value = metadata.getString("issn");
-                if (!PojoUtil.isEmpty(value)) {
-                    if (result.getWorkExternalIdentifiers() == null) {
-                        result.setWorkExternalIdentifiers(new ExternalIDs());
-                    }
-                    ExternalID extId = new ExternalID();
-                    extId.setRelationship(Relationship.SELF);
-                    extId.setType("ISSN");
-                    extId.setValue(value);
-                    IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("ISSN", locale);
-                    if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
-                        extId.setUrl(new Url(idType.getResolutionPrefix() + value));
-                    }
-                    result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
+                if (workMetadata.has("abstractText")) {
+                    work.setShortDescription(workMetadata.getString("abstractText"));
                 }
-            }
 
-            if (metadata.has("pubtype")) {
-                try {
-                    JSONArray a = metadata.getJSONArray("pubtype");
-                    result.setWorkType(getWorkType(a.getString(0)));
-                } catch (IllegalArgumentException e) {
+                String pubDate = null;
+                if (workMetadata.has("firstPublicationDate")) {
+                    pubDate = workMetadata.getString("firstPublicationDate");
 
+                } else if (workMetadata.has("electronicPublicationDate")) {
+                    pubDate = workMetadata.getString("electronicPublicationDate");
+                }
+
+                if (pubDate != null) {
+                    Date date = dateFormat.parse(pubDate);
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(date);
+                    PublicationDate publicationDate = new PublicationDate();
+                    work.setPublicationDate(publicationDate);
+                    publicationDate.setDay(new Day(c.get(Calendar.DAY_OF_MONTH)));
+                    // January = 0
+                    publicationDate.setMonth(new Month(c.get(Calendar.MONTH) + 1));
+                    publicationDate.setYear(new Year(c.get(Calendar.YEAR)));
+                }
+
+                if (workMetadata.has("journalInfo")) {
+                    JSONObject journalInfoMetadata = workMetadata.getJSONObject("journalInfo");
+                    if (journalInfoMetadata.has("journal")) {
+                        JSONObject journalMetadata = journalInfoMetadata.getJSONObject("journal");
+                        if (journalMetadata.has("title")) {
+                            work.setJournalTitle(new Title(journalMetadata.getString("title")));
+                        }
+                    }
+                }
+
+                if (workMetadata.has("fullTextUrlList")) {
+                    JSONObject fullTextUrlList = workMetadata.getJSONObject("fullTextUrlList");
+                    if (fullTextUrlList.has("fullTextUrl")) {
+                        JSONArray urls = fullTextUrlList.getJSONArray("fullTextUrl");
+                        String urlValue = null;
+                        for (int i = 0; i < urls.length(); i++) {
+                            JSONObject url = urls.getJSONObject(i);
+                            // Look for html or doi links
+                            String urlType = url.getString("documentStyle");
+                            if (urlType.equals("html")) {
+                                work.setUrl(new Url(url.getString("url")));
+                                break;
+                            } else if (urlType.equals("doi")) {
+                                work.setUrl(new Url(url.getString("url")));
+                            }
+                        }
+                    }
+                }
+                if (workMetadata.has("pmid")) {
+                    addExternalIdentifier(work, "PMID", workMetadata.getString("pmid"), locale);
+                }
+
+                if (workMetadata.has("pmcid")) {
+                    addExternalIdentifier(work, "PMC", workMetadata.getString("pmcid"), locale);
+                }
+
+                if (workMetadata.has("doi")) {
+                    addExternalIdentifier(work, "DOI", workMetadata.getString("doi"), locale);
                 }
             }
         }
 
-        return result;
+        return work;
     }
 
-    /**
-     * Map pubmed publication types with the WorkType enum
-     * https://www.nlm.nih.gov/mesh/pubtypes.html
-     * */
-    private WorkType getWorkType(String pubmedValue) {
-        switch (pubmedValue) {
-        case "Caricatures":
-        case "Cartoons":
-            return WorkType.ARTISTIC_PERFORMANCE;
-        case "Account Books":
-            return WorkType.BOOK;
-        case "Book Reviews":
-            return WorkType.BOOK_REVIEW;
-        case "Clinical Conference":
-        case "Consensus Development Conference":
-        case "Consensus Development Conference, NIH":
-            return WorkType.CONFERENCE_PAPER;
-        case "Dataset":
-            return WorkType.DATA_SET;
-        case "Dictionary":
-            return WorkType.DICTIONARY_ENTRY;
-        case "Academic Dissertations":
-            return WorkType.DISSERTATION;
-        case "Introductory Journal Article":
-        case "Journal Article":
-            return WorkType.JOURNAL_ARTICLE;
-        case "Lecture Notes":
-        case "Lectures":
-            return WorkType.LECTURE_SPEECH;
-        case "Newspaper Article":
-            return WorkType.NEWSPAPER_ARTICLE;
-        case "Video-Audio Media":
-        case "Webcasts":
-            return WorkType.ONLINE_RESOURCE;
-        case "Annual Reports":
-            return WorkType.REPORT;
-        case "Database":
-            return WorkType.SOFTWARE;
-        case "Blogs":
-            return WorkType.WEBSITE;
+    private void addExternalIdentifier(Work work, String type, String value, Locale locale) {
+        ExternalID extId = new ExternalID();
+        extId.setType(type);
+        extId.setValue(value);
+        extId.setRelationship(Relationship.SELF);
+        IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName(type, locale);
+        if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
+            extId.setUrl(new Url(idType.getResolutionPrefix() + value));
         }
-        return null;
     }
 }
