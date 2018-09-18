@@ -35,7 +35,7 @@ Example response:
 {"access_token":"1cecf036-5ced-4d04-8eeb-61fa6e3b32ee","token_type":"bearer","refresh_token":"81hbd686-7aa9-4c52-b8db-51fd8370ccf4","expires_in":631138518,"scope":"/read-public","orcid":null}
 ```
 
-## Search for ORCID recods
+## Search for ORCID records
 
 Version is the the version of the API you are using, the latest stable release is v2.1.
 Query is the terms you are searching for.
