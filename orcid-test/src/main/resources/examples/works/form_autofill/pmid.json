@@ -1,127 +1,138 @@
 {
-    "header": {
-        "type": "esummary",
-        "version": "0.3"
-    },
-    "result": {
-        "uids": [
-            "27211532"
-        ],
-        "27211532": {
-            "uid": "27211532",
-            "pubdate": "2018 Jan 01",
-            "epubdate": "2018 Jan 01",
-            "source": "Source",
-            "authors": [
-                {
-                    "name": "Author name",
-                    "authtype": "Author",
-                    "clusterid": ""
-                }
-            ],
-            "lastauthor": "Last author",
-            "title": "PMID title",
-            "volume": "1",
-            "issue": "1",
-            "pages": "1",
-            "lang": [
-                "eng"
-            ],
-            "nlmuniqueid": "1",
-            "issn": "issn1",
-            "essn": "essn1",
-            "pubtype": [
-                "Journal Article"
-            ],
-            "recordstatus": "recordStatus",
-            "pubstatus": "1",
-            "articleids": [
-                {
-                    "idtype": "pubmed",
-                    "idtypen": 1,
-                    "value": "pmid1"
-                },
-                {
-                    "idtype": "pii",
-                    "idtypen": 4,
-                    "value": "pii1"
-                },
-                {
-                    "idtype": "doi",
-                    "idtypen": 3,
-                    "value": "doi1"
-                },
-                {
-                    "idtype": "pmc",
-                    "idtypen": 8,
-                    "value": "pmc1"
-                },
-                {
-                    "idtype": "rid",
-                    "idtypen": 8,
-                    "value": "rid1"
-                },
-                {
-                    "idtype": "eid",
-                    "idtypen": 8,
-                    "value": "eid1"
-                },
-                {
-                    "idtype": "pmcid",
-                    "idtypen": 5,
-                    "value": "pmc-id: pcid2;"
-                }
-            ],
-            "history": [
-                {
-                    "pubstatus": "received",
-                    "date": "2016/03/15 00:00"
-                },
-                {
-                    "pubstatus": "accepted",
-                    "date": "2016/03/15 00:00"
-                },
-                {
-                    "pubstatus": "entrez",
-                    "date": "2016/05/24 06:00"
-                },
-                {
-                    "pubstatus": "pubmed",
-                    "date": "2016/05/24 06:00"
-                },
-                {
-                    "pubstatus": "medline",
-                    "date": "2017/03/07 06:00"
-                }
-            ],
-            "references": [
-            ],
-            "attributes": [
-            ],
-            "pmcrefcount": "",
-            "fulljournalname": "Journal title",
-            "elocationid": "doi: 10.0000/0.0000",
-            "doctype": "citation",
-            "srccontriblist": [
-            ],
-            "booktitle": "",
-            "medium": "",
-            "edition": "",
-            "publisherlocation": "",
-            "publishername": "",
-            "srcdate": "",
-            "reportnumber": "",
-            "availablefromurl": "",
-            "locationlabel": "",
-            "doccontriblist": [
-            ],
-            "docdate": "",
-            "bookname": "",
-            "chapter": "",
-            "sortpubdate": "2016/04/01 00:00",
-            "sortfirstauthor": "Lee ATJ",
-            "vernaculartitle": ""
-        }
-    }
+	"version": "6.0.2",
+	"hitCount": 1,
+	"nextCursorMark": "xxx",
+	"request": {
+		"query": "ext_id:123",
+		"resultType": "core",
+		"synonym": false,
+		"cursorMark": "*",
+		"pageSize": 25,
+		"sort": ""
+	},
+	"resultList": {
+		"result": [{
+			"id": "123456",
+			"source": "MED",
+			"pmid": "pmid1",
+			"pmcid": "pmc1",
+			"doi": "doi1",
+			"title": "PMID title",
+			"authorString": "Author",
+			"authorList": {
+				"author": [{
+					"fullName": "Author One",
+					"firstName": "Author",
+					"lastName": "One",
+					"initials": "A",
+					"authorId": {
+						"type": "ORCID",
+						"value": "0000-0000-0000-0000"
+					},
+					"affiliation": "affiliation 1"
+				}, {
+					"fullName": "Author Two",
+					"firstName": "Author",
+					"lastName": "Two",
+					"initials": "A",
+					"authorId": {
+						"type": "ORCID",
+						"value": "0000-0000-0000-0001"
+					},
+					"affiliation": "affiliation 2"
+				}]
+			},
+			"authorIdList": {
+				"authorId": [{
+					"type": "ORCID",
+					"value": "0000-0000-0000-0000"
+				}, {
+					"type": "ORCID",
+					"value": "0000-0000-0000-0001"
+				}]
+			},
+			"journalInfo": {
+				"volume": "1",
+				"journalIssueId": 1,
+				"dateOfPublication": "2018 ",
+				"monthOfPublication": 0,
+				"yearOfPublication": 2018,
+				"printPublicationDate": "2018-01-01",
+				"journal": {
+					"title": "Journal title",
+					"medlineAbbreviation": "Journal t",
+					"essn": "1234-5678",
+					"issn": "1234-5678",
+					"isoabbreviation": "J. t.",
+					"nlmid": "1234"
+				}
+			},
+			"pubYear": "2018",
+			"pageInfo": "1",
+			"abstractText": "description",
+			"affiliation": "affiliation",
+			"language": "eng",
+			"pubModel": "Electronic",
+			"pubTypeList": {
+				"pubType": ["Research Support, Non-U.S. Gov't", "research-article", "Journal Article"]
+			},
+			"meshHeadingList": {
+				"meshHeading": []
+			},
+			"subsetList": {
+				"subset": []
+			},
+			"fullTextUrlList": {
+				"fullTextUrl": [{
+					"availability": "Open access",
+					"availabilityCode": "OA",
+					"documentStyle": "pdf",
+					"site": "Europe_PMC",
+					"url": "http://europepmc.org/articles/PMC123?pdf=render"
+				}, {
+					"availability": "Subscription required",
+					"availabilityCode": "S",
+					"documentStyle": "html",
+					"site": "Europe_PMC",
+					"url": "http://europepmc.org/articles/PMC123/subscription"
+				}, {
+					"availability": "Open access",
+					"availabilityCode": "OA",
+					"documentStyle": "html",
+					"site": "Europe_PMC",
+					"url": "http://europepmc.org/articles/PMC123/oa"
+				}, {
+					"availability": "Subscription required",
+					"availabilityCode": "S",
+					"documentStyle": "doi",
+					"site": "DOI",
+					"url": "https://doi.org/10.0000/s0000-z"
+				}]
+			},
+			"commentCorrectionList": {
+				"commentCorrection": []
+			},
+			"isOpenAccess": "Y",
+			"inEPMC": "Y",
+			"inPMC": "N",
+			"hasPDF": "Y",
+			"hasBook": "N",
+			"hasSuppl": "N",
+			"citedByCount": 4,
+			"hasReferences": "Y",
+			"hasTextMinedTerms": "Y",
+			"hasDbCrossReferences": "N",
+			"hasLabsLinks": "Y",
+			"license": "cc by",
+			"authMan": "N",
+			"epmcAuthMan": "N",
+			"nihAuthMan": "N",
+			"hasTMAccessionNumbers": "N",
+			"dateOfCompletion": "2018-01-01",
+			"dateOfCreation": "2018-01-01",
+			"dateOfRevision": "2018-01-01",
+			"electronicPublicationDate": "2018-01-01",
+			"firstPublicationDate": "2018-01-01"
+		}]
+	}
 }
-
