@@ -4256,7 +4256,7 @@ ul#body-membership-list>li {
 .workspace-title {
     display: block;
     color: #494a4c;
-    font-weight: 400
+    font-weight: bold;
 }
 
 .workspace-title span {

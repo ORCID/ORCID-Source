@@ -15,7 +15,7 @@
                                 <div id="peer-review-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="${knowledgeBaseUri}/articles/1807594" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006971333" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div>
