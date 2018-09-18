@@ -136,8 +136,6 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                 // Pick the first element always
                 JSONObject workMetadata = results.getJSONObject(0);
 
-                // "title": "Peripheral blood derived mononuclear cells enhance
-                // osteoarthritic human chondrocyte migration.",
                 if (workMetadata.has("title")) {
                     WorkTitle w = new WorkTitle();
                     w.setTitle(new Title(workMetadata.getString("title")));
@@ -182,14 +180,18 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                     JSONObject fullTextUrlList = workMetadata.getJSONObject("fullTextUrlList");
                     if (fullTextUrlList.has("fullTextUrl")) {
                         JSONArray urls = fullTextUrlList.getJSONArray("fullTextUrl");
-                        String urlValue = null;
                         for (int i = 0; i < urls.length(); i++) {
                             JSONObject url = urls.getJSONObject(i);
                             // Look for html or doi links
                             String urlType = url.getString("documentStyle");
+                            String availability = url.getString("availability");
+                            // If we find the html link, use it and stop
+                            // searching
                             if (urlType.equals("html")) {
-                                work.setUrl(new Url(url.getString("url")));
-                                break;
+                                if(availability == null || availability.equals("Free") || availability.equals("Open access")) {
+                                    work.setUrl(new Url(url.getString("url")));
+                                    break;
+                                }
                             } else if (urlType.equals("doi")) {
                                 work.setUrl(new Url(url.getString("url")));
                             }
@@ -197,15 +199,15 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                     }
                 }
                 if (workMetadata.has("pmid")) {
-                    addExternalIdentifier(work, "PMID", workMetadata.getString("pmid"), locale);
+                    addExternalIdentifier(work, "pmid", workMetadata.getString("pmid"), locale);
                 }
 
                 if (workMetadata.has("pmcid")) {
-                    addExternalIdentifier(work, "PMC", workMetadata.getString("pmcid"), locale);
+                    addExternalIdentifier(work, "pmc", workMetadata.getString("pmcid"), locale);
                 }
 
                 if (workMetadata.has("doi")) {
-                    addExternalIdentifier(work, "DOI", workMetadata.getString("doi"), locale);
+                    addExternalIdentifier(work, "doi", workMetadata.getString("doi"), locale);
                 }
             }
         }

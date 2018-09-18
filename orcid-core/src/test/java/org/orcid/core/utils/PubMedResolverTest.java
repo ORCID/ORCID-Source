@@ -162,19 +162,19 @@ public class PubMedResolverTest {
 
         assertEquals(3, work.getExternalIdentifiers().getExternalIdentifier().size());
 
-        assertEquals("PMID", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("pmid", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("https://pmid/pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
 
-        assertEquals("DOI", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
-        assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
-        assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
-        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
-
-        assertEquals("PMC", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
-        assertEquals("https://pmc/pmcid1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
-        assertEquals("pmcid1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
+        assertEquals("pmc", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("https://pmc/pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());        
+        
+        assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
+        assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
+        assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(2).getRelationship());
     }
 
@@ -189,31 +189,21 @@ public class PubMedResolverTest {
         assertEquals("01", work.getPublicationDate().getDay().getValue());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
         
-        assertEquals(5, work.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(3, work.getExternalIdentifiers().getExternalIdentifier().size());
 
-        assertEquals("PMID", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("pmid", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("https://pmid/pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("pmid1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
 
-        assertEquals("DOI", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
-        assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
-        assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
-        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
-
-        assertEquals("PMC", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
-        assertEquals("https://pmc/pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
-        assertEquals("pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
+        assertEquals("pmc", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("https://pmc/pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());        
+        
+        assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
+        assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
+        assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(2).getRelationship());
-        
-        assertEquals("PMC", work.getExternalIdentifiers().getExternalIdentifier().get(3).getType());
-        assertEquals("https://pmc/pmc-id: pcid2;", work.getExternalIdentifiers().getExternalIdentifier().get(3).getUrl().getValue());
-        assertEquals("pmc-id: pcid2;", work.getExternalIdentifiers().getExternalIdentifier().get(3).getValue());
-        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(3).getRelationship());
-        
-        assertEquals("ISSN", work.getExternalIdentifiers().getExternalIdentifier().get(4).getType());
-        assertEquals("https://issn/issn1", work.getExternalIdentifiers().getExternalIdentifier().get(4).getUrl().getValue());
-        assertEquals("issn1", work.getExternalIdentifiers().getExternalIdentifier().get(4).getValue());
-        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(4).getRelationship());
     }
 }
