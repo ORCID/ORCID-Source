@@ -132,27 +132,27 @@ public class DOIResolverTest {
         assertEquals("http://dx.doi.org/10.000/0000.0000", work.getUrl().getValue());
         
         assertEquals(5, work.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("DOI", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("https://doi.org/10.000/0000.0000", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("10.000/0000.0000", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         
-        assertEquals("ISBN", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("isbn", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("https://www.worldcat.org/isbn/ISBN-0000-0000", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         assertEquals("ISBN-0000-0000", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
     
-        assertEquals("ISBN", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
+        assertEquals("isbn", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
         assertEquals("https://www.worldcat.org/isbn/ISBN-0000-0001", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
         assertEquals("ISBN-0000-0001", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(2).getRelationship());
     
-        assertEquals("ISSN", work.getExternalIdentifiers().getExternalIdentifier().get(3).getType());
+        assertEquals("issn", work.getExternalIdentifiers().getExternalIdentifier().get(3).getType());
         assertEquals("https://www.test.org/issn/ISSN-0000-0000", work.getExternalIdentifiers().getExternalIdentifier().get(3).getUrl().getValue());
         assertEquals("ISSN-0000-0000", work.getExternalIdentifiers().getExternalIdentifier().get(3).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(3).getRelationship());
     
-        assertEquals("ISSN", work.getExternalIdentifiers().getExternalIdentifier().get(4).getType());
+        assertEquals("issn", work.getExternalIdentifiers().getExternalIdentifier().get(4).getType());
         assertEquals("https://www.test.org/issn/ISSN-0000-0001", work.getExternalIdentifiers().getExternalIdentifier().get(4).getUrl().getValue());
         assertEquals("ISSN-0000-0001", work.getExternalIdentifiers().getExternalIdentifier().get(4).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(4).getRelationship());
