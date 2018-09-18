@@ -617,7 +617,7 @@ public class SetUpClientsAndUsers {
             if(emails != null && !emails.isEmpty()) {
                 for(EmailEntity rc2Email : emails) {
                     if (!params.get(EMAIL).equals(rc2Email.getEmail())) {
-                        emailDao.removeEmail(orcid, rc2Email.getEmail(), false);
+                        emailDao.removeEmail(orcid, rc2Email.getEmail());
                     }
                 }
             }
