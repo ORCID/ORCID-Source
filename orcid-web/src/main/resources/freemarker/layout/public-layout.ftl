@@ -5,8 +5,13 @@
 <body data-baseurl="<@orcid.rootPath '/'/>">
 <#nested />
 <#include "/common/scripts.ftl" />
-<#if !hideUserVoiceScript??> 
-    <#include "/common/user_voice_script.ftl" />
+<#if !hideSupportWidget??>  
+    <@orcid.checkFeatureStatus 'SUPPORT_MIGRATION'>
+        <#include "/common/zendesk_script.ftl" />
+    </@orcid.checkFeatureStatus>  
+    <@orcid.checkFeatureStatus featureName='SUPPORT_MIGRATION' enabled=false>
+        <#include "/common/user_voice_script.ftl" />
+    </@orcid.checkFeatureStatus>  
 </#if>
 </body>
 </html>

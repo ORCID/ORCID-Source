@@ -5,7 +5,7 @@
         
         <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have_more")}<br />
             <a
-                href="${knowledgeBaseUri}/articles/580410"
+                href="<@orcid.msg 'common.kb_uri_default'/>360006896634"
                 target="deprecate_orcid.learn_more_link">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
         </p>
         <div>

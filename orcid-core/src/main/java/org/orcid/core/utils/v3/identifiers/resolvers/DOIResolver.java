@@ -2,9 +2,9 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
@@ -123,24 +124,23 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         // see https://crosscite.org/docs.html for more docs.
 
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL(rr.getGeneratedUrl()).openConnection();
-            con.addRequestProperty("Accept", "application/vnd.citationstyles.csl+json");
-            con.setRequestMethod("GET");
-            con.setInstanceFollowRedirects(true);
-            if (con.getResponseCode() == 200) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+            InputStream inputStream = cache.get(rr.getGeneratedUrl(), "application/vnd.citationstyles.csl+json");
+            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
 
-                StringBuffer response = new StringBuffer();
-                in.lines().forEach(i -> response.append(i));
-                in.close();
+            StringBuffer response = new StringBuffer();
+            in.lines().forEach(i -> response.append(i));
+            in.close();
 
-                // Read JSON response and print
-                JSONObject json = new JSONObject(response.toString());
+            // Read JSON response and print
+            JSONObject json = new JSONObject(response.toString());
 
-                if (json != null) {
-                    return getWork(json);
-                }
+            if (json != null) {
+                return getWork(json);
             }
+        } catch (UnexpectedResponseCodeException e) {
+            // TODO: For future projects, we might want to retry when
+            // e.getReceivedCode() tell us that we can retry later, like 503 or
+            // 504
         } catch (IOException | JSONException e) {
             return null;
         }
@@ -178,7 +178,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         if (json.has("DOI")) {
             String doi = json.getString("DOI");
             ExternalID extId = new ExternalID();
-            extId.setType("DOI");
+            extId.setType("doi");
             extId.setRelationship(Relationship.SELF);
             extId.setValue(doi);
             IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("DOI", locale);
@@ -194,7 +194,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 for (int i = 0; i < isbns.length(); i++) {
                     String isbn = isbns.getString(i);
                     ExternalID extId = new ExternalID();
-                    extId.setType("ISBN");
+                    extId.setType("isbn");
                     extId.setRelationship(Relationship.SELF);
                     extId.setValue(isbn);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
@@ -213,7 +213,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 for (int i = 0; i < issns.length(); i++) {
                     String issn = issns.getString(i);
                     ExternalID extId = new ExternalID();
-                    extId.setType("ISSN");
+                    extId.setType("issn");
                     extId.setRelationship(Relationship.SELF);
                     extId.setValue(issn);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
@@ -258,11 +258,11 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 // need to worry about this error
             }
             result.setPublicationDate(publicationDate);
-        }                
+        }
 
         if (json.has("language")) {
             result.setLanguageCode(json.getString("language"));
         }
         return result;
-    }       
+    }
 }

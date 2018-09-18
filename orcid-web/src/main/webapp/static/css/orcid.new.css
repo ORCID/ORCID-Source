@@ -406,7 +406,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 
 .container {
     margin-bottom: 0;
-    min-height: 90%;
+    min-height: calc(100% - 20px);
     clear: both;
 }
 
@@ -1060,7 +1060,6 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     height: auto;
     background: #939598;
     font-size: 13px;
-    margin-top: -20px
 }
 
 .footer.fixed {
@@ -2493,7 +2492,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 .work-bulk-actions .popover-help-container .bulk-works-privacy-popover {
     display: none;
     position: absolute;
-    left: -86px;
+    left: -75px;
 }
 
 .work-bulk-actions .popover-help-container .bulk-actions-popover {
@@ -5072,9 +5071,15 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 .work-bulk-actions .privacy-bulk-works {
 	bottom: 45px;
     right: -5px;
-    width: auto;
-    top: -150px;
+    top: -170px;
     left: 186px;
+    min-width: 247px;
+}
+
+.work-bulk-actions .privacy-bulk-works ul li {
+    display: list-item;
+    padding: 0 0 0 27px;
+    margin: 0 0 0 15px;
 }
 
 .popover-help-container .workspace-top .popover-help-container .popover.privacy-myorcid3, .privacy-bulk-works 
@@ -5084,7 +5089,7 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 
 .popover-help-container>.privacy-myorcid3>.arrow {
     left: 186px
-}
+}   
 
 .source-line .sources-popover {
     top: -35px;
@@ -6291,7 +6296,8 @@ a#reset-password-toggle-text:hover:active {
 
 .public-profile .workspace-section .public-content {
     float: left;
-    width: 100%
+    width: 100%;
+    word-wrap: break-word;
 }
 
 .public-profile .workspace-section .workspace-section-header .inline-list .right .popover {
@@ -6421,7 +6427,7 @@ a#reset-password-toggle-text:hover:active {
 }
 
 .member-list select,.self-service select {
-    margin: 0
+    margin: 0 4px 0 0
 }
 
 .member-list .btn-primary {
@@ -6443,7 +6449,7 @@ a#reset-password-toggle-text:hover:active {
 
 .member-list .filter li {
     display: inline;
-    padding: 3px
+    padding: 3px;
 }
 
 .member-list ul.filter {

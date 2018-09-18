@@ -3,7 +3,7 @@
     <p>
         ${springMacroRequestContext.getMessage("2FA.details")}
         <br />
-        <a href="${knowledgeBaseUri}/articles/1190068"
+        <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673"
             target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
     </p>
     <div *ngIf="showEnabled2FA" >

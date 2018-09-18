@@ -16,7 +16,7 @@
                                 <div class="arrow"></div>
                                 <div class="popover-content">
                                     <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_2'/><br>
-                                    <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <a href="<@orcid.msg 'common.kb_uri_default'/>360006897694" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div>
@@ -127,7 +127,7 @@
                                         <div class="popover-content">
                                             <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_2'/><br>
                                             <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_4'/><br>
-                                            <a href="${knowledgeBaseUri}/articles/115483" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
+                                            <a href="<@orcid.msg 'common.kb_uri_default'/>360006973933" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
                                         </div>
                                     </div>
                                 </div>  
@@ -236,7 +236,7 @@
                                     <div id="education-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
-                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="${knowledgeBaseUri}/articles/1807522" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></a></p>
+                                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEducation'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006971493" target="manage_affiliations_settings.helpPopoverEducation"><@orcid.msg 'common.learn_more'/></a></p>
                                         </div>
                                     </div>
                                 </div>  
@@ -350,7 +350,7 @@
                                     <div class="popover-content">
                                         <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_2'/><br>
                                         <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_4'/><br>
-                                        <a href="${knowledgeBaseUri}/articles/115486" target="manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <a href="<@orcid.msg 'common.kb_uri_default'/>360008897654" target="manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div>
@@ -490,7 +490,7 @@
                                     <div class="popover-content">
                                         <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_2'/><br>
                                         <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_4'/><br>
-                                        <a href="${knowledgeBaseUri}/articles/116752" target="manage_affiliations_settings.helpPopoverMembershipAndService"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <a href="<@orcid.msg 'common.kb_uri_default'/>360008897694" target="manage_affiliations_settings.helpPopoverMembershipAndService"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div>

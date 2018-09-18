@@ -285,7 +285,7 @@
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="part-of" />
                                         <@orcid.msg "common.part_of" />
                                     </label>                            
-                                    <a href *ngIf="editWork.workExternalIdentifiers.length > 1" (click)="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right"></a>                            
+                                    <a href *ngIf="editWork.workExternalIdentifiers.length > 1" (click)="deleteExternalIdentifier(i)" class="glyphicon glyphicon-trash grey action-icon-align-right"></a>                            
                                 </div>
                                 <div *ngIf="last" class="add-item-link clearfix">   
                                     <span><a href (click)="addExternalIdentifier(i)"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>

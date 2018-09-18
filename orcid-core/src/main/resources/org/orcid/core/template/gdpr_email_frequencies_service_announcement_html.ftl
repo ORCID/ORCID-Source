@@ -33,13 +33,13 @@
         <p>
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C; font-weight: bold;">Your rights as a user under GDPR</span>
             <ul style="list-style:disc">
-                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">We created a <a href="https://support.orcid.org/knowledgebase/articles/907155" target="_blank">new Knowledge Base article</a> explaining the rights you have under the GDPR and how you can adjust your account settings in the Registry interface.</li>
+                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">We created a <a href="https://support.orcid.org/hc/articles/360006895834" target="_blank">new Knowledge Base article</a> explaining the rights you have under the GDPR and how you can adjust your account settings in the Registry interface.</li>
             </ul>
         </p>
         <p>
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C; font-weight: bold;">Security documentation</span>
             <ul style="list-style:disc">
-                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">We updated our <a href="https://support.orcid.org/knowledgebase/articles/136222" target="_blank">security documentation</a> to reflect our current practices.</li>
+                <li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">We updated our <a href="https://support.orcid.org/hc/articles/360006897574" target="_blank">security documentation</a> to reflect our current practices.</li>
             </ul>
         </p>
         <p>

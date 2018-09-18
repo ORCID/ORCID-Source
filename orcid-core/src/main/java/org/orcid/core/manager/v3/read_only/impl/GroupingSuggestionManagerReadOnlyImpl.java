@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3.read_only.impl;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkPutCodes;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.GroupingSuggestionDao;
 import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;
@@ -13,6 +14,10 @@ public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestion
 
     @Override
     public WorkGroupingSuggestion getGroupingSuggestion(String orcid) {
+        if (!Features.GROUPING_SUGGESTIONS.isActive()) {
+            return null;
+        }
+        
         GroupingSuggestionEntity suggestionEntity = groupingSuggestionDao.getNextGroupingSuggestion(orcid);
         if (suggestionEntity != null) {
             WorkGroupingSuggestion suggestionPojo = new WorkGroupingSuggestion();

@@ -54,7 +54,7 @@
                     privacyNodeName="visibility" 
                 ></privacy-toggle-ng2>
 
-                <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="142948-names-in-the-orcid-registry"><i class="glyphicon glyphicon-question-sign help-glyphicon" style="width: 14px;"></i></a>
+                <a href="<@orcid.msg 'common.kb_uri_default'/>360006973853"><i class="glyphicon glyphicon-question-sign help-glyphicon" style="width: 14px;"></i></a>
             </div>
             <ul class="workspace-section-toolbar clearfix">
                 <li class="pull-right">

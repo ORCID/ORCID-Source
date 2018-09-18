@@ -31,7 +31,7 @@
             <div id="account-settings-help" class="popover bottom">
                 <div class="arrow"></div>
                 <div class="popover-content">
-                    <p><@orcid.msg 'manage.help_popover.accountSettings'/> <a href="${knowledgeBaseUri}/topics/141844" target="manage.help_popover.accountSettings"><@orcid.msg 'common.learn_more'/></a></p>
+                    <p><@orcid.msg 'manage.help_popover.accountSettings'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360000661693" target="manage.help_popover.accountSettings"><@orcid.msg 'common.learn_more'/></a></p>
                 </div>
             </div>
         </div>
@@ -197,7 +197,7 @@
                             <@orcid.msg 'manage.get_my_data.details.p1' />
                         </p>
                         <p>
-                            <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="${knowledgeBaseUri}/articles/117225"><@orcid.msg 'common.learn_more' /></a>
+                            <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897634"><@orcid.msg 'common.learn_more' /></a>
                         </p>
                         <p>
                             <form action="${baseUri}/get-my-data" method="POST">
@@ -221,7 +221,7 @@
                 <div id="trusted-organizations-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
-                        <p><@orcid.msg 'manage.help_popover.trustedOrganizations'/> <a href="${knowledgeBaseUri}/articles/131598" target="manage.help_popover.trustedOrganizations"><@orcid.msg 'common.learn_more'/></a></p>
+                        <p><@orcid.msg 'manage.help_popover.trustedOrganizations'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006973893" target="manage.help_popover.trustedOrganizations"><@orcid.msg 'common.learn_more'/></a></p>
                     </div>
                 </div>
             </div>
@@ -279,7 +279,7 @@
                 <div id="trusted-individuals-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
-                        <p><@orcid.msg 'manage.help_popover.trustedIndividuals'/> <a href="${knowledgeBaseUri}/articles/217659" target="manage.help_popover.trustedIndividuals"><@orcid.msg 'common.learn_more'/></a></p>
+                        <p><@orcid.msg 'manage.help_popover.trustedIndividuals'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006973613" target="manage.help_popover.trustedIndividuals"><@orcid.msg 'common.learn_more'/></a></p>
                     </div>
                 </div>
             </div>
@@ -415,7 +415,7 @@
                 <div id="alternative-signin-accounts-help" class="popover bottom">
                     <div class="arrow"></div>
                     <div class="popover-content">
-                        <p><@orcid.msg 'manage.help_popover.alternateSigninAccounts'/>  <a href="${knowledgeBaseUri}/articles/892920" target="manage.help_popover.alternateSigninAccounts"><@orcid.msg 'common.learn_more'/></a></p>
+                        <p><@orcid.msg 'manage.help_popover.alternateSigninAccounts'/>  <a href="<@orcid.msg 'common.kb_uri_default'/>360006972693" target="manage.help_popover.alternateSigninAccounts"><@orcid.msg 'common.learn_more'/></a></p>
                     </div>
                 </div>
             </div>

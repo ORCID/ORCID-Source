@@ -51,7 +51,6 @@
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
         orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
-        orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
         orcidVar.features = JSON.parse("${featuresJson}");
         orcidVar.providerId = '${(providerId)!}';
         

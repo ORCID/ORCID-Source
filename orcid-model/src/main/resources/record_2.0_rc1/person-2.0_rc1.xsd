@@ -365,7 +365,7 @@
         <xs:annotation>
             <xs:documentation>See the ORCID Knowledgebase for a complete
                 description of ORCID Scopes and related documentation:
-                https://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.
+                https://members.orcid.org/api/oauth/orcid-scopes.
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
