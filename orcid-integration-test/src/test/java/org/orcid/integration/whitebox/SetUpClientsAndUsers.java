@@ -60,7 +60,6 @@ import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -618,7 +617,7 @@ public class SetUpClientsAndUsers {
             if(emails != null && !emails.isEmpty()) {
                 for(EmailEntity rc2Email : emails) {
                     if (!params.get(EMAIL).equals(rc2Email.getEmail())) {
-                        emailDao.removeEmail(orcid, rc2Email.getEmail());
+                        emailDao.removeEmail(orcid, rc2Email.getEmail(), false);
                     }
                 }
             }

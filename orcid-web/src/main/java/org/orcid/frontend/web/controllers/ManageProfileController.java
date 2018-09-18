@@ -571,8 +571,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
         
-        
-        
         String owner = null;
         
         try {
@@ -590,7 +588,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (errors.getErrors().size() == 0) {            
-            emailManager.removeEmail(currentUserOrcid, email);
+            emailManager.removeEmail(currentUserOrcid, email, false);
         }
         return errors;
     }

@@ -46,13 +46,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     private NotificationManager notificationManager;
     
     @Resource(name = "encryptionManager")
-    private EncryptionManager encryptionManager;
-
-    @Override
-    @Transactional
-    public void removeEmail(String orcid, String email) {
-        emailDao.removeEmail(orcid, email);
-    }
+    private EncryptionManager encryptionManager;   
 
     @Override
     @Transactional
