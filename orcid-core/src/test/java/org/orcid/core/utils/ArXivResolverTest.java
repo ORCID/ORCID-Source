@@ -104,11 +104,11 @@ public class ArXivResolverTest {
         assertEquals("02", work.getPublicationDate().getDay().getValue());
         assertEquals("Journal title", work.getJournalTitle().getContent());
         assertEquals(2, work.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("ARXIV", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("arxiv", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("https://arxiv.org/abs/0000.0000", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("0000.0000", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
-        assertEquals("DOI", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("http://dx.doi.org/10.0000/test/a0000-00000-x", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         assertEquals("10.0000/test/a0000-00000-x", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
