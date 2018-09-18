@@ -178,7 +178,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         if (json.has("DOI")) {
             String doi = json.getString("DOI");
             ExternalID extId = new ExternalID();
-            extId.setType("DOI");
+            extId.setType("doi");
             extId.setRelationship(Relationship.SELF);
             extId.setValue(doi);
             IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName("DOI", locale);
@@ -194,7 +194,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 for (int i = 0; i < isbns.length(); i++) {
                     String isbn = isbns.getString(i);
                     ExternalID extId = new ExternalID();
-                    extId.setType("ISBN");
+                    extId.setType("isbn");
                     extId.setRelationship(Relationship.SELF);
                     extId.setValue(isbn);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
@@ -213,7 +213,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 for (int i = 0; i < issns.length(); i++) {
                     String issn = issns.getString(i);
                     ExternalID extId = new ExternalID();
-                    extId.setType("ISSN");
+                    extId.setType("issn");
                     extId.setRelationship(Relationship.SELF);
                     extId.setValue(issn);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {

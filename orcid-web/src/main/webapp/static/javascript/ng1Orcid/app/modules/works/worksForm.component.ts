@@ -163,8 +163,10 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     deleteExternalIdentifier(index): void {
-        this.editWork.workExternalIdentifiers.splice(index,1);
-        this.cdr.detectChanges();
+        if (index > -1) {
+            this.editWork.workExternalIdentifiers.splice(index,1);
+            this.cdr.detectChanges();
+        }
     };
 
     fillUrl(i): void {

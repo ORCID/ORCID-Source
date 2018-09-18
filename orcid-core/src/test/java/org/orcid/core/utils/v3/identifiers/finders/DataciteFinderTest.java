@@ -75,6 +75,7 @@ public class DataciteFinderTest {
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", new ExternalIDs());
         assertEquals("DataciteFinder",result.getFinderName());
         assertEquals(25,result.getResults().size());
+        assertEquals(95,result.getTotal());
     }
     
     @Test

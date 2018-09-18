@@ -161,7 +161,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                     }
                     ExternalID arxiv = new ExternalID();
                     arxiv.setRelationship(Relationship.SELF);
-                    arxiv.setType("ARXIV");
+                    arxiv.setType("arxiv");
                     arxiv.setValue(normalizationService.normalise("arxiv", value));
                     arxiv.setUrl(new Url(value));
                     work.getWorkExternalIdentifiers().getExternalIdentifier().add(arxiv);
@@ -209,7 +209,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
                 case "arxiv:doi":
                     ExternalID doi = new ExternalID();
                     doi.setRelationship(Relationship.SELF);
-                    doi.setType("DOI");
+                    doi.setType("doi");
                     doi.setValue(normalizationService.normalise("doi", value));
                     doi.setUrl(new Url(normalizationService.generateNormalisedURL("doi", value)));
                     work.getWorkExternalIdentifiers().getExternalIdentifier().add(doi);

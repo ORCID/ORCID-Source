@@ -180,7 +180,7 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
         ClientRedirectUriEntity result = null;
         // found, return the first DEFAULT one
         for (ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
-            if (RedirectUriType.IMPORT_WORKS_WIZARD.value().equals(redirectUri.getRedirectUriType())) {
+            if (RedirectUriType.FIND_MY_STUFF.value().equals(redirectUri.getRedirectUriType())) {
                 result = redirectUri;
                 break;
             }
@@ -207,8 +207,17 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
     }
 
     @Override
-    public void markAsActioned(String orcid, String finderName) {
-        findMyStuffHistoryDao.markActioned(orcid, finderName);
+    public void markAsActioned(String orcid, String clientID) {
+        for (Finder f: finders){
+            if (f.getRelatedClientId().equals(clientID)){
+                findMyStuffHistoryDao.markActioned(orcid, f.getFinderName());                                
+            }
+        }
+    }
+
+    @Override
+    public void markOptOut(String orcid, String finderName, boolean state) {
+        findMyStuffHistoryDao.markOptOut(orcid, finderName, state);
     }
 
 }

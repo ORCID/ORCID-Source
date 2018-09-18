@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.model.v3.rc1.notification.internal.NotificationFindMyStuff;
-import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 
 public class FindMyStuffResult {
 
     public String finderName;
     public List<FindMyStuffItem> results;
+    public int total;
     private NotificationFindMyStuff notification;
 
     public NotificationFindMyStuff getNotification() {
@@ -31,6 +31,12 @@ public class FindMyStuffResult {
     }
     public void setFinderName(String serviceName) {
         this.finderName = serviceName;
+    }
+    public void setTotal(int totalResults) {
+        this.total=totalResults;
     }    
+    public int getTotal(){
+        return total;
+    }
     
 }
