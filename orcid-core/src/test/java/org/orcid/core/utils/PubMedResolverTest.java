@@ -65,7 +65,7 @@ public class PubMedResolverTest {
                 return argument1;
             }
         });
-        
+
         when(normalizationService.normalise(eq("pmid"), anyString())).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
@@ -90,7 +90,7 @@ public class PubMedResolverTest {
                 return "https://www.ncbi.nlm.nih.gov/pubmed/" + invocation.getArgument(1).toString();
             }
         });
-        
+
         when(identifierTypeManager.fetchIdentifierTypeByDatabaseName(eq("DOI"), Mockito.any(Locale.class))).thenAnswer(new Answer<IdentifierType>() {
             @Override
             public IdentifierType answer(InvocationOnMock invocation) throws Throwable {
@@ -117,7 +117,7 @@ public class PubMedResolverTest {
                 return i;
             }
         });
-        
+
         when(identifierTypeManager.fetchIdentifierTypeByDatabaseName(eq("ISSN"), Mockito.any(Locale.class))).thenAnswer(new Answer<IdentifierType>() {
             @Override
             public IdentifierType answer(InvocationOnMock invocation) throws Throwable {
@@ -129,7 +129,7 @@ public class PubMedResolverTest {
 
         when(cache.isHttp200(anyString())).thenReturn(true);
 
-        when(cache.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary?db=pmc&id=1&retmode=json", MediaType.APPLICATION_JSON))
+        when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=PMCID:pmc1&resultType=core&format=json", MediaType.APPLICATION_JSON))
                 .thenAnswer(new Answer<InputStream>() {
 
                     @Override
@@ -138,16 +138,16 @@ public class PubMedResolverTest {
                     }
 
                 });
-        
-        when(cache.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary?db=pubmed&id=pmid1&retmode=json", MediaType.APPLICATION_JSON))
-        .thenAnswer(new Answer<InputStream>() {
 
-            @Override
-            public InputStream answer(InvocationOnMock invocation) throws Throwable {
-                return PubMedResolverTest.class.getResourceAsStream("/examples/works/form_autofill/pmid.json");
-            }
+        when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:pmid1&resultType=core&format=json", MediaType.APPLICATION_JSON))
+                .thenAnswer(new Answer<InputStream>() {
 
-        });
+                    @Override
+                    public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                        return PubMedResolverTest.class.getResourceAsStream("/examples/works/form_autofill/pmid.json");
+                    }
+
+                });
     }
 
     @Test
@@ -170,8 +170,8 @@ public class PubMedResolverTest {
         assertEquals("pmc", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("https://pmc/pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         assertEquals("pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
-        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());        
-        
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+
         assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
         assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
         assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
@@ -187,8 +187,7 @@ public class PubMedResolverTest {
         assertEquals("2018", work.getPublicationDate().getYear().getValue());
         assertEquals("01", work.getPublicationDate().getMonth().getValue());
         assertEquals("01", work.getPublicationDate().getDay().getValue());
-        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
-        
+
         assertEquals(3, work.getExternalIdentifiers().getExternalIdentifier().size());
 
         assertEquals("pmid", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
@@ -199,8 +198,8 @@ public class PubMedResolverTest {
         assertEquals("pmc", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("https://pmc/pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         assertEquals("pmc1", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
-        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());        
-        
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+
         assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(2).getType());
         assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
         assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());

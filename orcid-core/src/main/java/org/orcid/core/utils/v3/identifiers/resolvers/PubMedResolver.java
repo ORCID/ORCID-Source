@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Year;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
@@ -220,9 +221,14 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
         extId.setType(type);
         extId.setValue(value);
         extId.setRelationship(Relationship.SELF);
-        IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName(type, locale);
+        IdentifierType idType = identifierTypeManager.fetchIdentifierTypeByDatabaseName(type.toUpperCase(), locale);
         if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
             extId.setUrl(new Url(idType.getResolutionPrefix() + value));
         }
+        if(work.getExternalIdentifiers() == null) {
+            work.setWorkExternalIdentifiers(new ExternalIDs());
+        }
+        
+        work.getExternalIdentifiers().getExternalIdentifier().add(extId);
     }
 }
