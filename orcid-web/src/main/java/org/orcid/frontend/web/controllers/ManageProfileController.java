@@ -678,7 +678,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody NamesForm getNameForm() {
         String currentOrcid = getCurrentUserOrcid();
         Name name = recordNameManager.getRecordName(currentOrcid);
-        return NamesForm.valueOf(name);
+        String currentRealOrcid = getRealUserOrcid();
+        Name realName = recordNameManager.getRecordName(currentRealOrcid);
+        
+        return NamesForm.valueOf(name, realName);
     }
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)

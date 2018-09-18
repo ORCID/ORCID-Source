@@ -38,6 +38,8 @@ import { OauthService }
 
 import { SearchService } 
     from '../../shared/search.service.ts';
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 @Component({
     selector: 'oauth-authorization-ng2',
@@ -93,6 +95,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     //registration form togglz features    
     disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
     initReactivationRequest: any;
+    nameFormUrl: string; 
+    loggedinUserName: string;
+    isLoggedIn: boolean;
     
     constructor(
         private zone:NgZone,
@@ -101,7 +106,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         private featuresService: FeaturesService,
         private modalService: ModalService,
         private oauthService: OauthService,
-        private searchSrvc: SearchService
+        private searchSrvc: SearchService,
+        private nameService: GenericService
     ) {
         window['angularComponentReference'] = {
             zone: this.zone,
@@ -151,6 +157,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.loadTime = 0;
         this.generalRegistrationError = null;
         this.initReactivationRequest = { "email":null, "error":null, "success":false };
+        this.nameFormUrl = '/account/nameForm.json';
+        this.isLoggedIn = false
     }
 
     addScript(url, onLoadFunction): void {      
@@ -725,5 +733,23 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }
             }
         );
+
+        console.log("OKKK")
+
+        this.nameService.getData(this.nameFormUrl).subscribe(response => {
+            {
+                if (response.realGivenNames.value || response.realFamilyName.value) {
+                    this.loggedinUserName = "";
+                    this.loggedinUserName += response.realGivenNames.value ? response.realGivenNames.value : "";
+                    this.loggedinUserName += response.realGivenNames.value && response.realFamilyName.value ? " " : "";
+                    this.loggedinUserName += response.realFamilyName.value ? response.realFamilyName.value : "";
+                    this.isLoggedIn == true;
+                } else {
+                    this.isLoggedIn == false;
+                }
+            }
+        }, (error) => {
+            this.isLoggedIn = false;
+        })
     };
 }
