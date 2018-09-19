@@ -11,13 +11,13 @@ import javax.annotation.Resource;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.common_v2.OrcidType;
@@ -57,7 +57,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Resource
     private ProfileDao profileDao;
 
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
     @Resource

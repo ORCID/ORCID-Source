@@ -97,12 +97,9 @@ public class EmailManagerTest extends BaseTest {
     }        
     
     @Test
-    public void removeEmailIfPrimaryTest() {
+    public void removeEmailTest() {
         assertTrue(emailManager.emailExists("billie@holiday.com"));
-        emailManager.removeEmail("4444-4444-4444-4446", "billie@holiday.com", false);
-        //Should not be removed yet
-        assertTrue(emailManager.emailExists("billie@holiday.com"));
-        emailManager.removeEmail("4444-4444-4444-4446", "billie@holiday.com", true);
+        emailManager.removeEmail("4444-4444-4444-4446", "billie@holiday.com");
         //Now it should be gone
         assertFalse(emailManager.emailExists("billie@holiday.com"));
     }

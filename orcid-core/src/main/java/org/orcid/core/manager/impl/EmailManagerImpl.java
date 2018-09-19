@@ -34,12 +34,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     private NotificationManager notificationManager;
 
     @Override
-    @Transactional
-    public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
-        emailDao.removeEmail(orcid, email, removeIfPrimary);
-    }
-
-    @Override
     public void addSourceToEmail(String email, String sourceId) {
         emailDao.addSourceToEmail(sourceId, email);
     }

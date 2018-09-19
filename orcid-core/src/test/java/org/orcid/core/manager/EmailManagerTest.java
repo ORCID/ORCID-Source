@@ -115,18 +115,7 @@ public class EmailManagerTest extends BaseTest {
         assertEquals(1, emails.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
     }
-    
-    @Test
-    public void removeEmailIfPrimaryTest() {
-        assertTrue(emailManager.emailExists("billie@holiday.com"));
-        emailManager.removeEmail("4444-4444-4444-4446", "billie@holiday.com", false);
-        //Should not be removed yet
-        assertTrue(emailManager.emailExists("billie@holiday.com"));
-        emailManager.removeEmail("4444-4444-4444-4446", "billie@holiday.com", true);
-        //Now it should be gone
-        assertFalse(emailManager.emailExists("billie@holiday.com"));
-    }
-    
+        
     @Test
     public void moveEmailToOtherAccountTest() {
         String email = "public@email.com";

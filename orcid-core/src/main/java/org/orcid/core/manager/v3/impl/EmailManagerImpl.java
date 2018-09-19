@@ -50,8 +50,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     @Transactional
-    public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
-        emailDao.removeEmail(orcid, email, removeIfPrimary);
+    public void removeEmail(String orcid, String email) {
+        emailDao.removeEmail(orcid, email);
     }
 
     @Override

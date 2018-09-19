@@ -565,31 +565,33 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody Errors deleteEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
         Errors errors = new Errors();
         String currentUserOrcid = getCurrentUserOrcid();
-        
+
         // if blank
         if (PojoUtil.isEmpty(email)) {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
-        
+
         String owner = null;
-        
+
         try {
-        	owner = emailManagerReadOnly.findOrcidIdByEmail(email);
-        } catch(NoResultException nre) {
-        	
-        }
-        
-        if(!currentUserOrcid.equals(owner)) {
-        	errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
-        }
-        
-        if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
-            errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
+            owner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        } catch (NoResultException nre) {
+
         }
 
-        if (errors.getErrors().size() == 0) {            
-            emailManager.removeEmail(currentUserOrcid, email, false);
+        if (!currentUserOrcid.equals(owner)) {
+            errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
         }
+
+        // Don't allow the user to delete a primary email
+        if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
+            errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
+        } else {
+            if (errors.getErrors().size() == 0) {
+                emailManager.removeEmail(currentUserOrcid, email);
+            }
+        }
+        
         return errors;
     }
     
