@@ -55,11 +55,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    public void addSourceToEmail(String email, String sourceId) {
-        emailDao.addSourceToEmail(sourceId, email);
-    }
-
-    @Override
     @Transactional
     public boolean verifyEmail(String email, String orcid) {
         boolean verified = emailDao.verifyEmail(email);        

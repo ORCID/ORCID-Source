@@ -20,8 +20,6 @@ public interface EmailManager extends EmailManagerReadOnly {
     void addEmail(HttpServletRequest request, String orcid, Email email);
     
     void removeEmail(String orcid, String email);        
-
-    void addSourceToEmail(String email, String sourceId);
     
     boolean verifyEmail(String email, String orcid);
     

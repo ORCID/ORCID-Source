@@ -34,11 +34,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     private NotificationManager notificationManager;
 
     @Override
-    public void addSourceToEmail(String email, String sourceId) {
-        emailDao.addSourceToEmail(sourceId, email);
-    }
-
-    @Override
     public boolean verifyEmail(String email) {
         return emailDao.verifyEmail(email);
     }
