@@ -98,10 +98,10 @@
                                                         <div *ngIf="peerReview?.role?.value" class="col-md-3 col-sm-3 col-xs-3">{{peerReview.role.value}}</div>
                                                         <div class="col-md-4 col-sm-4 col-xs-4">    <span class="pull-right"> 
                                                                 <a (click)="showMoreDetails(peerReview.putCode.value,$event)" *ngIf="!showPeerReviewDetails[peerReview.putCode.value]">
-                                                                    <span class="glyphicons expand"></span>
+                                                                    <span class="glyphicons expand"></span>  
                                                                     <span class="hidden-xs"><@orcid.msg 'common.details.show_details_lc' /></span>
                                                                 </a> 
-                                                                <a (click)="hideMoreDetails(peerReview.putCode.value);" *ngIf="showPeerReviewDetails[peerReview.putCode.value]">
+                                                                <a (click)="showMoreDetails(peerReview.putCode.value,$event);" *ngIf="showPeerReviewDetails[peerReview.putCode.value]">
                                                                     <span class="glyphicons collapse_top"></span>       <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                                                 </a> | 
                                                                 <a href="{{peerReview.url.value}}" *ngIf="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span *ngIf="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
@@ -144,10 +144,12 @@
                                                                 {{peerReviewService.details[peerReview.putCode.value]?.subjectContainerName.value}}.
                                                             </div>
                                                             <div *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectExternalIdentifier.externalIdentifierId.value != null">
-                                                                <ext-id-popover-ng2 [extID]="peerReviewService.details[peerReview.putCode.value]?.subjectExternalIdentifier" [putCode]="peerReview.putCode+'peerReviewSubject'" [activityType]="'peerReview'"></ext-id-popover-ng2>
-                                                            </div>                             
-                                                        </div>   
-                                                        <div class="col-md-12 sources-container-header">          
+                                                            <span class="url-popover">
+                                                                <ext-id-popover-ng2 [extID]="peerReviewService.details[peerReview.putCode.value]?.subjectExternalIdentifier" [putCode]="peerReview.putCode+'peerReviewSubject'" [activityType]="'peerReview'"></ext-id-popover-ng2> 
+                                                            </span>
+                                                        </div>                            
+                                                        </div>  
+                                                        <div class="col-md-12 sources-container-header">
                                                             <div class="row">
                                                                 <div class="col-md-3 col-sm-3 col-xs-6">
                                                                     <span class="workspace-title"><@orcid.msg 'groups.common.created'/></span> <span *ngIf="peerReviewService.details[peerReview.putCode.value]?.createdDate">{{peerReviewService.details[peerReview.putCode.value]?.createdDate | ajaxFormDateToISO8601}}</span>
@@ -163,7 +165,7 @@
                                                                     <@orcid.msg 'groups.common.source'/>: {{peerReview.sourceName}}    
                                                                 </div>
                                                                 <div class="col-md-3 col-sm-3 col-xs-9" *ngIf="editSources[peerReviewDuplicateGroup.id] != true">
-                                                                      <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="peerReviewDuplicateGroup.peerReviews.length == 1">(</span><a (click)="showSources(peerReviewDuplicateGroup.id)" ng-hide="peerReviewDuplicateGroup.peerReviews.length == 1" (mouseenter)="showTooltip(peerReview.putCode.value+'-sources')" (mouseleave)="hideTooltip(peerReview.putCode.value+'-sources')"><@orcid.msg 'groups.common.of'/> {{peerReviewDuplicateGroup.peerReviews.length}}</a><span ng-hide="peerReviewDuplicateGroup.peerReviews.length == 1">)</span>
+                                                                      <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">(</span><a (click)="showSources(peerReviewDuplicateGroup.id)" *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1" (mouseenter)="showTooltip(peerReview.putCode.value+'-sources')" (mouseleave)="hideTooltip(peerReview.putCode.value+'-sources')"><@orcid.msg 'groups.common.of'/> {{peerReviewDuplicateGroup.peerReviews.length}}</a><span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">)</span>
                                                                       <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[peerReview.putCode.value+'-sources']">
                                                                            <div class="arrow"></div>
                                                                            <div class="popover-content">
