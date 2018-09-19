@@ -42,6 +42,7 @@ export class PeerReviewDeleteComponent implements AfterViewInit, OnDestroy, OnIn
     };
 
     deletePeerReview(putCode): void {
+        console.log(putCode);
         this.peerReviewService.deletePeerReviews([putCode])
         .pipe(    
             takeUntil(this.ngUnsubscribe)
