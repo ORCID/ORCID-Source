@@ -420,6 +420,11 @@
   <funding-form-ng2></funding-form-ng2>
 </modalngcomponent>
 
+<#include "/includes/ng2_templates/peer-review-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalPeerReviewDelete" elementWidth="300">
+    <peer-review-delete-ng2></peer-review-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <#include "/includes/ng2_templates/research-resource-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalResearchResourceDelete" elementWidth="300">
     <research-resource-delete-ng2></research-resource-delete-ng2>

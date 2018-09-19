@@ -19,8 +19,8 @@ import { ModalService }
     from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'research-resource-delete-ng2',
-    template:  scriptTmpl("research-resource-delete-ng2-template")
+    selector: 'peer-review-delete-ng2',
+    template:  scriptTmpl("peer-review-delete-ng2-template")
 })
 export class PeerReviewDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
