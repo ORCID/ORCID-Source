@@ -107,7 +107,6 @@ export class PeerReviewService {
     }
 
     handleGroupData(data): void {
-        console.log(data);
         this.groups = new Array();
         this.groups = this.groups.concat(data);
         this.peerReviewCount = this.getPeerReviewCount();
@@ -121,7 +120,6 @@ export class PeerReviewService {
     }
 
     getPeerReviewCount(): number {
-        console.log(this.groups);
         var count = 0;
         for (var idx in this.groups) {
             count += this.groups[idx].peerReviewDuplicateGroups.length;
