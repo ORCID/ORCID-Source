@@ -208,8 +208,8 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    hideSources(group): void {
-        this.editSources[group.groupId] = false;
+    hideSources(groupId): void {
+        this.editSources[groupId] = false;
     };
 
     hideTooltip(element): void{        
@@ -223,8 +223,8 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                group.defaultActivity = peerReview;
-                group.activePutCode = group.defaultActivity.putCode;  
+                //group.defaultActivity = peerReview;
+                group.activePutCode = putCode;  
             },
             error => {
                 console.log('makeDefault', error);
@@ -279,9 +279,9 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    showSources(group, $event): void {
+    showSources(groupId,$event): void {
         $event.stopPropagation();
-        this.editSources[group.groupId] = true;
+        this.editSources[groupId] = true;
         this.hideAllTooltip();
     };
 

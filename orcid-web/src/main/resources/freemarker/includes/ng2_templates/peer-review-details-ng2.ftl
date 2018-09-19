@@ -165,7 +165,7 @@
                                                                     <@orcid.msg 'groups.common.source'/>: {{peerReview.sourceName}}    
                                                                 </div>
                                                                 <div class="col-md-3 col-sm-3 col-xs-9" *ngIf="editSources[peerReviewDuplicateGroup.id] != true">
-                                                                      <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">(</span><a (click)="showSources(peerReviewDuplicateGroup.id)" *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1" (mouseenter)="showTooltip(peerReview.putCode.value+'-sources')" (mouseleave)="hideTooltip(peerReview.putCode.value+'-sources')"><@orcid.msg 'groups.common.of'/> {{peerReviewDuplicateGroup.peerReviews.length}}</a><span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">)</span>
+                                                                      <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span>&nbsp;<span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">(</span><a (click)="showSources(peerReviewDuplicateGroup.id,$event)" *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1" (mouseenter)="showTooltip(peerReview.putCode.value+'-sources')" (mouseleave)="hideTooltip(peerReview.putCode.value+'-sources')"><@orcid.msg 'groups.common.of'/> {{peerReviewDuplicateGroup.peerReviews.length}}</a><span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">)</span>
                                                                       <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[peerReview.putCode.value+'-sources']">
                                                                            <div class="arrow"></div>
                                                                            <div class="popover-content">
@@ -176,7 +176,7 @@
                                                                 <div class="col-md-3 col-sm-3 col-xs-9" *ngIf="editSources[peerReviewDuplicateGroup.id]">
                                                                     <span class="glyphicon glyphicon-check" *ngIf="peerReview.putCode.value == peerReviewDuplicateGroup.activePutCode"></span><span *ngIf="peerReview.putCode.value == peerReviewDuplicateGroup.activePutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                                                     <#if !(isPublicProfile??)>
-                                                                        <a (click)="peerReviewService.makeDefault(peerReviewDuplicateGroup, peerReview.putCode.value); " *ngIf="peerReview.putCode.value != peerReviewDuplicateGroup.activePutCode">
+                                                                        <a (click)="makeDefault(peerReviewDuplicateGroup, peerReview, peerReview.putCode.value); " *ngIf="peerReview.putCode.value != peerReviewDuplicateGroup.activePutCode">
                                                                              <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                                                         </a>
                                                                     </#if>
