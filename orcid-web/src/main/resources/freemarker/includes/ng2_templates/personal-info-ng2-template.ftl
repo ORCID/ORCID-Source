@@ -43,7 +43,7 @@
                 -->
                 <!-- Peer Review -->
 
-                <#if !(peerReviewsEmpty)??>
+                <#if !(peerReviewEmpty)??>
                     <!--
                     <public-peer-reviews-ng2></public-peer-reviews-ng2>
                 -->

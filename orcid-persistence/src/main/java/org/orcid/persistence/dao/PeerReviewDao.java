@@ -63,4 +63,11 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      *            removed.
      */
     void removeAllPeerReviews(String orcid);
+    
+    /**
+     * Indicates if the record have public peer reviews
+     * 
+     * @param orcid
+     * */
+    Boolean hasPublicPeerReviews(String orcid);
 }
