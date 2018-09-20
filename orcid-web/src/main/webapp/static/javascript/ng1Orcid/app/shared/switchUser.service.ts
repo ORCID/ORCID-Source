@@ -47,16 +47,37 @@ export class SwitchUserService {
         
     }
 
-    switchUser(targetOrcid): Observable<any> {
-        /*return this.http.post( 
-            getBaseUri() + '/switch-user?username=' + targetOrcid, 
-            { headers: this.headers }
-        )
-        ;*/
+    switchUser(targetOrcid): Observable<any> {        
         return this.http.get( 
             getBaseUri() + '/switch-user?username=' + targetOrcid
         )
     }
+    
+    switchUserAdmin = function() {
+        $.ajax({
+            url: getBaseUri()+'/admin-actions/admin-switch-user?orcidOrEmail=' + $scope.orcidOrEmail,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                $scope.$apply(function(){
+                    if(!$.isEmptyObject(data)) {
+                        if(!$.isEmptyObject(data.errorMessg)) {
+                            $scope.orcidMap = data;
+                            $scope.showSwitchErrorModal();
+                        } else {
+                            window.location.replace(data.url);
+                        }
+                    } else {
+                        $scope.showSwitchInvalidModal();
+                    }
+                    $scope.orcidOrEmail='';
+                });
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error switching account");
+        });
+    };
 
     notifyOther(): void {
         this.notify.next();

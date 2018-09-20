@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * @author Angel Montenegro
@@ -75,7 +76,7 @@ public class AdminController extends BaseController {
     private static final String OUT_NEW_LINE = "\n";    
 
     @RequestMapping
-    public ModelAndView getDeprecatedProfilesPage() {
+    public ModelAndView loadAdminPage() {
         return new ModelAndView("admin_actions");        
     }
 
@@ -420,26 +421,24 @@ public class AdminController extends BaseController {
             orcid = orcidOrEmail;
         }
 
-        Map<String, String> mapOrcid = null;
-        if (StringUtils.isNotEmpty(orcid)) {
-            if (profileEntityManager.orcidExists(orcid)) {
-                mapOrcid = new HashMap<String, String>();
-                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-                if (!profileEntity.getClaimed()) {
-                    mapOrcid.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is unclaimed.").toString());
-                } else if (profileEntity.getDeactivationDate() != null) {
-                    mapOrcid.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is deactivated.").toString());
-                } else if (!profileEntity.isAccountNonLocked()) {
-                    mapOrcid.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is locked.").toString());
-                } else {
-                    mapOrcid.put("errorMessg", null);
-                }
-                mapOrcid.put("orcid", orcid);
-            }
+        Map<String, String> result = new HashMap<String, String>();
+        if (StringUtils.isNotEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {            
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+            if (!profileEntity.getClaimed()) {
+                result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is unclaimed.").toString());
+            } else if (profileEntity.getDeactivationDate() != null) {
+                result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is deactivated.").toString());
+            } else if (!profileEntity.isAccountNonLocked()) {
+                result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is locked.").toString());
+            } 
+            // All fine, set the switch user url
+            result.put("url", "./switch-user?username=" + orcid);
+        } else {
+            result.put("errorMessg", "Invalid id " + orcidOrEmail);
         }
-        return mapOrcid;
-    }
-
+        return result;
+    }    
+    
     /**
      * Admin verify email
      */
