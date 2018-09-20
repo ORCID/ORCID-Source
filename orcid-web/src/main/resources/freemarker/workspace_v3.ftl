@@ -1,91 +1,81 @@
 <@protected nav="record">
 <#escape x as x?html>
 <#if justRegistered?? && justRegistered>
-<div class="alert alert-success">
-    <strong>
-      <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
-      <thanks-for-registering-ng2></thanks-for-registering-ng2>
-    </strong>
-</div>
+  <div class="alert alert-success">
+      <strong>
+        <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
+        <thanks-for-registering-ng2></thanks-for-registering-ng2>
+      </strong>
+  </div>
 </#if>
-
 <#if emailVerified?? && emailVerified>
-<div class="alert alert-success">
-    <strong>
-        ${emailVerifiedMessage}
-        <#if primaryEmailUnverified?? && primaryEmailUnverified>
-        <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
-        <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
-        </#if>
-    </strong>
-</div>
+  <div class="alert alert-success">
+      <strong>
+          ${emailVerifiedMessage}
+          <#if primaryEmailUnverified?? && primaryEmailUnverified>
+          <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
+          <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
+          </#if>
+      </strong>
+  </div>
 </#if>
-
 <#if invalidOrcid?? && invalidOrcid>
-<div class="alert alert-success">
-    <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
-</div>
+  <div class="alert alert-success">
+      <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
+  </div>
 </#if>
-
 <div class="row workspace-top public-profile">
-
-    <#-- hidden divs that trigger angular -->
-    <#if RequestParameters['recordClaimed']??>
+  <#-- hidden divs that trigger angular -->
+  <#if RequestParameters['recordClaimed']??>
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-    <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
-    <claim-thanks-ng2></claim-thanks-ng2>
+      <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
+      <claim-thanks-ng2></claim-thanks-ng2>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
-    <div ng-controller="ClaimThanks" style="display: hidden;"></div>
+      <div ng-controller="ClaimThanks" style="display: hidden;"></div>
     </@orcid.checkFeatureStatus> 
-    <#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
+  <#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-    <verify-email-ng2></verify-email-ng2>
+      <verify-email-ng2></verify-email-ng2>
     </@orcid.checkFeatureStatus>
     <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
-    <div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
+      <div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
     </@orcid.checkFeatureStatus> 
-    </#if>
-    <!-- ID Banner and other account information -->
-    <div class="col-md-3 lhs left-aside">
-        <div class="workspace-profile">
-
-            <#include "includes/id_banner.ftl"/>
-
-            <#include "includes/orcid_public_record_widget.ftl"/>
-
-            <#include "includes/print_record.ftl"/>
-
-            <div class="qrcode-container">
-                <a href="<@orcid.rootPath "/qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
-                <div class="popover-help-container"></a>
-                    <i class="glyphicon glyphicon-question-sign"></i>
-                    <div id="qrcode-help" class="popover bottom">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                            <p><@orcid.msg 'workspace.qrcode.help'/> 
-                                <a href="<@orcid.msg 'common.kb_uri_default'/>360006897654" target="qrcode.help"><@orcid.msg 'common.learn_more'/></a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Person -->
-            <#include "/includes/ng2_templates/person-ng2-template.ftl">
-            <person-ng2></person-ng2>
-
-            <!-- Emails  -->
-            <#include "/includes/ng2_templates/emails-ng2-template.ftl">
-            <emails-ng2></emails-ng2>
-
-
-      <!--  External Identifiers -->
-
-      <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-      <div ng-hide="!externalIdentifiersForm.externalIdentifiers.length">
-        <external-identifiers-ng2></external-identifiers-ng2>
+  </#if>
+  <!--Left col-->
+  <div class="col-md-3 lhs left-aside">
+    <div class="workspace-profile">
+      <!-- ID Banner and other account information -->
+      <#include "includes/id_banner.ftl"/>
+      <#include "includes/orcid_public_record_widget.ftl"/>
+      <!--Print record-->
+      <#include "/includes/ng2_templates/print-record-ng2-template.ftl">
+      <print-record-ng2></print-record-ng2>
+      <div class="qrcode-container">
+          <a href="<@orcid.rootPath "/qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
+          <div class="popover-help-container"></a>
+              <i class="glyphicon glyphicon-question-sign"></i>
+              <div id="qrcode-help" class="popover bottom">
+                  <div class="arrow"></div>
+                  <div class="popover-content">
+                      <p><@orcid.msg 'workspace.qrcode.help'/> 
+                          <a href="<@orcid.msg 'common.kb_uri_default'/>360006897654" target="qrcode.help"><@orcid.msg 'common.learn_more'/></a>
+                      </p>
+                  </div>
+              </div>
+          </div>
       </div>
+      <!-- Person -->
+      <#include "/includes/ng2_templates/person-ng2-template.ftl">
+      <person-ng2></person-ng2> 
+      <!-- Emails  -->
+      <#include "/includes/ng2_templates/emails-ng2-template.ftl">
+      <emails-ng2></emails-ng2>
+      <!--  External Identifiers -->
+      <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
+        <div ng-hide="!externalIdentifiersForm.externalIdentifiers.length">
+          <external-identifiers-ng2></external-identifiers-ng2>
+        </div>
       </@orcid.checkFeatureStatus>
       <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>   
       <div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
@@ -114,7 +104,7 @@
       </@orcid.checkFeatureStatus>       
     </div>
   </div>
-
+  <!--Right col-->
   <div class="col-md-9 right-aside">
     <div class="workspace-right">        
       <!-- Locked error message -->
@@ -126,48 +116,42 @@
         </div>
       </div>                
       </#if>
-
       <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
-      <work-summary-ng2></work-summary-ng2>
+        <work-summary-ng2></work-summary-ng2>
       </@orcid.checkFeatureStatus>         
-        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-      <div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
-        <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
-          <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/>
-              <a href="<@orcid.msg 'common.kb_uri_default'/>360006896894" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a>
-          <@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
-        </div>                
-      </div>
+      <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
+        <div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
+          <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
+            <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/>
+                <a href="<@orcid.msg 'common.kb_uri_default'/>360006896894" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a>
+            <@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
+          </div>                
+        </div>
       </@orcid.checkFeatureStatus>  
       <div class="workspace-accordion" id="workspace-accordion">
         <!-- Notification alert -->                       
         <#include "includes/notification_alert.ftl"/>             
-        <!-- Personal Information -->
-        <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
-        <personal-info-ng2></personal-info-ng2>
-        </@orcid.checkFeatureStatus>         
-        <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">              
-          <div class="workspace-accordion-content" ng-if="displayInfo">
-            <#include "workspace_personal_v3.ftl"/>
+        <!-- Biography -->        
+        <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active">  
+          <div class="workspace-accordion-content">
+            <#include "/includes/ng2_templates/biography-ng2-template.ftl">
+            <biography-ng2></biography-ng2>
           </div>
         </div>    
         <!-- Affiliations / Education / Employment -->
         <#include "workspace_affiliations_body_list_v3.ftl"/>
-
-        <!-- Fundings -->
+        <!-- Funding -->
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
         <funding-ng2></funding-ng2>
-        
+        <!-- Research resources -->
         <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
           <!--Research resources-->
           <#include "/includes/ng2_templates/research-resource-ng2-template.ftl">
           <research-resource-ng2 publicView="false"></research-resource-ng2>
         </@orcid.checkFeatureStatus>
-
         <!-- Works -->
         <#include "/includes/ng2_templates/works-ng2-template.ftl">
         <works-ng2></works-ng2>
-
         <!--Peer review-->
         <div ng-controller="PeerReviewCtrl">
           <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
@@ -445,7 +429,6 @@
 
 <!--Org ID popover template used in v3 affiliations and research resources-->
 <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
-
 
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>

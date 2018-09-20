@@ -15,16 +15,9 @@
 					</div>
 					<div class="orcid-id-container">
 						<div class="orcid-id-info">
-							<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-		                        <span class="mini-orcid-icon"></span>
-		                        <!-- Reference: orcid.js:removeProtocolString() -->
-		                        <span id="orcid-id" class="orcid-id">${baseUri}/${(effectiveUserOrcid)!}</span>
-							</@orcid.checkFeatureStatus>	
-							<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-						    	<span class="mini-orcid-icon"></span>
-						    	<!-- Reference: orcid.js:removeProtocolString() -->
-					       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>	
-							</@orcid.checkFeatureStatus>	
+	                        <span class="mini-orcid-icon"></span>
+	                        <!-- Reference: orcid.js:removeProtocolString() -->
+	                        <span id="orcid-id" class="orcid-id">${baseUri}/${(effectiveUserOrcid)!}</span>	
 						</div>				
 					</div>
 				</div>

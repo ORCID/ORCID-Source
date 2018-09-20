@@ -33,7 +33,8 @@
                         </div>                  
                     </div>
                 </div>
-                <#include "includes/print_record.ftl"/>                         
+                <#include "/includes/ng2_templates/print-record-ng2-template.ftl">
+                <print-record-ng2></print-record-ng2>                        
 
                 <#if (locked)?? && !locked>
                     <!-- Other Names -->

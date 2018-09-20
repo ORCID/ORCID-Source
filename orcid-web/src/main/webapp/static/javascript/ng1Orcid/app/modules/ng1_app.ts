@@ -112,6 +112,9 @@ import { PersonModule }
 import { PersonalInfoModule } 
     from './personalInfo/personalInfo.ts';
 
+import { PrintRecordModule } 
+    from './printRecord/printRecord.ts';
+
 import { PublicEduAffiliationModule }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
@@ -250,6 +253,7 @@ export const orcidApp = angular.module(
         PasswordEditModule.name,
         PersonModule.name,
         PersonalInfoModule.name,
+        PrintRecordModule.name,
         PublicEduAffiliationModule.name,
         NotificationsModule.name,
         ReactivationModule.name,

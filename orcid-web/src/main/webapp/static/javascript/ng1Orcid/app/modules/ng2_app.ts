@@ -125,6 +125,9 @@ import { PersonNg2Module }
 import { PersonalInfoNg2Module } 
     from './personalInfo/personalInfo.ts';
 
+import { PrintRecordNg2Module } 
+    from './printRecord/printRecord.ts';
+
 import { PublicEduAffiliationNg2Module }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
@@ -355,6 +358,7 @@ export class RootCmp {
         PasswordEditNg2Module,
         PersonNg2Module,
         PersonalInfoNg2Module,
+        PrintRecordNg2Module,
         PublicEduAffiliationNg2Module,
         SecurityQuestionEditNg2Module,
         OauthAuthorizationNg2Module,
