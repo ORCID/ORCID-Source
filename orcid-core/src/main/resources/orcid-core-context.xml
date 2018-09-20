@@ -1277,6 +1277,14 @@
         <property name="maxMegaBytesOnDisk" value="256" />
     </bean>
     
+    <bean id="groupingSuggestionsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="grouping-suggestions" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="500" />
+        <property name="timeToIdleSeconds" value="3600" />
+        <property name="maxMegaBytesOnDisk" value="256" />
+    </bean>
+    
     <bean id="affiliationGroupsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="affiliations-group" />
         <property name="cacheManager" ref="coreCacheManager" />
@@ -1587,6 +1595,8 @@
 	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		
 	<bean id="worksCacheManager" class="org.orcid.core.manager.v3.impl.WorksCacheManagerImpl" />
+	
+	<bean id="groupingSuggestionsCacheManager" class="org.orcid.core.manager.v3.impl.GroupingSuggestionsCacheManagerImpl" />
 	
 	<bean id="groupedWorksGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="groupedWorksCache" />

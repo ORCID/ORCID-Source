@@ -60,9 +60,6 @@ public class ActivitiesGroupGenerator {
                 }
             }
         }
-        
-        //TODO: make sure this orders correctly
-        //TODO: look at v1.2 post/put work....
     }
     
     public List<ActivitiesGroup> getGroups() {
