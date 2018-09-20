@@ -87,6 +87,12 @@ export class PeerReviewService {
         );
     }
 
+    getPeerReviewImportWizardList(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/workspace/retrieve-peer-review-import-wizards.json'
+        )
+    }
+
     getPublicPeerReviewById( putCode ): Observable<any> {
         return this.http.get(
             getBaseUri() + '/' + orcidVar.orcidId + '/peer-review.json?putCode=' + putCode
