@@ -14,51 +14,18 @@
         </div>
         <div class="orcid-id-container">
             <div class="orcid-id-options">
-                <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-                    <div class="orcid-id-info">
-                        <span class="mini-orcid-icon-16"></span>
-                        <!-- Reference: orcid.js:removeProtocolString() -->
-                        <span id="orcid-id" class="orcid-id-https">${baseUri}/${(effectiveUserOrcid)!}</span>
-                    </div>
-                    <a href="${baseUri}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-                    <div class="orcid-id-info">
-                        <span class="mini-orcid-icon"></span>
-                        <!-- Reference: orcid.js:removeProtocolString() -->
-                        <span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
-                    </div>
-                    <a href="${baseUriHttp}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
-                </@orcid.checkFeatureStatus>
+                <div class="orcid-id-info">
+                    <span class="mini-orcid-icon-16"></span>
+                    <!-- Reference: orcid.js:removeProtocolString() -->
+                    <span id="orcid-id" class="orcid-id-https">${baseUri}/${(effectiveUserOrcid)!}</span>
+                </div>
+                <a href="${baseUri}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
             </div>
         </div>
     </div>
     <#if (locked)?? && !locked>
-        <div ng-controller="SwitchUserCtrl" class="dropdown id-banner-container" ng-show="unfilteredLength" ng-cloak>
-            <a ng-click="openMenu($event)" class="id-banner-switch"><@orcid.msg 'public-layout.manage_proxy_account'/><span class="glyphicon glyphicon-chevron-right"></span></a>
-            <ul class="dropdown-menu id-banner-dropdown" ng-show="isDroppedDown" ng-cloak>
-                <li>
-                    <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="<@orcid.msg 'manage_delegators.search.placeholder'/>"></input>
-                </li>
-                <li ng-show="me && !searchTerm">
-                    <a href="<@orcid.rootPath '/switch-user?username='/>{{me.giverOrcid.path}}">
-                        <ul>
-                            <li><@orcid.msg 'id_banner.switchbacktome'/></li>
-                            <li>{{me.giverOrcid.uri}}</li>
-						</ul>
-                    </a>
-                </li>
-                <li ng-repeat="delegationDetails in delegators | orderBy:'giverName.value' | limitTo:10">
-                    <a href="<@orcid.rootPath '/switch-user?username='/>{{delegationDetails.giverOrcid.path}}">
-                        <ul>
-                            <li>{{delegationDetails.giverName.value}}</li>
-                            <li>{{delegationDetails.giverOrcid.uri}}</li>							
-                        </ul>
-                    </a>
-                </li>
-                <li ng-show="delegators.length > 10"><a href="<@orcid.rootPath '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
-            </ul>
-        </div>  
+        <#include "/includes/ng2_templates/switch-user-ng2-template.ftl">
+        <switch-user-ng2></switch-user-ng2> 
     </#if>
 </div>
 </#escape>

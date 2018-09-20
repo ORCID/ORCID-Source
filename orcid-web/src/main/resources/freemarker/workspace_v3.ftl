@@ -45,9 +45,11 @@
   <!--Left col-->
   <div class="col-md-3 lhs left-aside">
     <div class="workspace-profile">
-      <!-- ID Banner and other account information -->
+      <!-- ID Banner-->
       <#include "includes/id_banner.ftl"/>
-      <#include "includes/orcid_public_record_widget.ftl"/>
+      <!--Public record widget-->
+      <#include "/includes/ng2_templates/widget-ng2-template.ftl">
+      <widget-ng2></widget-ng2>
       <!--Print record-->
       <#include "/includes/ng2_templates/print-record-ng2-template.ftl">
       <print-record-ng2></print-record-ng2>
