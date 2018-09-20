@@ -19,6 +19,7 @@ import { CommonNg2Module }
 import { UniquePipe }
     from '../../pipes/uniqueNg2.ts';
 
+import { MemberDetailsComponent } from './memberDetails.component.ts';
 import { MembersListComponent } from './membersList.component.ts';
 import { ConsortiaListComponent } from './consortiaList.component.ts';
 
@@ -31,12 +32,14 @@ export const MembersListModule = angular.module(
 // This is the Angular 2 part of the module
 @NgModule(
     {
-        declarations: [ 
+        declarations: [
+            MemberDetailsComponent,
             MembersListComponent,
             ConsortiaListComponent,
             UniquePipe
         ],
-        entryComponents: [ 
+        entryComponents: [
+            MemberDetailsComponent,
             MembersListComponent,
             ConsortiaListComponent
         ],
@@ -53,14 +56,21 @@ export class MembersListNg2Module {}
 //Must convert as much as possible of our code to directives
 
 MembersListModule.directive(
-    'membersListNg2', 
+    'memberDetailsNg2',
+    <any>downgradeComponent(
+        {
+            component: MemberDetailsComponent,
+        }
+    )
+    ).directive(
+    'memberDetailsNg2',
     <any>downgradeComponent(
         {
             component: MembersListComponent,
         }
     )
     ).directive(
-    'consortiaListNg2', 
+    'consortiaListNg2',
     <any>downgradeComponent(
         {
             component: ConsortiaListComponent,
