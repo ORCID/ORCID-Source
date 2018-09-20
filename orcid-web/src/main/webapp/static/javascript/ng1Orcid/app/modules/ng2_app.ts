@@ -235,6 +235,9 @@ import { WorksMergeChoosePreferredVersionNg2Module }
     
 import { WorksMergeSuggestionsNg2Module } 
     from './works/worksMergeSuggestions.ts';
+
+import { AdminActionsNg2Module } 
+    from './adminActions/adminActions.ts';    
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -389,7 +392,8 @@ export class RootCmp {
         DelegatorsNg2Module,
         ResendClaimNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,
-        WorksMergeSuggestionsNg2Module
+        WorksMergeSuggestionsNg2Module,
+        AdminActionsNg2Module
     ],
     providers: [
         { 
