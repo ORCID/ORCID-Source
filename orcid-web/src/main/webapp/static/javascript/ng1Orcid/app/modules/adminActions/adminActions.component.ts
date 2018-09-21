@@ -55,6 +55,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         
     };
     
+    findIds(): void {
+        
+    }
+    
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
