@@ -6847,6 +6847,10 @@ ul.comma li:last-child:after {
     color: #338caf
 }
 
+.biography-controller > .row > div.col-md-9.col-sm-8.col-xs-4 {
+    display: flex;
+}
+
 @media (max-width:767px) {
     .container {
         min-width: 320px
