@@ -404,6 +404,4 @@
 <!-- Ng1 directive -->
 <modal-email-un-verified></modal-email-un-verified>
 
-<#include "/includes/record/record_modals.ftl">
-
 </@protected>  
