@@ -12,6 +12,7 @@ public class ExternalIdentifiersForm implements ErrorsInterface, Serializable {
 
     private List<String> errors = new ArrayList<String>();
     private List<ExternalIdentifierForm> externalIdentifiers = new ArrayList<ExternalIdentifierForm>();
+    private Visibility visibility;
 
     public static ExternalIdentifiersForm valueOf(PersonExternalIdentifiers extIds) {
         if(extIds == null) {
@@ -53,5 +54,13 @@ public class ExternalIdentifiersForm implements ErrorsInterface, Serializable {
 
     public void setExternalIdentifiers(List<ExternalIdentifierForm> externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
+    }
+    
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 }

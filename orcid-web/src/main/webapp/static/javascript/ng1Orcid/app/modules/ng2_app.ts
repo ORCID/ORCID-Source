@@ -77,9 +77,6 @@ import { EmailUnverifiedWarningNg2Module }
 import { EmailVerificationSentMesssageNg2Module } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 
-import { ExternalIdentifiersNg2Module }
-    from './externalIdentifiers/externalIdentifiers.ts';
-
 import { ExtIdPopoverNg2Module } 
     from './extIdPopover/extIdPopover.ts';
 
@@ -342,7 +339,6 @@ export class RootCmp {
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved
         EmailVerificationSentMesssageNg2Module,//Aproved
-        ExternalIdentifiersNg2Module,
         ExtIdPopoverNg2Module,
         HeaderNg2Module,
         FundingDeleteNg2Module,

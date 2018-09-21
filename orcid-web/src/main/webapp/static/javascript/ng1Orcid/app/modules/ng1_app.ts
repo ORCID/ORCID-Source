@@ -58,9 +58,6 @@ import { EmailUnverifiedWarningModule }
 import { EmailVerificationSentMesssageModule } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 
-import { ExternalIdentifiersModule }
-    from './externalIdentifiers/externalIdentifiers.ts';
-
 import { ExtIdPopoverModule } 
     from './extIdPopover/extIdPopover.ts';
 
@@ -236,7 +233,6 @@ export const orcidApp = angular.module(
         EmailsModule.name,
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
-        ExternalIdentifiersModule.name,
         ExtIdPopoverModule.name,
         FundingDeleteModule.name,
         FundingFormModule.name,

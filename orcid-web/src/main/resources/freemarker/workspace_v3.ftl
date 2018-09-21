@@ -72,38 +72,7 @@
       <person-ng2></person-ng2> 
       <!-- Emails  -->
       <#include "/includes/ng2_templates/emails-ng2-template.ftl">
-      <emails-ng2></emails-ng2>
-      <!--  External Identifiers -->
-      <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-        <div ng-hide="!externalIdentifiersForm.externalIdentifiers.length">
-          <external-identifiers-ng2></external-identifiers-ng2>
-        </div>
-      </@orcid.checkFeatureStatus>
-      <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>   
-      <div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
-        <div class="workspace-section-header">
-          <div class="workspace-section-title">                 
-            <div id="open-edit-external-identifiers" class="edit-websites edit-option" ng-click="openEditModal()">
-              <div class="glyphicon glyphicon-pencil">
-                <div class="popover popover-tooltip top">
-                  <div class="arrow"></div>
-                  <div class="popover-content">
-                    <span><@orcid.msg 'manage_bio_settings.editExternalIdentifiers' /></span>
-                  </div>                
-                </div>
-              </div>
-            </div>
-            <div class="workspace-section-label"><@orcid.msg 'public_profile.labelOtherIDs'/></div>
-          </div>
-        </div>
-        <div class="workspace-section-content">
-          <div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
-            <span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</span>
-            <span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="externalIdentifier.commonName">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>
-          </div>
-        </div>
-      </div>
-      </@orcid.checkFeatureStatus>       
+      <emails-ng2></emails-ng2>    
     </div>
   </div>
   <!--Right col-->
