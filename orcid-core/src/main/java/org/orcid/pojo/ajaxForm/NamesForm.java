@@ -19,9 +19,7 @@ public class NamesForm extends VisibilityForm implements ErrorsInterface, Serial
     private Text givenNames;
     private Text familyName;
     private Text creditName;    
-    private Text realGivenNames;
-    private Text realFamilyName;
-    private Text realCreditName;    
+
     public static NamesForm valueOf(Name name) {
         NamesForm nf = new NamesForm();
 
@@ -48,24 +46,6 @@ public class NamesForm extends VisibilityForm implements ErrorsInterface, Serial
 
         return nf;
     }
-    public static NamesForm valueOf(Name name, Name realName) {
-       NamesForm nf = valueOf (name);
-       if (realName != null) {
-           if (realName.getGivenNames() != null) {
-               nf.setRealGivenNames((Text.valueOf(realName.getGivenNames().getContent())));
-           }
-
-           if (realName.getFamilyName() != null) {
-               nf.setRealFamilyName(Text.valueOf(realName.getFamilyName().getContent()));
-           }
-
-           if (realName.getCreditName() != null) {
-               nf.setRealCreditName(Text.valueOf(realName.getCreditName().getContent()));
-           }
-       }
-        return nf;
-    }
-    
     
     public Name toName() {
         Name name = new Name();
@@ -121,22 +101,4 @@ public class NamesForm extends VisibilityForm implements ErrorsInterface, Serial
     public void setCreditName(Text creditName) {
         this.creditName = creditName;
     }
-	public Text getRealGivenNames() {
-		return realGivenNames;
-	}
-	public void setRealGivenNames(Text realGivenNames) {
-		this.realGivenNames = realGivenNames;
-	}
-	public Text getRealFamilyName() {
-		return realFamilyName;
-	}
-	public void setRealFamilyName(Text realFamilyName) {
-		this.realFamilyName = realFamilyName;
-	}
-	public Text getRealCreditName() {
-		return realCreditName;
-	}
-	public void setRealCreditName(Text realCreditName) {
-		this.realCreditName = realCreditName;
-	}
 }
