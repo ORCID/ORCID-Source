@@ -6849,24 +6849,21 @@ ul.comma li:last-child:after {
 
 .relogin-container {
     display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: auto 28px;
-    word-break: break-all;
-    grid-row-gap: 25px;
     word-break: break-all;
     margin-bottom: 50px;
 }
+
 .menu-area {
     width: 100%;
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-columns: calc(100% - 60px) auto;
-    align-content: center;
-    justify-items: end;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 25px;
 }
 
 .relogin-container .btn.btn-primary {
     max-width: 250px;
+    margin-right: 20px;
 }
 
 .menu-area > .btn.btn-white-no-border {
@@ -6874,9 +6871,6 @@ ul.comma li:last-child:after {
     text-align: end;
     line-height: 30px;
     
-}
-.menu-area > .btn.btn-primary {
-    max-width: 250px;
 }
 
 @media (max-width:767px) {
