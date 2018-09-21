@@ -14,23 +14,23 @@ public class Names implements ErrorsInterface, Serializable{
     private Name real = null;
     private List<String> errors = new ArrayList<String>();
     
-    public static Names valueOf(org.orcid.jaxb.model.v3.rc1.record.Name current, org.orcid.jaxb.model.v3.rc1.record.Name real) {
+    public static Names valueOf(org.orcid.jaxb.model.v3.rc1.record.Name current, org.orcid.jaxb.model.v3.rc1.record.Name effective) {
     	Names names = new Names();
         if (current != null) {
-        	names.effective = Name.valueOf(current); 
+        	names.setEffective(Name.valueOf(current)); 
         }
-        if (real != null) {
-        	names.real = Name.valueOf(real); 
+        if (effective != null) {
+        	names.setReal(Name.valueOf(effective)); 
         }
         return names;
     }
     
-	public Name getCurrent() {
-		return current;
+	public Name getEffective() {
+		return this.effective;
 	}
 
-	public void setCurrent(Name current) {
-		this.current = current;
+	public void setEffective(Name current) {
+		this.effective = current;
 	}
 
 	public Name getReal() {

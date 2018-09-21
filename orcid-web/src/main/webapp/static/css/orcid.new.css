@@ -6847,6 +6847,38 @@ ul.comma li:last-child:after {
     color: #338caf
 }
 
+.relogin-container {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: auto 28px;
+    word-break: break-all;
+    grid-row-gap: 25px;
+    word-break: break-all;
+    margin-bottom: 50px;
+}
+.menu-area {
+    width: 100%;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: calc(100% - 60px) auto;
+    align-content: center;
+    justify-items: end;
+}
+
+.relogin-container .btn.btn-primary {
+    max-width: 250px;
+}
+
+.menu-area > .btn.btn-white-no-border {
+    width: 60;
+    text-align: end;
+    line-height: 30px;
+    
+}
+.menu-area > .btn.btn-primary {
+    max-width: 250px;
+}
+
 @media (max-width:767px) {
     .container {
         min-width: 320px
@@ -7974,9 +8006,13 @@ ul.comma li:last-child:after {
         font-size: 20px;
         margin-left: 10px
     }
+    .menu-area > .btn.btn-primary {
+        max-width: none;
+    }
 }
 
 @media (min-width:768px) and (max-width:991px) {
+
     .websites-box input {
         width: 45%!important
     }
@@ -8150,6 +8186,9 @@ ul.comma li:last-child:after {
 
     #edit-affiliation {
         width: 100%
+    }
+    .relogin-container {
+        padding: 0 20%;
     }
 }
 

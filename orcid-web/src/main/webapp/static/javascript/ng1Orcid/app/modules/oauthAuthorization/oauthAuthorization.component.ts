@@ -7,43 +7,43 @@ declare var getStaticCdnPath: any;
 declare var orcidGA: any;
 declare var orcidVar: any;
 
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
+import { NgForOf, NgIf }
+    from '@angular/common';
 
-import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone }
     from '@angular/core';
 
-import { ReCaptchaComponent } 
+import { ReCaptchaComponent }
     from 'angular2-recaptcha';
 
-import { Observable, Subject, Subscription } 
+import { Observable, Subject, Subscription }
     from 'rxjs';
-import { takeUntil } 
+import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonNg2Module }
     from './../common/common.ts';
 
-import { CommonService } 
+import { CommonService }
     from '../../shared/common.service.ts';
 
 import { FeaturesService }
     from '../../shared/features.service.ts'
 
-import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+import { ModalService }
+    from '../../shared/modal.service.ts';
 
-import { OauthService } 
+import { OauthService }
     from '../../shared/oauth.service.ts';
 
-import { SearchService } 
+import { SearchService }
     from '../../shared/search.service.ts';
-import { GenericService } 
+import { GenericService }
     from '../../shared/generic.service.ts';
 
 @Component({
     selector: 'oauth-authorization-ng2',
-    template:  scriptTmpl("oauth-authorization-ng2-template")
+    template: scriptTmpl("oauth-authorization-ng2-template")
 })
 export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, OnInit {
     @ViewChild(ReCaptchaComponent) captcha: ReCaptchaComponent;
@@ -93,15 +93,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     loadTime: any;
     generalRegistrationError: any;
     //registration form togglz features    
-    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
+    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');
     initReactivationRequest: any;
-    nameFormUrl: string; 
-    loggedinUserName: string;
+    nameFormUrl: string;
+    realLoggedInUserName: string;
+    effectiveLoggedInUserName: string;
     isLoggedIn: boolean;
-    
+
     constructor(
-        private zone:NgZone,
-        private cdr:ChangeDetectorRef,
+        private zone: NgZone,
+        private cdr: ChangeDetectorRef,
         private commonSrvc: CommonService,
         private featuresService: FeaturesService,
         private modalService: ModalService,
@@ -135,7 +136,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.personalLogin = true;
         this.recaptchaWidgetId = null;
         this.recatchaResponse = null;
-        this.requestInfoForm = null;    
+        this.requestInfoForm = null;
         this.registrationForm = {};
         this.scriptsInjected = false;
         this.showBulletIcon = false;
@@ -146,7 +147,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showEmailsAdditionalDuplicateEmailError = [false];
         this.showEmailsAdditionalReactivationSent = [false];
         this.showGeneralRegistrationError = false
-        this.showLimitedIcon = false;    
+        this.showLimitedIcon = false;
         this.showLongDescription = {};
         this.showRecaptcha = true;
         this.showReactivationSent = false;
@@ -156,18 +157,18 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.socialSignInForm = {};
         this.loadTime = 0;
         this.generalRegistrationError = null;
-        this.initReactivationRequest = { "email":null, "error":null, "success":false };
-        this.nameFormUrl = '/account/nameForm.json';
+        this.initReactivationRequest = { "email": null, "error": null, "success": false };
+        this.nameFormUrl = '/account/names/public';
         this.isLoggedIn = false
     }
 
-    addScript(url, onLoadFunction): void {      
+    addScript(url, onLoadFunction): void {
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
         script.src = getStaticCdnPath() + url;
-        script.onload =  onLoadFunction;
+        script.onload = onLoadFunction;
         head.appendChild(script); // Inject the script
-    }; 
+    };
 
     authorize(): void {
         this.authorizationForm.approved = true;
@@ -184,7 +185,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         var valid;
         if (cur === undefined) {
             return '';
-        } 
+        }
         valid = true;
         if (cur.required && (cur.value == null || cur.value.trim() == '')) {
             valid = false;
@@ -197,43 +198,43 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     showDeactivationError(): void {
         this.showDeactivatedError = true;
-        this.showReactivationSent = false;        
-        if(this.authorizationForm.userName.value != null && this.authorizationForm.userName.value.includes('@')) {
-            this.initReactivationRequest.email = this.authorizationForm.userName.value;            
+        this.showReactivationSent = false;
+        if (this.authorizationForm.userName.value != null && this.authorizationForm.userName.value.includes('@')) {
+            this.initReactivationRequest.email = this.authorizationForm.userName.value;
         } else {
             this.initReactivationRequest.email = '';
         }
     };
 
-    showInstitutionLogin(): void  {
+    showInstitutionLogin(): void {
 
         this.personalLogin = false; // Hide Personal Login
-        
-        if(!this.scriptsInjected){ // If shibboleth scripts haven't been
-                                        // loaded yet.
+
+        if (!this.scriptsInjected) { // If shibboleth scripts haven't been
+            // loaded yet.
 
             let scriptInjectedCallback = function () {
-                    this.scriptsInjected = true;
-                };
+                this.scriptsInjected = true;
+            };
 
             this.addScript('/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', this.addScript.bind(this, '/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', scriptInjectedCallback.bind(this)));
         };
     };
 
 
-    showPersonalLogin(): void {        
+    showPersonalLogin(): void {
         this.personalLogin = true;
     };
 
     switchForm(): void {
         this.showDeactivatedError = false;
-        this.showReactivationSent = false; 
+        this.showReactivationSent = false;
         var re = new RegExp("(/register)(.*)?$");
-        if (this.registrationForm.linkType=="social") {
+        if (this.registrationForm.linkType == "social") {
             window.location.href = getBaseUri() + "/social/access";
-        } else if (this.registrationForm.linkType=="shibboleth") {
+        } else if (this.registrationForm.linkType == "shibboleth") {
             window.location.href = getBaseUri() + "/shibboleth/signin";
-        } else if(re.test(window.location.pathname)){
+        } else if (re.test(window.location.pathname)) {
             window.location.href = getBaseUri() + "/signin";
         } else {
             this.showRegisterForm = !this.showRegisterForm;
@@ -248,7 +249,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showClientDescription = !this.showClientDescription;
     };
 
-    toggleLongDescription(orcid_scope): void {              
+    toggleLongDescription(orcid_scope): void {
         this.showLongDescription[orcid_scope] = !this.showLongDescription[orcid_scope];
     };
 
@@ -272,177 +273,177 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         let is_authorize = null;
 
         auth_scope_prefix = 'Authorize_';
-        if(this.enablePersistentToken) {
-            this.authorizationForm.persistentTokenEnabled=true;
+        if (this.enablePersistentToken) {
+            this.authorizationForm.persistentTokenEnabled = true;
             auth_scope_prefix = 'AuthorizeP_';
         }
-        if(this.allowEmailAccess) {
+        if (this.allowEmailAccess) {
             this.authorizationForm.emailAccessAllowed = true;
         }
         is_authorize = this.authorizationForm.approved;
 
-        this.oauthService.authorizeRequest( this.authorizationForm )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(is_authorize) {
-                    for(var i = 0; i < this.requestInfoForm.scopes.length; i++) {
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + this.requestInfoForm.scopes[i].name, 'OAuth ' + this.gaString]);
-                    }
-                }
-                orcidGA.windowLocationHrefDelay(data.redirectUrl);
-
-            },
-            error => {
-                console.log("An error occured authorizing the user.");
-            } 
-        );
-    };
-
-
-    loadAndInitAuthorizationForm(): void{
-        this.oauthService.loadAndInitAuthorizationForm( )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.authorizationForm = data;
-            },
-            error => {
-                console.log("An error occured initializing the authorization form.");
-            } 
-        );
-
-    };  
-
-    loadRequestInfoForm(): void{
-        this.oauthService.loadRequestInfoForm( )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data){
-                    this.requestInfoForm = data;
-                    this.requestInfoForm.scopes.forEach((scope) => {
-                        if (scope.value.endsWith('/update')) {
-                            this.showUpdateIcon = true;
-                        } else if(scope.value.endsWith('/read-limited')) {
-                            this.showLimitedIcon = true;
-                        } else {
-                            this.showBulletIcon = true;
+        this.oauthService.authorizeRequest(this.authorizationForm)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if (is_authorize) {
+                        for (var i = 0; i < this.requestInfoForm.scopes.length; i++) {
+                            orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + this.requestInfoForm.scopes[i].name, 'OAuth ' + this.gaString]);
                         }
-                    });
-          
-                    this.gaString = orcidGA.buildClientString(this.requestInfoForm.memberName, this.requestInfoForm.clientName);
-                }
+                    }
+                    orcidGA.windowLocationHrefDelay(data.redirectUrl);
 
-            },
-            error => {
-                console.log("An error occured initializing the request info form.");
-            } 
-        );
+                },
+                error => {
+                    console.log("An error occured authorizing the user.");
+                }
+            );
+    };
+
+
+    loadAndInitAuthorizationForm(): void {
+        this.oauthService.loadAndInitAuthorizationForm()
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.authorizationForm = data;
+                },
+                error => {
+                    console.log("An error occured initializing the authorization form.");
+                }
+            );
 
     };
 
-    oauth2ScreensLoadRegistrationForm(givenName, familyName, email, linkFlag): void{
-        this.oauthService.oauth2ScreensLoadRegistrationForm( )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.registrationForm = data;
+    loadRequestInfoForm(): void {
+        this.oauthService.loadRequestInfoForm()
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if (data) {
+                        this.requestInfoForm = data;
+                        this.requestInfoForm.scopes.forEach((scope) => {
+                            if (scope.value.endsWith('/update')) {
+                                this.showUpdateIcon = true;
+                            } else if (scope.value.endsWith('/read-limited')) {
+                                this.showLimitedIcon = true;
+                            } else {
+                                this.showBulletIcon = true;
+                            }
+                        });
 
-                if(!this.registrationForm.givenNames.value){
-                    this.registrationForm.givenNames.value=givenName;
-                }
-                if(!this.registrationForm.familyNames.value){
-                    this.registrationForm.familyNames.value=familyName;
-                }
-                if(!this.registrationForm.email.value){
-                    this.registrationForm.email.value=email;
-                }
-                if(!this.registrationForm.email.value){
-                    this.registrationForm.linkType=linkFlag; 
-                }
+                        this.gaString = orcidGA.buildClientString(this.requestInfoForm.memberName, this.requestInfoForm.clientName);
+                    }
 
-                this.registrationForm.activitiesVisibilityDefault.visibility = null;
-                this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
-                
-                this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
-                this.showReactivationSent = false;                
-                
-                for (var index in this.registrationForm.emailsAdditional) {
-                    this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
-                    this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
-                } 
-                this.cdr.detectChanges(); 
-            },
-            error => {
-                console.log("An error occured initializing the registration form.");
-            } 
-        );
+                },
+                error => {
+                    console.log("An error occured initializing the request info form.");
+                }
+            );
 
     };
 
-    getDuplicates(): void{
-        let url = getBaseUri() + '/dupicateResearcher.json?familyNames=' + this.registrationForm.familyNames.value + '&givenNames=' + this.registrationForm.givenNames.value;
-        this.oauthService.getDuplicates( url )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                var diffDate = new Date();
-                this.duplicates = data;
-                // reg was filled out to fast reload the page
-                if (this.loadTime + 5000 > diffDate.getTime()) {
-                    window.location.reload();
-                    return;
-                }
-                if (this.duplicates.length > 0 ) {
-                    for(var i = 0; i < this.duplicates.length; i++){
-                        this.getAffiliations(this.duplicates[i]);
+    oauth2ScreensLoadRegistrationForm(givenName, familyName, email, linkFlag): void {
+        this.oauthService.oauth2ScreensLoadRegistrationForm()
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.registrationForm = data;
+
+                    if (!this.registrationForm.givenNames.value) {
+                        this.registrationForm.givenNames.value = givenName;
+                    }
+                    if (!this.registrationForm.familyNames.value) {
+                        this.registrationForm.familyNames.value = familyName;
+                    }
+                    if (!this.registrationForm.email.value) {
+                        this.registrationForm.email.value = email;
+                    }
+                    if (!this.registrationForm.email.value) {
+                        this.registrationForm.linkType = linkFlag;
+                    }
+
+                    this.registrationForm.activitiesVisibilityDefault.visibility = null;
+                    this.registrationForm.emailsAdditional = [{ errors: [], getRequiredMessage: null, required: false, value: '', }];
+
+                    this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
+                    this.showReactivationSent = false;
+
+                    for (var index in this.registrationForm.emailsAdditional) {
+                        this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                        this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
                     }
                     this.cdr.detectChanges();
-                    this.showRegisterProcessing = false;
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates', duplicates: this.duplicates});
-                } else {
-                    this.oauth2ScreensPostRegisterConfirm();                          
+                },
+                error => {
+                    console.log("An error occured initializing the registration form.");
                 }
-
-            },
-            error => {
-                // something bad is happening!
-                console.log("error fetching dupicateResearcher.json");
-                // continue to registration, as solr dup lookup failed.
-                this.oauth2ScreensPostRegisterConfirm();
-        } 
-        );
+            );
 
     };
 
-    getAffiliations(dup: any){
-        if(!dup['affiliationsRequestSent']){
+    getDuplicates(): void {
+        let url = getBaseUri() + '/dupicateResearcher.json?familyNames=' + this.registrationForm.familyNames.value + '&givenNames=' + this.registrationForm.givenNames.value;
+        this.oauthService.getDuplicates(url)
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    var diffDate = new Date();
+                    this.duplicates = data;
+                    // reg was filled out to fast reload the page
+                    if (this.loadTime + 5000 > diffDate.getTime()) {
+                        window.location.reload();
+                        return;
+                    }
+                    if (this.duplicates.length > 0) {
+                        for (var i = 0; i < this.duplicates.length; i++) {
+                            this.getAffiliations(this.duplicates[i]);
+                        }
+                        this.cdr.detectChanges();
+                        this.showRegisterProcessing = false;
+                        this.modalService.notifyOther({ action: 'open', moduleId: 'modalRegisterDuplicates', duplicates: this.duplicates });
+                    } else {
+                        this.oauth2ScreensPostRegisterConfirm();
+                    }
+
+                },
+                error => {
+                    // something bad is happening!
+                    console.log("error fetching dupicateResearcher.json");
+                    // continue to registration, as solr dup lookup failed.
+                    this.oauth2ScreensPostRegisterConfirm();
+                }
+            );
+
+    };
+
+    getAffiliations(dup: any) {
+        if (!dup['affiliationsRequestSent']) {
             dup['affiliationsRequestSent'] = true;
             dup['affiliations'] = [];
             var orcid = dup.orcid;
             this.searchSrvc.getAffiliations(orcid).subscribe(
                 affiliationsResult => {
-                    if(affiliationsResult.employments){
-                        for(var i in affiliationsResult.employments['employment-summary']){
-                            if (dup['affiliations'].indexOf(affiliationsResult.employments['employment-summary'][i]['organization']['name']) < 0){
+                    if (affiliationsResult.employments) {
+                        for (var i in affiliationsResult.employments['employment-summary']) {
+                            if (dup['affiliations'].indexOf(affiliationsResult.employments['employment-summary'][i]['organization']['name']) < 0) {
                                 dup['affiliations'].push(affiliationsResult.employments['employment-summary'][i]['organization']['name']);
                             }
                         }
                     }
-                    if(affiliationsResult.educations){
-                        for(var i in affiliationsResult.educations['education-summary']){
-                            if (dup['affiliations'].indexOf(affiliationsResult.educations['education-summary'][i]['organization']['name']) < 0){
+                    if (affiliationsResult.educations) {
+                        for (var i in affiliationsResult.educations['education-summary']) {
+                            if (dup['affiliations'].indexOf(affiliationsResult.educations['education-summary'][i]['organization']['name']) < 0) {
                                 dup['affiliations'].push(affiliationsResult.educations['education-summary'][i]['organization']['name']);
                             }
                         }
@@ -450,32 +451,32 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 },
                 error => {
                     console.log("error getting affiliations for " + orcid);
-                } 
-            ); 
-        }  
+                }
+            );
+        }
     };
 
     sendReactivationEmail(email): void {
         this.oauthService.sendReactivationEmail(email)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.initReactivationRequest = data;
-                if(this.initReactivationRequest.error == null || this.initReactivationRequest.error == '') {
-                    this.showDeactivatedError = false;
-                    this.showReactivationSent = true;                    
-                } else {
-                    this.showDeactivatedError = true;
-                    this.showReactivationSent = false;                    
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.initReactivationRequest = data;
+                    if (this.initReactivationRequest.error == null || this.initReactivationRequest.error == '') {
+                        this.showDeactivatedError = false;
+                        this.showReactivationSent = true;
+                    } else {
+                        this.showDeactivatedError = true;
+                        this.showReactivationSent = false;
+                    }
+                    this.cdr.detectChanges();
+                },
+                error => {
+                    console.log("error sending reactivation email");
                 }
-                this.cdr.detectChanges();
-            },
-            error => {
-                console.log("error sending reactivation email");
-            } 
-        );
+            );
     };
 
     sendEmailsAdditionalReactivationEmail(index): void {
@@ -483,170 +484,170 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.showEmailsAdditionalReactivationSent.splice(index, 1, true);
 
         this.oauthService.sendReactivationEmail(this.registrationForm.emailsAdditional[index].value)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-            },
-            error => {
-                console.log("error sending reactivation email");
-            } 
-        );
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                },
+                error => {
+                    console.log("error sending reactivation email");
+                }
+            );
     };
 
     oauth2ScreensPostRegisterConfirm(): void {
         this.registrationForm.valNumClient = this.registrationForm.valNumServer / 2;
         this.oauthService.oauth2ScreensPostRegisterConfirm(this.registrationForm)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data != null && data.errors != null && data.errors.length > 0) {
-                    this.generalRegistrationError = data.errors[0];
-                    this.showGeneralRegistrationError = true;
-                    this.showRegisterProcessing = false;
-                    this.modalService.notifyOther({action:'close', moduleId: 'modalRegisterDuplicates'});
-                    this.cdr.detectChanges();
-                } else {
-                    if (this.gaString){
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth ' + this.gaString]);
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if (data != null && data.errors != null && data.errors.length > 0) {
+                        this.generalRegistrationError = data.errors[0];
+                        this.showGeneralRegistrationError = true;
+                        this.showRegisterProcessing = false;
+                        this.modalService.notifyOther({ action: 'close', moduleId: 'modalRegisterDuplicates' });
+                        this.cdr.detectChanges();
                     } else {
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
-                    } 
-                    orcidGA.windowLocationHrefDelay(data.url);
-                }   
-            },
-            error => {
-                // something bad is happening!
-                console.log("OauthAuthorizationController.postRegister() error");
-            } 
-        );
+                        if (this.gaString) {
+                            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth ' + this.gaString]);
+                        } else {
+                            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                        }
+                        orcidGA.windowLocationHrefDelay(data.url);
+                    }
+                },
+                error => {
+                    // something bad is happening!
+                    console.log("OauthAuthorizationController.postRegister() error");
+                }
+            );
     };
 
     oauth2ScreensRegister(linkFlag): void {
         if (this.gaString) {
             this.registrationForm.referredBy = this.requestInfoForm.clientId;
             this.registrationForm.creationType.value = "Member-referred";
-            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit' , 'OAuth ' + this.gaString]);
+            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit', 'OAuth ' + this.gaString]);
         } else {
             orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration-Submit', 'Website']);
             this.registrationForm.creationType.value = "Direct";
-        } 
+        }
 
         // Adding the response to the register object
-        this.registrationForm.grecaptcha.value = this.recatchaResponse; 
+        this.registrationForm.grecaptcha.value = this.recatchaResponse;
         this.registrationForm.grecaptchaWidgetId.value = this.recaptchaWidgetId;
-        
+
         this.registrationForm.linkType = linkFlag;
 
         this.oauthService.oauth2ScreensRegister(this.registrationForm)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.registrationForm = data;
-                if (this.registrationForm.errors == undefined 
-                    || this.registrationForm.errors.length == 0) {                                 
-                    this.getDuplicates();
-                } else {
-                    if(this.registrationForm.email.errors.length > 0) {
-                        this.errorEmail = data.email.value;
-                        //deactivated error
-                        this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
-                        this.showReactivationSent = false;
-                        //duplicate email error
-                        if($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1){ 
-                            this.showDuplicateEmailError = true;
-                            this.authorizationForm.userName.value = this.registrationForm.email.value;
-                        } 
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.registrationForm = data;
+                    if (this.registrationForm.errors == undefined
+                        || this.registrationForm.errors.length == 0) {
+                        this.getDuplicates();
                     } else {
-                        this.showDeactivatedError = false;
-                        this.showDuplicateEmailError = false;
-                    }
-
-                    for (var index in this.registrationForm.emailsAdditional) {
-                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
-                            this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
+                        if (this.registrationForm.email.errors.length > 0) {
+                            this.errorEmail = data.email.value;
                             //deactivated error
-                            this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
-                            this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                            this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
+                            this.showReactivationSent = false;
                             //duplicate email error
-                            this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
-                            this.authorizationForm.userName.value = this.registrationForm.emailsAdditional[index].value;
+                            if ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1) {
+                                this.showDuplicateEmailError = true;
+                                this.authorizationForm.userName.value = this.registrationForm.email.value;
+                            }
                         } else {
-                            this.showEmailsAdditionalDeactivatedError[index] = false;
-                            this.showEmailsAdditionalDuplicateEmailError[index] = false;
-                        } 
-                    }
+                            this.showDeactivatedError = false;
+                            this.showDuplicateEmailError = false;
+                        }
 
-                    if (this.registrationForm.grecaptcha.errors.length == 0) {
-                        this.showRecaptcha = false;
+                        for (var index in this.registrationForm.emailsAdditional) {
+                            if (this.registrationForm.emailsAdditional[index].errors.length > 0) {
+                                this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;
+                                //deactivated error
+                                this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                                this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                                //duplicate email error
+                                this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                                this.authorizationForm.userName.value = this.registrationForm.emailsAdditional[index].value;
+                            } else {
+                                this.showEmailsAdditionalDeactivatedError[index] = false;
+                                this.showEmailsAdditionalDuplicateEmailError[index] = false;
+                            }
+                        }
+
+                        if (this.registrationForm.grecaptcha.errors.length == 0) {
+                            this.showRecaptcha = false;
+                        }
                     }
+                    this.cdr.detectChanges();
+                },
+                error => {
+                    // something bad is happening!
+                    console.log("oauth2ScreensRegister() error");
                 }
-                this.cdr.detectChanges();
-            },
-            error => {
-                // something bad is happening!
-                console.log("oauth2ScreensRegister() error");
-            } 
-        );
+            );
     };
 
     serverValidate(field): void {
         this.oauthService.serverValidate(this.registrationForm, field)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.commonSrvc.copyErrorsLeft(this.registrationForm, data);
-                if(field == 'Email') {
-                    if (this.registrationForm.email.errors.length > 0) {
-                        this.errorEmail = data.email.value;
-                        //deactivated error
-                        this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
-                        this.showReactivationSent = false;
-                        //duplicate email error
-                        if($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1){ 
-                            this.showDuplicateEmailError = true;
-                            this.authorizationForm.userName.value = this.registrationForm.email.value;
-                        } 
-                    } else {
-                        this.showDeactivatedError = false;
-                        this.showDuplicateEmailError = false;
-                    } 
-                }
-                if(field == 'EmailsAdditional') {
-                    for (var index in this.registrationForm.emailsAdditional) {
-                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
-                            this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.commonSrvc.copyErrorsLeft(this.registrationForm, data);
+                    if (field == 'Email') {
+                        if (this.registrationForm.email.errors.length > 0) {
+                            this.errorEmail = data.email.value;
                             //deactivated error
-                            this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
-                            this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                            this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
+                            this.showReactivationSent = false;
                             //duplicate email error
-                            this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
-                            this.authorizationForm.userName.value = this.registrationForm.emailsAdditional[index].value;
+                            if ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.email.errors) != -1) {
+                                this.showDuplicateEmailError = true;
+                                this.authorizationForm.userName.value = this.registrationForm.email.value;
+                            }
                         } else {
-                            this.showEmailsAdditionalDeactivatedError[index] = false;
-                            this.showEmailsAdditionalDuplicateEmailError[index] = false;
+                            this.showDeactivatedError = false;
+                            this.showDuplicateEmailError = false;
                         }
-                    }                          
+                    }
+                    if (field == 'EmailsAdditional') {
+                        for (var index in this.registrationForm.emailsAdditional) {
+                            if (this.registrationForm.emailsAdditional[index].errors.length > 0) {
+                                this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;
+                                //deactivated error
+                                this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                                this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                                //duplicate email error
+                                this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                                this.authorizationForm.userName.value = this.registrationForm.emailsAdditional[index].value;
+                            } else {
+                                this.showEmailsAdditionalDeactivatedError[index] = false;
+                                this.showEmailsAdditionalDuplicateEmailError[index] = false;
+                            }
+                        }
+                    }
+                    this.cdr.detectChanges();
+
+                },
+                error => {
+                    // something bad is happening!
+                    console.log("serverValidate() error");
                 }
-                this.cdr.detectChanges();
-                
-            },
-            error => {
-                // something bad is happening!
-                console.log("serverValidate() error");
-            } 
-        );
+            );
     };
 
     showDuplicatesColorBox(): void {
-        this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates'});
+        this.modalService.notifyOther({ action: 'open', moduleId: 'modalRegisterDuplicates' });
     };
 
     handleCaptchaResponse($event): void {
@@ -666,58 +667,58 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     ngOnInit() {
         this.authorizationForm = {
-            userName:  {value: orcidVar.loginId},
-            givenNames:  {value: ""},
-            familyNames:  {value: ""},
-            email:  {value: ""},
-            linkType:  {value: null},
+            userName: { value: orcidVar.loginId },
+            givenNames: { value: "" },
+            familyNames: { value: "" },
+            email: { value: "" },
+            linkType: { value: null },
         }
 
         this.registrationForm = {
-            userName:  {value: null},
-            givenNames:  {value: null},
-            familyNames:  {value: null},
-            email:  {value: null},
-            password: {value: null},
-            passwordConfirm: {value: null},
-            activitiesVisibilityDefault: {visibility: null},
-            sendOrcidNews: {value: null},
-            termsOfUse: {value: null},
-            linkType:  {value: null},
+            userName: { value: null },
+            givenNames: { value: null },
+            familyNames: { value: null },
+            email: { value: null },
+            password: { value: null },
+            passwordConfirm: { value: null },
+            activitiesVisibilityDefault: { visibility: null },
+            sendOrcidNews: { value: null },
+            termsOfUse: { value: null },
+            linkType: { value: null },
         }
 
         //if oauth request load request info form
-        if(orcidVar.oauth2Screens || orcidVar.originalOauth2Process){
+        if (orcidVar.oauth2Screens || orcidVar.originalOauth2Process) {
             this.loadRequestInfoForm();
         }
-        
-        if(orcidVar.oauth2Screens) {
-            if(orcidVar.oauthUserId && orcidVar.showLogin){
+
+        if (orcidVar.oauth2Screens) {
+            if (orcidVar.oauthUserId && orcidVar.showLogin) {
                 this.showRegisterForm = false;
                 this.authorizationForm = {
-                    userName:  {value: orcidVar.oauthUserId}
-                } 
-            } else{
-                this.showRegisterForm = !orcidVar.showLogin;  
+                    userName: { value: orcidVar.oauthUserId }
+                }
+            } else {
+                this.showRegisterForm = !orcidVar.showLogin;
             }
         } else {
-            if(orcidVar.showLogin){
+            if (orcidVar.showLogin) {
                 this.showRegisterForm = false;
-            } else{
-                this.showRegisterForm = !orcidVar.showLogin;  
+            } else {
+                this.showRegisterForm = !orcidVar.showLogin;
             }
-        } 
+        }
 
-        window.onkeydown = function(e) {
-            if (e.keyCode == 13) {     
-                if(orcidVar.originalOauth2Process) { 
+        window.onkeydown = function (e) {
+            if (e.keyCode == 13) {
+                if (orcidVar.originalOauth2Process) {
                     //this.authorize();
                 }
             }
         };
 
-        $('#enterRecoveryCode').click(function() {
-            $('#recoveryCodeSignin').show(); 
+        $('#enterRecoveryCode').click(function () {
+            $('#recoveryCodeSignin').show();
         });
 
         if (orcidVar.firstName || orcidVar.lastName || orcidVar.emailId || orcidVar.linkRequest) {
@@ -728,26 +729,28 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
         this.subscription = this.oauthService.notifyObservable$.subscribe(
             (res) => {
-                if(res !== "undefined" && res.action === "confirm" && res.moduleId === "registerDuplicates"){
+                if (res !== "undefined" && res.action === "confirm" && res.moduleId === "registerDuplicates") {
                     this.oauth2ScreensPostRegisterConfirm();
                 }
             }
         );
 
-        console.log("OKKK")
-
         this.nameService.getData(this.nameFormUrl).subscribe(response => {
-            {
-                if (response.realGivenNames.value || response.realFamilyName.value) {
-                    this.loggedinUserName = "";
-                    this.loggedinUserName += response.realGivenNames.value ? response.realGivenNames.value : "";
-                    this.loggedinUserName += response.realGivenNames.value && response.realFamilyName.value ? " " : "";
-                    this.loggedinUserName += response.realFamilyName.value ? response.realFamilyName.value : "";
+                this.isLoggedIn = true;
+                if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
+                    this.realLoggedInUserName = "";
+                    this.realLoggedInUserName += response.real.givenNames.value ? response.real.givenNames.value : "";
+                    this.realLoggedInUserName += response.real.givenNames.value && response.real.familyName.value ? " " : "";
+                    this.realLoggedInUserName += response.real.familyName.value ? response.real.familyName.value : "";
                     this.isLoggedIn == true;
-                } else {
-                    this.isLoggedIn == false;
-                }
-            }
+                } 
+                if (response.effective && (response.effective.givenNames.value || response.effective.familyName.value)) {
+                    this.effectiveLoggedInUserName = "";
+                    this.effectiveLoggedInUserName += response.effective.givenNames.value ? response.effective.givenNames.value : "";
+                    this.effectiveLoggedInUserName += response.effective.givenNames.value && response.effective.familyName.value ? " " : "";
+                    this.effectiveLoggedInUserName += response.effective.familyName.value ? response.effective.familyName.value : "";
+                    this.isLoggedIn == true;
+                }     
         }, (error) => {
             this.isLoggedIn = false;
         })

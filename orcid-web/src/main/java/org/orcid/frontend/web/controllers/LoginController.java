@@ -17,6 +17,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -29,6 +30,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidRequestExcep
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,12 +67,18 @@ public class LoginController extends OauthControllerBase {
         return map;
     }
     
-    @RequestMapping(value = "/account/names", method = RequestMethod.GET)
-    public @ResponseBody Names getAccountNames() {
+    @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
+    public @ResponseBody Names getAccountNames(@PathVariable String type) {
         String currentOrcid = getCurrentUserOrcid();
         Name currentName = recordNameManager.getRecordName(currentOrcid);
+        if (type.equals("public") &&  !currentName.getVisibility().equals(Visibility.PUBLIC) ) {
+        	currentName = null;
+        }
         String currentRealOrcid = getRealUserOrcid();
         Name realName = recordNameManager.getRecordName(currentRealOrcid);
+        if (type.equals("public") &&  !realName.getVisibility().equals(Visibility.PUBLIC) ) {
+        	realName = null;
+        }
         return Names.valueOf(currentName, realName);
     }
 
