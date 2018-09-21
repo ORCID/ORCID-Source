@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.filter;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
@@ -43,11 +44,20 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
         if (OrcidUrlManager.getPathWithoutContextPath(request).equals("/oauth/authorize")) {
             HttpServletResponse response = (HttpServletResponse) res;
             HttpSession session = request.getSession();
+            String queryString = request.getQueryString();
+            boolean forceLogin = false;
+            
+            if (OrcidOauth2Constants.PROMPT_LOGIN.equals(request.getParameter(OrcidOauth2Constants.PROMPT))) {
+                //remove prompt param later on to prevent loop
+                forceLogin = true;
+            } 
+            
+            //users not logged in must sign in
             SecurityContext sci = null;
             if (session != null)
                 sci = (SecurityContext)session.getAttribute("SPRING_SECURITY_CONTEXT");
-            if (baseControllerUtil.getCurrentUser(sci) == null) {
-                String queryString = request.getQueryString();
+            if (forceLogin || baseControllerUtil.getCurrentUser(sci) == null) {
+                
                 if (session != null)
                     new HttpSessionRequestCache().saveRequest(request, response);
                 
@@ -57,7 +67,7 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
         }
         chain.doFilter(req, res);
     }
-
+    
     @Override
     public void init(FilterConfig arg0) throws ServletException {
         // Do nothing
