@@ -24,29 +24,32 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
    
     switchId: string;
     showSwitchUser: boolean;
+    switchUserError: boolean;
     
     constructor(
         private switchUserService: SwitchUserService
     ) {
         this.showSwitchUser = false;
-        console.log("Hey!" + this.showSwitchUser)
+        this.switchUserError = false;
     }    
 
     switchUser(): void {
-        this.switchUserService.switchUserAdmin(this.switchId)
+        this.switchUserService.adminSwitchUserValidate(this.switchId)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
-            data => {
-                if(!$.isEmptyObject(data)) {
-                    if($.isEmptyObject(data.errorMessg)) { 
-                        this.switchUserService.switchUser(this.switchId);
-                    }
+            data => {                
+                if(data != null && data.errorMessg == null) {
+                    this.switchUserError = false;
+                    window.location.replace(getBaseUri() + '/switch-user?username=' + data.id);                    
+                } else {
+                    this.switchUserError = true;
                 }
             },
             error => {
                 console.log('admin: switchUser', error);
+                this.switchUserError = true;
             } 
         );
         

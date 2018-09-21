@@ -26,31 +26,29 @@ export class SwitchUserService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
-    }
+    }    
 
     getDelegates(): Observable<any> {
         return this.http.get(
             getBaseUri()+'/delegators/delegators-and-me.json'
-        )
-        
-    }
-
+        );
+    };
+    
     searchDelegates(searchTerm): Observable<any> {
         return this.http.get(
             getBaseUri()+'/delegators/search/'+encodeURIComponent(searchTerm) + '?limit=10'
-        )
-        
-    }
-
-    switchUser(id): Observable<any> {        
-        return this.http.get( 
-            getBaseUri() + '/switch-user?username=' + id
-        )
-    }
+        );
+    };
     
-    switchUserAdmin(id): Observable<any> {
+    switchUser(id): Observable<any> {          
         return this.http.get(
-                getBaseUri() + '/admin-actions/admin-switch-user?orcidOrEmail=' + id
+                getBaseUri() + '/switch-user?username=' + id
+        );        
+    };
+    
+    adminSwitchUserValidate(id): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/admin-actions/admin-switch-user?orcidOrEmail=' + id
         );        
     };
 

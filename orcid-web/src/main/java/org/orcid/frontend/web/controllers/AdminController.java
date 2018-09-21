@@ -12,6 +12,7 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +77,11 @@ public class AdminController extends BaseController {
     private static final String OUT_NEW_LINE = "\n";    
 
     @RequestMapping
-    public ModelAndView loadAdminPage() {
+    public ModelAndView loadAdminPage(HttpServletRequest request, HttpServletResponse response) {
+        if (!orcidSecurityManager.isAdmin()) {
+            logoutCurrentUser(request, response);
+            return new ModelAndView("redirect:/signin");
+        }
         ModelAndView mav;
         if(Features.NG2_ADMIN_ACTIONS.isActive()) {
             mav = new ModelAndView("/admin/admin_actions");
@@ -436,7 +441,8 @@ public class AdminController extends BaseController {
                 result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is deactivated.").toString());
             } else if (!profileEntity.isAccountNonLocked()) {
                 result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is locked.").toString());
-            }             
+            }
+            result.put("id", orcid);
         } else {
             result.put("errorMessg", "Invalid id " + orcidOrEmail);
         }
