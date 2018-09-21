@@ -4,13 +4,8 @@ import { Injectable }
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-
-
 import { Observable, Subject } 
     from 'rxjs';
-
 
 import { catchError, map, tap } 
     from 'rxjs/operators';
@@ -47,36 +42,16 @@ export class SwitchUserService {
         
     }
 
-    switchUser(targetOrcid): Observable<any> {        
+    switchUser(id): Observable<any> {        
         return this.http.get( 
-            getBaseUri() + '/switch-user?username=' + targetOrcid
+            getBaseUri() + '/switch-user?username=' + id
         )
     }
     
-    switchUserAdmin = function() {
-        $.ajax({
-            url: getBaseUri()+'/admin-actions/admin-switch-user?orcidOrEmail=' + $scope.orcidOrEmail,
-            type: 'GET',
-            dataType: 'json',
-            success: function(data){
-                $scope.$apply(function(){
-                    if(!$.isEmptyObject(data)) {
-                        if(!$.isEmptyObject(data.errorMessg)) {
-                            $scope.orcidMap = data;
-                            $scope.showSwitchErrorModal();
-                        } else {
-                            window.location.replace(data.url);
-                        }
-                    } else {
-                        $scope.showSwitchInvalidModal();
-                    }
-                    $scope.orcidOrEmail='';
-                });
-            }
-        }).fail(function(error) {
-            // something bad is happening!
-            console.log("Error switching account");
-        });
+    switchUserAdmin(id): Observable<any> {
+        return this.http.get(
+                getBaseUri() + '/admin-actions/admin-switch-user?orcidOrEmail=' + id
+        );        
     };
 
     notifyOther(): void {

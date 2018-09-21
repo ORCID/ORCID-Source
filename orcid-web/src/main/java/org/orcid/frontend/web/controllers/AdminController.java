@@ -20,6 +20,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -41,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * @author Angel Montenegro
@@ -77,7 +77,13 @@ public class AdminController extends BaseController {
 
     @RequestMapping
     public ModelAndView loadAdminPage() {
-        return new ModelAndView("admin_actions");        
+        ModelAndView mav;
+        if(Features.NG2_ADMIN_ACTIONS.isActive()) {
+            mav = new ModelAndView("/admin/admin_actions");
+        } else {
+            mav = new ModelAndView("admin_actions");
+        }
+        return mav;        
     }
 
     /**
@@ -430,9 +436,7 @@ public class AdminController extends BaseController {
                 result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is deactivated.").toString());
             } else if (!profileEntity.isAccountNonLocked()) {
                 result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is locked.").toString());
-            } 
-            // All fine, set the switch user url
-            result.put("url", "./switch-user?username=" + orcid);
+            }             
         } else {
             result.put("errorMessg", "Invalid id " + orcidOrEmail);
         }

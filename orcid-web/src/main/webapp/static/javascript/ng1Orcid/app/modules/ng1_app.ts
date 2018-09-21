@@ -286,7 +286,7 @@ export const orcidApp = angular.module(
         DelegatorsModule.name,
         ResendClaimModule.name,
         WorksMergeChoosePreferredVersionModule.name,
-        WorksMergeSuggestionsModule.name
+        WorksMergeSuggestionsModule.name,
         AdminActionsModule.name
     ]
 );
