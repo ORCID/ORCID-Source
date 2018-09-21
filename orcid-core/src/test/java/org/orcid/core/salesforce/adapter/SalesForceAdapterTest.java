@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRoleType;
+import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OrgId;
@@ -213,6 +214,26 @@ public class SalesForceAdapterTest {
         contact.setAccountId("1234");
         JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromOrgId(contact);
         assertEquals("{\"Organization__c\":\"1234\"}", contactJson.toString());
+    }
+    
+    @Test
+    public void testCreateIntegrationsListFromJson() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_integrations_list.json"));
+        JSONObject inputObject = new JSONObject(inputString);
+        
+        List<Integration> membersList = salesForceAdapter.createIntegrationsListFromJson(inputObject);
+        
+        assertEquals(3, membersList.size());
+        
+        Integration integrationNewStyleBadgeAwarded = membersList.get(0);
+        assertEquals("Will's custom system new style", integrationNewStyleBadgeAwarded.getName());
+        
+        Integration integrationNoBadge = membersList.get(1);
+        assertEquals("Integration using Will's vendor system", integrationNoBadge.getName());
+        
+        
+        Integration integrationOldStyleBadAwarded = membersList.get(2);
+        assertEquals("Will's custom system old style", integrationOldStyleBadAwarded.getName());
     }
 
 }

@@ -1,0 +1,51 @@
+{
+  "totalSize" : 1,
+  "done" : true,
+  "records" : [ {
+    "attributes" : {
+      "type" : "Account",
+      "url" : "/services/data/v20.0/sobjects/Account/0013D00000ZhwbSQAR"
+    },
+    "Integrations__r" : {
+      "totalSize" : 3,
+      "done" : true,
+      "records" : [ {
+        "attributes" : {
+          "type" : "Integration__c",
+          "url" : "/services/data/v20.0/sobjects/Integration__c/a033D000002BQXAQA4"
+        },
+        "Name" : "Will's custom system new style",
+        "Description__c" : "Will's custom system new style",
+        "Integration_Stage__c" : "Complete",
+        "Level__c" : null,
+        "BadgeAwarded__c" : false,
+        "Highest_Achievement__c" : "AUTHENTICATE",
+        "Integration_URL__c" : null
+      }, {
+        "attributes" : {
+          "type" : "Integration__c",
+          "url" : "/services/data/v20.0/sobjects/Integration__c/a033D000002BQanQAG"
+        },
+        "Name" : "Integration using Will's vendor system",
+        "Description__c" : "Integration built on Will's vendor system",
+        "Integration_Stage__c" : "Complete",
+        "Level__c" : null,
+        "BadgeAwarded__c" : false,
+        "Highest_Achievement__c" : null,
+        "Integration_URL__c" : null
+      }, {
+        "attributes" : {
+          "type" : "Integration__c",
+          "url" : "/services/data/v20.0/sobjects/Integration__c/a033D000002BQQ9QAO"
+        },
+        "Name" : "Will's custom system old style",
+        "Description__c" : "Will's made up system",
+        "Integration_Stage__c" : "Complete",
+        "Level__c" : "Connect",
+        "BadgeAwarded__c" : true,
+        "Highest_Achievement__c" : null,
+        "Integration_URL__c" : null
+      } ]
+    }
+  } ]
+}
