@@ -167,12 +167,12 @@
             </div><!--login-->
 
             <div *ngIf="this.isLoggedIn" class="relogin-container">
-                <div>You are logged in as {{realLoggedInUserName}} ${baseUri}/${realUserOrcid!} 
-                    <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> managing the record of {{effectiveLoggedInUserName}} ${baseUri}/${effectiveUserOrcid!} </ng-container>
+                <div><@orcid.msg 'login.reloginalert.youare'/> {{realLoggedInUserName}} ${baseUri}/${realUserOrcid!} 
+                    <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> <@orcid.msg 'login.reloginalert.managing'/> {{effectiveLoggedInUserName}} ${baseUri}/${effectiveUserOrcid!} </ng-container>
                 </div>
                 <div class="menu-area"> 
-                <a href="<@orcid.rootPath "/my-orcid" />"><div class="btn btn-primary">Continue to My ORCID record</div></a>
-                <a href="<@orcid.rootPath "/signout" />"><div class="btn btn-white-no-border">Not You?</div></a>
+                <a href="<@orcid.rootPath "/my-orcid" />"><div class="btn btn-primary"><@orcid.msg 'login.reloginalert.continue'/></div></a>
+                <a href="<@orcid.rootPath "/signout" />"><div class="btn btn-white-no-border"><@orcid.msg 'login.reloginalert.no'/></div></a>
                 </div>
             </div>
         </div><!--col-md-offset-3-->
