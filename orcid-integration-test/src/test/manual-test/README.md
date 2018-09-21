@@ -106,9 +106,11 @@
 
 57. Set up a new Self Service Org account using [this document](https://docs.google.com/document/d/1FlpmgtubCEnD21EpJLWu4AXh4DH0moC9pe6R_5clA78/edit) or alternatively use 0000-0003-0641-4661.
 
-58. Sign in to 0000-0003-0641-4661 and visit https://aq.orcid.org/0000-0003-0641-4661/self-service
+58. Sign in to 0000-0003-0641-4661 and visit https://qa.orcid.org/0000-0003-0641-4661/self-service
 
-59. Update org info- make sure it feeds to Salesforce.
+ ** Note Salesforce to Registry changes may take an hour to appear due to caching.**
+ 
+59. Update org info- make sure it feeds into Salesforce.
 
 60. Add new consortium org contact- make sure info feeds to SF.
 
