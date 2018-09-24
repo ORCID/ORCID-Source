@@ -349,7 +349,7 @@ public class AdminController extends BaseController {
      * Reset password
      */
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
-    public @ResponseBody String resetPassword(@RequestBody AdminChangePassword form) {
+    public @ResponseBody AdminChangePassword resetPassword(@RequestBody AdminChangePassword form) {
         String orcidOrEmail = form.getOrcidOrEmail();
         String password = form.getPassword();        
         if (StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
@@ -370,17 +370,17 @@ public class AdminController extends BaseController {
                     if (profileEntityManager.orcidExists(orcid)) {
                         profileEntityManager.updatePassword(orcid, password);
                     } else {
-                        return getMessage("admin.errors.unexisting_orcid");
+                        form.setError(getMessage("admin.errors.unexisting_orcid"));                        
                     }
                 } else {
-                    return getMessage("admin.errors.unable_to_fetch_info");
+                    form.setError(getMessage("admin.errors.unable_to_fetch_info"));                    
                 }
             }
         } else {
-            return getMessage("admin.reset_password.error.invalid_password");
+            form.setError(getMessage("admin.reset_password.error.invalid_password"));            
         }
 
-        return getMessage("admin.reset_password.success");
+        return form;
     }
 
     /**
