@@ -30,7 +30,7 @@
         <sql>CREATE INDEX rejected_grouping_suggestion_orcid_idx on rejected_grouping_suggestion (orcid);</sql>
     </changeSet>    
     
-    <changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-REJECTED-GROUPING_SUGGESTION" author="George Nash" dbms="postgresql">
+    <changeSet id="ORCIDRO-GRANT-REJECTED-SUGGESTION" author="George Nash" dbms="postgresql">
         <preConditions>
             <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
         </preConditions>
