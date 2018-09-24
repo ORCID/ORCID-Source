@@ -58,7 +58,6 @@ export class FindIdsComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.profileList = null;
                 }
                 this.emails='';
-                this.showEmailIdsModal();
 
                 ////console.log('this.getForm', this.formData);
             },
@@ -67,22 +66,7 @@ export class FindIdsComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
-
-
-    showEmailIdsModal(): void {
-        /*
-        $.colorbox({
-            html : $compile($('#email-ids-modal').html())($scope),
-            scrolling: true,
-            onLoad: function() {
-                $('#cboxClose').remove();
-            }
-        });
-
-        setTimeout(function(){$.colorbox.resize({width:"575px"});},100);
-        */
-    };
-
+    
     toggleSection(): void {
         this.showSection = !this.showSection;
         $('#find_ids_section').toggle();

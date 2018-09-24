@@ -54,7 +54,7 @@ export class AdminDelegatesService {
     }
 
     findIds( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
+        let encoded_data = encodeURI(obj);
         
         return this.http.post( 
             getBaseUri()+'/admin-actions/find-id.json', 

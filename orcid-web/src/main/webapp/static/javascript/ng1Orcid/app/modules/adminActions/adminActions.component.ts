@@ -15,6 +15,9 @@ import { takeUntil }
 import { SwitchUserService } 
     from '../../shared/switchUser.service.ts';
     
+import { AdminDelegatesService } 
+    from '../../shared/adminDelegates.service.ts'; 
+    
 @Component({
     selector: 'admin-actions-ng2',
     template:  scriptTmpl("admin-actions-ng2-template")
@@ -22,19 +25,32 @@ import { SwitchUserService }
 export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();    
    
+    // Switch user
     switchId: string;
     showSwitchUser: boolean;
     switchUserError: boolean;
     
+    // Find ids
+    csvEmails: string;
+    profileList: any;
+    showFindIds: boolean;
+    showIds: boolean;
+    
     constructor(
-        private switchUserService: SwitchUserService
+        private switchUserService: SwitchUserService,
+        private adminDelegatesService: AdminDelegatesService
     ) {
         this.showSwitchUser = false;
         this.switchUserError = false;
+        
+        this.csvEmails = '';
+        this.showFindIds = false;
+        this.showIds = false;
+        this.profileList = {};
     }    
 
-    switchUser(): void {
-        this.switchUserService.adminSwitchUserValidate(this.switchId)
+    switchUser(id): void {
+        this.switchUserService.adminSwitchUserValidate(id)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -48,7 +64,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
             },
             error => {
-                console.log('admin: switchUser', error);
+                console.log('admin: switchUser error', error);
                 this.switchUserError = true;
             } 
         );
@@ -56,7 +72,24 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     findIds(): void {
-        
+        console.log(this.csvEmails)
+        this.adminDelegatesService.findIds( this.csvEmails )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.showIds = true;
+                if(data) {
+                    this.profileList = data;
+                } else {
+                    this.profileList = {};
+                }                
+            },
+            error => {
+                console.log('admin: findIds error', error);
+            } 
+        );
     }
     
     //Default init functions provided by Angular Core
