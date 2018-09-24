@@ -14,7 +14,6 @@ import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -53,8 +52,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
-
-    private static int RANDOM_STRING_LENGTH = 15;
 
     @Resource(name = "profileEntityManagerV3")
     ProfileEntityManager profileEntityManager;
@@ -335,14 +332,6 @@ public class AdminController extends BaseController {
         if (StringUtils.isBlank(csvEmails))
             return new HashMap<String, String>();
         return emailManager.findOricdIdsByCommaSeparatedEmails(csvEmails);
-    }
-
-    /**
-     * Generate random string
-     */
-    @RequestMapping(value = "/generate-random-string.json", method = RequestMethod.GET)
-    public @ResponseBody String generateRandomString() {
-        return RandomStringUtils.random(RANDOM_STRING_LENGTH, OrcidPasswordConstants.getEntirePasswordCharsRange());
     }
 
     /**

@@ -17,10 +17,14 @@ import { SwitchUserService }
     
 import { AdminDelegatesService } 
     from '../../shared/adminDelegates.service.ts'; 
+
+import { CommonService } 
+    from '../../shared/common.service.ts';
     
 @Component({
     selector: 'admin-actions-ng2',
-    template:  scriptTmpl("admin-actions-ng2-template")
+    template:  scriptTmpl("admin-actions-ng2-template"),
+    providers: [CommonService]
 })
 export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();    
@@ -42,7 +46,8 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     
     constructor(
         private switchUserService: SwitchUserService,
-        private adminDelegatesService: AdminDelegatesService
+        private adminDelegatesService: AdminDelegatesService,
+        private commonSrvc: CommonService
     ) {
         this.showSwitchUser = false;
         this.switchUserError = false;
@@ -52,8 +57,8 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showIds = false;
         this.profileList = {};
     
-        showResetPassword = false;
-        resetPasswordParams = {};
+        this.showResetPassword = false;
+        this.resetPasswordParams = {};
     }    
 
     switchUser(id): void {
@@ -79,7 +84,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     findIds(): void {
-        console.log(this.csvEmails)
         this.adminDelegatesService.findIds( this.csvEmails )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -97,9 +101,26 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('admin: findIds error', error);
             } 
         );
-    }
+    };
     
+    randomString(): void {
+        this.commonSrvc.randomString()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.resetPasswordParams.password = data;
+            },
+            error => {
+                console.log('admin: randomString', error);
+            } 
+        );
+    };
     
+    confirmResetPassword(): void {
+        
+    };
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

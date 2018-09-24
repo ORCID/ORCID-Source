@@ -67,8 +67,8 @@
 <!-- Reset password -->
 <div class="workspace-accordion-item" id="reset-password">
     <p>
-        <a  *ngIf="showResetPassword" (click)="showResetPassword = !showResetPassword"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
-        <a  *ngIf="!showResetPassword" (click)="showResetPassword = !showResetPassword"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+        <a  *ngIf="showResetPassword" (click)="showResetPassword = !showResetPassword"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.reset_password' /></a>
+        <a  *ngIf="!showResetPassword" (click)="showResetPassword = !showResetPassword"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.reset_password' /></a>
     </p>
     <div class="form-group" *ngIf="showResetPassword">
         <div>
@@ -76,9 +76,9 @@
             <input type="text" id="orcid" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
             <label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
             <input type="text" id="password" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
-            <a href (click)="randomString()" class="glyphicon glyphicon-random blue"></a>                                  
-            <div *ngIf="resetPasswordParams.error != ''">
-                <span class="orcid-error" [(ngModel)]="resetPasswordParams.error"></span><br />
+            <a (click)="randomString()" class="glyphicon glyphicon-random blue"></a>
+            <div *ngIf="resetPasswordParams?.error != null">
+                <span class="orcid-error" [(ngModel)]="resetPasswordParams.error"></span>
             </div>
         </div>
         <div class="controls save-btns pull-left">
