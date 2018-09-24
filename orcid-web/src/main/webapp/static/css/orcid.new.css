@@ -4255,7 +4255,7 @@ ul#body-membership-list>li {
 .workspace-title {
     display: block;
     color: #494a4c;
-    font-weight: 400
+    font-weight: bold;
 }
 
 .workspace-title span {
@@ -5806,7 +5806,7 @@ ul.oauth-scopes li {
 }
 
 .peer-review-list-container .glyphicons {
-    padding-left: 15px
+    padding-left: 18px
 }
 
 .research-resource-list-container .glyphicons {

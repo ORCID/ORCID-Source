@@ -106,6 +106,12 @@ import { OrgIdentifierPopoverModule }
 import { PasswordEditModule } 
     from './passwordEdit/passwordEdit.ts';
 
+import { PeerReviewModule } 
+    from './peerReview/peerReview.ts';
+
+import { PeerReviewDeleteModule } 
+    from './peerReview/peerReviewDelete.ts';
+
 import { PersonModule } 
     from './person/person.ts';
 
@@ -248,6 +254,8 @@ export const orcidApp = angular.module(
         OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
         PasswordEditModule.name,
+        PeerReviewModule.name,
+        PeerReviewDeleteModule.name,
         PersonModule.name,
         PersonalInfoModule.name,
         PublicEduAffiliationModule.name,
