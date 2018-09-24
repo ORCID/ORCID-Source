@@ -137,7 +137,7 @@ public class WorksController extends BaseWorkspaceController {
         return groupingSuggestionManager.getGroupingSuggestion(getCurrentUserOrcid());
     }
     
-    @RequestMapping(value = "/rejectGroupingSuggestion", method = RequestMethod.POST)
+    @RequestMapping(value = "/rejectGroupingSuggestion.json", method = RequestMethod.POST)
     public @ResponseBody Boolean declineGroupingSuggestion(@RequestBody WorkGroupingSuggestion suggestion) {     
         groupingSuggestionManager.markGroupingSuggestionAsRejected(suggestion);
         return true;
