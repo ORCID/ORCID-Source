@@ -408,4 +408,12 @@ public class OauthControllerBase extends BaseController {
             throw new IllegalArgumentException(getMessage("web.orcid.oauth_invalid_client.exception"));
         return clientDetails.isPersistentTokensEnabled();
     }
+    
+    protected String removeQueryStringParams(String queryString, String... params) {
+        for (String param : params) {
+            String keyValue = param + "=[^&]*?";
+            queryString = queryString.replaceAll("(&" + keyValue + "(?=(&|$))|^" + keyValue + "(&|$))", "");
+        }
+        return queryString;
+    }
 }

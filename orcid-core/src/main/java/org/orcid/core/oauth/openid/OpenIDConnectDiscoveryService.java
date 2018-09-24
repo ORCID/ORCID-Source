@@ -23,7 +23,7 @@ public class OpenIDConnectDiscoveryService {
         private List<String> claims_supported = Lists.newArrayList("family_name","given_name","name","auth_time","iss","sub");
         private List<String> scopes_supported = Lists.newArrayList("openid");
         private List<String> subject_types_supported  = Lists.newArrayList("public");
-        private List<String> response_types_supported = Lists.newArrayList("code");
+        private List<String> response_types_supported = Lists.newArrayList("code","id_token","id_token token");
         private Boolean claims_parameter_supported = false;
         private List<String> token_endpoint_auth_methods_supported = Lists.newArrayList("client_secret_basic");
         public String getIssuer() {
