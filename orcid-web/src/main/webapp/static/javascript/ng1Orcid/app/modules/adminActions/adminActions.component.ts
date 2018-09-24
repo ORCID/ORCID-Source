@@ -36,6 +36,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showFindIds: boolean;
     showIds: boolean;
     
+    // Reset password
+    showResetPassword: boolean;
+    resetPasswordParams: any;
+    
     constructor(
         private switchUserService: SwitchUserService,
         private adminDelegatesService: AdminDelegatesService
@@ -47,6 +51,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showFindIds = false;
         this.showIds = false;
         this.profileList = {};
+    
+        showResetPassword = false;
+        resetPasswordParams = {};
     }    
 
     switchUser(id): void {
@@ -91,6 +98,8 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     }
+    
+    
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

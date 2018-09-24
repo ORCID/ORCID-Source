@@ -1,4 +1,5 @@
 <script type="text/ng-template" id="admin-actions-ng2-template">
+<!-- Switch user -->
 <div class="workspace-accordion-item" id="switch-user">
     <p>
         <a *ngIf="showSwitchUser" (click)="showSwitchUser = !showSwitchUser"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.switch_user' /></a>
@@ -18,44 +19,76 @@
     </div>  
 </div>
 
-
+<!-- Find ids -->
 <div class="workspace-accordion-item" id="find-ids">    
-        <p>
-            <a *ngIf="showFindIds" (click)="showFindIds = !showFindIds"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.find_ids' /></a>
-            <a *ngIf="!showFindIds" (click)="showFindIds = !showFindIds"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.find_ids' /></a>
-        </p>                
-        <div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" *ngIf="showFindIds">
-            <div class="form-group">
-                <label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
-                <input type="text" id="emails" (keyup.enter)="findIds()" [(ngModel)]="csvEmails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
+    <p>
+        <a *ngIf="showFindIds" (click)="showFindIds = !showFindIds"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.find_ids' /></a>
+        <a *ngIf="!showFindIds" (click)="showFindIds = !showFindIds"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.find_ids' /></a>
+    </p>                
+    <div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" *ngIf="showFindIds">
+        <div class="form-group">
+            <label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
+            <input type="text" id="emails" (keyup.enter)="findIds()" [(ngModel)]="csvEmails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="find-ids" (click)="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>                       
+        </div>
+    </div>  
+    <div class="form-group" *ngIf="showIds">
+        <h3><@orcid.msg 'admin.find_ids.results'/></h3>
+        <div *ngIf="profileList?.length > 0">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <td><strong><@orcid.msg 'admin.email'/></strong></td>
+                    <td><strong><@orcid.msg 'admin.orcid'/></strong></td>
+                    <td><strong><@orcid.msg 'admin.account_status'/></strong></td>
+                </tr>
+                <tr *ngFor="let profile of profileList">
+                    <td>{{profile.email}}</td>
+                    <td><a href="<@orcid.msg 'admin.public_view.click.link'/>{{profile.orcid}}" target="profile.orcid">{{profile.orcid}}</a>&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a (click)="switchUser(profile.orcid)"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
+                    <td>{{profile.status}}</td>
+                </tr>
+            </table>
+            <div class="controls save-btns pull-right bottom-margin-small">
+                <a href="" class="cancel-action" (click)="showIds = false" (click)="csvEmails = ''"><@orcid.msg 'freemarker.btnclose'/></a>
             </div>
-            <div class="controls save-btns pull-left">
-                <span id="find-ids" (click)="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>                       
-            </div>
-        </div>  
-        <div class="form-group" *ngIf="showIds">
-            <h3><@orcid.msg 'admin.find_ids.results'/></h3>
-            <div *ngIf="profileList?.length > 0">
-                <table class="table table-bordered table-hover">
-                    <tr>
-                        <td><strong><@orcid.msg 'admin.email'/></strong></td>
-                        <td><strong><@orcid.msg 'admin.orcid'/></strong></td>
-                        <td><strong><@orcid.msg 'admin.account_status'/></strong></td>
-                    </tr>
-                    <tr *ngFor="let profile of profileList">
-                        <td>{{profile.email}}</td>
-                        <td><a href="<@orcid.msg 'admin.public_view.click.link'/>{{profile.orcid}}" target="profile.orcid">{{profile.orcid}}</a>&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a (click)="switchUser(profile.orcid)"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
-                        <td>{{profile.status}}</td>
-                    </tr>
-                </table>
-                <div class="controls save-btns pull-right bottom-margin-small">
-                    <a href="" class="cancel-action" (click)="showIds = false" (click)="csvEmails = ''"><@orcid.msg 'freemarker.btnclose'/></a>
-                </div>
-            </div>
-            <div *ngIf="profileList?.length == 0">
-                <span><@orcid.msg 'admin.find_ids.no_results'/></span>
-            </div>
-        </div>         
+        </div>
+        <div *ngIf="profileList?.length == 0">
+            <span><@orcid.msg 'admin.find_ids.no_results'/></span>
+        </div>
+    </div>         
 </div>
+
+
+
+
+
+
+<!-- Reset password -->
+<div class="workspace-accordion-item" id="reset-password">
+    <p>
+        <a  *ngIf="showResetPassword" (click)="showResetPassword = !showResetPassword"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+        <a  *ngIf="!showResetPassword" (click)="showResetPassword = !showResetPassword"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
+    </p>
+    <div class="form-group" *ngIf="showResetPassword">
+        <div>
+            <label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
+            <input type="text" id="orcid" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
+            <label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
+            <input type="text" id="password" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
+            <a href (click)="randomString()" class="glyphicon glyphicon-random blue"></a>                                  
+            <div *ngIf="resetPasswordParams.error != ''">
+                <span class="orcid-error" [(ngModel)]="resetPasswordParams.error"></span><br />
+            </div>
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="find-ids" (click)="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>                        
+        </div>
+    </div>
+</div>
+
+
+
+
 
 </script>
