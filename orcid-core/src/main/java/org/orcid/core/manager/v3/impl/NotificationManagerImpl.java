@@ -34,6 +34,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -204,6 +205,9 @@ public class NotificationManagerImpl implements NotificationManager {
     @Value("${org.orcid.notifications.delete.offset.records:10}")
     private Integer recordsPerBatch;
     
+    @Resource
+    FindMyStuffManager findMyStuffManager;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -1052,6 +1056,10 @@ public class NotificationManagerImpl implements NotificationManager {
         if (notificationEntity.getReadDate() == null) {
             notificationEntity.setReadDate(now);
             notificationDao.merge(notificationEntity);
+        }
+        
+        if (NotificationType.FIND_MY_STUFF.value().equals(notificationEntity.getNotificationType())){
+            findMyStuffManager.markAsActioned(orcid, notificationEntity.getClientSourceId());
         }
 
         return notificationAdapter.toNotification(notificationEntity);

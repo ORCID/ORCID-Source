@@ -85,7 +85,7 @@
                         'public-layout.edit_your_record'/></a></li>
                     <li><a href="<@orcid.rootPath "/about" />"><@orcid.msg
                         'public-layout.about_orcid'/></a></li>
-                    <li><a href="<@orcid.rootPath "/contact-us" />"><@orcid.msg
+                    <li><a href="<@orcid.rootPath "/help/contact-us" />"><@orcid.msg
                         'public-layout.contact_us'/></a></li>
                     <li><a href="<@orcid.rootPath "/help" />"><@orcid.msg
                         'public-layout.help'/></a></li>
@@ -427,10 +427,10 @@
                                 <a href="${aboutUri}/help/contact-us" title=""><@orcid.msg 'public-layout.contact_us'/></a>
                             </li>
                             <li class="leaf">
-                                <a href="http://orcid.uservoice.com/forums/175591-general" title=""><@orcid.msg 'public-layout.give_feedback'/></a>
+                                <a href="https://support.orcid.org/hc/en-us/community/topics" title=""><@orcid.msg 'public-layout.give_feedback'/></a>
                             </li>
                             <li class="last leaf">
-                                <a href="http://orcid.uservoice.com/knowledgebase" title=""><@orcid.msg 'public-layout.knowledge_base'/></a>
+                                <a href="<@orcid.msg 'common.kb_uri_help_center_home'/>" title=""><@orcid.msg 'public-layout.knowledge_base'/></a>
                             </li>
                         </ul>
                     </li>

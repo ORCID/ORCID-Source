@@ -36,9 +36,6 @@ import org.springframework.test.context.ContextConfiguration;
 public class CrossrefFinderTest {
 
     @Mock
-    DOINormalizer norm;
-
-    @Mock
     PIDResolverCache cache;
     
     @Resource
@@ -47,15 +44,11 @@ public class CrossrefFinderTest {
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(finder, "norm", norm);
         TargetProxyHelper.injectIntoProxy(finder, "cache", cache);
 
-        when(norm.normalise(eq("doi"), eq("http://dx.doi.org/10.7287/peerj.preprints.26505"))).thenReturn("10.7287/peerj.preprints.26505");
-        when(norm.normalise(eq("doi"), eq("http://dx.doi.org/10.7287/peerj.preprints.26505v1"))).thenReturn("10.7287/peerj.preprints.26505v1");
-        when(norm.normalise(eq("doi"), eq("http://dx.doi.org/10.1101/097196"))).thenReturn("10.1101/097196");
         when(cache.isHttp200(anyString())).thenReturn(true);
 
-        when(cache.get("https://search.crossref.org/dois?q=0000-0003-1419-2405", "application/json")).thenAnswer(new Answer<InputStream>() {
+        when(cache.get("https://api.crossref.org/works?filter=orcid:0000-0003-1419-2405", "application/json")).thenAnswer(new Answer<InputStream>() {
 
             @Override
             public InputStream answer(InvocationOnMock invocation) throws Throwable {
@@ -71,6 +64,7 @@ public class CrossrefFinderTest {
         FindMyStuffResult result = finder.find("0000-0003-1419-2405", new ExternalIDs());
         assertEquals("CrossrefFinder",result.getFinderName());
         assertEquals(3,result.getResults().size());
+        assertEquals(3,result.getTotal());
     }
     
     @Test

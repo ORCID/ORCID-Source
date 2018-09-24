@@ -14,7 +14,7 @@
                     ${springMacroRequestContext.getMessage("social.link.to_finish.register.1")}{{idpName}}${springMacroRequestContext.getMessage("social.link.to_finish.register.2")}
                 </p>
                 <p>
-                    <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}{{idpName}} ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="${knowledgeBaseUri}/articles/892920" target="social.link.visit_knowledgebase_link" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
+                    <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}{{idpName}} ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="<@orcid.msg 'common.kb_uri_default'/>360006972693" target="social.link.visit_knowledgebase_link" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
                 </p>
             </div>
             <div>                                                   
@@ -33,7 +33,7 @@
                         ${springMacroRequestContext.getMessage("social.link.unsupported.why_cant_i")}
                     </p>
                     <p>
-                        ${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.1")}<a href="${knowledgeBaseUri}/articles/892920" target="social.link.unsupported.you_can_find_out.2">${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.3")}
+                        ${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.1")}<a href="<@orcid.msg 'common.kb_uri_default'/>360006972693" target="social.link.unsupported.you_can_find_out.2">${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.3")}
                     </p>
                 </div>
             <#elseif headerCheckFailed??>
@@ -57,7 +57,7 @@
                                     ${springMacroRequestContext.getMessage("social.link.to_finish")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.account_to_orcid")}
                                 </p>
                                 <p>
-                                    <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="${knowledgeBaseUri}/articles/892920" target="social.link.visit_knowledgebase_link" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
+                                    <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")} {{idpName}} ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="<@orcid.msg 'common.kb_uri_default'/>360006972693" target="social.link.visit_knowledgebase_link" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
                                 </p>
                             </div>
                         </div>

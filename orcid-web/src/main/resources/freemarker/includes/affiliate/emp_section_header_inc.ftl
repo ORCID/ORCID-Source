@@ -12,7 +12,7 @@
                     <div id="employment-help" class="popover bottom">
                         <div class="arrow"></div>
                         <div class="popover-content">
-                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="${knowledgeBaseUri}/articles/1807525" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
+                            <p><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894834" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                         </div>
                     </div>
                 </div>

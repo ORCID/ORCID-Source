@@ -406,7 +406,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 
 .container {
     margin-bottom: 0;
-    min-height: 90%;
+    min-height: calc(100% - 20px);
     clear: both;
 }
 
@@ -1060,7 +1060,6 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     height: auto;
     background: #939598;
     font-size: 13px;
-    margin-top: -20px
 }
 
 .footer.fixed {
@@ -6297,7 +6296,8 @@ a#reset-password-toggle-text:hover:active {
 
 .public-profile .workspace-section .public-content {
     float: left;
-    width: 100%
+    width: 100%;
+    word-wrap: break-word;
 }
 
 .public-profile .workspace-section .workspace-section-header .inline-list .right .popover {

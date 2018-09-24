@@ -611,7 +611,12 @@ public class WorksController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody WorkForm workWorkTypeValidate(@RequestBody WorkForm work) {
-        work.getWorkType().setErrors(new ArrayList<String>());
+        if(work.getWorkType() == null) {
+            work.setWorkType(new Text());
+        } else {
+            work.getWorkType().setErrors(new ArrayList<String>());            
+        }
+        
         if (work.getWorkType().getValue() == null || work.getWorkType().getValue().trim().length() == 0) {
             setError(work.getWorkType(), "NotBlank.manualWork.workType");
         }
@@ -827,6 +832,8 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/resolve/{type}", method = RequestMethod.GET)
     public @ResponseBody WorkForm fetchWorkData(@PathVariable("type") String type, @RequestParam("value") String value){        
         Work w = resolverService.resolveMetadata(type, value);
-        return WorkForm.valueOf(w);
+        WorkForm workForm = WorkForm.valueOf(w);
+        validateWork(workForm);
+        return workForm;
     }
 }

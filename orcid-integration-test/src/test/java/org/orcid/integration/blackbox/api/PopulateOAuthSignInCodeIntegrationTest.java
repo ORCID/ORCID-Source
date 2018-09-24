@@ -1,11 +1,7 @@
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import org.orcid.core.togglz.Features;
-import org.orcid.integration.blackbox.api.BlackBoxBase;
-import static org.orcid.integration.blackbox.api.BBBUtil.executeJavaScript;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementByXpath;
 import static org.orcid.integration.blackbox.api.BBBUtil.getUrl;
@@ -13,11 +9,12 @@ import static org.orcid.integration.blackbox.api.BBBUtil.getUrlAndWait;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForElementPresence;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForElementVisibility;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.codehaus.jettison.json.JSONException;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -40,6 +37,15 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
     @Before    
     public void before() {
         authorizeScreen = this.getWebBaseUrl() + "/oauth/authorize?client_id=" + this.getClient1ClientId() + "&response_type=code&redirect_uri=" + this.getClient1RedirectUri() + "&scope=/activities/read-limited";
+        
+        // timeout for waiting for angular needs extending for these tests
+        getWebDriver().manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+    }
+    
+    @After
+    public void after() {
+        // reset timeout change
+        getWebDriver().manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
     }
     
     @Test

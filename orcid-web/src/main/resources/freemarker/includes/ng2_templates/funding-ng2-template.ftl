@@ -15,7 +15,7 @@
                                 <div id="funding-help" class="popover bottom">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
-                                        <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="${knowledgeBaseUri}/articles/326033" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
+                                        <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897214" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
                                     </div>
                                 </div>
                             </div> 

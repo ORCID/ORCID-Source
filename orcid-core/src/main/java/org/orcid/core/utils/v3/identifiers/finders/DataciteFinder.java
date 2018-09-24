@@ -38,7 +38,6 @@ public class DataciteFinder implements Finder {
 
     @Override
     public FindMyStuffResult find(String orcid, ExternalIDs existingIDs) {
-        orcid = "0000-0003-1419-2405";
         FindMyStuffResult result = new FindMyStuffResult();
         result.setFinderName(getFinderName());
         if (!isEnabled())
@@ -52,6 +51,7 @@ public class DataciteFinder implements Finder {
                     result.getResults().add(new FindMyStuffItem(w.attributes.doi, "doi", w.attributes.title));
                 }
             }
+            result.setTotal(dcResult.meta.total);
         } catch (MalformedURLException e) {
             // do nothing
         } catch (IOException e) {
@@ -75,8 +75,16 @@ public class DataciteFinder implements Finder {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class DataciteSearchResult {
         public List<DataciteSimpleWork> data;
+        public DataciteMeta meta;
 
         public DataciteSearchResult() {
+        };
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class DataciteMeta{
+        public int total;
+        public DataciteMeta() {
         };
     }
 

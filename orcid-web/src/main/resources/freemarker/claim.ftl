@@ -35,7 +35,7 @@
                                                 ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_2")}
                                                 </li>
                                             </ul>                         
-                                            <p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/10_million_password_list_top_1000.txt" target="password_one_time_reset.commonpasswordslink">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>
+                                            <p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-1000.txt" target="password_one_time_reset.commonpasswordslink">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>
                                             <p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
                                         </div>                
                                     </div>
@@ -84,7 +84,7 @@
                                                 <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
                                                 <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
                                             </ul>
-                                            <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+                                            <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
                                         </div>
                                     </div>
                                 </div>

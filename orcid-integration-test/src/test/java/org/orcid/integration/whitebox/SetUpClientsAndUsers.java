@@ -351,8 +351,8 @@ public class SetUpClientsAndUsers {
         } else {
             clientDetailsManager.addAuthorizedGrantTypeToClient(Sets.newHashSet("implicit"), client1);
             clientDetailsManager.addScopesToClient(getScopes(client1Params, clientType), client1);
-            if (client1.getRegisteredRedirectUri().size() < 2) // find my stuff
-                clientDetailsManager.addClientRedirectUri(client1ClientId, client1Params.get(ADD_AUTHORIZATION_END_POINT),RedirectUriType.IMPORT_WORKS_WIZARD);
+            if (client1.getClientRegisteredRedirectUris().size() < 2) // find my stuff
+                clientDetailsManager.addClientRedirectUri(client1ClientId, client1Params.get(REDIRECT_URI),RedirectUriType.FIND_MY_STUFF, ScopePathType.ACTIVITIES_UPDATE);
         }
 
         // Create client 2
@@ -705,8 +705,7 @@ public class SetUpClientsAndUsers {
         //FindMyStuff for client1
         if ("true".equals(params.get(ADD_AUTHORIZATION_END_POINT))){
             RedirectUri redirectUri2 = new RedirectUri(params.get(REDIRECT_URI));
-            redirectUri2.setType(RedirectUriType.IMPORT_WORKS_WIZARD); 
-            redirectUri2.setScope(Lists.newArrayList(ScopePathType.ACTIVITIES_UPDATE));
+            redirectUri2.setType(RedirectUriType.FIND_MY_STUFF); 
             redirectUri2.setScope(Lists.newArrayList(ScopePathType.ACTIVITIES_UPDATE));
             redirectUrisToAdd.add(redirectUri2);
         }        
@@ -785,7 +784,7 @@ public class SetUpClientsAndUsers {
         assertNotNull(existingClient);
         assertEquals(member1Orcid, existingClient.getGroupProfileId());
         assertNotNull(existingClient.getRegisteredRedirectUri());
-        assertEquals(2, existingClient.getRegisteredRedirectUri().size());
+        assertEquals(2, existingClient.getClientRegisteredRedirectUris().size());
         assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
         assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
         assertEquals(client1RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());

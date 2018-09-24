@@ -33,7 +33,7 @@
                         <li class="limited" style="color: #ffb027;"><@orcid.msg 'privacyToggle.help.trusted_parties' /></li>
                         <li class="private" style="color: #990000;"><@orcid.msg 'privacyToggle.help.only_me' /></li>
                     </ul>
-                    <a href="https://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information' /></a>
+                    <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information' /></a>
                 </div>                
             </div>                              
         </div>
