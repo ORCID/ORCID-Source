@@ -95,11 +95,12 @@ export class ExtIdPopoverComponent implements OnInit {
                 break;
             default:
                 this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
-                this.type = JSON.parse(JSON.stringify(this.extID.type.value));
+                this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
                 if(this.extID.url){
                     this.url = JSON.parse(JSON.stringify(this.extID.url.value));
                 }
-                this.value = JSON.parse(JSON.stringify(this.extID.value.value));
+                this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
+                break;
         }
         if(this.url){
             this.urlProtocol.transform(this.url); 

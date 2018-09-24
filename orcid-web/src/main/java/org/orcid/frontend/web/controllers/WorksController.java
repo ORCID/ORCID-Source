@@ -134,21 +134,15 @@ public class WorksController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/groupingSuggestions.json", method = RequestMethod.GET)
     public @ResponseBody WorkGroupingSuggestion getGroupingSuggestion() {     
-        return workManager.getGroupingSuggestion(getCurrentUserOrcid());
+        return groupingSuggestionManager.getGroupingSuggestion(getCurrentUserOrcid());
     }
     
-    @RequestMapping(value = "/rejectGroupingSuggestion/{putCode}", method = RequestMethod.POST)
-    public @ResponseBody Boolean declineGroupingSuggestion(@PathVariable("putCode") Long putCode) {     
-        groupingSuggestionManager.markGroupingSuggestionAsRejected(getCurrentUserOrcid(), putCode);
+    @RequestMapping(value = "/rejectGroupingSuggestion.json", method = RequestMethod.POST)
+    public @ResponseBody Boolean declineGroupingSuggestion(@RequestBody WorkGroupingSuggestion suggestion) {     
+        groupingSuggestionManager.markGroupingSuggestionAsRejected(suggestion);
         return true;
     }
     
-    @RequestMapping(value = "/acceptGroupingSuggestion/{putCode}", method = RequestMethod.POST)
-    public @ResponseBody Boolean acceptGroupingSuggestion(@PathVariable("putCode") Long putCode) {     
-        groupingSuggestionManager.markGroupingSuggestionAsAccepted(getCurrentUserOrcid(), putCode);
-        return true;
-    }
-
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
@@ -614,9 +608,8 @@ public class WorksController extends BaseWorkspaceController {
         if(work.getWorkType() == null) {
             work.setWorkType(new Text());
         } else {
-            work.getWorkType().setErrors(new ArrayList<String>());            
+            work.getWorkType().setErrors(new ArrayList<String>());
         }
-        
         if (work.getWorkType().getValue() == null || work.getWorkType().getValue().trim().length() == 0) {
             setError(work.getWorkType(), "NotBlank.manualWork.workType");
         }

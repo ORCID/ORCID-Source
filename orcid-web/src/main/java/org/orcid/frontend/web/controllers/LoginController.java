@@ -126,16 +126,6 @@ public class LoginController extends OauthControllerBase {
     private ModelAndView handleOauthSignIn(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String queryString = request.getQueryString();
         String redirectUri = null;
-
-        // Check if user is already logged in, if so, redirect it to oauth/authorize
-        OrcidProfileUserDetails userDetails = getCurrentUser();
-        if(userDetails != null) {
-            redirectUri = orcidUrlManager.getBaseUrl() + "/oauth/authorize?";
-            queryString = queryString.replace("oauth&", "");
-            redirectUri = redirectUri + queryString;
-            RedirectView rView = new RedirectView(redirectUri);
-            return new ModelAndView(rView);
-        }
         
         // Get and save the request information form
         RequestInfoForm requestInfoForm;
@@ -148,11 +138,24 @@ public class LoginController extends OauthControllerBase {
             return mav;
         }
         
-        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
-        // Save also the original query string
-        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
-        // Save a flag to indicate this is a request from the new
-        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
+        //force a login even if the user is already logged in if openid prompt=login param present
+        boolean forceLogin = false;
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
+            String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
+            if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)){
+                forceLogin = true;
+            }
+        }
+        
+        // Check if user is already logged in, if so, redirect it to oauth/authorize
+        OrcidProfileUserDetails userDetails = getCurrentUser();
+        if(!forceLogin && userDetails != null) {
+            redirectUri = orcidUrlManager.getBaseUrl() + "/oauth/authorize?";
+            queryString = queryString.replace("oauth&", "");
+            redirectUri = redirectUri + queryString;
+            RedirectView rView = new RedirectView(redirectUri);
+            return new ModelAndView(rView);
+        }
 
         // Redirect URI
         redirectUri = requestInfoForm.getRedirectUrl();
@@ -180,8 +183,11 @@ public class LoginController extends OauthControllerBase {
             String redirectUriWithParams = redirectUri + "?error=invalid_scope&error_description=" + e.getMessage();
             return new ModelAndView(new RedirectView(redirectUriWithParams));
         }
-        
-       //handle openID behaviour
+
+        //handle openID prompt and max_age behaviour
+        //here we remove prompt=login if present
+        //here we remove max_age if present
+        //
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
@@ -192,7 +198,23 @@ public class LoginController extends OauthControllerBase {
                 error.setView(rView);
                 return error;
             }
+            if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_CONFIRM)){
+                //keep - handled by OAuthAuthorizeController
+            }else if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)){
+                //remove because otherwise we'll end up back here again!
+                queryString = removeQueryStringParams(queryString, OrcidOauth2Constants.PROMPT);
+            }
+            if (request.getParameter(OrcidOauth2Constants.MAX_AGE) != null) {
+                //remove because otherwise we'll end up back here again!
+                queryString = removeQueryStringParams(queryString, OrcidOauth2Constants.MAX_AGE);                
+            }
         }
+        
+        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        // Save also the original query string
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
+        // Save a flag to indicate this is a request from the new
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
 
         ModelAndView mav = new ModelAndView("login");
         boolean showLogin = false;

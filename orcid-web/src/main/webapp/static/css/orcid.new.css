@@ -4255,7 +4255,7 @@ ul#body-membership-list>li {
 .workspace-title {
     display: block;
     color: #494a4c;
-    font-weight: 400
+    font-weight: bold;
 }
 
 .workspace-title span {
@@ -5806,7 +5806,7 @@ ul.oauth-scopes li {
 }
 
 .peer-review-list-container .glyphicons {
-    padding-left: 15px
+    padding-left: 18px
 }
 
 .research-resource-list-container .glyphicons {
@@ -6869,8 +6869,11 @@ ul.comma li:last-child:after {
 .menu-area > .btn.btn-white-no-border {
     width: 60;
     text-align: end;
-    line-height: 30px;
-    
+    line-height: 30px;  
+}
+
+.biography-controller > .row > div.col-md-9.col-sm-8.col-xs-4 {
+    display: flex;
 }
 
 @media (max-width:767px) {

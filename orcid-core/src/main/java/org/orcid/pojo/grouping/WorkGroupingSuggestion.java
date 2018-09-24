@@ -1,16 +1,16 @@
 package org.orcid.pojo.grouping;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
-import org.orcid.core.adapter.jsonidentifier.JSONWorkPutCodes;
+import org.apache.commons.lang3.StringUtils;
 
 public class WorkGroupingSuggestion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
-    private JSONWorkPutCodes putCodes;
-    
-    private Long id;
+    private List<Long> putCodes;
     
     private String orcid;
     
@@ -18,24 +18,21 @@ public class WorkGroupingSuggestion implements Serializable {
         
     }
     
-    public WorkGroupingSuggestion(JSONWorkPutCodes putCodes) {
+    public WorkGroupingSuggestion(List<Long> putCodes) {
         this.putCodes = putCodes;
     }
 
-    public JSONWorkPutCodes getPutCodes() {
+    public List<Long> getPutCodes() {
         return putCodes;
     }
 
-    public void setPutCodes(JSONWorkPutCodes putCodes) {
+    public void setPutCodes(List<Long> putCodes) {
         this.putCodes = putCodes;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    
+    public String getPutCodesAsString() {
+        Collections.sort(putCodes);
+        return StringUtils.join(putCodes, ',');
     }
 
     public String getOrcid() {
