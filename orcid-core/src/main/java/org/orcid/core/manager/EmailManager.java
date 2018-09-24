@@ -10,12 +10,6 @@ import org.orcid.core.manager.read_only.EmailManagerReadOnly;
  */
 public interface EmailManager extends EmailManagerReadOnly {
 
-    void removeEmail(String orcid, String email);
-
-    void removeEmail(String orcid, String email, boolean removeIfPrimary);        
-
-    void addSourceToEmail(String email, String sourceId);
-    
     boolean verifyEmail(String email);
     
     boolean verifyPrimaryEmail(String orcid);
