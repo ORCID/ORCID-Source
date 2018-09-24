@@ -266,5 +266,6 @@
 	<include file="/db/updates/fix-public-client-redirect-uri-type.xml" />
 	<include file="/db/updates/find-my-stuff-history.xml" />
 	<include file="/db/updates/grant_select_grouping_suggestion.xml" />
+	<include file="/db/updates/recreate_grouping_suggestion_table.xml" />
 	
 </databaseChangeLog>

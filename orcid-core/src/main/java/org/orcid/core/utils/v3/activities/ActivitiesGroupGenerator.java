@@ -10,35 +10,21 @@ import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 
 public class ActivitiesGroupGenerator {    
 
-    private List<ActivitiesGroup> groups = new ArrayList<ActivitiesGroup>();
+    protected List<ActivitiesGroup> groups = new ArrayList<ActivitiesGroup>();
     
     private Map<GroupAble, ActivitiesGroup> lookup = new HashMap<GroupAble, ActivitiesGroup>();
-    
     
     public void group(GroupableActivity activity) {
         if(groups.isEmpty()) {
             //If it is the first activity, create a new group for it
-            ActivitiesGroup newGroup = new ActivitiesGroup(activity);
-            groups.add(newGroup);
-            for (GroupAble g :newGroup.getGroupKeys()){
-                lookup.put(g, newGroup);
-            }
+            createNewGroup(activity);
         } else {            
             //If it is not the first activity, check which groups it belongs to
-            List<ActivitiesGroup> belongsTo = new ArrayList<ActivitiesGroup>();
-            ActivitiesGroup thisGroup = new ActivitiesGroup(activity);
-            for (GroupAble g :thisGroup.getGroupKeys()){
-                if (lookup.containsKey(g))
-                    belongsTo.add(lookup.get(g));
-            }
+            List<ActivitiesGroup> belongsTo = generateBelongsToList(activity);
             
             //If it doesnt belong to any group, create a new group for it
             if(belongsTo.isEmpty()) {
-                ActivitiesGroup newGroup = new ActivitiesGroup(activity);
-                groups.add(newGroup);
-                for (GroupAble g :newGroup.getGroupKeys()){
-                    lookup.put(g, newGroup);
-                }
+                createNewGroup(activity);
             } else {
                 //Get the first group it belongs to
                 ActivitiesGroup firstGroup = belongsTo.get(0);
@@ -47,25 +33,46 @@ public class ActivitiesGroupGenerator {
                 //If it belongs to other groups, merge them into the first one
                 if(belongsTo.size() > 1) {
                     for(int i = 1; i < belongsTo.size(); i++){
-                        //Merge the group
-                        if (firstGroup != belongsTo.get(i)){
-                            firstGroup.merge(belongsTo.get(i));
-                            //Remove it from the list of groups
-                            groups.remove(belongsTo.get(i));                            
-                        }
+                        mergeAndRemoveGroup(firstGroup, belongsTo.get(i));
                     }                        
                 }
-                for (GroupAble g :firstGroup.getGroupKeys()){
-                    lookup.put(g, firstGroup);
-                }
+                updateLookupKeys(firstGroup);
             }
         }
-        
-        //TODO: make sure this orders correctly
-        //TODO: look at v1.2 post/put work....
     }
     
     public List<ActivitiesGroup> getGroups() {
         return groups;
+    }
+    
+    protected ActivitiesGroup createNewGroup(GroupableActivity activity) {
+        ActivitiesGroup newGroup = new ActivitiesGroup(activity);
+        groups.add(newGroup);
+        updateLookupKeys(newGroup);
+        return newGroup;
+    }
+    
+    protected List<ActivitiesGroup> generateBelongsToList(GroupableActivity activity) {
+        List<ActivitiesGroup> belongsTo = new ArrayList<ActivitiesGroup>();
+        ActivitiesGroup thisGroup = new ActivitiesGroup(activity);
+        for (GroupAble g :thisGroup.getGroupKeys()){
+            if (lookup.containsKey(g)) {
+                belongsTo.add(lookup.get(g));
+            }
+        }
+        return belongsTo;
+    }
+    
+    protected void mergeAndRemoveGroup(ActivitiesGroup keep, ActivitiesGroup discard) {
+        if (keep != discard){
+            keep.merge(discard);
+            groups.remove(discard);                            
+        }
+    }
+    
+    protected void updateLookupKeys(ActivitiesGroup group) {
+        for (GroupAble g : group.getGroupKeys()){
+            lookup.put(g, group);
+        }
     }
 }

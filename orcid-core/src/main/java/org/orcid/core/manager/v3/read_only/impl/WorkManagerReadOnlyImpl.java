@@ -13,10 +13,12 @@ import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.manager.WorkEntityCacheManager;
+import org.orcid.core.manager.v3.GroupingSuggestionsCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
+import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
@@ -31,6 +33,7 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
@@ -48,6 +51,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     protected WorkEntityCacheManager workEntityCacheManager;
 
     private final Integer maxBulkSize;
+    
+    @Resource
+    private GroupingSuggestionsCacheManager groupingSuggestionsCacheManager;
     
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.max:100}") Integer bulkSize) {
         this.maxBulkSize = (bulkSize == null || bulkSize > 100) ? 100 : bulkSize;
@@ -132,7 +138,27 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, putCodes, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
+    
+    /**
+     * Generate a grouped list of works with the given list of works and generates grouping suggestions
+     * 
+     * @param works
+     *            The list of works to group
+     * @return Works element with the WorkSummary elements grouped
+     */
+    @Override
+    public Works groupWorksAndGenerateGroupingSuggestions(List<WorkSummary> summaries, String orcid) {
+        WorkGroupAndGroupingSuggestionGenerator groupGenerator = new WorkGroupAndGroupingSuggestionGenerator();
+        for (WorkSummary work : summaries) {
+            groupGenerator.group(work);
+        }
+        Works works = processGroupedWorks(groupGenerator.getGroups());
 
+        List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+        groupingSuggestionsCacheManager.putGroupingSuggestions(orcid, suggestions);
+        return works;
+    }
+    
     /**
      * Generate a grouped list of works with the given list of works
      * 
@@ -146,8 +172,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public Works groupWorks(List<WorkSummary> works, boolean justPublic) {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-        Works result = new Works();
-        // Group all works
         for (WorkSummary work : works) {
             if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
@@ -156,37 +180,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 groupGenerator.group(work);
             }
         }
-
-        List<ActivitiesGroup> groups = groupGenerator.getGroups();
-
-        for (ActivitiesGroup group : groups) {
-            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
-            Set<GroupableActivity> activities = group.getActivities();
-            WorkGroup workGroup = new WorkGroup();
-            // Fill the work groups with the external identifiers
-            if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
-                // Initialize the ids as an empty list
-                workGroup.getIdentifiers().getExternalIdentifier();
-            } else {
-                for (GroupAble extId : externalIdentifiers) {
-                    ExternalID workExtId = (ExternalID) extId;
-                    workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
-                }
-            }
-            
-            // Fill the work group with the list of activities
-            for (GroupableActivity activity : activities) {
-                WorkSummary workSummary = (WorkSummary) activity;
-                workGroup.getWorkSummary().add(workSummary);
-            }
-
-            // Sort the works
-            workGroup.getWorkSummary().sort(WorkComparators.ALL);
-            result.getWorkGroup().add(workGroup);
-        }
-        // Sort the groups!
-        result.getWorkGroup().sort(WorkComparators.GROUP);
-        return result;
+        return processGroupedWorks(groupGenerator.getGroups());
     }
 
     @Override
@@ -212,7 +206,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     
     @Override
     public Works getWorksAsGroups(String orcid) {
-        return groupWorks(getWorksSummaryList(orcid), false);
+        return groupWorksAndGenerateGroupingSuggestions(getWorksSummaryList(orcid), orcid);
     }
 
     private String[] getPutCodeArray(String putCodesAsString) {
@@ -245,6 +239,38 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             }
         }
         return ids;
+    }
+    
+    private Works processGroupedWorks(List<ActivitiesGroup> groups) {
+        Works result = new Works();
+        for (ActivitiesGroup group : groups) {
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
+            Set<GroupableActivity> activities = group.getActivities();
+            WorkGroup workGroup = new WorkGroup();
+            // Fill the work groups with the external identifiers
+            if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
+                // Initialize the ids as an empty list
+                workGroup.getIdentifiers().getExternalIdentifier();
+            } else {
+                for (GroupAble extId : externalIdentifiers) {
+                    ExternalID workExtId = (ExternalID) extId;
+                    workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
+                }
+            }
+            
+            // Fill the work group with the list of activities
+            for (GroupableActivity activity : activities) {
+                WorkSummary workSummary = (WorkSummary) activity;
+                workGroup.getWorkSummary().add(workSummary);
+            }
+
+            // Sort the works
+            workGroup.getWorkSummary().sort(WorkComparators.ALL);
+            result.getWorkGroup().add(workGroup);
+        }
+        // Sort the groups!
+        result.getWorkGroup().sort(WorkComparators.GROUP);
+        return result;
     }
 
 }
