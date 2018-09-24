@@ -273,9 +273,9 @@
 		<property name="entityManager" ref="entityManagerReadOnly" />		
 	</bean>
 	
-	<bean id="groupingSuggestionDao" class="org.orcid.persistence.dao.impl.GroupingSuggestionDaoImpl" />
+	<bean id="rejectedGroupingSuggestionDao" class="org.orcid.persistence.dao.impl.RejectedGroupingSuggestionDaoImpl" />
     
-    <bean id="groupingSuggestionDaoReadOnly" class="org.orcid.persistence.dao.impl.GroupingSuggestionDaoImpl">
+    <bean id="rejectedGroupingSuggestionDaoReadOnly" class="org.orcid.persistence.dao.impl.RejectedGroupingSuggestionDaoImpl">
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     

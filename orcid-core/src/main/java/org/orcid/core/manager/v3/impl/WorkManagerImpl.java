@@ -40,13 +40,10 @@ import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -190,9 +187,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
-        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        generateGroupingSuggestions(orcid, updatedWork);
-        return updatedWork;
+        return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
     
@@ -266,7 +261,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Update the element in the bulk
                         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-                        generateGroupingSuggestions(orcid, updatedWork);
                         bulk.set(i, updatedWork);
                         
                         //Add the work extIds to the list of existing external identifiers
@@ -361,9 +355,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
-        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        generateGroupingSuggestions(orcid, updatedWork);
-        return updatedWork;
+        return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
     @Override
@@ -382,20 +374,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return result;
     }
     
-    @Override
-    public WorkGroupingSuggestion getGroupingSuggestion(String orcid) {
-        WorkGroupingSuggestion suggestion = groupingSuggestionManagerReadOnly.getGroupingSuggestion(orcid);
-        if (suggestion != null) {
-            List<WorkSummary> summaries = getWorksSummaryList(orcid, Arrays.asList(suggestion.getPutCodes().getWorkPutCodes()));
-            Works groupedWorks = groupWorks(summaries, false);
-            while (suggestion != null && !groupingSuggestionManager.suggestionValid(suggestion, groupedWorks)) {
-                groupingSuggestionManager.removeSuggestion(suggestion);
-                suggestion = groupingSuggestionManager.getGroupingSuggestion(orcid);
-            }
-        }
-        return suggestion;
-    }
-
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
         String incomingWorkVisibility = workEntity.getVisibility();
         String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
@@ -485,10 +463,4 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return workEntity;
     }
     
-    private void generateGroupingSuggestions(String orcid, Work updatedWork) {
-        List<WorkSummary> summaries = getWorksSummaryList(orcid);
-        Works groupedWorks = groupWorks(summaries, true);
-        groupingSuggestionManager.generateGroupingSuggestionsForProfile(orcid, updatedWork, groupedWorks);
-    }
-
 }

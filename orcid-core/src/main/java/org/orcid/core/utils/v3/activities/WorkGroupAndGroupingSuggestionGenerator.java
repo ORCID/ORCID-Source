@@ -14,8 +14,6 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
 
     private Map<String, List<ActivitiesGroup>> potentialGroupingSuggestions = new HashMap<>();
 
-    protected List<ActivitiesGroup> groups = new ArrayList<ActivitiesGroup>();
-
     public void group(GroupableActivity activity) {
         if (!(activity instanceof WorkSummary)) {
             throw new IllegalArgumentException("Argument must be of type WorkSummary");
@@ -68,6 +66,7 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
                     }
                 }
                 suggestion.setPutCodes(putCodes);
+                suggestions.add(suggestion);
             }
         }
         return suggestions;

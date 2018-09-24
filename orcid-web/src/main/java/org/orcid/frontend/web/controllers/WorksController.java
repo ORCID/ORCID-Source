@@ -134,21 +134,15 @@ public class WorksController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/groupingSuggestions.json", method = RequestMethod.GET)
     public @ResponseBody WorkGroupingSuggestion getGroupingSuggestion() {     
-        return workManager.getGroupingSuggestion(getCurrentUserOrcid());
+        return groupingSuggestionManager.getGroupingSuggestion(getCurrentUserOrcid());
     }
     
-    @RequestMapping(value = "/rejectGroupingSuggestion/{putCode}", method = RequestMethod.POST)
-    public @ResponseBody Boolean declineGroupingSuggestion(@PathVariable("putCode") Long putCode) {     
-        groupingSuggestionManager.markGroupingSuggestionAsRejected(getCurrentUserOrcid(), putCode);
+    @RequestMapping(value = "/rejectGroupingSuggestion", method = RequestMethod.POST)
+    public @ResponseBody Boolean declineGroupingSuggestion(@RequestBody WorkGroupingSuggestion suggestion) {     
+        groupingSuggestionManager.markGroupingSuggestionAsRejected(suggestion);
         return true;
     }
     
-    @RequestMapping(value = "/acceptGroupingSuggestion/{putCode}", method = RequestMethod.POST)
-    public @ResponseBody Boolean acceptGroupingSuggestion(@PathVariable("putCode") Long putCode) {     
-        groupingSuggestionManager.markGroupingSuggestionAsAccepted(getCurrentUserOrcid(), putCode);
-        return true;
-    }
-
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());

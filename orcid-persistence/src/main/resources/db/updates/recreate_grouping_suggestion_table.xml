@@ -1,0 +1,40 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	
+	<changeSet id="DROP-GROUPING-SUGGESTION-TABLE" author="George Nash" dbms="postgresql">
+		<sql>DROP TABLE IF EXISTS grouping_suggestion;</sql>
+		<sql>DROP SEQUENCE IF EXISTS grouping_suggestion_seq;</sql>
+	</changeSet>
+	
+	<changeSet id="INSTALL-REJECTED-GROUPING-SUGGESTION-TABLE" author="George Nash">
+         <createTable tableName="rejected_grouping_suggestion">
+            <column name="put_codes" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="rejected_grouping_suggestion_pkey" />
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>           
+    </changeSet>
+    
+    <changeSet id="ADD-REJECTED-GROUPING-SUGGESTION-INDEX" author="George Nash">
+        <preConditions onFail="MARK_RAN">   
+            <not>
+                <indexExists indexName="rejected_grouping_suggestion_orcid_idx" tableName="grouping_suggestion" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX rejected_grouping_suggestion_orcid_idx on rejected_grouping_suggestion (orcid);</sql>
+    </changeSet>    
+    
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-REJECTED-GROUPING_SUGGESTION" author="George Nash" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON rejected_grouping_suggestion to orcidro;</sql>
+    </changeSet>
+	
+</databaseChangeLog>
