@@ -46,6 +46,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showResetPasswordConfirm: boolean;
     resetPasswordSuccess: boolean;
     
+    // Verify email
+    showVerifyEmail: boolean;
+    emailToVerify: string;
+    verifyEmailMessage: string;
+    
     constructor(
         private switchUserService: SwitchUserService,
         private adminActionsService: AdminActionsService,
@@ -63,6 +68,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.resetPasswordParams = {};
         this.showResetPasswordConfirm = false;
         this.resetPasswordSuccess = false;
+    
+        this.showVerifyEmail = false;
+        this.verifyEmailMessage = null;
     }    
 
     switchUser(id): void {
@@ -146,6 +154,22 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('admin: resetPassword error', error);
             } 
         );        
+    };
+    
+    verifyEmail(): void {        
+        this.adminActionsService.verifyEmail( this.emailToVerify )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.emailToVerify = '';
+                this.verifyEmailMessage = data;
+            },
+            error => {
+                console.log('admin: verifyEmail error', error);
+            } 
+        );      
     };
     
     //Default init functions provided by Angular Core

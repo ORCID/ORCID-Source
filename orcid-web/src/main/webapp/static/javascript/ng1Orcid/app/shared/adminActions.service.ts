@@ -41,8 +41,6 @@ export class AdminActionsService {
     }
     
     resetPassword( obj ): Observable<any> {
-        console.log('resetPassword in service');
-        console.log(JSON.stringify(obj));
         return this.http.post( 
             getBaseUri() + '/admin-actions/reset-password.json', 
             JSON.stringify(obj), 
@@ -50,5 +48,12 @@ export class AdminActionsService {
         )        
     }
 
-    
+    verifyEmail( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/admin-verify-email.json', 
+                encodeURI(obj), 
+                { headers: this.headers, responseType: 'text' }
+        )  
+    }
+        
 }

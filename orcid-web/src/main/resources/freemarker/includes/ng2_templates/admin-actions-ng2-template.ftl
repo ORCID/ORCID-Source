@@ -2,8 +2,8 @@
 <!-- Switch user -->
 <div class="workspace-accordion-item" id="switch-user">
     <p>
-        <a *ngIf="showSwitchUser" (click)="showSwitchUser = !showSwitchUser"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.switch_user' /></a>
-        <a *ngIf="!showSwitchUser" (click)="showSwitchUser = !showSwitchUser"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.switch_user' /></a>
+        <a *ngIf="showSwitchUser" (click)="showSwitchUser = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.switch_user' /></a>
+        <a *ngIf="!showSwitchUser" (click)="showSwitchUser = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.switch_user' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" id="switch_user_section" *ngIf="showSwitchUser">
         <div class="form-group">
@@ -22,8 +22,8 @@
 <!-- Find ids -->
 <div class="workspace-accordion-item" id="find-ids">    
     <p>
-        <a *ngIf="showFindIds" (click)="showFindIds = !showFindIds"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.find_ids' /></a>
-        <a *ngIf="!showFindIds" (click)="showFindIds = !showFindIds"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.find_ids' /></a>
+        <a *ngIf="showFindIds" (click)="showFindIds = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.find_ids' /></a>
+        <a *ngIf="!showFindIds" (click)="showFindIds = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.find_ids' /></a>
     </p>                
     <div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" *ngIf="showFindIds">
         <div class="form-group">
@@ -59,16 +59,11 @@
     </div>         
 </div>
 
-
-
-
-
-
 <!-- Reset password -->
 <div class="workspace-accordion-item" id="reset-password">
     <p>
-        <a  *ngIf="showResetPassword" (click)="showResetPassword = !showResetPassword"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.reset_password' /></a>
-        <a  *ngIf="!showResetPassword" (click)="showResetPassword = !showResetPassword"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.reset_password' /></a>
+        <a *ngIf="showResetPassword" (click)="showResetPassword = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.reset_password' /></a>
+        <a *ngIf="!showResetPassword" (click)="showResetPassword = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.reset_password' /></a>
     </p>
     <div class="form-group" *ngIf="showResetPassword">
         <div>
@@ -94,8 +89,34 @@
     </div>
 </div>
 
+<!-- Verify email -->
+<div class="workspace-accordion-item" id="verify-email">
+    <p>
+        <a *ngIf="showVerifyEmail" (click)="showVerifyEmail = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.verify_email' /></a>
+        <a *ngIf="!showVerifyEmail" (click)="showVerifyEmail = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.verify_email' /></a>
+    </p>
+    <div class="form-group" *ngIf="showVerifyEmail">
+        <div>            
+            <label for="email"><@orcid.msg 'admin.verify_email.title' /></label>
+            <input type="text" (keyup.enter)="verifyEmail()" [(ngModel)]="emailToVerify" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />                                                                                    
+        </div>
+        <div *ngIf="verifyEmailMessage != null">
+            <span class="orcid-error" [innerHTML]="verifyEmailMessage"></span>
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="verify-email" (click)="verifyEmail()" class="btn btn-primary"><@orcid.msg 'admin.verify_email.btn'/></span>                      
+        </div>        
+    </div>
+</div>
 
-
-
+<!--  -->
+<div class="workspace-accordion-item" id="">
+    <p>
+        <a *ngIf="show" (click)="show = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.' /></a>
+        <a *ngIf="!show" (click)="show = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.' /></a>
+    </p>
+    <div class="form-group" *ngIf="show">
+    </div>
+</div>
 
 </script>
