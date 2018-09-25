@@ -68,60 +68,29 @@ public class EmailDaoTest extends DBUnitTest {
     }
     
     @Test
-    public void testRemovePrimaryEmail() {
+    public void testRemoveEmail() {
         String primaryEmail = "angel1@montenegro.com";
         String primaryEmailHash = "2965a4115f2639b43e5feb78adddfff52e5324813b6c12b4e25ebdac052f72df";
         assertTrue(emailDao.emailExists(primaryEmailHash));
         //Not the owner
-        emailDao.removeEmail("4444-4444-4444-4443", primaryEmail, true);
+        emailDao.removeEmail("4444-4444-4444-4443", primaryEmail);
         assertTrue(emailDao.emailExists(primaryEmailHash));
-        //Don't delete if it is primary
-        emailDao.removeEmail("4444-4444-4444-4444", primaryEmail, false);
-        assertTrue(emailDao.emailExists(primaryEmailHash));
-        //Right owner and delete even if it is primary
-        emailDao.removeEmail("4444-4444-4444-4444", primaryEmail, true);
+        //Right owner 
+        emailDao.removeEmail("4444-4444-4444-4444", primaryEmail);
         assertFalse(emailDao.emailExists(primaryEmailHash));
     }
     
     @Test
-    public void testRemovePrimaryEmailCaseSensitive() {    	    	
-    	String primaryEmail = "spike@milligan.com";
+    public void testRemoveEmailCaseSensitive() {    	
+    	String primaryEmail = "sPiKe@miLLigan.com";
     	String primaryEmailHash = "fa755fdf4ba30ea92bbbd382f4787526d162110cd83192a3bec180e6a09396b5";
         assertTrue(emailDao.emailExists(primaryEmailHash));
         //Not the owner
-        emailDao.removeEmail("4444-4444-4444-4443", primaryEmail, true);
-        assertTrue(emailDao.emailExists(primaryEmailHash));
-        //Don't delete if it is primary
-        emailDao.removeEmail("4444-4444-4444-4441", primaryEmail, false);
+        emailDao.removeEmail("4444-4444-4444-4443", primaryEmail);
         assertTrue(emailDao.emailExists(primaryEmailHash));
         //Right owner and delete even if it is primary
-        emailDao.removeEmail("4444-4444-4444-4441", primaryEmail, true);
+        emailDao.removeEmail("4444-4444-4444-4441", primaryEmail);
         assertFalse(emailDao.emailExists(primaryEmailHash));
-    }
-    
-    @Test
-    public void testRemoveNonPrimaryEmail() {
-        String nonPrimaryEmail = "limited_0000-0000-0000-0003@test.orcid.org";
-        String emailHash = "71d1e18acf189e7b14e486a53691cef30249a3aedfd5b4c988b1754eb179e6b9";
-        //Not the owner
-        emailDao.removeEmail("4444-4444-4444-4443", nonPrimaryEmail, false);        
-        assertTrue(emailDao.emailExists(emailHash));
-        //Remove only if it is not primary
-        emailDao.removeEmail("0000-0000-0000-0003", nonPrimaryEmail, false);
-        assertFalse(emailDao.emailExists(emailHash));
-    }
-    
-    @Test
-    public void testRemoveNonPrimaryEmailCaseSensitive() {
-    	String nonPrimaryEmail = "TeDdYbAsS@semantico.com";
-    	String nonPrimaryEmailHash = "2c5cb98057d742ca06eff946aa12a2eb3f9a383159ec85097d8a525fc260cbe7";
-    	assertTrue(emailDao.emailExists(nonPrimaryEmailHash));
-    	//Not the owner    	
-        emailDao.removeEmail("0000-0000-0000-0003", nonPrimaryEmail, false);        
-        assertTrue(emailDao.emailExists(nonPrimaryEmailHash));
-        //Remove only if it is not primary
-        emailDao.removeEmail("4444-4444-4444-4443", nonPrimaryEmail, false);
-        assertFalse(emailDao.emailExists(nonPrimaryEmailHash));
     }
     
     @Test 
