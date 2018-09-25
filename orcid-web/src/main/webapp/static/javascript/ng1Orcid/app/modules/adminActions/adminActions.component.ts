@@ -43,6 +43,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     // Reset password
     showResetPassword: boolean;
     resetPasswordParams: any;
+    showResetPasswordConfirm: boolean;
     
     constructor(
         private switchUserService: SwitchUserService,
@@ -59,6 +60,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     
         this.showResetPassword = false;
         this.resetPasswordParams = {};
+        this.showResetPasswordConfirm = false;
     }    
 
     switchUser(id): void {
@@ -119,7 +121,14 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     confirmResetPassword(): void {
-        
+        if(this.resetPasswordParams != null && this.resetPasswordParams.orcidOrEmail != null && this.resetPasswordParams.password != null) {
+            this.showResetPasswordConfirm = true;
+        }        
+    };
+    
+    resetPassword(): void {
+        console.log('Reset password');
+        this.showResetPasswordConfirm = false;
     };
     
     //Default init functions provided by Angular Core

@@ -81,9 +81,13 @@
                 <span class="orcid-error" [(ngModel)]="resetPasswordParams.error"></span>
             </div>
         </div>
-        <div class="controls save-btns pull-left">
-            <span id="find-ids" (click)="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>                        
+        <div class="controls save-btns pull-left" *ngIf="!showResetPasswordConfirm">
+            <span (click)="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>                        
         </div>
+        <div class="controls save-btns pull-left" *ngIf="showResetPasswordConfirm">
+            <label class="relative orcid-error"><@orcid.msg 'admin.reset_password.confirm.message'/> {{resetPasswordParams.orcidOrEmail}}?</label>
+            <span (click)="resetPassword()" class="btn btn-primary"><@orcid.msg 'change_password.confirmnewpassword'/></span> 
+        </div>    
     </div>
 </div>
 
