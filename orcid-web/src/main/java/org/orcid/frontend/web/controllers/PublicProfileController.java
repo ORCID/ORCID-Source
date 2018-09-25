@@ -406,7 +406,13 @@ public class PublicProfileController extends BaseWorkspaceController {
         else {
             mav.addObject("fundingEmpty", true);
         }
-
+        
+        if(peerReviewManagerReadOnly.hasPublicPeerReviews(orcid)) {
+            isProfileEmtpy = false;
+        } else {
+            mav.addObject("peerReviewEmpty", true);
+        }
+        
         ObjectMapper mapper = new ObjectMapper();
 
         try {

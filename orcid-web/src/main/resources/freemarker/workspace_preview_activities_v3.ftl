@@ -44,10 +44,7 @@
 </#if>
 
 <!-- Peer Review -->
-<!-- Works -->
 <#if !(peerReviewEmpty)??> 
 <#include "/includes/ng2_templates/peer-review-ng2-template.ftl">
 <peer-review-ng2 publicView="true"></peer-review-ng2>
 </#if>
-    
-    
