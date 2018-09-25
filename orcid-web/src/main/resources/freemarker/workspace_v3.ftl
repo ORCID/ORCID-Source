@@ -1,29 +1,7 @@
 <@protected nav="record">
 <#escape x as x?html>
-<#if justRegistered?? && justRegistered>
-  <div class="alert alert-success">
-      <strong>
-        <#include "/includes/ng2_templates/thanks-for-registering-ng2-template.ftl">
-        <thanks-for-registering-ng2></thanks-for-registering-ng2>
-      </strong>
-  </div>
-</#if>
-<#if emailVerified?? && emailVerified>
-  <div class="alert alert-success">
-      <strong>
-          ${emailVerifiedMessage}
-          <#if primaryEmailUnverified?? && primaryEmailUnverified>
-          <#include "/includes/ng2_templates/thanks-for-verifying-ng2-template.ftl">
-          <thanks-for-verifying-ng2></thanks-for-verifying-ng2>
-          </#if>
-      </strong>
-  </div>
-</#if>
-<#if invalidOrcid?? && invalidOrcid>
-  <div class="alert alert-success">
-      <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
-  </div>
-</#if>
+<#include "/includes/ng2_templates/my-orcid-alerts-ng2-template.ftl">
+<my-orcid-alerts-ng2></my-orcid-alerts-ng2>
 <div class="row workspace-top public-profile">
   <#-- hidden divs that trigger angular -->
   <#if RequestParameters['recordClaimed']??>

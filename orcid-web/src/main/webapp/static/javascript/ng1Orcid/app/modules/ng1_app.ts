@@ -88,6 +88,9 @@ import { MembersListModule }
 import { ModalModule } 
     from './modalNg2/modal-ng.ts';
 
+import { MyOrcidAlertsModule } 
+    from './myOrcidAlerts/myOrcidAlerts.ts';
+
 import { NameModule } 
     from './name/name.ts';
 
@@ -159,12 +162,6 @@ import { Social2FAModule }
 
 import { SwitchUserModule }
     from './switchUser/switchUser.ts';
-
-import { ThanksForRegisteringModule } 
-    from './thanksForRegistering/thanksForRegistering.ts';
-
-import { ThanksForVerifyingModule } 
-    from './thanksForVerifying/thanksForVerifying.ts';
 
 import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
@@ -243,6 +240,7 @@ export const orcidApp = angular.module(
         LinkAccountModule.name,
         MembersListModule.name,
         ModalModule.name,
+        MyOrcidAlertsModule.name,
         NameModule.name,
         OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
@@ -267,8 +265,6 @@ export const orcidApp = angular.module(
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
         SwitchUserModule.name,
-        ThanksForRegisteringModule.name,
-        ThanksForVerifyingModule.name,
         TwoFaStateModule.name,
         TwoFaSetupModule.name,
         VerifyEmailModule.name,

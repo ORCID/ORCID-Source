@@ -107,6 +107,9 @@ import { MembersListNg2Module }
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 
+import { MyOrcidAlertsNg2Module } 
+    from './myOrcidAlerts/myOrcidAlerts.ts';
+
 import { NameNg2Module } 
     from './name/name.ts';
 
@@ -178,12 +181,6 @@ import { Social2FANg2Module }
 
 import { SwitchUserNg2Module }
     from './switchUser/switchUser.ts';
-
-import { ThanksForRegisteringNg2Module } 
-    from './thanksForRegistering/thanksForRegistering.ts';
-
-import { ThanksForVerifyingNg2Module } 
-    from './thanksForVerifying/thanksForVerifying.ts';
 
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
@@ -349,6 +346,7 @@ export class RootCmp {
         LinkAccountNg2Module,
         MembersListNg2Module, //Approved
         ModalNg2Module, //Approved
+        MyOrcidAlertsNg2Module,
         NameNg2Module, //Approved
         NotificationsNg2Module,
         PasswordEditNg2Module,
@@ -373,8 +371,6 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         SwitchUserNg2Module,
-        ThanksForRegisteringNg2Module,
-        ThanksForVerifyingNg2Module,
         TwoFaStateNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,

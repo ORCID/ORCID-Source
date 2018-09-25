@@ -16,10 +16,10 @@ import { ModalService }
     from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'thanks-for-verifying-ng2',
-    template:  scriptTmpl("thanks-for-verifying-ng2-template")
+    selector: 'my-orcid-alerts-ng2',
+    template:  scriptTmpl("my-orcid-alerts-ng2-template")
 })
-export class ThanksForVerifyingComponent implements AfterViewInit, OnDestroy, OnInit {
+export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 

@@ -10,12 +10,12 @@ import { NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-//In the end only thanksForRegisteringNg2 should remain
-import { ThanksForRegisteringComponent } from './thanksForRegistering.component.ts';
+//In the end only myOrcidAlertsNg2 should remain
+import { MyOrcidAlertsComponent } from './myOrcidAlerts.component.ts';
 
 // This is the Angular 1 part of the module
-export const ThanksForRegisteringModule = angular.module(
-    'ThanksForRegisteringModule', 
+export const MyOrcidAlertsModule = angular.module(
+    'MyOrcidAlertsModule', 
     []
 );
 
@@ -23,26 +23,26 @@ export const ThanksForRegisteringModule = angular.module(
 @NgModule(
     {
         declarations: [ 
-            ThanksForRegisteringComponent 
+            MyOrcidAlertsComponent 
         ],
         entryComponents: [ 
-            ThanksForRegisteringComponent 
+            MyOrcidAlertsComponent 
         ],
         imports: [
             CommonModule
         ]
     }
 )
-export class ThanksForRegisteringNg2Module {}
+export class MyOrcidAlertsNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
-ThanksForRegisteringModule.directive(
-    'thanksForRegisteringNg2', 
+MyOrcidAlertsModule.directive(
+    'myOrcidAlertsNg2', 
     <any>downgradeComponent(
         {
-            component: ThanksForRegisteringComponent
+            component: MyOrcidAlertsComponent
         }
     )
 );
