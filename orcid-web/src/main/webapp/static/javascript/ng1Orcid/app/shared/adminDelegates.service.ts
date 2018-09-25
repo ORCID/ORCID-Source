@@ -53,17 +53,6 @@ export class AdminDelegatesService {
         
     }
 
-    findIds( obj ): Observable<any> {
-        let encoded_data = encodeURI(obj);
-        
-        return this.http.post( 
-            getBaseUri()+'/admin-actions/find-id.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        
-    }
-
     getFormData( id ): Observable<any> {
         return this.http.get(
             this.url + id

@@ -1,0 +1,54 @@
+import { HttpClient, HttpClientModule, HttpHeaders } 
+     from '@angular/common/http';
+
+import { Injectable } 
+    from '@angular/core';
+
+import { Observable, Subject } 
+    from 'rxjs';
+
+import { catchError, map, tap } 
+    from 'rxjs/operators';
+
+@Injectable()
+export class AdminActionsService {
+    private headers: HttpHeaders;
+    private notify = new Subject<any>();    
+    
+    notifyObservable$ = this.notify.asObservable();
+
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders(
+            {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+            }
+        );
+    }
+
+    notifyOther(): void {
+        this.notify.next();
+        console.log('notify');
+    }
+
+    findIds( obj ): Observable<any> {
+        return this.http.post( 
+            getBaseUri() + '/admin-actions/find-id.json', 
+            encodeURI(obj), 
+            { headers: this.headers }
+        )        
+    }
+    
+    resetPassword( obj ): Observable<any> {
+        console.log('resetPassword in service');
+        console.log(JSON.stringify(obj));
+        return this.http.post( 
+            getBaseUri() + '/admin-actions/reset-password.json', 
+            JSON.stringify(obj), 
+            { headers: this.headers }
+        )        
+    }
+
+    
+}

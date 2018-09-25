@@ -100,6 +100,9 @@ import { AffiliationService }
 import { AccountService }
     from '../../shared/account.service.ts';
 
+import { AdminActionsService }
+    from '../../shared/adminActions.service.ts';
+    
 import { BlogService }
     from '../../shared/blog.service.ts';
 
@@ -258,6 +261,7 @@ import { ResendClaimService }
         ],
         providers: [
             AccountService,
+            AdminActionsService,
             AdminDelegatesService,
             AffiliationService,
             BlogService,

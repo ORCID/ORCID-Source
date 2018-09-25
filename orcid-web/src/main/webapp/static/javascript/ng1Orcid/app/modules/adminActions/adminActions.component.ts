@@ -14,9 +14,9 @@ import { takeUntil }
 
 import { SwitchUserService } 
     from '../../shared/switchUser.service.ts';
-    
-import { AdminDelegatesService } 
-    from '../../shared/adminDelegates.service.ts'; 
+
+import { AdminActionsService } 
+    from '../../shared/adminActions.service.ts';    
 
 import { CommonService } 
     from '../../shared/common.service.ts';
@@ -47,7 +47,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     
     constructor(
         private switchUserService: SwitchUserService,
-        private adminDelegatesService: AdminDelegatesService,
+        private adminActionsService: AdminActionsService,
         private commonSrvc: CommonService
     ) {
         this.showSwitchUser = false;
@@ -86,7 +86,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     findIds(): void {
-        this.adminDelegatesService.findIds( this.csvEmails )
+        this.adminActionsService.findIds( this.csvEmails )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -127,8 +127,23 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     resetPassword(): void {
-        console.log('Reset password');
-        this.showResetPasswordConfirm = false;
+        console.log('Admin reset password');
+        this.adminActionsService.resetPassword( this.resetPasswordParams )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                console.log('Just resetted password');
+                this.showResetPasswordConfirm = false;
+                if(data) {
+                    this.resetPasswordParams = data;
+                }                
+            },
+            error => {
+                console.log('admin: resetPassword error', error);
+            } 
+        );        
     };
     
     //Default init functions provided by Angular Core
