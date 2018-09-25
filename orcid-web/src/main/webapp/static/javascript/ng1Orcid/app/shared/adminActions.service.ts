@@ -63,5 +63,12 @@ export class AdminActionsService {
                 { headers: this.headers }
         )  
     }
-        
+     
+    removeSecurityQuestion( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/remove-security-question.json', 
+                encodeURI(obj), 
+                { headers: this.headers, responseType: 'text' }
+        )  
+    }
 }

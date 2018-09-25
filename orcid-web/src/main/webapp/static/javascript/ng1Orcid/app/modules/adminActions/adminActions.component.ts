@@ -55,6 +55,12 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showAddDelegates: boolean;
     addDelegateParams: any;
     
+    // Remove security question
+    showRemoveSecurityQuestion: boolean;
+    orcidOrEmail: string;
+    removeSecurityQuestionResult: string;
+    showRemoveSecurityQuestionConfirm: boolean;
+    
     constructor(
         private switchUserService: SwitchUserService,
         private adminActionsService: AdminActionsService,
@@ -78,6 +84,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         
         this.showAddDelegates = false;
         this.addDelegateParams = {trusted : {errors: [], value: ''}, managed : {errors: [], value: ''}};
+        
+        this.showRemoveSecurityQuestion = false;
+        this.showRemoveSecurityQuestionConfirm = false;
     }    
 
     switchUser(id): void {
@@ -153,8 +162,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showResetPasswordConfirm = false;                
                 this.resetPasswordParams = data;      
                 if(this.resetPasswordParams.error == undefined || this.resetPasswordParams.error == '') {
-                    this.resetPasswordSuccess = true;
+                    this.resetPasswordParams.orcidOrEmail = '';
                     this.resetPasswordParams.password = '';
+                    this.showResetPasswordConfirm = false;
+                    this.resetPasswordSuccess = true;
                 }
             },
             error => {
@@ -192,6 +203,28 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('admin: verifyEmail error', error);
             } 
         );   
+    };
+    
+    confirmRemoveSecurityQuestion(): void {
+        if(this.orcidOrEmail != null) {
+            this.showRemoveSecurityQuestionConfirm = true;
+        }
+    };
+    
+    removeSecurityQuestion(): void {
+        this.adminActionsService.removeSecurityQuestion( this.orcidOrEmail )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {                
+                this.removeSecurityQuestionResult = data;
+                this.showRemoveSecurityQuestionConfirm = false;
+            },
+            error => {
+                console.log('admin: verifyEmail error', error);
+            } 
+        );          
     };
     
     //Default init functions provided by Angular Core

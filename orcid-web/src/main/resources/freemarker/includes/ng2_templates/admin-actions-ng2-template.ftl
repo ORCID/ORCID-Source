@@ -65,8 +65,8 @@
         <a *ngIf="showResetPassword" (click)="showResetPassword = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.reset_password' /></a>
         <a *ngIf="!showResetPassword" (click)="showResetPassword = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.reset_password' /></a>
     </p>
-    <div class="form-group" *ngIf="showResetPassword">
-        <div>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showResetPassword">
+        <div class="form-group">
             <label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
             <input type="text" id="orcid" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
             <label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
@@ -83,8 +83,9 @@
             <span (click)="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>                        
         </div>
         <div class="controls save-btns pull-left" *ngIf="showResetPasswordConfirm">
-            <label class="orcid-error"><@orcid.msg 'admin.reset_password.confirm.message'/> {{resetPasswordParams.orcidOrEmail}}?</label>
-            <span (click)="resetPassword()" class="btn btn-primary"><@orcid.msg 'change_password.confirmnewpassword'/></span> 
+            <label class="orcid-error"><@orcid.msg 'admin.reset_password.confirm.message'/> {{resetPasswordParams.orcidOrEmail}}?</label><br>
+            <span (click)="resetPassword()" class="btn btn-primary"><@orcid.msg 'change_password.confirmnewpassword'/></span>&nbsp; 
+            <a href="" class="cancel-action" (click)="showResetPasswordConfirm = false" (click)="resetPasswordParams.orcidOrEmail = ''" (click)="resetPasswordParams.password = ''" (click)="showResetPassword = false"><@orcid.msg 'freemarker.btncancel'/></a>
         </div>    
     </div>
 </div>
@@ -95,8 +96,8 @@
         <a *ngIf="showVerifyEmail" (click)="showVerifyEmail = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.verify_email' /></a>
         <a *ngIf="!showVerifyEmail" (click)="showVerifyEmail = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.verify_email' /></a>
     </p>
-    <div class="form-group" *ngIf="showVerifyEmail">
-        <div>            
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showVerifyEmail">
+        <div class="form-group">            
             <label for="email"><@orcid.msg 'admin.verify_email.title' /></label>
             <input type="text" (keyup.enter)="verifyEmail()" [(ngModel)]="emailToVerify" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />                                                                                    
         </div>
@@ -115,7 +116,7 @@
         <a *ngIf="showAddDelegates" (click)="showAddDelegates = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.delegate' /></a>
         <a *ngIf="!showAddDelegates" (click)="showAddDelegates = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.delegate' /></a>
     </p>
-    <div class="form-group" *ngIf="showAddDelegates">
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showAddDelegates">
         <!-- Managed -->
         <div class="form-group">
             <label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
@@ -140,6 +141,31 @@
         </div>
         <div class="controls save-btns pull-left">
             <span id="bottom-confirm-delegate-profile" (click)="addDelegate()" class="btn btn-primary"><@orcid.msg 'admin.delegate.button'/></span>
+        </div>
+    </div>
+</div>
+
+<!-- Remove security question -->
+<div class="workspace-accordion-item" id="remove-security-question">
+    <p>
+        <a *ngIf="showRemoveSecurityQuestion" (click)="showRemoveSecurityQuestion = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.remove_security_question' /></a>
+        <a *ngIf="!showRemoveSecurityQuestion" (click)="showRemoveSecurityQuestion = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.remove_security_question' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showRemoveSecurityQuestion">
+        <div class="form-group">
+            <label for="orcid"><@orcid.msg 'admin.remove_security_question.orcid.label' /></label>
+            <input type="text" id="orcid" (keyup.enter)="confirmRemoveSecurityQuestion()" [(ngModel)]="orcidOrEmail" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />
+            <div *ngIf="removeSecurityQuestionResult">
+                <span class="orcid-error" [innerHTML]="removeSecurityQuestionResult"></span>
+            </div>
+        </div>
+        <div class="controls save-btns pull-left" *ngIf="!showRemoveSecurityQuestionConfirm">
+            <span (click)="confirmRemoveSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.button'/></span>                     
+        </div>
+        <div class="controls save-btns pull-left" *ngIf="showRemoveSecurityQuestionConfirm">
+            <label class="orcid-error"><@orcid.msg 'admin.remove_security_question.confirm.message'/> {{orcidOrEmail}}?</label><br>           
+            <span (click)="removeSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.confirm.button'/></span>&nbsp;                    
+            <a href="" class="cancel-action" (click)="showRemoveSecurityQuestionConfirm = false" (click)="orcidOrEmail = ''" (click)="showRemoveSecurityQuestion = false"><@orcid.msg 'freemarker.btncancel'/></a>
         </div>
     </div>
 </div>
