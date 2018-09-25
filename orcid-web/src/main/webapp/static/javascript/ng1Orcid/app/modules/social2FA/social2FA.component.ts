@@ -5,7 +5,7 @@ declare var $window: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit, Input } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -15,6 +15,9 @@ import { takeUntil }
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
+    
+import { ShibbolethService } 
+    from '../../shared/shibboleth.service.ts'; 
 
 
 @Component({
@@ -27,20 +30,32 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
     codes: any;
     verificationCode: string;
     recoveryCode: string;
+    showRecoveryCodeSignIn: boolean;
+    @Input() shib: boolean;
 
     constructor(
+        private shibbolethService: ShibbolethService,
         private twoFAStateService: TwoFAStateService
     ) {
         this.codes = {};
         this.verificationCode = "";
         this.recoveryCode = "";
+        this.showRecoveryCodeSignIn = false;
     }
-
+ 
     init(): void {
-        $('#enterRecoveryCode').click(function() {
-            $('#recoveryCodeSignin').show();
-        });
-
+        if (this.shib) {
+            this.initShib2FA();
+        } else {
+            this.initSocial2FA();
+        }
+    };
+    
+    toggleRecoveryCodeSignIn(): void {
+        this.showRecoveryCodeSignIn = true;
+    };
+    
+    initSocial2FA(): void {
         this.twoFAStateService.init()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -54,8 +69,34 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
+    
+    initShib2FA(): void {
+        this.shibbolethService.init()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.codes = data;
+            },
+            error => {
+                //console.log('getAlsoKnownAsFormError', error);
+            } 
+        );
+    };
 
     submitCode(): void {
+        alert("hello there");
+        if (this.shib) {
+            console.log("shibboleth submission!!!");
+            this.submitShib2FA();
+        } else {
+            console.log("social submisssion");
+            this.submitSocial2FA();
+        }
+    };
+    
+    submitSocial2FA(): void {    
         this.twoFAStateService.submitCode( this.codes )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -72,6 +113,28 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
             },
             error => {
                 //console.log('getWebsitesFormError', error);
+            } 
+        );
+    };
+    
+    submitShib2FA(): void {
+        this.shibbolethService.submitCode( this.codes )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.codes = data;
+                if (data.errors.length == 0) {
+                    window.location.href = data.redirectUrl;
+
+                } else {
+                    this.verificationCode = "";
+                    this.recoveryCode = "";
+                }
+            },
+            error => {
+                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };
