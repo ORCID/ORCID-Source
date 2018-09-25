@@ -170,4 +170,56 @@
     </div>
 </div>
 
+
+
+
+
+
+<!-- Deprecate record -->
+<div class="workspace-accordion-item" id="deprecate-record">
+    <p>
+        <a *ngIf="showDeprecateRecord" (click)="showDeprecateRecord = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.profile_deprecation' /></a>
+        <a *ngIf="!showDeprecateRecord" (click)="showDeprecateRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.profile_deprecation' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showDeprecateRecord">
+    
+    
+        
+        <!-- Deprecated -->
+        <div class="form-group">
+            <label for="deprecated"><@orcid.msg 'admin.delegate.managed.label' /></label>
+            <input type="text" id="deprecated" [(ngModel)]="addDelegateParams.managed.value" (keyup.enter)="addDelegate()" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge">
+            <div id="invalid-managed" *ngIf="addDelegateParams.managed.errors.length > 0">
+                <span class="orcid-error" *ngFor='let error of addDelegateParams.managed.errors' [innerHTML]="error"></span><br />
+            </div>                          
+        </div>              
+        <!-- Primary -->
+        <div class="form-group">
+            <label for="primary"><@orcid.msg 'admin.delegate.trusted.label' /></label>
+            <input type="text" id="primary" [(ngModel)]="addDelegateParams.trusted.value" (keyup.enter)="addDelegate()" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge">
+            <div id="invalid-trusted" *ngIf="addDelegateParams.trusted.errors.length > 0">
+                <span class="orcid-error" *ngFor='let error of addDelegateParams.trusted.errors' [innerHTML]="error"></span><br />
+            </div>                          
+        </div>
+        <div *ngIf="addDelegateParams.errors?.length > 0">
+            <span class="orcid-error" *ngFor='let error of addDelegateParams.errors' [innerHTML]="error"></span><br />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="bottom-confirm-delegate-profile" (click)="addDelegate()" class="btn btn-primary"><@orcid.msg 'admin.delegate.button'/></span>
+        </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    </div>
+</div>
+
+
+
+
+
 </script>
