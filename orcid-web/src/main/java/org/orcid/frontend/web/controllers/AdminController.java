@@ -456,7 +456,7 @@ public class AdminController extends BaseController {
     /**
      * Admin starts delegation process
      */
-    @RequestMapping(value = "/admin-delegates", method = RequestMethod.POST)
+    @RequestMapping(value = "/add-delegate.json", method = RequestMethod.POST)
     public @ResponseBody AdminDelegatesRequest startDelegationProcess(@RequestBody AdminDelegatesRequest request) {
         // Clear errors
         request.setErrors(new ArrayList<String>());
@@ -466,11 +466,9 @@ public class AdminController extends BaseController {
 
         String trusted = request.getTrusted().getValue();
         String managed = request.getManaged().getValue();
-        boolean trustedIsOrcid = matchesOrcidPattern(trusted);
-        boolean managedIsOrcid = matchesOrcidPattern(managed);
         boolean haveErrors = false;
 
-        if (!trustedIsOrcid) {
+        if (!matchesOrcidPattern(trusted)) {
             if (emailManager.emailExists(trusted)) {
                 Map<String, String> email = findIdByEmailHelper(trusted);
                 trusted = email.get(trusted);
@@ -478,13 +476,23 @@ public class AdminController extends BaseController {
                 request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
                 haveErrors = true;
             }
+        } else {
+            if(!profileEntityManager.orcidExists(trusted)) {
+                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
+                haveErrors = true;
+            }
         }
 
-        if (!managedIsOrcid) {
+        if (!matchesOrcidPattern(managed)) {
             if (emailManager.emailExists(managed)) {
                 Map<String, String> email = findIdByEmailHelper(managed);
                 managed = email.get(managed);
             } else {
+                request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
+                haveErrors = true;
+            }
+        } else {
+            if(!profileEntityManager.orcidExists(managed)) {
                 request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
                 haveErrors = true;
             }

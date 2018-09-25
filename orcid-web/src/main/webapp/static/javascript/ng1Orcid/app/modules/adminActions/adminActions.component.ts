@@ -51,6 +51,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     emailToVerify: string;
     verifyEmailMessage: string;
     
+    // Add delegates
+    showAddDelegates: boolean;
+    addDelegateParams: any;
+    
     constructor(
         private switchUserService: SwitchUserService,
         private adminActionsService: AdminActionsService,
@@ -71,6 +75,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     
         this.showVerifyEmail = false;
         this.verifyEmailMessage = null;
+        
+        this.showAddDelegates = false;
+        this.addDelegateParams = {trusted : {errors: [], value: ''}, managed : {errors: [], value: ''}};
     }    
 
     switchUser(id): void {
@@ -170,6 +177,21 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('admin: verifyEmail error', error);
             } 
         );      
+    };
+    
+    addDelegate(): void {        
+        this.adminActionsService.addDelegate( this.addDelegateParams )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {                
+                this.addDelegateParams = data;
+            },
+            error => {
+                console.log('admin: verifyEmail error', error);
+            } 
+        );   
     };
     
     //Default init functions provided by Angular Core

@@ -55,5 +55,13 @@ export class AdminActionsService {
                 { headers: this.headers, responseType: 'text' }
         )  
     }
+    
+    addDelegate( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/add-delegate.json', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )  
+    }
         
 }
