@@ -44,6 +44,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showResetPassword: boolean;
     resetPasswordParams: any;
     showResetPasswordConfirm: boolean;
+    resetPasswordSuccess: boolean;
     
     constructor(
         private switchUserService: SwitchUserService,
@@ -61,6 +62,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showResetPassword = false;
         this.resetPasswordParams = {};
         this.showResetPasswordConfirm = false;
+        this.resetPasswordSuccess = false;
     }    
 
     switchUser(id): void {
@@ -126,19 +128,19 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         }        
     };
     
-    resetPassword(): void {
-        console.log('Admin reset password');
+    resetPassword(): void {        
         this.adminActionsService.resetPassword( this.resetPasswordParams )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                console.log('Just resetted password');
-                this.showResetPasswordConfirm = false;
-                if(data) {
-                    this.resetPasswordParams = data;
-                }                
+                this.showResetPasswordConfirm = false;                
+                this.resetPasswordParams = data;      
+                if(this.resetPasswordParams.error == undefined || this.resetPasswordParams.error == '') {
+                    this.resetPasswordSuccess = true;
+                    this.resetPasswordParams.password = '';
+                }
             },
             error => {
                 console.log('admin: resetPassword error', error);

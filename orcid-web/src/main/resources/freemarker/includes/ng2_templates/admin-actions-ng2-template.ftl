@@ -78,14 +78,17 @@
             <input type="text" id="password" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
             <a (click)="randomString()" class="glyphicon glyphicon-random blue"></a>
             <div *ngIf="resetPasswordParams?.error != null">
-                <span class="orcid-error" [(ngModel)]="resetPasswordParams.error"></span>
+                <span class="orcid-error">{{resetPasswordParams.error}}</span>
+            </div>
+            <div *ngIf="resetPasswordSuccess">
+                <span class="orcid-error"><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></span>
             </div>
         </div>
         <div class="controls save-btns pull-left" *ngIf="!showResetPasswordConfirm">
             <span (click)="confirmResetPassword()" class="btn btn-primary"><@orcid.msg 'admin.reset_password.button'/></span>                        
         </div>
         <div class="controls save-btns pull-left" *ngIf="showResetPasswordConfirm">
-            <label class="relative orcid-error"><@orcid.msg 'admin.reset_password.confirm.message'/> {{resetPasswordParams.orcidOrEmail}}?</label>
+            <label class="orcid-error"><@orcid.msg 'admin.reset_password.confirm.message'/> {{resetPasswordParams.orcidOrEmail}}?</label>
             <span (click)="resetPassword()" class="btn btn-primary"><@orcid.msg 'change_password.confirmnewpassword'/></span> 
         </div>    
     </div>
