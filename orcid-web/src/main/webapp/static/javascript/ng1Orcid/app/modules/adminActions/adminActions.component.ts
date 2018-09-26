@@ -65,6 +65,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showDeprecateRecord: boolean;
     showDeprecateRecordConfirm: boolean;
     deprecateRecordParams: any;
+    
+    // Deactivate record
+    idsToDeactivate: string;
+    deactivateResults: any;
         
     constructor(
         private switchUserService: SwitchUserService,
@@ -96,6 +100,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showDeprecateRecord = false;
         this.showDeprecateRecordConfirm = false;
         this.deprecateRecordParams = {deprecatedAccount : {errors: [], orcid:''}, primaryAccount : {errors: [], orcid:''}, errors: []};
+    
+        this.idsToDeactivate = '';
+        this.deactivateResults = {};
     }    
 
     switchUser(id): void {
@@ -276,6 +283,21 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showDeprecateRecord = false;
         this.showDeprecateRecordConfirm = false;
         this.deprecateRecordParams = {deprecatedAccount : {errors: [], orcid:''}, primaryAccount : {errors: [], orcid:''}, errors: []};
+    };
+    
+    deactivateRecord(): void {
+        this.adminActionsService.deactivateRecord( this.idsToDeactivate )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.deactivateResults = data;                
+            },
+            error => {
+                console.log('admin: deactivateRecord error', error);
+            } 
+        ); 
     };
     
     //Default init functions provided by Angular Core

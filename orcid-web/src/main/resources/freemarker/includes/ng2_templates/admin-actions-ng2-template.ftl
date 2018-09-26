@@ -248,8 +248,31 @@
     </div>
 </div>
 
-
-
+<!-- Deactivate record -->
+<div class="workspace-accordion-item" id="deactivate-record">
+    <p>
+        <a *ngIf="showDeactivateRecord" (click)="showDeactivateRecord = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.profile_deactivation' /></a>
+        <a *ngIf="!showDeactivateRecord" (click)="showDeactivateRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.profile_deactivation' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showDeactivateRecord">
+        <div class="alert alert-success" *ngIf="deactivateResults.success?.length > 0"><@spring.message "admin.profile_deactivation.deactivation_success"/>
+            <br>{{deactivateResults.success}}
+        </div>
+        <div class="alert alert-success" *ngIf="deactivateResults.alreadyDeactivated?.length > 0"><@spring.message "admin.profile_deactivation.already_deactivated"/>
+            <br>{{deactivateResults.alreadyDeactivated}}
+        </div>
+        <div class="alert alert-success" *ngIf="deactivateResults.notFoundList?.length > 0"><@spring.message "admin.profile_deactivation.not_found"/>
+            <br>{{deactivateResults.notFoundList}}
+        </div>
+        <div class="form-group">
+            <label for="orcidIds"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
+            <input type="text" id="orcidIds" (keyup.enter)="deactivateRecord()" [(ngModel)]="idsToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="find-ids" (click)="deactivateRecord()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>                       
+        </div>        
+    </div>
+</div>
 
 
 </script>

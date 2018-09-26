@@ -352,8 +352,8 @@ public class AdminController extends BaseController {
 
         Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
         resendIdMap.put("notFoundList", notFoundIds);
-        resendIdMap.put("deactivateSuccessfulList", successIds);
-        resendIdMap.put("alreadyDeactivatedList", deactivatedIds);
+        resendIdMap.put("success", successIds);
+        resendIdMap.put("alreadyDeactivated", deactivatedIds);
         return resendIdMap;
     }
 
