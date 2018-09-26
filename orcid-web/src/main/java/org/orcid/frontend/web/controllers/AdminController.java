@@ -154,8 +154,23 @@ public class AdminController extends BaseController {
             request.getPrimaryAccount().setErrors(new ArrayList<String>());
         }
         
-        validateIdForDeprecation(request.getDeprecatedAccount());
-        validateIdForDeprecation(request.getPrimaryAccount());
+        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : request.getDeprecatedAccount().getOrcid();
+        String primaryOrcid = request.getPrimaryAccount() == null ? null : request.getPrimaryAccount().getOrcid();
+        
+        if (deprecatedOrcid.equals(primaryOrcid)) {
+            request.getPrimaryAccount().getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
+        } else {
+            if(request.getDeprecatedAccount() != null) {
+                request.getDeprecatedAccount().setErrors(new ArrayList<String>());
+            }
+            
+            if(request.getPrimaryAccount() != null) {
+                request.getPrimaryAccount().setErrors(new ArrayList<String>());
+            }
+            
+            validateIdForDeprecation(request.getDeprecatedAccount());
+            validateIdForDeprecation(request.getPrimaryAccount());            
+        }
         
         if(!request.getDeprecatedAccount().getErrors().isEmpty()) {
             copyErrors(request.getDeprecatedAccount(), request);
