@@ -6,11 +6,15 @@ import { AfterViewInit, Component, OnDestroy, OnInit }
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
+
 import { takeUntil } 
     from 'rxjs/operators';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
+
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
@@ -23,17 +27,23 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
+    elementHeight: any;
+    elementWidth: any;
     emailPrimary: string;
+    sourceGrantReadWizard: any;
 
     constructor(
         private emailService: EmailService,
+        private genericService: GenericService,
         private modalService: ModalService
     ) {
+        this.elementHeight = "120";
+        this.elementWidth = "500";
         this.emailPrimary = '';
     }
 
-    close(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalemailunverified'});
+    close(id: string): void {
+        this.genericService.close(id);
     }
 
     getEmails(): any {
@@ -50,6 +60,25 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
             } 
         );
     }
+
+    getSourceGrantReadWizard(): any {
+        this.genericService.getData('/my-orcid/sourceGrantReadWizard.json')
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.sourceGrantReadWizard = data;
+                if(this.sourceGrantReadWizard.url){
+                    this.elementHeight = "160";
+                }
+                this.genericService.open('claimed-record-thanks');
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
+    };
 
     verifyEmail(): any {
         this.emailService.verifyEmail()
@@ -68,6 +97,17 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
         this.modalService.notifyOther({action:'open', moduleId: 'emailSentConfirmation'});
     }
 
+    yes(): any {
+        this.close('claimed-record-thanks');
+        var newWin = window.open(this.sourceGrantReadWizard.url);
+        if (!newWin) {
+            window.location.href = this.sourceGrantReadWizard.url;
+        }
+        else {
+            newWin.focus();
+        }
+    };
+
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
@@ -79,6 +119,10 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
     };
 
     ngOnInit() {
+        var urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('recordClaimed')){
+            this.getSourceGrantReadWizard()
+        }
         this.getEmails();
     };
 }

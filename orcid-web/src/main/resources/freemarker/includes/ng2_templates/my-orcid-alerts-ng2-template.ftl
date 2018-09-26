@@ -35,4 +35,5 @@
           <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
       </div>
     </#if>
+    <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
 </script>

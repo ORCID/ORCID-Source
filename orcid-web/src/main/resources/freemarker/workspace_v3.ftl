@@ -5,13 +5,6 @@
 <div class="row workspace-top public-profile">
   <#-- hidden divs that trigger angular -->
   <#if RequestParameters['recordClaimed']??>
-    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-      <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
-      <claim-thanks-ng2></claim-thanks-ng2>
-    </@orcid.checkFeatureStatus>
-    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
-      <div ng-controller="ClaimThanks" style="display: hidden;"></div>
-    </@orcid.checkFeatureStatus> 
   <#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
     <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
       <verify-email-ng2></verify-email-ng2>
@@ -181,33 +174,6 @@
   </div>
 </script>
 
-<script type="text/ng-template" id="claimed-record-thanks">
-    <div class="lightbox-container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-                <br />
-                <button class="btn btn-primary" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
-            </div>
-        </div>
-    </div>
-</script>
-
-<script type="text/ng-template" id="claimed-record-thanks-source-grand-read">
-    <div class="lightbox-container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
-                <br />
-                <strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
-                <br />
-                <button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
-                <button class="btn btn-primary" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
-            </div>
-        </div>
-    </div>
-</script>
-
 <script type="text/ng-template" id="delete-external-id-modal">
     <div class="lightbox-container">
         <div class="row">
@@ -323,8 +289,7 @@
 
 <#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">
-    <works-delete-ng2></works-delete-ng2>
-    
+    <works-delete-ng2></works-delete-ng2> 
 </modalngcomponent><!-- Ng2 component -->
 
 
