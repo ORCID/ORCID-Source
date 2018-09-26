@@ -168,45 +168,69 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Test
     public void testCheckOrcid() throws Exception {
-        ProfileDetails profileDetails = adminController.checkOrcidToDeprecate("4444-4444-4444-4447");
-        assertNotNull(profileDetails);
-        assertEquals(0, profileDetails.getErrors().size());
-        assertEquals("otis@reading.com", profileDetails.getEmail());
-        assertEquals("Family Name", profileDetails.getFamilyName());
-        assertEquals("Given Names", profileDetails.getGivenNames());
-        assertEquals("4444-4444-4444-4447", profileDetails.getOrcid());
-
-        // Must throw exception
-        profileDetails = adminController.checkOrcidToDeprecate("4444-4444-4444-4411");
-        assertNotNull(profileDetails);
-        assertEquals(1, profileDetails.getErrors().size());
-        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.inexisting_orcid", "4444-4444-4444-4411"), profileDetails.getErrors().get(0));
+        ProfileDeprecationRequest r = new ProfileDeprecationRequest();
+        ProfileDetails toDeprecate = new ProfileDetails();
+        toDeprecate.setOrcid("4444-4444-4444-4447");
+        r.setDeprecatedAccount(toDeprecate);
+        ProfileDetails primary = new ProfileDetails();
+        primary.setOrcid("4444-4444-4444-4411");
+        r.setPrimaryAccount(primary);
+        
+        r = adminController.checkOrcidToDeprecate(r);
+        assertNotNull(r);
+        assertEquals(1, r.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.inexisting_orcid", "4444-4444-4444-4411"), r.getErrors().get(0));
+        assertEquals("otis@reading.com", r.getDeprecatedAccount().getEmail());
+        assertEquals("Family Name", r.getDeprecatedAccount().getFamilyName());
+        assertEquals("Given Names", r.getDeprecatedAccount().getGivenNames());
+        assertEquals("4444-4444-4444-4447", r.getDeprecatedAccount().getOrcid());
+        
+        assertEquals("4444-4444-4444-4411", r.getPrimaryAccount().getOrcid());
+        assertNull(r.getPrimaryAccount().getEmail());
+        assertNull(r.getPrimaryAccount().getFamilyName());
+        assertNull(r.getPrimaryAccount().getGivenNames());        
     }
 
     @Test
     public void tryToDeprecateDeprecatedProfile() throws Exception {
+        ProfileDeprecationRequest r = new ProfileDeprecationRequest();
+        ProfileDetails toDeprecate = new ProfileDetails();
+        toDeprecate.setOrcid("4444-4444-4444-444X");
+        r.setDeprecatedAccount(toDeprecate);
+        ProfileDetails primary = new ProfileDetails();
+        primary.setOrcid("4444-4444-4444-4443");
+        r.setPrimaryAccount(primary);
+        
         // Test deprecating a deprecated account
-        ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-444X", "4444-4444-4444-4443");
+        ProfileDeprecationRequest result = adminController.deprecateProfile(r);
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.already_deprecated", "4444-4444-4444-444X"), result.getErrors().get(0));
 
         // Test deprecating account with himself
-        result = adminController.deprecateProfile("4444-4444-4444-4440", "4444-4444-4444-4440");
+        toDeprecate.setOrcid("4444-4444-4444-4440");
+        primary.setOrcid("4444-4444-4444-4440");
+        result = adminController.deprecateProfile(r);
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"), result.getErrors().get(0));
 
         // Test set deprecated account as a primary account
-        result = adminController.deprecateProfile("4444-4444-4444-4443", "4444-4444-4444-444X");
+        toDeprecate.setOrcid("4444-4444-4444-4443");
+        primary.setOrcid("4444-4444-4444-444X");
+        result = adminController.deprecateProfile(r);
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_deprecated", "4444-4444-4444-444X"), result.getErrors().get(0));
 
         // Test deprecating an invalid orcid
-        result = adminController.deprecateProfile("4444-4444-4444-444", "4444-4444-4444-4443");
+        toDeprecate.setOrcid("4444-4444-4444-444");
+        primary.setOrcid("4444-4444-4444-4443");
+        result = adminController.deprecateProfile(r);
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.invalid_orcid", "4444-4444-4444-444"), result.getErrors().get(0));
 
         // Test use invalid orcid as primary
-        result = adminController.deprecateProfile("4444-4444-4444-4440", "4444-4444-4444-444");
+        toDeprecate.setOrcid("4444-4444-4444-4440");
+        primary.setOrcid("4444-4444-4444-444");
+        result = adminController.deprecateProfile(r);
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.invalid_orcid", "4444-4444-4444-444"), result.getErrors().get(0));
 
@@ -214,7 +238,9 @@ public class AdminControllerTest extends BaseControllerTest {
         adminController.deactivateOrcidAccount("4444-4444-4444-4443");
         
         // Test set deactive primary account
-        result = adminController.deprecateProfile("4444-4444-4444-4440", "4444-4444-4444-4443");
+        toDeprecate.setOrcid("4444-4444-4444-4440");
+        primary.setOrcid("4444-4444-4444-4443");
+        result = adminController.deprecateProfile(r);
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", "4444-4444-4444-4443"), result.getErrors().get(0));
     }
