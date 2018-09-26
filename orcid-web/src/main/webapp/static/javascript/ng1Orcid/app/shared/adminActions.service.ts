@@ -69,6 +69,22 @@ export class AdminActionsService {
                 getBaseUri() + '/admin-actions/remove-security-question.json', 
                 encodeURI(obj), 
                 { headers: this.headers, responseType: 'text' }
-        )  
+        )
     }
+    
+    validateDeprecateRequest( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/deprecate-profile/check-orcid.json',                 
+                JSON.stringify(obj),
+                { headers: this.headers }
+            )
+    }
+    
+    deprecateRecord( obj ): void {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/deprecate-profile/deprecate-profile.json', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )
+    };
 }

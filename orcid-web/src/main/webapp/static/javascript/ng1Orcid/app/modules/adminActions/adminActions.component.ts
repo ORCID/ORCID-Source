@@ -61,6 +61,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     removeSecurityQuestionResult: string;
     showRemoveSecurityQuestionConfirm: boolean;
     
+    // Deprecate record
+    showDeprecateRecord: boolean;
+    showDeprecateRecordConfirm: boolean;
+    deprecateRecordParams: any;
+        
     constructor(
         private switchUserService: SwitchUserService,
         private adminActionsService: AdminActionsService,
@@ -87,6 +92,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         
         this.showRemoveSecurityQuestion = false;
         this.showRemoveSecurityQuestionConfirm = false;
+        
+        this.showDeprecateRecord = false;
+        this.showDeprecateRecordConfirm = false;
+        this.deprecateRecordParams = {deprecatedAccount : {errors: [], orcid:''}, primaryAccount : {errors: [], orcid:''}, errors: []};
     }    
 
     switchUser(id): void {
@@ -225,6 +234,48 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('admin: verifyEmail error', error);
             } 
         );          
+    };
+    
+    confirmDeprecate(): void {        
+        this.adminActionsService.validateDeprecateRequest( this.deprecateRecordParams )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {                
+                this.deprecateRecordParams = data;
+                if(this.deprecateRecordParams.errors.length == 0) {
+                    this.showDeprecateRecordConfirm = true;
+                }
+            },
+            error => {
+                console.log('admin: confirmDeprecate error', error);
+            } 
+        ); 
+    };
+    
+    deprecateRecord(): void {
+        this.adminActionsService.deprecateRecord( this.deprecateRecordParams )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.deprecateRecordParams = data;
+                if(this.deprecateRecordParams.errors.length == 0) {
+                    this.showDeprecateRecordConfirm = false;                    
+                }
+            },
+            error => {
+                console.log('admin: confirmDeprecate error', error);
+            } 
+        ); 
+    };
+    
+    deprecateRecordCancel(): void {
+        this.showDeprecateRecord = false;
+        this.showDeprecateRecordConfirm = false;
+        this.deprecateRecordParams = {deprecatedAccount : {errors: [], orcid:''}, primaryAccount : {errors: [], orcid:''}, errors: []};
     };
     
     //Default init functions provided by Angular Core

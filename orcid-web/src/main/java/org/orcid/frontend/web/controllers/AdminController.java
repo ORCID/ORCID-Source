@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -96,94 +95,109 @@ public class AdminController extends BaseController {
      * @param primaryOrcid
      *            Orcid to use as a primary account
      */
-    @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.GET)
-    public @ResponseBody ProfileDeprecationRequest deprecateProfile(@RequestParam("deprecated") String deprecatedOrcid, @RequestParam("primary") String primaryOrcid) {
-        ProfileDeprecationRequest result = new ProfileDeprecationRequest();
+    @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.POST)
+    public @ResponseBody ProfileDeprecationRequest deprecateProfile(@RequestBody ProfileDeprecationRequest request) { 
+        //Cleanup 
+        request.setErrors(new ArrayList<String>());
+        request.setSuccessMessage(null);
+        
+        if(request.getDeprecatedAccount() != null) {
+            request.getDeprecatedAccount().setErrors(new ArrayList<String>());
+        }
+        
+        if(request.getPrimaryAccount() != null) {
+            request.getPrimaryAccount().setErrors(new ArrayList<String>());
+        }
+        
+        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : request.getDeprecatedAccount().getOrcid();
+        String primaryOrcid = request.getPrimaryAccount() == null ? null : request.getPrimaryAccount().getOrcid();
         // Check for errors
         if (!OrcidStringUtils.isValidOrcid(deprecatedOrcid)) {
-            result.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", deprecatedOrcid));
+            request.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", deprecatedOrcid));
         } else if (!OrcidStringUtils.isValidOrcid(primaryOrcid)) {
-            result.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", primaryOrcid));
+            request.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", primaryOrcid));
         } else if (deprecatedOrcid.equals(primaryOrcid)) {
-            result.getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
+            request.getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
         } else {
             try {
-                boolean wasDeprecated = adminManager.deprecateProfile(result, deprecatedOrcid, primaryOrcid, getCurrentUserOrcid());
-                if (wasDeprecated) {
-                    ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
-                    ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);
-
-                    ProfileDetails deprecatedDetails = new ProfileDetails();
-                    deprecatedDetails.setOrcid(deprecatedOrcid);
-
-                    if (deprecated.getRecordNameEntity() != null) {
-                        deprecatedDetails.setFamilyName(deprecated.getRecordNameEntity().getFamilyName());
-                        deprecatedDetails.setGivenNames(deprecated.getRecordNameEntity().getGivenNames());
-                    }
-
-                    ProfileDetails primaryDetails = new ProfileDetails();
-                    primaryDetails.setOrcid(primaryOrcid);
-                    if (primary.getRecordNameEntity() != null) {
-                        primaryDetails.setFamilyName(primary.getRecordNameEntity().getFamilyName());
-                        primaryDetails.setGivenNames(primary.getRecordNameEntity().getGivenNames());
-                    }
-
-                    result.setDeprecatedAccount(deprecatedDetails);
-                    result.setPrimaryAccount(primaryDetails);
-                    result.setDeprecatedDate(new Date());
+                boolean wasDeprecated = adminManager.deprecateProfile(request, deprecatedOrcid, primaryOrcid, getCurrentUserOrcid());
+                if (wasDeprecated) {                    
+                    request.setSuccessMessage(getMessage("admin.profile_deprecation.deprecate_account.success_message", deprecatedOrcid, primaryOrcid));
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
-                result.getErrors().add(getMessage("admin.profile_deprecation.errors.internal_error", deprecatedOrcid));
+                request.getErrors().add(getMessage("admin.profile_deprecation.errors.internal_error", deprecatedOrcid));
             }
         }
 
-        return result;
+        return request;
     }
 
     /**
-     * Check an orcid on database to see if it exists
+     * Check a deprecation request to validate the id to deprecate and the primary id
      * 
-     * @param orcid
-     *            The orcid string to check on database
-     * @return a ProfileDetails object with the details of the profile or an
-     *         error message.
+     * @param request
+     *            The request
+     * @return a ProfileDeprecationRequest validated
      */
-    @RequestMapping(value = { "/deprecate-profile/check-orcid.json" }, method = RequestMethod.GET)
-    public @ResponseBody ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {
-        ProfileDetails profileDetails = new ProfileDetails();
+    @RequestMapping(value = { "/deprecate-profile/check-orcid.json" }, method = RequestMethod.POST)
+    public @ResponseBody ProfileDeprecationRequest checkOrcidToDeprecate(@RequestBody ProfileDeprecationRequest request) {
+        //Cleanup 
+        request.setErrors(new ArrayList<String>());
+        request.setSuccessMessage(null);
+        
+        if(request.getDeprecatedAccount() != null) {
+            request.getDeprecatedAccount().setErrors(new ArrayList<String>());
+        }
+        
+        if(request.getPrimaryAccount() != null) {
+            request.getPrimaryAccount().setErrors(new ArrayList<String>());
+        }
+        
+        validateIdForDeprecation(request.getDeprecatedAccount());
+        validateIdForDeprecation(request.getPrimaryAccount());
+        
+        if(!request.getDeprecatedAccount().getErrors().isEmpty()) {
+            copyErrors(request.getDeprecatedAccount(), request);
+        }
+        
+        if(!request.getPrimaryAccount().getErrors().isEmpty()) {
+            copyErrors(request.getPrimaryAccount(), request);
+        }
+        
+        return request;
+    }
+    
+    private void validateIdForDeprecation(ProfileDetails details) {
+        String orcid = details.getOrcid();
         try {
             ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);            
             if (profile.getDeprecatedDate() != null || profile.getPrimaryRecord() != null) {
-                profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
+                details.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
             } else if (profile.getDeactivationDate() != null) {
-                profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
-            } else {
-                profileDetails.setOrcid(orcid);
+                details.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
+            } else {                
                 RecordNameEntity recordName = profile.getRecordNameEntity(); 
                 if (recordName != null) {
                     boolean hasName = false;
                     if (!PojoUtil.isEmpty(recordName.getFamilyName())) {
-                        profileDetails.setFamilyName(recordName.getFamilyName());
+                        details.setFamilyName(recordName.getFamilyName());
                         hasName = true;
                     }
                     if (!PojoUtil.isEmpty(recordName.getGivenNames())) {
-                        profileDetails.setGivenNames(recordName.getGivenNames());
+                        details.setGivenNames(recordName.getGivenNames());
                         hasName = true;
                     }
-
                     if (!hasName) {
-                        profileDetails.setGivenNames(recordName.getCreditName());
+                        details.setGivenNames(recordName.getCreditName());
                     }
                 }        
                 Email primary = emailManager.findPrimaryEmail(orcid);
-                profileDetails.setEmail(primary.getEmail());                                    
+                details.setEmail(primary.getEmail());                                    
             }            
         } catch (IllegalArgumentException iae) {
-            profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
+            details.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
         }
-
-        return profileDetails;
     }
 
     @RequestMapping(value = "/reactivate-profile", method = RequestMethod.GET)
