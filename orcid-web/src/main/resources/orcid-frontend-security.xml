@@ -150,6 +150,14 @@
         <sec:custom-filter ref="revokeTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
+    
+    <!-- Userinfo does its own auth.  CSRF disabled to enable post -->
+    <sec:http pattern="/oauth/userinfo" use-expressions="false" authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager" 
+	    create-session="ifRequired" entry-point-ref="approveOauthAuthenticationEntryPoint">
+    	<sec:csrf disabled="true"/>
+        <sec:intercept-url pattern="/oauth/userinfo" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:anonymous enabled="true" />
+    </sec:http>
 
 	<sec:http use-expressions="false" pattern="/oauth/.*" 
 	    authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager" 
@@ -180,8 +188,6 @@
 		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/jwks"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/userinfo"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
