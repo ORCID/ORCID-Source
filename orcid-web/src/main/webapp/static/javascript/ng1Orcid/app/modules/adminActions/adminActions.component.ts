@@ -272,7 +272,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         ); 
     };
     
-    deprecateRecordCancel(): void {
+    deprecateRecordReset(): void {
         this.showDeprecateRecord = false;
         this.showDeprecateRecordConfirm = false;
         this.deprecateRecordParams = {deprecatedAccount : {errors: [], orcid:''}, primaryAccount : {errors: [], orcid:''}, errors: []};

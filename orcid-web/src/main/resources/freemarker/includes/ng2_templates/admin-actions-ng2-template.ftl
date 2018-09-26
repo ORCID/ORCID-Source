@@ -180,34 +180,32 @@
         <!-- Deprecated -->
         <div class="form-group">
             <label for="deprecated"><@orcid.msg 'admin.profile_deprecation.to_deprecate' /></label>
-            <input type="text" id="deprecated" [(ngModel)]="deprecateRecordParams.deprecatedAccount.orcid" (keyup.enter)="confirmDeprecate()" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge">
-            <div id="invalid-deprecated-id" *ngIf="deprecateRecordParams.deprecatedAccount.errors.length > 0">
+            <input type="text" id="deprecated" [(ngModel)]="deprecateRecordParams.deprecatedAccount.orcid" (keyup.enter)="confirmDeprecate()" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge">                                   
+            <div *ngIf="deprecateRecordParams.deprecatedAccount.errors?.length > 0">
                 <span class="orcid-error" *ngFor='let error of deprecateRecordParams.deprecatedAccount.errors' [innerHTML]="error"></span><br />
-            </div>                          
+            </div>
         </div>              
         <!-- Primary -->
         <div class="form-group">
             <label for="primary"><@orcid.msg 'admin.profile_deprecation.primary' /></label>
-            <input type="text" id="primary" [(ngModel)]="deprecateRecordParams.primaryAccount.orcid" (keyup.enter)="confirmDeprecate()" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge">
-            <div id="invalid-primary-id" *ngIf="deprecateRecordParams.primaryAccount.errors.length > 0">
+            <input type="text" id="primary" [(ngModel)]="deprecateRecordParams.primaryAccount.orcid" (keyup.enter)="confirmDeprecate()" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge">                                    
+            <div *ngIf="deprecateRecordParams.primaryAccount.errors?.length > 0">
                 <span class="orcid-error" *ngFor='let error of deprecateRecordParams.primaryAccount.errors' [innerHTML]="error"></span><br />
-            </div>                          
-        </div>
-        <div *ngIf="deprecateRecordParams.errors?.length > 0">
-            <span class="orcid-error" *ngFor='let error of deprecateRecordParams.errors' [innerHTML]="error"></span><br />
-        </div>
-        <div class="controls save-btns pull-left">
+            </div>
+        </div>        
+        <div class="controls save-btns pull-left" *ngIf="!showDeprecateRecordConfirm">
             <span id="bottom-confirm-deprecate-record" (click)="confirmDeprecate()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
         </div>
+        <br>
         <div class="form-group" *ngIf="deprecateRecordParams.successMessage != null && deprecateRecordParams.successMessage != ''">
-            <h1><@orcid.msg 'admin.success'/></h1>
+            <h3><@orcid.msg 'admin.success'/></h3>
             <p id="success-message">{{deprecateRecordParams.successMessage}}</p>  
             <div class="control-group">
-                <a href="" class="cancel-action" (click)="deprecateRecordCancel()"><@orcid.msg 'freemarker.btnclose'/></a>
+                <a href="" class="cancel-action" (click)="deprecateRecordReset()"><@orcid.msg 'freemarker.btnclose'/></a>
             </div>  
         </div>
         <div class="form-group" *ngIf="showDeprecateRecordConfirm">
-            <h1><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm'/></h1>
+            <h3><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm'/></h3>
             <div class="bottom-margin-small">
                 <p><@orcid.msg 'admin.profile_deprecation.deprecate_account.confirm.message.1'/></p>
                 <table border="0">
@@ -217,11 +215,11 @@
                     </tr>
                     <tr>
                         <td><strong><@orcid.msg 'admin.profile_deprecation.name'/></strong></td>
-                        <td>{{deprecateRecordParams.deprecatedAccount.givenNames}}&nbsp;{{deprecatedAccount.familyName}}</td>
+                        <td>{{deprecateRecordParams.deprecatedAccount.givenNames}}&nbsp;{{deprecateRecordParams.deprecatedAccount.familyName}}</td>
                     </tr>
                     <tr>
                         <td><strong><@orcid.msg 'admin.profile_deprecation.email'/></strong></td>
-                        <td>{{deprecateRecordParams.deprecatedAccount.primaryEmail}}</td>
+                        <td>{{deprecateRecordParams.deprecatedAccount.email}}</td>
                     </tr>           
                 </table>
             </div>
@@ -234,17 +232,17 @@
                     </tr>
                     <tr>
                         <td><strong><@orcid.msg 'admin.profile_deprecation.name'/></strong></td>
-                        <td>{{deprecateRecordParams.primaryAccount.givenNames}}&nbsp;{{primaryAccount.familyName}}</td>
+                        <td>{{deprecateRecordParams.primaryAccount.givenNames}}&nbsp;{{deprecateRecordParams.primaryAccount.familyName}}</td>
                     </tr>
                     <tr>
                         <td><strong><@orcid.msg 'admin.profile_deprecation.email'/></strong></td>
-                        <td>{{deprecateRecordParams.primaryAccount.primaryEmail}}</td>
+                        <td>{{deprecateRecordParams.primaryAccount.email}}</td>
                     </tr>       
                 </table>
             </div>          
             <div class="control-group">
-                <button class="btn btn-primary" id="bottom-deprecate-profile" ng-click="deprecateRecord()"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></button>
-                <a href="" class="cancel-action" (click)="deprecateRecordCancel()"><@orcid.msg 'freemarker.btnclose'/></a>
+                <button class="btn btn-primary" id="bottom-deprecate-profile" (click)="deprecateRecord()"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></button>&nbsp;
+                <a class="cancel-action" (click)="deprecateRecordReset();"><@orcid.msg 'freemarker.btnclose'/></a>
             </div>
         </div>        
     </div>

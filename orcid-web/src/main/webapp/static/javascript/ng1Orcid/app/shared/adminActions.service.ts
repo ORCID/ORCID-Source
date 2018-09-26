@@ -74,7 +74,7 @@ export class AdminActionsService {
     
     validateDeprecateRequest( obj ): Observable<any> {
         return this.http.post( 
-                getBaseUri() + '/deprecate-profile/check-orcid.json',                 
+                getBaseUri() + '/admin-actions/deprecate-profile/check-orcid.json',                 
                 JSON.stringify(obj),
                 { headers: this.headers }
             )
