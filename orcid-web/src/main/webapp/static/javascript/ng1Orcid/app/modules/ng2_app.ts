@@ -50,9 +50,6 @@ import { AllConsortiumContactsNg2Module }
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 
-import { ClaimThanksNg2Module } 
-    from './claimThanks/claimThanks.ts';
-
 import { ClientEditNg2Module } 
     from './clientEdit/clientEdit.ts';
 
@@ -187,9 +184,6 @@ import { TwoFaSetupNg2Module }
 
 import { TwoFaStateNg2Module }
     from './2FAState/twoFAState.ts';
-    
-import { VerifyEmailNg2Module }
-    from './verifyEmail/verifyEmail.ts';
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
@@ -211,9 +205,6 @@ import { SearchService }
 
 import { WorkspaceService } 
     from '../shared/workspace.service.ts'; 
-
-import { WorkSpaceSummaryNg2Module } 
-    from './workspaceSummary/workspaceSummary.ts';
 
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
@@ -327,7 +318,6 @@ export class RootCmp {
         AlertBannerNg2Module,
         AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
-        ClaimThanksNg2Module,
         ClientEditNg2Module,
         DeactivateAccountNg2Module,
         DeactivateAccountMessageNg2Module,
@@ -374,13 +364,11 @@ export class RootCmp {
         TwoFaStateNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
-        VerifyEmailNg2Module,
         WidgetNg2Module, //Approved
         WorksBulkDeleteNg2Module,
         WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
-        WorkSpaceSummaryNg2Module,
         WorksPrivacyPreferencesNg2Module,
         DelegatorsNg2Module,
         ResendClaimNg2Module,

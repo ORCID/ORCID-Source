@@ -31,9 +31,6 @@ import { AllConsortiumContactsModule }
 import { BiographyModule } 
     from './biography/biography.ts';
 
-import { ClaimThanksModule } 
-    from './claimThanks/claimThanks.ts';
-
 import { ClientEditModule } 
     from './clientEdit/clientEdit.ts';
 
@@ -168,9 +165,6 @@ import { TwoFaSetupModule }
 
 import { TwoFaStateModule }
     from './2FAState/twoFAState.ts';
-    
-import { VerifyEmailModule }
-    from './verifyEmail/verifyEmail.ts';
 
 import { WidgetModule } 
     from './widget/widget.ts';
@@ -186,9 +180,6 @@ import { WorksFormModule }
 
 import { WorksModule } 
     from './works/works.ts';
-
-import { WorkSpaceSummaryModule } 
-    from './workspaceSummary/workspaceSummary.ts';
 
 import { WorksPrivacyPreferencesModule } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
@@ -221,7 +212,6 @@ export const orcidApp = angular.module(
         AlertBannerModule.name,
         AllConsortiumContactsModule.name,
         BiographyModule.name,
-        ClaimThanksModule.name,
         ClientEditModule.name,
         DeactivateAccountModule.name,
         DeactivateAccountMessageModule.name,
@@ -267,13 +257,11 @@ export const orcidApp = angular.module(
         SwitchUserModule.name,
         TwoFaStateModule.name,
         TwoFaSetupModule.name,
-        VerifyEmailModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,
         WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
-        WorkSpaceSummaryModule.name,
         WorksPrivacyPreferencesModule.name,
         UnsubscribeModule.name,
         DelegatorsModule.name,
