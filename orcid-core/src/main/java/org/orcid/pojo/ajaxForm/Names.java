@@ -10,34 +10,34 @@ public class Names implements ErrorsInterface, Serializable{
 
 
 	private static final long serialVersionUID = 1L;
-    private Name effective = null;
-    private Name real = null;
+    private NamesForm effective = null;
+    private NamesForm real = null;
     private List<String> errors = new ArrayList<String>();
     
     public static Names valueOf(org.orcid.jaxb.model.v3.rc1.record.Name current, org.orcid.jaxb.model.v3.rc1.record.Name effective) {
     	Names names = new Names();
         if (current != null) {
-        	names.setEffective(Name.valueOf(current)); 
+        	names.setEffective(NamesForm.valueOf(current)); 
         }
         if (effective != null) {
-        	names.setReal(Name.valueOf(effective)); 
+        	names.setReal(NamesForm.valueOf(effective)); 
         }
         return names;
     }
     
-	public Name getEffective() {
+	public NamesForm getEffective() {
 		return this.effective;
 	}
 
-	public void setEffective(Name current) {
+	public void setEffective(NamesForm current) {
 		this.effective = current;
 	}
 
-	public Name getReal() {
+	public NamesForm getReal() {
 		return real;
 	}
 
-	public void setReal(Name real) {
+	public void setReal(NamesForm real) {
 		this.real = real;
 	}
 	public static long getSerialversionuid() {

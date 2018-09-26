@@ -167,8 +167,8 @@
             </div><!--login-->
 
             <div *ngIf="this.isLoggedIn" class="relogin-container">
-                <div><@orcid.msg 'login.reloginalert.youare'/> {{realLoggedInUserName}} ${baseUri}/${realUserOrcid!} 
-                    <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> <@orcid.msg 'login.reloginalert.managing'/> {{effectiveLoggedInUserName}} ${baseUri}/${effectiveUserOrcid!} </ng-container>
+                <div><@orcid.msg 'login.reloginalert.youare'/> <b>{{realLoggedInUserName}} </b> <a target="_blank" href="${baseUri}/${realUserOrcid!}">${baseUri}/${realUserOrcid!}</a>
+                    <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> <@orcid.msg 'login.reloginalert.managing'/> <b>{{effectiveLoggedInUserName}} </b> <a target="_blank" href="${baseUri}/${effectiveUserOrcid!}">${baseUri}/${effectiveUserOrcid!}</a> </ng-container>
                 </div>
                 <div class="menu-area"> 
                 <a href="<@orcid.rootPath "/my-orcid" />"><div class="btn btn-primary"><@orcid.msg 'login.reloginalert.continue'/></div></a>

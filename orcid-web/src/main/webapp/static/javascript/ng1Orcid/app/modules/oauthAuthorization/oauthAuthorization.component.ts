@@ -94,12 +94,14 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     loadTime: any;
     generalRegistrationError: any;
     //registration form togglz features    
-    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
+    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');
+    togglzReLoginAlert: boolean = this.featuresService.isFeatureEnabled('RE_LOGGIN_ALERT');    
     initReactivationRequest: any;
     nameFormUrl: string;
     realLoggedInUserName: string;
     effectiveLoggedInUserName: string;
     isLoggedIn: boolean;    
+    
     constructor(
         private zone:NgZone,
         private cdr:ChangeDetectorRef,
@@ -735,6 +737,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             }
         );
 
+        if (this.togglzReLoginAlert) {
+
         this.nameService.getData(this.nameFormUrl).subscribe(response => {
             this.isLoggedIn = true;
             if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
@@ -751,8 +755,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 this.effectiveLoggedInUserName += response.effective.familyName.value ? response.effective.familyName.value : "";
                 this.isLoggedIn == true;
             }     
-    }, (error) => {
-        this.isLoggedIn = false;
-    })
+            }, (error) => {
+                this.isLoggedIn = false;
+            })
+        }
+
     };
 }

@@ -5,6 +5,9 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
+	
+    @Label("Shows an alert message when a user goes to /signin and is already signed in\n")
+    RE_LOGGIN_ALERT,
 
     @Label("Affiliation org ID in UI")
     AFFILIATION_ORG_ID,
@@ -104,6 +107,7 @@ public enum Features implements Feature {
     
     @Label("Grouping suggestions")
     GROUPING_SUGGESTIONS;
+    
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

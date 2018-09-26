@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
@@ -56,7 +56,7 @@ public class LoginController extends OauthControllerBase {
     protected EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource(name = "recordNameManagerV3")
-    private RecordNameManager recordNameManager;
+    private RecordNameManagerReadOnly recordNameManager;
     
     
     @ModelAttribute("yesNo")
@@ -236,7 +236,7 @@ public class LoginController extends OauthControllerBase {
         }
         
         mav.addObject("showLogin", String.valueOf(showLogin));
-        mav.addObject("hideUserVoiceScript", true);
+        mav.addObject("hideSupportWidget", true);
         mav.addObject("oauth2Screens", true);
         mav.addObject("oauthRequest", true);
         return mav;
