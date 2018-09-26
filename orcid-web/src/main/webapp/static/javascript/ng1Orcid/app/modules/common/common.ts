@@ -151,6 +151,9 @@ import { OauthService }
 import { PasswordService }
     from '../../shared/password.service.ts';
 
+import { PeerReviewService }
+    from '../../shared/peerReview.service.ts';
+
 import { PreferencesService }
     from '../../shared/preferences.service.ts';
 
@@ -275,6 +278,7 @@ import { ResendClaimService }
             NotificationsService,
             OauthService,
             PasswordService,
+            PeerReviewService,
             PreferencesService,
             ReactivationService,
             ResearchResourceService,

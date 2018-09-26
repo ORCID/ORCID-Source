@@ -1,6 +1,6 @@
 # Write, update and personal identifiers
 
-This tutorial goes over editing information in the other IDs section of the person information on an ORCID record. Personal identifiers are intended to record unique, persistent identifiers that represent the researcher and link to an exteranl system. Examples of personal identifiers include: ISNIs, Scopus Author IDs, Researchers IDs, Loop profiles, and other local identifiers that resolve to a resource about the researcher.
+This tutorial goes over editing information in the other IDs section of the person information on an ORCID record. Personal identifiers are intended to record unique, persistent identifiers that represent the researcher and link to an external system. Examples of personal identifiers include: ISNIs, Scopus Author IDs, Researchers IDs, Loop profiles, and other local identifiers that resolve to a resource about the researcher.
 
 These calls can be used with Member API credentials on sandbox or the production servers.
 

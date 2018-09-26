@@ -213,10 +213,6 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 	
-	<bean id="groupingSuggestionManager" class="org.orcid.core.manager.impl.GroupingSuggestionManagerImpl">
-	   <property name="groupingSuggestionDao" ref="groupingSuggestionDao" />
-	</bean>
-
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl">
 		<property name="emailDao" ref="emailDao" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
@@ -444,12 +440,11 @@
     </bean>
     
     <bean id="groupingSuggestionManagerV3" class="org.orcid.core.manager.v3.impl.GroupingSuggestionManagerImpl">
-       <property name="groupingSuggestionDao" ref="groupingSuggestionDao" />
-       <property name="workDao" ref="workDaoReadOnly" />
+       <property name="rejectedGroupingSuggestionDao" ref="rejectedGroupingSuggestionDao" />
     </bean>
 
     <bean id="groupingSuggestionManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.GroupingSuggestionManagerReadOnlyImpl">
-       <property name="groupingSuggestionDao" ref="groupingSuggestionDaoReadOnly" />
+        <property name="rejectedGroupingSuggestionDao" ref="rejectedGroupingSuggestionDaoReadOnly" />
     </bean>
 	
 	<bean id="orcidIdentifierUtils" class="org.orcid.core.utils.v3.OrcidIdentifierUtils" />
@@ -1277,6 +1272,14 @@
         <property name="maxMegaBytesOnDisk" value="256" />
     </bean>
     
+    <bean id="groupingSuggestionsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="grouping-suggestions" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="500" />
+        <property name="timeToIdleSeconds" value="3600" />
+        <property name="maxMegaBytesOnDisk" value="256" />
+    </bean>
+    
     <bean id="affiliationGroupsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="affiliations-group" />
         <property name="cacheManager" ref="coreCacheManager" />
@@ -1587,6 +1590,8 @@
 	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		
 	<bean id="worksCacheManager" class="org.orcid.core.manager.v3.impl.WorksCacheManagerImpl" />
+	
+	<bean id="groupingSuggestionsCacheManager" class="org.orcid.core.manager.v3.impl.GroupingSuggestionsCacheManagerImpl" />
 	
 	<bean id="groupedWorksGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="groupedWorksCache" />

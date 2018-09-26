@@ -73,11 +73,8 @@
         <#include "/includes/ng2_templates/works-ng2-template.ftl">
         <works-ng2></works-ng2>
         <!--Peer review-->
-        <div ng-controller="PeerReviewCtrl">
-          <div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
-            <#include "workspace_peer_review_body_list.ftl"/>
-          </div>
-        </div>
+        <#include "/includes/ng2_templates/peer-review-ng2-template.ftl">
+        <peer-review-ng2 publicView="false"></peer-review-ng2>
       </div>
     </div>
   </div>    
@@ -132,6 +129,11 @@
 <modalngcomponent elementHeight="700" elementId="modalFundingForm" elementWidth="800">
   <funding-form-ng2></funding-form-ng2>
 </modalngcomponent>
+
+<#include "/includes/ng2_templates/peer-review-delete-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalPeerReviewDelete" elementWidth="300">
+    <peer-review-delete-ng2></peer-review-delete-ng2>
+</modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/research-resource-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalResearchResourceDelete" elementWidth="300">
