@@ -1,18 +1,8 @@
 <@protected nav="record">
 <#escape x as x?html>
 <#include "/includes/ng2_templates/my-orcid-alerts-ng2-template.ftl">
-<my-orcid-alerts-ng2></my-orcid-alerts-ng2>
+<my-orcid-alerts-ng2 checkEmailValidated=${(Session.CHECK_EMAIL_VALIDATED?c)!} inDelegationMode=${(inDelegationMode?c)!}></my-orcid-alerts-ng2>
 <div class="row workspace-top public-profile">
-  <#-- hidden divs that trigger angular -->
-  <#if RequestParameters['recordClaimed']??>
-  <#elseif !Session.CHECK_EMAIL_VALIDATED?exists && !inDelegationMode>
-    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-      <verify-email-ng2></verify-email-ng2>
-    </@orcid.checkFeatureStatus>
-    <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>  
-      <div ng-controller="VerifyEmailCtrl" style="display: hidden;" orcid-loading="{{loading}}"></div>
-    </@orcid.checkFeatureStatus> 
-  </#if>
   <!--Left col-->
   <div class="col-md-3 lhs left-aside">
     <div class="workspace-profile">
@@ -58,18 +48,6 @@
         </div>
       </div>                
       </#if>
-      <@orcid.checkFeatureStatus 'ANGULAR2_QA'> 
-        <work-summary-ng2></work-summary-ng2>
-      </@orcid.checkFeatureStatus>         
-      <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-        <div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
-          <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
-            <strong><@orcid.msg 'workspace.addinformationaboutyou_1'/>
-                <a href="<@orcid.msg 'common.kb_uri_default'/>360006896894" target="get_started" style="word-break: normal;"><@orcid.msg 'workspace.addinformationaboutyou_2'/></a>
-            <@orcid.msg 'workspace.addinformationaboutyou_3'/></strong>
-          </div>                
-        </div>
-      </@orcid.checkFeatureStatus>  
       <div class="workspace-accordion" id="workspace-accordion">
         <!-- Notification alert -->                       
         <#include "includes/notification_alert.ftl"/>             
@@ -105,172 +83,6 @@
   </div>    
 </div>
 </#escape>
-
-<script type="text/ng-template" id="verify-email-modal">  
-  <div class="lightbox-container"> 
-    <div class="row">
-      <div class="col-md-12 col-xs-12 col-sm-12" ng-if="verifiedModalEnabled">
-        <!-- New -->
-        <h4><@orcid.msg 'workspace.your_primary_email_new'/></h4>
-        <p><@orcid.msg 'workspace.ensure_future_access1'/></p>
-        <p><@orcid.msg 'workspace.ensure_future_access2'/> <strong>{{primaryEmail}}</strong></p>
-        <p><@orcid.msg 'workspace.ensure_future_access3'/> <a target="workspace.ensure_future_access4" href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/> <a target="workspace.link.email.support" href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
-        <div class="topBuffer">
-          <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_new'/></button>        
-          <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
-        </div>
-      </div>
-
-      <div class="col-md-12 col-xs-12 col-sm-12" ng-if="!verifiedModalEnabled">
-        <!-- Original -->
-        <h4><@orcid.msg 'workspace.your_primary_email'/></h4>
-        <p><@orcid.msg 'workspace.ensure_future_access'/></p>
-        <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></button>        
-        <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
-      </div>
-    </div>
-  </div>
-</script>
-
-<script type="text/ng-template" id="combine-work-template">
-  <div class="lightbox-container">
-    <div class="row combine-work">
-      <div class="col-md-12 col-xs-12 col-sm-12">
-        <h3>Selected work "{{combineWork.title.value}}"       
-          <span ng-if="hasCombineableEIs(combineWork)">
-            (<span ng-repeat='ie in combineWork.workExternalIdentifiers'>
-              <span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
-            </span>)
-          </span>       
-        </h3>
-        <p>Combine with (select one):</p>
-        <ul class="list-group">
-          <li class="list-group-item" ng-repeat="group in worksSrvc.groups | orderBy:sortState.predicate:sortState.reverse" ng-if="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
-            <strong>{{group.getDefault().title.value}}</strong>
-            <a ng-click="combined(combineWork,group.getDefault())" class="btn btn-primary pull-right bottomBuffer">Combine</a>
-
-          </li>           
-        </ul>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12 col-xs-12 col-sm-12">
-        <button class="btn close-button pull-right" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></button>
-      </div>
-    </div>
-  </div>
-</script>
-
-<script type="text/ng-template" id="verify-email-modal-sent">
-  <div class="lightbox-container">
-    <div class="row">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <h4><@orcid.msg 'manage.email.verificationEmail'/> {{emailsPojo.emails[0].value}}</h4>
-        <@orcid.msg 'workspace.check_your_email'/><br />
-        <br />
-        <button class="btn btn-white-no-border" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></button>
-      </div>
-    </div>
-  </div>
-</script>
-
-<script type="text/ng-template" id="delete-external-id-modal">
-    <div class="lightbox-container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
-                <button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'freemarker.btnDelete'/></button> 
-                <a ng-click="closeEditModal()"><@orcid.msg 'freemarker.btncancel'/></a>
-            </div>
-        </div>
-    </div> 
-</script>
-
-<script type="text/ng-template" id="import-wizard-modal">
-  <#if ((workImportWizards)??)>   
-  <div id="third-parties">
-    <div class="ie7fix-inner">
-      <div class="row"> 
-        <div class="col-md-12 col-sm-12 col-xs-12">         
-          <a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-          <h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.link_works'/></h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="justify">
-            <p><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
-          </div>                                
-          <#list workImportWizards?sort_by("displayName") as thirdPartyDetails>
-          <#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-          <#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-          <strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
-          <div class="justify">
-            <p>
-              ${(thirdPartyDetails.shortDescription)!}
-            </p>
-          </div>
-          <#if (thirdPartyDetails_has_next)>
-          <hr/>
-          </#if>
-          </#list>
-        </div>
-      </div>                 
-      <div class="row footer">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <p>
-            <strong><@orcid.msg 'workspace.LinkResearchActivities.footer.title'/></strong>      
-            <@orcid.msg 'workspace.LinkResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivities.footer.description2'/>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  </#if>
-</script>
-
-<script type="text/ng-template" id="import-funding-modal">
-  <#if ((fundingImportWizards)??)>    
-  <div id="third-parties">
-    <div class="ie7fix-inner">
-      <div class="row"> 
-        <div class="col-md-12 col-sm-12 col-xs-12">         
-          <a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-          <h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.link_funding'/></h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="justify">
-            <p><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
-          </div>                                
-          <#list fundingImportWizards?sort_by("name") as thirdPartyDetails>
-          <#assign redirect = (thirdPartyDetails.redirectUri) >
-          <#assign predefScopes = (thirdPartyDetails.scopes) >
-          <strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.id}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.name}</a></strong><br />
-          <div class="justify">
-            <p>
-              ${(thirdPartyDetails.description)!}
-            </p>
-          </div>
-          <#if (thirdPartyDetails_has_next)>
-          <hr/>
-          </#if>
-          </#list>
-        </div>
-      </div>                 
-      <div class="row footer">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <p>
-            <strong><@orcid.msg 'workspace.LinkResearchActivities.footer.title'/></strong>      
-            <@orcid.msg 'workspace.LinkResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivities.footer.description2'/>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  </#if>
-</script>
 
 <#include "/includes/ng2_templates/email-verification-sent-messsage-ng2-template.ftl">
 <modalngcomponent elementHeight="248" elementId="emailSentConfirmation" elementWidth="500">
