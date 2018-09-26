@@ -1,4 +1,5 @@
 <script type="text/ng-template" id="my-orcid-alerts-ng2-template">
+    <!--If user just registered-->
     <#if justRegistered?? && justRegistered>
       <div class="alert alert-success">
           <strong>
@@ -13,6 +14,7 @@
           </strong>
       </div>
     </#if>
+    <!--If user verified an email-->
     <#if emailVerified?? && emailVerified>
       <div class="alert alert-success">
           <strong>
@@ -30,10 +32,12 @@
           </strong>
       </div>
     </#if>
+    <!--If admin user tried to switch to an invalid ORCID ID-->
     <#if invalidOrcid?? && invalidOrcid>
       <div class="alert alert-success">
           <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
       </div>
     </#if>
     <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
+    <#include "/includes/ng2_templates/verify-email-ng2-template.ftl">
 </script>
