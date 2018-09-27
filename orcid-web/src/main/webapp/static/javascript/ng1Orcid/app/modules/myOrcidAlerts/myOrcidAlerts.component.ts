@@ -10,6 +10,9 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
+import { AccountService } 
+    from '../../shared/account.service.ts';
+
 import { EmailService } 
     from '../../shared/email.service.ts';
 
@@ -39,6 +42,7 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
     manualEditVerificationFeatureEnabled = this.featuresService.isFeatureEnabled('EMAIL_VERIFICATION_MANUAL_EDIT');
 
     constructor(
+        private accountService: AccountService,
         private elementRef: ElementRef,
         private emailService: EmailService,
         private featuresService: FeaturesService,
@@ -53,6 +57,20 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
     }
 
     close(id: string): void {
+        if (id=='verify-email-modal'){
+            this.accountService.delayVerifyEmail()
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+     
+                },
+                error => {
+                    //console.log('getWebsitesFormError', error);
+                } 
+            );
+        }
         this.genericService.close(id);
     }
 
@@ -108,7 +126,6 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
             } 
         );
         this.close('verify-email-modal');
-        this.modalService.notifyOther({action:'close', moduleId: 'modalemailunverified'});
         this.modalService.notifyOther({action:'open', moduleId: 'emailSentConfirmation'});
     }
 
