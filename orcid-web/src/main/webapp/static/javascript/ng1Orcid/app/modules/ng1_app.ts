@@ -112,9 +112,6 @@ import { PeerReviewDeleteModule }
 import { PersonModule } 
     from './person/person.ts';
 
-import { PersonalInfoModule } 
-    from './personalInfo/personalInfo.ts';
-
 import { PrintRecordModule } 
     from './printRecord/printRecord.ts';
 
@@ -244,7 +241,6 @@ export const orcidApp = angular.module(
         PeerReviewModule.name,
         PeerReviewDeleteModule.name,
         PersonModule.name,
-        PersonalInfoModule.name,
         PrintRecordModule.name,
         PublicEduAffiliationModule.name,
         NotificationsModule.name,

@@ -136,14 +136,6 @@
         <!-- NG2: Under development -->
         <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
         <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
-    
-
-        <!-- Probably this one wont be needed -->
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") 
-            || springMacroRequestContext.requestUri?contains("/print")
-            || (isPublicProfile??)>
-            <#include "/includes/ng2_templates/personal-info-ng2-template.ftl">
-        </#if>
     </@orcid.checkFeatureStatus> 
  
         <#if springMacroRequestContext.requestUri?contains("/social") ||  springMacroRequestContext.requestUri?contains("/shibboleth/signin") || (RequestParameters['linkRequest'])??>

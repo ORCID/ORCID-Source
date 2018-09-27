@@ -125,9 +125,6 @@ import { PeerReviewDeleteNg2Module }
 import { PersonNg2Module } 
     from './person/person.ts';
 
-import { PersonalInfoNg2Module } 
-    from './personalInfo/personalInfo.ts';
-
 import { PrintRecordNg2Module } 
     from './printRecord/printRecord.ts';
 
@@ -349,7 +346,6 @@ export class RootCmp {
         PeerReviewNg2Module,
         PeerReviewDeleteNg2Module,
         PersonNg2Module,
-        PersonalInfoNg2Module,
         PrintRecordNg2Module,
         PublicEduAffiliationNg2Module,
         SecurityQuestionEditNg2Module,

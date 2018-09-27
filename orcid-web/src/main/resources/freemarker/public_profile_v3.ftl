@@ -310,10 +310,6 @@
     </div>
     
     <div class="col-md-9 right-aside">
-        <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-        <personal-info-ng2></personal-info-ng2>
-        </@orcid.checkFeatureStatus>
-        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
             <div class="workspace-inner-public workspace-public workspace-accordion">
                 <#if (isProfileEmpty)?? && isProfileEmpty>
@@ -343,7 +339,6 @@
                 </@orcid.checkFeatureStatus>                   
             </div>
         </div>
-        </@orcid.checkFeatureStatus>
     </div>
 </div>
 </#escape>
