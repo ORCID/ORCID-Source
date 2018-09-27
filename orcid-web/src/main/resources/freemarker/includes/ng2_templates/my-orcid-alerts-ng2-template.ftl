@@ -39,5 +39,4 @@
       </div>
     </#if>
     <#include "/includes/ng2_templates/claim-thanks-ng2-template.ftl">
-    <#include "/includes/ng2_templates/verify-email-ng2-template.ftl">
 </script>
