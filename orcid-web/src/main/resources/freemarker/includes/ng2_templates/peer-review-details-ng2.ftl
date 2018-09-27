@@ -14,7 +14,7 @@
                         <!-- Privacy -->
                         <li>
                             <@orcid.privacyToggle2Ng2 angularModel="group.peerReviewDuplicateGroups[0].peerReviews[0].visibility.visibility"
-                            elementId="group.activePutCode" 
+                            elementId="group.groupId" 
                             questionClick=""
                             clickedClassCheck="{'popover-help-container-show':privacyHelp[group.peerReviewDuplicateGroups[0].peerReviews[0].putCode.value]==true}"
                             publicClick="setGroupPrivacy(group, 'PUBLIC', $event)"
