@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.GroupingSuggestionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -76,9 +75,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Resource
     private LocaleManager localeManager;
-    
-    @Resource
-    private GroupingSuggestionManager groupingSuggestionManager;
     
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
@@ -354,7 +350,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     private void generateGroupingSuggestions(String orcid, Work updatedWork) {
         List<WorkSummary> summaries = getWorksSummaryList(orcid);
         Works groupedWorks = groupWorks(summaries, true);
-        groupingSuggestionManager.generateGroupingSuggestionsForProfile(orcid, updatedWork, groupedWorks);
     }
 
     @Override

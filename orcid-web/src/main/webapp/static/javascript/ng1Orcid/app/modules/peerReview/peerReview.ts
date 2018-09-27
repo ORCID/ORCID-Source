@@ -7,45 +7,45 @@ import { Directive, NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-//User generated
-import { EmailEditComponent } 
-    from './emailEdit.component.ts';
+//User generated components
+import { PeerReviewComponent } 
+    from './peerReview.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';
 
 // This is the Angular 1 part of the module
-export const EmailEditModule = angular.module(
-    'EmailEditModule', 
+export const PeerReviewModule = angular.module(
+    'PeerReviewModule', 
     []
 );
 
 // This is the Angular 2 part of the module
 @NgModule(
     {
-        imports: [
-            CommonNg2Module
-        ],
         declarations: [ 
-            EmailEditComponent
+            PeerReviewComponent
         ],
         entryComponents: [ 
-            EmailEditComponent 
+            PeerReviewComponent 
+        ],
+        imports: [
+            CommonNg2Module
         ],
         providers: [
             
         ]
     }
 )
-export class EmailEditNg2Module {}
+export class PeerReviewNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-EmailEditModule.directive(
-    'emailEditNg2', 
+PeerReviewModule.directive(
+    'peerReviewNg2', 
     <any>downgradeComponent(
         {
-            component: EmailEditComponent,
+            component: PeerReviewComponent,
         }
     )
 );

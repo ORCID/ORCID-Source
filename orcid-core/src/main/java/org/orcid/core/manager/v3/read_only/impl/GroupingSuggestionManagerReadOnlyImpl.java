@@ -1,38 +1,44 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
-import org.orcid.core.adapter.jsonidentifier.JSONWorkPutCodes;
+import javax.annotation.Resource;
+
+import org.orcid.core.manager.v3.GroupingSuggestionsCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.JsonUtils;
-import org.orcid.persistence.dao.GroupingSuggestionDao;
-import org.orcid.persistence.jpa.entities.GroupingSuggestionEntity;
+import org.orcid.persistence.dao.RejectedGroupingSuggestionDao;
+import org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
 public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestionManagerReadOnly {
 
-    protected GroupingSuggestionDao groupingSuggestionDao;
+    protected RejectedGroupingSuggestionDao rejectedGroupingSuggestionDao;
+
+    @Resource
+    private GroupingSuggestionsCacheManager groupingSuggestionsCacheManager;
 
     @Override
     public WorkGroupingSuggestion getGroupingSuggestion(String orcid) {
         if (!Features.GROUPING_SUGGESTIONS.isActive()) {
             return null;
         }
-        
-        GroupingSuggestionEntity suggestionEntity = groupingSuggestionDao.getNextGroupingSuggestion(orcid);
-        if (suggestionEntity != null) {
-            WorkGroupingSuggestion suggestionPojo = new WorkGroupingSuggestion();
-            JSONWorkPutCodes putCodes = JsonUtils.readObjectFromJsonString(suggestionEntity.getWorkPutCodes(), JSONWorkPutCodes.class);
-            suggestionPojo.setId(suggestionEntity.getId());
-            suggestionPojo.setOrcid(orcid);
-            suggestionPojo.setPutCodes(putCodes);
-            return suggestionPojo;
-        } else {
-            return null;
+
+        WorkGroupingSuggestion suggestion = groupingSuggestionsCacheManager.getGroupingSuggestion(orcid);
+        if (suggestion != null) {
+            RejectedGroupingSuggestionEntity rejection = rejectedGroupingSuggestionDao.findGroupingSuggestionIdAndOrcid(suggestion.getOrcid(),
+                    suggestion.getPutCodesAsString());
+            while (rejection != null) {
+                suggestion = groupingSuggestionsCacheManager.getGroupingSuggestion(orcid);
+                if (suggestion == null) {
+                    return null;
+                }
+                rejection = rejectedGroupingSuggestionDao.findGroupingSuggestionIdAndOrcid(suggestion.getOrcid(), suggestion.getPutCodesAsString());
+            }
         }
+        return suggestion;
     }
 
-    public void setGroupingSuggestionDao(GroupingSuggestionDao groupingSuggestionDao) {
-        this.groupingSuggestionDao = groupingSuggestionDao;
+    public void setRejectedGroupingSuggestionDao(RejectedGroupingSuggestionDao rejectedGroupingSuggestionDao) {
+        this.rejectedGroupingSuggestionDao = rejectedGroupingSuggestionDao;
     }
 
 }

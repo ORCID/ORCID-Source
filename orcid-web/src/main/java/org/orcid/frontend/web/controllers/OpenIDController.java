@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -84,7 +87,7 @@ public class OpenIDController {
                 }
             }            
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new OpenIDConnectUserInfoAccessDenied());
     }
     
     /** Expose the openid discovery information
@@ -99,5 +102,16 @@ public class OpenIDController {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(openIDConnectDiscoveryService.getConfig());
         return json;     
+    }
+    
+
+    @JsonInclude(Include.NON_NULL) 
+    public static class OpenIDConnectUserInfoAccessDenied extends OpenIDConnectUserInfo{
+        String error = "access_denied";
+        @JsonProperty("error-description")
+        String errorDescription="access_token is invalid";
+        OpenIDConnectUserInfoAccessDenied(){
+            
+        }
     }
 }
