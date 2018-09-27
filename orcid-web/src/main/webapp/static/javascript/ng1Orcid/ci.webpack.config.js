@@ -1,9 +1,10 @@
 var webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     context: __dirname + "/",
     entry: "./require.js",
-    mode: 'development',
+    mode: 'production',
     module: {
         rules: [
             {
@@ -19,6 +20,19 @@ module.exports = {
     output: {
         path: __dirname + '/',
         filename: "angular_orcid_generated.js"
+    },
+    optimization: {
+        minimizer: [
+          new UglifyJsPlugin({
+            uglifyOptions: {
+                mangle: false,
+                compress: true,
+                comments: false
+
+            }
+            
+          })
+        ]
     },
     plugins: [
         function()
