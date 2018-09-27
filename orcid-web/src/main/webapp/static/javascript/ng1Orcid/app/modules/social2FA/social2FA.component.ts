@@ -86,12 +86,9 @@ export class Social2FAComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     submitCode(): void {
-        alert("hello there");
         if (this.shib) {
-            console.log("shibboleth submission!!!");
             this.submitShib2FA();
         } else {
-            console.log("social submisssion");
             this.submitSocial2FA();
         }
     };
