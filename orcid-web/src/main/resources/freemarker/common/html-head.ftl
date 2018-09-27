@@ -49,8 +49,7 @@
         orcidVar.emailToReactivate = '${(email)!}';
         orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
-        orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
-        orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
+        orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};       
         orcidVar.features = JSON.parse("${featuresJson}");
         orcidVar.providerId = '${(providerId)!}';
         
@@ -102,7 +101,7 @@
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     
     <#if springMacroRequestContext.requestUri?contains("/print")>
-    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>
+        <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>
     </#if>
 
     <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css"/>
