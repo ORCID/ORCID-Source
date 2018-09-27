@@ -1,7 +1,7 @@
 <@protected nav="record">
 <#escape x as x?html>
 <#include "/includes/ng2_templates/my-orcid-alerts-ng2-template.ftl">
-<my-orcid-alerts-ng2 checkEmailValidated=${(Session.CHECK_EMAIL_VALIDATED?c)!} inDelegationMode=${(inDelegationMode?c)!}></my-orcid-alerts-ng2>
+<my-orcid-alerts-ng2 checkEmailValidated=${(Session.CHECK_EMAIL_VALIDATED?exists?c)!} inDelegationMode=${(inDelegationMode?c)!}></my-orcid-alerts-ng2>
 <div class="row workspace-top public-profile">
   <!--Left col-->
   <div class="col-md-3 lhs left-aside">
