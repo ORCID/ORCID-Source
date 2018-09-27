@@ -216,7 +216,12 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/reactivate-profile", method = RequestMethod.GET)
-    public @ResponseBody ProfileDetails reactivateOrcidAccount(@RequestParam("orcid") String orcid, @RequestParam("email") String email) {        
+    public @ResponseBody ProfileDetails reactivateOrcidAccount(@RequestBody ProfileDetails profileDetails) {
+        profileDetails.setErrors(new ArrayList<String>());
+        
+        String email = profileDetails.getEmail();
+        String orcid = profileDetails.getOrcid();
+        
         ProfileEntity toReactivate = null;
         
         try {
@@ -225,32 +230,31 @@ public class AdminController extends BaseController {
             
         }
         
-        ProfileDetails result = new ProfileDetails();
         if (toReactivate == null)
-            result.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
+            profileDetails.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
         else if (toReactivate.getDeactivationDate() == null)
-            result.getErrors().add(getMessage("admin.profile_reactivation.errors.already_active"));
+            profileDetails.getErrors().add(getMessage("admin.profile_reactivation.errors.already_active"));
         else if (toReactivate.getDeprecatedDate() != null)
-            result.getErrors().add(getMessage("admin.errors.deprecated_account"));
+            profileDetails.getErrors().add(getMessage("admin.errors.deprecated_account"));
         else if (PojoUtil.isEmpty(email) || !validateEmailAddress(email))
-            result.getErrors().add(getMessage("admin.errors.deactivated_account.primary_email_required"));
+            profileDetails.getErrors().add(getMessage("admin.errors.deactivated_account.primary_email_required"));
         else {
             try {
                 if(!emailManagerReadOnly.emailExists(email)) {
-                    result.getErrors().add(getMessage("admin.errors.unexisting_email"));
+                    profileDetails.getErrors().add(getMessage("admin.errors.unexisting_email"));
                 } else {
                     String orcidId = emailManager.findOrcidIdByEmail(email);
                     if(!orcidId.equals(orcid)) {
-                        result.getErrors().add(getMessage("admin.errors.deactivated_account.orcid_id_dont_match", orcidId));
+                        profileDetails.getErrors().add(getMessage("admin.errors.deactivated_account.orcid_id_dont_match", orcidId));
                     }
                 }                
             } catch(NoResultException nre) {
                 // Don't do nothing, the email doesn't exists
             }
         }
-        if (result.getErrors() == null || result.getErrors().size() == 0)
+        if (profileDetails.getErrors() == null || profileDetails.getErrors().size() == 0)
             profileEntityManager.reactivateRecord(orcid, email);
-        return result;
+        return profileDetails;
     }
 
     @RequestMapping(value = "/find-id.json", method = RequestMethod.POST)

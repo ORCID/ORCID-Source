@@ -253,7 +253,7 @@ public class AdminControllerTest extends BaseControllerTest {
         
         // Test deactivate
         Map<String, Set<String>> result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
-        assertEquals(1, result.get("deactivateSuccessfulList").size());
+        assertEquals(1, result.get("success").size());
 
         ProfileEntity deactivated = profileDao.find("4444-4444-4444-4445");
         assertNotNull(deactivated.getDeactivationDate());
@@ -262,27 +262,32 @@ public class AdminControllerTest extends BaseControllerTest {
 
         // Test try to deactivate an already deactive account
         result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
-        assertEquals(1, result.get("alreadyDeactivatedList").size());
+        assertEquals(1, result.get("alreadyDeactivated").size());
 
         // Test reactivate using an email address that belongs to other record
-        ProfileDetails proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445", "public_0000-0000-0000-0003@test.orcid.org");
+        ProfileDetails proDetails = new ProfileDetails();
+        proDetails.setEmail("public_0000-0000-0000-0003@test.orcid.org");
+        proDetails.setOrcid("4444-4444-4444-4445");
+        proDetails = adminController.reactivateOrcidAccount(proDetails);
         assertEquals(1, proDetails.getErrors().size());
         assertEquals(adminController.getMessage("admin.errors.deactivated_account.orcid_id_dont_match", "0000-0000-0000-0003"), proDetails.getErrors().get(0));
         
         // Test reactivate using empty primary email
-        proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445", "");
+        proDetails.setEmail("");
+        proDetails = adminController.reactivateOrcidAccount(proDetails);
         assertEquals(1, proDetails.getErrors().size());
         assertEquals(adminController.getMessage("admin.errors.deactivated_account.primary_email_required"), proDetails.getErrors().get(0));
         
         // Test reactivate
-        proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445", "andrew@timothy.com");
+        proDetails.setEmail("andrew@timothy.com");
+        proDetails = adminController.reactivateOrcidAccount(proDetails);
         assertEquals(0, proDetails.getErrors().size());
 
         deactivated = profileDao.find("4444-4444-4444-4445");
         assertNull(deactivated.getDeactivationDate());
 
         // Try to reactivate an already active account
-        proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445", "andrew@timothy.com");
+        proDetails = adminController.reactivateOrcidAccount(proDetails);
         assertEquals(1, proDetails.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", new ArrayList<String>()), proDetails.getErrors().get(0));
     }
