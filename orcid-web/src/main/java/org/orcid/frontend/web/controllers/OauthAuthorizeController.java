@@ -93,8 +93,11 @@ public class OauthAuthorizeController extends OauthControllerBase {
             return error;
         } 
         
-        //implicit requests must have nonce.
-        if (request.getParameter(OAuth2Utils.RESPONSE_TYPE).contains("token") && request.getParameter(OrcidOauth2Constants.NONCE) == null) {
+        //implicit id_token requests must have nonce.
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) 
+                && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) 
+                && request.getParameter(OAuth2Utils.RESPONSE_TYPE).contains("id_token") 
+                && request.getParameter(OrcidOauth2Constants.NONCE) == null) {
             String redirectUriWithParams = requestInfoForm.getRedirectUrl(); 
             redirectUriWithParams += "#error=invalid_request ";
             RedirectView rView = new RedirectView(redirectUriWithParams);
