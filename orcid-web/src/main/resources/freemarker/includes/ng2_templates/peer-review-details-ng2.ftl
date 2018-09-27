@@ -94,8 +94,8 @@
                                                         <div class="col-md-3 col-sm-3 col-xs-3">
                                                             <span *ngIf="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span *ngIf="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span *ngIf="peerReview.completionDate.day">-{{peerReview.completionDate.month}}</span>
                                                         </div>
-                                                        <div *ngIf="peerReview?.type?.value" class="col-md-2 col-sm-2 col-xs-2">{{peerReview.type.value}}</div>
-                                                        <div *ngIf="peerReview?.role?.value" class="col-md-3 col-sm-3 col-xs-3">{{peerReview.role.value}}</div>
+                                                        <div *ngIf="peerReview?.type?.value" class="col-md-2 col-sm-2 col-xs-2">{{peerReview.type?.value}}</div>
+                                                        <div *ngIf="peerReview?.role?.value" class="col-md-3 col-sm-3 col-xs-3">{{peerReview.role?.value}}</div>
                                                         <div class="col-md-4 col-sm-4 col-xs-4">    <span class="pull-right"> 
                                                                 <a (click)="showMoreDetails(peerReview.putCode.value,$event)" *ngIf="!showPeerReviewDetails[peerReview.putCode.value]">
                                                                     <span class="glyphicons expand"></span>  
@@ -104,7 +104,7 @@
                                                                 <a (click)="showMoreDetails(peerReview.putCode.value,$event);" *ngIf="showPeerReviewDetails[peerReview.putCode.value]">
                                                                     <span class="glyphicons collapse_top"></span>       <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                                                 </a> | 
-                                                                <a href="{{peerReview.url.value}}" *ngIf="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span *ngIf="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
+                                                                <a href="{{peerReview.url?.value}}" *ngIf="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span *ngIf="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
                                                                  <#if !(isPublicProfile??)>
                                                                     <div (click)="deletePeerReviewConfirm(peerReview)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
                                                                         <div class="popover popover-tooltip top">
@@ -134,16 +134,16 @@
                                                             <span class="workspace-title"><@orcid.msg 'peer_review.convening_organization' />&nbsp;</span>{{peerReviewService.details[peerReview.putCode.value]?.orgName?.value}} ({{peerReviewService.details[peerReview.putCode.value]?.city?.value}}<span *ngIf="peerReviewService.details[peerReview.putCode.value]?.city?.value && peerReviewService.details[peerReview.putCode.value]?.country?.value">,</span> {{peerReviewService.details[peerReview.putCode.value]?.country?.value}})
                                                         </div>
                                                         <div class="col-md-12 info-detail">
-                                                            <div *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectName.value != null">
+                                                            <div *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectName?.value != null">
                                                                 <span class="workspace-title"><@orcid.msg 'peer_review.review_subject'/></span>                                  
-                                                                {{peerReviewService.details[peerReview.putCode.value]?.subjectName.value}} 
-                                                                <span *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectType.value != null">({{peerReviewService.details[peerReview.putCode.value]?.subjectType.value}})
+                                                                {{peerReviewService.details[peerReview.putCode.value]?.subjectName?.value}} 
+                                                                <span *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectType?.value != null">({{peerReviewService.details[peerReview.putCode.value]?.subjectType?.value}})
                                                                 </span>
                                                             </div>
                                                             <div *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectContainerName != null">
-                                                                {{peerReviewService.details[peerReview.putCode.value]?.subjectContainerName.value}}.
+                                                                {{peerReviewService.details[peerReview.putCode.value]?.subjectContainerName?.value}}.
                                                             </div>
-                                                            <div *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectExternalIdentifier.externalIdentifierId.value != null">
+                                                            <div *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectExternalIdentifier?.externalIdentifierId?.value != null">
                                                             <span class="url-popover">
                                                                 <ext-id-popover-ng2 [extID]="peerReviewService.details[peerReview.putCode.value]?.subjectExternalIdentifier" [putCode]="peerReview.putCode+'peerReviewSubject'" [activityType]="'peerReview'"></ext-id-popover-ng2> 
                                                             </span>
