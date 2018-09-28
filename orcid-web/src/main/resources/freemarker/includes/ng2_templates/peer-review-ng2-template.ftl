@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="peer-review-ng2-template">
     <div *ngIf="peerReviewService.groups?.length > 0">
         <!-- PEER REVIEW -->
-        <div class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && peerReviewService.groups.length < 1">
+        <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && peerReviewService.groups.length < 1">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-xs-12">
