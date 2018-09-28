@@ -12,9 +12,6 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
-import { SwitchUserService } 
-    from '../../shared/switchUser.service.ts';
-
 import { AdminActionsService } 
     from '../../shared/adminActions.service.ts';    
 
@@ -97,7 +94,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     ids: string;
     
     constructor(
-        private switchUserService: SwitchUserService,
         private adminActionsService: AdminActionsService,
         private commonSrvc: CommonService
     ) {
@@ -170,7 +166,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     }
     
     switchUser(id): void {
-        this.switchUserService.adminSwitchUserValidate(id)
+        this.adminActionsService.adminSwitchUserValidate(id)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )

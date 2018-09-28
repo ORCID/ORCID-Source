@@ -46,12 +46,6 @@ export class SwitchUserService {
         );        
     };
     
-    adminSwitchUserValidate(id): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/admin-actions/admin-switch-user?orcidOrEmail=' + id
-        );        
-    };
-
     notifyOther(): void {
         this.notify.next();
         console.log('notify');

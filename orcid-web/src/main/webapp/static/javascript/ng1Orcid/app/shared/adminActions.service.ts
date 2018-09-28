@@ -32,6 +32,12 @@ export class AdminActionsService {
         console.log('notify');
     }
 
+    adminSwitchUserValidate( obj ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/admin-actions/admin-switch-user?orcidOrEmail=' + obj
+        );        
+    };
+    
     findIds( obj ): Observable<any> {
         return this.http.post( 
             getBaseUri() + '/admin-actions/find-id.json', 
