@@ -215,7 +215,7 @@ public class AdminController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/reactivate-profile", method = RequestMethod.GET)
+    @RequestMapping(value = "/reactivate-record", method = RequestMethod.POST)
     public @ResponseBody ProfileDetails reactivateOrcidAccount(@RequestBody ProfileDetails profileDetails) {
         profileDetails.setErrors(new ArrayList<String>());
         
@@ -252,8 +252,10 @@ public class AdminController extends BaseController {
                 // Don't do nothing, the email doesn't exists
             }
         }
-        if (profileDetails.getErrors() == null || profileDetails.getErrors().size() == 0)
+        if (profileDetails.getErrors() == null || profileDetails.getErrors().size() == 0) {
             profileEntityManager.reactivateRecord(orcid, email);
+            profileDetails.setStatus(getMessage("admin.success"));
+        }
         return profileDetails;
     }
 
@@ -326,7 +328,7 @@ public class AdminController extends BaseController {
         return builder.toString();
     }
 
-    @RequestMapping(value = "/deactivate-profiles.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/deactivate-records.json", method = RequestMethod.POST)
     public @ResponseBody Map<String, Set<String>> deactivateOrcidAccount(@RequestBody String orcidIds) {
         Set<String> deactivatedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();

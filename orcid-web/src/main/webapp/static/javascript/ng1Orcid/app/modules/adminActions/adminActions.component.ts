@@ -67,8 +67,14 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     deprecateRecordParams: any;
     
     // Deactivate record
+    showDeactivateRecord: boolean;
     idsToDeactivate: string;
     deactivateResults: any;
+    
+    // Reactivate record
+    showReactivateRecord: boolean;
+    showReactivateRecordConfirm: boolean;
+    elementToReactivate: any;
         
     constructor(
         private switchUserService: SwitchUserService,
@@ -101,8 +107,13 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showDeprecateRecordConfirm = false;
         this.deprecateRecordParams = {deprecatedAccount : {errors: [], orcid:''}, primaryAccount : {errors: [], orcid:''}, errors: []};
     
+        this.showDeactivateRecord = false;
         this.idsToDeactivate = '';
         this.deactivateResults = {};
+        
+        this.showReactivateRecord =  false;
+        this.showReactivateRecordConfirm = false;
+        this.elementToReactivate = {errors: [], orcid:'', email:''};
     }    
 
     switchUser(id): void {
@@ -298,6 +309,27 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('admin: deactivateRecord error', error);
             } 
         ); 
+    };
+    
+    reactivateRecord(): void {
+        this.adminActionsService.reactivateRecord( this.elementToReactivate )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.elementToReactivate = data; 
+                this.showReactivateRecordConfirm = false;                
+            },
+            error => {
+                console.log('admin: reactivateRecord error', error);
+            } 
+        );
+    };
+    
+    reactivateRecordReset(): void {
+        this.showReactivateRecordConfirm = false;
+        this.elementToReactivate = {errors: [], orcid:'', email:''};
     };
     
     //Default init functions provided by Angular Core

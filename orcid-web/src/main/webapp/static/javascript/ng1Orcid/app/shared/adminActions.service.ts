@@ -90,8 +90,16 @@ export class AdminActionsService {
     
     deactivateRecord( obj ): Observable<any> {
         return this.http.post( 
-                getBaseUri() + '/admin-actions/deactivate-profiles.json', 
+                getBaseUri() + '/admin-actions/deactivate-records.json', 
                 encodeURI(obj), 
+                { headers: this.headers }
+        )        
+    };
+    
+    reactivateRecord( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/reactivate-record.json', 
+                JSON.stringify(obj), 
                 { headers: this.headers }
         )        
     };

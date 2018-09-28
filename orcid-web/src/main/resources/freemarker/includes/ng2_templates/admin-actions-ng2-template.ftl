@@ -280,24 +280,29 @@
         <a *ngIf="showReactivateRecord" (click)="showReactivateRecord = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.profile_reactivation' /></a>
         <a *ngIf="!showReactivateRecord" (click)="showReactivateRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.profile_reactivation' /></a>
     </p>
-    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showReactivateRecord">
-    
-    
-        <div class="alert alert-success" *ngIf=" > 0"><@spring.message "admin.profile_deactivation.not_found"/>
-            <br>{{deactivateResults.notFoundList}}
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showReactivateRecord">    
+        <div class="form-group">
+            <label for="orcidId"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
+            <input type="text" id="orcidId" (keyup.enter)="reactivateRecord()" [(ngModel)]="elementToReactivate.orcid" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
         </div>
         <div class="form-group">
-            <label for="orcidIds"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-            <input type="text" id="orcidIds" (keyup.enter)="deactivateRecord()" [(ngModel)]="idsToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
+            <label for="email"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
+            <input type="text" id="email" (keyup.enter)="reactivateRecord()" [(ngModel)]="elementToReactivate.email" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.primary_email' />" class="input-xlarge" />
         </div>
-        <div class="form-group">
-            <label for="orcidIds"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-            <input type="text" id="orcidIds" (keyup.enter)="deactivateRecord()" [(ngModel)]="idsToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
+        <div *ngIf="elementToReactivate.errors?.length > 0">
+            <span class="orcid-error" *ngFor='let error of elementToReactivate.errors' [innerHTML]="error"></span><br />
         </div>
-        <div class="controls save-btns pull-left">
-            <span id="deactivate-btn" (click)="deactivateRecord()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>                       
+        <div *ngIf="elementToReactivate.status != null && elementToReactivate.status != ''">
+            <span class="orcid-error">{{elementToReactivate.status}}</span><br />
         </div>
-    
+        <div class="controls save-btns pull-left" *ngIf="!showReactivateRecordConfirm">
+            <span id="deactivate-btn" (click)="showReactivateRecordConfirm = true" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>                       
+        </div>
+        <div class="controls save-btns pull-left" *ngIf="showReactivateRecordConfirm">
+            <label class="orcid-error"><@orcid.msg 'admin.profile_reactivation.confirm.message'/> {{elementToReactivate.orcid}}?</label><br>
+            <span (click)="reactivateRecord()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>&nbsp; 
+            <a href="" class="cancel-action" (click)="showReactivateRecordConfirm = false" (click)="resetPasswordParams.orcidOrEmail = ''" (click)="resetPasswordParams.password = ''" (click)="showResetPassword = false"><@orcid.msg 'freemarker.btncancel'/></a>
+        </div> 
     
     
     </div>
