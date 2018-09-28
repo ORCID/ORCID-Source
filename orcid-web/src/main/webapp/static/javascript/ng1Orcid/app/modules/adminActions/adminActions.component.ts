@@ -86,7 +86,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showUnlockRecord: boolean;
     idsToUnlock: string;
     unlockResults: any;
-    
+
     constructor(
         private switchUserService: SwitchUserService,
         private adminActionsService: AdminActionsService,
@@ -132,6 +132,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         
         this.showUnlockRecord = false;
         this.idsToUnlock = '';
+        this.unlockResults = {};
         
         this.getLockReasons();
     }    
@@ -381,7 +382,22 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('admin: lockRecords error', error);
             } 
         );
-    }
+    };
+    
+    unlockRecords(): void {
+        this.adminActionsService.unlockRecords( this.idsToUnlock )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.unlockResults = data;                              
+            },
+            error => {
+                console.log('admin: lockRecords error', error);
+            } 
+        );
+    };
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

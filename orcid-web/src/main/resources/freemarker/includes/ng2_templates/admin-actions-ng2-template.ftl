@@ -339,7 +339,6 @@
     </div>
 </div>
 
-
 <!-- Unlock record -->
 <div class="workspace-accordion-item" id="unlock-record">
     <p>
@@ -347,7 +346,22 @@
         <a *ngIf="!showUnlockRecord" (click)="showUnlockRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showUnlockRecord">
-            
+        <div class="alert alert-success" *ngIf="unlockResults.notFound?.length > 0"><@spring.message "admin.profile_unlock.not_found"/>
+            <br>{{unlockResults.notFound}}
+        </div>
+        <div class="alert alert-success" *ngIf="unlockResults.alreadyUnlocked?.length > 0"><@spring.message "admin.profile_unlock.already_unlocked"/>
+            <br>{{unlockResults.alreadyUnlocked}}
+        </div>
+        <div class="alert alert-success" *ngIf="unlockResults.successful?.length > 0"><@spring.message "admin.profile_unlock.unlock_success"/>
+            <br>{{unlockResults.successful}}
+        </div>        
+        <div class="form-group">
+            <label for="orcid_to_unlock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
+            <input type="text" id="orcid_to_unlock" (keyup.enter)="unlockRecords()" [(ngModel)]="idsToUnlock" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="bottom-confirm-lock-profile" (click)="unlockRecords()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>
+        </div>        
     </div>
 </div>
 
