@@ -42,7 +42,7 @@
         </#if>
 
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
-        orcidVar.lastModified = '${(lastModifiedTime)!}';
+        orcidVar.lastModified = '${(lastModifiedTime?datetime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
         orcidVar.resetParams = '${(resetParams)!}';
@@ -141,13 +141,6 @@
         <#if springMacroRequestContext.requestUri?contains("/social") ||  springMacroRequestContext.requestUri?contains("/shibboleth/signin") || (RequestParameters['linkRequest'])??>
             
         </#if>
-
-    <!-- NG2: QA -->
-    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>  
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-            <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
-        </#if>
-    </@orcid.checkFeatureStatus> 
 
     <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
         <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>

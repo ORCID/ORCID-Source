@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -267,7 +268,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         Long lastModifiedTime = getLastModifiedTime(orcid);
-
+        
         ModelAndView mav = null;
         if (request.getRequestURI().contains("/print")) {
             mav = new ModelAndView("print_public_record");
@@ -277,7 +278,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         mav.addObject("isPublicProfile", true);
         mav.addObject("effectiveUserOrcid", orcid);
-        mav.addObject("lastModifiedTime", lastModifiedTime);
+        mav.addObject("lastModifiedTime",  new java.util.Date(lastModifiedTime));
 
         boolean isProfileEmtpy = true;
 
