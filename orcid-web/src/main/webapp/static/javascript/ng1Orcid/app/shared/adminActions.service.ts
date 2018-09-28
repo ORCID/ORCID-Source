@@ -148,4 +148,12 @@ export class AdminActionsService {
                 { headers: this.headers }
         )        
     };
+    
+    lookupIdOrEmails( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/lookup-id-or-emails.json', 
+                encodeURI(obj), 
+                { headers: this.headers, responseType: 'text' }
+        )        
+    };
 }

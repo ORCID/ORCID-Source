@@ -9,39 +9,6 @@
 	<!-- Right menu bar -->
 	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">	
 		
-						
-		<!-- Un Review Profile -->			
-		<a name="unreview-profile"></a>
-		<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>				
-				<a ng-show="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
-				<a ng-hide="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
-			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="unreview_modal" style="display:none;">	
-				<div class="alert alert-success" ng-show="result.unreviewSuccessfulList.length || result.notFoundList.length || result.alreadyUnreviewedList.length" style="overflow-x:auto;">
-	    			<div ng-show="result.unreviewSuccessfulList.length"><@spring.message "admin.profile_unreview.unreview_success"/>
-	    				<br>{{result.unreviewSuccessfulList}}
-	    			</div>
-	    			<div ng-show="result.alreadyUnreviewedList.length"><br><@spring.message "admin.profile_unreview.already_unreviewed"/>
-	    				<br>{{result.alreadyUnreviewedList}}
-	    			</div>
-	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_unreview.not_found"/>
-	    				<br>{{result.notFoundList}}
-					</div>
-				</div>					    		
-		    	<div class="form-group">
-		    		<p ng-show="message != ''">{{message}}</p>
-					<label for="orcid_to_unreview"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
-					<textarea id="orcid_to_unreview" ng-model="orcidToUnreview" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.review_profile.orcid_ids_or_emails' />" ></textarea>
-					<div ng-show="profileDetails.errors.length">
-						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
-					</div>
-				</div>
-				<div class="controls save-btns pull-left">
-					<span id="bottom-confirm-unreview-profile" ng-click="unreviewAccount()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>		
-				</div>
-			</div>
-		</div>
 		
 		<!-- Lookup id or email -->
 		<a name="lookup-id-email"></a>

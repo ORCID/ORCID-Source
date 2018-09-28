@@ -28,7 +28,7 @@
     <div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" *ngIf="showFindIds">
         <div class="form-group">
             <label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
-            <input type="text" id="emails" (keyup.enter)="findIds()" [(ngModel)]="csvEmails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
+            <input type="text" id="emails" (keyup.enter)="findIds()" [(ngModel)]="csvIdsOrEmails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
         </div>
         <div class="controls save-btns pull-left">
             <span id="find-ids" (click)="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>                       
@@ -50,7 +50,7 @@
                 </tr>
             </table>
             <div class="controls save-btns pull-right bottom-margin-small">
-                <a href="" class="cancel-action" (click)="showIds = false" (click)="csvEmails = ''"><@orcid.msg 'freemarker.btnclose'/></a>
+                <a href="" class="cancel-action" (click)="showIds = false" (click)="csvIdsOrEmails = ''"><@orcid.msg 'freemarker.btnclose'/></a>
             </div>
         </div>
         <div *ngIf="profileList?.length == 0">
@@ -365,27 +365,6 @@
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Review record -->
 <div class="workspace-accordion-item" id="review-record">
     <p>
@@ -445,8 +424,55 @@
         <a *ngIf="!showLookupIdOrEmail" (click)="showLookupIdOrEmail = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lookup_id_email' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showLookupIdOrEmail">
+        <div class="form-group">
+            <label for="orcid_to_unreview"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
+            <input type="text" id="orcid_to_unreview" (keyup.enter)="unreviewRecords()" [(ngModel)]="csvIdsOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left" *ngIf="!idsString.length">
+            <span id="bottom-confirm-lookup" (click)="lookupIdOrEmails()" class="btn btn-primary"><@orcid.msg 'admin.lookup_id_email.button'/></span>
+        </div>        
+        <div *ngIf="idsString.length">
+            <h3><@orcid.msg 'admin.lookup_id_email.results'/></h3>
+            <div>
+                <textarea style="height:100px; width: 500px; resize: none;" readonly="readonly" [innerHTML]="idsString"></textarea><br>
+                <div class="controls save-btns pull-left bottom-margin-small">
+                    <a href="" class="cancel-action" (click)="noResults = false" (click)="idsString = ''" (click)="csvIdsOrEmails = ''" (click)="showLookupIdOrEmail = false"><@orcid.msg 'freemarker.btnclose'/></a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Batch resend claim emails -->
 <div class="workspace-accordion-item" id="resend-claim-email">

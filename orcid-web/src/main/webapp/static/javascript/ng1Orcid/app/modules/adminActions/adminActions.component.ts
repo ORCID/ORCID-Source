@@ -32,7 +32,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     switchUserError: boolean;
     
     // Find ids
-    csvEmails: string;
+    csvIdsOrEmails: string;
     profileList: any;
     showFindIds: boolean;
     showIds: boolean;
@@ -90,6 +90,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showUnreviewRecord: boolean;
     unreviewResults: any;
     
+    // Lookup ids or emails
+    showLookupIdOrEmail: boolean;
+    idsString: string;
+    
     // General
     ids: string;
     
@@ -100,7 +104,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showSwitchUser = false;
         this.switchUserError = false;
         
-        this.csvEmails = '';
+        this.csvIdsOrEmails = '';
         this.showFindIds = false;
         this.showIds = false;
         this.profileList = {};
@@ -142,6 +146,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         
         this.showUnreviewRecord = false;
         this.unreviewResults = {};
+        
+        this.showLookupIdOrEmail = false;
+        this.idsString = '';
         
         // General
         this.ids = '';
@@ -188,7 +195,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     findIds(): void {
-        this.adminActionsService.findIds( this.csvEmails )
+        this.adminActionsService.findIds( this.csvIdsOrEmails )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -437,6 +444,21 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             },
             error => {
                 console.log('admin: unreviewRecords error', error);
+            } 
+        );
+    };
+    
+    lookupIdOrEmails(): void {
+        this.adminActionsService.lookupIdOrEmails( this.csvIdsOrEmails )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.idsString = data;                
+            },
+            error => {
+                console.log('admin: lookupIdOrEmails error', error);
             } 
         );
     };
