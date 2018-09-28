@@ -60,7 +60,7 @@ export class GenericService {
                     tap(
                         (data) => {
                             this.objAlsoKnownAs.data = data;
-                            this.objAlsoKnownAs.hasNewData = false;                      
+                            this.objAlsoKnownAs.hasNewData = false;              
                         }
                     )
                 )
