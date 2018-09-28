@@ -313,42 +313,29 @@
         <a *ngIf="!showLockRecord" (click)="showLockRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showLockRecord">
-    		
-    
-    
-    
-    
-        <div class="alert alert-success" ng-show="result.lockSuccessfulList.length || result.notFoundList.length || result.alreadyLockedList.length || result.reviewedList.length" style="overflow-x:auto;">
-            <div ng-show="result.lockSuccessfulList.length"><@spring.message "admin.profile_lock.lock_success"/>
-                <br>{{result.lockSuccessfulList}}
-            </div>
-            <div ng-show="result.alreadyLockedList.length"><br><@spring.message "admin.profile_lock.already_locked"/>
-                <br>{{result.alreadyLockedList}}
-            </div>
-            <div ng-show="result.reviewedList.length"><br><@spring.message "admin.profile_lock.reviewed"/>
-                <br>{{result.reviewedList}}
-            </div>
-            <div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_lock.not_found"/>
-                <br>{{result.notFoundList}}
-            </div>
-        </div>                              
+        <div class="alert alert-success" *ngIf="lockResults.notFound?.length > 0"><@spring.message "admin.profile_lock.not_found"/>
+            <br>{{lockResults.notFound}}
+        </div>
+        <div class="alert alert-success" *ngIf="lockResults.alreadyLocked?.length > 0"><@spring.message "admin.profile_lock.already_locked"/>
+            <br>{{lockResults.alreadyLocked}}
+        </div>
+        <div class="alert alert-success" *ngIf="lockResults.reviewed?.length > 0"><@spring.message "admin.profile_lock.reviewed"/>
+            <br>{{lockResults.reviewed}}
+        </div>
+        <div class="alert alert-success" *ngIf="lockResults.successful?.length > 0"><@spring.message "admin.profile_lock.lock_success"/>
+            <br>{{lockResults.successful}}
+        </div>
         <div class="control-group">
             <label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
             <div class="controls">
-                <textarea id="orcid_to_lock" ng-model="orcidToLock" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" ></textarea>
-                <select ng-model="lockReason">
-                    <option ng-repeat="reason in lockReasons" value="{{reason}}">{{reason}}</option>
+                <textarea id="orcid_to_lock" [(ngModel)]="lockRecordsParams.orcidsToLock" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" ></textarea>
+                <select [(ngModel)]="lockRecordsParams.lockReason">
+                    <option *ngFor="let reason of lockReasons" [value]="reason">{{reason}}</option>
                 </select>
-                <textarea id="lock_reason_description" ng-model="description" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.lock_reason_optional_description' />" ></textarea>
+                <textarea id="lock_reason_description" [(ngModel)]="lockRecordsParams.description" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.lock_reason_optional_description' />" ></textarea>
             </div>
-            <span id="bottom-confirm-lock-profile" ng-click="lockAccount()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>      
+            <span id="bottom-confirm-lock-profile" (click)="lockRecords()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>      
         </div>
-    
-    
-    
-    
-    
-    
     </div>
 </div>
 

@@ -75,7 +75,18 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showReactivateRecord: boolean;
     showReactivateRecordConfirm: boolean;
     elementToReactivate: any;
-        
+    
+    // Lock record
+    lockReasons: any;
+    showLockRecord: boolean;
+    lockRecordsParams: any;
+    lockResults: any;
+    
+    // Unlock record
+    showUnlockRecord: boolean;
+    idsToUnlock: string;
+    unlockResults: any;
+    
     constructor(
         private switchUserService: SwitchUserService,
         private adminActionsService: AdminActionsService,
@@ -114,8 +125,33 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showReactivateRecord =  false;
         this.showReactivateRecordConfirm = false;
         this.elementToReactivate = {errors: [], orcid:'', email:''};
+    
+        this.showLockRecord = false;
+        this.lockResults = {};
+        this.lockRecordsParams = {orcidsToLock:'', lockReason:'', description:''};
+        
+        this.showUnlockRecord = false;
+        this.idsToUnlock = '';
+        
+        this.getLockReasons();
     }    
 
+    getLockReasons(): void {
+        this.adminActionsService.getLockReasons( )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.lockReasons = data;
+                this.lockRecordsParams.lockReason = data[0];                
+            },
+            error => {
+                console.log('admin: getLockReasons error', error);
+            } 
+        );
+    }
+    
     switchUser(id): void {
         this.switchUserService.adminSwitchUserValidate(id)
         .pipe(    
@@ -331,6 +367,21 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showReactivateRecordConfirm = false;
         this.elementToReactivate = {errors: [], orcid:'', email:''};
     };
+    
+    lockRecords(): void {
+        this.adminActionsService.lockRecords( this.lockRecordsParams )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.lockResults = data;                              
+            },
+            error => {
+                console.log('admin: lockRecords error', error);
+            } 
+        );
+    }
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

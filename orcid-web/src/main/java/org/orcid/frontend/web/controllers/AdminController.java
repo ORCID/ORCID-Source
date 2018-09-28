@@ -621,10 +621,10 @@ public class AdminController extends BaseController {
         }
 
         Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
-        resendIdMap.put("notFoundList", notFoundIds);
-        resendIdMap.put("lockSuccessfulList", successIds);
-        resendIdMap.put("alreadyLockedList", lockedIds);
-        resendIdMap.put("reviewedList", reviewedIds);
+        resendIdMap.put("notFound", notFoundIds);
+        resendIdMap.put("successful", successIds);
+        resendIdMap.put("alreadyLocked", lockedIds);
+        resendIdMap.put("reviewed", reviewedIds);
         return resendIdMap;
     }
 
