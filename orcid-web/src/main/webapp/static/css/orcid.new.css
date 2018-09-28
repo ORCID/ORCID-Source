@@ -6784,10 +6784,6 @@ ul.comma li:last-child:after {
     padding-left: 0
 }
 
-.no-padding-right {
-    padding-right: 0
-}
-
 .footer-main {
     border-top: 1px solid #c9c9c9;
     font-size: 11px;

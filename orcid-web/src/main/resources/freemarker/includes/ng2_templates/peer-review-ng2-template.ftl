@@ -5,10 +5,10 @@
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <h2 (click)="workspaceSrvc.togglePeerReview()" class="toggle-text">
+                        <a (click)="workspaceSrvc.togglePeerReview()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i>
                             <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span>{{peerReviewService.groups.length}}</span>)
-                        </h2>
+                        </a>
                         <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
                                 <i class="glyphicon glyphicon-question-sign"></i>

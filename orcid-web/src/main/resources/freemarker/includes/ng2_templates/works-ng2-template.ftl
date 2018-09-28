@@ -4,7 +4,7 @@
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
-                <div class="col-md-3 col-sm-3 col-xs-12 no-padding-right">
+                <div class="col-md-3 col-sm-3 col-xs-12">
                     <div>
                         <a (click)="workspaceSrvc.toggleWorks()" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
