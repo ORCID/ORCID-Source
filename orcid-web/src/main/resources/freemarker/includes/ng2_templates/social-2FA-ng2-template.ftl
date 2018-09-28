@@ -23,10 +23,10 @@
                     </div>
                     <div id="2FAInstructions">
                         <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
-                        <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device1")} <a href='#' id='enterRecoveryCode'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device2")}</a></p>
+                        <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device1")} <a (click)='toggleRecoveryCodeSignIn()'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device2")}</a></p>
                         <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device_or_recovery")} <a href='https://orcid.org/help/contact-us'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.contact_support")}</a></p>
                     </div>
-                    <div id="recoveryCodeSignin" class="form-group" style="display:none">
+                    <div id="recoveryCodeSignin" class="form-group" *ngIf="showRecoveryCodeSignIn">
                         <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
                         <input id="recoveryCode" [(ngModel)]="codes.recoveryCode" name="recoveryCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">                                               
                     </div>

@@ -174,6 +174,9 @@ import { SwitchUserService }
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
+    
+import { ShibbolethService } 
+    from '../../shared/shibboleth.service.ts'; 
 
 import { WidgetService }
     from '../../shared/widget.service.ts'
@@ -288,6 +291,7 @@ import { ResendClaimService }
             ResearchResourceService,
             SearchService,
             TwoFAStateService,
+            ShibbolethService,
             SwitchUserService,
             WidgetService,
             WorksService,

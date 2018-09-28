@@ -181,7 +181,7 @@ import { SelfServiceRemoveSubMemberNg2Module }
 
 import { Social2FANg2Module }
     from './social2FA/social2FA.ts';
-
+    
 import { SwitchUserNg2Module }
     from './switchUser/switchUser.ts';
 

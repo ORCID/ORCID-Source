@@ -162,7 +162,7 @@ import { SelfServiceRemoveSubMemberModule }
 
 import { Social2FAModule }
     from './social2FA/social2FA.ts';
-
+    
 import { SwitchUserModule }
     from './switchUser/switchUser.ts';
 
