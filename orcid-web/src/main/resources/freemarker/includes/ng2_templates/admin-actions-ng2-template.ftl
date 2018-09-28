@@ -365,4 +365,83 @@
     </div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Review record -->
+<div class="workspace-accordion-item" id="review-record">
+    <p>
+        <a *ngIf="showReviewRecord" (click)="showReviewRecord = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.review_profile' /></a>
+        <a *ngIf="!showReviewRecord" (click)="showReviewRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.review_profile' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showReviewRecord">
+    </div>
+</div>
+
+<!-- Unreview record -->
+<div class="workspace-accordion-item" id="unreview-record">
+    <p>
+        <a *ngIf="showUnreviewRecord" (click)="showUnreviewRecord = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
+        <a *ngIf="!showUnreviewRecord" (click)="showUnreviewRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showUnreviewRecord">
+    </div>
+</div>
+
+<!-- Lookup id or email -->
+<div class="workspace-accordion-item" id="lookup-id-or-email">
+    <p>
+        <a *ngIf="showLookupIdOrEmail" (click)="showLookupIdOrEmail = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.lookup_id_email' /></a>
+        <a *ngIf="!showLookupIdOrEmail" (click)="showLookupIdOrEmail = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lookup_id_email' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showLookupIdOrEmail">
+    </div>
+</div>
+
+<!-- Batch resend claim emails -->
+<div class="workspace-accordion-item" id="resend-claim-email">
+<p>
+    <a *ngIf="showResendClaimEmail" (click)="showResendClaimEmail = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.resend_claim.title' /></a>
+    <a *ngIf="!showResendClaimEmail" (click)="showResendClaimEmail = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.resend_claim.title' /></a>
+</p>
+<div class="collapsible bottom-margin-small admin-modal" *ngIf="showResendClaimEmail">
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
