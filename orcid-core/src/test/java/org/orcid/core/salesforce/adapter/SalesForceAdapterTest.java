@@ -2,6 +2,7 @@ package org.orcid.core.salesforce.adapter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -15,6 +16,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.orcid.core.salesforce.model.Achievement;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRoleType;
@@ -227,6 +229,11 @@ public class SalesForceAdapterTest {
         
         Integration integrationNewStyleBadgeAwarded = membersList.get(0);
         assertEquals("Will's custom system new style", integrationNewStyleBadgeAwarded.getName());
+        List<Achievement> achievements = integrationNewStyleBadgeAwarded.getAchievements();
+        assertNotNull(achievements);
+        assertEquals(2, achievements.size());
+        assertEquals("a0N3D000001Jy5cUAC", achievements.get(0).getBadgeId());
+        assertEquals("a0N3D000001Jy5eUAC", achievements.get(1).getBadgeId());
         
         Integration integrationNoBadge = membersList.get(1);
         assertEquals("Integration using Will's vendor system", integrationNoBadge.getName());

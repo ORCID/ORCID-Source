@@ -551,10 +551,10 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
         String query = new String();
         
-        if(Features.BADGES.isActive()) {
-            query = "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'";
+        if(Features.NEW_BADGES.isActive()) {
+            query = "SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c, (Select Id, Name, Status__c, Badge__c from Achievements__r Where Status__c = 'Awarded') from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
         } else {
-            query = "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'";
+            query = "SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
         }
         
         WebResource resource = createQueryResource(query, memberId);
