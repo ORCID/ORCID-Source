@@ -63,7 +63,7 @@ MembersListModule.directive(
         }
     )
     ).directive(
-    'memberDetailsNg2',
+    'membersListNg2',
     <any>downgradeComponent(
         {
             component: MembersListComponent,
