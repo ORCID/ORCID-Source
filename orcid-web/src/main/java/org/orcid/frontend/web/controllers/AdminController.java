@@ -676,8 +676,8 @@ public class AdminController extends BaseController {
         return resendIdMap;
     }
 
-    @RequestMapping(value = "/unreview-accounts.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> unreviewAccounts(@RequestBody String orcidIds) {
+    @RequestMapping(value = "/unreview-records.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> unreviewRecords(@RequestBody String orcidIds) {
         Set<String> unreviewedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -701,14 +701,14 @@ public class AdminController extends BaseController {
         }
 
         Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
-        resendIdMap.put("notFoundList", notFoundIds);
-        resendIdMap.put("unreviewSuccessfulList", successIds);
-        resendIdMap.put("alreadyUnreviewedList", unreviewedIds);
+        resendIdMap.put("notFound", notFoundIds);
+        resendIdMap.put("successful", successIds);
+        resendIdMap.put("alreadyUnreviewed", unreviewedIds);
         return resendIdMap;
     }
 
-    @RequestMapping(value = "/review-accounts.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> reviewAccounts(@RequestBody String orcidIds) {
+    @RequestMapping(value = "/review-records.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> reviewRecords(@RequestBody String orcidIds) {
         Set<String> reviewedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -732,9 +732,9 @@ public class AdminController extends BaseController {
         }
 
         Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
-        resendIdMap.put("notFoundList", notFoundIds);
-        resendIdMap.put("reviewSuccessfulList", successIds);
-        resendIdMap.put("alreadyReviewedList", reviewedIds);
+        resendIdMap.put("notFound", notFoundIds);
+        resendIdMap.put("successful", successIds);
+        resendIdMap.put("alreadyReviewed", reviewedIds);
         return resendIdMap;
     }
 

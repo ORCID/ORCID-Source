@@ -126,4 +126,20 @@ export class AdminActionsService {
                 { headers: this.headers }
         )        
     };
+    
+    reviewRecords( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/review-records.json', 
+                encodeURI(obj), 
+                { headers: this.headers }
+        )        
+    };
+    
+    unreviewRecords( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/unreview-records.json', 
+                encodeURI(obj), 
+                { headers: this.headers }
+        )        
+    };
 }

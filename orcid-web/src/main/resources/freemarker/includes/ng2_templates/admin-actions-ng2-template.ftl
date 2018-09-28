@@ -266,7 +266,7 @@
         </div>
         <div class="form-group">
             <label for="orcidIds"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-            <input type="text" id="orcidIds" (keyup.enter)="deactivateRecord()" [(ngModel)]="idsToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
+            <input type="text" id="orcidIds" (keyup.enter)="deactivateRecord()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="input-xlarge" />
         </div>
         <div class="controls save-btns pull-left">
             <span id="deactivate-btn" (click)="deactivateRecord()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>                       
@@ -357,7 +357,7 @@
         </div>        
         <div class="form-group">
             <label for="orcid_to_unlock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
-            <input type="text" id="orcid_to_unlock" (keyup.enter)="unlockRecords()" [(ngModel)]="idsToUnlock" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" class="input-xlarge" />
+            <input type="text" id="orcid_to_unlock" (keyup.enter)="unlockRecords()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" class="input-xlarge" />
         </div>
         <div class="controls save-btns pull-left">
             <span id="bottom-confirm-lock-profile" (click)="unlockRecords()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>
@@ -393,6 +393,22 @@
         <a *ngIf="!showReviewRecord" (click)="showReviewRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.review_profile' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showReviewRecord">
+        <div class="alert alert-success" *ngIf="reviewResults.notFound?.length > 0"><@spring.message "admin.profile_review.not_found"/>
+            <br>{{reviewResults.notFound}}
+        </div>
+        <div class="alert alert-success" *ngIf="reviewResults.alreadyReviewed?.length > 0"><@spring.message "admin.profile_review.already_reviewed"/>
+            <br>{{reviewResults.alreadyReviewed}}
+        </div>
+        <div class="alert alert-success" *ngIf="reviewResults.successful?.length > 0"><@spring.message "admin.profile_review.review_success"/>
+            <br>{{reviewResults.successful}}
+        </div>        
+        <div class="form-group">
+            <label for="orcid_to_review"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
+            <input type="text" id="orcid_to_review" (keyup.enter)="reviewRecords()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.review_profile.orcid_ids_or_emails' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="bottom-confirm-review-record" (click)="reviewRecords()" class="btn btn-primary"><@orcid.msg 'admin.review_profile.btn.review'/></span>
+        </div>        
     </div>
 </div>
 
@@ -403,6 +419,22 @@
         <a *ngIf="!showUnreviewRecord" (click)="showUnreviewRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showUnreviewRecord">
+        <div class="alert alert-success" *ngIf="unreviewResults.notFound?.length > 0"><@spring.message "admin.profile_unreview.not_found"/>
+            <br>{{unreviewResults.notFound}}
+        </div>
+        <div class="alert alert-success" *ngIf="unreviewResults.alreadyUnreviewed?.length > 0"><@spring.message "admin.profile_unreview.already_unreviewed"/>
+            <br>{{unreviewResults.alreadyUnreviewed}}
+        </div>
+        <div class="alert alert-success" *ngIf="unreviewResults.successful?.length > 0"><@spring.message "admin.profile_unreview.unreview_success"/>
+            <br>{{unreviewResults.successful}}
+        </div>        
+        <div class="form-group">
+            <label for="orcid_to_unreview"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
+            <input type="text" id="orcid_to_unreview" (keyup.enter)="unreviewRecords()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.review_profile.orcid_ids_or_emails' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="bottom-confirm-unreview-record" (click)="unreviewRecords()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>
+        </div>
     </div>
 </div>
 

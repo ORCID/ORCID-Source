@@ -68,7 +68,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     
     // Deactivate record
     showDeactivateRecord: boolean;
-    idsToDeactivate: string;
     deactivateResults: any;
     
     // Reactivate record
@@ -84,9 +83,19 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     
     // Unlock record
     showUnlockRecord: boolean;
-    idsToUnlock: string;
     unlockResults: any;
 
+    // Review record
+    showReviewRecord: boolean;
+    reviewResults: any;
+    
+    // Unreview record
+    showUnreviewRecord: boolean;
+    unreviewResults: any;
+    
+    // General
+    ids: string;
+    
     constructor(
         private switchUserService: SwitchUserService,
         private adminActionsService: AdminActionsService,
@@ -119,7 +128,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.deprecateRecordParams = {deprecatedAccount : {errors: [], orcid:''}, primaryAccount : {errors: [], orcid:''}, errors: []};
     
         this.showDeactivateRecord = false;
-        this.idsToDeactivate = '';
         this.deactivateResults = {};
         
         this.showReactivateRecord =  false;
@@ -130,9 +138,17 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.lockResults = {};
         this.lockRecordsParams = {orcidsToLock:'', lockReason:'', description:''};
         
-        this.showUnlockRecord = false;
-        this.idsToUnlock = '';
+        this.showUnlockRecord = false;        
         this.unlockResults = {};
+        
+        this.showReviewRecord = false;
+        this.reviewResults = {};
+        
+        this.showUnreviewRecord = false;
+        this.unreviewResults = {};
+        
+        // General
+        this.ids = '';
         
         this.getLockReasons();
     }    
@@ -334,7 +350,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     deactivateRecord(): void {
-        this.adminActionsService.deactivateRecord( this.idsToDeactivate )
+        this.adminActionsService.deactivateRecord( this.ids )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -385,7 +401,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     unlockRecords(): void {
-        this.adminActionsService.unlockRecords( this.idsToUnlock )
+        this.adminActionsService.unlockRecords( this.ids )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -395,6 +411,36 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             },
             error => {
                 console.log('admin: lockRecords error', error);
+            } 
+        );
+    };
+    
+    reviewRecords(): void {
+        this.adminActionsService.reviewRecords( this.ids )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.reviewResults = data;                              
+            },
+            error => {
+                console.log('admin: reviewRecords error', error);
+            } 
+        );
+    };
+    
+    unreviewRecords(): void {
+        this.adminActionsService.unreviewRecords( this.ids )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.unreviewResults = data;                              
+            },
+            error => {
+                console.log('admin: unreviewRecords error', error);
             } 
         );
     };

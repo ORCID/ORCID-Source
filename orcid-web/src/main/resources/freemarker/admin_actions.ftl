@@ -9,42 +9,7 @@
 	<!-- Right menu bar -->
 	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">	
 		
-		
-		
-		
-		<!-- Review Profile -->			
-		<a name="review-profile"></a>
-		<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>				
-				<a ng-show="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.review_profile' /></a>
-				<a ng-hide="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.review_profile' /></a>
-			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="review_modal" style="display:none;">		
-				<div class="alert alert-success" ng-show="result.reviewSuccessfulList.length || result.notFoundList.length || result.alreadyReviewedList.length" style="overflow-x:auto;">
-	    			<div ng-show="result.reviewSuccessfulList.length"><@spring.message "admin.profile_review.review_success"/>
-	    				<br>{{result.reviewSuccessfulList}}
-	    			</div>
-	    			<div ng-show="result.alreadyReviewedList.length"><br><@spring.message "admin.profile_review.already_reviewed"/>
-	    				<br>{{result.alreadyReviewedList}}
-	    			</div>
-	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_review.not_found"/>
-	    				<br>{{result.notFoundList}}
-					</div>
-				</div>				    		
-		    	<div class="form-group">
-		    		<p ng-show="message != ''">{{message}}</p>
-					<label for="orcid_to_review"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
-					<textarea id="orcid_to_review" ng-model="orcidToReview" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.review_profile.orcid_ids_or_emails' />" ></textarea>
-					<div ng-show="profileDetails.errors.length">
-						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
-					</div>
-				</div>
-				<div class="controls save-btns pull-left">
-					<span id="bottom-confirm-review-profile" ng-click="reviewAccount()" class="btn btn-primary"><@orcid.msg 'admin.review_profile.btn.review'/></span>		
-				</div>
-			</div>
-		</div>
-							
+						
 		<!-- Un Review Profile -->			
 		<a name="unreview-profile"></a>
 		<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>

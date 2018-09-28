@@ -576,7 +576,7 @@ public class AdminControllerTest extends BaseControllerTest {
         Mockito.when(profileEntityManager.reviewProfile("test")).thenReturn(true);
         Mockito.when(profileEntityManager.reviewProfile("with")).thenReturn(true);
 
-        Map<String, Set<String>> results = adminController.reviewAccounts(commaSeparatedValues);
+        Map<String, Set<String>> results = adminController.reviewRecords(commaSeparatedValues);
         assertEquals(2, results.get("notFoundList").size());
         assertTrue(results.get("notFoundList").contains("some"));
         assertTrue(results.get("notFoundList").contains("orcid"));
@@ -648,7 +648,7 @@ public class AdminControllerTest extends BaseControllerTest {
         Mockito.when(profileEntityManager.reviewProfile("test")).thenReturn(true);
         Mockito.when(profileEntityManager.reviewProfile("with")).thenReturn(true);
 
-        Map<String, Set<String>> results = adminController.unreviewAccounts(commaSeparatedValues);
+        Map<String, Set<String>> results = adminController.unreviewRecords(commaSeparatedValues);
         assertEquals(2, results.get("notFoundList").size());
         assertTrue(results.get("notFoundList").contains("some"));
         assertTrue(results.get("notFoundList").contains("orcid"));
