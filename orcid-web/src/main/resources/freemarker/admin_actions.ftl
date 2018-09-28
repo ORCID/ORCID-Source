@@ -154,66 +154,6 @@
 	</div>
 </script>
 
-<script type="text/ng-template" id="confirm-reactivation-modal">
-	<div style="padding:20px">		
-    		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
-    		<h1><@orcid.msg 'admin.profile_reactivation.confirm'/></h1>
-			<div class="bottom-margin-small">
-		    	<span><@orcid.msg 'admin.profile_reactivation.confirm.message'/></span>
-				<br />
-				<span>{{orcidToReactivate}}</span>				    	
-			</div>
-			<div class="control-group">			
-				<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="reactivateAccount()"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></button>
-				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
-			</div>		
-	</div>
-</script>
-
-<!-- Confirm reset password -->
-<script type="text/ng-template" id="confirm-reset-password">
-	<div class="colorbox-content">
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">	
-    			<h1><@orcid.msg 'admin.reset_password.confirm_title'/></h1>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">					
-				<div class="control-group">
-    				<label class="relative"><@orcid.msg 'admin.reset_password.confirm.message'/> {{params.orcidOrEmail}}?</label>    				
-  				</div>
-				<div class="control-group">
-					<button class="btn btn-primary" ng-click="resetPassword()"><@orcid.msg 'admin.reset_password.confirm.button'/></button>
-					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
-				</div>
-			</div>				
-		</div>
-	</div>
-</script>
-
-<!-- Confirm remove security question -->
-<script type="text/ng-template" id="confirm-remove-security-question">
-	<div class="colorbox-content">
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">	
-    			<h1><@orcid.msg 'admin.remove_security_question.confirm_title'/></h1>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">					
-				<div class="control-group">
-    				<label class="relative"><@orcid.msg 'admin.remove_security_question.confirm.message'/> {{orcidOrEmail}}?</label>    				
-  				</div>
-				<div class="control-group">
-					<button class="btn btn-primary" ng-click="removeSecurityQuestion()"><@orcid.msg 'admin.remove_security_question.confirm.button'/></button>
-					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
-				</div>
-			</div>				
-		</div>
-	</div>
-</script>
-
 <!-- Admin main Layout -->
 <div class="row">
 	<!-- Left menu bar -->	

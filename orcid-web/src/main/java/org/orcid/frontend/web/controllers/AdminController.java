@@ -216,7 +216,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/reactivate-record", method = RequestMethod.POST)
-    public @ResponseBody ProfileDetails reactivateOrcidAccount(@RequestBody ProfileDetails profileDetails) {
+    public @ResponseBody ProfileDetails reactivateOrcidRecord(@RequestBody ProfileDetails profileDetails) {
         profileDetails.setErrors(new ArrayList<String>());
         
         String email = profileDetails.getEmail();
@@ -329,7 +329,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/deactivate-records.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> deactivateOrcidAccount(@RequestBody String orcidIds) {
+    public @ResponseBody Map<String, Set<String>> deactivateOrcidRecords(@RequestBody String orcidIds) {
         Set<String> deactivatedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -592,8 +592,8 @@ public class AdminController extends BaseController {
      *            The orcid of the account we want to lock
      * @return true if the account was locked, false otherwise
      */
-    @RequestMapping(value = "/lock-accounts.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> lockAccounts(@RequestBody LockAccounts lockAccounts) {
+    @RequestMapping(value = "/lock-records.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> lockRecords(@RequestBody LockAccounts lockAccounts) {
         Set<String> lockedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -645,8 +645,8 @@ public class AdminController extends BaseController {
      *            The orcid of the account we want to unlock
      * @return true if the account was unlocked, false otherwise
      */
-    @RequestMapping(value = "/unlock-accounts.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> unlockAccounts(@RequestBody String orcidIds) {
+    @RequestMapping(value = "/unlock-records.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> unlockRecords(@RequestBody String orcidIds) {
         Set<String> unlockedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();

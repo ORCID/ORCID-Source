@@ -103,4 +103,20 @@ export class AdminActionsService {
                 { headers: this.headers }
         )        
     };
+    
+    lockRecords( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/lock-records.json', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )        
+    };
+    
+    unlockRecords( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/unlock-records.json', 
+                encodeURI(obj), 
+                { headers: this.headers }
+        )        
+    };
 }

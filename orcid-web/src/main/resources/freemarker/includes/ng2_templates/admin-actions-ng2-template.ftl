@@ -303,8 +303,64 @@
             <span (click)="reactivateRecord()" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>&nbsp; 
             <a href="" class="cancel-action" (click)="showReactivateRecordConfirm = false" (click)="resetPasswordParams.orcidOrEmail = ''" (click)="resetPasswordParams.password = ''" (click)="showResetPassword = false"><@orcid.msg 'freemarker.btncancel'/></a>
         </div> 
+    </div>
+</div>
+
+<!-- Lock record -->
+<div class="workspace-accordion-item" id="lock-record">
+    <p>
+        <a *ngIf="showLockRecord" (click)="showLockRecord = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.lock_profile' /></a>
+        <a *ngIf="!showLockRecord" (click)="showLockRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showLockRecord">
+    		
     
     
+    
+    
+        <div class="alert alert-success" ng-show="result.lockSuccessfulList.length || result.notFoundList.length || result.alreadyLockedList.length || result.reviewedList.length" style="overflow-x:auto;">
+            <div ng-show="result.lockSuccessfulList.length"><@spring.message "admin.profile_lock.lock_success"/>
+                <br>{{result.lockSuccessfulList}}
+            </div>
+            <div ng-show="result.alreadyLockedList.length"><br><@spring.message "admin.profile_lock.already_locked"/>
+                <br>{{result.alreadyLockedList}}
+            </div>
+            <div ng-show="result.reviewedList.length"><br><@spring.message "admin.profile_lock.reviewed"/>
+                <br>{{result.reviewedList}}
+            </div>
+            <div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_lock.not_found"/>
+                <br>{{result.notFoundList}}
+            </div>
+        </div>                              
+        <div class="control-group">
+            <label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
+            <div class="controls">
+                <textarea id="orcid_to_lock" ng-model="orcidToLock" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" ></textarea>
+                <select ng-model="lockReason">
+                    <option ng-repeat="reason in lockReasons" value="{{reason}}">{{reason}}</option>
+                </select>
+                <textarea id="lock_reason_description" ng-model="description" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.lock_reason_optional_description' />" ></textarea>
+            </div>
+            <span id="bottom-confirm-lock-profile" ng-click="lockAccount()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>      
+        </div>
+    
+    
+    
+    
+    
+    
+    </div>
+</div>
+
+
+<!-- Unlock record -->
+<div class="workspace-accordion-item" id="unlock-record">
+    <p>
+        <a *ngIf="showUnlockRecord" (click)="showUnlockRecord = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
+        <a *ngIf="!showUnlockRecord" (click)="showUnlockRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showUnlockRecord">
+            
     </div>
 </div>
 
