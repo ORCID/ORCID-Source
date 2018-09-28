@@ -103,10 +103,7 @@ public enum Features implements Feature {
     WORK_GROUP_LOGGING,
     
     @Label("Grouping suggestions")
-    GROUPING_SUGGESTIONS,
-    
-    @Label("Admin actions NG2")
-    NG2_ADMIN_ACTIONS;
+    GROUPING_SUGGESTIONS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

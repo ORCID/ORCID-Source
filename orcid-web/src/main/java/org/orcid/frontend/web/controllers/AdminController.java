@@ -19,7 +19,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -63,28 +62,26 @@ public class AdminController extends BaseController {
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
-    
+
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_NOT_AVAILABLE = "N/A";
-    private static final String OUT_NEW_LINE = "\n";    
+    private static final String OUT_NEW_LINE = "\n";
+
+    private void isAdmin(HttpServletRequest serverRequest, HttpServletResponse response) throws IllegalAccessException {
+        if (!orcidSecurityManager.isAdmin()) {
+            logoutCurrentUser(serverRequest, response);
+            throw new IllegalAccessException("You are not an admin");
+        }
+    }
 
     @RequestMapping
-    public ModelAndView loadAdminPage(HttpServletRequest request, HttpServletResponse response) {
-        if (!orcidSecurityManager.isAdmin()) {
-            logoutCurrentUser(request, response);
-            return new ModelAndView("redirect:/signin");
-        }
-        ModelAndView mav;
-        if(Features.NG2_ADMIN_ACTIONS.isActive()) {
-            mav = new ModelAndView("/admin/admin_actions");
-        } else {
-            mav = new ModelAndView("admin_actions");
-        }
-        return mav;        
+    public ModelAndView loadAdminPage(HttpServletRequest serverRequest, HttpServletResponse response) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        return new ModelAndView("/admin/admin_actions");
     }
 
     /**
@@ -94,21 +91,24 @@ public class AdminController extends BaseController {
      *            Orcid to deprecate
      * @param primaryOrcid
      *            Orcid to use as a primary account
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.POST)
-    public @ResponseBody ProfileDeprecationRequest deprecateProfile(@RequestBody ProfileDeprecationRequest request) { 
-        //Cleanup 
+    public @ResponseBody ProfileDeprecationRequest deprecateProfile(HttpServletRequest serverRequest, HttpServletResponse response,
+            @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        // Cleanup
         request.setErrors(new ArrayList<String>());
         request.setSuccessMessage(null);
-        
-        if(request.getDeprecatedAccount() != null) {
+
+        if (request.getDeprecatedAccount() != null) {
             request.getDeprecatedAccount().setErrors(new ArrayList<String>());
         }
-        
-        if(request.getPrimaryAccount() != null) {
+
+        if (request.getPrimaryAccount() != null) {
             request.getPrimaryAccount().setErrors(new ArrayList<String>());
         }
-        
+
         String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : request.getDeprecatedAccount().getOrcid();
         String primaryOrcid = request.getPrimaryAccount() == null ? null : request.getPrimaryAccount().getOrcid();
         // Check for errors
@@ -121,7 +121,7 @@ public class AdminController extends BaseController {
         } else {
             try {
                 boolean wasDeprecated = adminManager.deprecateProfile(request, deprecatedOrcid, primaryOrcid, getCurrentUserOrcid());
-                if (wasDeprecated) {                    
+                if (wasDeprecated) {
                     request.setSuccessMessage(getMessage("admin.profile_deprecation.deprecate_account.success_message", deprecatedOrcid, primaryOrcid));
                 }
             } catch (Exception e) {
@@ -134,65 +134,69 @@ public class AdminController extends BaseController {
     }
 
     /**
-     * Check a deprecation request to validate the id to deprecate and the primary id
+     * Check a deprecation request to validate the id to deprecate and the
+     * primary id
      * 
      * @param request
      *            The request
      * @return a ProfileDeprecationRequest validated
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json" }, method = RequestMethod.POST)
-    public @ResponseBody ProfileDeprecationRequest checkOrcidToDeprecate(@RequestBody ProfileDeprecationRequest request) {
-        //Cleanup 
+    public @ResponseBody ProfileDeprecationRequest checkOrcidToDeprecate(HttpServletRequest serverRequest, HttpServletResponse response,
+            @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        // Cleanup
         request.setErrors(new ArrayList<String>());
         request.setSuccessMessage(null);
-        
-        if(request.getDeprecatedAccount() != null) {
+
+        if (request.getDeprecatedAccount() != null) {
             request.getDeprecatedAccount().setErrors(new ArrayList<String>());
         }
-        
-        if(request.getPrimaryAccount() != null) {
+
+        if (request.getPrimaryAccount() != null) {
             request.getPrimaryAccount().setErrors(new ArrayList<String>());
         }
-        
+
         String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : request.getDeprecatedAccount().getOrcid();
         String primaryOrcid = request.getPrimaryAccount() == null ? null : request.getPrimaryAccount().getOrcid();
-        
+
         if (deprecatedOrcid.equals(primaryOrcid)) {
             request.getPrimaryAccount().getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
         } else {
-            if(request.getDeprecatedAccount() != null) {
+            if (request.getDeprecatedAccount() != null) {
                 request.getDeprecatedAccount().setErrors(new ArrayList<String>());
             }
-            
-            if(request.getPrimaryAccount() != null) {
+
+            if (request.getPrimaryAccount() != null) {
                 request.getPrimaryAccount().setErrors(new ArrayList<String>());
             }
-            
+
             validateIdForDeprecation(request.getDeprecatedAccount());
-            validateIdForDeprecation(request.getPrimaryAccount());            
+            validateIdForDeprecation(request.getPrimaryAccount());
         }
-        
-        if(!request.getDeprecatedAccount().getErrors().isEmpty()) {
+
+        if (!request.getDeprecatedAccount().getErrors().isEmpty()) {
             copyErrors(request.getDeprecatedAccount(), request);
         }
-        
-        if(!request.getPrimaryAccount().getErrors().isEmpty()) {
+
+        if (!request.getPrimaryAccount().getErrors().isEmpty()) {
             copyErrors(request.getPrimaryAccount(), request);
         }
-        
+
         return request;
     }
-    
+
     private void validateIdForDeprecation(ProfileDetails details) {
         String orcid = details.getOrcid();
         try {
-            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);            
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
             if (profile.getDeprecatedDate() != null || profile.getPrimaryRecord() != null) {
                 details.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
             } else if (profile.getDeactivationDate() != null) {
                 details.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
-            } else {                
-                RecordNameEntity recordName = profile.getRecordNameEntity(); 
+            } else {
+                RecordNameEntity recordName = profile.getRecordNameEntity();
                 if (recordName != null) {
                     boolean hasName = false;
                     if (!PojoUtil.isEmpty(recordName.getFamilyName())) {
@@ -206,30 +210,32 @@ public class AdminController extends BaseController {
                     if (!hasName) {
                         details.setGivenNames(recordName.getCreditName());
                     }
-                }        
+                }
                 Email primary = emailManager.findPrimaryEmail(orcid);
-                details.setEmail(primary.getEmail());                                    
-            }            
+                details.setEmail(primary.getEmail());
+            }
         } catch (IllegalArgumentException iae) {
             details.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
         }
     }
 
     @RequestMapping(value = "/reactivate-record", method = RequestMethod.POST)
-    public @ResponseBody ProfileDetails reactivateOrcidRecord(@RequestBody ProfileDetails profileDetails) {
+    public @ResponseBody ProfileDetails reactivateOrcidRecord(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ProfileDetails profileDetails)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         profileDetails.setErrors(new ArrayList<String>());
-        
+
         String email = profileDetails.getEmail();
         String orcid = profileDetails.getOrcid();
-        
+
         ProfileEntity toReactivate = null;
-        
+
         try {
             toReactivate = profileEntityCacheManager.retrieve(orcid);
-        } catch(Exception e) {
-            
+        } catch (Exception e) {
+
         }
-        
+
         if (toReactivate == null)
             profileDetails.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
         else if (toReactivate.getDeactivationDate() == null)
@@ -240,15 +246,15 @@ public class AdminController extends BaseController {
             profileDetails.getErrors().add(getMessage("admin.errors.deactivated_account.primary_email_required"));
         else {
             try {
-                if(!emailManagerReadOnly.emailExists(email)) {
+                if (!emailManagerReadOnly.emailExists(email)) {
                     profileDetails.getErrors().add(getMessage("admin.errors.unexisting_email"));
                 } else {
                     String orcidId = emailManager.findOrcidIdByEmail(email);
-                    if(!orcidId.equals(orcid)) {
+                    if (!orcidId.equals(orcid)) {
                         profileDetails.getErrors().add(getMessage("admin.errors.deactivated_account.orcid_id_dont_match", orcidId));
                     }
-                }                
-            } catch(NoResultException nre) {
+                }
+            } catch (NoResultException nre) {
                 // Don't do nothing, the email doesn't exists
             }
         }
@@ -260,7 +266,9 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/find-id.json", method = RequestMethod.POST)
-    public @ResponseBody List<ProfileDetails> findIdByEmail(@RequestBody String csvEmails) {
+    public @ResponseBody List<ProfileDetails> findIdByEmail(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvEmails)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         Map<String, String> emailMap = findIdByEmailHelper(csvEmails);
         List<ProfileDetails> profileDetList = new ArrayList<ProfileDetails>();
         ProfileDetails tempObj;
@@ -283,7 +291,9 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST)
-    public @ResponseBody String lookupIdOrEmails(@RequestBody String csvIdOrEmails) {
+    public @ResponseBody String lookupIdOrEmails(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvIdOrEmails)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         List<String> idEmailList = new ArrayList<String>();
         StringBuilder builder = new StringBuilder();
         if (StringUtils.isNotBlank(csvIdOrEmails)) {
@@ -317,8 +327,8 @@ public class AdminController extends BaseController {
                             builder.append(idEmail).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
                         }
                     }
-                } catch(Exception e) {
-                    //Invalid orcid in the params, so, we can just ignore it
+                } catch (Exception e) {
+                    // Invalid orcid in the params, so, we can just ignore it
                     LOGGER.warn("Unable to get info for " + idEmail, e);
                 }
                 builder.append(OUT_NEW_LINE);
@@ -329,7 +339,9 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/deactivate-records.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> deactivateOrcidRecords(@RequestBody String orcidIds) {
+    public @ResponseBody Map<String, Set<String>> deactivateOrcidRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidIds)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         Set<String> deactivatedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -340,8 +352,8 @@ public class AdminController extends BaseController {
                 ProfileEntity profile = null;
                 try {
                     profile = profileEntityCacheManager.retrieve(orcid);
-                } catch(Exception e) {
-                    //Invalid orcid id provided
+                } catch (Exception e) {
+                    // Invalid orcid id provided
                 }
                 if (profile == null) {
                     notFoundIds.add(orcid);
@@ -371,11 +383,15 @@ public class AdminController extends BaseController {
 
     /**
      * Reset password
+     * 
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
-    public @ResponseBody AdminChangePassword resetPassword(@RequestBody AdminChangePassword form) {
+    public @ResponseBody AdminChangePassword resetPassword(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody AdminChangePassword form)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         String orcidOrEmail = form.getOrcidOrEmail();
-        String password = form.getPassword();        
+        String password = form.getPassword();
         if (StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             String orcid = null;
             if (orcidSecurityManager.isAdmin()) {
@@ -394,14 +410,14 @@ public class AdminController extends BaseController {
                     if (profileEntityManager.orcidExists(orcid)) {
                         profileEntityManager.updatePassword(orcid, password);
                     } else {
-                        form.setError(getMessage("admin.errors.unexisting_orcid"));                        
+                        form.setError(getMessage("admin.errors.unexisting_orcid"));
                     }
                 } else {
-                    form.setError(getMessage("admin.errors.unable_to_fetch_info"));                    
+                    form.setError(getMessage("admin.errors.unable_to_fetch_info"));
                 }
             }
         } else {
-            form.setError(getMessage("admin.reset_password.error.invalid_password"));            
+            form.setError(getMessage("admin.reset_password.error.invalid_password"));
         }
 
         return form;
@@ -409,9 +425,13 @@ public class AdminController extends BaseController {
 
     /**
      * Remove security question
+     * 
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = "/remove-security-question.json", method = RequestMethod.POST)
-    public @ResponseBody String removeSecurityQuestion(HttpServletRequest request, @RequestBody String orcidOrEmail) {
+    public @ResponseBody String removeSecurityQuestion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidOrEmail)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         if (StringUtils.isNotBlank(orcidOrEmail))
             orcidOrEmail = orcidOrEmail.trim();
         boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
@@ -441,9 +461,13 @@ public class AdminController extends BaseController {
 
     /**
      * Admin switch user
+     * 
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
-    public @ResponseBody Map<String, String> adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail) {
+    public @ResponseBody Map<String, String> adminSwitchUser(HttpServletRequest serverRequest, HttpServletResponse response,
+            @ModelAttribute("orcidOrEmail") String orcidOrEmail) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         if (StringUtils.isNotBlank(orcidOrEmail))
             orcidOrEmail = orcidOrEmail.trim();
         boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
@@ -457,7 +481,7 @@ public class AdminController extends BaseController {
         }
 
         Map<String, String> result = new HashMap<String, String>();
-        if (StringUtils.isNotEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {            
+        if (StringUtils.isNotEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
             if (!profileEntity.getClaimed()) {
                 result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is unclaimed.").toString());
@@ -471,17 +495,21 @@ public class AdminController extends BaseController {
             result.put("errorMessg", "Invalid id " + orcidOrEmail);
         }
         return result;
-    }    
-    
+    }
+
     /**
      * Admin verify email
+     * 
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = "/admin-verify-email.json", method = RequestMethod.POST)
-    public @ResponseBody String adminVerifyEmail(@RequestBody String email) {
+    public @ResponseBody String adminVerifyEmail(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String email)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
-        	String orcid = emailManagerReadOnly.findOrcidIdByEmail(email);
-            emailManager.verifyEmail(email, orcid);            
+            String orcid = emailManagerReadOnly.findOrcidIdByEmail(email);
+            emailManager.verifyEmail(email, orcid);
         } else {
             result = getMessage("admin.verify_email.fail", email);
         }
@@ -490,9 +518,13 @@ public class AdminController extends BaseController {
 
     /**
      * Admin starts delegation process
+     * 
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = "/add-delegate.json", method = RequestMethod.POST)
-    public @ResponseBody AdminDelegatesRequest startDelegationProcess(@RequestBody AdminDelegatesRequest request) {
+    public @ResponseBody AdminDelegatesRequest startDelegationProcess(HttpServletRequest serverRequest, HttpServletResponse response,
+            @RequestBody AdminDelegatesRequest request) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         // Clear errors
         request.setErrors(new ArrayList<String>());
         request.getManaged().setErrors(new ArrayList<String>());
@@ -512,7 +544,7 @@ public class AdminController extends BaseController {
                 haveErrors = true;
             }
         } else {
-            if(!profileEntityManager.orcidExists(trusted)) {
+            if (!profileEntityManager.orcidExists(trusted)) {
                 request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
                 haveErrors = true;
             }
@@ -527,7 +559,7 @@ public class AdminController extends BaseController {
                 haveErrors = true;
             }
         } else {
-            if(!profileEntityManager.orcidExists(managed)) {
+            if (!profileEntityManager.orcidExists(managed)) {
                 request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
                 haveErrors = true;
             }
@@ -542,9 +574,13 @@ public class AdminController extends BaseController {
 
     /**
      * Admin starts delegation process
+     * 
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = "/admin-delegates/check-claimed-status.json", method = RequestMethod.GET)
-    public @ResponseBody boolean checkClaimedStatus(@RequestParam("orcidOrEmail") String orcidOrEmail) {
+    public @ResponseBody boolean checkClaimedStatus(HttpServletRequest serverRequest, HttpServletResponse response, @RequestParam("orcidOrEmail") String orcidOrEmail)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
         String orcid = null;
         // If it is not an orcid, check the value from the emails table
@@ -559,7 +595,7 @@ public class AdminController extends BaseController {
 
         if (PojoUtil.isEmpty(orcid) || !profileEntityManager.orcidExists(orcid))
             return false;
-        
+
         return profileEntityManager.isProfileClaimed(orcid);
     }
 
@@ -591,9 +627,12 @@ public class AdminController extends BaseController {
      * @param orcid
      *            The orcid of the account we want to lock
      * @return true if the account was locked, false otherwise
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = "/lock-records.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> lockRecords(@RequestBody LockAccounts lockAccounts) {
+    public @ResponseBody Map<String, Set<String>> lockRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody LockAccounts lockAccounts)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         Set<String> lockedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -603,7 +642,7 @@ public class AdminController extends BaseController {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
                 String nextToken = tokenizer.nextToken();
-                String orcidId = getOrcidFromParam(nextToken);                
+                String orcidId = getOrcidFromParam(nextToken);
                 if (!profileEntityManager.orcidExists(orcidId)) {
                     notFoundIds.add(nextToken);
                 } else {
@@ -644,9 +683,12 @@ public class AdminController extends BaseController {
      * @param orcid
      *            The orcid of the account we want to unlock
      * @return true if the account was unlocked, false otherwise
+     * @throws IllegalAccessException
      */
     @RequestMapping(value = "/unlock-records.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> unlockRecords(@RequestBody String orcidIds) {
+    public @ResponseBody Map<String, Set<String>> unlockRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidIds)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         Set<String> unlockedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -677,7 +719,9 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/unreview-records.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> unreviewRecords(@RequestBody String orcidIds) {
+    public @ResponseBody Map<String, Set<String>> unreviewRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidIds)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         Set<String> unreviewedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -708,7 +752,9 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/review-records.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> reviewRecords(@RequestBody String orcidIds) {
+    public @ResponseBody Map<String, Set<String>> reviewRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidIds)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         Set<String> reviewedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -739,7 +785,9 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, List<String>> resendClaimEmail(@RequestBody String emailsOrOrcids) {
+    public @ResponseBody Map<String, List<String>> resendClaimEmail(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String emailsOrOrcids)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         List<String> emailOrOrcidList = new ArrayList<String>();
         if (StringUtils.isNotBlank(emailsOrOrcids)) {
             StringTokenizer tokenizer = new StringTokenizer(emailsOrOrcids, INP_STRING_SEPARATOR);
@@ -770,9 +818,9 @@ public class AdminController extends BaseController {
             }
         }
         Map<String, List<String>> resendIdMap = new HashMap<String, List<String>>();
-        resendIdMap.put("notFoundList", notFoundIds);
-        resendIdMap.put("claimResendSuccessfulList", successIds);
-        resendIdMap.put("alreadyClaimedList", claimedIds);
+        resendIdMap.put("notFound", notFoundIds);
+        resendIdMap.put("successful", successIds);
+        resendIdMap.put("alreadyClaimed", claimedIds);
         return resendIdMap;
     }
 

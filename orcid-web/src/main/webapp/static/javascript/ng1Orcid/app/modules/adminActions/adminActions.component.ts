@@ -94,6 +94,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showLookupIdOrEmail: boolean;
     idsString: string;
     
+    // Resend claim email
+    showResendClaimEmail: boolean;
+    resendClaimResults: any;
+    
     // General
     ids: string;
     
@@ -149,6 +153,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         
         this.showLookupIdOrEmail = false;
         this.idsString = '';
+        
+        this.showResendClaimEmail = false;
+        this.resendClaimResults = {};
         
         // General
         this.ids = '';
@@ -456,6 +463,21 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.idsString = data;                
+            },
+            error => {
+                console.log('admin: lookupIdOrEmails error', error);
+            } 
+        );
+    };
+    
+    resendClaimEmail(): void {
+        this.adminActionsService.resendClaimEmail( this.ids )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.resendClaimResults = data;                
             },
             error => {
                 console.log('admin: lookupIdOrEmails error', error);

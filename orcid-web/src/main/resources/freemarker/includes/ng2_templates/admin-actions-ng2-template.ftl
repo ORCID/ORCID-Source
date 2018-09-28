@@ -443,63 +443,30 @@
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Batch resend claim emails -->
 <div class="workspace-accordion-item" id="resend-claim-email">
-<p>
-    <a *ngIf="showResendClaimEmail" (click)="showResendClaimEmail = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.resend_claim.title' /></a>
-    <a *ngIf="!showResendClaimEmail" (click)="showResendClaimEmail = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.resend_claim.title' /></a>
-</p>
-<div class="collapsible bottom-margin-small admin-modal" *ngIf="showResendClaimEmail">
+    <p>
+        <a *ngIf="showResendClaimEmail" (click)="showResendClaimEmail = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.resend_claim.title' /></a>
+        <a *ngIf="!showResendClaimEmail" (click)="showResendClaimEmail = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.resend_claim.title' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showResendClaimEmail">
+        <div class="alert alert-success" *ngIf="resendClaimResults.notFound?.length > 0"><@spring.message "admin.resend_claim.not_found"/>
+            <br>{{resendClaimResults.notFound}}
+        </div>
+        <div class="alert alert-success" *ngIf="resendClaimResults.alreadyClaimed?.length > 0"><@spring.message "admin.resend_claim.already_claimed"/>
+            <br>{{resendClaimResults.alreadyClaimed}}
+        </div>
+        <div class="alert alert-success" *ngIf="resendClaimResults.successful?.length > 0"><@spring.message "admin.resend_claim.sent_success"/>
+            <br>{{resendClaimResults.successful}}
+        </div>        
+        <div class="form-group">
+            <label for="orcid_to_unreview"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
+            <input type="text" id="orcid_to_unreview" (keyup.enter)="resendClaimEmail()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="bottom-confirm-unreview-record" (click)="resendClaimEmail()" class="btn btn-primary"><@orcid.msg 'resend_claim.resend_claim_button_text'/></span>
+        </div>
+    </div>
 </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </script>

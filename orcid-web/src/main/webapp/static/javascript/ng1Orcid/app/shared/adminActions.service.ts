@@ -154,6 +154,14 @@ export class AdminActionsService {
                 getBaseUri() + '/admin-actions/lookup-id-or-emails.json', 
                 encodeURI(obj), 
                 { headers: this.headers, responseType: 'text' }
-        )        
+        )
+    };
+    
+    resendClaimEmail( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/resend-claim.json', 
+                encodeURI(obj), 
+                { headers: this.headers }
+        )
     };
 }
