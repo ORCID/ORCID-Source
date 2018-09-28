@@ -31,9 +31,6 @@ import { AllConsortiumContactsModule }
 import { BiographyModule } 
     from './biography/biography.ts';
 
-import { ClaimThanksModule } 
-    from './claimThanks/claimThanks.ts';
-
 import { ClientEditModule } 
     from './clientEdit/clientEdit.ts';
 
@@ -57,9 +54,6 @@ import { EmailUnverifiedWarningModule }
 
 import { EmailVerificationSentMesssageModule } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
-
-import { ExternalIdentifiersModule }
-    from './externalIdentifiers/externalIdentifiers.ts';
 
 import { ExtIdPopoverModule } 
     from './extIdPopover/extIdPopover.ts';
@@ -91,6 +85,9 @@ import { MembersListModule }
 import { ModalModule } 
     from './modalNg2/modal-ng.ts';
 
+import { MyOrcidAlertsModule } 
+    from './myOrcidAlerts/myOrcidAlerts.ts';
+
 import { NameModule } 
     from './name/name.ts';
 
@@ -115,8 +112,8 @@ import { PeerReviewDeleteModule }
 import { PersonModule } 
     from './person/person.ts';
 
-import { PersonalInfoModule } 
-    from './personalInfo/personalInfo.ts';
+import { PrintRecordModule } 
+    from './printRecord/printRecord.ts';
 
 import { PublicEduAffiliationModule }
     from './publicEduAffiliation/publicEduAffiliation.ts';
@@ -166,20 +163,11 @@ import { Social2FAModule }
 import { SwitchUserModule }
     from './switchUser/switchUser.ts';
 
-import { ThanksForRegisteringModule } 
-    from './thanksForRegistering/thanksForRegistering.ts';
-
-import { ThanksForVerifyingModule } 
-    from './thanksForVerifying/thanksForVerifying.ts';
-
 import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
 
 import { TwoFaStateModule }
     from './2FAState/twoFAState.ts';
-    
-import { VerifyEmailModule }
-    from './verifyEmail/verifyEmail.ts';
 
 import { WidgetModule } 
     from './widget/widget.ts';
@@ -195,9 +183,6 @@ import { WorksFormModule }
 
 import { WorksModule } 
     from './works/works.ts';
-
-import { WorkSpaceSummaryModule } 
-    from './workspaceSummary/workspaceSummary.ts';
 
 import { WorksPrivacyPreferencesModule } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
@@ -230,7 +215,6 @@ export const orcidApp = angular.module(
         AlertBannerModule.name,
         AllConsortiumContactsModule.name,
         BiographyModule.name,
-        ClaimThanksModule.name,
         ClientEditModule.name,
         DeactivateAccountModule.name,
         DeactivateAccountMessageModule.name,
@@ -239,7 +223,6 @@ export const orcidApp = angular.module(
         EmailsModule.name,
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
-        ExternalIdentifiersModule.name,
         ExtIdPopoverModule.name,
         FundingDeleteModule.name,
         FundingFormModule.name,
@@ -250,6 +233,7 @@ export const orcidApp = angular.module(
         LinkAccountModule.name,
         MembersListModule.name,
         ModalModule.name,
+        MyOrcidAlertsModule.name,
         NameModule.name,
         OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
@@ -257,7 +241,7 @@ export const orcidApp = angular.module(
         PeerReviewModule.name,
         PeerReviewDeleteModule.name,
         PersonModule.name,
-        PersonalInfoModule.name,
+        PrintRecordModule.name,
         PublicEduAffiliationModule.name,
         NotificationsModule.name,
         ReactivationModule.name,
@@ -275,17 +259,13 @@ export const orcidApp = angular.module(
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
         SwitchUserModule.name,
-        ThanksForRegisteringModule.name,
-        ThanksForVerifyingModule.name,
         TwoFaStateModule.name,
         TwoFaSetupModule.name,
-        VerifyEmailModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,
         WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
-        WorkSpaceSummaryModule.name,
         WorksPrivacyPreferencesModule.name,
         UnsubscribeModule.name,
         DelegatorsModule.name,

@@ -624,7 +624,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }
                 if(field == 'EmailsAdditional') {
                     for (var index in this.registrationForm.emailsAdditional) {
-                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
+                        if (this.registrationForm.emailsAdditional[index].errors && this.registrationForm.emailsAdditional[index].errors.length > 0) {      
                             this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
                             //deactivated error
                             this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));

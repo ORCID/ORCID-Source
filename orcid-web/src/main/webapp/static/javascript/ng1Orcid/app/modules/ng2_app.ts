@@ -50,9 +50,6 @@ import { AllConsortiumContactsNg2Module }
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 
-import { ClaimThanksNg2Module } 
-    from './claimThanks/claimThanks.ts';
-
 import { ClientEditNg2Module } 
     from './clientEdit/clientEdit.ts';
 
@@ -76,9 +73,6 @@ import { EmailUnverifiedWarningNg2Module }
 
 import { EmailVerificationSentMesssageNg2Module } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
-
-import { ExternalIdentifiersNg2Module }
-    from './externalIdentifiers/externalIdentifiers.ts';
 
 import { ExtIdPopoverNg2Module } 
     from './extIdPopover/extIdPopover.ts';
@@ -110,6 +104,9 @@ import { MembersListNg2Module }
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 
+import { MyOrcidAlertsNg2Module } 
+    from './myOrcidAlerts/myOrcidAlerts.ts';
+
 import { NameNg2Module } 
     from './name/name.ts';
 
@@ -128,8 +125,8 @@ import { PeerReviewDeleteNg2Module }
 import { PersonNg2Module } 
     from './person/person.ts';
 
-import { PersonalInfoNg2Module } 
-    from './personalInfo/personalInfo.ts';
+import { PrintRecordNg2Module } 
+    from './printRecord/printRecord.ts';
 
 import { PublicEduAffiliationNg2Module }
     from './publicEduAffiliation/publicEduAffiliation.ts';
@@ -185,20 +182,11 @@ import { Social2FANg2Module }
 import { SwitchUserNg2Module }
     from './switchUser/switchUser.ts';
 
-import { ThanksForRegisteringNg2Module } 
-    from './thanksForRegistering/thanksForRegistering.ts';
-
-import { ThanksForVerifyingNg2Module } 
-    from './thanksForVerifying/thanksForVerifying.ts';
-
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
 
 import { TwoFaStateNg2Module }
     from './2FAState/twoFAState.ts';
-    
-import { VerifyEmailNg2Module }
-    from './verifyEmail/verifyEmail.ts';
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
@@ -220,9 +208,6 @@ import { SearchService }
 
 import { WorkspaceService } 
     from '../shared/workspace.service.ts'; 
-
-import { WorkSpaceSummaryNg2Module } 
-    from './workspaceSummary/workspaceSummary.ts';
 
 import { WorksPrivacyPreferencesNg2Module } 
     from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
@@ -336,7 +321,6 @@ export class RootCmp {
         AlertBannerNg2Module,
         AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
-        ClaimThanksNg2Module,
         ClientEditNg2Module,
         DeactivateAccountNg2Module,
         DeactivateAccountMessageNg2Module,
@@ -345,7 +329,6 @@ export class RootCmp {
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved
         EmailVerificationSentMesssageNg2Module,//Aproved
-        ExternalIdentifiersNg2Module,
         ExtIdPopoverNg2Module,
         HeaderNg2Module,
         FundingDeleteNg2Module,
@@ -356,13 +339,14 @@ export class RootCmp {
         LinkAccountNg2Module,
         MembersListNg2Module, //Approved
         ModalNg2Module, //Approved
+        MyOrcidAlertsNg2Module,
         NameNg2Module, //Approved
         NotificationsNg2Module,
         PasswordEditNg2Module,
         PeerReviewNg2Module,
         PeerReviewDeleteNg2Module,
         PersonNg2Module,
-        PersonalInfoNg2Module,
+        PrintRecordNg2Module,
         PublicEduAffiliationNg2Module,
         SecurityQuestionEditNg2Module,
         OauthAuthorizationNg2Module,
@@ -381,18 +365,14 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         SwitchUserNg2Module,
-        ThanksForRegisteringNg2Module,
-        ThanksForVerifyingNg2Module,
         TwoFaStateNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
-        VerifyEmailNg2Module,
         WidgetNg2Module, //Approved
         WorksBulkDeleteNg2Module,
         WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
-        WorkSpaceSummaryNg2Module,
         WorksPrivacyPreferencesNg2Module,
         DelegatorsNg2Module,
         ResendClaimNg2Module,

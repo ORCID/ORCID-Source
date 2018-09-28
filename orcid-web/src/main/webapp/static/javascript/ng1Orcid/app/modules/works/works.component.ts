@@ -717,7 +717,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openEditWork(putCode): void{
-        console.log(putCode);
         this.getEditable(putCode, function(data) {
             this.addWorkModal(data);
         }.bind(this));

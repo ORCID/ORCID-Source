@@ -121,9 +121,6 @@ import { DiscoService }
 import { EmailService } 
     from '../../shared/email.service.ts';
 
-import { ExternalIdentifiersService } 
-    from '../../shared/externalIdentifiers.service.ts';
-
 import { FeaturesService }
     from '../../shared/features.service.ts';
 
@@ -274,7 +271,6 @@ import { ResendClaimService }
             DiscoService,
             EmailFrequencyService,
             EmailService,
-            ExternalIdentifiersService,
             FeaturesService,
             FundingService,
             GenericService,

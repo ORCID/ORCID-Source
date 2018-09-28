@@ -33,7 +33,8 @@
                         </div>                  
                     </div>
                 </div>
-                <#include "includes/print_record.ftl"/>                         
+                <#include "/includes/ng2_templates/print-record-ng2-template.ftl">
+                <print-record-ng2></print-record-ng2>                        
 
                 <#if (locked)?? && !locked>
                     <!-- Other Names -->
@@ -309,10 +310,6 @@
     </div>
     
     <div class="col-md-9 right-aside">
-        <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-        <personal-info-ng2></personal-info-ng2>
-        </@orcid.checkFeatureStatus>
-        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
             <div class="workspace-inner-public workspace-public workspace-accordion">
                 <#if (isProfileEmpty)?? && isProfileEmpty>
@@ -342,7 +339,6 @@
                 </@orcid.checkFeatureStatus>                   
             </div>
         </div>
-        </@orcid.checkFeatureStatus>
     </div>
 </div>
 </#escape>

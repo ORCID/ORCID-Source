@@ -49,8 +49,7 @@
         orcidVar.emailToReactivate = '${(email)!}';
         orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
-        orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};
-        orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?c};        
+        orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};       
         orcidVar.features = JSON.parse("${featuresJson}");
         orcidVar.providerId = '${(providerId)!}';
         
@@ -102,7 +101,7 @@
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     
     <#if springMacroRequestContext.requestUri?contains("/print")>
-    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>
+        <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>
     </#if>
 
     <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css"/>
@@ -137,14 +136,6 @@
         <!-- NG2: Under development -->
         <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
         <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
-    
-
-        <!-- Probably this one wont be needed -->
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") 
-            || springMacroRequestContext.requestUri?contains("/print")
-            || (isPublicProfile??)>
-            <#include "/includes/ng2_templates/personal-info-ng2-template.ftl">
-        </#if>
     </@orcid.checkFeatureStatus> 
  
         <#if springMacroRequestContext.requestUri?contains("/social") ||  springMacroRequestContext.requestUri?contains("/shibboleth/signin") || (RequestParameters['linkRequest'])??>
