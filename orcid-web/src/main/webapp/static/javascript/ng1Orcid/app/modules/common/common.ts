@@ -91,9 +91,6 @@ import { SwitchUserNg2Module }
 
 //User generated services
 
-import { AdminDelegatesService }
-    from '../../shared/adminDelegates.service.ts';
-
 import { AffiliationService } 
     from '../../shared/affiliation.service.ts';
 
@@ -262,7 +259,6 @@ import { ResendClaimService }
         providers: [
             AccountService,
             AdminActionsService,
-            AdminDelegatesService,
             AffiliationService,
             BlogService,
             ClaimService,

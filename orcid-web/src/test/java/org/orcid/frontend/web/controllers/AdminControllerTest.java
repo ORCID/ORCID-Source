@@ -321,7 +321,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void removeSecurityQuestionTest() throws IllegalAccessException {
+    public void removeSecurityQuestionTest() throws Exception {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
         assertNotNull(orcidProfile.getSecurityQuestionAnswer());
         adminController.removeSecurityQuestion(mockRequest, mockResponse, "4444-4444-4444-4440");
@@ -330,7 +330,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void removeSecurityQuestionUsingEmailTest() throws IllegalAccessException {
+    public void removeSecurityQuestionUsingEmailTest() throws Exception {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
         assertNotNull(orcidProfile.getSecurityQuestionAnswer());
         adminController.removeSecurityQuestion(mockRequest, mockResponse, "michael@bentine.com");
@@ -363,7 +363,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void verifyEmailTest() throws IllegalAccessException {
+    public void verifyEmailTest() throws Exception {
         TargetProxyHelper.injectIntoProxy(emailManager, "notificationManager", mockNotificationManager);
         TargetProxyHelper.injectIntoProxy(adminController, "emailManagerReadOnly", mockEmailManagerReadOnly);
         when(mockEmailManagerReadOnly.findOrcidIdByEmail("not-verified@email.com")).thenReturn("4444-4444-4444-4499");
@@ -473,7 +473,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testUnlockAccounts() throws IllegalAccessException {
+    public void testUnlockAccounts() throws Exception {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);
@@ -540,7 +540,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testReviewAccounts() throws IllegalAccessException {
+    public void testReviewAccounts() throws Exception {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);
@@ -614,7 +614,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testUnreviewAccounts() throws IllegalAccessException {
+    public void testUnreviewAccounts() throws Exception {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);

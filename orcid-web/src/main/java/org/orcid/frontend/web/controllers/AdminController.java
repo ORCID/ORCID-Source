@@ -1,5 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -267,8 +269,9 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/find-id.json", method = RequestMethod.POST)
     public @ResponseBody List<ProfileDetails> findIdByEmail(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvEmails)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        csvEmails = URLDecoder.decode(csvEmails, "UTF-8");        
         Map<String, String> emailMap = findIdByEmailHelper(csvEmails);
         List<ProfileDetails> profileDetList = new ArrayList<ProfileDetails>();
         ProfileDetails tempObj;
@@ -292,8 +295,9 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST)
     public @ResponseBody String lookupIdOrEmails(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvIdOrEmails)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        csvIdOrEmails = URLDecoder.decode(csvIdOrEmails, "UTF-8");
         List<String> idEmailList = new ArrayList<String>();
         StringBuilder builder = new StringBuilder();
         if (StringUtils.isNotBlank(csvIdOrEmails)) {
@@ -340,8 +344,9 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/deactivate-records.json", method = RequestMethod.POST)
     public @ResponseBody Map<String, Set<String>> deactivateOrcidRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidIds)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        orcidIds = URLDecoder.decode(orcidIds, "UTF-8");
         Set<String> deactivatedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -390,32 +395,31 @@ public class AdminController extends BaseController {
     public @ResponseBody AdminChangePassword resetPassword(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody AdminChangePassword form)
             throws IllegalAccessException {
         isAdmin(serverRequest, response);
+        form.setError(null);
         String orcidOrEmail = form.getOrcidOrEmail();
         String password = form.getPassword();
         if (StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             String orcid = null;
-            if (orcidSecurityManager.isAdmin()) {
-                if (StringUtils.isNotBlank(orcidOrEmail))
-                    orcidOrEmail = orcidOrEmail.trim();
-                boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
-                // If it is not an orcid, check the value from the emails table
-                if (!isOrcid) {
-                    Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
-                    orcid = email.get(orcidOrEmail);
-                } else {
-                    orcid = orcidOrEmail;
-                }
-
-                if (StringUtils.isNotEmpty(orcid)) {
-                    if (profileEntityManager.orcidExists(orcid)) {
-                        profileEntityManager.updatePassword(orcid, password);
-                    } else {
-                        form.setError(getMessage("admin.errors.unexisting_orcid"));
-                    }
-                } else {
-                    form.setError(getMessage("admin.errors.unable_to_fetch_info"));
-                }
+            if (StringUtils.isNotBlank(orcidOrEmail))
+                orcidOrEmail = orcidOrEmail.trim();
+            boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+            // If it is not an orcid, check the value from the emails table
+            if (!isOrcid) {
+                Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
+                orcid = email.get(orcidOrEmail);
+            } else {
+                orcid = orcidOrEmail;
             }
+
+            if (StringUtils.isNotEmpty(orcid)) {
+                if (profileEntityManager.orcidExists(orcid)) {
+                    profileEntityManager.updatePassword(orcid, password);
+                } else {
+                    form.setError(getMessage("admin.errors.unexisting_orcid"));
+                }
+            } else {
+                form.setError(getMessage("admin.errors.unable_to_fetch_info"));
+            }            
         } else {
             form.setError(getMessage("admin.reset_password.error.invalid_password"));
         }
@@ -427,11 +431,13 @@ public class AdminController extends BaseController {
      * Remove security question
      * 
      * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException 
      */
     @RequestMapping(value = "/remove-security-question.json", method = RequestMethod.POST)
     public @ResponseBody String removeSecurityQuestion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidOrEmail)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        orcidOrEmail = URLDecoder.decode(orcidOrEmail, "UTF-8");
         if (StringUtils.isNotBlank(orcidOrEmail))
             orcidOrEmail = orcidOrEmail.trim();
         boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
@@ -444,15 +450,12 @@ public class AdminController extends BaseController {
             orcid = orcidOrEmail;
         }
 
-        if (StringUtils.isNotEmpty(orcid)) {
-            // Only allow and admin
-            if (orcidSecurityManager.isAdmin()) {
-                String result = adminManager.removeSecurityQuestion(orcid);
-                // If the resulting string is not null, it means there was an
-                // error
-                if (result != null)
-                    return result;
-            }
+        if (StringUtils.isNotEmpty(orcid)) {            
+            String result = adminManager.removeSecurityQuestion(orcid);
+            // If the resulting string is not null, it means there was an
+            // error
+            if (result != null)
+                return result;            
         } else {
             return getMessage("admin.errors.unable_to_fetch_info");
         }
@@ -501,11 +504,13 @@ public class AdminController extends BaseController {
      * Admin verify email
      * 
      * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException 
      */
     @RequestMapping(value = "/admin-verify-email.json", method = RequestMethod.POST)
     public @ResponseBody String adminVerifyEmail(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String email)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        email = URLDecoder.decode(email, "UTF-8");
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
             String orcid = emailManagerReadOnly.findOrcidIdByEmail(email);
@@ -684,11 +689,13 @@ public class AdminController extends BaseController {
      *            The orcid of the account we want to unlock
      * @return true if the account was unlocked, false otherwise
      * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException 
      */
     @RequestMapping(value = "/unlock-records.json", method = RequestMethod.POST)
     public @ResponseBody Map<String, Set<String>> unlockRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidIds)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        orcidIds = URLDecoder.decode(orcidIds, "UTF-8");
         Set<String> unlockedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -720,8 +727,9 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/unreview-records.json", method = RequestMethod.POST)
     public @ResponseBody Map<String, Set<String>> unreviewRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidIds)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        orcidIds = URLDecoder.decode(orcidIds, "UTF-8");
         Set<String> unreviewedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -753,8 +761,9 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/review-records.json", method = RequestMethod.POST)
     public @ResponseBody Map<String, Set<String>> reviewRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidIds)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        orcidIds = URLDecoder.decode(orcidIds, "UTF-8");
         Set<String> reviewedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
@@ -786,8 +795,9 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
     public @ResponseBody Map<String, List<String>> resendClaimEmail(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String emailsOrOrcids)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
+        emailsOrOrcids = URLDecoder.decode(emailsOrOrcids, "UTF-8");
         List<String> emailOrOrcidList = new ArrayList<String>();
         if (StringUtils.isNotBlank(emailsOrOrcids)) {
             StringTokenizer tokenizer = new StringTokenizer(emailsOrOrcids, INP_STRING_SEPARATOR);
