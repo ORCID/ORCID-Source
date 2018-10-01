@@ -82,7 +82,7 @@ public class OpenIDController {
     public @ResponseBody ResponseEntity<OpenIDConnectUserInfo> getUserInfoPOST(HttpServletRequest request) throws IOException{
         String requestStr = IOUtils.toString(request.getInputStream());
         if (requestStr != null && requestStr.contains("access_token")) {
-            String tokenValue = requestStr.replaceAll("access_token=", "");
+            String tokenValue = requestStr.replaceAll("access_token=", "").trim();
             OpenIDConnectUserInfo info = getInfoFromToken(tokenValue);
             if (info != null)
                 return ResponseEntity.ok(info);
