@@ -330,6 +330,22 @@
                             </div>
                         </div>
 
+                        <!-- visibility controlls -->
+                        <div class="control-group visibility-container">
+                                <div class="text">
+                                    Set visibility:
+                                </div>
+                                <div class="controlls">
+                                    <privacy-toggle-ng2 
+                                    [dataPrivacyObj]="otherName" 
+                                    (privacyUpdate)="privacyChange($event, 'otherNames')"
+                                    elementId="also-known-as-privacy-toggle" 
+                                    privacyNodeName="visibility" 
+                                    ></privacy-toggle-ng2> 
+                                </div>
+                        </div>
+                        <!-- END visibility controlls -->
+
                         <div class="control-group">
 
                             <div *ngIf="editWork?.putCode?.value != null">
