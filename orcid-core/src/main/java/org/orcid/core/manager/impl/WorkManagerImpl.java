@@ -30,8 +30,6 @@ import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
-import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
@@ -174,7 +172,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        generateGroupingSuggestions(orcid, updatedWork);
         return updatedWork;
     }
 
@@ -247,7 +244,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Update the element in the bulk
                         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-                        generateGroupingSuggestions(orcid, updatedWork);
                         bulk.set(i, updatedWork);
                         
                         //Add the work extIds to the list of existing external identifiers
@@ -343,13 +339,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        generateGroupingSuggestions(orcid, updatedWork);
         return updatedWork;
-    }
-
-    private void generateGroupingSuggestions(String orcid, Work updatedWork) {
-        List<WorkSummary> summaries = getWorksSummaryList(orcid);
-        Works groupedWorks = groupWorks(summaries, true);
     }
 
     @Override
