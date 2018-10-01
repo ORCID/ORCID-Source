@@ -16,6 +16,9 @@
         color: #000 !important; /* Black prints faster:                           http://www.sanbeiji.com/archives/953 */
         text-shadow: none !important;
     }
+    i.green{
+        color: #a6ce39 !important
+    }
 
     a,
     a:visited {

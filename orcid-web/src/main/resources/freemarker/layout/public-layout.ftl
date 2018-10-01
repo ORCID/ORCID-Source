@@ -3,6 +3,27 @@
 <html class="no-js oldie" lang="en">
 <#include "/common/html-head.ftl" />
 <body data-baseurl="<@orcid.rootPath '/'/>">
+<root-cmp>
+    <style type="text/css">
+        body, html {
+            height: 100%;
+        }
+        .app-loading {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+    </style>
+    <div class="app-loading">
+        <i class="glyphicon glyphicon-refresh spin green x8" id="spinner"></i>
+        <!--[if lt IE 8]>    
+            <img src="${staticCdn}/img/spin-big.gif" class="spinner" width="85" height ="85"/>
+        <![endif]-->
+    </div>
+</root-cmp>
 <#nested />
 <#include "/common/scripts.ftl" />
 <#if !hideSupportWidget??>  
