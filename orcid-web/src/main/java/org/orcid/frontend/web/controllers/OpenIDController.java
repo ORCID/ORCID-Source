@@ -2,6 +2,8 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +52,9 @@ public class OpenIDController {
     @Value("${org.orcid.core.baseUri}")
     private String path;
     
+    //match access token in POST body
+    Pattern p = Pattern.compile("(?<=access_token=).*?(?=&|$)");
+    
     /** Expose the public key as JSON
      * 
      * @param request
@@ -80,12 +85,10 @@ public class OpenIDController {
     
     @RequestMapping(value = "/oauth/userinfo", method = RequestMethod.POST, produces = "application/json")
     public @ResponseBody ResponseEntity<OpenIDConnectUserInfo> getUserInfoPOST(HttpServletRequest request) throws IOException{
-        String requestStr = IOUtils.toString(request.getInputStream());
-        if (requestStr != null && requestStr.contains("access_token")) {
-            String tokenValue = requestStr.replaceAll("access_token=", "").trim();
-            OpenIDConnectUserInfo info = getInfoFromToken(tokenValue);
+        if (request.getParameter("access_token") != null) {
+            OpenIDConnectUserInfo info = getInfoFromToken(request.getParameter("access_token"));
             if (info != null)
-                return ResponseEntity.ok(info);
+                return ResponseEntity.ok(info);                
         }
         return getUserInfo(request);
     }
