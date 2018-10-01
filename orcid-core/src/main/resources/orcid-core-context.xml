@@ -941,8 +941,6 @@
 	
 	<bean id="sourceManager" class="org.orcid.core.manager.impl.SourceManagerImpl" />
 	
-	<bean id="customEmailManager" class="org.orcid.core.manager.impl.CustomEmailManagerImpl" />
-	
 	<bean id="orcidSocialManager" class="org.orcid.core.manager.impl.OrcidSocialManagerImpl" />
 	
 	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />	
