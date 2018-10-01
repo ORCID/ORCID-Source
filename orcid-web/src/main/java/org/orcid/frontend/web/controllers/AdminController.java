@@ -552,6 +552,12 @@ public class AdminController extends BaseController {
             if (!profileEntityManager.orcidExists(trusted)) {
                 request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
                 haveErrors = true;
+            } else {
+                ProfileEntity e = profileEntityCacheManager.retrieve(trusted);
+                if(!e.isAccountNonLocked() || e.getPrimaryRecord() != null) {
+                    request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
+                    haveErrors = true;
+                }
             }
         }
 
@@ -567,9 +573,15 @@ public class AdminController extends BaseController {
             if (!profileEntityManager.orcidExists(managed)) {
                 request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
                 haveErrors = true;
+            } else {
+                ProfileEntity e = profileEntityCacheManager.retrieve(managed);
+                if(!e.isAccountNonLocked() || e.getPrimaryRecord() != null) {
+                    request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
+                    haveErrors = true;
+                }
             }
         }
-
+        
         if (haveErrors)
             return request;
 

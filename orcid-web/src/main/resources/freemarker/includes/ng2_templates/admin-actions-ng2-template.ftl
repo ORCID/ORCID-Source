@@ -201,7 +201,7 @@
             <h3><@orcid.msg 'admin.success'/></h3>
             <p id="success-message">{{deprecateRecordParams.successMessage}}</p>  
             <div class="control-group">
-                <a href="" class="cancel-action" (click)="deprecateRecordReset()"><@orcid.msg 'freemarker.btnclose'/></a>
+                <a href="" class="cancel-action" (click)="deprecateRecordReset();"><@orcid.msg 'freemarker.btnclose'/></a>
             </div>  
         </div>
         <div class="form-group" *ngIf="showDeprecateRecordConfirm">
@@ -241,7 +241,7 @@
                 </table>
             </div>          
             <div class="control-group">
-                <button class="btn btn-primary" id="bottom-deprecate-profile" (click)="deprecateRecord()"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></button>&nbsp;
+                <button class="btn btn-primary" id="bottom-deprecate-profile" (click)="deprecateRecord();"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></button>&nbsp;
                 <a class="cancel-action" (click)="deprecateRecordReset();"><@orcid.msg 'freemarker.btnclose'/></a>
             </div>
         </div>        
@@ -286,7 +286,7 @@
             <input type="text" id="orcidId" (keyup.enter)="reactivateRecord()" [(ngModel)]="elementToReactivate.orcid" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
         </div>
         <div class="form-group">
-            <label for="email"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
+            <label for="email"><@orcid.msg 'admin.profile_reactivation.primary_email' /></label>
             <input type="text" id="email" (keyup.enter)="reactivateRecord()" [(ngModel)]="elementToReactivate.email" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.primary_email' />" class="input-xlarge" />
         </div>
         <div *ngIf="elementToReactivate.errors?.length > 0">
