@@ -3095,7 +3095,7 @@ ul.personal-inf-display li:last-child {
     width: 100%
 }
 
-.add-item-link a {
+.add-item-link button {
     float: right
 }
 
@@ -5612,7 +5612,9 @@ ul.oauth-scopes li {
 .action-icon-align-right {
     position: absolute;
     top: 8px;
-    right: 5px
+    right: 5px;
+    border: none;
+    font-size: 14px;
 }
 
 .action-icon-inside {
