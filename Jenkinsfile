@@ -58,7 +58,7 @@ node {
 }
 
 def report_and_clean(){
-    sh "rm -rf /var/lib/jenkins/.m2/repository/org/orcid/orcid-*/${BRANCH_NAME}-${BUILD_NUMBER}*"
+    sh "rm -rf /var/lib/jenkins/.m2/repository/org/orcid/**/${BRANCH_NAME}-${BUILD_NUMBER}"
     junit '**/target/surefire-reports/*.xml'
     deleteDir()
 }
