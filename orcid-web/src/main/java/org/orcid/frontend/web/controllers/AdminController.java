@@ -210,8 +210,10 @@ public class AdminController extends BaseController {
                 // Don't do nothing, the email doesn't exists
             }
         }
-        if (result.getErrors() == null || result.getErrors().size() == 0)
-            profileEntityManager.reactivateRecord(orcid, email);
+        if (result.getErrors() == null || result.getErrors().size() == 0) {
+            // Null Reactivation object means the reactivation is done by an admin
+            profileEntityManager.reactivate(orcid, email, null);
+        }
         return result;
     }
 

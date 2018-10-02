@@ -14,6 +14,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc1.record.Email;
 import org.orcid.jaxb.model.v3.rc1.record.Emails;
 import org.orcid.persistence.dao.ProfileDao;
@@ -209,11 +210,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    public void reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility) {
+    public boolean reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility) {
         EmailEntity entity = emailDao.find(emailHash);
         // If email doesn't exists, create it
         if(entity == null) {
             emailDao.addEmail(orcid, email, emailHash, visibility.name(), orcid, null);
+            return true;
         } else {
             if(orcid.equals(entity.getProfile().getId())) {
                 entity.setEmail(email);
@@ -227,5 +229,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 throw new IllegalArgumentException("Email " + email + " belongs to other record than " + orcid);
             }
         }
+        
+        return false;
     }
 }
