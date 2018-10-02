@@ -225,6 +225,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 entity.setLastModified(new Date());
                 emailDao.merge(entity);  
                 emailDao.flush();
+                if(!entity.getVerified()) {
+                    return true;
+                }
             } else {
                 throw new IllegalArgumentException("Email " + email + " belongs to other record than " + orcid);
             }

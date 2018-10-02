@@ -59,7 +59,7 @@ public interface EmailManager extends EmailManagerReadOnly {
      * @param emailHash
      * @param visibility
      * 
-     * @return true if the email is new, flase if the email was reactivated
+     * @return true if the email is new or it exists but have not been verified
      * */
     boolean reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility);
 }
