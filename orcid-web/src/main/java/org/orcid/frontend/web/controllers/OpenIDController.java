@@ -132,6 +132,7 @@ public class OpenIDController {
 
     @JsonInclude(Include.NON_NULL) 
     public static class OpenIDConnectUserInfoAccessDenied extends OpenIDConnectUserInfo{
+        @JsonProperty("error")
         String error = "access_denied";
         @JsonProperty("error-description")
         String errorDescription="access_token is invalid";
