@@ -50,6 +50,8 @@ import org.orcid.jaxb.model.v3.rc1.record.Membership;
 import org.orcid.jaxb.model.v3.rc1.record.Name;
 import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType;
 import org.orcid.jaxb.model.v3.rc1.record.Person;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
@@ -1548,6 +1550,26 @@ public class ValidateV3_rc1SamplesTest {
     }
     
     @Test
+    public void testUnmarshallPeerReview() throws SAXException, URISyntaxException {
+        PeerReview object = (PeerReview) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml", PeerReview.class);
+        assertNotNull(object);
+        assertNotNull(object.getRole());
+        assertNotNull(object.getType());
+        assertNotNull(object.getSubjectType());
+        object = (PeerReview) unmarshallFromPath("/record_3.0_rc1/samples/write_samples/peer-review-full-3.0_rc1.xml", PeerReview.class);
+        assertNotNull(object);
+        assertNotNull(object.getRole());
+        assertNotNull(object.getType());
+        assertNotNull(object.getSubjectType());
+        object = (PeerReview) unmarshallFromPath("/record_3.0_rc1/samples/write_samples/peer-review-full-award-subject-type-3.0_rc1.xml", PeerReview.class);
+        assertNotNull(object);
+        assertNotNull(object.getRole());
+        assertNotNull(object.getType());
+        assertNotNull(object.getSubjectType());
+        assertEquals(PeerReviewSubjectType.AWARD, object.getSubjectType());
+    }
+    
+    @Test
     public void testMarshallQualification() throws JAXBException, SAXException, URISyntaxException {
         Qualification object = (Qualification) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/qualification-3.0_rc1.xml", Qualification.class);
         marshall(object, "/record_3.0_rc1/qualification-3.0_rc1.xsd");
@@ -1559,6 +1581,12 @@ public class ValidateV3_rc1SamplesTest {
     public void testMarshallQualifications() throws JAXBException, SAXException, URISyntaxException {
         Qualifications object = (Qualifications) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/qualifications-3.0_rc1.xml", Qualifications.class);
         marshall(object, "/record_3.0_rc1/activities-3.0_rc1.xsd");
+    }
+    
+    @Test
+    public void testMarshallPeerReview() throws JAXBException, SAXException, URISyntaxException {
+        PeerReview object = (PeerReview) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml", PeerReview.class);
+        marshall(object, "/record_3.0_rc1/peer-review-3.0_rc1.xsd");
     }
 
     @Test
@@ -1719,6 +1747,8 @@ public class ValidateV3_rc1SamplesTest {
                 result = (ResearchResource) obj;
             } else if (ResearchResources.class.equals(type)) {
                 result = (ResearchResources) obj;
+            } else if (PeerReview.class.equals(type)) {
+                result = (PeerReview) obj;
             }
             return result;
         } catch (IOException e) {

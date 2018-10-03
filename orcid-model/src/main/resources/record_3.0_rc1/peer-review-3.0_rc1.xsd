@@ -102,7 +102,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="subject-type" type="work:work-type" minOccurs="0" maxOccurs="1">
+						<xs:element name="subject-type" type="peer-review:subject-type" minOccurs="0" maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation>The type of object that the review subject is (for example, a journal article, grant, etc).
 								</xs:documentation>
@@ -194,6 +194,61 @@
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
+	
+	<xs:simpleType name="subject-type">
+        <xs:annotation>
+            <xs:documentation>The types of peer review subject accepted accepted by the ORCID Registry, based on work types and funding types.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <!-- work types -->
+            <xs:enumeration value="artistic-performance" />
+            <xs:enumeration value="book-chapter" />
+            <xs:enumeration value="book-review" />
+            <xs:enumeration value="book" />
+            <xs:enumeration value="conference-abstract" />
+            <xs:enumeration value="conference-paper" />
+            <xs:enumeration value="conference-poster" />
+            <xs:enumeration value="data-set" />
+            <xs:enumeration value="dictionary-entry" />
+            <xs:enumeration value="disclosure" />
+            <xs:enumeration value="dissertation" />
+            <xs:enumeration value="edited-book" />
+            <xs:enumeration value="encyclopedia-entry" />
+            <xs:enumeration value="invention" />
+            <xs:enumeration value="journal-article" />
+            <xs:enumeration value="journal-issue" />
+            <xs:enumeration value="lecture-speech" />
+            <xs:enumeration value="license" />
+            <xs:enumeration value="magazine-article" />
+            <xs:enumeration value="manual" />
+            <xs:enumeration value="newsletter-article" />
+            <xs:enumeration value="newspaper-article" />
+            <xs:enumeration value="online-resource" />
+            <xs:enumeration value="other" />
+            <xs:enumeration value="patent" />
+            <xs:enumeration value="registered-copyright" />
+            <xs:enumeration value="report" />
+            <xs:enumeration value="research-technique" />
+            <xs:enumeration value="research-tool" />
+            <xs:enumeration value="software" />
+            <xs:enumeration value="spin-off-company" />
+            <xs:enumeration value="standards-and-policy" />
+            <xs:enumeration value="supervised-student-publication" />
+            <xs:enumeration value="technical-standard" />
+            <xs:enumeration value="test" />
+            <xs:enumeration value="translation" />
+            <xs:enumeration value="trademark" />
+            <xs:enumeration value="website" />
+            <xs:enumeration value="working-paper" />
+            
+            <!-- funding types -->
+            <xs:enumeration value="grant" />
+            <xs:enumeration value="contract" />
+            <xs:enumeration value="award" />
+            <xs:enumeration value="salary-award" />
+        </xs:restriction>
+    </xs:simpleType>
 
 	<xs:simpleType name="role">
 		<xs:annotation>

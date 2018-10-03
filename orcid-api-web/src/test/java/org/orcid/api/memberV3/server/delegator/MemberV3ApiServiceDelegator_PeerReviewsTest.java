@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Keyword;
 import org.orcid.jaxb.model.v3.rc1.record.Membership;
 import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
@@ -64,7 +65,6 @@ import org.orcid.jaxb.model.v3.rc1.record.Service;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
@@ -559,7 +559,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         WorkTitle workTitle1 = new WorkTitle();
         workTitle1.setTitle(new Title("work-title"));
         peerReview1.setSubjectName(workTitle1);
-        peerReview1.setSubjectType(WorkType.DATA_SET);
+        peerReview1.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview1.setType(PeerReviewType.EVALUATION);
 
         Response response1 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview1);
@@ -588,7 +588,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         WorkTitle workTitle2 = new WorkTitle();
         workTitle2.setTitle(new Title("work-title"));
         peerReview2.setSubjectName(workTitle2);
-        peerReview2.setSubjectType(WorkType.DATA_SET);
+        peerReview2.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview2.setType(PeerReviewType.EVALUATION);
 
         Response response2 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview2);
