@@ -359,14 +359,12 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             this.types.push(this.types.splice(idx, 1)[0]);
                         }
                     }
-                    for (var idx in this.types){
-                        console.log(this.editWork.workType.value + ' ' + this.types[idx].key);
+                    for (var idx in this.types){                        
                         if (this.types[idx].key == this.editWork.workType.value){
                             hasType = true;
                             break;
                         }                        
-                    }
-                    console.log('hasType?' + hasType);
+                    }                    
                     if(!hasType) {
                         switch (this.editWork.workCategory.value){
                         case "conference":
