@@ -267,7 +267,7 @@
                                 <input type="radio" name="relationship{{i}}" [(ngModel)]="editFunding.externalIdentifiers[i].relationship.value" value="part-of">
                                 <@orcid.msg "common.part_of" />
                             </label>                            
-                            <button(click)="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" *ngIf="!first"></button>
+                            <button (click)="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" *ngIf="!first"></button>
                         </div>
                         <div *ngIf="last" class="add-item-link">
                             <span><button class="btn-white-no-border" (click)="addFundingExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.external_identifier.add_another' /></button></span>
