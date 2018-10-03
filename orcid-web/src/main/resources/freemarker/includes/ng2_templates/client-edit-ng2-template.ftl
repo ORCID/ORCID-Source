@@ -9,9 +9,9 @@
             <div class="col-md-3 col-sm-2 col-xs-2">                
                 <#if allow_more_clients?? && allow_more_clients>
                     <#if is_premium?? && is_premium>
-                        <a href="" class="pull-right"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
+                        <a class="pull-right"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
                     <#else>
-                        <a href="" class="pull-right" ng-hide="clients.length > 0"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
+                        <a class="pull-right" ng-hide="clients.length > 0"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
                     </#if>                      
                 </#if>
             </div>              
@@ -28,7 +28,7 @@
                     <p><@orcid.msg 'manage.developer_tools.group.description.1' />&nbsp;<a href="<@orcid.msg 'manage.developer_tools.group.description.link.url' />"><@orcid.msg 'manage.developer_tools.group.description.link.text' /></a><@orcid.msg 'manage.developer_tools.group.description.2' /></p>     
                     <div *ngIf="clients?.length == 0" >
                         <span><@orcid.msg 'manage.developer_tools.group.no_clients'/></span><br />
-                        <span><@orcid.msg 'manage.developer_tools.group.register_now'/>&nbsp;<a href="" (click)="showAddClient()"><@orcid.msg 'manage.developer_tools.group.add'/></a></span>
+                        <span><@orcid.msg 'manage.developer_tools.group.register_now'/>&nbsp;<a (click)="showAddClient()"><@orcid.msg 'manage.developer_tools.group.add'/></a></span>
                     </div>  
                     <div *ngIf="clients?.length > 0" >
                         <table class="table sub-table">
@@ -44,8 +44,8 @@
                                     </td>                                               
                                     <td colspan="4" class="pull-right">                                     
                                         <ul class="client-options">
-                                            <li><a href (click)="viewDetails(client)"><span class="glyphicon glyphicon-eye-open"></span><@orcid.msg 'manage.developer_tools.group.view_credentials_link' /></a></li>   
-                                            <li><a href (click)="showEditClient(client)"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.developer_tools.group.edit_credentials_link' /></a></li>                                              
+                                            <li><a (click)="viewDetails(client)"><span class="glyphicon glyphicon-eye-open"></span><@orcid.msg 'manage.developer_tools.group.view_credentials_link' /></a></li>   
+                                            <li><a (click)="showEditClient(client)"><span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'manage.developer_tools.group.edit_credentials_link' /></a></li>                                              
                                         </ul>                                       
                                     </td>                                   
                                 </tr>                                               
@@ -122,7 +122,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="inner-row margin-left-fix">                         
                                 <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge ruri" [(ngModel)]="rUri.value.value" />                                                         
-                                <a href (click)="deleteUriOnNewClient($index)" class="glyphicon glyphicon-trash grey"></a>
+                                <a (click)="deleteUriOnNewClient($index)" class="glyphicon glyphicon-trash grey"></a>
                                 <span class="orcid-error" *ngIf="rUri?.errors?.length > 0">
                                     <div *ngFor='let error of rUri.errors' [innerHTML]="error"></div>
                                 </span>                                 
@@ -134,14 +134,14 @@
             <div class="row">
                 <!-- Add redirect uris -->
                 <div class="col-md-9 col-sm-9 col-xs-9 add-options">
-                    <a href="" class="icon-href-bg" (click)="addRedirectUriToNewClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+                    <a class="icon-href-bg" (click)="addRedirectUriToNewClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
                     <div class="add-options margin-bottom-box" *ngIf="!hideGoogleUri || !hideSwaggerUri || !hideSwaggerMemberUri">                                
                         <div>
                             <h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
                             <ul class="pullleft-list">
-                                <li *ngIf="!hideGoogleUri" id="google-ruir"><a href="" class="icon-href" (click)="addTestRedirectUri('google','false')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>                                        
-                                <li *ngIf="!hideSwaggerUri" id="swagger-ruir"><a href="" class="icon-href" (click)="addTestRedirectUri('swagger','false')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>                                        
-                                <li *ngIf="!hideSwaggerMemberUri" id="swagger-member-ruir"><a href="" class="icon-href" (click)="addTestRedirectUri('swagger-member','false')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger_member'/></a></li>                                     
+                                <li *ngIf="!hideGoogleUri" id="google-ruir"><a class="icon-href" (click)="addTestRedirectUri('google','false')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>                                        
+                                <li *ngIf="!hideSwaggerUri" id="swagger-ruir"><a class="icon-href" (click)="addTestRedirectUri('swagger','false')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>                                        
+                                <li *ngIf="!hideSwaggerMemberUri" id="swagger-member-ruir"><a class="icon-href" (click)="addTestRedirectUri('swagger-member','false')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger_member'/></a></li>                                     
                             </ul>                               
                         </div>
                     </div>                      
@@ -154,7 +154,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href (click)="addClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />">
+                            <a (click)="addClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />">
                                 <span class="glyphicon glyphicon-floppy-disk"></span>
                             </a>
                         </li>                           
@@ -172,7 +172,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">             
                     <ul class="sso-options pull-right"> 
                         <li><a href="#member_developer_tools_header" (click)="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>                        
-                        <li><a href (click)="showEditClient(clientDetails)" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>                            
+                        <li><a (click)="showEditClient(clientDetails)" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>                            
                     </ul>                   
                 </div>
             </div>
@@ -369,7 +369,7 @@
                     <span></span>
                 </div>
                 <div class="col-md-9 col-sm-9 col-xs-8">
-                    <a href="" class="btn btn-danger" (click)="confirmResetClientSecret()">                                            
+                    <a class="btn btn-danger" (click)="confirmResetClientSecret()">                                            
                         <@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
                     </a>
                 </div>
@@ -390,7 +390,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="inner-row margin-left-fix">                         
                                 <input type="text" class="input-xlarge ruri" [(ngModel)]="rUri.value.value" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>"/>
-                                <a href (click)="deleteUriOnExistingClient($index)" class="glyphicon glyphicon-trash grey pull-right"></a>
+                                <a (click)="deleteUriOnExistingClient($index)" class="glyphicon glyphicon-trash grey pull-right"></a>
                                 <span class="orcid-error" *ngIf="rUri?.errors?.length > 0">
                                     <div *ngFor='let error of rUri.errors' [innerHTML]="error"></div>
                                 </span>                                                                                             
@@ -402,14 +402,14 @@
             <div class="row">
                 <!-- Add redirect uris -->
                 <div class="col-md-9 col-sm-9 col-xs-9 add-options">
-                    <a href="" class="icon-href-bg" (click)="addUriToExistingClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+                    <a class="icon-href-bg" (click)="addUriToExistingClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
                     <div class="add-options margin-bottom-box" *ngIf="!hideGoogleUri || !hideSwaggerUri || !hideSwaggerMemberUri">                                
                         <div>
                             <h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
                             <ul class="pullleft-list">
-                                <li *ngIf="!hideGoogleUri" id="google-ruir"><a href="" class="icon-href" (click)="addTestRedirectUri('google','true')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>                                     
-                                <li *ngIf="!hideSwaggerUri" id="swagger-ruir"><a href="" class="icon-href" (click)="addTestRedirectUri('swagger','true')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>                                     
-                                <li *ngIf="!hideSwaggerMemberUri" id="swagger-member-ruir"><a href="" class="icon-href" (click)="addTestRedirectUri('swagger-member','true')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger_member'/></a></li>                                      
+                                <li *ngIf="!hideGoogleUri" id="google-ruir"><a class="icon-href" (click)="addTestRedirectUri('google','true')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>                                     
+                                <li *ngIf="!hideSwaggerUri" id="swagger-ruir"><a class="icon-href" (click)="addTestRedirectUri('swagger','true')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>                                     
+                                <li *ngIf="!hideSwaggerMemberUri" id="swagger-member-ruir"><a class="icon-href" (click)="addTestRedirectUri('swagger-member','true')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger_member'/></a></li>                                      
                             </ul>                               
                         </div>
                     </div>                      
@@ -417,7 +417,7 @@
                 <div class="col-md-3 col-sm-3 col-xs-3 sso-api">                
                     <ul class="sso-options pull-right">                         
                         <li><a href="#member_developer_tools_header" (click)="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
-                        <li><a href (click)="editClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>                            
+                        <li><a (click)="editClient()" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>                            
                     </ul>                   
                 </div>      
             </div>      
