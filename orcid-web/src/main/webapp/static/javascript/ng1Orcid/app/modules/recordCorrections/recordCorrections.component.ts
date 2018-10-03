@@ -22,6 +22,10 @@ import { CommonService }
 export class RecordCorrectionsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
+    currentPage = {
+        "recordCorrections" : ['aas','asds']
+    }
+
     constructor(
         private commonSrvc: CommonService
     ) {

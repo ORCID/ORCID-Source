@@ -1,6 +1,7 @@
 
 
 <script type="text/ng-template" id="record-corrections-ng2-template">
+    <div> exists </div>
     <div *ngIf="currentPage.recordCorrections.length > 0" >
         <div class="row heading">
             <div class="col-md-3 col-sm-12 col-xs-12">

@@ -16,7 +16,7 @@ import { CommonNg2Module }
 
 // This is the Angular 1 part of the module
 export const RecordCorrectionsModule = angular.module(
-    'PasswordEditModule', 
+    'RecordCorrectionsModule', 
     []
 );
 
@@ -42,7 +42,7 @@ export class RecordCorrectionsNg2Module {}
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 RecordCorrectionsModule.directive(
-    'passwordEditNg2', 
+    'recordCorrectionsNg2', 
     <any>downgradeComponent(
         {
             component: RecordCorrectionsComponent,
