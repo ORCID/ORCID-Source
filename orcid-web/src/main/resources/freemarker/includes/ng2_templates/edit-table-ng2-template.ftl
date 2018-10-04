@@ -14,7 +14,7 @@
             <tr>
                 <!-- Email header -->
                 <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
-                <td><a href="" id="account-settings-toggle-email-edit" (click)="toggleEmailEdit()">{{emailToggleText}}</a></td>
+                <td><a id="account-settings-toggle-email-edit" (click)="toggleEmailEdit()">{{emailToggleText}}</a></td>
             </tr>
             
             <tr>
@@ -25,7 +25,7 @@
             
             <tr>
                 <th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
-                <td><a href="" id="" (click)="toggleLanguageEdit()">{{languageToggleText}}</a></td>
+                <td><a id="" (click)="toggleLanguageEdit()">{{languageToggleText}}</a></td>
             </tr>
             
 
@@ -43,7 +43,7 @@
             </tr>
             <tr>
                 <th><a name="editPassword"></a>${springMacroRequestContext.getMessage("manage.password")}</th>
-                <td><a href="" (click)="togglePasswordEdit()">{{passwordToggleText}}</a></td>
+                <td><a (click)="togglePasswordEdit()">{{passwordToggleText}}</a></td>
             </tr>
             <tr *ngIf="showEditPassword">
                 <td colspan="2" class="reset" id="password-edit">
@@ -55,7 +55,7 @@
             <!-- Privacy preferences -->
             <tr>
                 <th><a name="editPrivacyPreferences"></a>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
-                <td><a href="" (click)="togglePrivacyPreferencesEdit()" id="privacyPreferencesToggle">{{privacyPreferencesToggleText}}</a></td>
+                <td><a (click)="togglePrivacyPreferencesEdit()" id="privacyPreferencesToggle">{{privacyPreferencesToggleText}}</a></td>
             </tr>
 
             <tr *ngIf="showEditPrivacyPreferences" id="privacyPreferencesSection">
@@ -65,7 +65,7 @@
             </tr>
             <tr>
                 <th><a name="editSecurityQuestion"></a>${springMacroRequestContext.getMessage("manage.security_question")}</th>
-                <td><a href="" (click)="toggleSecurityQuestionEdit()">{{securityQuestionToggleText}}</a></td>
+                <td><a (click)="toggleSecurityQuestionEdit()">{{securityQuestionToggleText}}</a></td>
             </tr>
             <tr *ngIf="showEditSecurityQuestion" >
                 <td colspan="2">
@@ -85,7 +85,7 @@
             <!-- Deprecate duplicate account -->
             <tr>
                 <th><a name="editDeprecate"></a>${springMacroRequestContext.getMessage("manage.removeDuplicate")}</th>
-                <td><a href="" (click)="toggleDeprecateEdit()">{{deprecateToggleText}}</a></td>
+                <td><a (click)="toggleDeprecateEdit()">{{deprecateToggleText}}</a></td>
             </tr>
             <tr *ngIf="showEditDeprecate" >
                 <td colspan="2">
@@ -95,7 +95,7 @@
             <@orcid.checkFeatureStatus 'TWO_FACTOR_AUTHENTICATION'>
                 <tr>
                     <th><a name="edit2FA"></a>${springMacroRequestContext.getMessage("manage.2FA")}</th>
-                    <td><a href="" (click)="toggle2FAEdit()">{{twoFAToggleText}}</a></td>
+                    <td><a (click)="toggle2FAEdit()">{{twoFAToggleText}}</a></td>
                 </tr>
                 <tr *ngIf="showEdit2FA" >
                     <td colspan="2">
@@ -105,7 +105,7 @@
             </@orcid.checkFeatureStatus>
             <tr>
                 <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
-                <td><a href="" (click)="toggleGetMyDataEdit()">{{twoFAToggleText}}</a></td>
+                <td><a (click)="toggleGetMyDataEdit()">{{twoFAToggleText}}</a></td>
             </tr>
             <tr *ngIf="showEditGetMyData">
                 <td colspan="2">
