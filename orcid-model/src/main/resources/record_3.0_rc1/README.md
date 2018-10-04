@@ -118,6 +118,7 @@ v3.0_rc1 is the current development release of the ORCID API.
 - *reviewer-role* and *review-type* are returned with the peer-review summary
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
 - Addition of *common:external-id-normalized* when reading peer-reviews for normalized peer-review identifiers
+- Addition of *grant*, *contract*, *award*, *salary-award*, and *research-resource-proposal* to supported subject types
 
 ## Sample files:
 

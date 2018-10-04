@@ -197,7 +197,14 @@
 	
 	<xs:simpleType name="subject-type">
         <xs:annotation>
-            <xs:documentation>The types of peer review subject accepted accepted by the ORCID Registry, based on work types and funding types.
+            <xs:documentation>The types of peer review subject accepted accepted by the ORCID Registry. In addition to work types (please refer to the CASRAI dictionary for definitions of
+                each work type: https://dictionary.casrai.org/Output_Types), the following options are available:
+			    * Software: peer-reviewed software
+			    * Award: Peer-reviewed funding providing direct research costs through competitions
+			    * Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria
+			    * Grant: Peer-reviewed funding providing direct research costs through competitions
+			    * Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
+			    * Research resource proposal: A peer-reviewed proposal of use of a research resource
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
@@ -247,6 +254,9 @@
             <xs:enumeration value="contract" />
             <xs:enumeration value="award" />
             <xs:enumeration value="salary-award" />
+            
+            <!-- research resource types -->
+            <xs:enumeration value="research-resource-proposal" />
         </xs:restriction>
     </xs:simpleType>
 

@@ -91,6 +91,8 @@ public enum PeerReviewSubjectType implements Serializable {
     AWARD("award"),
     @XmlEnumValue("salary-award")
     SALARY_AWARD("salary-award"),
+    @XmlEnumValue("research-resource-proposal")
+    RESEARCH_RESOURCE_PROPOSAL("research-resource-proposal"),
     @XmlEnumValue("undefined")
     UNDEFINED("undefined");
     

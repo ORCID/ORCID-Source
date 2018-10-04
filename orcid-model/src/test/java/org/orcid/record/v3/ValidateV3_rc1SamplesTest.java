@@ -1587,6 +1587,10 @@ public class ValidateV3_rc1SamplesTest {
     public void testMarshallPeerReview() throws JAXBException, SAXException, URISyntaxException {
         PeerReview object = (PeerReview) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml", PeerReview.class);
         marshall(object, "/record_3.0_rc1/peer-review-3.0_rc1.xsd");
+        
+        object = (PeerReview) unmarshallFromPath("/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml", PeerReview.class);
+        object.setSubjectType(PeerReviewSubjectType.RESEARCH_RESOURCE_PROPOSAL);
+        marshall(object, "/record_3.0_rc1/peer-review-3.0_rc1.xsd");
     }
 
     @Test
