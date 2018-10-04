@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/research-resource" xmlns:research-resource="http://www.orcid.org/ns/research-resource"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2018 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="research-resource" uri="http://www.orcid.org/ns/research-resource" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_3.0_rc2/common-3.0_rc2.xsd" />
+
+	<xs:element name="research-resource">
+		<xs:annotation>
+			<xs:documentation>research-resource utilized by the researcher.
+				* The put-code attribute is used only when reading this element. When
+				updating the item, the put-code attribut must be included to
+				indicate the specific record to be updated.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="common:element-summary">
+					<xs:sequence>
+					<xs:element name="proposal" type="research-resource:proposal" minOccurs="1" maxOccurs="1" />
+					<xs:element name="resource-items" type="research-resource:resource-items" minOccurs="1" maxOccurs="1" />					
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="research-resource-summary">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="common:element-summary">
+					<xs:sequence>
+					<xs:element name="proposal" type="research-resource:proposal" minOccurs="1" maxOccurs="1" />
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="proposal">
+		<xs:annotation>
+			<xs:documentation>Container for proposal that led to access
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="title" type="research-resource:research-resource-title" minOccurs="1" />
+			<xs:element name="hosts" type="research-resource:hosts" minOccurs="1" maxOccurs="1" />
+			<xs:element ref="common:external-ids" minOccurs="1" maxOccurs="1"/>
+			<xs:element ref="common:start-date" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="common:end-date" minOccurs="0" maxOccurs="1"/>			
+			<xs:element ref="common:url" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="resource-items">
+		<xs:annotation>
+			<xs:documentation>Container for resources
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="resource-item" type="research-resource:resource-item" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="resource-item">
+		<xs:annotation>
+			<xs:documentation>Actual resources used
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+				<xs:element name="resource-name" type="common:string-1000" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="resource-type" type="research-resource:resource-type" minOccurs="1" maxOccurs="1" />
+				<xs:element name="hosts" type="research-resource:hosts" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="common:external-ids" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="common:url" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="hosts">
+		<xs:annotation>
+			<xs:documentation>Container for host and proposal organisations
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="common:organization" minOccurs="1" maxOccurs="10"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="resource-type">
+		<xs:annotation>
+			<xs:documentation>Types of research-resources. Options are:
+    * Collection: An object or group of objects used for research purposes; can be tangible or digital. Examples include ocean mission, field campaign, data sets, rare book collections, museum collections, biological specimen collections
+
+    * Equipment: Hardware used for research purposes. Examples include microscopes, telescopes, computers, glassware, samples, materials
+
+    * Infrastructure: A facility, building, or other physical space used to perform research. Examples incldue a neutron spallation source, animal facility, data enclave, archaeological site, telescope array, ship, plane, farm, laboratory
+
+    * Service: Services used for research purposes. Examples include data analysis, computing services, logistical support, legal services, copyediting, expert or staff advisement.
+
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="infrastructures" />
+			<xs:enumeration value="collections" />
+			<xs:enumeration value="equipment" />
+			<xs:enumeration value="services" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="research-resource-title">
+		<xs:annotation>
+			<xs:documentation>Container for titles of the proposal or resource-item.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="common:title"/>
+			<xs:element ref="common:translated-title" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
