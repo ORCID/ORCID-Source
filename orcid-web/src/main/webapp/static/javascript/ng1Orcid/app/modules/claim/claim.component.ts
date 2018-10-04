@@ -30,15 +30,15 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();    
 
     postingClaim: boolean;
-    register: any;
-
+    claim: any;
+    
     constructor(
         private claimService: ClaimService,
         private featuresService: FeaturesService,
         private commonService: CommonService
     ) {
         this.postingClaim = false;
-        this.register = {};
+        this.claim = { 'password': { 'value': '', }, 'passwordConfirm': { 'value': '', } };        
     }
 
     getClaim(): void{
@@ -47,12 +47,11 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
-            data => {
-                this.register = data;
-                //console.log('this.registerData', this.register);
+            data => {                
+                this.claim = data;
             },
             error => {
-                //console.log('getregisterDataError', error);
+                console.log('getClaim', error);
             } 
         );
     };
@@ -78,25 +77,25 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         this.postingClaim = true;
 
-        this.claimService.postClaim( this.register )
+        this.claimService.postClaim( this.claim )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.register = data;
+                this.claim = data;
 
-                if (this.register.errors.length == 0) {
-                    if (this.register.url != null) {
+                if (this.claim.errors.length == 0) {
+                    if (this.claim.url != null) {
                         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
-                        orcidGA.windowLocationHrefDelay(this.register.url);
+                        orcidGA.windowLocationHrefDelay(this.claim.url);
                     }
                 }
                 this.postingClaim = false;
             },
             error => {
                 this.postingClaim = false;
-                //console.log('setformDataError', error);
+                console.log('postClaim', error);
             } 
         );
     };
@@ -105,22 +104,22 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
         if (field === undefined) {
             field = '';
         }
-        this.claimService.serverValidate( this.register, field )
+        this.claimService.serverValidate( this.claim, field )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.commonService.copyErrorsLeft(this.register, data);
+                this.commonService.copyErrorsLeft(this.claim, data);
             },
             error => {
-                //console.log("serverValidate() error", error);
+                console.log("serverValidate", error);
             } 
         );
     };
 
     updateActivitiesVisibilityDefault(priv, $event): any {
-        this.register.activitiesVisibilityDefault.visibility = priv;
+        this.claim.activitiesVisibilityDefault.visibility = priv;
     };
     
     //Default init functions provided by Angular Core
