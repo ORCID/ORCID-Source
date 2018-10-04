@@ -1,6 +1,5 @@
-import { NgForOf, NgIf } from "@angular/common";
 import { AfterViewInit, Component, OnDestroy, OnInit } from "@angular/core";
-import { Observable, Subject, Subscription } from "rxjs";
+import {  Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { CommonService } from "../../shared/common.service.ts";
 import { GenericService } from "../../shared/generic.service.ts";

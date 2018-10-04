@@ -1,5 +1,5 @@
 import * as angular from "angular";
-import { Directive, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { downgradeComponent } from "@angular/upgrade/static";
 import { RecordCorrectionsComponent } from "./recordCorrections.component.ts";
 import { CommonNg2Module } from "./../common/common.ts";
