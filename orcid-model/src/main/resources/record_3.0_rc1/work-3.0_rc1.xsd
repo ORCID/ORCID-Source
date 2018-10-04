@@ -117,9 +117,10 @@
 
 	<xs:simpleType name="work-type">
 		<xs:annotation>
-			<xs:documentation>The types of works accepted accepted by the ORCID
+			<xs:documentation>The types of works accepted by the ORCID
 				Registry. Please refer to the CASRAI dictionary for definitions of
-				each work type. http://dictionary.casrai.org/research-personnel-profile/contributions/outputs
+				each work type. https://dictionary.casrai.org/Output_Types. 
+				(In addition to these types we have software type.)
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">

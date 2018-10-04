@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/group-id" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:group-id="http://www.orcid.org/ns/group-id">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_2.1/common-2.1.xsd" />
+
+	<xs:element name="group-id-record">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="common:source-type">
+					<xs:sequence>
+						<xs:element name="name" type="common:string-1000"
+							minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>Group display name
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>																		
+						<xs:element name="group-id"  type="common:group-id" maxOccurs="1" minOccurs="1" />
+						<xs:element name="description" type="common:string-1000"
+							maxOccurs="1" minOccurs="1">
+							<xs:annotation>
+								<xs:documentation>Description
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="type" minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>type of group
+								</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="publisher">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
+									<xs:enumeration value="institution">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
+									<xs:enumeration value="journal">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
+									<xs:enumeration value="conference">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
+									<xs:enumeration value="newspaper">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
+									<xs:enumeration value="newsletter">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
+									<xs:enumeration value="magazine">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
+									<xs:enumeration value="peer-review service">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="put-code" type="common:put-code" use="optional" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="group-id-records">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+				<xs:element name="total" type="xs:integer"></xs:element>
+				<xs:element name="page" type="xs:integer"></xs:element>
+				<xs:element name="page-size" type="xs:integer"></xs:element>
+				<xs:element ref="group-id:group-id-record" minOccurs="0" maxOccurs="unbounded"></xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
