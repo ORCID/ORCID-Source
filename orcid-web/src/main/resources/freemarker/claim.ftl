@@ -37,7 +37,7 @@
                                     </div>
                                 </div>
                                 <span class="orcid-error" *ngIf="claim.password?.errors?.length > 0">
-                                    <div *ngFor='let error of claim.password.errors' [innerHTML]="error"></div>
+                                    <div *ngFor="let error of claim.password.errors" [innerHTML]="error"></div>
                                 </span>                                                                                                
                             </div>
                         </div>
@@ -48,11 +48,57 @@
                                     <input type="password" name="confirmPassword" class="input-xlarge" [(ngModel)]="claim.passwordConfirm.value" (ngModelChange)="serverValidate('PasswordConfirm')"/>
                                     <span class="required" [ngClass]="isValidClass(claim.passwordConfirm)">*</span>
                                     <span class="orcid-error" *ngIf="claim.passwordConfirm.errors.length > 0">
-                                        <div *ngFor='let error of claim.passwordConfirm.errors' [innerHTML]="error"></div>
+                                        <div *ngFor="let error of claim.passwordConfirm.errors" [innerHTML]="error"></div>
                                     </span>
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group clear-fix popover-registry">  
+                            <h4><@orcid.msg 'register.privacy_settings' /></h4>         
+                            <p><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault' /></p> 
+                            <p><b><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault.who_can_see_this' /></b></p>
+                            <div class="visibilityDefault">
+                                <div class="radio">
+                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="PUBLIC" (ngModelChange)="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
+                                </div>
+                                <div class="radio">
+                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="LIMITED" (ngModelChange)="serverValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
+                                </div>
+                                <div class="radio">
+                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="PRIVATE" (ngModelChange)="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
+                                </div>
+                            </div>
+                            <div class="visibilityHelp">
+                                <span class="required" ng-class="isValidClass(register.activitiesDefaultVisibility)">*</span>
+                                <div class="popover-help-container">
+                                    <i class="glyphicon glyphicon-question-sign"></i>
+                                    <div id="name-help" class="popover bottom">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <strong><@orcid.msg 'privacyToggle.help.who_can_see' /></strong>
+                                            <ul class="privacyHelp">
+                                                <li class="public" style="color: #009900;"><@orcid.msg 'privacyToggle.help.everyone' /></li>
+                                                <li class="limited"style="color: #ffb027;"><@orcid.msg 'privacyToggle.help.trusted_parties' /></li>
+                                                <li class="private" style="color: #990000;"><@orcid.msg 'privacyToggle.help.only_me' /></li>
+                                            </ul>
+                                            <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information"><@orcid.msg 'privacyToggle.help.more_information' /></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="orcid-error" *ngIf="claim.activitiesVisibilityDefault.errors.length > 0">
+                                <div *ngFor="let error of claim.activitiesVisibilityDefault.errors" [innerHTML]="error"></div>
+                            </span>
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                     </script>
                     <claim-ng2></claim-ng2>
                 </div>
