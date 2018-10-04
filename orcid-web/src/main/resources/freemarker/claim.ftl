@@ -38,8 +38,20 @@
                                 </div>
                                 <span class="orcid-error" *ngIf="claim.password?.errors?.length > 0">
                                     <div *ngFor='let error of claim.password.errors' [innerHTML]="error"></div>
-                                </span>
+                                </span>                                                                                                
+                            </div>
+                        </div>
+                        <div>
                             <div>
+                                <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword' /></label>
+                                <div class="relative">
+                                    <input type="password" name="confirmPassword" class="input-xlarge" [(ngModel)]="claim.passwordConfirm.value" (ngModelChange)="serverValidate('PasswordConfirm')"/>
+                                    <span class="required" [ngClass]="isValidClass(claim.passwordConfirm)">*</span>
+                                    <span class="orcid-error" *ngIf="claim.passwordConfirm.errors.length > 0">
+                                        <div *ngFor='let error of claim.passwordConfirm.errors' [innerHTML]="error"></div>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </script>
                     <claim-ng2></claim-ng2>
