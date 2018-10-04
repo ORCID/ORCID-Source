@@ -57,13 +57,13 @@
                             <p><b><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault.who_can_see_this' /></b></p>
                             <div class="visibilityDefault">
                                 <div class="radio">
-                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="PUBLIC" (ngModelChange)="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
+                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="PUBLIC"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
                                 </div>
                                 <div class="radio">
-                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="LIMITED" (ngModelChange)="serverValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
+                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="LIMITED"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
                                 </div>
                                 <div class="radio">
-                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="PRIVATE" (ngModelChange)="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
+                                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="claim.activitiesVisibilityDefault.visibility" value="PRIVATE"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
                                 </div>
                             </div>
                             <div class="visibilityHelp">
@@ -98,7 +98,16 @@
                             </div>
                             <p><@orcid.msg 'register.paragraph.3' /></p>                            
                         </div>                          
-                        
+                        <div class="form-group clear-fix bottomBuffer">
+                            <h4><@orcid.msg 'register.labelTermsofUse'/><span class="required"  [ngClass]="{'text-error':claim.termsOfUse.value == false}"></span></h4>  
+                            <p>
+                                <input id="register-form-term-box" type="checkbox" name="termsConditions" [(ngModel)]="claim.termsOfUse.value" tabindex="9" name="acceptTermsAndConditions" (ngModelChange)="serverValidate('TermsOfUse')" />
+                                <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
+                            </p>
+                            <span class="orcid-error" *ngIf="claim.termsOfUse.errors.length > 0">
+                                <div *ngFor="let error of claim.termsOfUse.errors" [innerHTML]="error"></div>
+                            </span>
+                        </div>
                         
                         
                         

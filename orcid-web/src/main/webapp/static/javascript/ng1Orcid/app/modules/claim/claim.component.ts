@@ -38,7 +38,13 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
         private commonService: CommonService
     ) {
         this.postingClaim = false;
-        this.claim = { 'password': { 'value': '', 'errors':[] }, 'passwordConfirm': { 'value': '', 'errors':[] }, 'activitiesVisibilityDefault': {'visibility':'', 'errors':[]}, 'sendOrcidNews': { 'value': ''} };        
+        this.claim = { 
+                'password': { 'value': '', 'errors':[] }, 
+                'passwordConfirm': { 'value': '', 'errors':[] }, 
+                'activitiesVisibilityDefault': {'visibility':'', 'errors':[]}, 
+                'sendOrcidNews': { 'value': false }, 
+                'termsOfUse': { 'value': false } 
+                };        
     }
 
     getClaim(): void{
@@ -49,7 +55,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {                
                 this.claim = data;
-                this.claim.activitiesVisibilityDefault.visibility = '';
+                this.claim.activitiesVisibilityDefault.visibility = null;
             },
             error => {
                 console.log('getClaim', error);
