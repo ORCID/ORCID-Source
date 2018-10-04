@@ -9,7 +9,7 @@
                     <script type="text/ng-template" id="claim-ng2-template">
                         <div>
                             <label class="control-label"><@orcid.msg 'claim.password' /></label>
-                            <div class="relative">
+                            <div class="form-group clear-fix">
                                 <input type="password" name="password" class="input-xlarge" [(ngModel)]="claim.password.value" (ngModelChange)="serverValidate('Password')"/>
                                 <span class="required" [ngClass]="isValidClass(claim.password)">*</span>
                                 <div class="popover-help-container" style="display: inline;float: none;">
@@ -41,19 +41,17 @@
                                 </span>                                                                                                
                             </div>
                         </div>
-                        <div>
-                            <div>
-                                <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword' /></label>
-                                <div class="relative">
-                                    <input type="password" name="confirmPassword" class="input-xlarge" [(ngModel)]="claim.passwordConfirm.value" (ngModelChange)="serverValidate('PasswordConfirm')"/>
-                                    <span class="required" [ngClass]="isValidClass(claim.passwordConfirm)">*</span>
-                                    <span class="orcid-error" *ngIf="claim.passwordConfirm.errors.length > 0">
-                                        <div *ngFor="let error of claim.passwordConfirm.errors" [innerHTML]="error"></div>
-                                    </span>
-                                </div>
-                            </div>
+                        <div class="form-group clear-fix">                            
+                            <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword' /></label>
+                            <div class="relative">
+                                <input type="password" name="confirmPassword" class="input-xlarge" [(ngModel)]="claim.passwordConfirm.value" (ngModelChange)="serverValidate('PasswordConfirm')"/>
+                                <span class="required" [ngClass]="isValidClass(claim.passwordConfirm)">*</span>
+                                <span class="orcid-error" *ngIf="claim.passwordConfirm.errors.length > 0">
+                                    <div *ngFor="let error of claim.passwordConfirm.errors" [innerHTML]="error"></div>
+                                </span>
+                            </div>                            
                         </div>
-                        <div class="form-group clear-fix popover-registry">  
+                        <div class="form-group clear-fix">  
                             <h4><@orcid.msg 'register.privacy_settings' /></h4>         
                             <p><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault' /></p> 
                             <p><b><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault.who_can_see_this' /></b></p>
@@ -90,8 +88,16 @@
                                 <div *ngFor="let error of claim.activitiesVisibilityDefault.errors" [innerHTML]="error"></div>
                             </span>
                         </div>
-                        
-                        
+                        <div class="form-group clear-fix">
+                            <h4 class="dark-label"><@orcid.msg 'register.label.notification_settings' /></h4>                
+                            <p><@orcid.msg 'register.paragraph.1' /></p>
+                            <p><@orcid.msg 'register.paragraph.2' /></p>
+                            <div class="control-group">
+                                <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" tabindex="9" [(ngModel)]="claim.sendOrcidNews.value" />
+                                <label for="send-orcid-news"><@orcid.msg 'manage.email.email_frequency.notifications.news.checkbox.label' /></label>
+                            </div>
+                            <p><@orcid.msg 'register.paragraph.3' /></p>                            
+                        </div>                          
                         
                         
                         

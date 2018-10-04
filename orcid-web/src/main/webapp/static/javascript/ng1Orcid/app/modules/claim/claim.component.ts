@@ -38,7 +38,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
         private commonService: CommonService
     ) {
         this.postingClaim = false;
-        this.claim = { 'password': { 'value': '', 'errors':[] }, 'passwordConfirm': { 'value': '', 'errors':[] }, 'activitiesVisibilityDefault': {'visibility':'', 'errors':[]} };        
+        this.claim = { 'password': { 'value': '', 'errors':[] }, 'passwordConfirm': { 'value': '', 'errors':[] }, 'activitiesVisibilityDefault': {'visibility':'', 'errors':[]}, 'sendOrcidNews': { 'value': ''} };        
     }
 
     getClaim(): void{
