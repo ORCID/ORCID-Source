@@ -1,15 +1,13 @@
-
-
 <script type="text/ng-template" id="record-corrections-ng2-template">
-    <div *ngIf="currentPage?.recordCorrections?.length > 0" >
+    <div class="record-corrections-table" *ngIf="currentPage?.recordCorrections?.length > 0" >
         <div class="row heading">
             <div class="col-md-3 col-sm-3 col-xs-3">
                 <p class="italic"><@orcid.msg 'record_corrections.date'/></p>    				
             </div>
-            <div class="col-md-7 col-sm-7 col-xs-7">
+            <div class="col-md-7 col-sm-6 col-xs-6">
                 <p class="italic"><@orcid.msg 'record_corrections.description'/></p>
             </div>
-            <div class="col-md-2 col-sm-2 col-xs-2">
+            <div class="col-md-2 col-sm-3 col-xs-3">
                 <p class="italic"><@orcid.msg 'record_corrections.num_modified'/></p>
             </div>
         </div>	    		
@@ -17,10 +15,10 @@
             <div class="col-md-3 col-sm-3 col-xs-3">
                 <span>{{element.dateCreated | date:'yyyy-MM-dd HH:mm:ss'}}</span>	    				
             </div>
-            <div class="col-md-7 col-sm-7 col-xs-7">
+            <div class="col-md-7 col-sm-6 col-xs-6">
                 <span>{{element.description}}</span>
             </div>
-            <div class="col-md-2 col-sm-2 col-xs-2">
+            <div class="col-md-2 col-sm-3 col-xs-3">
                 <span>{{element.numChanged}}</span>
             </div>
         </div>

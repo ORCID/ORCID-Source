@@ -6882,6 +6882,11 @@ ul.comma li:last-child:after {
     display: flex;
 }
 
+.record-corrections-table {
+    overflow: hidden;
+    word-break: break-word;
+}
+
 @media (max-width:767px) {
     .container {
         min-width: 320px
