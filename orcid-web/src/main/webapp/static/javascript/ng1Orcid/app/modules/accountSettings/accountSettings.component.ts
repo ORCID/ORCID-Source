@@ -31,10 +31,10 @@ import { TwoFAStateService }
     from '../../shared/twoFAState.service.ts';
 
 @Component({
-    selector: 'edit-table-ng2',
-    template:  scriptTmpl("edit-table-ng2-template")
+    selector: 'account-settings-ng2',
+    template:  scriptTmpl("account-settings-ng2-template")
 })
-export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
+export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     
     changePasswordPojo: any;

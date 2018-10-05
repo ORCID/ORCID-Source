@@ -53,8 +53,8 @@ import { BiographyNg2Module }
 import { ClientEditNg2Module } 
     from './clientEdit/clientEdit.ts';
 
-import { EditTableNg2Module } 
-    from './editTable/editTable.ts';
+import { AccountSettingsNg2Module } 
+    from './accountSettings/accountSettings.ts';
 
 import { EmailsNg2Module } 
     from './emails/emails.ts';
@@ -304,7 +304,7 @@ export class RootCmp {
         AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
         ClientEditNg2Module,
-        EditTableNg2Module,
+        AccountSettingsNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved

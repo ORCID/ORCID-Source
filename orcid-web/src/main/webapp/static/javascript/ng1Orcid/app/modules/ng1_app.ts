@@ -34,8 +34,8 @@ import { BiographyModule }
 import { ClientEditModule } 
     from './clientEdit/clientEdit.ts';
 
-import { EditTableModule } 
-    from './editTable/editTable.ts';
+import { AccountSettingsModule } 
+    from './accountSettings/accountSettings.ts';
 
 import { EmailsModule } 
     from './emails/emails.ts';
@@ -198,7 +198,7 @@ export const orcidApp = angular.module(
         AllConsortiumContactsModule.name,
         BiographyModule.name,
         ClientEditModule.name,
-        EditTableModule.name,
+        AccountSettingsModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
         EmailUnverifiedWarningModule.name,

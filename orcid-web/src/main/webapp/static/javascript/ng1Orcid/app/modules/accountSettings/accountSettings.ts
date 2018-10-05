@@ -8,8 +8,8 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated
-import { EditTableComponent } 
-    from './editTable.component.ts';
+import { AccountSettingsComponent } 
+    from './accountSettings.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';
@@ -18,8 +18,8 @@ import { EmailsFormNg2Module }
     from './../emailsForm/emailsForm.ts';
 
 // This is the Angular 1 part of the module
-export const EditTableModule = angular.module(
-    'EditTableModule', 
+export const AccountSettingsModule = angular.module(
+    'AccountSettingsModule', 
     []
 );
 
@@ -31,25 +31,25 @@ export const EditTableModule = angular.module(
             EmailsFormNg2Module,
         ],
         declarations: [ 
-            EditTableComponent
+            AccountSettingsComponent
         ],
         entryComponents: [ 
-            EditTableComponent 
+            AccountSettingsComponent 
         ],
         providers: [
             
         ]
     }
 )
-export class EditTableNg2Module {}
+export class AccountSettingsNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-EditTableModule.directive(
-    'editTableNg2', 
+AccountSettingsModule.directive(
+    'accountSettingsNg2', 
     <any>downgradeComponent(
         {
-            component: EditTableComponent,
+            component: AccountSettingsComponent,
         }
     )
 );

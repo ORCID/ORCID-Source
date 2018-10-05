@@ -39,9 +39,11 @@
         </div>
         <#assign open = "" />
         <modal-unverified-email-set-primary></modal-unverified-email-set-primary>
+        
         <!--Accounting settings-->
-        <#include "/includes/ng2_templates/edit-table-ng2-template.ftl">
-        <edit-table-ng2></edit-table-ng2>
+        <#include "/includes/ng2_templates/account-settings-ng2-template.ftl">
+        <account-settings-ng2></account-settings-ng2>
+        
         <!--Trusted organizations-->
         <div class="section-heading">
             <h1 id="manage-permissions">
@@ -101,6 +103,7 @@
                 </table>
             </div>
         </div>
+
         <!--Trusted individuals-->
         <div class="section-heading">
             <h1>
@@ -212,6 +215,7 @@
             <#include "/includes/ng2_templates/delegators-ng2-template.ftl">
             <delegators-ng2></delegators-ng2>             
         </#if>
+
         <!--Alternate signin accounts-->
         <div class="section-heading">
             <h1>
