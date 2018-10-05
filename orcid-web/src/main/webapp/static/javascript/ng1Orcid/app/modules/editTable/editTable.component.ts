@@ -1,4 +1,5 @@
 declare var om: any;
+declare var orcidVar: any;
 
 //Import all the angular components
 
@@ -29,7 +30,12 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     
     changePasswordPojo: any;
     errorUpdatingVisibility: any;
+    initSecurityQuestionFlag: boolean;
+    password: any;
     prefs: any;
+    securityQuestions: any;
+    securityQuestionPojo: any;
+    showConfirmationWindow: any;
     showSection: any;
     toggleText: any;
     
@@ -40,7 +46,13 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.changePasswordPojo = {};
         this.errorUpdatingVisibility = false;
+        this.initSecurityQuestionFlag = false;
         this.prefs = {};
+        this.securityQuestions = [];
+        this.securityQuestionPojo = {
+            securityQuestionId: null
+        };
+        this.showConfirmationWindow = false;
         this.showSection = {
             'deactivate': (window.location.hash === "#editDeactivate"),
             'deprecate': (window.location.hash === "#editDeprecate"),
@@ -52,8 +64,16 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
             'twoFA': (window.location.hash === "#edit2FA"),
             'getMyData': false
         };
-        this.toggleText = {};
+        this.toggleText = {}; 
     }
+
+    securityQuestionCheckCredentials(): void {
+        if( orcidVar.isPasswordConfirmationRequired ){
+            this.showConfirmationWindow = true;
+        } else {
+            this.saveChangeSecurityQuestion();
+        }
+    };
 
     getChangePassword(): void {
         this.accountService.getChangePassword()
@@ -90,6 +110,33 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    getSecurityQuestion(): void {
+        this.accountService.getSecurityQuestion()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.securityQuestionPojo = data;
+            },
+            error => {
+                //console.log('error with security question.json', error);
+            } 
+        );
+    };
+
+    initSecurityQuestion( obj ): void{
+        if( this.initSecurityQuestionFlag == false ){
+            this.initSecurityQuestionFlag = true;
+            let objLastIndex = obj.length - 1;
+
+            if(obj[objLastIndex] == ""){
+                obj = obj.slice(0, -1);
+            }
+            this.securityQuestions = obj;
+        }
+    }
+
     saveChangePassword(): void {
         this.accountService.saveChangePassword( this.changePasswordPojo )
         .pipe(    
@@ -105,6 +152,22 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     }
+
+    saveChangeSecurityQuestion(): void {
+        this.accountService.submitModal( this.securityQuestionPojo )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.securityQuestionPojo = data;
+            },
+            error => {
+                //console.log('error with security question', error);
+            } 
+        );
+        this.securityQuestionPojo.password=null;
+    };
 
     toggleSection(sectionName): void {
         this.showSection[sectionName] = !this.showSection[sectionName];
@@ -187,5 +250,6 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         this.getChangePassword();
         this.getPreferences();
+        this.getSecurityQuestion();
     }; 
 }

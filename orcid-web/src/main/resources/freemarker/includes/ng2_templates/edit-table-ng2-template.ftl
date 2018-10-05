@@ -4,7 +4,6 @@
 <#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
 <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
 <script type="text/ng-template" id="edit-table-ng2-template">
-    <h1>Change</h1>
     <table class="table table-bordered settings-table account-settings" style="margin:0; padding:0;">
         <tbody>
             <!-- Email and notification preferences -->
@@ -110,6 +109,7 @@
                     </div> 
                 </td>
             </tr>
+            <!--Security question-->
             <tr>
                 <th><a name="editSecurityQuestion"></a>${springMacroRequestContext.getMessage("manage.security_question")}</th>
                 <td><a (click)="toggleSection('editSecurityQuestion')">{{toggleText['editSecurityQuestion']}}</a></td>
@@ -117,7 +117,53 @@
             <tr
                 *ngIf="showSection['editSecurityQuestion']">
                 <td colspan="2">
-                    <security-question-edit-ng2></security-question-edit-ng2>
+                    <div class="editTablePadCell35">
+                        <span class="orcid-error" *ngIf="securityQuestionPojo?.errors?.length > 0"> <span
+                            *ngFor='let error of securityQuestionPojo.errors' [innerHTML]="error"></span>
+                        </span>
+                        <div class="control-group">
+                            <label for="changeSecurityQuestionForm.securityQuestionAnswer"
+                                class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>                                    
+                            <div class="relative" >
+                                {{initSecurityQuestion([<#list securityQuestions?keys as key>'${securityQuestions[key]?js_string}',</#list>''])}}
+
+                                <select id="securityQuestionId" name="securityQuestionId"
+                                    class="input-xlarge"
+                                    [(ngModel)]="securityQuestionPojo.securityQuestionId">
+                                    >
+
+                                        <option *ngFor="let securityOption of securityQuestions; let i = index" value="{{i}}">{{securityOption}}</option>                                    
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label for="changeSecurityQuestionForm.securityQuestionAnswer"
+                                class="">${springMacroRequestContext.getMessage("manage.securityAnswer")}</label>
+                            <div class="relative">
+                                <input type="text" id="securityQuestionAnswer"
+                                    name="securityQuestionAnswer" class="input-xlarge"
+                                    [(ngModel)]="securityQuestionPojo.securityAnswer"
+                                    (keyup.enter)="securityQuestionCheckCredentials()" />
+                            </div>
+                        </div>
+                        <#if isPasswordConfirmationRequired>
+                            <@orcid.msg 'manage.security_question.not_allowed' />
+                            <div style="padding: 20px;" *ngIf="showConfirmationWindow">
+                                <h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>
+                               <label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                               <input id="check_password_modal.password" type="password" name="check_password_modal.password" [(ngModel)]="securityQuestionPojo.password" class="input-xlarge"/>
+                               <br />
+                               <button id="bottom-submit" class="btn btn-primary" (click)="saveChangeSecurityQuestion()"><@orcid.msg 'check_password_modal.submit'/></button>
+                            </div>
+                        <#else>
+                            <div class="control-group">
+                                <button id="bottom-submit-security-question"
+                                    class="btn btn-primary" (click)="securityQuestionCheckCredentials()"><@orcid.msg 'freemarker.btnsavechanges' /></button>
+                                <a id="bottom-reset-security-question" class="cancel-option inner-row" (click)="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></a>                                    
+                            </div>
+                        </#if>
+                    </div>
                 </td>
             </tr>
             <!-- Deactivate Account -->

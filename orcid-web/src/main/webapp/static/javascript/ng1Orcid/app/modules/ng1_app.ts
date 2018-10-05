@@ -139,9 +139,6 @@ import { ResearchResourceDeleteModule }
 import { SearchModule } 
     from './search/search.ts';
 
-import { SecurityQuestionEditModule } 
-    from './securityQuestionEdit/securityQuestionEdit.ts';
-
 import { SelfServiceModule } 
     from './selfService/selfService.ts';
 
@@ -183,9 +180,6 @@ import { WorksFormModule }
 
 import { WorksModule } 
     from './works/works.ts';
-
-import { WorksPrivacyPreferencesModule } 
-    from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
 import { UnsubscribeModule }
     from './unsubscribe/unsubscribe.ts'
@@ -251,7 +245,6 @@ export const orcidApp = angular.module(
         ResearchResourceModule.name,
         ResearchResourceDeleteModule.name,
         SearchModule.name,
-        SecurityQuestionEditModule.name,
         SelfServiceModule.name,
         SelfServiceAddContactModule.name,
         SelfServiceExistingSubMemberModule.name,
@@ -266,7 +259,6 @@ export const orcidApp = angular.module(
         WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
-        WorksPrivacyPreferencesModule.name,
         UnsubscribeModule.name,
         DelegatorsModule.name,
         ResendClaimModule.name,

@@ -23,17 +23,11 @@ import { DeprecateAccountNg2Module }
 import { EmailsFormNg2Module }
     from './../emailsForm/emailsForm.ts';
 
-import { PasswordEditNg2Module }
-    from './../passwordEdit/passwordEdit.ts';
-
 import { SecurityQuestionEditNg2Module }
     from './../securityQuestionEdit/securityQuestionEdit.ts';
 
 import { TwoFaStateNg2Module }
     from './../2FAState/twoFAState.ts';
-
-import { WorksPrivacyPreferencesNg2Module }
-    from './../worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
 // This is the Angular 1 part of the module
 export const EditTableModule = angular.module(
@@ -49,10 +43,8 @@ export const EditTableModule = angular.module(
             DeactivateAccountNg2Module,
             DeprecateAccountNg2Module,
             EmailsFormNg2Module,
-            PasswordEditNg2Module,
             SecurityQuestionEditNg2Module,
             TwoFaStateNg2Module,
-            WorksPrivacyPreferencesNg2Module
         ],
         declarations: [ 
             EditTableComponent
