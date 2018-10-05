@@ -36,10 +36,10 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.v3.rc1.record.Addresses;
-import org.orcid.jaxb.model.v3.rc1.record.Biography;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
-import org.orcid.jaxb.model.v3.rc1.record.Name;
+import org.orcid.jaxb.model.v3.rc2.record.Addresses;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -632,7 +632,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+        org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
         Visibility v = Visibility.valueOf(defaultVis);
         
         // Set the default visibility
@@ -726,7 +726,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         BiographyForm form = BiographyForm.valueOf(bio);
         if(form.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid()); 
-            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = Visibility.valueOf(defaultVis);          
             form.setVisibility(v);
         }
@@ -751,7 +751,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setContent(bf.getBiography().getValue());
             }
             if (bf.getVisibility() != null && bf.getVisibility().getVisibility() != null) {
-                org.orcid.jaxb.model.v3.rc1.common.Visibility v = org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(bf.getVisibility().getVisibility().value());
+                org.orcid.jaxb.model.v3.rc2.common.Visibility v = org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(bf.getVisibility().getVisibility().value());
                 bio.setVisibility(v);
             }
 

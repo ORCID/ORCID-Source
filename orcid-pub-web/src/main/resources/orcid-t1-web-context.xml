@@ -117,7 +117,11 @@
         <property name="externalVersion" value="2.1" />
     </bean>
     
-    <bean id="publicV3ApiServiceDelegatorV3_0_rc1" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl" />
+    <bean id="publicV3ApiServiceDelegator" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl" />
+    
+    <bean id="publicV3ApiServiceDelegatorV3_0" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="3.0_rc1" />
+    </bean>
     
     <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc1">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc1"/>
@@ -143,8 +147,12 @@
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorV2_1"/>
     </bean>
     
-     <bean id="publicV3ApiServiceImplV3_0_rc1" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0_rc1">
-        <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorV3_0_rc1"/>
+    <bean id="publicV3ApiServiceImplV3_0_rc1" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0_rc1">
+        <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorV3_0"/>
+    </bean>
+    
+    <bean id="publicV3ApiServiceImplV3_0_rc2" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0_rc2">
+        <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorV3_0"/>
     </bean>
     
     <!--  Statistics API -->

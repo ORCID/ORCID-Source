@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.adapter.v3.JpaJaxbKeywordAdapter;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 
 import ma.glasnost.orika.MapperFacade;

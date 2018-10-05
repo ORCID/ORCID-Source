@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupType;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class Member implements ErrorsInterface, Serializable {
