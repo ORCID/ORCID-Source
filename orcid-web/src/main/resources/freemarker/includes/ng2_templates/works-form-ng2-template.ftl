@@ -207,7 +207,7 @@
                                         <option value="${key}">${roles[key]}</option>
                                     </#list>
                                 </select>
-                                <a href (click)="deleteContributor(contributor)" class="glyphicon glyphicon-trash grey"></a>
+                                <button (click)="deleteContributor(contributor)" class="glyphicon glyphicon-trash grey"></button>
                                 <span class="orcid-error" *ngIf="contributor?.contributorRole?.errors?.length > 0">
                                         <div *ngFor='let error of contributor.contributorRole.errors' [innerHtml]="error"></div>
                                 </span>
@@ -285,16 +285,16 @@
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="part-of" />
                                         <@orcid.msg "common.part_of" />
                                     </label>                            
-                                    <a href *ngIf="editWork.workExternalIdentifiers.length > 1" (click)="deleteExternalIdentifier(i)" class="glyphicon glyphicon-trash grey action-icon-align-right"></a>                            
+                                    <button *ngIf="editWork.workExternalIdentifiers.length > 1" (click)="deleteExternalIdentifier(i)" class="glyphicon glyphicon-trash grey action-icon-align-right"></button>                            
                                 </div>
                                 <div *ngIf="last" class="add-item-link clearfix">   
-                                    <span><a href (click)="addExternalIdentifier(i)"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
+                                    <span><button class="btn-white-no-border" (click)="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></button></span>
                                 </div>
                             </div>
                         </div>
                         <div *ngIf="editWork?.workExternalIdentifiers == null || editWork.workExternalIdentifiers.length == 0">
                             <div class="add-item-link">
-                                <span><a href (click)="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
+                                <span><button class="btn-white-no-border" (click)="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></button></span>
                             </div>
                         </div>
                         <div class="form-group">
