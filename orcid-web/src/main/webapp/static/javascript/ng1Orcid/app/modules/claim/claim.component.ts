@@ -43,7 +43,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
                 'passwordConfirm': { 'value': '', 'errors':[] }, 
                 'activitiesVisibilityDefault': {'visibility':'', 'errors':[]}, 
                 'sendOrcidNews': { 'value': false }, 
-                'termsOfUse': { 'value': false } 
+                'termsOfUse': { 'value': false, 'errors':[] } 
                 };        
     }
 

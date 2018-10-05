@@ -108,12 +108,12 @@
                                 <div *ngFor="let error of claim.termsOfUse.errors" [innerHTML]="error"></div>
                             </span>
                         </div>
-                        
-                        
-                        
-                        
-                        
-                        
+                        <div class="form-group clear-fix centered-mobile">
+                            <button type="submit" class="btn btn-primary" (click)="postClaim()"><@orcid.msg 'claim.btnClaim' /></button>
+                            <span *ngIf="postingClaim">
+                                <i class="glyphicon glyphicon-refresh spin x2 green"></i>
+                            </span>
+                        </div>                        
                     </script>
                     <claim-ng2></claim-ng2>
                 </div>

@@ -145,10 +145,12 @@ public class ClaimController extends BaseController {
         claimPasswordValidate(claim);
         claimPasswordConfirmValidate(claim);
         claimTermsOfUseValidate(claim);
+        activitiesVisibilityDefaultValidate(claim.getActivitiesVisibilityDefault());
 
         copyErrors(claim.getPassword(), claim);
         copyErrors(claim.getPasswordConfirm(), claim);
         copyErrors(claim.getTermsOfUse(), claim);
+        copyErrors(claim.getActivitiesVisibilityDefault(), claim);
 
         if (claim.getErrors().size() > 0) {
             return claim;
