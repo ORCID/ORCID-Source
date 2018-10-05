@@ -14,6 +14,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.SalesForceUnauthorizedException;
 import org.orcid.core.salesforce.adapter.SalesForceAdapter;
 import org.orcid.core.salesforce.dao.SalesForceDao;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
@@ -209,6 +210,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     @Override
     public void removeOpportunity(String opportunityId) {
         retryConsumer(accessToken -> removeOpportunityInSalesForce(accessToken, opportunityId));
+    }
+    
+    @Override
+    public List<Badge> retrieveBadges() {
+        return retry(accessToken -> retrieveBadgesFromSalesForce(accessToken));
     }
 
     @Override
@@ -552,9 +558,9 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         String query = new String();
         
         if(Features.NEW_BADGES.isActive()) {
-            query = "SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c, (Select Id, Name, Status__c, Badge__c from Achievements__r Where Status__c = 'Awarded') from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
+            query = "SELECT Integration__c.Id, Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c, (Select Id, Name, Status__c, Badge__c from Achievements__r Where Status__c = 'Awarded') from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
         } else {
-            query = "SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
+            query = "SELECT Integration__c.Id, Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
         }
         
         WebResource resource = createQueryResource(query, memberId);
@@ -694,6 +700,23 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting org ids from SalesForce");
         return salesForceAdapter.createOrgIdsFromJson(result);
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<Badge> retrieveBadgesFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of badges from SalesForce");
+        WebResource resource = createQueryResource(
+                "Select Id, Name, Public_Description__c, Badge_Index__c, Badge_Index_Name__c From Badge__c Where Active__c = true Order By Badge_Index_Name__c");
+        ClientResponse response = doGetRequest(resource, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 200, "Error getting badges list from SalesForce");
+        return salesForceAdapter.createBadgesListFromJson(result);
     }
     
     private <T> T retry(Function<String, T> function) {

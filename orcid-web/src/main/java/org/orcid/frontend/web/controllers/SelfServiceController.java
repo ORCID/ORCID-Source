@@ -83,7 +83,7 @@ public class SelfServiceController extends BaseController {
         }
         return map;
     }
-
+    
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
         return new ModelAndView("redirect:/self-service/" + salesForceManager.retrievePrimaryAccountIdByOrcid(getCurrentUserOrcid()));

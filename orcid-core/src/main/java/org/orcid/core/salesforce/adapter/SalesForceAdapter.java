@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
@@ -136,6 +137,16 @@ public class SalesForceAdapter {
             return objectsList.stream().map(e -> mapperFacade.map(e, Integration.class)).collect(Collectors.toList());
         } catch (JSONException e) {
             throw new RuntimeException("Error getting integrations from SalesForce JSON", e);
+        }
+    }
+
+    public List<Badge> createBadgesListFromJson(JSONObject results) {
+        List<JSONObject> objectsList;
+        try {
+            objectsList = extractObjectListFromRecords(results);
+            return objectsList.stream().map(e -> mapperFacade.map(e, Badge.class)).collect(Collectors.toList());
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting badges from SalesForce JSON", e);
         }
     }
 

@@ -1,8 +1,5 @@
 package org.orcid.core.salesforce.adapter;
 
-import static org.orcid.core.utils.JsonUtils.extractBoolean;
-import static org.orcid.core.utils.JsonUtils.extractString;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -11,6 +8,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.salesforce.model.Achievement;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
@@ -70,6 +68,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         registerOpportunityContactRoleMap(mapperFactory);
         registerOrgIdMap(mapperFactory);
         registerIntegrationMap(mapperFactory);
+        registerBadgesMap(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
@@ -236,6 +235,16 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
                 }
             }
         });
+        classMap.register();
+    }
+
+    private void registerBadgesMap(MapperFactory mapperFactory) {
+        ClassMapBuilder<Badge, JSONObject> classMap = mapperFactory.classMap(Badge.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Id");
+        classMap.field("name", "Name");
+        classMap.field("publicDescription", "Public_Description__c");
+        classMap.field("index", "Badge_Index__c");
+        classMap.field("indexAndName", "Badge_Index_Name__c");
         classMap.register();
     }
 

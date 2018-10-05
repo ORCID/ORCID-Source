@@ -28,6 +28,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactPermission;
@@ -45,6 +46,8 @@ import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
+
+import com.google.common.base.Functions;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -111,6 +114,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private String premiumConsortiumMemberTypeId;
 
     private String consortiumMemberRecordTypeId;
+    
+    private Map<String, Badge> badgesMap;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -431,6 +436,14 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         }
         return consortiumMemberRecordTypeId;
     }
+    
+    @Override
+    public Map<String, Badge> retrieveBadgesMap() {
+        if (badgesMap == null) {
+            badgesMap = salesForceDao.retrieveBadges().stream().collect(Collectors.toMap(Badge::getId, Functions.identity()));
+        }
+        return badgesMap;
+    }
 
     @Override
     public void updateMember(Member member) {
@@ -722,6 +735,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         salesForceContactsCache.clear();
         premiumConsortiumMemberTypeId = null;
         consortiumMemberRecordTypeId = null;
+        badgesMap = null;
     }
 
     private void evictLists() {
