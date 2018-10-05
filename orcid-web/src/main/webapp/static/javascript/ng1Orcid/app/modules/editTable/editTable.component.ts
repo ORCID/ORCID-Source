@@ -33,10 +33,12 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     initSecurityQuestionFlag: boolean;
     password: any;
     prefs: any;
+    primaryEmail: string;
     securityQuestions: any;
     securityQuestionPojo: any;
     showConfirmationWindow: any;
     showSection: any;
+    showSendDeactivateEmailSuccess: boolean;
     toggleText: any;
     
     constructor(
@@ -48,6 +50,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         this.errorUpdatingVisibility = false;
         this.initSecurityQuestionFlag = false;
         this.prefs = {};
+        this.primaryEmail="";
         this.securityQuestions = [];
         this.securityQuestionPojo = {
             securityQuestionId: null
@@ -64,6 +67,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
             'twoFA': (window.location.hash === "#edit2FA"),
             'getMyData': false
         };
+        this.showSendDeactivateEmailSuccess=false;
         this.toggleText = {}; 
     }
 
@@ -169,6 +173,26 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         this.securityQuestionPojo.password=null;
     };
 
+    sendDeactivateEmail(): void {
+        console.log("send deactivate")
+        this.accountService.sendDeactivateEmail()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.primaryEmail = data;
+                this.showSendDeactivateEmailSuccess=true;
+                console.log(this.primaryEmail);
+                console.log(this.showSendDeactivateEmailSuccess);
+            },
+            error => {
+                //console.log('setformDataError', error);
+            } 
+        );
+
+    };
+
     toggleSection(sectionName): void {
         this.showSection[sectionName] = !this.showSection[sectionName];
         this.updateToggleText(sectionName);
@@ -197,11 +221,21 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
 
     updateToggleText(sectionName){
         switch(sectionName) { 
+            case 'editSecurityQuestion': {
+                if(this.showSection[sectionName]==true){
+                    this.toggleText[sectionName] = om.get("manage.editTable.hide");
+                } else {
+                    this.toggleText[sectionName] = om.get("manage.editTable.edit");
+                    this.securityQuestionPojo.errors = [];
+                }
+                break; 
+            }
             case 'deactivate': { 
                 if(this.showSection[sectionName]==true){
                     this.toggleText[sectionName] = om.get("manage.editTable.hide");
                 } else {
                     this.toggleText[sectionName] = om.get("manage.editTable.deactivateRecord");
+                    this.showSendDeactivateEmailSuccess=false;
                 }
                 break; 
             } 

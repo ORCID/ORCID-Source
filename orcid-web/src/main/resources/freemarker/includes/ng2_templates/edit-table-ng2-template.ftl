@@ -1,6 +1,4 @@
 <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
-<#include "/includes/ng2_templates/security-question-edit-ng2-template.ftl">
-<#include "/includes/ng2_templates/deactivate-account-ng2-template.ftl">
 <#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
 <#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
 <script type="text/ng-template" id="edit-table-ng2-template">
@@ -173,11 +171,36 @@
             </tr>
             <tr *ngIf="showSection['deactivate']" >
                 <td colspan="2">
-                    <deactivate-account-ng2></deactivate-account-ng2>
+                    <div class="editTablePadCell35 close-account-container">
+                        <p>${springMacroRequestContext.getMessage("deactivate_orcid.gdpr_you_may")}</p>
+                        
+                        <h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
+                        <p>
+                            ${springMacroRequestContext.getMessage("deactivate_orcid.gdpr_once")} <a
+                                href="<@orcid.msg 'common.kb_uri_default'/>360006973813"
+                                target="deactivate_orcid.close_an">${springMacroRequestContext.getMessage("deactivate_orcid.gdpr_learn_more")}</a>
+                        </p>
+                        
+                        <h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
+                        <p>
+                            ${springMacroRequestContext.getMessage("deactivate_orcid.gdpr_if_you_have")}&nbsp;<strong>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}</strong>
+                            <a
+                                href="<@orcid.msg 'common.kb_uri_default'/>360006896634"
+                                target="deprecate_orcid.learn_more_link" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
+                        </p>
+                        <h4>${springMacroRequestContext.getMessage("deactivate_orcid.listTitle")}</h4>
+                        <ol>
+                            <li>${springMacroRequestContext.getMessage("deactivate_orcid.b1")}</li>
+                            <li>${springMacroRequestContext.getMessage("deactivate_orcid.b2")}</li>
+                            <li>${springMacroRequestContext.getMessage("deactivate_orcid.b3")}</li>
+                        </ol>
+                        <span class="orcid-error" *ngIf="showSendDeactivateEmailSuccess">
+                            ${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}
+                        </span>
+                        <button (click)="sendDeactivateEmail()" class="btn btn-primary">${springMacroRequestContext.getMessage("deactivate_orcid.deactivatemyOrcidaccount")}</button>
+                    </div>
                 </td>
             </tr>
-
-            <!-- / Deactivate Account -->
             <!-- Deprecate duplicate account -->
             <tr>
                 <th><a name="editDeprecate"></a>${springMacroRequestContext.getMessage("manage.removeDuplicate")}</th>

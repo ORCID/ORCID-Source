@@ -14,17 +14,11 @@ import { EditTableComponent }
 import { CommonNg2Module }
     from './../common/common.ts';
 
-import { DeactivateAccountNg2Module }
-    from './../deactivateAccount/deactivateAccount.ts';
-
 import { DeprecateAccountNg2Module }
     from './../deprecateAccount/deprecateAccount.ts';
 
 import { EmailsFormNg2Module }
     from './../emailsForm/emailsForm.ts';
-
-import { SecurityQuestionEditNg2Module }
-    from './../securityQuestionEdit/securityQuestionEdit.ts';
 
 import { TwoFaStateNg2Module }
     from './../2FAState/twoFAState.ts';
@@ -40,10 +34,8 @@ export const EditTableModule = angular.module(
     {
         imports: [
             CommonNg2Module,
-            DeactivateAccountNg2Module,
             DeprecateAccountNg2Module,
             EmailsFormNg2Module,
-            SecurityQuestionEditNg2Module,
             TwoFaStateNg2Module,
         ],
         declarations: [ 

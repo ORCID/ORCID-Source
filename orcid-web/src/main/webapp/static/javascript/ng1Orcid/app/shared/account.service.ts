@@ -137,7 +137,7 @@ export class AccountService {
 
     sendDeactivateEmail(): Observable<any> {
         return this.http.get(
-            getBaseUri() + '/account/send-deactivate-account.json'
+            getBaseUri() + '/account/send-deactivate-account.json', {responseType: 'text'}
         )
         
     }

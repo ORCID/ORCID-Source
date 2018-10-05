@@ -53,12 +53,6 @@ import { BiographyNg2Module }
 import { ClientEditNg2Module } 
     from './clientEdit/clientEdit.ts';
 
-import { DeactivateAccountNg2Module }
-    from './deactivateAccount/deactivateAccount.ts';
-
-import { DeactivateAccountMessageNg2Module }
-    from './deactivateAccount/deactivateAccountMessage.ts';
-
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
 
@@ -316,8 +310,6 @@ export class RootCmp {
         AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
         ClientEditNg2Module,
-        DeactivateAccountNg2Module,
-        DeactivateAccountMessageNg2Module,
         DeprecateAccountNg2Module,
         EditTableNg2Module,
         EmailsFormNg2Module,//Aproved
