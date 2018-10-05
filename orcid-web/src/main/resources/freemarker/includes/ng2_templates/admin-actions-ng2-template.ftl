@@ -120,7 +120,8 @@
         <!-- Managed -->
         <div class="form-group">
             <label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
-            <input type="text" id="managed" [(ngModel)]="addDelegateParams.managed.value" (keyup.enter)="addDelegate()" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge">
+            <input type="text" id="managed" [(ngModel)]="addDelegateParams.managed.value" (keyup.enter)="addDelegate()" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" (ngModelChange)="checkClaimedStatus('managed')">
+            <a href class="glyphicon glyphicon-ok green" *ngIf="managedVerified"></a>
             <div id="invalid-managed" *ngIf="addDelegateParams.managed.errors.length > 0">
                 <span class="orcid-error" *ngFor='let error of addDelegateParams.managed.errors' [innerHTML]="error"></span><br />
             </div>                          
@@ -128,7 +129,8 @@
         <!-- Trusted -->
         <div class="form-group">
             <label for="trusted"><@orcid.msg 'admin.delegate.trusted.label' /></label>
-            <input type="text" id="trusted" [(ngModel)]="addDelegateParams.trusted.value" (keyup.enter)="addDelegate()" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge">
+            <input type="text" id="trusted" [(ngModel)]="addDelegateParams.trusted.value" (keyup.enter)="addDelegate()" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge"  (ngModelChange)="checkClaimedStatus('trusted')">
+            <a href class="glyphicon glyphicon-ok green" *ngIf="trustedVerified"></a>
             <div id="invalid-trusted" *ngIf="addDelegateParams.trusted.errors.length > 0">
                 <span class="orcid-error" *ngFor='let error of addDelegateParams.trusted.errors' [innerHTML]="error"></span><br />
             </div>                          

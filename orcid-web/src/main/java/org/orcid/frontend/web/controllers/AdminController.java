@@ -593,11 +593,12 @@ public class AdminController extends BaseController {
      * Admin starts delegation process
      * 
      * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException 
      */
-    @RequestMapping(value = "/admin-delegates/check-claimed-status.json", method = RequestMethod.GET)
-    public @ResponseBody boolean checkClaimedStatus(HttpServletRequest serverRequest, HttpServletResponse response, @RequestParam("orcidOrEmail") String orcidOrEmail)
-            throws IllegalAccessException {
-        isAdmin(serverRequest, response);
+    @RequestMapping(value = "/check-claimed-status.json", method = RequestMethod.POST)
+    public @ResponseBody boolean checkClaimedStatus(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidOrEmail)
+            throws IllegalAccessException, UnsupportedEncodingException {
+        isAdmin(serverRequest, response);        
         boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
         String orcid = null;
         // If it is not an orcid, check the value from the emails table

@@ -50,6 +50,8 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     
     // Add delegates
     showAddDelegates: boolean;
+    trustedVerified: boolean;
+    managedVerified: boolean;
     addDelegateParams: any;
     
     // Remove security question
@@ -122,6 +124,8 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.verifyEmailMessage = null;
         
         this.showAddDelegates = false;
+        this.trustedVerified = false;
+        this.managedVerified = false;
         this.addDelegateParams = {trusted : {errors: [], value: ''}, managed : {errors: [], value: ''}};
         
         this.showRemoveSecurityQuestion = false;
@@ -484,6 +488,35 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
+    
+    checkClaimedStatus( element ): void {
+        let id = '';
+        if(element == 'trusted') {
+            this.trustedVerified = false;
+            id = this.addDelegateParams.trusted.value;
+        } else {
+            this.managedVerified = false;
+            id = this.addDelegateParams.managed.value;
+        }
+        this.adminActionsService.checkClaimedStatus( id )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data) {
+                    if(element == 'trusted') {
+                        this.trustedVerified = true;
+                    } else {
+                        this.managedVerified = true;
+                    }
+                }                              
+            },
+            error => {
+                console.log('admin: checkClaimedStatus error', error);
+            } 
+        );
+    }
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

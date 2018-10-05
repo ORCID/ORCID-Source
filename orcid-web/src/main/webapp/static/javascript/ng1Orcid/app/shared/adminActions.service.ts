@@ -164,4 +164,12 @@ export class AdminActionsService {
                 { headers: this.headers }
         )
     };
+    
+    checkClaimedStatus( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/check-claimed-status.json',
+                encodeURI(obj), 
+                { headers: this.headers }
+        )
+    };
 }
