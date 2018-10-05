@@ -13,7 +13,10 @@ module.exports = {
                     {
                         loader: 'ts-loader'
                     }
-                ]
+                ],
+                noParse: function(content) {
+                    return /controllers|directives|services/.test(content);
+                  }
             }
         ]
     },
