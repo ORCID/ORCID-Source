@@ -15,9 +15,7 @@ export const RecordCorrectionsModule = angular.module(
   imports: [CommonNg2Module],
   declarations: [RecordCorrectionsComponent],
   entryComponents: [RecordCorrectionsComponent],
-  providers: [],
-  bootstrap: [
-    RecordCorrectionsComponent]
+  providers: []
 })
 export class RecordCorrectionsNg2Module {}
 

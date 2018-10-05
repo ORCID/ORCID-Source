@@ -229,10 +229,6 @@ import { WorksMergeSuggestionsNg2Module }
     
 import { RecordCorrectionsNg2Module }
     from './recordCorrections/recordCorrections.ts'
-
-    
-import { RecordCorrectionsComponent } 
-from './recordCorrections/recordCorrections.component.ts';
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -295,11 +291,22 @@ if (token && header) {
 */
 ///////////////////////////////
 
+@Component(
+    {
+        selector: 'root-cmp',
+        template: '<div class="ng-view"></div>'
+    }
+) 
+export class RootCmp {
+}
+
 @NgModule({
     bootstrap: [
-        RecordCorrectionsComponent
-        ]
-    ,
+        RootCmp
+    ],
+    declarations: [
+        RootCmp
+    ],
     imports: [
         /* Ng Modules */
         BrowserModule,
@@ -387,7 +394,6 @@ if (token && header) {
             multi: true
         }*/
     ]
-    
 
 })
 

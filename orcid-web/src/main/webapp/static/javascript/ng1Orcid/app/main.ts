@@ -31,4 +31,10 @@ if (NODE_ENV === 'production') {
     enableProdMode();
 }
 platformBrowserDynamic().bootstrapModule(Ng2AppModule).then(
+    platformRef => {
+        const upgrade = (<any>platformRef.instance).upgrade; 
+
+        // bootstrap angular1
+        upgrade.bootstrap(document.body, [orcidApp.name]);
+    }
 );
