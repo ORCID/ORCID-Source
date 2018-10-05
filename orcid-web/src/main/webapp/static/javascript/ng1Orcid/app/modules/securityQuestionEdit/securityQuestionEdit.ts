@@ -32,6 +32,9 @@ export const SecurityQuestionEditModule = angular.module(
         entryComponents: [ 
             SecurityQuestionEditComponent 
         ],
+        exports: [ 
+            SecurityQuestionEditComponent
+        ],
         providers: [
             
         ]

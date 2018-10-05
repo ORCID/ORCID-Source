@@ -30,6 +30,9 @@ export const TwoFaStateModule = angular.module(
         entryComponents: [ 
             TwoFaStateComponent 
         ],
+        exports: [ 
+            TwoFaStateComponent 
+        ],
         imports: [
             CommonNg2Module
         ],

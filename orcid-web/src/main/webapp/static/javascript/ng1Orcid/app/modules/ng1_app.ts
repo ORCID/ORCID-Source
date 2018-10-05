@@ -43,6 +43,9 @@ import { DeactivateAccountMessageModule }
 import { DeprecateAccountModule }
     from './deprecateAccount/deprecateAccount.ts';
 
+import { EditTableModule } 
+    from './editTable/editTable.ts';
+
 import { EmailsModule } 
     from './emails/emails.ts';
 
@@ -99,9 +102,6 @@ import { OauthAuthorizationModule }
 
 import { OrgIdentifierPopoverModule } 
     from './orgIdentifierPopover/orgIdentifierPopover.ts';
-
-import { PasswordEditModule } 
-    from './passwordEdit/passwordEdit.ts';
 
 import { PeerReviewModule } 
     from './peerReview/peerReview.ts';
@@ -219,6 +219,7 @@ export const orcidApp = angular.module(
         DeactivateAccountModule.name,
         DeactivateAccountMessageModule.name,
         DeprecateAccountModule.name,
+        EditTableModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
         EmailUnverifiedWarningModule.name,
@@ -237,7 +238,6 @@ export const orcidApp = angular.module(
         NameModule.name,
         OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
-        PasswordEditModule.name,
         PeerReviewModule.name,
         PeerReviewDeleteModule.name,
         PersonModule.name,

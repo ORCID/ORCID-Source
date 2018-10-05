@@ -32,6 +32,9 @@ export const DeprecateAccountModule = angular.module(
         entryComponents: [ 
             DeprecateAccountComponent 
         ],
+        exports: [ 
+            DeprecateAccountComponent 
+        ],
         providers: [
             
         ]

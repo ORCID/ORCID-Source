@@ -62,6 +62,9 @@ import { DeactivateAccountMessageNg2Module }
 import { DeprecateAccountNg2Module }
     from './deprecateAccount/deprecateAccount.ts';
 
+import { EditTableNg2Module } 
+    from './editTable/editTable.ts';
+
 import { EmailsNg2Module } 
     from './emails/emails.ts';
 
@@ -112,9 +115,6 @@ import { NameNg2Module }
 
 import { NotificationsNg2Module }
     from './notifications/notifications.ts';
-
-import { PasswordEditNg2Module } 
-    from './passwordEdit/passwordEdit.ts';
 
 import { PeerReviewNg2Module } 
     from './peerReview/peerReview.ts';
@@ -208,9 +208,6 @@ import { SearchService }
 
 import { WorkspaceService } 
     from '../shared/workspace.service.ts'; 
-
-import { WorksPrivacyPreferencesNg2Module } 
-    from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
 
 import { UnsubscribeNg2Module }
     from './unsubscribe/unsubscribe.ts';
@@ -325,6 +322,7 @@ export class RootCmp {
         DeactivateAccountNg2Module,
         DeactivateAccountMessageNg2Module,
         DeprecateAccountNg2Module,
+        EditTableNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved
@@ -342,7 +340,6 @@ export class RootCmp {
         MyOrcidAlertsNg2Module,
         NameNg2Module, //Approved
         NotificationsNg2Module,
-        PasswordEditNg2Module,
         PeerReviewNg2Module,
         PeerReviewDeleteNg2Module,
         PersonNg2Module,
@@ -373,7 +370,6 @@ export class RootCmp {
         WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
-        WorksPrivacyPreferencesNg2Module,
         DelegatorsNg2Module,
         ResendClaimNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,

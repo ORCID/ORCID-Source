@@ -30,6 +30,9 @@ export const DeactivateAccountModule = angular.module(
         entryComponents: [ 
             DeactivateAccountComponent 
         ],
+        exports: [ 
+            DeactivateAccountComponent 
+        ],
         imports: [
             CommonNg2Module
         ],
