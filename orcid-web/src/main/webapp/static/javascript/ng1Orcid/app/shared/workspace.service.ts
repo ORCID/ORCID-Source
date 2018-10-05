@@ -89,10 +89,6 @@ export class WorkspaceService {
     toggleMembershipAndService(): void {
         this.displayMembershipAndService = !this.displayMembershipAndService;
     };
-    
-    toggleFunding(): void {
-        this.displayFunding = !this.displayFunding;
-    };
 
     togglePeerReview(): void {              
         this.displayPeerReview = !this.displayPeerReview;
@@ -108,9 +104,5 @@ export class WorkspaceService {
 
     togglePersonalInfo(): void {
         this.displayPersonalInfo = !this.displayPersonalInfo;
-    };
-
-    toggleWorks(): void {
-        this.displayWorks = !this.displayWorks;
     };
 }
