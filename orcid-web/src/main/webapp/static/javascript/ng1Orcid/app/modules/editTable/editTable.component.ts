@@ -18,8 +18,17 @@ import { takeUntil }
 import { AccountService } 
     from '../../shared/account.service.ts'; 
 
+import { EmailService } 
+    from '../../shared/email.service.ts'; 
+
+import { GenericService } 
+    from '../../shared/generic.service.ts'; 
+
 import { PreferencesService } 
     from '../../shared/preferences.service.ts';
+
+import { TwoFAStateService } 
+    from '../../shared/twoFAState.service.ts';
 
 @Component({
     selector: 'edit-table-ng2',
@@ -29,6 +38,9 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     
     changePasswordPojo: any;
+    deprecateProfilePojo: any;
+    elementHeight: any;
+    elementWidth: any;
     errorUpdatingVisibility: any;
     initSecurityQuestionFlag: boolean;
     password: any;
@@ -37,6 +49,8 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     securityQuestions: any;
     securityQuestionPojo: any;
     showConfirmationWindow: any;
+    showDisabled2FA: boolean;
+    showEnabled2FA: boolean;
     showSection: any;
     showSendDeactivateEmailSuccess: boolean;
     toggleText: any;
@@ -44,9 +58,13 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor(
         private cdr:ChangeDetectorRef,
         private accountService: AccountService,
+        private emailService: EmailService,
+        private genericService: GenericService,
         private preferencesService: PreferencesService,
+        private twoFAStateService: TwoFAStateService,
     ) {
         this.changePasswordPojo = {};
+        this.deprecateProfilePojo = {};
         this.errorUpdatingVisibility = false;
         this.initSecurityQuestionFlag = false;
         this.prefs = {};
@@ -56,6 +74,8 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
             securityQuestionId: null
         };
         this.showConfirmationWindow = false;
+        this.showDisabled2FA = false;
+        this.showEnabled2FA = false;
         this.showSection = {
             'deactivate': (window.location.hash === "#editDeactivate"),
             'deprecate': (window.location.hash === "#editDeprecate"),
@@ -71,12 +91,89 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         this.toggleText = {}; 
     }
 
-    securityQuestionCheckCredentials(): void {
-        if( orcidVar.isPasswordConfirmationRequired ){
-            this.showConfirmationWindow = true;
-        } else {
-            this.saveChangeSecurityQuestion();
-        }
+    cancelDeprecateModal(id: string){
+        this.deprecateProfilePojo = {};
+        this.genericService.close(id);
+    } 
+
+    check2FAState(): void {
+        this.twoFAStateService.checkState()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.update2FAStatus( data );
+            },
+            error => {
+                //console.log('getTwoFAStateFormError', error);
+            } 
+        );
+    };
+
+    closeModal(id: string){
+        this.genericService.close(id);
+    } 
+
+    deprecateORCID = function() {
+        this.accountService.deprecateORCID( this.deprecateProfilePojo )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.deprecateProfilePojo = data;
+                if(data.errors.length == 0) {
+                    this.elementWidth = '645';
+                    this.elementHeight = '645';
+                    this.genericService.open('modalDeprecateAccountConfirm');
+                } 
+            },
+            error => {
+                console.log('deprecateORCIDerror', error);
+            } 
+        );
+    };
+
+    deprecateProfileConfirm(): void {
+        this.genericService.setData( this.deprecateProfilePojo, '/account/confirm-deprecate-profile.json' )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data) {
+                    this.closeModal('modalDeprecateAccountConfirm');
+                    this.genericService.close('modalDeprecateAccountConfirm');
+                    this.elementWidth = '400';
+                    this.elementHeight = '200';
+                    this.genericService.open('modalDeprecateAccountSuccess');
+                    this.emailService.emailsUpdated(true);
+                }
+            },
+            error => {
+                console.log('submitDeprecateAccountError', error);
+            } 
+        );
+    };
+
+    disable2FA(): void {
+        this.twoFAStateService.disable()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.update2FAStatus( data );
+            },
+            error => {
+                //console.log('An error occurred disabling user 2FA', error);
+            } 
+        );
+    };
+
+    enable2FA(): void {
+        window.location.href = getBaseUri() + '/2FA/setup';
     };
 
     getChangePassword(): void {
@@ -96,6 +193,23 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         );
  
     };
+
+    getDeprecateProfile(): void {
+        this.genericService.getData( '/account/deprecate-profile.json' )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data) {
+                    this.deprecateProfilePojo = data;
+                }
+            },
+            error => {
+                console.log('getDeprecateAccountError', error);
+            } 
+        );
+    }; 
 
     getPreferences(): void {
         this.preferencesService.getPrivacyPreferences()
@@ -173,8 +287,15 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         this.securityQuestionPojo.password=null;
     };
 
+    securityQuestionCheckCredentials(): void {
+        if( orcidVar.isPasswordConfirmationRequired ){
+            this.showConfirmationWindow = true;
+        } else {
+            this.saveChangeSecurityQuestion();
+        }
+    };
+
     sendDeactivateEmail(): void {
-        console.log("send deactivate")
         this.accountService.sendDeactivateEmail()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -183,8 +304,6 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.primaryEmail = data;
                 this.showSendDeactivateEmailSuccess=true;
-                console.log(this.primaryEmail);
-                console.log(this.showSendDeactivateEmailSuccess);
             },
             error => {
                 //console.log('setformDataError', error);
@@ -196,6 +315,11 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     toggleSection(sectionName): void {
         this.showSection[sectionName] = !this.showSection[sectionName];
         this.updateToggleText(sectionName);
+    };
+
+    update2FAStatus(status): void {
+        this.showEnabled2FA = status.enabled;
+        this.showDisabled2FA = !status.enabled;
     };
 
     updateActivitiesVisibilityDefault(oldPriv, newPriv, $event: any): void {
@@ -244,9 +368,19 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.toggleText[sectionName] = om.get("manage.editTable.hide");
                 } else {
                     this.toggleText[sectionName] = om.get("manage.editTable.removeDuplicate");
+                    this.deprecateProfilePojo = {};
                 }
                 break; 
             } 
+            case 'editPassword': {
+                if(this.showSection[sectionName]==true){
+                    this.toggleText[sectionName] = om.get("manage.editTable.hide");
+                } else {
+                    this.toggleText[sectionName] = om.get("manage.editTable.edit");
+                    this.changePasswordPojo = {};
+                }
+                break;
+            }
             case 'getMyData': {
                 if(this.showSection[sectionName]==true){
                     this.toggleText[sectionName] = om.get("manage.editTable.hide");
@@ -282,8 +416,10 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
         for(var key in this.showSection){
             this.updateToggleText(key);
         }
+        this.check2FAState();
         this.getChangePassword();
         this.getPreferences();
         this.getSecurityQuestion();
+        this.getDeprecateProfile();
     }; 
 }

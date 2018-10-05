@@ -34,9 +34,6 @@ import { BiographyModule }
 import { ClientEditModule } 
     from './clientEdit/clientEdit.ts';
 
-import { DeprecateAccountModule }
-    from './deprecateAccount/deprecateAccount.ts';
-
 import { EditTableModule } 
     from './editTable/editTable.ts';
 
@@ -157,9 +154,6 @@ import { SwitchUserModule }
 import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
 
-import { TwoFaStateModule }
-    from './2FAState/twoFAState.ts';
-
 import { WidgetModule } 
     from './widget/widget.ts';
 
@@ -204,7 +198,6 @@ export const orcidApp = angular.module(
         AllConsortiumContactsModule.name,
         BiographyModule.name,
         ClientEditModule.name,
-        DeprecateAccountModule.name,
         EditTableModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
@@ -244,7 +237,6 @@ export const orcidApp = angular.module(
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
         SwitchUserModule.name,
-        TwoFaStateModule.name,
         TwoFaSetupModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,

@@ -53,9 +53,6 @@ import { BiographyNg2Module }
 import { ClientEditNg2Module } 
     from './clientEdit/clientEdit.ts';
 
-import { DeprecateAccountNg2Module }
-    from './deprecateAccount/deprecateAccount.ts';
-
 import { EditTableNg2Module } 
     from './editTable/editTable.ts';
 
@@ -175,9 +172,6 @@ import { SwitchUserNg2Module }
 
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
-
-import { TwoFaStateNg2Module }
-    from './2FAState/twoFAState.ts';
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
@@ -310,7 +304,6 @@ export class RootCmp {
         AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
         ClientEditNg2Module,
-        DeprecateAccountNg2Module,
         EditTableNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
@@ -350,7 +343,6 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         SwitchUserNg2Module,
-        TwoFaStateNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
         WidgetNg2Module, //Approved

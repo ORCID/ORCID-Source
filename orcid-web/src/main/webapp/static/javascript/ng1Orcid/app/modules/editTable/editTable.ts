@@ -14,14 +14,8 @@ import { EditTableComponent }
 import { CommonNg2Module }
     from './../common/common.ts';
 
-import { DeprecateAccountNg2Module }
-    from './../deprecateAccount/deprecateAccount.ts';
-
 import { EmailsFormNg2Module }
     from './../emailsForm/emailsForm.ts';
-
-import { TwoFaStateNg2Module }
-    from './../2FAState/twoFAState.ts';
 
 // This is the Angular 1 part of the module
 export const EditTableModule = angular.module(
@@ -34,9 +28,7 @@ export const EditTableModule = angular.module(
     {
         imports: [
             CommonNg2Module,
-            DeprecateAccountNg2Module,
             EmailsFormNg2Module,
-            TwoFaStateNg2Module,
         ],
         declarations: [ 
             EditTableComponent

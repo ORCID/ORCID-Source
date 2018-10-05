@@ -1,6 +1,4 @@
 <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
-<#include "/includes/ng2_templates/deprecate-account-ng2-template.ftl">
-<#include "/includes/ng2_templates/twoFA-state-ng2-template.ftl">
 <script type="text/ng-template" id="edit-table-ng2-template">
     <table class="table table-bordered settings-table account-settings" style="margin:0; padding:0;">
         <tbody>
@@ -201,29 +199,77 @@
                     </div>
                 </td>
             </tr>
-            <!-- Deprecate duplicate account -->
+            <!-- Remove duplicate record -->
             <tr>
                 <th><a name="editDeprecate"></a>${springMacroRequestContext.getMessage("manage.removeDuplicate")}</th>
                 <td><a (click)="toggleSection('deprecate')">{{toggleText['deprecate']}}</a></td>
             </tr>
             <tr *ngIf="showSection['deprecate']" >
                 <td colspan="2">
-                    <deprecate-account-ng2></deprecate-account-ng2>
+                    <div class="editTablePadCell35 close-account-container">
+                        <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
+                        <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}</p>
+                        <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have_more")}<br />
+                            <a href="<@orcid.msg 'common.kb_uri_default'/>360006896634" target="deprecate_orcid.learn_more_link">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
+                        </p>
+                        <div>
+                            <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
+                            <div class="relative">
+                                <input id="emailOrId" type="text" name="emailOrId" (keyup.enter)="deprecateORCID()" 
+                                    [(ngModel)]="deprecateProfilePojo.deprecatingOrcidOrEmail" class="input-xlarge" />
+                                <span class="required">*</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="password" class="">${springMacroRequestContext.getMessage("deprecate_orcid.password")}</label>
+                            <div class="relative">
+                                <input id="password" type="password"
+                                    name="password"
+                                    [(ngModel)]="deprecateProfilePojo.deprecatingPassword" (keyup.enter)="deprecateORCID()" 
+                                    class="input-xlarge" /> <span class="required">*</span>
+                            </div>
+                        </div>
+                       <span class="orcid-error"
+                            *ngIf="deprecateProfilePojo?.errors?.length > 0">
+                            <div *ngFor='let error of deprecateProfilePojo.errors'
+                                [innerHTML]="error"></div>
+                        </span>
+                        <button (click)="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
+                    </div>
+                    <#include "/includes/ng2_templates/deprecate-account-modal-ng2-template.ftl"> 
+                    <#include "/includes/ng2_templates/deprecate-account-success-modal-ng2-template.ftl"> 
                 </td>
             </tr>
+            <!--Two-factor authentication-->
             <tr>
                 <th><a name="edit2FA"></a>${springMacroRequestContext.getMessage("manage.2FA")}</th>
                 <td><a (click)="toggleSection('twoFA')">{{toggleText['twoFA']}}</a></td>
             </tr>
-            <tr *ngIf="showSection['2FA']" >
+            <tr *ngIf="showSection['twoFA']" >
                 <td colspan="2">
-                    <two-fa-state-ng2></two-fa-state-ng2>
+                    <p>
+                        ${springMacroRequestContext.getMessage("2FA.details")}
+                        <br />
+                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006971673"
+                            target="2FA.learn_more_link">${springMacroRequestContext.getMessage("2FA.learn_more_link")}</a>
+                    </p>
+                    <div *ngIf="showEnabled2FA" >
+                        <span class="on">${springMacroRequestContext.getMessage("2FA.state.on.heading")} <span class="glyphicon glyphicon-ok"></span></span>
+                        <span class="small bold leftBuffer">${springMacroRequestContext.getMessage("2FA.state.on.description")}</span>
+                        <a class="leftBuffer" id="disable2FA" (click)="disable2FA()" href="#">${springMacroRequestContext.getMessage("2FA.disable")}</a>
+                    </div>
+                    <div *ngIf="showDisabled2FA" >
+                        <span class="off">${springMacroRequestContext.getMessage("2FA.state.off.heading")} <span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="small bold leftBuffer">${springMacroRequestContext.getMessage("2FA.state.off.description")}</span>
+                        <button (click)="enable2FA()" class="btn btn-primary leftBuffer">${springMacroRequestContext.getMessage("2FA.enable")}</button>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <th><a name="getMyData"></a>${springMacroRequestContext.getMessage("manage.get_my_data")}</th>
                 <td><a (click)="toggleSection('getMyData')">{{toggleText['getMyData']}}</a></td>
             </tr>
+            <!--Download all my data-->
             <tr *ngIf="showSection['getMyData']" id="get-my-data">
                 <td colspan="2">
                     <p>
