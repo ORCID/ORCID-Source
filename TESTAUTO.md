@@ -4,7 +4,7 @@
 
 Blackbox tests are in [ORICD-Source/orcid-integration-test/src/test/java/org/orcid/integration/blackbox](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integration-test/src/test/java/org/orcid/integration/blackbox)
 
-###Prerequisites
+### Prerequisites
 1. Complete the ORCID [Development Environment Setup](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
 2. Install [Firefox 52 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/), we suggest putting this into your `~/bin` as to not overwrite the default firefox. 
 3. Verify Firefox installation and locate installation directory
@@ -13,7 +13,7 @@ Blackbox tests are in [ORICD-Source/orcid-integration-test/src/test/java/org/orc
     
 4. Install the latest [geckodriver](https://github.com/mozilla/geckodriver/releases). We suggest putting this into your `~/bin`.
 
-###Set up the test data
+### Set up the test data
 
 Test data is set up using a whitebox test located at [src/test/java/org/orcid/integration/whitebox/SetUpClientsAndUsers.java](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/java/org/orcid/integration/whitebox/SetUpClientsAndUsers.java)
 
@@ -22,7 +22,7 @@ The default test data is in the following config files:
 * Users: [src/test/resources/test-web.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/resources/test-web.properties)
 * Members/clients: [src/test/resources/test-client.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/resources/test-client.properties)
 
-####Eclipse
+#### Eclipse
 
 1. Select Run > Run Configurations
 2. Right click JUnit and select New
