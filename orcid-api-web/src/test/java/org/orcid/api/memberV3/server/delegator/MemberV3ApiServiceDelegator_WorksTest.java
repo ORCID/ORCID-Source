@@ -36,7 +36,6 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.core.web.filters.ApiVersionFilter;
@@ -101,7 +100,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     // Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
 
-    @Resource(name = "memberV3ApiServiceDelegatorV3_0")
+    @Resource(name = "memberV3ApiServiceDelegator")
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
 
     @Resource
@@ -161,7 +160,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     public void testCreateBulkWorksWithBlankTitles() {
         RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
-        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_rc1",  RequestAttributes.SCOPE_REQUEST);
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_rc2",  RequestAttributes.SCOPE_REQUEST);
         RequestContextHolder.setRequestAttributes(attrs);
         
         Long time = System.currentTimeMillis();
@@ -511,7 +510,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     public void testCreateWorksWithBulkAllOK() {
         RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
-        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_rc1",  RequestAttributes.SCOPE_REQUEST);
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_rc2",  RequestAttributes.SCOPE_REQUEST);
         RequestContextHolder.setRequestAttributes(attrs);
         
         Long time = System.currentTimeMillis();

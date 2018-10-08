@@ -443,6 +443,9 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             if(apiVersion.equals("3.0_rc1")) {
                 return SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC1.get(type);
             }
+            if(apiVersion.equals("3.0_rc2")) {
+                return SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC2.get(type);
+            }
         }               
         return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);
     }

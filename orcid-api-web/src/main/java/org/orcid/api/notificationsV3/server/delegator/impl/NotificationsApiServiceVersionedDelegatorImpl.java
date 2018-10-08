@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
-import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.api.notificationsV3.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 public class NotificationsApiServiceVersionedDelegatorImpl implements NotificationsApiServiceDelegator<Object> {
 
     @Resource
-    private NotificationsApiServiceDelegator<Object> notificationsApiServiceDelegator;
+    private NotificationsApiServiceDelegator<Object> notificationsApiServiceDelegatorV3;
     
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -34,11 +34,8 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     private String externalVersion;
 
     @Resource
-    private V3VersionConverterChain v2VersionConverterChain;
+    private V3VersionConverterChain v3VersionConverterChain;
     
-    @Resource
-    private V3VersionConverterChain v2_1VersionConverterChain;
-
     public String getExternalVersion() {
         return externalVersion;
     }
@@ -56,7 +53,7 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotifications(String orcid) {        
         checkProfileStatus(orcid, true);
-        Response response = notificationsApiServiceDelegator.findPermissionNotifications(orcid);
+        Response response = notificationsApiServiceDelegatorV3.findPermissionNotifications(orcid);
         if(externalVersion.equals("2.1")) {
             return upgradeResponse(response);
         } else {
@@ -68,7 +65,7 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotification(String orcid, Long id) {
         checkProfileStatus(orcid, true);
-        Response response = downgradeResponse(notificationsApiServiceDelegator.findPermissionNotification(orcid, id));
+        Response response = downgradeResponse(notificationsApiServiceDelegatorV3.findPermissionNotification(orcid, id));
         if(externalVersion.equals("2.1")) {
             return upgradeResponse(response);
         } else {
@@ -80,21 +77,21 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
         checkProfileStatus(orcid, false);
-        return downgradeResponse(notificationsApiServiceDelegator.flagNotificationAsArchived(orcid, id));
+        return downgradeResponse(notificationsApiServiceDelegatorV3.flagNotificationAsArchived(orcid, id));
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response addPermissionNotification(UriInfo uriInfo, String orcid, Object notification) {
         checkProfileStatus(orcid, false);
-        return notificationsApiServiceDelegator.addPermissionNotification(uriInfo, orcid, upgradeObject(notification));
+        return notificationsApiServiceDelegatorV3.addPermissionNotification(uriInfo, orcid, upgradeObject(notification));
     }
 
     private Response downgradeResponse(Response response) {
         Object entity = response.getEntity();
         V3Convertible result = null;
         if (entity != null) {
-            result = v2VersionConverterChain.downgrade(new V3Convertible(entity, MemberV3ApiServiceDelegator.LATEST_V3_VERSION), externalVersion);
+            result = v3VersionConverterChain.downgrade(new V3Convertible(entity, MemberV3ApiServiceDelegator.LATEST_V3_VERSION), externalVersion);
         }
         return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
     }
@@ -103,7 +100,7 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
         Object entity = response.getEntity();
         V3Convertible result = null;
         if (entity != null) {
-            result = v2_1VersionConverterChain.upgrade(new V3Convertible(entity, MemberV3ApiServiceDelegator.LATEST_V3_VERSION), externalVersion);
+            result = v3VersionConverterChain.upgrade(new V3Convertible(entity, MemberV3ApiServiceDelegator.LATEST_V3_VERSION), externalVersion);
             return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
         }
         return response;
@@ -112,7 +109,7 @@ public class NotificationsApiServiceVersionedDelegatorImpl implements Notificati
     private Object upgradeObject(Object entity) {
         V3Convertible result = null;
         if (entity != null) {
-            result = v2VersionConverterChain.upgrade(new V3Convertible(entity, externalVersion), MemberV3ApiServiceDelegator.LATEST_V3_VERSION);
+            result = v3VersionConverterChain.upgrade(new V3Convertible(entity, externalVersion), MemberV3ApiServiceDelegator.LATEST_V3_VERSION);
         }
         return result.getObjectToConvert();
     }

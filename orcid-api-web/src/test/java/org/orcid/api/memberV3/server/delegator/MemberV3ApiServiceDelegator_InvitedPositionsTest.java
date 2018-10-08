@@ -75,7 +75,7 @@ public class MemberV3ApiServiceDelegator_InvitedPositionsTest extends DBUnitTest
     // Now on, for any new test, PLAESE USE THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
 
-    @Resource(name = "memberV3ApiServiceDelegatorV3_0")
+    @Resource(name = "memberV3ApiServiceDelegator")
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
 
     @BeforeClass

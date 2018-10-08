@@ -129,7 +129,7 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
 
     private final String ORCID = "0000-0000-0000-0003";
 
-    @Resource(name = "publicV3ApiServiceDelegatorV3_0_rc1")
+    @Resource(name = "publicV3ApiServiceDelegator")
     PublicV3ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
     @BeforeClass

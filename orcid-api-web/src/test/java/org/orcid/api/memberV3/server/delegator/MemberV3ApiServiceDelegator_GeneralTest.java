@@ -96,7 +96,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
-    @Resource(name = "memberV3ApiServiceDelegatorV3_0")
+    @Resource(name = "memberV3ApiServiceDelegator")
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
     
     @Before
