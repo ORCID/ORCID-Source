@@ -18,6 +18,7 @@ export class MembersListService {
     private membersListUrl: string;
     private consortiaListUrl: string;
     private memberDetailsBySlugUrl: string;
+    private badgesUrl: string;
     
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -31,6 +32,7 @@ export class MembersListService {
         this.membersListUrl = getBaseUri() + '/members/members.json';
         this.consortiaListUrl = getBaseUri() + '/consortia/consortia.json';
         this.memberDetailsBySlugUrl = getBaseUri() + '/members/detailsBySlug.json?memberSlug=';
+        this.badgesUrl = getBaseUri() + '/members/badges.json';
     }
     
     getCommunityTypes(): Observable<any> {
@@ -48,6 +50,10 @@ export class MembersListService {
     getMemberDetailsBySlug(slug: string): Observable<any> {
         const url = `${this.memberDetailsBySlugUrl}${slug}`;
         return this.http.get(url);
+    }
+    
+    getBadges(): Observable<any> {
+        return this.http.get(this.badgesUrl);
     }
     
 }

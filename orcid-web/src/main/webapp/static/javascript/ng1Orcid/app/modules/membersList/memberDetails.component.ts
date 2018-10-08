@@ -23,9 +23,12 @@ import { FeaturesService }
 export class MemberDetailsComponent {
         
     communityTypes: any = {};
+    badges: any = null;
     showMemberDetailsLoader: boolean = true;
     showGetMemberDetailsError: boolean = false;
     currentMemberDetails: any = null;
+    newBadgesEnabled : boolean;
+    badgesAwarded: any = {}
     
     constructor(
         protected commonSrvc: CommonService,
@@ -44,11 +47,24 @@ export class MemberDetailsComponent {
         );
     }
     
+    getBadges(): void {
+        this.membersListService.getBadges()
+            .subscribe(data => {
+                this.badges = data;
+                this.updateAwardedBadges();
+            },
+            error => {
+                //console.log('getBadges error', error);
+            } 
+        );
+    }
+    
     getCurrentMemberDetails(): void {
         this.membersListService.getMemberDetailsBySlug(orcidVar.memberSlug)
             .subscribe(data => {
                 this.showMemberDetailsLoader = false;
                 this.currentMemberDetails = data;
+                 this.updateAwardedBadges();
                 
             },
             error => {
@@ -59,12 +75,31 @@ export class MemberDetailsComponent {
         );
     }
     
+    updateAwardedBadges(): void {
+        if(this.badges != null && this.currentMemberDetails != null) {
+            for(let integration of this.currentMemberDetails.integrations){
+                for(let achievement of integration.achievements){
+                    let badgeName = this.badges[achievement.badgeId].name;
+                    let integrationBadges = this.badgesAwarded[integration.id];
+                    if(integrationBadges == null){
+                        integrationBadges = {};
+                        this.badgesAwarded[integration.id] = integrationBadges;
+                    }
+                    integrationBadges[badgeName] = true;
+                }
+            }
+            console.log(this.badgesAwarded);
+        }
+    }
+    
     getMemberPageUrl(slug: string): string {
         return orcidVar.baseUri + '/members/' + slug;
     }
     
     ngOnInit(): void {
+        this.newBadgesEnabled = this.featuresService.isFeatureEnabled('NEW_BADGES');
         this.getCommunityTypes();
+        this.getBadges();
         this.getCurrentMemberDetails();   
     }
 
