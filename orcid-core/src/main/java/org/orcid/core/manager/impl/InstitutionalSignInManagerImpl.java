@@ -182,6 +182,18 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         }
         return null;
     }
+    
+    @Override
+    public String retrieveFirstName(Map<String, String> headers) {
+        String givenName = extractFirst(headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER));
+        return givenName != null ? givenName : "";
+    }
+
+    @Override
+    public String retrieveLastName(Map<String, String> headers) {
+        String lastName = extractFirst(headers.get(InstitutionalSignInManager.SN_HEADER));
+        return lastName != null ? lastName : "";
+    }
 
     /**
      * Shibboleth SP combines multiple values by concatenating, using semicolon
