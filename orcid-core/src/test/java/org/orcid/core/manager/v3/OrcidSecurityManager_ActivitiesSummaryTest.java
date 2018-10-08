@@ -10,21 +10,21 @@ import org.junit.Test;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Affiliations;
-import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Affiliations;
+import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 
 /**
  * 

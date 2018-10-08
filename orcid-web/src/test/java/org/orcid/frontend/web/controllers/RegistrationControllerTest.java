@@ -61,7 +61,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Registration;

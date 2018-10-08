@@ -1032,11 +1032,21 @@
 	    </property>
 	</bean>
 	
+	<bean id="v3VersionConverterChain" class="org.orcid.core.version.impl.V3VersionConverterChainImpl">
+        <property name="converters">
+            <list>
+                <ref bean="versionConverterV3_0_rc1ToV3_0_rc2" />
+            </list>
+        </property>
+    </bean>
+	
     <bean id="versionConverterV2_0_rc1ToV2_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0_rc2"/>
 	<bean id="versionConverterV2_0_rc2ToV2_0_rc3" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc2ToV2_0_rc3"/>
 	<bean id="versionConverterV2_0_rc3ToV2_0_rc4" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc3ToV2_0_rc4"/>
 	<bean id="versionConverterV2_0_rc4ToV2_0" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc4ToV2_0"/>
 	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
+
+    <bean id="versionConverterV3_0_rc1ToV3_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV3_0_rc1ToV3_0_rc2"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
@@ -1561,6 +1571,8 @@
     </bean>
              
     <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
+    
+    <bean id="v3VersionObjectFactory" class="org.orcid.core.version.impl.V3VersionObjectFactoryImpl" />
             
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">

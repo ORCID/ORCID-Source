@@ -74,7 +74,7 @@ public class ClientsController extends BaseWorkspaceController {
         mav.addObject("member_id", memberId);
         mav.addObject("member_type", memberType);
 
-        Set<org.orcid.jaxb.model.v3.rc1.client.Client> clients = clientManagerReadOnly.getClients(memberId);
+        Set<org.orcid.jaxb.model.v3.rc2.client.Client> clients = clientManagerReadOnly.getClients(memberId);
         if (clients.isEmpty()) {
             mav.addObject("allow_more_clients", true);
         } else if (MemberType.PREMIUM.equals(memberType) || MemberType.PREMIUM_INSTITUTION.equals(memberType)) {
@@ -202,9 +202,9 @@ public class ClientsController extends BaseWorkspaceController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody List<Client> getClients() {
         String memberId = getEffectiveUserOrcid();
-        Set<org.orcid.jaxb.model.v3.rc1.client.Client> existingClients = clientManagerReadOnly.getClients(memberId);
+        Set<org.orcid.jaxb.model.v3.rc2.client.Client> existingClients = clientManagerReadOnly.getClients(memberId);
         List<Client> clients = new ArrayList<Client>();
-        for (org.orcid.jaxb.model.v3.rc1.client.Client existingClient : existingClients) {
+        for (org.orcid.jaxb.model.v3.rc2.client.Client existingClient : existingClients) {
             clients.add(Client.fromModelObject(existingClient));
         }
         Collections.sort(clients);
@@ -217,7 +217,7 @@ public class ClientsController extends BaseWorkspaceController {
         validateIncomingElement(client);
 
         if (client.getErrors().size() == 0) {
-            org.orcid.jaxb.model.v3.rc1.client.Client newClient = client.toModelObject();
+            org.orcid.jaxb.model.v3.rc2.client.Client newClient = client.toModelObject();
             try {
                 newClient = clientManager.create(newClient);
             } catch (Exception e) {
@@ -238,7 +238,7 @@ public class ClientsController extends BaseWorkspaceController {
         validateIncomingElement(client);
 
         if (client.getErrors().size() == 0) {
-            org.orcid.jaxb.model.v3.rc1.client.Client clientToEdit = client.toModelObject();
+            org.orcid.jaxb.model.v3.rc2.client.Client clientToEdit = client.toModelObject();
             try {
                 // Updating from the clients edit page should not overwrite
                 // configuration values on the DB
@@ -282,7 +282,7 @@ public class ClientsController extends BaseWorkspaceController {
     @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
     public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
         // Verify this client belongs to the member
-        org.orcid.jaxb.model.v3.rc1.client.Client client = clientManagerReadOnly.get(clientId);
+        org.orcid.jaxb.model.v3.rc2.client.Client client = clientManagerReadOnly.get(clientId);
         if (client == null) {
             return false;
         }

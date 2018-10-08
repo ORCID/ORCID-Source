@@ -21,58 +21,58 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.v3.rc1.common.Amount;
-import org.orcid.jaxb.model.v3.rc1.common.Contributor;
-import org.orcid.jaxb.model.v3.rc1.common.ContributorAttributes;
-import org.orcid.jaxb.model.v3.rc1.common.ContributorEmail;
-import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.rc1.common.ContributorRole;
-import org.orcid.jaxb.model.v3.rc1.common.Country;
-import org.orcid.jaxb.model.v3.rc1.common.CreditName;
-import org.orcid.jaxb.model.v3.rc1.common.Day;
-import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.Month;
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.rc1.common.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.rc1.common.Source;
-import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
-import org.orcid.jaxb.model.v3.rc1.common.SourceName;
-import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.rc1.common.Subtitle;
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle;
-import org.orcid.jaxb.model.v3.rc1.common.Url;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.common.Year;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc1.record.Citation;
-import org.orcid.jaxb.model.v3.rc1.record.CitationType;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributorAttributes;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributorRole;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributors;
-import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
-import org.orcid.jaxb.model.v3.rc1.record.FundingType;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.Role;
-import org.orcid.jaxb.model.v3.rc1.record.SequenceType;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.common.Amount;
+import org.orcid.jaxb.model.v3.rc2.common.Contributor;
+import org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes;
+import org.orcid.jaxb.model.v3.rc2.common.ContributorEmail;
+import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.rc2.common.ContributorRole;
+import org.orcid.jaxb.model.v3.rc2.common.Country;
+import org.orcid.jaxb.model.v3.rc2.common.CreditName;
+import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.Month;
+import org.orcid.jaxb.model.v3.rc2.common.Organization;
+import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc2.common.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc2.common.SourceName;
+import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.rc2.common.Subtitle;
+import org.orcid.jaxb.model.v3.rc2.common.Title;
+import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle;
+import org.orcid.jaxb.model.v3.rc2.common.Url;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Year;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc2.record.Citation;
+import org.orcid.jaxb.model.v3.rc2.record.CitationType;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributorRole;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
+import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
+import org.orcid.jaxb.model.v3.rc2.record.FundingType;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReviewSubjectType;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.Role;
+import org.orcid.jaxb.model.v3.rc2.record.SequenceType;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
+import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -599,13 +599,13 @@ public class ActivityValidatorTest {
      * */
     @Test
     public void validatePeerReview_validPeerReviewTest() {
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validatePeerReview_invalidExternalIdentifiersTest() {        
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getExternalIdentifiers().getExternalIdentifier().get(0).setType(null);
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
@@ -614,68 +614,80 @@ public class ActivityValidatorTest {
     public void validatePeerReview_invalidPutCodeTest() {   
         SourceEntity source = mock(SourceEntity.class);
         when(source.getCachedSourceName()).thenReturn("source name");
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.setPutCode(1L);
         activityValidator.validatePeerReview(pr, source, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validatePeerReview_invalidPeerReviewTypeTest() {        
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.setType(null);
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validatePeerReview_noExternalIdentifiersTest() {
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getExternalIdentifiers().getExternalIdentifier().clear();
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validatePeerReview_emptyExternalIdentifierValueTest() {
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validatePeerReview_invalidSubjectExternalIdentifiersTest() {
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getSubjectExternalIdentifier().setType(null);
         activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = VisibilityMismatchException.class)
     public void validatePeerReview_dontChangeVisibilityTest() {        
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.setVisibility(Visibility.LIMITED);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
     @Test(expected = InvalidOrgException.class)
     public void validatePeerReviewWithoutOrg() {
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.setOrganization(null);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
     @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validatePeerReviewWithoutDisambiguatedOrg() {
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getOrganization().setDisambiguatedOrganization(null);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
     @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validatePeerReviewWithoutDisambiguatedOrgId() {
-        PeerReview pr = getPeerReview();
+        PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
-    public PeerReview getPeerReview() {
+    @Test
+    public void validatePeerReviewWithFundingTypeAsSubjectType() {
+        PeerReview pr = getPeerReviewWithFundingTypeAsSubjectType();
+        activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
+    }
+    
+    private PeerReview getPeerReviewWithFundingTypeAsSubjectType() {
+        PeerReview peerReview = getPeerReviewWithWorkTypeAsSubjectType();
+        peerReview.setSubjectType(PeerReviewSubjectType.AWARD);
+        return peerReview;
+    }
+    
+    private PeerReview getPeerReviewWithWorkTypeAsSubjectType() {
         PeerReview peerReview = new PeerReview();
         peerReview.setCompletionDate(getFuzzyDate());
         peerReview.setExternalIdentifiers(getExternalIDs());
@@ -685,7 +697,7 @@ public class ActivityValidatorTest {
         peerReview.setSubjectContainerName(new Title("subject-container-name"));
         peerReview.setSubjectExternalIdentifier(getExternalID());
         peerReview.setSubjectName(getWorkTitle());
-        peerReview.setSubjectType(WorkType.ARTISTIC_PERFORMANCE);
+        peerReview.setSubjectType(PeerReviewSubjectType.ARTISTIC_PERFORMANCE);
         peerReview.setSubjectUrl(new Url("http://test.orcid.org"));
         peerReview.setType(PeerReviewType.EVALUATION);
         peerReview.setUrl(new Url("http://test.orcid.org"));

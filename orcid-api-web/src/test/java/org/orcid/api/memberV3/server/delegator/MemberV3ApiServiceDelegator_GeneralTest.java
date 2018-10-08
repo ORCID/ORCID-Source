@@ -40,29 +40,30 @@ import org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl;
 import org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc1.client.ClientSummary;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc1.record.Address;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Membership;
-import org.orcid.jaxb.model.v3.rc1.record.OtherName;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc1.record.Qualification;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc1.record.Service;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.search.Result;
-import org.orcid.jaxb.model.v3.rc1.search.Search;
+import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Membership;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.Service;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.search.Result;
+import org.orcid.jaxb.model.v3.rc2.search.Search;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.test.DBUnitTest;
@@ -95,6 +96,9 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
+    @Resource(name = "memberV3ApiServiceDelegator")
+    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
+    
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
@@ -113,9 +117,6 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);         
     }
     
-    @Resource(name = "memberV3ApiServiceDelegatorV3_0_rc1")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator;
-
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);

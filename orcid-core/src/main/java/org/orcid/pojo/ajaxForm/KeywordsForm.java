@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
 
 public class KeywordsForm implements ErrorsInterface, Serializable {
 
