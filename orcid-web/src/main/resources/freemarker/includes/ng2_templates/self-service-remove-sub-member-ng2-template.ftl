@@ -5,7 +5,7 @@
         <p><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_text2'/></p>
         <form (submit)="removeSubMember(subMember)">
             <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
-            <a href="" (click)="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
+            <button (click)="closeModal()" class="btn btn-white-no-border cancel-option"><@orcid.msg 'freemarker.btncancel'/></button>
         </form>
         <div *ngIf="errors?.length === 0">
             <br>
