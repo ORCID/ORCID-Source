@@ -59,4 +59,11 @@ public interface PeerReviewManagerReadOnly {
      * @return PeerReviews element with the PeerReviewSummary elements grouped                  
      * */
     PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews, boolean justPublic);
+    
+    /**
+     * Indicates if the record have public peer reviews
+     * 
+     * @param orcid
+     * */
+    Boolean hasPublicPeerReviews(String orcid);
 }

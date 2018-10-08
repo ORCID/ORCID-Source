@@ -156,4 +156,9 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
 
         return groupedDuplicates;
     }
+
+    @Override
+    public Boolean hasPublicPeerReviews(String orcid) {
+        return peerReviewDao.hasPublicPeerReviews(orcid);
+    }
 }

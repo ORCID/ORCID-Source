@@ -38,6 +38,9 @@ import { OauthService }
 
 import { SearchService } 
     from '../../shared/search.service.ts';
+    
+import { GenericService }
+    from '../../shared/generic.service.ts';
 
 @Component({
     selector: 'oauth-authorization-ng2',
@@ -91,8 +94,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     loadTime: any;
     generalRegistrationError: any;
     //registration form togglz features    
-    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
+    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');
+    togglzReLoginAlert: boolean = this.featuresService.isFeatureEnabled('RE_LOGGIN_ALERT');    
     initReactivationRequest: any;
+    nameFormUrl: string;
+    realLoggedInUserName: string;
+    effectiveLoggedInUserName: string;
+    isLoggedIn: boolean;    
     
     constructor(
         private zone:NgZone,
@@ -101,7 +109,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         private featuresService: FeaturesService,
         private modalService: ModalService,
         private oauthService: OauthService,
-        private searchSrvc: SearchService
+        private searchSrvc: SearchService,
+        private nameService: GenericService
     ) {
         window['angularComponentReference'] = {
             zone: this.zone,
@@ -150,14 +159,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.socialSignInForm = {};
         this.loadTime = 0;
         this.generalRegistrationError = null;
-        this.initReactivationRequest = { "email":null, "error":null, "success":false };
+        this.initReactivationRequest = { "email": null, "error": null, "success": false };
+        this.nameFormUrl = '/account/names/public';
+        this.isLoggedIn = false
     }
 
     addScript(url, onLoadFunction): void {      
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
         script.src = getStaticCdnPath() + url;
-        script.onload =  onLoadFunction;
+        script.onload = onLoadFunction;
         head.appendChild(script); // Inject the script
     }; 
 
@@ -613,7 +624,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }
                 if(field == 'EmailsAdditional') {
                     for (var index in this.registrationForm.emailsAdditional) {
-                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
+                        if (this.registrationForm.emailsAdditional[index].errors && this.registrationForm.emailsAdditional[index].errors.length > 0) {      
                             this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
                             //deactivated error
                             this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
@@ -725,5 +736,29 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }
             }
         );
+
+        if (this.togglzReLoginAlert) {
+
+        this.nameService.getData(this.nameFormUrl).subscribe(response => {
+            this.isLoggedIn = true;
+            if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
+                this.realLoggedInUserName = "";
+                this.realLoggedInUserName += response.real.givenNames.value ? response.real.givenNames.value : "";
+                this.realLoggedInUserName += response.real.givenNames.value && response.real.familyName.value ? " " : "";
+                this.realLoggedInUserName += response.real.familyName.value ? response.real.familyName.value : "";
+                this.isLoggedIn == true;
+            } 
+            if (response.effective && (response.effective.givenNames.value || response.effective.familyName.value)) {
+                this.effectiveLoggedInUserName = "";
+                this.effectiveLoggedInUserName += response.effective.givenNames.value ? response.effective.givenNames.value : "";
+                this.effectiveLoggedInUserName += response.effective.givenNames.value && response.effective.familyName.value ? " " : "";
+                this.effectiveLoggedInUserName += response.effective.familyName.value ? response.effective.familyName.value : "";
+                this.isLoggedIn == true;
+            }     
+            }, (error) => {
+                this.isLoggedIn = false;
+            })
+        }
+
     };
 }

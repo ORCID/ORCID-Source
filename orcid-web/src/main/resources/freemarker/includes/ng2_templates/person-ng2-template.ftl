@@ -91,8 +91,33 @@
             </div>
         </div>
     </div>
+    <!-- EXT IDS  -->          
+    <div *ngIf="formData['externalIdentifiers']?.externalIdentifiers" class="workspace-section extIds">
+        <div class="workspace-section-header">
+            <div class="workspace-section-title">                 
+                <div id="open-edit-external-identifiers" class="edit-websites edit-option" (click)="openEditModal('modalExtIdsForm')">
+                    <div class="glyphicon glyphicon-pencil">
+                        <div class="popover popover-tooltip top">
+                            <div class="arrow"></div>
+                            <div class="popover-content">
+                                <span><@orcid.msg 'manage_bio_settings.editExternalIdentifiers' /></span>
+                            </div>                
+                        </div>
+                    </div>
+                </div>
+                <div class="workspace-section-label"><@orcid.msg 'public_profile.labelOtherIDs'/></div>
+            </div>
+        </div>
+        <div class="workspace-section-content">
+            <div *ngFor="let externalIdentifier of formData['externalIdentifiers']?.externalIdentifiers">
+                <span *ngIf="!(externalIdentifier.url)">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</span>
+                <span *ngIf="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="externalIdentifier.commonName">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>
+            </div>
+        </div>
+    </div> 
     <#include "/includes/ng2_templates/also-known-as-form-ng2-template.ftl"> 
     <#include "/includes/ng2_templates/country-form-ng2-template.ftl"> 
+    <#include "/includes/ng2_templates/external-identifiers-form-ng2-template.ftl"> 
     <#include "/includes/ng2_templates/keywords-form-ng2-template.ftl"> 
     <#include "/includes/ng2_templates/websites-form-ng2-template.ftl"> 
 </script>

@@ -25,8 +25,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
 
     void removeEmail(String orcid, String email);
     
-    void removeEmail(String orcid, String email, boolean removeIfPrimary);
-    
     @SuppressWarnings("rawtypes")
     List findIdByCaseInsensitiveEmail(List<String> emails);
     

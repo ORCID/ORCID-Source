@@ -102,12 +102,32 @@
 
 56. On https://qa.orcid.org/account add [orcid id] as a trusted individual
 
+## Test Self Service
+
+57. Set up a new Self Service Org account using [this document](https://docs.google.com/document/d/1FlpmgtubCEnD21EpJLWu4AXh4DH0moC9pe6R_5clA78/edit) or alternatively use 0000-0003-0641-4661.
+
+58. Sign in to 0000-0003-0641-4661 and visit https://qa.orcid.org/self-service
+
+ ** Note Salesforce to Registry changes may take an hour to appear due to caching.**
+
+59. Update org info- make sure it feeds into Salesforce.
+
+60. Add new consortium org contact- make sure info feeds to SF.
+
+61. Add new member org- make sure request feeds to SF.
+
+62. Set new org as a member in SF- see that the status updates.
+
+63. Delete existing org make sure it does delete.
+
+
+
 
 ## Run the automated Independent Tests
 
-57. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
+64. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
 
-58. Build the ORCID Independent Tests 2 with the following parameters
+65. Build the ORCID Independent Tests 2 with the following parameters
 	* user_login: ma_test_[DD][month][YYYY]
  	* user_pass: [DD][month][YYYY]
  	* orcid_id: [orcid id]
@@ -115,13 +135,13 @@
 
 ## Post ORCID Independent Tests
 
-59. Visit https://qa.orcid.org/signin
+66. Visit https://qa.orcid.org/signin
 
-60. Sign into the account created earlier
+67. Sign into the account created earlier
 	* ORCID: [orcid id]
 	* Password: [DD][month][YYYY]
 
-61. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
+68. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
 	* 3 other names
 	* 3 countries
 	* 4 keywords
@@ -132,18 +152,18 @@
 	* 3 works (one being a group of 2) - open one to view details
 	* 1 peer-review item (with two reviews) - open one to view details
 
-62. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
+69. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
 	* Check that the group of works with doi:0000 only displays the public version
 
-63. Go to http://qa.orcid.org/inbox check for:
+70. Go to http://qa.orcid.org/inbox check for:
 	* the request for access notification
 	* notifications of updates to the record
 
-64. Archive the first notification in the list
+71. Archive the first notification in the list
 
-65. Use the switch user option to change to the record created during the OAuth process
+72. Use the switch user option to change to the record created during the OAuth process
 
-66. Using IE 11 visit the follow pages and make sure everything loads
+73. Using IE 11 visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register

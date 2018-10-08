@@ -434,8 +434,17 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid());        
-        return ExternalIdentifiersForm.valueOf(extIds);
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid()); 
+        ExternalIdentifiersForm form = ExternalIdentifiersForm.valueOf(extIds);
+        //Set the default visibility
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);
+            form.setVisibility(v);
+        }
+        return form;
+        
     }
 
     /**

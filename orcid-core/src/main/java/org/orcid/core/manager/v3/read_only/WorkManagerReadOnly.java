@@ -92,4 +92,6 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * @return a compiled ExternalIDs object
      */
     ExternalIDs getAllExternalIDs(String orcid);
+
+    Works groupWorksAndGenerateGroupingSuggestions(List<WorkSummary> summaries, String orcid);
 }

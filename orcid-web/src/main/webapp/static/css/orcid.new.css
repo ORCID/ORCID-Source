@@ -3095,7 +3095,7 @@ ul.personal-inf-display li:last-child {
     width: 100%
 }
 
-.add-item-link a {
+.add-item-link button {
     float: right
 }
 
@@ -4255,7 +4255,7 @@ ul#body-membership-list>li {
 .workspace-title {
     display: block;
     color: #494a4c;
-    font-weight: 400
+    font-weight: bold;
 }
 
 .workspace-title span {
@@ -5612,7 +5612,9 @@ ul.oauth-scopes li {
 .action-icon-align-right {
     position: absolute;
     top: 8px;
-    right: 5px
+    right: 5px;
+    border: none;
+    font-size: 14px;
 }
 
 .action-icon-inside {
@@ -5806,7 +5808,7 @@ ul.oauth-scopes li {
 }
 
 .peer-review-list-container .glyphicons {
-    padding-left: 15px
+    padding-left: 18px
 }
 
 .research-resource-list-container .glyphicons {
@@ -6845,6 +6847,41 @@ ul.comma li:last-child:after {
 
 .social-button .social:hover:before {
     color: #338caf
+}
+
+.relogin-container {
+    word-break: break-all;
+    margin-bottom: 50px;
+    border: solid 1px;
+    padding: 20px;
+    box-shadow: 2px 1px 9px 2px #eee;
+    border-color: #999;
+}
+
+.menu-area {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-top: 25px;
+}
+
+.menu-area >a >.btn.btn-white-no-border {
+    line-height: 30px;
+}
+
+.relogin-container .btn.btn-primary {
+    max-width: 250px;
+    margin-right: 20px;
+}
+
+.menu-area > .btn.btn-white-no-border {
+    width: 60;
+    text-align: end;
+    line-height: 30px;  
+}
+
+.biography-controller > .row > div.col-md-9.col-sm-8.col-xs-4 {
+    display: flex;
 }
 
 @media (max-width:767px) {
@@ -7974,9 +8011,13 @@ ul.comma li:last-child:after {
         font-size: 20px;
         margin-left: 10px
     }
+    .menu-area > .btn.btn-primary {
+        max-width: none;
+    }
 }
 
 @media (min-width:768px) and (max-width:991px) {
+
     .websites-box input {
         width: 45%!important
     }
@@ -8150,6 +8191,9 @@ ul.comma li:last-child:after {
 
     #edit-affiliation {
         width: 100%
+    }
+    .relogin-container {
+        margin: initial;
     }
 }
 

@@ -15,16 +15,9 @@
 					</div>
 					<div class="orcid-id-container">
 						<div class="orcid-id-info">
-							<@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-		                        <span class="mini-orcid-icon"></span>
-		                        <!-- Reference: orcid.js:removeProtocolString() -->
-		                        <span id="orcid-id" class="orcid-id">${baseUri}/${(effectiveUserOrcid)!}</span>
-							</@orcid.checkFeatureStatus>	
-							<@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false>
-						    	<span class="mini-orcid-icon"></span>
-						    	<!-- Reference: orcid.js:removeProtocolString() -->
-					       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>	
-							</@orcid.checkFeatureStatus>	
+	                        <span class="mini-orcid-icon"></span>
+	                        <!-- Reference: orcid.js:removeProtocolString() -->
+	                        <span id="orcid-id" class="orcid-id">${baseUri}/${(effectiveUserOrcid)!}</span>	
 						</div>				
 					</div>
 				</div>
@@ -302,10 +295,6 @@
     </div>
     
     <div class="col-md-12">
-    	<@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-        <personal-info-ng2></personal-info-ng2>
-        </@orcid.checkFeatureStatus>
-        <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false> 
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
         		<div class="workspace-inner-public workspace-public workspace-accordion">
 	        		<#if (isProfileEmpty)?? && isProfileEmpty>
@@ -330,7 +319,6 @@
 	        		</#if>
 	        	</div>	                   
         </div>
-        </@orcid.checkFeatureStatus>
     </div>
 </div>
 </#escape>

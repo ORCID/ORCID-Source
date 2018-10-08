@@ -121,9 +121,6 @@ import { DiscoService }
 import { EmailService } 
     from '../../shared/email.service.ts';
 
-import { ExternalIdentifiersService } 
-    from '../../shared/externalIdentifiers.service.ts';
-
 import { FeaturesService }
     from '../../shared/features.service.ts';
 
@@ -154,6 +151,9 @@ import { OauthService }
 import { PasswordService }
     from '../../shared/password.service.ts';
 
+import { PeerReviewService }
+    from '../../shared/peerReview.service.ts';
+
 import { PreferencesService }
     from '../../shared/preferences.service.ts';
 
@@ -171,6 +171,9 @@ import { SwitchUserService }
 
 import { TwoFAStateService } 
     from '../../shared/twoFAState.service.ts';
+    
+import { ShibbolethService } 
+    from '../../shared/shibboleth.service.ts'; 
 
 import { WidgetService }
     from '../../shared/widget.service.ts'
@@ -268,7 +271,6 @@ import { ResendClaimService }
             DiscoService,
             EmailFrequencyService,
             EmailService,
-            ExternalIdentifiersService,
             FeaturesService,
             FundingService,
             GenericService,
@@ -279,11 +281,13 @@ import { ResendClaimService }
             NotificationsService,
             OauthService,
             PasswordService,
+            PeerReviewService,
             PreferencesService,
             ReactivationService,
             ResearchResourceService,
             SearchService,
             TwoFAStateService,
+            ShibbolethService,
             SwitchUserService,
             WidgetService,
             WorksService,

@@ -369,18 +369,6 @@ public class BaseController {
     public boolean isPasswordConfirmationRequired() {
         return orcidSecurityManager.isPasswordConfirmationRequired();
     } 
-    
-    @Value("${org.orcid.emailVerificationManualEdit.enabled:false}")
-    private boolean emailVerificationManualEditEnabled;
-    
-    @ModelAttribute("emailVerificationManualEditEnabled")
-    public boolean isEmailVerificationManualEditEnabled() {
-        return emailVerificationManualEditEnabled;
-    }
-
-    public void setEmailVerificationManualEditEnabled(boolean emailVerificationManualEditEnabled) {
-        this.emailVerificationManualEditEnabled = emailVerificationManualEditEnabled;
-    }
 
     @ModelAttribute("request")
     public HttpServletRequest getRequest(HttpServletRequest request) {

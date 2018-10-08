@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Controller("oauthAuthorizeController")
 public class OauthAuthorizeController extends OauthControllerBase {
@@ -89,10 +91,25 @@ public class OauthAuthorizeController extends OauthControllerBase {
             ModelAndView error = new ModelAndView();
             error.setView(rView);
             return error;
-        }  
+        } 
         
-        //Add check for prompt=login and max_age here. This is a MUST in the openid spec.
+        //implicit id_token requests must have nonce.
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) 
+                && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) 
+                && request.getParameter(OAuth2Utils.RESPONSE_TYPE).contains("id_token") 
+                && request.getParameter(OrcidOauth2Constants.NONCE) == null) {
+            String redirectUriWithParams = requestInfoForm.getRedirectUrl(); 
+            redirectUriWithParams += "#error=invalid_request ";
+            RedirectView rView = new RedirectView(redirectUriWithParams);
+            ModelAndView error = new ModelAndView();
+            error.setView(rView);
+            return error;
+        }
+        
+        //Check for prompt=login and max_age. This is a MUST in the openid spec.
+        //If found redirect back to the signin page.
         //Add check for prompt=confirm here. This is a SHOULD in the openid spec.
+        //If found, force user to confirm permissions.
         boolean forceConfirm = false;
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
@@ -104,7 +121,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
                 try{
                     long max = Long.parseLong(maxAge);        
                     if (authTime == null || ((authTime.getTime() + (max*1000)) < (new java.util.Date()).getTime())){
-                        return oauthLoginController.loginGetHandler(request,response,new ModelAndView());                    
+                        return redirectToForceSignin(request);
                     }                    
                 }catch(NumberFormatException e){
                     //ignore
@@ -113,8 +130,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
             if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_CONFIRM)){
                 forceConfirm=true;
             }else if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)){
-                request.getParameterMap().remove(OrcidOauth2Constants.PROMPT);
-                return oauthLoginController.loginGetHandler(request,response,new ModelAndView());
+                return redirectToForceSignin(request);
             }
         }
 
@@ -171,7 +187,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
                 String redirectUriWithParams = requestInfoForm.getRedirectUrl();
-                redirectUriWithParams += "?error=interaction_required";
+                redirectUriWithParams += "#error=interaction_required";
                 RedirectView rView = new RedirectView(redirectUriWithParams);
                 ModelAndView error = new ModelAndView();
                 error.setView(rView);
@@ -246,4 +262,15 @@ public class OauthAuthorizeController extends OauthControllerBase {
             copy(savedParams, params);
         }
     }    
+    
+    private ModelAndView redirectToForceSignin(HttpServletRequest request) {
+        String q = request.getQueryString();
+        q = removeQueryStringParams(q,"prompt","max_age");
+        q += "&prompt=login";
+        RedirectView rView = new RedirectView(orcidUrlManager.getBaseUrl() + "/signin?oauth&" +q);
+        ModelAndView m = new ModelAndView();
+        m.setView(rView);
+        return m;
+    }
+    
 }
