@@ -255,11 +255,13 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
                                      existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }
-    	}    	
-    	        
+    	}
+    	
         orcidSecurityManager.checkSource(pfe);
-        
-        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);     
+        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);   
+    	if (pfe.getVisibility() == null) {
+    		pfe.setVisibility(originalVisibility.name());  
+    	}
         
         //Be sure it doesn't overwrite the source
         pfe.setSourceId(existingSourceId);
