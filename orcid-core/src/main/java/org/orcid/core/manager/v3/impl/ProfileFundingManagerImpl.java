@@ -28,6 +28,7 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,7 +202,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         profileFundingEntity.setProfile(profile);
-        setIncomingWorkPrivacy(profileFundingEntity, profile);        
+        setIncomingWorkPrivacy(profileFundingEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);        
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
@@ -210,16 +211,21 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }        
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
+    
+	private void setIncomingWorkPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile) {
+		setIncomingWorkPrivacy(workEntity, profile, true);
+	}
 
-    private void setIncomingWorkPrivacy(ProfileFundingEntity profileFundingEntity, ProfileEntity profile) {
-        String incomingWorkVisibility = profileFundingEntity.getVisibility();
-        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {            
-            profileFundingEntity.setVisibility(defaultWorkVisibility);            
-        } else if (incomingWorkVisibility == null) {
-            profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        }
-    }
+	private void setIncomingWorkPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
+		String incomingWorkVisibility = workEntity.getVisibility();
+		String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+
+		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
+			workEntity.setVisibility(defaultWorkVisibility);
+		} else if (isApiRequest && !profile.getClaimed()) {
+			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+		}
+	}
     
     
     /**
@@ -254,8 +260,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     	        
         orcidSecurityManager.checkSource(pfe);
         
-        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
-        pfe.setVisibility(originalVisibility.name());        
+        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);     
         
         //Be sure it doesn't overwrite the source
         pfe.setSourceId(existingSourceId);
