@@ -182,7 +182,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         
-        setIncomingWorkPrivacy(workEntity, profile);        
+        setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
@@ -374,15 +374,20 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return result;
     }
     
-    private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-        String incomingWorkVisibility = workEntity.getVisibility();
-        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            workEntity.setVisibility(defaultWorkVisibility);            
-        } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        }
-    }
+	private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
+		setIncomingWorkPrivacy(workEntity, profile, true);
+	}
+
+	private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
+		String incomingWorkVisibility = workEntity.getVisibility();
+		String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+
+		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
+			workEntity.setVisibility(defaultWorkVisibility);
+		} else if (isApiRequest && !profile.getClaimed()) {
+			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+		}
+	}
 
     private List<Item> createItemList(WorkEntity workEntity) {
         Item item = new Item();

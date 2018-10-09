@@ -337,9 +337,8 @@
                                 </div>
                                 <div class="controlls">
                                     <privacy-toggle-ng2 
-                                    [dataPrivacyObj]="otherName" 
-                                    (privacyUpdate)="privacyChange($event, 'otherNames')"
-                                    elementId="also-known-as-privacy-toggle" 
+                                    [dataPrivacyObj]="editWork" 
+                                    elementId="work-privacy-toggle" 
                                     privacyNodeName="visibility" 
                                     ></privacy-toggle-ng2> 
                                 </div>
