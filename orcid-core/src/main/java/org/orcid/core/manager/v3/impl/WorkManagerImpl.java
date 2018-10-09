@@ -346,7 +346,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
         orcidSecurityManager.checkSource(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
-        workEntity.setVisibility(originalVisibility.name());
         
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
