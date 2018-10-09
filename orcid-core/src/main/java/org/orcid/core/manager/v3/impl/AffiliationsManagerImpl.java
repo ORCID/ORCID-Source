@@ -33,7 +33,6 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
 
@@ -480,7 +479,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         String defaultElementVisibility = profile.getActivitiesVisibilityDefault();
 		if ((isApiRequest && profile.getClaimed()) || (incomingElementVisibility == null && !isApiRequest)) {
 			orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);
-		} else if (isApiRequest && !profile.getClaimed()) {
+		} else if (isApiRequest && !profile.getClaimed() && incomingElementVisibility == null) {
 			orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
 		}
     }

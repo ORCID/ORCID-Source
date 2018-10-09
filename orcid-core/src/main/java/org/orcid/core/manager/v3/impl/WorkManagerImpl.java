@@ -383,7 +383,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
 		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
 			workEntity.setVisibility(defaultWorkVisibility);
-		} else if (isApiRequest && !profile.getClaimed()) {
+		} else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
 			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
 		}
 	}

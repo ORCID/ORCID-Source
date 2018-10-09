@@ -28,7 +28,6 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -222,7 +221,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
 		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
 			workEntity.setVisibility(defaultWorkVisibility);
-		} else if (isApiRequest && !profile.getClaimed()) {
+		} else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
 			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
 		}
 	}
