@@ -1,5 +1,5 @@
 <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
-<script type="text/ng-template" id="edit-table-ng2-template">
+<script type="text/ng-template" id="account-settings-ng2-template">
     <table class="table table-bordered settings-table account-settings" style="margin:0; padding:0;">
         <tbody>
             <!-- Email and notification preferences -->

@@ -170,6 +170,9 @@ import { Social2FANg2Module }
 import { SwitchUserNg2Module }
     from './switchUser/switchUser.ts';
 
+import { TrustedOrganizationsNg2Module }
+    from './trustedOrganizations/trustedOrganizations.ts';
+
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
 
@@ -343,6 +346,7 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         SwitchUserNg2Module,
+        TrustedOrganizationsNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
         WidgetNg2Module, //Approved

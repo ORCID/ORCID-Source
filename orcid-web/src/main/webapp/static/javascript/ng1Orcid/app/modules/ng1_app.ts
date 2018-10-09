@@ -151,6 +151,9 @@ import { Social2FAModule }
 import { SwitchUserModule }
     from './switchUser/switchUser.ts';
 
+import { TrustedOrganizationsModule } 
+    from './trustedOrganizations/trustedOrganizations.ts';
+
 import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
 
@@ -237,6 +240,7 @@ export const orcidApp = angular.module(
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
         SwitchUserModule.name,
+        TrustedOrganizationsModule.name,
         TwoFaSetupModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,

@@ -27,6 +27,7 @@
     </div>
     <!-- Right side -->
     <div class="col-md-9 col-sm-12 col-xs-12" id="settings">
+        <!--Accounting settings-->
         <h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
         <div class="popover-help-container">
             <i class="glyphicon glyphicon-question-sign"></i>
@@ -40,7 +41,6 @@
         <#assign open = "" />
         <modal-unverified-email-set-primary></modal-unverified-email-set-primary>
         
-        <!--Accounting settings-->
         <#include "/includes/ng2_templates/account-settings-ng2-template.ftl">
         <account-settings-ng2></account-settings-ng2>
         
@@ -59,50 +59,8 @@
                 </div>
             </div>
         </div>
-        <div ng-controller="revokeApplicationFormCtrl" class="clearfix">
-            <div ng-show="!applicationSummaryList.length > 0" ng-cloak>
-                <p><@orcid.msg 'manage.none_added.trustedOrganizations'/></p>
-            </div>
-            <div ng-show="applicationSummaryList.length > 0" ng-cloak>
-                <table class="table table-bordered settings-table normal-width">
-                    <thead>
-                        <tr>
-                            <th width="35%">${springMacroRequestContext.getMessage("manage.trusted_organization")}</th>
-                            <th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
-                            <th width="35%">${springMacroRequestContext.getMessage("manage.thaccesstype")}</th>
-                            <td width="5%"></td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr data-ng-repeat="applicationSummary in applicationSummaryList">
-                            <td class="revokeApplicationName">{{applicationSummary.name}}<br />
-                                <a data-ng-hide="applicationSummary.websiteValue == null" href="{{getApplicationUrlLink(applicationSummary)}}" target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
-                            </td>
-                            <td width="35%">{{applicationSummary.approvalDate}}</td>
-                            <td width="5%">
-                                <div data-ng-show="applicationSummary.scopePaths">
-                                    <span data-ng-repeat="(key, value) in applicationSummary.scopePaths">
-                                    {{value}}
-                                    </span>
-                                </div>
-                            </td>
-                            <td width="5%" class="tooltip-container">
-                                <a id="revokeAppBtn" name="{{applicationSummary.orcidPath}}" ng-click="confirmRevoke(applicationSummary)"
-                                    class="glyphicon glyphicon-trash grey"
-                                    ng-hide="isPasswordConfirmationRequired">
-                                        <div class="popover popover-tooltip top">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <span><@spring.message "manage.revokeaccess"/></span>
-                                            </div>
-                                        </div>
-                                    </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <#include "/includes/ng2_templates/trusted-organizations-ng2-template.ftl">
+        <trusted-organizations-ng2></trusted-organizations-ng2>
 
         <!--Trusted individuals-->
         <div class="section-heading">

@@ -117,6 +117,13 @@ export class AccountService {
         
     }
 
+    getTrustedOrgs(): Observable<any> {
+        return this.http.get(
+            getBaseUri()+'/account/get-trusted-orgs.json'
+        )
+        
+    }
+
     saveChangePassword( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
         
@@ -160,6 +167,14 @@ export class AccountService {
         return this.http.post( 
             getBaseUri() + '/account/revokeDelegate.json', 
             encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+
+    revokeTrustedOrg(applicationSummary): Observable<any> {
+        return this.http.post(
+            getBaseUri() + '/account/revoke-application.json?tokenId='+ applicationSummary.tokenId,
             { headers: this.headers }
         )
         
