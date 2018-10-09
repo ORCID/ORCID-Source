@@ -283,7 +283,7 @@
                 </div>
 
                 <!-- visibility controlls -->
-                <div class="control-group visibility-container">
+                <div *ngIf="togglzDialogPrivacyOption" class="control-group visibility-container">
                             <label>
                                 Set visibility:
                             </label>

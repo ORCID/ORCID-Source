@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 	
+    @Label("Change view privacy from work/funding/affiliation form dialogs")
+    DIALOG_PRIVACY_OPTION,
+	
     @Label("Shows an alert message when a user goes to /signin and is already signed in\n")
     RE_LOGGIN_ALERT,
 
@@ -108,6 +111,7 @@ public enum Features implements Feature {
     @Label("Grouping suggestions")
     GROUPING_SUGGESTIONS;
     
+
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
