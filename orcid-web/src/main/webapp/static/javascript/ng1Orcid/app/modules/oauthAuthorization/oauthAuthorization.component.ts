@@ -737,7 +737,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             }
         );
 
-        if (this.togglzReLoginAlert) {
+        if (this.togglzReLoginAlert && !orcidVar.oauth2Screens && !orcidVar.originalOauth2Process) {
 
         this.nameService.getData(this.nameFormUrl).subscribe(response => {
             this.isLoggedIn = true;
