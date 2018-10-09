@@ -11,7 +11,7 @@ import { catchError, map, tap }
     from 'rxjs/operators';
 
 @Injectable()
-export class PublicClientService {
+export class DeveloperToolsService {
     private headers: HttpHeaders;
     private url: string;
 

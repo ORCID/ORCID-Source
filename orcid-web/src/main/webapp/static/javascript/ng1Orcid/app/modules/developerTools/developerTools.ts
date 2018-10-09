@@ -11,12 +11,12 @@ import { downgradeComponent, UpgradeModule }
 import { CommonNg2Module }
     from './../common/common.ts';
 
-import { PublicClientComponent } 
-    from './publicClient.component.ts';
+import { DeveloperToolsComponent } 
+    from './developerTools.component.ts';
 
 // This is the Angular 1 part of the module
-export const PublicClientModule = angular.module(
-    'PublicClientModule', 
+export const DeveloperToolsModule = angular.module(
+    'DeveloperToolsModule', 
     []
 );
 
@@ -25,10 +25,10 @@ export const PublicClientModule = angular.module(
 @NgModule(
     {
         declarations: [
-            PublicClientComponent
+            DeveloperToolsComponent
         ],
         entryComponents: [ 
-            PublicClientComponent 
+            DeveloperToolsComponent 
         ],
         imports: [
             CommonNg2Module
@@ -37,16 +37,16 @@ export const PublicClientModule = angular.module(
         ]
     }
 )
-export class PublicClientNg2Module {}
+export class DeveloperToolsNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
-PublicClientModule.directive(
-    'publicClientNg2', 
+DeveloperToolsModule.directive(
+    'developerToolsNg2', 
     <any>downgradeComponent(
         {
-            component: PublicClientComponent
+            component: DeveloperToolsComponent
         }
     )
 );
