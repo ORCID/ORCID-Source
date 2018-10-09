@@ -1,3 +1,5 @@
+declare var orcidVar: any;
+
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
@@ -18,6 +20,9 @@ import { CommonService }
 
 import { DeveloperToolsService } 
     from '../../shared/developerTools.service.ts'; 
+    
+import { EmailService } 
+    from '../../shared/email.service.ts';
 
 @Component({
     selector: 'developerTools-ng2',
@@ -26,14 +31,21 @@ import { DeveloperToolsService }
 export class DeveloperToolsComponent implements OnDestroy, OnInit {    
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
+    developerToolsEnabled: boolean;
     client: any;
+    showTerms: boolean;
+    acceptedTerms: boolean;
     
     constructor(
             private commonSrvc: CommonService,
             private developerToolsService: DeveloperToolsService,
+            private emailService: EmailService,
             private cdr:ChangeDetectorRef
         ) {
         this.client = {};
+        this.showTerms = false;
+        this.acceptedTerms = false;
+        this.developerToolsEnabled = orcidVar.developerToolsEnabled;
     }
     
     ngOnDestroy() {
@@ -41,22 +53,58 @@ export class DeveloperToolsComponent implements OnDestroy, OnInit {
         this.ngUnsubscribe.complete();
     };
 
+    verifyEmail(primaryEmail): void {
+        this.emailService.verifyEmail(primaryEmail)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                console.log(primaryEmail + 'verified');
+            },
+            error => {
+                console.log('verifyEmail Error', error);
+            } 
+        );
+    };
+    
     getClient(): void {
         this.developerToolsService.getClient()
         .pipe(    
                 takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.client = data;                    
+            },
+            error => {
+                console.log("error ngOnInit", error);
+            } 
+        );
+    };
+    
+    enableDeveloperTools(): void {
+        if(this.acceptedTerms){
+            this.developerToolsService.enableDeveloperTools()
+            .pipe(    
+                    takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
                 data => {
-                    this.client = data;                    
+                    if(data) {
+                        this.developerToolsEnabled = true;
+                        this.getClient();
+                    }                    
                 },
                 error => {
                     console.log("error ngOnInit", error);
                 } 
             );
+        }
     }
     
     ngOnInit() {
+        console.log('on init')
         this.getClient();
     };
 }

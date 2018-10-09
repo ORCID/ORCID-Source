@@ -2,13 +2,11 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -61,10 +59,12 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
-        ModelAndView mav = new ModelAndView("developer_tools");
+        ModelAndView mav = new ModelAndView("developer_tools/developer_tools");
         String userOrcid = getCurrentUserOrcid();
         ProfileEntity entity = profileEntityCacheManager.retrieve(userOrcid);
-        mav.addObject("developerToolsEnabled", entity.getEnableDeveloperTools());
+        if(entity.getEnableDeveloperTools() != null) {
+            mav.addObject("developerToolsEnabled", String.valueOf(entity.getEnableDeveloperTools()));
+        }
         if (!entity.getEnableDeveloperTools()) {            
             if (OrcidType.USER.equals(entity.getOrcidType())) {
                 mav.addObject("error", getMessage("manage.developer_tools.user.error.enable_developer_tools"));
@@ -74,7 +74,14 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         }
 
         mav.addObject("hideRegistration", (sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin()));
-        mav.addObject("hasVerifiedEmail", emailManagerReadOnly.haveAnyEmailVerified(userOrcid));
+        boolean hasVerifiedEmail = emailManagerReadOnly.haveAnyEmailVerified(userOrcid);
+        if(hasVerifiedEmail) {
+            mav.addObject("hasVerifiedEmail", true);
+        } else {
+            mav.addObject("hasVerifiedEmail", false);
+            mav.addObject("primaryEmail", emailManagerReadOnly.findPrimaryEmail(userOrcid).getEmail());
+        }
+        
         return mav;
     }
     
