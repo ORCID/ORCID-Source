@@ -229,13 +229,11 @@
                         </span>
                         
                     </div>     
-
-
                     <!-- visibility controlls -->
                     <div class="control-group visibility-container">
-                            <div class="text">
+                            <label>
                                 Set visibility:
-                            </div>
+                            </label>
                             <div class="controlls">
                                 <privacy-toggle-ng2 
                                 [dataPrivacyObj]="editAffiliation" 
@@ -245,9 +243,6 @@
                             </div>
                     </div>
                     <!-- END visibility controlls -->
- 
-
-
                     <div class="control-group">
                         <ul class="inline-list margin-separator pull-left">
                             <li>
