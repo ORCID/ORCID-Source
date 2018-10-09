@@ -157,7 +157,15 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
             userName:  {value: ""}
         } 
         this.setEntityId(this.entityId);
-        this.loadDiscoFeed();
+
+        if(this.entityId === "facebook" || this.entityId === "google"){
+            this.idpName = this.entityId.charAt(0).toUpperCase() + this.entityId.slice(1);
+            this.loadedFeed = true;
+        } else {
+            this.loadDiscoFeed();
+        }
+        
+        console.log(orcidVar.providerId);
         
     }; 
 }
