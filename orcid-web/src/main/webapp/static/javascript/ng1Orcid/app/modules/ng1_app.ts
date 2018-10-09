@@ -201,6 +201,9 @@ import { WorksMergeChoosePreferredVersionModule }
     
 import { WorksMergeSuggestionsModule } 
     from './works/worksMergeSuggestions.ts';
+
+import { PublicClientModule } 
+    from './publicClient/publicClient.ts';    
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -271,7 +274,8 @@ export const orcidApp = angular.module(
         DelegatorsModule.name,
         ResendClaimModule.name,
         WorksMergeChoosePreferredVersionModule.name,
-        WorksMergeSuggestionsModule.name
+        WorksMergeSuggestionsModule.name,
+        PublicClientModule.name
     ]
 );
 

@@ -77,21 +77,6 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         mav.addObject("hasVerifiedEmail", emailManagerReadOnly.haveAnyEmailVerified(userOrcid));
         return mav;
     }
-
-    @RequestMapping(value = "/client.json", method = RequestMethod.GET)
-    public @ResponseBody Client getEmptyClient(HttpServletRequest request) {
-        Client emptyObject = new Client();
-        emptyObject.setClientSecret(Text.valueOf(StringUtils.EMPTY));
-
-        RedirectUri redirectUri = new RedirectUri();
-        redirectUri.setValue(new Text());
-        redirectUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
-
-        List<RedirectUri> set = new ArrayList<RedirectUri>();
-        set.add(redirectUri);
-        emptyObject.setRedirectUris(set);
-        return emptyObject;
-    }
     
     @RequestMapping(value = "/get-client.json", method = RequestMethod.GET)
     public @ResponseBody Client getClient() {
