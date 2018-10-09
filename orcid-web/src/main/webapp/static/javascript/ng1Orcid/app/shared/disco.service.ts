@@ -61,9 +61,6 @@ export class DiscoService {
                 return name;
             }
         }
-        if(entityId === "facebook" || entityId === "google"){
-            return entityId.charAt(0).toUpperCase() + entityId.slice(1);
-        }
         return entityId;
     };
 

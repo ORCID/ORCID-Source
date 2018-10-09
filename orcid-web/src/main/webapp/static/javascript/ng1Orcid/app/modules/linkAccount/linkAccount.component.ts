@@ -163,9 +163,6 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
             this.loadedFeed = true;
         } else {
             this.loadDiscoFeed();
-        }
-        
-        console.log(orcidVar.providerId);
-        
+        }       
     }; 
 }
