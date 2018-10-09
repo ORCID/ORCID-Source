@@ -350,8 +350,20 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                             }
                     }
                 } else {
-                    this.editAffiliation = this.getEmptyAffiliation();
-                    this.editAffiliation.affiliationType.value = this.addAffType;
+                    this.affiliationService.getBlankAffiliation()
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            this.editAffiliation = data
+                            this.editAffiliation.affiliationType.value = this.addAffType;
+                            
+                        },
+                        error => {
+                            console.log('Error getting blankAffiliation', error);
+                        } 
+                    );
                 }
             }
         );
