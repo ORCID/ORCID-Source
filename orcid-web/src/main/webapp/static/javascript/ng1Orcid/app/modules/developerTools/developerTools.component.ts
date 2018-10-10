@@ -25,7 +25,7 @@ import { EmailService }
     from '../../shared/email.service.ts';
 
 @Component({
-    selector: 'developerTools-ng2',
+    selector: 'developer-tools-ng2',
     template:  scriptTmpl("developerTools-ng2-template")
 })
 export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit {    
@@ -35,6 +35,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     client: any;
     showTerms: boolean;
     acceptedTerms: boolean;
+    verifyEmailSent: boolean;
     
     constructor(
             private commonSrvc: CommonService,
@@ -45,6 +46,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.client = {};
         this.showTerms = false;
         this.acceptedTerms = false;
+        this.verifyEmailSent = false;
         this.developerToolsEnabled = orcidVar.developerToolsEnabled;
     }
     
@@ -54,13 +56,15 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
 
     verifyEmail(primaryEmail): void {
+        console.log('Primary email: ' + primaryEmail);
         this.emailService.verifyEmail(primaryEmail)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                console.log(primaryEmail + 'verified');
+                console.log(primaryEmail + ' verify email sent');
+                this.verifyEmailSent = true;
             },
             error => {
                 console.log('verifyEmail Error', error);
@@ -109,7 +113,6 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
     
     ngOnInit() {
-        console.log('on init')
         this.getClient();
     };
 }

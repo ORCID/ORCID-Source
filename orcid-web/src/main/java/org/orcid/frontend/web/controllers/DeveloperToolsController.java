@@ -91,7 +91,15 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         Set<org.orcid.jaxb.model.v3.rc1.client.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
 
         if (existingClients.isEmpty()) {
-            return null;
+            Client client = new Client();
+            client.setClientId(Text.valueOf(""));
+            client.setClientSecret(Text.valueOf(""));
+            client.setDisplayName(Text.valueOf(""));
+            client.setErrors(new ArrayList<String>());
+            client.setRedirectUris(new ArrayList<RedirectUri>());
+            client.setShortDescription(Text.valueOf(""));
+            client.setWebsite(Text.valueOf(""));
+            return client;
         }
 
         return Client.fromModelObject(existingClients.stream().findFirst().get());

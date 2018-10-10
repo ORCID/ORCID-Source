@@ -47,9 +47,9 @@
                             </div>
                         </div>
                     <#else>             
-                        <div ng-cloak>
+                        <div>
                             <button class="btn btn-primary bottomBuffer" (click)="verifyEmail('${primaryEmail?html}')"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>     
-                            <div class="red" ng-show="verifyEmailSent">                                 
+                            <div class="red" *ngIf="verifyEmailSent">                                 
                                 <h4><@orcid.msg 'workspace.sent'/></h4>
                                 <@orcid.msg 'workspace.check_your_email'/><br />
                             </div>                                                                                      

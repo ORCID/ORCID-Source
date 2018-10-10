@@ -34,15 +34,15 @@ export class DeveloperToolsService {
     }
     
     getClient(): Observable<any> {
-        return this.http.post( 
-            getBaseUri() + '/get-client.json',             
+        return this.http.get(
+            this.url + '/get-client.json',             
             { headers: this.headers }
         )        
     }
     
     enableDeveloperTools(): Observable<any> {
         return this.http.post(
-            getBaseUri() + '/enable-developer-tools.json',             
+            this.url + '/enable-developer-tools.json',             
             { headers: this.headers, responseType: 'text' }
         )        
     }       

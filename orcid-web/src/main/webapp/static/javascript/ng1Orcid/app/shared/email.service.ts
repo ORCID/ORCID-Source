@@ -264,40 +264,25 @@ export class EmailService {
             )
         )
         ;
-
-        /*
-        Old code, behaviour changed with new email functionality
-
-        for (let i in this.emails.emails) {
-            if (this.emails.emails[i] == email) {
-                this.emails.emails[i].primary = true;
-                this.primaryEmail = email;
-                if (this.emails.emails[i].verified == false) {
-                    this.unverifiedSetPrimary = true;
-                } else {
-                    this.unverifiedSetPrimary = false;
-                }
-
-            } else {
-                this.emails.emails[i].primary = false;
-            }
-        }
-        this.saveEmail();
-        */
     }
 
     verifyEmail(email?): Observable<any>  {
-
         let _email = null; 
-        if(email){
-            _email = email;
+        if(email) {
+            if(typeof email === 'string') {
+                _email = email;
+            } else {
+                _email = email.value;
+            }            
         } else {
-            _email = this.getEmailPrimary();
+            let primary = this.getEmailPrimary();
+            if(primary) {
+                _email = primary.value
+            }
         }
         
-
         return this.http.get(
-            getBaseUri() + '/account/verifyEmail.json?email=' + encodeURIComponent(_email.value)
+            getBaseUri() + '/account/verifyEmail.json?email=' + encodeURIComponent(_email)
         )
         ;
     }
