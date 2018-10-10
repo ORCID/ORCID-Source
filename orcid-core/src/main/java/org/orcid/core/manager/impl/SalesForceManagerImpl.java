@@ -605,7 +605,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         if (contactOrcid != null) {
             SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(contactOrcid, accountId);
             if (connection != null) {
-                salesForceConnectionDao.remove(connection);
+                salesForceConnectionDao.remove(connection.getId());
             }
         }
     }
