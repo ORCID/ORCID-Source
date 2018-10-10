@@ -61,6 +61,7 @@
     <@orcid.checkFeatureStatus 'NEW_FOOTER'>
         <footer class="footer-main">
             <div class="container">
+	            <span id="noop"><!-- For automated tests --> </span>
                 <div class="row">
                     <div class="col-md-2">
                         <p>
