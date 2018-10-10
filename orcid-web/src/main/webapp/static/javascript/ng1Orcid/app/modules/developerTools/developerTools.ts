@@ -21,7 +21,6 @@ export const DeveloperToolsModule = angular.module(
 );
 
 // This is the Angular 2 part of the module
-
 @NgModule(
     {
         declarations: [
@@ -34,6 +33,7 @@ export const DeveloperToolsModule = angular.module(
             CommonNg2Module
         ],
         providers: [
+            
         ]
     }
 )
@@ -41,7 +41,6 @@ export class DeveloperToolsNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-
 DeveloperToolsModule.directive(
     'developerToolsNg2', 
     <any>downgradeComponent(

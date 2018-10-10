@@ -297,7 +297,7 @@ import { DeveloperToolsService }
             WorkspaceService,
             UnsubscribeService,
             ResendClaimService,
-            DeveloperToolsService
+            DeveloperToolsService,
         ]
     }
 )

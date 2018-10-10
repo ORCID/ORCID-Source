@@ -3,7 +3,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, EventEmitter, Output } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, EventEmitter, Output } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -28,7 +28,7 @@ import { EmailService }
     selector: 'developerTools-ng2',
     template:  scriptTmpl("developerTools-ng2-template")
 })
-export class DeveloperToolsComponent implements OnDestroy, OnInit {    
+export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit {    
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     developerToolsEnabled: boolean;
@@ -102,6 +102,11 @@ export class DeveloperToolsComponent implements OnDestroy, OnInit {
             );
         }
     }
+    
+    //Default init functions provided by Angular Core
+    ngAfterViewInit() {
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+    };
     
     ngOnInit() {
         console.log('on init')

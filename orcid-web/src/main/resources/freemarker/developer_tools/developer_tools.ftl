@@ -8,7 +8,7 @@
                 <h1 id="manage-developer-tools">
                     <span><@spring.message "manage.developer_tools.user.title"/></span>                 
                 </h1>        
-            </script>
+            </script>            
 			<developerTools-ng2></developerTools-ng2>
 		</div>
 	</div>	    

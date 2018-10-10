@@ -14,6 +14,9 @@ import { catchError, map, tap }
 export class DeveloperToolsService {
     private headers: HttpHeaders;
     private url: string;
+    private notify = new Subject<any>();
+
+    notifyObservable$ = this.notify.asObservable();
 
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -26,6 +29,10 @@ export class DeveloperToolsService {
         this.url = getBaseUri() + '/developer-tools';
     }
 
+    notifyOther(): void {
+        this.notify.next();
+    }
+    
     getClient(): Observable<any> {
         return this.http.post( 
             getBaseUri() + '/get-client.json',             
