@@ -234,6 +234,12 @@ export class WorksService {
                         titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
+                        type: "preprint",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    
+                    {
                         type: "research-technique",
                         titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
                         titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")

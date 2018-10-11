@@ -16,7 +16,6 @@ import { catchError, map, tap }
 @Injectable()
 export class DeveloperToolsService {
     private headers: HttpHeaders;
-    private noContentHeaders: HttpHeaders;
     private url: string;
     private notify = new Subject<any>();
 
@@ -30,12 +29,6 @@ export class DeveloperToolsService {
                     'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
                 }
             );  
-        this.noContentHeaders = new HttpHeaders(
-                {
-                    'Access-Control-Allow-Origin':'*',
-                    'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
-                }
-            );
         this.url = getBaseUri() + '/developer-tools';        
     };
 
@@ -51,10 +44,10 @@ export class DeveloperToolsService {
     };
     
     enableDeveloperTools(): Observable<any> {
-        console.log('No Content Headers: ' + JSON.stringify(this.noContentHeaders))
         return this.http.post(
             this.url + '/enable-developer-tools.json', 
-            { headers: this.noContentHeaders }
+            {},
+            { headers: this.headers }
         )        
     };       
 }

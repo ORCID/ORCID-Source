@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
@@ -240,6 +242,8 @@ public class SetUpClientsAndUsers {
     protected AddressDao addressDao;
     @Resource
     protected EmailDao emailDao;
+    @Resource
+    protected EmailFrequencyManager emailFrequencyManager;
     @Resource
     protected WorkDao workDao;
     @Resource
@@ -540,14 +544,28 @@ public class SetUpClientsAndUsers {
                 throw new ApplicationException(
                         "User with email " + params.get(EMAIL) + " must have orcid id '" + orcid + "' but it is '" + entity.getId() + "'");
             }
-
+            
             // Check if the profile have the same password, if not, update the
             // password
             String encryptedPassword = encryptionManager.hashForInternalUse(params.get(PASSWORD));
             if (!encryptedPassword.equals(entity.getEncryptedPassword())) {                
                 profileDao.updateEncryptedPassword(orcid, encryptedPassword);                
             }
-
+            
+            //update email hash
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    try {
+                        String emailHash;
+                        emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
+                        emailDao.populateEmailHash(email, emailHash);
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            
             // Set default names
             Name name = new Name();
             name.setCreditName(new CreditName(params.get(CREDIT_NAME)));
@@ -621,6 +639,12 @@ public class SetUpClientsAndUsers {
                     }
                 }
             }
+            
+            //ensure we have an email fequency
+            Map<?,?> emailF = emailFrequencyManager.getEmailFrequency(orcid);
+            if (emailF == null || emailF.isEmpty())
+                emailFrequencyManager.createOnClaim(orcid, false);
+
             
             // Remove notifications
             List<NotificationEntity> notifications = notificationDao.findByOrcid(orcid, true, 0, 10000);

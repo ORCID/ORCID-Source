@@ -48,6 +48,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Membership;
 import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
 import org.orcid.jaxb.model.v3.rc1.record.Person;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
@@ -248,7 +249,7 @@ public class Utils {
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(new Title("work-title"));
         peerReview.setSubjectName(workTitle);
-        peerReview.setSubjectType(WorkType.DATA_SET);
+        peerReview.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview.setType(PeerReviewType.EVALUATION);
         return peerReview;
     }

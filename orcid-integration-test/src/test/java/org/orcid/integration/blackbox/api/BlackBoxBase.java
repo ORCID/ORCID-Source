@@ -754,17 +754,16 @@ public class BlackBoxBase {
     }
     
     public static void updateExternalIdentifierVisibility(String extId, String visibility) {
-        By elementLocation = By.xpath(String.format(
-                "//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'][descendant::a[contains(text(),'%s')]]//div[@id='privacy-bar']/ul/li[%s]/a", extId,
+        By elementLocation = By.xpath(String.format("//div[@id='externalIdentifiers']/div[descendant::a[contains(text(),'%s')]]//privacy-toggle-ng2/div/ul/li[%s]/a", extId,
                 getPrivacyIndex(visibility)));
         waitForElementVisibility(elementLocation);
         WebElement privacyOption = findElement(elementLocation);
         ngAwareClick(privacyOption);
     }
-    
+
     public static void changeExternalIdentifiersVisibility(String visibility) {
         int index = getPrivacyIndex(visibility);
-        String extIdsVisibilityXpath = "//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']//ul[@class='privacyToggle']/li[" + index +"]";
+        String extIdsVisibilityXpath = "//div[@id='externalIdentifiers']//ul[@class='privacyToggle']/li[" + index +"]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(extIdsVisibilityXpath)), webDriver);
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(extIdsVisibilityXpath));
@@ -775,13 +774,10 @@ public class BlackBoxBase {
      
     public static void deleteExternalIdentifiers() {
         waitForAngular();
-        By rowBy = By.xpath("//div[@id='colorbox']//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']");
-        waitForElementVisibility(rowBy);
-        List<WebElement> webElements = findElements(rowBy);
+        List<WebElement> webElements = findElements(By.xpath("//div[@id='colorbox']//div[@id='externalIdentifiers']/div"));
         for (WebElement webElement: webElements) {
-            clickAwayFromPopOverInModal();
             // Delete the ext id
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteExternalIdentifier(externalIdentifier)']")));
+            ngAwareClick(webElement.findElement(By.xpath("//div[@id='delete-ext-id']")));
         }          
     }
 
@@ -880,47 +876,48 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-education-container")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-education")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-education")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+        waitForAngular();
     }
     
     public static void changeEducationVisibility(String title, String visibility) {
         int index = getPrivacyIndex(visibility);
-        String educationVisibilityXpath = "//li[@education-put-code and descendant::span[text()='" + title + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        String educationVisibilityXpath = "//li[descendant::span[text()='" + title + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(educationVisibilityXpath)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(educationVisibilityXpath)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }    
     
     public static void createEducation(String institutionName) {
-        String institutionNameXpath = "//input[@ng-model='editAffiliation.affiliationName.value']";
+        String institutionNameXpath = "//affiliation-form-ng2//input[@id='affiliationName']";
         By institutionBy = By.xpath(institutionNameXpath);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(institutionBy), webDriver);
         WebElement institutionElement = findElement(institutionBy);
         institutionElement.sendKeys(institutionName);
         blurElement(institutionElement);
         
-        String cityXpath = "//input[@ng-model='editAffiliation.city.value']";
+        String cityXpath = "//affiliation-form-ng2//input[@id='city']";
         By cityBy = By.xpath(cityXpath);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(cityBy), webDriver);
         WebElement cityElement = findElement(cityBy);
         cityElement.sendKeys("Test land");
         blurElement(cityElement);
         
-        String countryXpath = "//select[@ng-model='editAffiliation.country.value']";
+        String countryXpath = "//affiliation-form-ng2//select[@id='country']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
         WebElement countryInput = findElement(By.xpath(countryXpath));
         Select input = new Select(countryInput);
         input.selectByValue(Iso3166Country.US.value());
+        blurElement(countryInput);
         
-        String startDateYearXpath = "//select[@ng-model='editAffiliation.startDate.year']";
+        String startDateYearXpath = "//affiliation-form-ng2//select[@id='startYear']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(startDateYearXpath)), webDriver);
         WebElement startDateInput = findElement(By.xpath(startDateYearXpath));
         Select startDate = new Select(startDateInput);
         startDate.selectByValue("2017");
+        blurElement(startDateInput);
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        ((JavascriptExecutor)webDriver).executeScript("$('#save-affiliation').click();");
-        BBBUtil.noCboxOverlay(webDriver);
+        ngAwareClick(findElementByXpath ("//affiliation-form-ng2//button[@id='save-affiliation']"));
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
@@ -950,7 +947,7 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-employment-container")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-employment")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-employment")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+        waitForAngular();
     }
     
     public static void changeEmploymentVisibility(String title, String visibility) {
@@ -962,35 +959,34 @@ public class BlackBoxBase {
     }    
     
     public static void createEmployment(String institutionName) {
-        String institutionNameXpath = "//input[@ng-model='editAffiliation.affiliationName.value']";
+        String institutionNameXpath = "//affiliation-form-ng2//input[@id='affiliationName']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(institutionNameXpath)), webDriver);
         WebElement institutionNameElement = findElementByXpath(institutionNameXpath);
         ngAwareClick(institutionNameElement);
         institutionNameElement.sendKeys(institutionName);
         blurElement(institutionNameElement);
         
-        String cityXpath = "//input[@ng-model='editAffiliation.city.value']";
+        String cityXpath = "//affiliation-form-ng2//input[@id='city']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
         WebElement cityElement = findElementByXpath(cityXpath);
         ngAwareClick(cityElement);
         cityElement.sendKeys("Test land");
         blurElement(cityElement);
         
-        String countryXpath = "//select[@ng-model='editAffiliation.country.value']";
+        String countryXpath = "//affiliation-form-ng2//select[@id='country']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
         WebElement countryInput = findElement(By.xpath(countryXpath));
         Select input = new Select(countryInput);
         input.selectByValue(Iso3166Country.US.value());
         
-        String startDateYearXpath = "//select[@ng-model='editAffiliation.startDate.year']";
+        String startDateYearXpath = "//affiliation-form-ng2//select[@id='startYear']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(startDateYearXpath)), webDriver);
         WebElement startDateInput = findElement(By.xpath(startDateYearXpath));
         Select startDate = new Select(startDateInput);
         startDate.selectByValue("2017");
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        ((JavascriptExecutor)webDriver).executeScript("$('#save-affiliation').click();");
-        BBBUtil.noCboxOverlay(webDriver);
+        ngAwareClick(findElementByXpath ("//affiliation-form-ng2//button[@id='save-affiliation']"));
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
@@ -1157,8 +1153,8 @@ public class BlackBoxBase {
     }
     
     public void switchUser(String userOrcid) {
-        String openSwitchUserMenu = "//div[@ng-controller='SwitchUserCtrl']//a[@ng-click='openMenu($event)']";
-        String switchUserLink = "//div[@ng-controller='SwitchUserCtrl' and descendant::a[@ng-click='openMenu($event)']]//a[descendant::li[contains(text(),'" + userOrcid + "')]]";
+        String openSwitchUserMenu = "//switch-user-ng2/div/a";
+        String switchUserLink = "//switch-user-ng2//a[descendant::li[contains(text(),'" + userOrcid + "')]]";
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(openSwitchUserMenu)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(openSwitchUserMenu)));
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
@@ -1302,13 +1298,13 @@ public class BlackBoxBase {
     }
     
     public boolean educationAppearsInPublicPage(String institutionName) {                                                
-        String publicEducationXpath = "//li[@education-put-code and descendant::span[text()='" + institutionName + "']]";
+        String publicEducationXpath = "//li[descendant::span[text()='" + institutionName + "']]";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicEducationXpath)), webDriver);
         return true;
     }
     
     public boolean employmentAppearsInPublicPage(String institutionName) {                                                
-        String publicEmploymentXpath = "//li[@employment-put-code and descendant::span[text()='" + institutionName + "']]";
+        String publicEmploymentXpath = "//li[descendant::span[text()='" + institutionName + "']]";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicEmploymentXpath)), webDriver);
         return true;
     }

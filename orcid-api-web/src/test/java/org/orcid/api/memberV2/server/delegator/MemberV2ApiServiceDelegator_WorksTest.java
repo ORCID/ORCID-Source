@@ -101,8 +101,8 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
     @Resource
     protected EmailFrequencyManager emailFrequencyManager;
     
-    @Value("${org.orcid.core.works.bulk.max:100}")
-    private Long maxBulkSize;
+    @Value("${org.orcid.core.works.bulk.read.max:100}")
+    private Long bulkReadSize;
     
     @Mock
     protected EmailFrequencyManager mockEmailFrequencyManager;
@@ -758,7 +758,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
     public void testViewBulkWorksWithTooManyPutCodes() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= maxBulkSize; i++) {
+        for (int i = 1; i <= bulkReadSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         serviceDelegator.viewBulkWorks(ORCID, tooManyPutCodes.toString());

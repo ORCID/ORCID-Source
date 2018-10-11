@@ -118,6 +118,9 @@ import { PrintRecordModule }
 import { PublicEduAffiliationModule }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
+import { PublicRecordModule } 
+    from './publicRecord/publicRecord.ts';
+
 import { ReactivationModule } 
     from './reactivation/reactivation.ts';
 
@@ -193,6 +196,9 @@ import { UnsubscribeModule }
 import { DelegatorsModule } 
     from './delegators/delegators.ts';
     
+import {ClaimModule}
+    from './claim/claim.ts';
+    
 import { ResendClaimModule } 
     from './resendClaim/resendClaim.ts';
     
@@ -204,6 +210,9 @@ import { WorksMergeSuggestionsModule }
 
 import { DeveloperToolsModule } 
     from './developerTools/developerTools.ts';    
+
+import { AdminActionsModule } 
+    from './adminActions/adminActions.ts';       
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -246,6 +255,7 @@ export const orcidApp = angular.module(
         PersonModule.name,
         PrintRecordModule.name,
         PublicEduAffiliationModule.name,
+        PublicRecordModule.name,
         NotificationsModule.name,
         ReactivationModule.name,
         RegisterDuplicatesModule.name,
@@ -272,10 +282,12 @@ export const orcidApp = angular.module(
         WorksPrivacyPreferencesModule.name,
         UnsubscribeModule.name,
         DelegatorsModule.name,
+        ClaimModule.name, 
         ResendClaimModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
-        DeveloperToolsModule.name
+        DeveloperToolsModule.name,
+        AdminActionsModule.name
     ]
 );
 
