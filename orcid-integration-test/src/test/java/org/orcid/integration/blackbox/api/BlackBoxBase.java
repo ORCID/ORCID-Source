@@ -907,12 +907,14 @@ public class BlackBoxBase {
         WebElement countryInput = findElement(By.xpath(countryXpath));
         Select input = new Select(countryInput);
         input.selectByValue(Iso3166Country.US.value());
+        blurElement(countryInput);
         
         String startDateYearXpath = "//affiliation-form-ng2//select[@id='startYear']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(startDateYearXpath)), webDriver);
         WebElement startDateInput = findElement(By.xpath(startDateYearXpath));
         Select startDate = new Select(startDateInput);
         startDate.selectByValue("2017");
+        blurElement(startDateInput);
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         ngAwareClick(findElementByXpath ("//affiliation-form-ng2//button[@id='save-affiliation']"));
