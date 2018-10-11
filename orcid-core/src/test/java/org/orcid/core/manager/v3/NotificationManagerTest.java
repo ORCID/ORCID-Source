@@ -61,16 +61,16 @@ import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.v3.rc1.common.Locale;
-import org.orcid.jaxb.model.v3.rc1.common.Source;
-import org.orcid.jaxb.model.v3.rc1.notification.Notification;
-import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.notification.Notification;
+import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.model.v3.rc2.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -296,7 +296,7 @@ public class NotificationManagerTest extends DBUnitTest {
         resetMocks();
         String submittedEmail = "email_not_in_orcid@test.orcid.org";
         for (Locale locale : Locale.values()) {
-            Locale curLocale = org.orcid.jaxb.model.v3.rc1.common.Locale.valueOf(locale.name());
+            Locale curLocale = org.orcid.jaxb.model.v3.rc2.common.Locale.valueOf(locale.name());
             notificationManager.sendPasswordResetNotFoundEmail(submittedEmail, LocaleUtils.toLocale(curLocale.value()));
         }
     }

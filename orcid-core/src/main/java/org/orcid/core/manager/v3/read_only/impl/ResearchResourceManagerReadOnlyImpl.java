@@ -12,17 +12,17 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.GroupableActivityComparator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc2.record.GroupsContainer;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 
@@ -66,7 +66,7 @@ public class ResearchResourceManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         ResearchResources rr = new ResearchResources();
         for (ResearchResourceSummary r : researchResources){
-            if (justPublic && !r.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
+            if (justPublic && !r.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
             } else {
                 groupGenerator.group(r);
             }

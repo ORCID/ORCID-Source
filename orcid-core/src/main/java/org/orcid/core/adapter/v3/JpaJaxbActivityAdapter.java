@@ -3,8 +3,8 @@ package org.orcid.core.adapter.v3;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 //model, entity, summary, 
 public interface JpaJaxbActivityAdapter <M,E,S>{

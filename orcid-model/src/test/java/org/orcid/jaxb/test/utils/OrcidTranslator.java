@@ -57,7 +57,14 @@ public class OrcidTranslator<T> {
         V3_0RC1_PEER_REVIEW("record_3.0_rc1/peer-review-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.PeerReview.class),
         V3_0RC1_FUNDING("record_3.0_rc1/funding-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.Funding.class),
         V3_0RC1_FUNDINGS("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.Fundings.class),
-        V3_0RC1_ACTIVITIES("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary.class);
+        V3_0RC1_ACTIVITIES("record_3.0_rc1/activities-3.0_rc1.xsd", org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary.class),
+        V3_0RC2("record_3.0_rc2/record-3.0_rc2.xsd", org.orcid.jaxb.model.v3.rc2.record.Record.class),
+        V3_0RC2_WORK("record_3.0_rc2/work-3.0_rc2.xsd", org.orcid.jaxb.model.v3.rc2.record.Work.class),
+        V3_0RC2_WORKS("record_3.0_rc2/activities-3.0_rc2.xsd", org.orcid.jaxb.model.v3.rc2.record.summary.Works.class),
+        V3_0RC2_PEER_REVIEW("record_3.0_rc2/peer-review-3.0_rc2.xsd", org.orcid.jaxb.model.v3.rc2.record.PeerReview.class),
+        V3_0RC2_FUNDING("record_3.0_rc2/funding-3.0_rc2.xsd", org.orcid.jaxb.model.v3.rc2.record.Funding.class),
+        V3_0RC2_FUNDINGS("record_3.0_rc2/activities-3.0_rc2.xsd", org.orcid.jaxb.model.v3.rc2.record.summary.Fundings.class),
+        V3_0RC2_ACTIVITIES("record_3.0_rc2/activities-3.0_rc2.xsd", org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary.class);
         
         public final String location;
         public final Class<?> modelClass;
@@ -87,6 +94,13 @@ public class OrcidTranslator<T> {
      */
     public static OrcidTranslator<org.orcid.jaxb.model.v3.rc1.record.Record> v3_0RC1(){
         return new OrcidTranslator<org.orcid.jaxb.model.v3.rc1.record.Record>(SchemaVersion.V3_0RC1);
+    }
+    
+    /**
+     * @return a new v3.0rc2 OrcidTranslator
+     */
+    public static OrcidTranslator<org.orcid.jaxb.model.v3.rc2.record.Record> v3_0RC2(){
+        return new OrcidTranslator<org.orcid.jaxb.model.v3.rc2.record.Record>(SchemaVersion.V3_0RC2);
     }
     
     /**

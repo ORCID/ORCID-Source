@@ -57,7 +57,8 @@ public class SwaggerModelConverter implements ModelConverter {
                     org.orcid.jaxb.model.common_rc3.Visibility.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.common_rc4.Visibility.class.isAssignableFrom(cls) || 
                     org.orcid.jaxb.model.common_v2.Visibility.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.v3.rc1.common.Visibility.class.isAssignableFrom(cls)) {
+                    org.orcid.jaxb.model.v3.rc1.common.Visibility.class.isAssignableFrom(cls) ||
+                    org.orcid.jaxb.model.v3.rc2.common.Visibility.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Visibility.class, null);
             }
             if (    org.orcid.jaxb.model.record_rc1.Citation.class.isAssignableFrom(cls) ||
@@ -65,7 +66,8 @@ public class SwaggerModelConverter implements ModelConverter {
                     org.orcid.jaxb.model.record_rc3.Citation.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.record_rc4.Citation.class.isAssignableFrom(cls) || 
                     org.orcid.jaxb.model.record_v2.Citation.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.v3.rc1.record.Citation.class.isAssignableFrom(cls)) {
+                    org.orcid.jaxb.model.v3.rc1.record.Citation.class.isAssignableFrom(cls) ||
+                    org.orcid.jaxb.model.v3.rc2.record.Citation.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Citation.class, null);
             }
             if (_type.getRawClass() != null && _type.getRawClass().getCanonicalName().contains("model.v3")){
