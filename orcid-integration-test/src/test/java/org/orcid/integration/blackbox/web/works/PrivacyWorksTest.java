@@ -61,6 +61,9 @@ public class PrivacyWorksTest extends BlackBoxBase {
         webDriver.findElement(selectLimitedByTitle(PRIVACY_WORKS_TEST+_B)).click();
         webDriver.findElement(selectPrivateByTitle(PRIVACY_WORKS_TEST+_C)).click();
         
+        webDriver.get(webDriver.getCurrentUrl());
+        AddWorksTest.waitWorksLoaded(wait, webDriver);
+        
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_A, "PUBLIC")));
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_B, "LIMITED")));
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_C, "PRIVATE")));
