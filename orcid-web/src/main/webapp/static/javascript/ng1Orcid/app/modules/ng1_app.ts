@@ -196,6 +196,9 @@ import { UnsubscribeModule }
 import { DelegatorsModule } 
     from './delegators/delegators.ts';
     
+import {ClaimModule}
+    from './claim/claim.ts';
+    
 import { ResendClaimModule } 
     from './resendClaim/resendClaim.ts';
     
@@ -276,6 +279,7 @@ export const orcidApp = angular.module(
         WorksPrivacyPreferencesModule.name,
         UnsubscribeModule.name,
         DelegatorsModule.name,
+        ClaimModule.name, 
         ResendClaimModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,

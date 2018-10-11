@@ -221,6 +221,9 @@ import { UnsubscribeNg2Module }
 import { DelegatorsNg2Module } 
     from './delegators/delegators.ts';    
 
+import { ClaimNg2Module }
+    from './claim/claim.ts';
+    
 import { ResendClaimNg2Module }
     from './resendClaim/resendClaim.ts';    
     
@@ -382,6 +385,7 @@ export class RootCmp {
         WorksNg2Module,
         WorksPrivacyPreferencesNg2Module,
         DelegatorsNg2Module,
+        ClaimNg2Module,
         ResendClaimNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,
         WorksMergeSuggestionsNg2Module,
