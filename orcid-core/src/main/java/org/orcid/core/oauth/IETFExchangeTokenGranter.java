@@ -24,6 +24,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -38,6 +39,11 @@ import com.google.common.collect.Sets;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
 
+/** Spec: https://tools.ietf.org/html/draft-ietf-oauth-token-exchange-15
+ * 
+ * @author tom
+ *
+ */
 public class IETFExchangeTokenGranter implements TokenGranter {
 
     public static final String IETF_EXCHANGE = "urn:ietf:params:oauth:grant-type:token-exchange";
@@ -97,6 +103,26 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         throw new IllegalArgumentException("Supported tokens types are "+OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN+" "+OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN);
     }
 
+    /** Create an id token and return it.
+     * Note this uses the weird convention of returning the id_token in the access_token property of the response.
+     * Example:
+     * 
+     *     {
+     "access_token":"eyJhbGciOiJFUzI1NiIsImtpZCI6IjcyIn0.eyJhdWQiOiJ1cm4
+       6ZXhhbXBsZTpjb29wZXJhdGlvbi1jb250ZXh0IiwiaXNzIjoiaHR0cHM6Ly9hcy5l
+       eGFtcGxlLmNvbSIsImV4cCI6MTQ0MTkxMzYxMCwic2NvcGUiOiJzdGF0dXMgZmVlZ
+       CIsInN1YiI6InVzZXJAZXhhbXBsZS5uZXQiLCJhY3QiOnsic3ViIjoiYWRtaW5AZX
+       hhbXBsZS5uZXQifX0.3paKl9UySKYB5ng6_cUtQ2qlO8Rc_y7Mea7IwEXTcYbNdwG
+       9-G1EKCFe5fW3H0hwX-MSZ49Wpcb1SiAZaOQBtw",
+     "issued_token_type":"urn:ietf:params:oauth:token-type:id_token",
+     "token_type":"N_A",
+     "expires_in":3600
+    }
+     * 
+     * @param tokenRequest
+     * @param subjectToken
+     * @return
+     */
     private OAuth2AccessToken generateIdToken(TokenRequest tokenRequest, String subjectToken) {
         OAuth2AccessToken existing = tokenStore.readAccessToken(subjectToken); 
         OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(subjectToken);
@@ -131,8 +157,8 @@ public class IETFExchangeTokenGranter implements TokenGranter {
 
         try {
             String idTok = openIDConnectTokenEnhancer.buildIdToken(existing,detail.getProfile().getId(), tokenRequest.getClientId(),tokenRequest.getRequestParameters().get(OrcidOauth2Constants.NONCE) );
-            existing.getAdditionalInformation().put(OrcidOauth2Constants.ID_TOKEN, idTok);
-            return existing;
+            //existing.getAdditionalInformation().put(OrcidOauth2Constants.ID_TOKEN, idTok);
+            return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.idToken(idTok));
         } catch (JOSEException e) {
             throw new RuntimeException("Could not sign ID token");
         }
@@ -140,7 +166,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         //openIDConnectTokenEnhancer.buildIdToken(existing, detail.getProfile().getId() ,tokenRequest.getClientId(), OrcidOauth2Constants.NONCE);
         
     }
-
+    
     /** Generate an Access Token and exchange it for an id_token.       
      * 
      * @param tokenRequest
@@ -226,7 +252,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         
         OAuth2Authentication authentication = new OAuth2Authentication(request , userAuth);
         OAuth2AccessToken token = tokenServices.createAccessToken(authentication); 
-        return token;
+        return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.accessToken(token));
         //TODO: what do we put in redirect_uri?
         //TODO: update OBO table or add OBO to token detail
         //Need to update to add OBO table - token - new client id (sp) - original client id (m) - id_token (decoded as JSON field).
