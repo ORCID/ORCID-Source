@@ -5,11 +5,9 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
+public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, INVITED_POSITION, FUNDING, GROUP_ID_RECORD, MEMBERSHIP, OTHER_NAME, PEER_REVIEW, QUALIFICATION, RESEARCHER_URL, SERVICE, WORK, WORK_BULK, ADDRESS, KEYWORD, RESEARCH_RESOURCE> {
 
-public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, INVITED_POSITION, FUNDING, GROUP_ID_RECORD, MEMBERSHIP, OTHER_NAME, PEER_REVIEW, QUALIFICATION, RESEARCHER_URL, SERVICE, WORK, WORK_BULK, ADDRESS, KEYWORD> {
-
-    static final String LATEST_V3_VERSION = "3.0_rc1";
+    static final String LATEST_V3_VERSION = "3.0_rc2";
 
     Response viewStatusText();
     
@@ -213,9 +211,9 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response viewResearchResourceSummary(String orcid, Long putCode);
 
-    Response createResearchResource(String orcid, ResearchResource researchResource);
+    Response createResearchResource(String orcid, RESEARCH_RESOURCE researchResource);
 
-    Response updateResearchResource(String orcid, Long putCode, ResearchResource researchResource);
+    Response updateResearchResource(String orcid, Long putCode, RESEARCH_RESOURCE researchResource);
 
     Response deleteResearchResource(String orcid, Long putCode);
 

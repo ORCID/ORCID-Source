@@ -11,7 +11,7 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

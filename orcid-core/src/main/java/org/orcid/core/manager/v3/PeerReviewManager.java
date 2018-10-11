@@ -3,8 +3,8 @@ package org.orcid.core.manager.v3;
 import java.util.ArrayList;
 
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
 
 public interface PeerReviewManager extends PeerReviewManagerReadOnly {
     

@@ -254,5 +254,12 @@ export class CommonService {
         if (pojoMember != null && pojoMember.value != null && (pojoMember.value.charAt(0) == ' ' || pojoMember.value.charAt(pojoMember.value.length - 1) == ' ')) {
             pojoMember.value = pojoMember.value.trim();
         }
-    };            
+    };   
+    
+    randomString(): Observable<any> {        
+       return this.http.get(
+                getBaseUri() + '/generate-random-string.json',
+                {responseType: 'text'}
+        );         
+    };
 }

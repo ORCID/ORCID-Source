@@ -17,7 +17,7 @@ public enum WorkCategory {
     CONFERENCE("conference", WorkType.CONFERENCE_ABSTRACT, WorkType.CONFERENCE_PAPER, WorkType.CONFERENCE_POSTER), @XmlEnumValue("intellectual_property")
     INTELLECTUAL_PROPERTY("intellectual_property", WorkType.DISCLOSURE, WorkType.LICENSE, WorkType.PATENT, WorkType.REGISTERED_COPYRIGHT, WorkType.TRADEMARK), @XmlEnumValue("other_output")
     OTHER_OUTPUT("other_output", WorkType.ARTISTIC_PERFORMANCE, WorkType.DATA_SET, WorkType.INVENTION, WorkType.LECTURE_SPEECH, WorkType.OTHER,
-            WorkType.RESEARCH_TECHNIQUE, WorkType.SOFTWARE, WorkType.SPIN_OFF_COMPANY, WorkType.STANDARDS_AND_POLICY, WorkType.TECHNICAL_STANDARD, WorkType.UNDEFINED);
+            WorkType.PREPRINT, WorkType.RESEARCH_TECHNIQUE, WorkType.SOFTWARE, WorkType.SPIN_OFF_COMPANY, WorkType.STANDARDS_AND_POLICY, WorkType.TECHNICAL_STANDARD, WorkType.UNDEFINED);
 
     private List<WorkType> types = new ArrayList<WorkType>();
     private String value;

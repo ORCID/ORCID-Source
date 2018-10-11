@@ -1,0 +1,55 @@
+{
+  "totalSize" : 5,
+  "done" : true,
+  "records" : [ {
+    "attributes" : {
+      "type" : "Badge__c",
+      "url" : "/services/data/v20.0/sobjects/Badge__c/a0N3D000001Jy5eUAC"
+    },
+    "Id" : "a0N3D000001Jy5eUAC",
+    "Name" : "AUTHENTICATE",
+    "Public_Description__c" : "Authenticating ORCID iDs using API ensures that the iD belongs to the researcher, that it is correct (e.g., no data entry typographical errors), and that the researcher agrees to it being used. In addition, the API enables verification through an OAuth pr",
+    "Badge_Index__c" : 1.0,
+    "Badge_Index_Name__c" : "1 - AUTHENTICATE"
+  }, {
+    "attributes" : {
+      "type" : "Badge__c",
+      "url" : "/services/data/v20.0/sobjects/Badge__c/a0N3D000001Jy5cUAC"
+    },
+    "Id" : "a0N3D000001Jy5cUAC",
+    "Name" : "DISPLAY",
+    "Public_Description__c" : "Display iDs to signal to researchers that your systems support the use of ORCID",
+    "Badge_Index__c" : 2.0,
+    "Badge_Index_Name__c" : "2 - DISPLAY"
+  }, {
+    "attributes" : {
+      "type" : "Badge__c",
+      "url" : "/services/data/v20.0/sobjects/Badge__c/a0N3D000001Jy5fUAC"
+    },
+    "Id" : "a0N3D000001Jy5fUAC",
+    "Name" : "COLLECT",
+    "Public_Description__c" : "Researchers expect the data on their ORCID record to be read and used by other systems, to save them the time and effort and reduce the risk of errors. You can collect information from ORCID records about affiliation, research resource, and works, -- incl",
+    "Badge_Index__c" : 3.0,
+    "Badge_Index_Name__c" : "3 - COLLECT"
+  }, {
+    "attributes" : {
+      "type" : "Badge__c",
+      "url" : "/services/data/v20.0/sobjects/Badge__c/a0N3D000001Jy5dUAC"
+    },
+    "Id" : "a0N3D000001Jy5dUAC",
+    "Name" : "CONNECT",
+    "Public_Description__c" : "Connect information to ORCID records for trusted sharing with others",
+    "Badge_Index__c" : 3.0,
+    "Badge_Index_Name__c" : "3 - CONNECT"
+  }, {
+    "attributes" : {
+      "type" : "Badge__c",
+      "url" : "/services/data/v20.0/sobjects/Badge__c/a0N3D000001Jy5hUAC"
+    },
+    "Id" : "a0N3D000001Jy5hUAC",
+    "Name" : "SYNCHRONIZE",
+    "Public_Description__c" : "Synchronizing information between your system(s) and your researchers’ ORCID records helps reduce the reporting burden for them – and you – and improves data quality for everyone. It helps achieve the goal of “Enter once, reuse often”.",
+    "Badge_Index__c" : 4.0,
+    "Badge_Index_Name__c" : "4 - SYNCHRONIZE"
+  } ]
+}

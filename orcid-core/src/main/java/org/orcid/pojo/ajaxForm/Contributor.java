@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.v3.rc1.common.ContributorEmail;
-import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.rc1.common.CreditName;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributorAttributes;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributorRole;
+import org.orcid.jaxb.model.v3.rc2.common.ContributorEmail;
+import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.rc2.common.CreditName;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributorRole;
 
 public class Contributor implements ErrorsInterface, Serializable {
 
@@ -54,7 +54,7 @@ public class Contributor implements ErrorsInterface, Serializable {
         return c;
     }
     
-    public static Contributor valueOf(org.orcid.jaxb.model.v3.rc1.common.Contributor contributor) {
+    public static Contributor valueOf(org.orcid.jaxb.model.v3.rc2.common.Contributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {

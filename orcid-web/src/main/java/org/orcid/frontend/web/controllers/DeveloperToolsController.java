@@ -96,7 +96,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/get-client.json", method = RequestMethod.GET)
     public @ResponseBody Client getClient() {
         String userOrcid = getEffectiveUserOrcid();
-        Set<org.orcid.jaxb.model.v3.rc1.client.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
+        Set<org.orcid.jaxb.model.v3.rc2.client.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
 
         if (existingClients.isEmpty()) {
             return null;
@@ -110,7 +110,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
-            org.orcid.jaxb.model.v3.rc1.client.Client clientToCreate = client.toModelObject();
+            org.orcid.jaxb.model.v3.rc2.client.Client clientToCreate = client.toModelObject();
             try {
                 clientToCreate = clientManager.createPublicClient(clientToCreate);
             } catch (Exception e) {
@@ -131,7 +131,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
-            org.orcid.jaxb.model.v3.rc1.client.Client clientToEdit = client.toModelObject();
+            org.orcid.jaxb.model.v3.rc2.client.Client clientToEdit = client.toModelObject();
             try {
                 clientToEdit = clientManager.edit(clientToEdit, false);
             } catch (Exception e) {
@@ -150,7 +150,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
     public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
         //Verify this client belongs to the member
-        org.orcid.jaxb.model.v3.rc1.client.Client client = clientManagerReadOnly.get(clientId);
+        org.orcid.jaxb.model.v3.rc2.client.Client client = clientManagerReadOnly.get(clientId);
         if(client == null) {
             return false;
         }

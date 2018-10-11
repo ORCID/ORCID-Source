@@ -6,7 +6,7 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 public class JpaJaxbEmailAdapterImpl implements JpaJaxbEmailAdapter {

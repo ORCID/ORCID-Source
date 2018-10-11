@@ -1,8 +1,8 @@
 package org.orcid.core.manager.v3;
 
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 
 public interface ResearcherUrlManager extends ResearcherUrlManagerReadOnly {
     /**
