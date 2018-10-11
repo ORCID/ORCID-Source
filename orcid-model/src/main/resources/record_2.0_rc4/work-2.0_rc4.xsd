@@ -111,7 +111,7 @@
 			<xs:documentation>The types of works accepted accepted by the ORCID
 				Registry. Please refer to the CASRAI dictionary for definitions of
 				each work type.
-				http://dictionary.casrai.org/research-personnel-profile/contributions/outputs
+				https://dictionary.casrai.org/Output_Types
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
