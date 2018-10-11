@@ -43,7 +43,7 @@
                                                 </div>                                              
                                             </span>
                                             <span class="col-md-3 col-xs-3 col-sm-3">
-                                                <a href (click)="showTerms = false"><@orcid.msg 'freemarker.btncancel' /></a>&nbsp;
+                                                <a href (click)="showTerms = false" (click)="acceptedTerms = false"><@orcid.msg 'freemarker.btncancel' /></a>&nbsp;
                                                 <button class="btn btn-primary" (click)="enableDeveloperTools()"><@orcid.msg 'freemarker.btncontinue' /></button>
                                             </span> 
                                         </div>                                        
