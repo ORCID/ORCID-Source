@@ -1,10 +1,7 @@
 package org.orcid.core.oauth;
 
-import static org.mockito.Mockito.withSettings;
-
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +10,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -28,20 +24,14 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -95,14 +85,14 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         if (requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN) && subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN)) {
             return generateAccessToken(tokenRequest, subjectToken);
         }else if (requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN) && subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN)) { 
-            throw new InvalidTokenException("access_tokens cannot be exchanged for id_tokens");
+            throw new IllegalArgumentException("access_tokens cannot be exchanged for id_tokens");
             //use openIDConnectTokenEnhancer.buildIdToken(OAuth2AccessToken accessToken, OAuth2Authentication authentication,String clientID, String nonce);
             //create id_token from access token.
             //1. Check access token is valid for this client.
             //2. Create id_token. (include in response additionalInformation)
             //OrcidAuthorizationCodeServiceImpl.remove turns a code into an auth.  we need to do the same but with an id_token...
         }
-        throw new InvalidTokenException("supported tokens types are "+OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN+" "+OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN);
+        throw new IllegalArgumentException("Supported tokens types are "+OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN+" "+OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN);
     }
 
     /** Generate an Access Token and exchange it for an id_token.       
@@ -118,18 +108,18 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         try {
             SignedJWT claims = SignedJWT.parse(subjectToken);
             if (!openIDConnectKeyService.verify(claims)) {
-                throw new InvalidTokenException("Invalid id token signature");
+                throw new IllegalArgumentException("Invalid id token signature");
             }
             OBOClient = claims.getJWTClaimsSet().getAudience().get(0);
             OBOOrcid = claims.getJWTClaimsSet().getSubject();           
         } catch (ParseException e) {
-            throw new InvalidTokenException("Unexpected id token value");
+            throw new IllegalArgumentException("Unexpected id token value, cannot parse the id_token");
         }
         
         // Verify the token DOES NOT belong to requesting client (use refresh instead!)
         //TODO: consider if this is correct...
         if (OBOClient.equals(tokenRequest.getClientId())) {
-            throw new InvalidTokenException("Attempt to exchange own id_token, use refresh token instead");
+            throw new IllegalArgumentException("Attempt to exchange own id_token, use refresh token instead");
         }
         
         //verify OBO client is enabled
@@ -151,7 +141,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
             }
         }
         if (scopesOBO.isEmpty()) {
-            throw new OrcidInvalidScopeException("OBO has no valid scopes");
+            throw new OrcidInvalidScopeException("The id_token is not associated with a valid scope");
         }
         Set<ScopePathType> combinedOBOScopes = new HashSet<ScopePathType>();
         for (ScopePathType scope : scopesOBO) {
@@ -161,16 +151,11 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         //do we have requested scopes?
         String requestedScopesString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.SCOPE_PARAM);
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromSpaceSeparatedString(requestedScopesString);
-        Set<ScopePathType> combinedRequestedScopes = new HashSet<ScopePathType>();
-        for (ScopePathType scope : requestedScopes) {
-            combinedRequestedScopes.addAll(scope.combined());
-        }
-        if (!combinedRequestedScopes.isEmpty()) {
-            //note this may be more fine grained, but has the same outcome.
-            scopesOBO = Sets.intersection(combinedOBOScopes, combinedRequestedScopes);            
+        if (!requestedScopes.isEmpty()) {
+            scopesOBO = Sets.intersection(combinedOBOScopes, requestedScopes);            
         }
         if (scopesOBO.isEmpty()) {
-            throw new OrcidInvalidScopeException("OBO requesting non-granted scope");
+            throw new OrcidInvalidScopeException("The requested scope(s) are not available from this id_token");
         }
         Set<String> tokenScopes = Sets.newHashSet();
         for (ScopePathType s: scopesOBO) {

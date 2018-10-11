@@ -1,10 +1,5 @@
 package org.orcid.core.oauth;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,16 +8,8 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.TokenRequest;
-
-import com.google.common.collect.Sets;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 
 public class IETFExchangeTokenChecker {
 
@@ -53,7 +40,7 @@ public class IETFExchangeTokenChecker {
      */
     public void validateRequest(String grantType, TokenRequest tokenRequest) {
         if (!OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(grantType)) {
-            throw new IllegalArgumentException("Missing IETF Token exchange grant type"); //this should not really happen
+            throw new IllegalArgumentException("Missing IETF Token exchange grant type "+OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE); //this should not really happen
         }
         
         //extract params
@@ -63,13 +50,13 @@ public class IETFExchangeTokenChecker {
         
         //check we have the right request params
         if (StringUtils.isEmpty(subjectToken) ||StringUtils.isEmpty(subjectTokenType)||StringUtils.isEmpty(requestedTokenType)) {
-            throw new InvalidTokenException("Missing IETF Token exchange request parameter");
+            throw new IllegalArgumentException("Missing IETF Token exchange request parameter(s).  Required: "+OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN+" "+OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE+" "+OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE);
         }
         
         if (!(subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN) || subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN)) ||
             !(requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN) || requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN)) ||
                 subjectTokenType.equals(requestedTokenType)) {
-            throw new InvalidTokenException("Invalid IETF token exchange token types supported tokens types are "+OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN+" "+OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN);            
+            throw new IllegalArgumentException("Invalid IETF token exchange token type(s) supported tokens types are "+OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN+" "+OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN);            
         }
         
         // Verify requesting client is enabled
@@ -79,7 +66,7 @@ public class IETFExchangeTokenChecker {
         //Verify requesting client has grant type
         // TODO: consider if we need a similar check to see original client has enabled OBO...?
         if (!clientDetails.getAuthorizedGrantTypes().contains(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE)) {
-            throw new InvalidTokenException("Client does not have "+OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE+" enabled");            
+            throw new IllegalArgumentException("Client does not have "+OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE+" enabled");            
         }
     }
 }
