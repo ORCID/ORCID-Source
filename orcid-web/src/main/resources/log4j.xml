@@ -12,7 +12,7 @@
 	</appender>
 
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-		<param name="Threshold" value="INFO"/>
+		<param name="Threshold" value="DEBUG"/>
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="WEB %-5.5p [%-11.11t] %d{HH:mm:ss,SSS} (%F:%L) | %m %n" />
 		</layout>

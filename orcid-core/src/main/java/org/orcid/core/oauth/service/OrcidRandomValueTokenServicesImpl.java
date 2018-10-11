@@ -130,7 +130,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             accessToken = new DefaultOAuth2AccessToken(customTokenEnhancer.enhance(accessToken, authentication));
         }
         
-        if(this.isSupportRefreshToken(authentication.getOAuth2Request())) {
+        if(!OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(authentication.getOAuth2Request().getGrantType()) 
+                && this.isSupportRefreshToken(authentication.getOAuth2Request())) {
             OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken(UUID.randomUUID().toString());
             accessToken.setRefreshToken(refreshToken);
         }
@@ -274,6 +275,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         return false;
     }
     
+    //see https://github.com/spring-projects/spring-security-oauth/pull/957#issuecomment-304729865
     @Override
     @Transactional
     public OAuth2AccessToken refreshAccessToken(String refreshTokenValue, TokenRequest tokenRequest) throws AuthenticationException {

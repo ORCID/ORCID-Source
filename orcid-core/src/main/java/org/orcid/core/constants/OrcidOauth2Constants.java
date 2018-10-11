@@ -41,4 +41,13 @@ public class OrcidOauth2Constants {
     public static final String OAUTH_QUERY_STRING = "queryString";
     public static final String IMPLICIT_GRANT_TYPE = "implicit";
     public static final String IMPLICIT_TOKEN_RESPONSE_TYPE = "token";
+    
+    //IETF exchange
+    public static final String IETF_EXCHANGE_GRANT_TYPE = "urn:ietf:params:oauth:grant-type:token-exchange";
+    public static final String IETF_EXCHANGE_ACCESS_TOKEN = "urn:ietf:params:oauth:token-type:access_token";
+    public static final String IETF_EXCHANGE_ID_TOKEN = "urn:ietf:params:oauth:token-type:id_token";
+    public static final String IETF_EXCHANGE_SUBJECT_TOKEN = "subject_token";
+    public static final String IETF_EXCHANGE_SUBJECT_TOKEN_TYPE = "subject_token_type";
+    public static final String IETF_EXCHANGE_REQUESTED_TOKEN_TYPE = "requested_token_type";
+    
 }

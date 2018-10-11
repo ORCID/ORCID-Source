@@ -65,6 +65,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         String grantType = formParams.getFirst(OrcidOauth2Constants.GRANT_TYPE);
         Boolean revokeOld = formParams.containsKey(OrcidOauth2Constants.REVOKE_OLD) ? Boolean.valueOf(formParams.getFirst(OrcidOauth2Constants.REVOKE_OLD)) : true;
         Long expiresIn = calculateExpiresIn(formParams);
+        //IETF Token exchange
+        String subjectToken = formParams.getFirst(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN);
+        String subjectTokenType = formParams.getFirst(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE);
+        String requestedTokenType = formParams.getFirst(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE);
         
         String bearerToken = null;
         Set<String> scopes = new HashSet<String>();
@@ -134,7 +138,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
                 
         try{
-            OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken, revokeOld, expiresIn);
+            OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken, revokeOld, expiresIn, subjectToken, subjectTokenType, requestedTokenType);
             return getResponse(token);
         } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
@@ -169,7 +173,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         return result == 0 ? result : (System.currentTimeMillis() + (result * 1000));
     }
     
-    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization, boolean revokeOld, Long expiresIn) {        
+    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization, boolean revokeOld, Long expiresIn, String subjectToken, String subjectTokenType, String requestedTokenType) {        
         String clientId = client.getName();
         Map<String, String> authorizationParameters = new HashMap<String, String>();
         
@@ -210,7 +214,13 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             authorizationParameters.put(OrcidOauth2Constants.REVOKE_OLD, String.valueOf(revokeOld));
             authorizationParameters.put(OrcidOauth2Constants.EXPIRES_IN, String.valueOf(expiresIn));
             authorizationParameters.put(OrcidOauth2Constants.REFRESH_TOKEN, String.valueOf(refreshToken));
-        }        
+        } else if (OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(grantType)) {
+            authorizationParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN, String.valueOf(subjectToken));
+            authorizationParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE, String.valueOf(subjectTokenType));
+            authorizationParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE, String.valueOf(requestedTokenType));  
+            //required so OrcidRandomValueTokenServicesImpl doesn't generate a refresh token
+            authorizationParameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);  
+        }
         
         if (redirectUri != null) {
             authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);
