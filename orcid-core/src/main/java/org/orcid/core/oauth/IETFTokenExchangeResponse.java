@@ -1,5 +1,6 @@
 package org.orcid.core.oauth;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 
 import com.google.common.collect.Maps;
+import com.nimbusds.jwt.SignedJWT;
 
 public class IETFTokenExchangeResponse implements OAuth2AccessToken {
 
@@ -21,11 +23,13 @@ public class IETFTokenExchangeResponse implements OAuth2AccessToken {
     private String value;
     private int expiresIn;
     
-    public static IETFTokenExchangeResponse idToken(String idToken) {
+    public static IETFTokenExchangeResponse idToken(String idToken) throws ParseException {
         IETFTokenExchangeResponse token = new IETFTokenExchangeResponse();
         token.additionalInformation.put("issued_token_type", OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN );
         token.value = idToken;
         token.tokenType = "N_A";
+        SignedJWT claims = SignedJWT.parse(idToken);
+        token.expiration = claims.getJWTClaimsSet().getExpirationTime();
         return token;
     }
     

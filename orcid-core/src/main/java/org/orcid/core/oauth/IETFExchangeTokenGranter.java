@@ -139,32 +139,15 @@ public class IETFExchangeTokenGranter implements TokenGranter {
             throw new IllegalArgumentException("You cannot exchange an OBO access_token for an id_token");
             //TODO: prevent people exchanging OBO id tokens for access tokens.
         }
-        
-        /*
-        //generate an id token and attach to the original token for the response.
-        ProfileEntity profileEntity = detail.getProfile();
-        List<OrcidGrantedAuthority> authorities = profileDao.getGrantedAuthoritiesForProfile(profileEntity.getId());
-        profileEntity.setAuthorities(authorities);
-        OrcidOauth2UserAuthentication userAuth = new OrcidOauth2UserAuthentication(profileEntity,true);
-        Map<String, String> requestParameters = tokenRequest.getClientId();
-        OAuth2Request request = new OAuth2Request(requestParameters, tokenRequest.getClientId(), authorities, true, existing.getScope(),
-                OAuth2Utils.parseParameterList(detail.getResourceId()), detail.getRedirectUri(), Sets.newHashSet("token"),null);
-        
-        OAuth2Authentication authentication = new OAuth2Authentication(request , userAuth);
-        
-//        openIDConnectTokenEnhancer.enhance(existing, authentication);
- * */
 
         try {
             String idTok = openIDConnectTokenEnhancer.buildIdToken(existing,detail.getProfile().getId(), tokenRequest.getClientId(),tokenRequest.getRequestParameters().get(OrcidOauth2Constants.NONCE) );
-            //existing.getAdditionalInformation().put(OrcidOauth2Constants.ID_TOKEN, idTok);
             return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.idToken(idTok));
         } catch (JOSEException e) {
             throw new RuntimeException("Could not sign ID token");
+        } catch (ParseException e) {
+            throw new RuntimeException("Generated unparsable ID token");
         }
-        
-        //openIDConnectTokenEnhancer.buildIdToken(existing, detail.getProfile().getId() ,tokenRequest.getClientId(), OrcidOauth2Constants.NONCE);
-        
     }
     
     /** Generate an Access Token and exchange it for an id_token.       
@@ -183,7 +166,9 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                 throw new IllegalArgumentException("Invalid id token signature");
             }
             OBOClient = claims.getJWTClaimsSet().getAudience().get(0);
-            OBOOrcid = claims.getJWTClaimsSet().getSubject();           
+            OBOOrcid = claims.getJWTClaimsSet().getSubject();        
+            //TODO: check expiration.  Maybe modify code that generates ids to be 1 hr if not already 
+            
         } catch (ParseException e) {
             throw new IllegalArgumentException("Unexpected id token value, cannot parse the id_token");
         }
