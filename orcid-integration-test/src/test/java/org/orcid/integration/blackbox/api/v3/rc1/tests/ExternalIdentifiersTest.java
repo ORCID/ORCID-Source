@@ -1,4 +1,4 @@
-package org.orcid.integration.blackbox.api.v3.tests;
+package org.orcid.integration.blackbox.api.v3.rc1.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
