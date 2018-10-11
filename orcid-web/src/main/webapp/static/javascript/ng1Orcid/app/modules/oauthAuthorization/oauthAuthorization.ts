@@ -14,6 +14,9 @@ import { CommonNg2Module }
 import { OauthAuthorizationComponent } 
     from './oauthAuthorization.component.ts';
 
+import { SwitchUserNg2Module }
+    from './../switchUser/switchUser.ts';
+
 // This is the Angular 1 part of the module
 export const OauthAuthorizationModule = angular.module(
     'OauthAuthorizationModule', 
@@ -25,13 +28,14 @@ export const OauthAuthorizationModule = angular.module(
 @NgModule(
     {
         declarations: [
-            OauthAuthorizationComponent
+            OauthAuthorizationComponent,
         ],
         entryComponents: [ 
             OauthAuthorizationComponent 
         ],
         imports: [
-            CommonNg2Module
+            CommonNg2Module,
+            SwitchUserNg2Module
         ],
         providers: [
         ]

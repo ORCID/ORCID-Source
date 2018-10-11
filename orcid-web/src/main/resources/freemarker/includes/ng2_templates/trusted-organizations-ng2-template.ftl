@@ -18,11 +18,11 @@
                             <td class="revokeApplicationName">{{applicationSummary.name}}<br />
                                 <a *ngIf="!applicationSummary.websiteValue" href="{{getApplicationUrlLink(applicationSummary)}}" target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
                             </td>
-                            <td width="35%">{{applicationSummary.approvalDate | humanDate}}</td>
+                            <td width="35%">{{applicationSummary.approvalDate | date:'yyyy-MM-dd'}}</td>
                             <td width="5%">
                                 <div *ngIf="applicationSummary.scopePaths">
-                                    <span>
-                                    {{applicationSummary.scopePaths | keys}}
+                                    <span *ngFor="let key of applicationSummary.scopePaths | keys">
+                                    {{key}}
                                     </span>
                                 </div>
                             </td>
