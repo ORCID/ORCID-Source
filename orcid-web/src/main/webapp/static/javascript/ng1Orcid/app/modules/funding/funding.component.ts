@@ -399,6 +399,14 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.wizardDescExpanded[id] = !this.wizardDescExpanded[id];
     };
 
+    toggleSectionDisplay($event): void {
+        $event.stopPropagation();
+        this.workspaceSrvc.displayFunding = !this.workspaceSrvc.displayFunding;
+        if(this.workspaceSrvc.displayFunding==false){
+            this.fundingImportWizard=false;
+        }
+    }
+
     userIsSource(funding): boolean {
         if (funding.source == orcidVar.orcidId){
             return true;
