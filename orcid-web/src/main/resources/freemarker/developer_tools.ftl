@@ -316,7 +316,6 @@
 							</div>	
 						</div>				
 					</div>
-
 					<div class="row slide" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="tab-container" ng-class="{'expanded' : expanded == true}">
@@ -325,6 +324,21 @@
 							</div>
 						</div>			
 					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					<!-- Edit form -->
 					<div class="edit-details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && editing" ng-cloak>			
 						<!-- Name and Edit/Delete options -->

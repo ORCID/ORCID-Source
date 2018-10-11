@@ -49,5 +49,13 @@ export class DeveloperToolsService {
             {},
             { headers: this.headers }
         )        
-    };       
+    }; 
+    
+    createCredentials( obj ): Observable<any> {
+        return this.http.post(
+            this.url + '/create-client.json', 
+            JSON.stringify(obj),
+            { headers: this.headers }
+        )        
+    }; 
 }

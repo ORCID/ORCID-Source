@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -96,7 +97,12 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             client.setClientSecret(Text.valueOf(""));
             client.setDisplayName(Text.valueOf(""));
             client.setErrors(new ArrayList<String>());
-            client.setRedirectUris(new ArrayList<RedirectUri>());
+            RedirectUri empty = new RedirectUri();
+            empty.setValue(Text.valueOf(""));
+            empty.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
+            List<RedirectUri> rUris = new ArrayList<RedirectUri>();
+            rUris.add(empty);
+            client.setRedirectUris(rUris);
             client.setShortDescription(Text.valueOf(""));
             client.setWebsite(Text.valueOf(""));
             return client;
