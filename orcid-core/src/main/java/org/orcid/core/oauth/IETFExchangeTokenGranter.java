@@ -26,13 +26,16 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 
 import com.google.common.collect.Sets;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
 
 public class IETFExchangeTokenGranter implements TokenGranter {
@@ -43,6 +46,10 @@ public class IETFExchangeTokenGranter implements TokenGranter {
     
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
+    
+    @Resource(name = "orcidTokenStore")
+    private TokenStore tokenStore;
+    
     @Resource
     private OpenIDConnectKeyService openIDConnectKeyService;
 
@@ -85,14 +92,53 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         if (requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN) && subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN)) {
             return generateAccessToken(tokenRequest, subjectToken);
         }else if (requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN) && subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN)) { 
-            throw new IllegalArgumentException("access_tokens cannot be exchanged for id_tokens");
-            //use openIDConnectTokenEnhancer.buildIdToken(OAuth2AccessToken accessToken, OAuth2Authentication authentication,String clientID, String nonce);
-            //create id_token from access token.
-            //1. Check access token is valid for this client.
-            //2. Create id_token. (include in response additionalInformation)
-            //OrcidAuthorizationCodeServiceImpl.remove turns a code into an auth.  we need to do the same but with an id_token...
+            return generateIdToken(tokenRequest, subjectToken);
         }
         throw new IllegalArgumentException("Supported tokens types are "+OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN+" "+OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN);
+    }
+
+    private OAuth2AccessToken generateIdToken(TokenRequest tokenRequest, String subjectToken) {
+        OAuth2AccessToken existing = tokenStore.readAccessToken(subjectToken); 
+        OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(subjectToken);
+        if (detail == null) {
+            throw new IllegalArgumentException("access_token does not exist or is disabled");            
+        }
+        if (!detail.getClientDetailsId().equals(tokenRequest.getClientId())) {
+            throw new IllegalArgumentException("Clients can only exchange their own access_tokens for id_tokens");
+        }
+        if (existing.isExpired()) {
+            throw new IllegalArgumentException("access_token has expired");
+        }
+        if (false) {
+            throw new IllegalArgumentException("You cannot exchange an OBO access_token for an id_token");
+            //TODO: prevent people exchanging OBO id tokens for access tokens.
+        }
+        
+        /*
+        //generate an id token and attach to the original token for the response.
+        ProfileEntity profileEntity = detail.getProfile();
+        List<OrcidGrantedAuthority> authorities = profileDao.getGrantedAuthoritiesForProfile(profileEntity.getId());
+        profileEntity.setAuthorities(authorities);
+        OrcidOauth2UserAuthentication userAuth = new OrcidOauth2UserAuthentication(profileEntity,true);
+        Map<String, String> requestParameters = tokenRequest.getClientId();
+        OAuth2Request request = new OAuth2Request(requestParameters, tokenRequest.getClientId(), authorities, true, existing.getScope(),
+                OAuth2Utils.parseParameterList(detail.getResourceId()), detail.getRedirectUri(), Sets.newHashSet("token"),null);
+        
+        OAuth2Authentication authentication = new OAuth2Authentication(request , userAuth);
+        
+//        openIDConnectTokenEnhancer.enhance(existing, authentication);
+ * */
+
+        try {
+            String idTok = openIDConnectTokenEnhancer.buildIdToken(existing,detail.getProfile().getId(), tokenRequest.getClientId(),tokenRequest.getRequestParameters().get(OrcidOauth2Constants.NONCE) );
+            existing.getAdditionalInformation().put(OrcidOauth2Constants.ID_TOKEN, idTok);
+            return existing;
+        } catch (JOSEException e) {
+            throw new RuntimeException("Could not sign ID token");
+        }
+        
+        //openIDConnectTokenEnhancer.buildIdToken(existing, detail.getProfile().getId() ,tokenRequest.getClientId(), OrcidOauth2Constants.NONCE);
+        
     }
 
     /** Generate an Access Token and exchange it for an id_token.       
