@@ -4,10 +4,12 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.read_only.ManagerReadOnlyBase;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactPermission;
@@ -117,5 +119,7 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
      * @throws OrcidUnauthorizedException
      */
     void checkContactUpdatePermissions(Collection<Contact> existingContacts, Collection<Contact> updatedContacts);
+
+    Map<String, Badge> retrieveBadgesMap();
 
 }
