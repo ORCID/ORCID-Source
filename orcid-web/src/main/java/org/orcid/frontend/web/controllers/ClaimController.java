@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;
@@ -146,10 +145,12 @@ public class ClaimController extends BaseController {
         claimPasswordValidate(claim);
         claimPasswordConfirmValidate(claim);
         claimTermsOfUseValidate(claim);
+        activitiesVisibilityDefaultValidate(claim.getActivitiesVisibilityDefault());
 
         copyErrors(claim.getPassword(), claim);
         copyErrors(claim.getPasswordConfirm(), claim);
         copyErrors(claim.getTermsOfUse(), claim);
+        copyErrors(claim.getActivitiesVisibilityDefault(), claim);
 
         if (claim.getErrors().size() > 0) {
             return claim;

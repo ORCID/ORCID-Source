@@ -30,4 +30,8 @@ public interface InstitutionalSignInManager {
     RemoteUser retrieveRemoteUser(Map<String, String> headers);
 
     String retrieveDisplayName(Map<String, String> headers);
+
+    String retrieveFirstName(Map<String, String> headers);
+
+    String retrieveLastName(Map<String, String> headers);
 }

@@ -15,8 +15,8 @@ public enum Features implements Feature {
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
 
-    @Label("Badges on member details")
-    BADGES,
+    @Label("New style badges on member details")
+    NEW_BADGES,
     
     @Label("Cookie policy banner")
     COOKIE_BANNER,

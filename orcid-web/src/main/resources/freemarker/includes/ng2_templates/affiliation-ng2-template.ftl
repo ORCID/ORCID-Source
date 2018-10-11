@@ -5,10 +5,10 @@
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <h2 (click)="workspaceSrvc.toggleEmployment()" class="toggle-text">
+                        <a (click)="workspaceSrvc.toggleEmployment()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
                             <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span>{{employments.length}}</span>)
-                        </h2>
+                        </a>
                         <#if !(isPublicProfile??)> 
                         <div class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
@@ -115,10 +115,10 @@
                     <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <a name='workspace-educations-qualifications'></a>
-                            <h2 (click)="workspaceSrvc.toggleEducation();workspaceSrvc.toggleEducationAndQualification();" class="toggle-text">
+                            <a (click)="workspaceSrvc.toggleEducation();workspaceSrvc.toggleEducationAndQualification();" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducationAndQualification()==false }"></i>                               
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education_qualification'/> (<span>{{sectionOneElements.length}}</span>)
-                            </h2>    
+                            </a>    
                             <#if !(isPublicProfile??)> 
                                 <div class="popover-help-container">
                                     <i class="glyphicon glyphicon-question-sign"></i>
@@ -226,10 +226,10 @@
                     <div *ngIf="!displayNewAffiliationTypesFeatureEnabled">
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <a name='workspace-educations'></a>
-                            <h2 (click)="toggleEducation()" class="toggle-text">
+                            <a (click)="toggleEducation()" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducation()==false }"></i>                               
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span>{{educations.length}}</span>)
-                            </h2>    
+                            </a>    
                             <#if !(isPublicProfile??)> 
                                 <div class="popover-help-container">
                                     <i class="glyphicon glyphicon-question-sign"></i>
@@ -338,10 +338,10 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <a name='workspace-distinction-invited-position'></a>
-                            <h2 (click)="workspaceSrvc.toggleDistinctionAndInvitedPosition($event)" class="toggle-text">
+                            <a (click)="workspaceSrvc.toggleDistinctionAndInvitedPosition($event)" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayDistinctionAndInvitedPosition==false}"></i>
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.distinction_invited_position'/> (<span>{{distinctionsAndInvitedPositions.length}}</span>)
-                            </h2>
+                            </a>
                             <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
                                 <i class="glyphicon glyphicon-question-sign"></i>
@@ -478,10 +478,10 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <a name='workspace-membership-service'></a>
-                            <h2 (click)="workspaceSrvc.toggleMembershipAndService()" class="toggle-text">
+                            <a (click)="workspaceSrvc.toggleMembershipAndService()" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayMembershipAndService==false}"></i>
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.membership_service'/> (<span>{{membershipsAndServices.length}}</span>)
-                            </h2>
+                            </a>
                             <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
                                 <i class="glyphicon glyphicon-question-sign"></i>

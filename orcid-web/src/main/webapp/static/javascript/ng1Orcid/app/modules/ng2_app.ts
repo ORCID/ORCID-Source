@@ -131,6 +131,9 @@ import { PrintRecordNg2Module }
 import { PublicEduAffiliationNg2Module }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
+import { PublicRecordNg2Module } 
+    from './publicRecord/publicRecord.ts';
+
 import { OauthAuthorizationNg2Module } 
     from './oauthAuthorization/oauthAuthorization.ts';
 
@@ -218,6 +221,9 @@ import { UnsubscribeNg2Module }
 import { DelegatorsNg2Module } 
     from './delegators/delegators.ts';    
 
+import { ClaimNg2Module }
+    from './claim/claim.ts';
+    
 import { ResendClaimNg2Module }
     from './resendClaim/resendClaim.ts';    
     
@@ -226,6 +232,9 @@ import { WorksMergeChoosePreferredVersionNg2Module }
     
 import { WorksMergeSuggestionsNg2Module } 
     from './works/worksMergeSuggestions.ts';
+
+import { AdminActionsNg2Module } 
+    from './adminActions/adminActions.ts';    
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -348,6 +357,7 @@ export class RootCmp {
         PersonNg2Module,
         PrintRecordNg2Module,
         PublicEduAffiliationNg2Module,
+        PublicRecordNg2Module,
         SecurityQuestionEditNg2Module,
         OauthAuthorizationNg2Module,
         OrgIdentifierPopoverNg2Module,
@@ -375,9 +385,11 @@ export class RootCmp {
         WorksNg2Module,
         WorksPrivacyPreferencesNg2Module,
         DelegatorsNg2Module,
+        ClaimNg2Module,
         ResendClaimNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,
-        WorksMergeSuggestionsNg2Module
+        WorksMergeSuggestionsNg2Module,
+        AdminActionsNg2Module
     ],
     providers: [
         { 

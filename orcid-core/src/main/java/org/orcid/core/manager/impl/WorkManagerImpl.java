@@ -74,11 +74,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource
     private LocaleManager localeManager;
     
-    @Value("${org.orcid.core.works.bulk.max:100}")
-    private Long maxBulkSize;
-        
-    public WorkManagerImpl(@Value("${org.orcid.core.works.bulk.max:100}") Integer bulkReadSize) {
+    private Integer maxWorksToWrite;
+    
+    public WorkManagerImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize,
+            @Value("${org.orcid.core.works.bulk.write.max:100}") Integer bulkWriteSize) {
         super(bulkReadSize);
+        this.maxWorksToWrite = (bulkWriteSize == null) ? 100 : bulkWriteSize;
     }
     
     /**
@@ -200,9 +201,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
             
             //Check bulk size
-            if(bulk.size() > maxBulkSize) {
+            if(bulk.size() > maxWorksToWrite) {
                 Locale locale = localeManager.getLocale();                
-                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxBulkSize}, locale));                
+                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxWorksToWrite}, locale));                
             }
                                     
             for(int i = 0; i < bulk.size(); i++) {

@@ -2,14 +2,18 @@ package org.orcid.core.salesforce.adapter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.salesforce.model.Achievement;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
+import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
@@ -63,6 +67,8 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         registerContactRoleMap(mapperFactory);
         registerOpportunityContactRoleMap(mapperFactory);
         registerOrgIdMap(mapperFactory);
+        registerIntegrationMap(mapperFactory);
+        registerBadgesMap(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
@@ -195,6 +201,50 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("primaryIdForType", "Primary_ID_for_type__c");
         classMap.field("accountId", "Organization__c");
         classMap.field("notes", "Notes__c");
+        classMap.register();
+    }
+    
+    private void registerIntegrationMap(MapperFactory mapperFactory) {
+        ClassMapBuilder<Integration, JSONObject> classMap = mapperFactory.classMap(Integration.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Id");
+        classMap.field("name", "Name");
+        classMap.field("badgeAwarded", "BadgeAwarded__c");
+        classMap.field("description", "Description__c");
+        classMap.field("level", "Level__c");
+        classMap.field("stage", "Integration_Stage__c");
+        classMap.field("resourceUrl", "Integration_URL__c");
+        classMap.customize(new CustomMapper<Integration, JSONObject>() {
+            @Override
+            public void mapBtoA(JSONObject b, Integration a, MappingContext context) {
+                JSONObject opportunitiesObject = b.optJSONObject("Achievements__r");
+                if (opportunitiesObject != null) {
+                    JSONArray recordsArray = opportunitiesObject.optJSONArray("records");
+                    if (recordsArray != null && recordsArray.length() > 0) {
+                        try {
+                            List<Achievement> achievements = a.getAchievements();
+                            for (int i = 0; i < recordsArray.length(); i++) {
+                                JSONObject record = recordsArray.getJSONObject(i);
+                                Achievement achievement = new Achievement();
+                                achievement.setBadgeId(record.optString("Badge__c"));
+                                achievements.add(achievement);
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException("Error reading achievements", e);
+                        }
+                    }
+                }
+            }
+        });
+        classMap.register();
+    }
+
+    private void registerBadgesMap(MapperFactory mapperFactory) {
+        ClassMapBuilder<Badge, JSONObject> classMap = mapperFactory.classMap(Badge.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Id");
+        classMap.field("name", "Name");
+        classMap.field("publicDescription", "Public_Description__c");
+        classMap.field("index", "Badge_Index__c");
+        classMap.field("indexAndName", "Badge_Index_Name__c");
         classMap.register();
     }
 

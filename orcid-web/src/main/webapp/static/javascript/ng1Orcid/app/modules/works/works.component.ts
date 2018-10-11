@@ -1016,6 +1016,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    toggleSectionDisplay($event): void {
+        $event.stopPropagation();
+        this.workspaceSrvc.displayWorks = !this.workspaceSrvc.displayWorks;
+        if(this.workspaceSrvc.displayWorks==false){
+            this.workImportWizard=false;
+        }
+    }
+
     toggleSelectMenu(): void {                   
         this.bulkDisplayToggle = !this.bulkDisplayToggle;                    
     };
