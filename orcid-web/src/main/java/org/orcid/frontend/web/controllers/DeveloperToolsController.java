@@ -63,7 +63,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         String userOrcid = getCurrentUserOrcid();
         ProfileEntity entity = profileEntityCacheManager.retrieve(userOrcid);
         if(entity.getEnableDeveloperTools() != null) {
-            mav.addObject("developerToolsEnabled", String.valueOf(entity.getEnableDeveloperTools()));
+            mav.addObject("developerToolsEnabled", entity.getEnableDeveloperTools());
         }
         if (!entity.getEnableDeveloperTools()) {            
             if (OrcidType.USER.equals(entity.getOrcidType())) {

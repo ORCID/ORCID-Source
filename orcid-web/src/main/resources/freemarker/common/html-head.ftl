@@ -80,7 +80,7 @@
         </#if>
         
         <#if (developerToolsEnabled)??>            
-            orcidVar.developerToolsEnabled = ${developerToolsEnabled};
+            orcidVar.developerToolsEnabled = ${developerToolsEnabled?c};            
         <#else>
             orcidVar.developerToolsEnabled = false;
         </#if>

@@ -1,3 +1,3 @@
-<div *ngIf="!developerToolsEnabled">
+<div *ngIf="developerToolsEnabled">
     <p>Under development</p>
 </div>
