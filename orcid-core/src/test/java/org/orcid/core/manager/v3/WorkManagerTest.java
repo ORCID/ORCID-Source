@@ -79,8 +79,8 @@ public class WorkManagerTest extends BaseTest {
     @Resource
     private WorkDao workDao;
     
-    @Value("${org.orcid.core.works.bulk.max:100}")
-    private Long maxBulkSize;
+    @Value("${org.orcid.core.works.bulk.read.max:100}")
+    private Long bulkReadSize;
     
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
@@ -971,7 +971,7 @@ public class WorkManagerTest extends BaseTest {
     @Test(expected = ExceedMaxNumberOfPutCodesException.class)
     public void testFindWorkBulkTooManyPutCodes() {
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= maxBulkSize; i++) {
+        for (int i = 1; i <= bulkReadSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         

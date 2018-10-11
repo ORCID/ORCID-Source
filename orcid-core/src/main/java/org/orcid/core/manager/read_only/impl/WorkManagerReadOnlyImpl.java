@@ -47,12 +47,10 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     protected WorkEntityCacheManager workEntityCacheManager;
     
-    private static final Logger LOG = LoggerFactory.getLogger(WorkManagerReadOnlyImpl.class);
-
-    private final Integer maxBulkSize;
+    private final Integer maxWorksToRead;
     
-    public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.max:100}") Integer bulkSize) {
-        this.maxBulkSize = (bulkSize == null || bulkSize > 100) ? 100 : bulkSize;
+    public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
+        this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
     }
     
     public void setWorkDao(WorkDao workDao) {
@@ -201,8 +199,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private String[] getPutCodeArray(String putCodesAsString) {
         String[] putCodeArray = putCodesAsString.split(BULK_PUT_CODES_DELIMITER);
-        if (putCodeArray.length > maxBulkSize) {
-            throw new ExceedMaxNumberOfPutCodesException(maxBulkSize);
+        if (putCodeArray.length > maxWorksToRead) {
+            throw new ExceedMaxNumberOfPutCodesException(maxWorksToRead);
         }
         return putCodeArray;
     }
