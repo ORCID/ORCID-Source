@@ -13,9 +13,6 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
-import { AdminDelegatesService } 
-    from '../../shared/adminDelegates.service.ts'; 
-
 import { FeaturesService }
     from '../../shared/features.service.ts' 
 
@@ -50,8 +47,7 @@ export class EditTableComponent implements AfterViewInit, OnDestroy, OnInit {
     showEditGetMyData: boolean;
     
     constructor(
-            private featuresService: FeaturesService,
-        //private adminDelegatesService: AdminDelegatesService
+            private featuresService: FeaturesService
     ) {
     	this.deactivateToggleText = "";
     	this.deprecateToggleText = "";

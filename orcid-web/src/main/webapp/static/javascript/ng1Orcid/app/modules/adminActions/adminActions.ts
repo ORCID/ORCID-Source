@@ -7,16 +7,15 @@ import { Directive, NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-//User generated
-import { FindIdsComponent } 
-    from './findIds.component.ts';
+import { AdminActionsComponent } 
+    from './adminActions.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';
-
+    
 // This is the Angular 1 part of the module
-export const FindIdsModule = angular.module(
-    'FindIdsModule', 
+export const AdminActionsModule = angular.module(
+    'AdminActionsModule', 
     []
 );
 
@@ -27,25 +26,25 @@ export const FindIdsModule = angular.module(
             CommonNg2Module
         ],
         declarations: [ 
-            FindIdsComponent
+            AdminActionsComponent
         ],
         entryComponents: [ 
-            FindIdsComponent 
+            AdminActionsComponent 
         ],
         providers: [
             
         ]
     }
 )
-export class FindIdsNg2Module {}
+export class AdminActionsNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-FindIdsModule.directive(
-    'findIdsNg2', 
+AdminActionsModule.directive(
+    'adminActionsNg2', 
     <any>downgradeComponent(
         {
-            component: FindIdsComponent,
+            component: AdminActionsComponent,
         }
     )
 );
