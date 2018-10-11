@@ -83,6 +83,16 @@
 							<p class="developer-tools-instructions"></p>
 						</div>
 					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					<!-- View client-->
 					<div class="details" ng-show="userCredentials.clientSecret && userCredentials.clientSecret.value && !editing" ng-cloak>
 						<!-- Name and Edit/Delete options -->
@@ -225,6 +235,11 @@
 							</div>
 						</div>				
 					</div>
+					
+					
+					
+					
+					
 					<!-- Create client -->
 					<div class="create-client" ng-show="creating" ng-cloak>	
 						<!-- Name -->
@@ -421,6 +436,27 @@
 							</div>					
 						</div>				
 					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					<!-- Bottom instructions -->	
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12">

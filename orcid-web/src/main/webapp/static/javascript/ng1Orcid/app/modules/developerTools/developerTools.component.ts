@@ -35,7 +35,8 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     client: any;
     showTerms: boolean;
     acceptedTerms: boolean;
-    verifyEmailSent: boolean;
+    verifyEmailSent: boolean;    
+    showForm: boolean;
     
     constructor(
             private commonSrvc: CommonService,
@@ -48,6 +49,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.acceptedTerms = false;
         this.verifyEmailSent = false;
         this.developerToolsEnabled = orcidVar.developerToolsEnabled;
+        this.showForm = false;
     }
     
     ngOnDestroy() {
@@ -63,7 +65,6 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         )
         .subscribe(
             data => {
-                console.log(primaryEmail + ' verify email sent');
                 this.verifyEmailSent = true;
             },
             error => {
@@ -79,7 +80,12 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         )
         .subscribe(
             data => {
-                this.client = data;                    
+                this.client = data;
+                if(this.client.clientId.value.length == 0) {
+                    this.showForm = true;
+                } else {
+                    this.showForm = false;
+                }
             },
             error => {
                 console.log("error ngOnInit", error);
