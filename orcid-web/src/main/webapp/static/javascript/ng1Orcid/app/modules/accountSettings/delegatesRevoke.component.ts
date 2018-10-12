@@ -1,9 +1,5 @@
-declare var $: any;
-declare var delegateEmail: any;
-declare var getBaseUri: any;
-declare var isEmail: any;
 declare var orcidVar: any;
-declare var orcidSearchUrlJs: any;
+
 //Import all the angular components
 
 import { NgForOf, NgIf } 
@@ -32,29 +28,31 @@ export class DelegatesRevokeComponent implements AfterViewInit, OnDestroy, OnIni
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
    
-    isPasswordConfirmationRequired: any;
-    errors: any;
-    delegateToRevoke: any;
     delegateNameToRevoke: any;
+    delegateToRevoke: any;
+    errors: any;
+    isPasswordConfirmationRequired: any;
     password: any;
 
     constructor(
         private accountService: AccountService,
         private modalService: ModalService
     ) {
-        this.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
         this.errors = [];
+        this.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
     }
 
-    revoke(): void {
+    closeModal(): void {
+        this.modalService.notifyOther({action:'close', moduleId: 'modalRevokeDelegate'});
+    };
 
+    revoke(): void {
         var revokeDelegate = {
             delegateToManage: null,
             password: null
         };
         revokeDelegate.delegateToManage = this.delegateToRevoke;
         revokeDelegate.password = this.password;
-
         this.accountService.revoke( revokeDelegate )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -73,10 +71,6 @@ export class DelegatesRevokeComponent implements AfterViewInit, OnDestroy, OnIni
                 //console.log('setformDataError', error);
             } 
         );
-    };
-
-    closeModal(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalRevokeDelegate'});
     };
 
     //Default init functions provided by Angular Core

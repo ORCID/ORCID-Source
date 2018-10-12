@@ -1,7 +1,6 @@
 <script type="text/ng-template" id="delegates-ng2-template">
     <div class="clearfix" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
         <div *ngIf="delegation?.length > 0" >
-            <div class="ng-hide" *ngIf="showInitLoader == true;"></div>
             <table class="table table-bordered settings-table normal-width" *ngIf="delegation">
                 <thead>
                     <tr>
@@ -86,7 +85,7 @@
                 <span id="ajax-loader" class="" *ngIf="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
             </div>
         </div>
-        <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
+        <div *ngIf="noResults" id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </#if>
     </div>
 </script>

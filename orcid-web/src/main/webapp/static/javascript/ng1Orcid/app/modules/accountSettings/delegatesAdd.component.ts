@@ -1,9 +1,5 @@
-declare var $: any;
-declare var delegateEmail: any;
-declare var getBaseUri: any;
-declare var isEmail: any;
 declare var orcidVar: any;
-declare var orcidSearchUrlJs: any;
+
 //Import all the angular components
 
 import { NgForOf, NgIf } 
@@ -32,15 +28,15 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
    
+    delegateIdx: any;
+    delegateNameToAdd: any;
+    delegateToAdd: any;
     effectiveUserOrcid: any;
-    input: any;
-    realUserOrcid: any;
-    isPasswordConfirmationRequired: any;
     emailSearchResult: any;
     errors: any;
-    delegateIdx: any;
-    delegateToAdd: any;
-    delegateNameToAdd: any;
+    input: any;
+    isPasswordConfirmationRequired: any;
+    realUserOrcid: any;
     password: any;
 
     constructor(
@@ -48,8 +44,8 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
         private modalService: ModalService
     ) {
         this.effectiveUserOrcid = orcidVar.orcidId;
-        this.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
         this.errors = [];
+        this.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
     }
 
     addDelegate(): void {
@@ -59,7 +55,6 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         addDelegate.delegateToManage = this.delegateToAdd;
         addDelegate.password = this.password;
-
         this.accountService.addDelegate( addDelegate )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -82,17 +77,13 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     addDelegateByEmail(): void {
-
         var addDelegate = {
             delegateEmail: null,
             password: null
         };
-        
         this.errors = [];
-        
         addDelegate.delegateEmail = this.input.text;
         addDelegate.password = this.password;
-
         this.accountService.addDelegateByEmail( addDelegate )
         .pipe(    
             takeUntil(this.ngUnsubscribe)

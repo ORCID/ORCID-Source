@@ -1,10 +1,8 @@
 declare var $: any;
-declare var colorbox: any;
-declare var delegateEmail: any;
-declare var getBaseUri: any;
 declare var isEmail: any;
 declare var orcidVar: any;
 declare var orcidSearchUrlJs: any;
+
 //Import all the angular components
 
 import { NgForOf, NgIf } 
@@ -36,28 +34,25 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     private subscription: Subscription;
    
     allResults: any;
+    areMoreResults: any;
+    delegateIdx: any;
+    delegateNameToAdd: any;
+    delegatesByOrcid: any;
+    delegateToAdd: any;
+    delegateToRevoke: any;
+    delegation: any;
     effectiveUserOrcid: any;
+    emailSearchResult: any;
     input: any;
+    isPasswordConfirmationRequired: any;
     newResults: any;
+    noResults: boolean;
     numFound: any;
     realUserOrcid: any;
-    results: any;
-    showInitLoader: any;
+    rows: any;
     showLoader: any;
     sort: any;
-    isPasswordConfirmationRequired: any;
-    areMoreResults: any;
     start: any;
-    emailSearchResult: any;
-    errors: any;
-    delegateIdx: any;
-    delegateToAdd: any;
-    delegateNameToAdd: any;
-    rows: any;
-    password: any;
-    delegateToRevoke: any;
-    delegatesByOrcid: any;
-    delegation: any;
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -66,36 +61,67 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         private searchService: SearchService
     ) {
         this.allResults = new Array();
+        this.areMoreResults = false;
+        this.delegateIdx = "";
+        this.delegateNameToAdd = "";
+        this.delegatesByOrcid = null;
+        this.delegateToAdd = "";
+        this.delegateToRevoke = null;
+        this.delegation = null;
         this.effectiveUserOrcid = orcidVar.orcidId;
+        this.emailSearchResult = null;
         this.input = {};
         this.input.rows = 10;
         this.input.start = 0;
+        this.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
+        this.noResults = false;
         this.numFound = 0;
         this.realUserOrcid = orcidVar.realOrcidId;
-        this.results = new Array();
-        this.showInitLoader = true;
+        this.rows = null;
         this.showLoader = false;
         this.sort = {
             column: 'receiverName.value',
             descending: false
         };
-        this.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
-        this.areMoreResults = false;
         this.start = null;
-        this.emailSearchResult = null;
-        this.errors = {};
-        this.delegateIdx = "";
-        this.delegateToAdd = "";
-        this.delegateNameToAdd = "";
-        this.rows = null;
-        this.password = "";
-        this.delegateToRevoke = null;
-        this.delegatesByOrcid = null;
-        this.delegation = null;
     }
 
-    getDelegates(): void {
+    areResults(): boolean{
+        return this.numFound != 0;
+    };
 
+    changeSorting(column): void {
+        var sort = this.sort;
+        if (sort.column === column) {
+            sort.descending = !sort.descending;
+        } else {
+            sort.column = column;
+            sort.descending = false;
+        }
+    };
+
+    confirmAddDelegate(delegateName, delegateId, delegateIdx): void {
+        this.delegateNameToAdd = delegateName;
+        this.delegateToAdd = delegateId;
+        this.delegateIdx = delegateIdx;
+        this.accountService.notifyOther({delegateNameToAdd:this.delegateNameToAdd, delegateToAdd:this.delegateToAdd, delegateIdx:this.delegateIdx});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
+    };
+
+    confirmAddDelegateByEmail(emailSearchResult): void {
+        this.emailSearchResult = emailSearchResult;
+        this.accountService.notifyOther({emailSearchResult:this.emailSearchResult, input:this.input});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
+    };
+
+    confirmRevoke = function(delegateName, delegateId) {
+        this.delegateNameToRevoke = delegateName;
+        this.delegateToRevoke = delegateId;
+        this.accountService.notifyOther({delegateNameToRevoke:this.delegateNameToRevoke, delegateToRevoke:this.delegateToRevoke});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalRevokeDelegate'});
+    };
+
+    getDelegates(): void {
         this.accountService.getDelegates(  )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -110,7 +136,6 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.delegatesByOrcid[delegate.receiverOrcid.value] = delegate;
                     }
                 }
-                this.showInitLoader = false;
             },
             error => {
                 //console.log('setformDataError', error);
@@ -118,21 +143,32 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    searchByEmail(): void {
-        this.accountService.searchByEmail( this.input.text )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.confirmAddDelegateByEmail(data);
-                this.showLoader = false;
-            },
-            error => {
-                //console.log('setformDataError', error);
-            } 
-        );
+    getMoreResults(): void {
+        this.showLoader = true;
+        this.start += 10;
+        this.getResults();
     };
+
+    getNames(result: any){
+        if(!result['namesRequestSent']){
+            result['namesRequestSent'] = true;
+            var name="";
+            var orcid = result['orcid-identifier'].path;
+            this.searchService.getNames(orcid).subscribe(
+                namesResult => {
+                    if (namesResult['name']['given-names']){
+                        result['given-names'] = namesResult['name']['given-names']['value'];
+                    }
+                    if(namesResult['name']['family-name']){
+                        result['family-name'] = namesResult['name']['family-name']['value'];
+                    }
+                    if(namesResult['name']['credit-name']) {
+                        result['credit-name'] = namesResult['name']['credit-name'];
+                    }
+                }
+            );
+        } 
+    }
 
     getResults(): void {
         this.searchService.getResults( orcidSearchUrlJs.buildUrl(this.input) )
@@ -152,7 +188,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.cdr.detectChanges();
 
                 if(!this.numFound){
-                    $('#no-results-alert').fadeIn(1200);
+                    this.noResults = true;
                 }
                 
                 this.showLoader = false;
@@ -181,95 +217,18 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                         );
                     }
                 }
-
                 this.cdr.detectChanges();
             },
             error => {
-                console.log("error");
                 //console.log('setformDataError', error);
             } 
         );
     };
 
-    areResults(): boolean{
-        return this.numFound != 0;
-    };
-
-    changeSorting(column): void {
-        var sort = this.sort;
-        if (sort.column === column) {
-            sort.descending = !sort.descending;
-        } else {
-            sort.column = column;
-            sort.descending = false;
-        }
-    };
-
-    concatPropertyValues(array, propertyName): string{
-        if(typeof array === 'undefined'){
-            return '';
-        }
-        else{
-            return $.map(array, function(o){ return o[propertyName]; }).join(', ');
-        }
-    };
-
-    confirmAddDelegate(delegateName, delegateId, delegateIdx): void {
-        this.errors = [];
-        this.delegateNameToAdd = delegateName;
-        this.delegateToAdd = delegateId;
-        this.delegateIdx = delegateIdx;
-        this.accountService.notifyOther({delegateNameToAdd:this.delegateNameToAdd, delegateToAdd:this.delegateToAdd, delegateIdx:this.delegateIdx});
-        this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
-    };
-
-    confirmAddDelegateByEmail(emailSearchResult): void {
-        this.errors = [];
-        this.emailSearchResult = emailSearchResult;
-        this.accountService.notifyOther({emailSearchResult:this.emailSearchResult, input:this.input});
-        this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
-    };
-
-    confirmRevoke = function(delegateName, delegateId) {
-        this.errors = [];
-        this.delegateNameToRevoke = delegateName;
-        this.delegateToRevoke = delegateId;
-        this.accountService.notifyOther({delegateNameToRevoke:this.delegateNameToRevoke, delegateToRevoke:this.delegateToRevoke});
-        this.modalService.notifyOther({action:'open', moduleId: 'modalRevokeDelegate'});
-    };
-
-    getNames(result: any){
-        if(!result['namesRequestSent']){
-            result['namesRequestSent'] = true;
-            var name="";
-            var orcid = result['orcid-identifier'].path;
-            this.searchService.getNames(orcid).subscribe(
-                namesResult => {
-                    if (namesResult['name']['given-names']){
-                        result['given-names'] = namesResult['name']['given-names']['value'];
-                    }
-                    if(namesResult['name']['family-name']){
-                        result['family-name'] = namesResult['name']['family-name']['value'];
-                    }
-                    if(namesResult['name']['credit-name']) {
-                        result['credit-name'] = namesResult['name']['credit-name'];
-                    }
-                }
-            );
-        } 
-    }
-
-    getMoreResults(): void {
-        this.showLoader = true;
-        this.start += 10;
-        this.getResults();
-    };
-
     search(): void {
-        console.log("search");
-        this.results = new Array();
+        this.allResults = new Array();
         this.showLoader = true;
-        $('#no-results-alert').hide();
+        this.noResults = false;
         if(isEmail(this.input.text)){
             this.numFound = 0;
             this.start = 0;
@@ -281,7 +240,21 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-
+    searchByEmail(): void {
+        this.accountService.searchByEmail( this.input.text )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.confirmAddDelegateByEmail(data);
+                this.showLoader = false;
+            },
+            error => {
+                //console.log('setformDataError', error);
+            } 
+        );
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
