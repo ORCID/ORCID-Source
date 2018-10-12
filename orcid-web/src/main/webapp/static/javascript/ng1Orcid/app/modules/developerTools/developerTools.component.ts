@@ -120,7 +120,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     
     addRedirectURI(rUri): void {
         rUri = (typeof rUri != undefined && rUri != null) ? rUri : ''; 
-        this.client.redirectUris.push({value: {value: rUri}, type: {value: 'sso-authentication'}});
+        this.client.redirectUris.push({value: {value: rUri}, type: {value: 'sso-authentication'}, errors: []});
     };
     
     addTestRedirectUri(type): void {
@@ -133,11 +133,21 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
             this.hideSwaggerUri = true;
         } 
         
-        if(this.client.redirectUris.length == 1 && this.client.redirectUris[0].value.value == null) {
+        if(this.client.redirectUris.length == 1 && this.client.redirectUris[0].value.value == '') {
             this.client.redirectUris[0].value.value = rUri;
         } else {
             this.addRedirectURI(rUri);   
         }
+    };
+    
+    deleteRedirectUri(idx): void {
+        var removed = this.client.redirectUris[idx].value.value
+        this.client.redirectUris.splice(idx, 1);
+        if(this.googleUri == removed) {
+            this.hideGoogleUri = false;
+        } else if (this.swaggerUri == removed){
+            this.hideSwaggerUri = false;
+        }        
     };
     
     createCredentials(): void {
@@ -160,7 +170,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
                 console.log("error ngOnInit", error);
             } 
         );
-    };
+    };    
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

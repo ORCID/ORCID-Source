@@ -51,9 +51,9 @@
                 <div class="col-md-10 col-sm-10 col-xs-12">
                     <div class="redirectUris">
                         <h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>                        
-                        <div *ngFor="let rUri of client.redirectUris">                                      
+                        <div *ngFor="let rUri of client.redirectUris; index as idx;">                            
                             <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" [(ngModel)]="rUri.value.value">                   
-                            <a href (click)="deleteRedirectUri($index)" class="glyphicon glyphicon-trash blue"></a>
+                            <a (click)="deleteRedirectUri(idx);" class="glyphicon glyphicon-trash blue"></a>
                             <span class="orcid-error" *ngIf="rUri.errors.length > 0">
                                 <div *ngFor='let error of rUri.errors' [innerHTML]="error"></div>
                             </span> 
@@ -69,7 +69,7 @@
             <div class="row">
                 <div class="col-md-9 col-sm-9 col-xs-9 add-options">
                     <a class="icon-href-bg" (click)="addRedirectURI();"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
-                    <div class="add-options margin-bottom-box">                             
+                    <div class="add-options margin-bottom-box" *ngIf="!hideGoogleUri || !hideSwaggerUri">
                         <div>
                             <h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
                             <ul class="pullleft-list">
@@ -81,7 +81,7 @@
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-3">                
                     <ul class="sso-options pull-right">                                 
-                        <li><a (click)="submit();" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>                                                                                                
+                        <li><a (click)="createCredentials();" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>                                                                                                
                     </ul>                   
                 </div>  
             </div>              
