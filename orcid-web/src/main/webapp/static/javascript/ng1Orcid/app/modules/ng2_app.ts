@@ -32,6 +32,12 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 
 //User generated modules imports
 
+import { AccountSettingsNg2Module } 
+    from './accountSettings/accountSettings.ts';
+
+import { AdminActionsNg2Module } 
+    from './adminActions/adminActions.ts';    
+
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
 
@@ -50,11 +56,14 @@ import { AllConsortiumContactsNg2Module }
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 
-import { ClientEditNg2Module } 
-    from './clientEdit/clientEdit.ts';
+import { ClaimNg2Module }
+    from './claim/claim.ts';
 
-import { AccountSettingsNg2Module } 
-    from './accountSettings/accountSettings.ts';
+import { ClientEditNg2Module } 
+    from './clientEdit/clientEdit.ts'; 
+
+import { DelegatorsNg2Module } 
+    from './delegators/delegators.ts';  
 
 import { EmailsNg2Module } 
     from './emails/emails.ts';
@@ -146,6 +155,9 @@ import { ResearchResourceNg2Module }
 import { ResearchResourceDeleteNg2Module } 
     from './researchResource/researchResourceDelete.ts';
 
+import { ResendClaimNg2Module }
+    from './resendClaim/resendClaim.ts';    
+
 import { ResetPasswordNg2Module }
     from './resetPassword/resetPassword.ts';
 
@@ -173,11 +185,11 @@ import { Social2FANg2Module }
 import { SwitchUserNg2Module }
     from './switchUser/switchUser.ts';
 
-import { TrustedOrganizationsNg2Module }
-    from './trustedOrganizations/trustedOrganizations.ts';
-
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
+
+import { UnsubscribeNg2Module }
+    from './unsubscribe/unsubscribe.ts';  
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
@@ -193,33 +205,12 @@ import { WorksFormNg2Module }
 
 import { WorksNg2Module } 
     from './works/works.ts';
-
-import { SearchService } 
-    from '../shared/search.service.ts'; 
-
-import { WorkspaceService } 
-    from '../shared/workspace.service.ts'; 
-
-import { UnsubscribeNg2Module }
-    from './unsubscribe/unsubscribe.ts';
-
-import { DelegatorsNg2Module } 
-    from './delegators/delegators.ts';    
-
-import { ClaimNg2Module }
-    from './claim/claim.ts';
-    
-import { ResendClaimNg2Module }
-    from './resendClaim/resendClaim.ts';    
     
 import { WorksMergeChoosePreferredVersionNg2Module } 
     from './works/worksMergeChoosePreferredVersion.ts';
     
 import { WorksMergeSuggestionsNg2Module } 
     from './works/worksMergeSuggestions.ts';
-
-import { AdminActionsNg2Module } 
-    from './adminActions/adminActions.ts';    
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -309,14 +300,17 @@ export class RootCmp {
         NgbModule.forRoot(),
         UpgradeModule,
         /* User Generated Modules */
+        AccountSettingsNg2Module,
+        AdminActionsNg2Module,
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
         AlertBannerNg2Module,
         AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
+        ClaimNg2Module,
         ClientEditNg2Module,
-        AccountSettingsNg2Module,
+        DelegatorsNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved
@@ -347,6 +341,7 @@ export class RootCmp {
         RequestPasswordResetNg2Module,
         ResearchResourceNg2Module,
         ResearchResourceDeleteNg2Module,
+        ResendClaimNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
@@ -356,7 +351,6 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         SwitchUserNg2Module,
-        TrustedOrganizationsNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
         WidgetNg2Module, //Approved
@@ -364,12 +358,8 @@ export class RootCmp {
         WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
-        DelegatorsNg2Module,
-        ClaimNg2Module,
-        ResendClaimNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,
         WorksMergeSuggestionsNg2Module,
-        AdminActionsNg2Module
     ],
     providers: [
         { 

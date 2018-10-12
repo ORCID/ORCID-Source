@@ -11,6 +11,21 @@ import { downgradeComponent, UpgradeModule }
 import { AccountSettingsComponent } 
     from './accountSettings.component.ts';
 
+import { DelegatesComponent } 
+    from './delegates.component.ts';
+
+import { DelegatesAddComponent } 
+    from './delegatesAdd.component.ts';
+
+import { DelegatesRevokeComponent } 
+    from './delegatesRevoke.component.ts';
+
+import { TrustedOrganizationsComponent } 
+    from './trustedOrganizations.component.ts';
+
+import { TrustedOrganizationsRevokeComponent } 
+    from './trustedOrganizationsRevoke.component.ts';
+
 import { CommonNg2Module }
     from './../common/common.ts';
 
@@ -31,10 +46,20 @@ export const AccountSettingsModule = angular.module(
             EmailsFormNg2Module,
         ],
         declarations: [ 
-            AccountSettingsComponent
+            AccountSettingsComponent,
+            DelegatesComponent,
+            DelegatesAddComponent,
+            DelegatesRevokeComponent,
+            TrustedOrganizationsComponent,
+            TrustedOrganizationsRevokeComponent
         ],
         entryComponents: [ 
-            AccountSettingsComponent 
+            AccountSettingsComponent,
+            DelegatesComponent,
+            DelegatesAddComponent,
+            DelegatesRevokeComponent,
+            TrustedOrganizationsComponent,
+            TrustedOrganizationsRevokeComponent 
         ],
         providers: [
             
@@ -50,6 +75,41 @@ AccountSettingsModule.directive(
     <any>downgradeComponent(
         {
             component: AccountSettingsComponent,
+        }
+    )
+    ).directive(
+    'delegatesNg2',
+    <any>downgradeComponent(
+        {
+            component: DelegatesComponent,
+        }
+    )
+    ).directive(
+    'delegatesAddNg2',
+    <any>downgradeComponent(
+        {
+            component: DelegatesAddComponent,
+        }
+    )
+    ).directive(
+    'delegatesRevokeNg2',
+    <any>downgradeComponent(
+        {
+            component: DelegatesRevokeComponent,
+        }
+    )
+    ).directive(
+    'trustedOrganizationsNg2', 
+    <any>downgradeComponent(
+        {
+            component: TrustedOrganizationsComponent,
+        }
+    )
+    ).directive(
+    'trustedOrganizationsRevokeNg2',
+    <any>downgradeComponent(
+        {
+            component: TrustedOrganizationsRevokeComponent,
         }
     )
 );

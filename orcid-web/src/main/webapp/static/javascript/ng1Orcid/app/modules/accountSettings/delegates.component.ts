@@ -10,7 +10,7 @@ declare var orcidSearchUrlJs: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -19,18 +19,26 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service.ts';
 
+import { ModalService } 
+    from '../../shared/modal.service.ts';  
+
+import { SearchService } 
+    from '../../shared/search.service.ts';
 
 @Component({
-    selector: 'delegates-v2-ng2',
-    template:  scriptTmpl("delegates-v2-ng2-template")
+    selector: 'delegates-ng2',
+    template:  scriptTmpl("delegates-ng2-template")
 })
-export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
+export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
    
+    allResults: any;
     effectiveUserOrcid: any;
     input: any;
+    newResults: any;
     numFound: any;
     realUserOrcid: any;
     results: any;
@@ -52,8 +60,12 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
     delegation: any;
 
     constructor(
-        private accountService: AccountService
+        private cdr: ChangeDetectorRef,
+        private accountService: AccountService,
+        private modalService: ModalService,
+        private searchService: SearchService
     ) {
+        this.allResults = new Array();
         this.effectiveUserOrcid = orcidVar.orcidId;
         this.input = {};
         this.input.rows = 10;
@@ -82,68 +94,6 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
         this.delegation = null;
     }
 
-    addDelegate(): void {
-
-        var addDelegate = {
-            delegateToManage: null,
-            password: null
-        };
-        addDelegate.delegateToManage = this.delegateToAdd;
-        addDelegate.password = this.password;
-
-        this.accountService.addDelegate( addDelegate )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data.errors.length === 0){
-                    this.getDelegates();
-                    this.results.splice(this.delegateIdx, 1);
-                    this.closeModal();
-                }
-                else{
-                    this.errors = data.errors;
-                }
-            },
-            error => {
-                //console.log('setformDataError', error);
-            } 
-        );
-    };
-
-    addDelegateByEmail(): void {
-
-        var addDelegate = {
-            delegateEmail: null,
-            password: null
-        };
-        
-        this.errors = [];
-        
-        addDelegate.delegateEmail = this.input.text;
-        addDelegate.password = this.password;
-
-        this.accountService.addDelegateByEmail( addDelegate )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data.errors.length === 0){
-                    this.getDelegates();
-                    this.closeModal();
-                }
-                else{
-                    this.errors = data.errors;
-                }
-            },
-            error => {
-                //console.log('setformDataError', error);
-            } 
-        );
-    };
-
     getDelegates(): void {
 
         this.accountService.getDelegates(  )
@@ -168,35 +118,6 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    revoke(): void {
-
-        var revokeDelegate = {
-            delegateToManage: null,
-            password: null
-        };
-        revokeDelegate.delegateToManage = this.delegateToRevoke;
-        revokeDelegate.password = this.password;
-
-        this.accountService.revoke( revokeDelegate )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data.errors.length === 0){
-                    this.getDelegates();
-                    this.closeModal();
-                }
-                else{
-                    this.errors = data.errors;
-                }
-            },
-            error => {
-                //console.log('setformDataError', error);
-            } 
-        );
-    };
-
     searchByEmail(): void {
         this.accountService.searchByEmail( this.input.text )
         .pipe(    
@@ -214,29 +135,34 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getResults(): void {
-        this.accountService.getResults( this.input )
+        this.searchService.getResults( orcidSearchUrlJs.buildUrl(this.input) )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                var bottom = null;
-                var newSearchResults = null;
-                var newSearchResultsTop = null;
-                var orcidList = data['result'];
-                var showMoreButtonTop = null;
-                var tempResults = null;
+                this.newResults = data['result'];
                 this.numFound = data['num-found'];
 
-                this.results = this.results.concat(orcidList); 
-                
+                for(var i = 0; i < this.newResults.length; i++){
+                    this.getNames(this.newResults[i]);
+                }
+
+                this.allResults = this.allResults.concat(this.newResults); 
+                this.cdr.detectChanges();
+
                 if(!this.numFound){
                     $('#no-results-alert').fadeIn(1200);
                 }
                 
-                this.areMoreResults = this.numFound >= (this.start + this.rows);
                 this.showLoader = false;
+
+                this.areMoreResults = this.numFound > (this.input.start + this.input.rows);
                 
+                var bottom = null;
+                var newSearchResults = null;
+                var newSearchResultsTop = null;
+                var showMoreButtonTop = null;
                 newSearchResults = $('.new-search-result');
                 
                 if(newSearchResults.length > 0){
@@ -255,8 +181,11 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
                         );
                     }
                 }
+
+                this.cdr.detectChanges();
             },
             error => {
+                console.log("error");
                 //console.log('setformDataError', error);
             } 
         );
@@ -276,10 +205,6 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    closeModal(): void {
-        //$.colorbox.close();
-    };
-
     concatPropertyValues(array, propertyName): string{
         if(typeof array === 'undefined'){
             return '';
@@ -290,98 +215,49 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
     };
 
     confirmAddDelegate(delegateName, delegateId, delegateIdx): void {
-
         this.errors = [];
         this.delegateNameToAdd = delegateName;
         this.delegateToAdd = delegateId;
         this.delegateIdx = delegateIdx;
-        /*
-        $.colorbox({
-                    html : $compile($('#confirm-add-delegate-modal').html())($scope),
-                    transition: 'fade',
-                    close: '',
-                    onLoad: function() {
-                        $('#cboxClose').remove();
-                    },
-                    onComplete: function() {$.colorbox.resize();},
-                    scrolling: true
-                });
-        */
+        this.accountService.notifyOther({delegateNameToAdd:this.delegateNameToAdd, delegateToAdd:this.delegateToAdd, delegateIdx:this.delegateIdx});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
     };
 
     confirmAddDelegateByEmail(emailSearchResult): void {
-
         this.errors = [];
         this.emailSearchResult = emailSearchResult;
-        /*
-        $.colorbox({
-                    html : $compile($('#confirm-add-delegate-by-email-modal').html())($scope),
-                    transition: 'fade',
-                    close: '',
-                    onLoad: function() {
-                        $('#cboxClose').remove();
-                    },
-                    onComplete: function() {$.colorbox.resize();},
-                    scrolling: true
-                });
-        */
+        this.accountService.notifyOther({emailSearchResult:this.emailSearchResult, input:this.input});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
     };
 
     confirmRevoke = function(delegateName, delegateId) {
         this.errors = [];
         this.delegateNameToRevoke = delegateName;
         this.delegateToRevoke = delegateId;
-        /*
-        $.colorbox({
-            html : $compile($('#revoke-delegate-modal').html())($scope)
-
-        });
-        $.colorbox.resize();
-        */
+        this.accountService.notifyOther({delegateNameToRevoke:this.delegateNameToRevoke, delegateToRevoke:this.delegateToRevoke});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalRevokeDelegate'});
     };
 
-    getDisplayName(result): any {
+    getNames(result: any){
         if(!result['namesRequestSent']){
             result['namesRequestSent'] = true;
             var name="";
             var orcid = result['orcid-identifier'].path;
-            var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
-            
-            this.accountService.getDisplayName( orcid )
-            .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-            .subscribe(
-                data => {
-                    if (data['name']['given-names']){
-                        result['given-names'] = data['name']['given-names']['value'];
+            this.searchService.getNames(orcid).subscribe(
+                namesResult => {
+                    if (namesResult['name']['given-names']){
+                        result['given-names'] = namesResult['name']['given-names']['value'];
                     }
-                    if(data['name']['family-name']){
-                        result['family-name'] = data['name']['family-name']['value'];
+                    if(namesResult['name']['family-name']){
+                        result['family-name'] = namesResult['name']['family-name']['value'];
                     }
-                    if(data['name']['credit-name']) {
-                        result['credit-name'] = data['name']['credit-name']['value'];
+                    if(namesResult['name']['credit-name']) {
+                        result['credit-name'] = namesResult['name']['credit-name'];
                     }
-
-                    if(result['credit-name']) {
-                        name = result['credit-name'];
-                    } else if (result['given-names'] && result['given-names']){
-                        name = result['given-names'] + " " + result['family-name'];
-                    } else if (result['given-names']) {
-                        name = result['given-names'];
-                    } else {
-                        name = "";
-                    }             
-                    return name; 
-                },
-                error => {
-                    //console.log('setformDataError', error);
-                } 
+                }
             );
-
-        }
-
-    };
+        } 
+    }
 
     getMoreResults(): void {
         this.showLoader = true;
@@ -390,6 +266,7 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
     };
 
     search(): void {
+        console.log("search");
         this.results = new Array();
         this.showLoader = true;
         $('#no-results-alert').hide();
@@ -408,7 +285,22 @@ export class DelegatesV2Component implements AfterViewInit, OnDestroy, OnInit {
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
-        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directivesload
+        this.subscription = this.accountService.notifyObservable$.subscribe(
+            (res) => {                
+                if(res.action == 'add') {
+                    if(res.successful == true) {
+                        this.input = {};
+                        this.getDelegates();
+                    }
+                } 
+                if(res.action == 'revoke') {
+                    if(res.successful == true) {
+                        this.getDelegates();
+                    }
+                }               
+            }
+        );
     };
 
     ngOnDestroy() {

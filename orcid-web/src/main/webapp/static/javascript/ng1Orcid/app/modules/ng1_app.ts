@@ -13,6 +13,12 @@ import 'angular-route'
 
 //User generated imports
 
+import { AccountSettingsModule } 
+    from './accountSettings/accountSettings.ts';
+
+import { AdminActionsModule } 
+    from './adminActions/adminActions.ts';  
+
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
 
@@ -31,11 +37,14 @@ import { AllConsortiumContactsModule }
 import { BiographyModule } 
     from './biography/biography.ts';
 
+import {ClaimModule}
+    from './claim/claim.ts';
+
 import { ClientEditModule } 
     from './clientEdit/clientEdit.ts';
 
-import { AccountSettingsModule } 
-    from './accountSettings/accountSettings.ts';
+import { DelegatorsModule } 
+    from './delegators/delegators.ts';
 
 import { EmailsModule } 
     from './emails/emails.ts';
@@ -130,6 +139,9 @@ import { ResearchResourceModule }
 import { ResearchResourceDeleteModule } 
     from './researchResource/researchResourceDelete.ts';
 
+import { ResendClaimModule } 
+    from './resendClaim/resendClaim.ts';
+
 import { SearchModule } 
     from './search/search.ts';
 
@@ -154,11 +166,11 @@ import { Social2FAModule }
 import { SwitchUserModule }
     from './switchUser/switchUser.ts';
 
-import { TrustedOrganizationsModule } 
-    from './trustedOrganizations/trustedOrganizations.ts';
-
 import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
+
+import { UnsubscribeModule }
+    from './unsubscribe/unsubscribe.ts';
 
 import { WidgetModule } 
     from './widget/widget.ts';
@@ -174,27 +186,12 @@ import { WorksFormModule }
 
 import { WorksModule } 
     from './works/works.ts';
-
-import { UnsubscribeModule }
-    from './unsubscribe/unsubscribe.ts'
-
-import { DelegatorsModule } 
-    from './delegators/delegators.ts';
-    
-import {ClaimModule}
-    from './claim/claim.ts';
-    
-import { ResendClaimModule } 
-    from './resendClaim/resendClaim.ts';
     
 import { WorksMergeChoosePreferredVersionModule } 
     from './works/worksMergeChoosePreferredVersion.ts';
     
 import { WorksMergeSuggestionsModule } 
-    from './works/worksMergeSuggestions.ts';
-
-import { AdminActionsModule } 
-    from './adminActions/adminActions.ts';       
+    from './works/worksMergeSuggestions.ts';   
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -203,14 +200,17 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
+        AccountSettingsModule.name,
+        AdminActionsModule.name,
         AffiliationModule.name,
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
         AlertBannerModule.name,
         AllConsortiumContactsModule.name,
         BiographyModule.name,
+        ClaimModule.name, 
         ClientEditModule.name,
-        AccountSettingsModule.name,
+        DelegatorsModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
         EmailUnverifiedWarningModule.name,
@@ -242,6 +242,7 @@ export const orcidApp = angular.module(
         ResetPasswordModule.name,
         ResearchResourceModule.name,
         ResearchResourceDeleteModule.name,
+        ResendClaimModule.name,
         SearchModule.name,
         SelfServiceModule.name,
         SelfServiceAddContactModule.name,
@@ -250,20 +251,15 @@ export const orcidApp = angular.module(
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
         SwitchUserModule.name,
-        TrustedOrganizationsModule.name,
         TwoFaSetupModule.name,
+        UnsubscribeModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,
         WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
-        UnsubscribeModule.name,
-        DelegatorsModule.name,
-        ClaimModule.name, 
-        ResendClaimModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
-        AdminActionsModule.name
     ]
 );
 
