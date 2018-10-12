@@ -41,6 +41,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     hideSwaggerUri: boolean;
     googleUri: string = 'https://developers.google.com/oauthplayground';
     swaggerUri: string = orcidVar.pubBaseUri +"/v2.0/";
+    selectedRedirectUri: string;
     
     constructor(
             private commonSrvc: CommonService,
@@ -56,6 +57,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.showForm = false;
         this.hideGoogleUri = false;
         this.hideSwaggerUri = false;
+        this.selectedRedirectUri = '';
     }
     
     ngOnDestroy() {
@@ -171,6 +173,13 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
             } 
         );
     };    
+    
+    getClientUrl(website): void {
+        if(typeof website != undefined && website != null && website.lastIndexOf('http://') === -1 && website.lastIndexOf('https://') === -1) {            
+                return '//' + website;            
+        }
+        return website;
+    };
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
