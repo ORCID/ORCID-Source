@@ -14,7 +14,7 @@ public class Names implements ErrorsInterface, Serializable{
     private NamesForm real = null;
     private List<String> errors = new ArrayList<String>();
     
-    public static Names valueOf(org.orcid.jaxb.model.v3.rc1.record.Name current, org.orcid.jaxb.model.v3.rc1.record.Name effective) {
+    public static Names valueOf(org.orcid.jaxb.model.v3.rc2.record.Name current, org.orcid.jaxb.model.v3.rc2.record.Name effective) {
     	Names names = new Names();
         if (current != null) {
         	names.setEffective(NamesForm.valueOf(current)); 

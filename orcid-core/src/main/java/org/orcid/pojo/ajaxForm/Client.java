@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc1.client.ClientRedirectUri;
+import org.orcid.jaxb.model.v3.rc2.client.ClientRedirectUri;
 
 public class Client implements ErrorsInterface, Serializable, Comparable<Client> {
 
@@ -28,7 +28,7 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
     private Set<String> scopes;
     private Checkbox allowAutoDeprecate;    
         
-    public static Client fromModelObject(org.orcid.jaxb.model.v3.rc1.client.Client modelObject) {
+    public static Client fromModelObject(org.orcid.jaxb.model.v3.rc2.client.Client modelObject) {
         Client client = new Client();
 
         client.setClientId(Text.valueOf(modelObject.getId()));
@@ -90,8 +90,8 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
         return client;
     }
     
-    public org.orcid.jaxb.model.v3.rc1.client.Client toModelObject() {
-        org.orcid.jaxb.model.v3.rc1.client.Client modelObject = new org.orcid.jaxb.model.v3.rc1.client.Client();
+    public org.orcid.jaxb.model.v3.rc2.client.Client toModelObject() {
+        org.orcid.jaxb.model.v3.rc2.client.Client modelObject = new org.orcid.jaxb.model.v3.rc2.client.Client();
 
         if (this.getAllowAutoDeprecate() != null) {
             modelObject.setAllowAutoDeprecate(this.getAllowAutoDeprecate().getValue());

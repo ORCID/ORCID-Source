@@ -1,6 +1,6 @@
 package org.orcid.pojo;
 
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
+import org.orcid.jaxb.model.v3.rc2.common.Organization;
 
 public class Org {
 
