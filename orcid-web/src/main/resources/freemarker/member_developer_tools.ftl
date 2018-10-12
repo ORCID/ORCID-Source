@@ -236,20 +236,7 @@
 					<div class="col-md-9 col-sm-9 col-xs-12">
 						<p><input type="checkbox" disabled="disabled" class="small-element middle" ng-model="clientDetails.allowAutoDeprecate.value" /></p>
 					</div>					
-				</div>
-								
-				<@security.authorize access="hasAnyRole('ROLE_PREMIUM_INSTITUTION', 'ROLE_BASIC_INSTITUTION')">																					
-					<div class="row bottomBuffer">
-						<!-- Custom Emails -->
-						<div class="col-md-3 col-sm-3 col-xs-12">
-							<span><strong><@orcid.msg 'manage.developer_tools.group.custom_emails.th'/></strong></span>
-						</div>
-						<div class="col-md-9 col-sm-9 col-xs-12 dt-description">
-							<p><a href="<@orcid.rootPath "/group/custom-emails" />?clientId={{clientDetails.clientId.value}}" target="Edit custom emails">Edit custom emails</a></p>
-						</div>
-					</div>	
-				</@security.authorize>
-				
+				</div>		
 				<!-- Slidebox -->
 				<div class="slidebox grey-box" ng-show="expanded == true">
 					<div class="row">

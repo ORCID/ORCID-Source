@@ -53,6 +53,27 @@ public class JSONInputValidator {
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.Service.class, "/record_3.0_rc1/service-3.0_rc1.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc1.record.ResearchResource.class, "/record_3.0_rc1/research-resource-3.0_rc1.xsd");
         
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Work.class, "/record_3.0_rc2/work-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Funding.class, "/record_3.0_rc2/funding-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Education.class, "/record_3.0_rc2/education-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Employment.class, "/record_3.0_rc2/employment-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.PeerReview.class, "/record_3.0_rc2/peer-review-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord.class, "/group-id-3.0_rc2/group-id-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission.class,
+                "/notification_3.0_rc2/notification-permission-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl.class, "/record_3.0_rc2/researcher-url-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.OtherName.class, "/record_3.0_rc2/other-name-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier.class, "/record_3.0_rc2/person-external-identifier-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Keyword.class, "/record_3.0_rc2/keyword-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Address.class, "/record_3.0_rc2/address-3.0_rc2.xsd");
+        
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Distinction.class, "/record_3.0_rc2/distinction-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.InvitedPosition.class, "/record_3.0_rc2/invited-position-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Membership.class, "/record_3.0_rc2/membership-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Qualification.class, "/record_3.0_rc2/qualification-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.Service.class, "/record_3.0_rc2/service-3.0_rc2.xsd");
+        SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class, "/record_3.0_rc2/research-resource-3.0_rc2.xsd");
+        
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Work.class, "/record_2.0/work-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Funding.class, "/record_2.0/funding-2.0.xsd");
         SCHEMA_LOCATIONS.put(org.orcid.jaxb.model.record_v2.Education.class, "/record_2.0/education-2.0.xsd");

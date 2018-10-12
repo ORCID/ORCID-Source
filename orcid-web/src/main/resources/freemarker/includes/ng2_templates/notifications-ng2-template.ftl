@@ -42,7 +42,7 @@
                         <td (click)="toggleDisplayBody(notification.putCode)"><span >{{notification.subject}}</span></td>
                         <td (click)="toggleDisplayBody(notification.putCode)"><span >{{notification.createdDate|humanDate}}</span></td>
                         <td class="centered">
-                            <span *ngIf="!notification.archivedDate"><a href="" (click)="archive(notification.putCode)" class="glyphicon glyphicon-download-alt dark-grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
+                            <span *ngIf="!notification.archivedDate"><a (click)="archive(notification.putCode)" class="glyphicon glyphicon-download-alt dark-grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
                         </td>
                         <td class="centered">
                             <input type="checkbox" class="centered archive-checkbox" [(ngModel)]="notificationsSrvc.bulkArchiveMap[notification.putCode]" *ngIf="!notification.archivedDate" (ngModelChange)="notificationsSrvc.checkSelection()">

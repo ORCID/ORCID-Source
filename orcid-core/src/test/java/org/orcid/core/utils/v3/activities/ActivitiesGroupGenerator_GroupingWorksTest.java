@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Title;
+import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 
 /**
  * 

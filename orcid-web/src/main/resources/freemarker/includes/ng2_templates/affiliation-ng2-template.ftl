@@ -5,10 +5,10 @@
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <h2 (click)="workspaceSrvc.toggleEmployment()" class="toggle-text">
+                        <a (click)="workspaceSrvc.toggleEmployment()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
                             <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span>{{employments.length}}</span>)
-                        </h2>
+                        </a>
                         <#if !(isPublicProfile??)> 
                         <div class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
@@ -66,7 +66,7 @@
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
                                             <ul class="menu-options employment">                                                
                                                 <li>                            
-                                                    <a id="add-employment" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
+                                                    <a id="add-employment" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                                         <span class="glyphicon glyphicon-plus"></span>
                                                         <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                     </a>            
@@ -77,7 +77,7 @@
                                 </div>         
                             </li>                            
                             <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
+                                <a class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                     <span class="glyphicon glyphicon-plus"></span>
                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />  
                                 </a>                
@@ -95,7 +95,7 @@
                         <#else>
                             <strong>                                
                             <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                            <a href="" (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemploymentnow' /></a>
+                            <a (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemploymentnow' /></a>
                             <@orcid.msg 'common.now' />                                
                             </strong>
                         </#if>
@@ -115,10 +115,10 @@
                     <div *ngIf="displayNewAffiliationTypesFeatureEnabled">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <a name='workspace-educations-qualifications'></a>
-                            <h2 (click)="workspaceSrvc.toggleEducation();workspaceSrvc.toggleEducationAndQualification();" class="toggle-text">
+                            <a (click)="workspaceSrvc.toggleEducation();workspaceSrvc.toggleEducationAndQualification();" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducationAndQualification()==false }"></i>                               
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education_qualification'/> (<span>{{sectionOneElements.length}}</span>)
-                            </h2>    
+                            </a>    
                             <#if !(isPublicProfile??)> 
                                 <div class="popover-help-container">
                                     <i class="glyphicon glyphicon-question-sign"></i>
@@ -177,7 +177,7 @@
                                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
                                                     <ul class="menu-options education">
                                                         <li>          
-                                                            <a id="add-education" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                                            <a id="add-education" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                                                 <span class="glyphicon glyphicon-plus"></span>
                                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                             </a>
@@ -188,7 +188,7 @@
                                         </div>         
                                     </li>
                                     <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
-                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                        <a class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education' />  
                                         </a>
@@ -203,7 +203,7 @@
                                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification'/>    
                                                     <ul class="menu-options qualification">
                                                         <li>          
-                                                            <a id="add-qualification" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
+                                                            <a id="add-qualification" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
                                                                 <span class="glyphicon glyphicon-plus"></span>
                                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                             </a>
@@ -214,7 +214,7 @@
                                         </div>         
                                     </li>
                                     <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
-                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
+                                        <a class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification' />  
                                         </a>
@@ -226,10 +226,10 @@
                     <div *ngIf="!displayNewAffiliationTypesFeatureEnabled">
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <a name='workspace-educations'></a>
-                            <h2 (click)="toggleEducation()" class="toggle-text">
+                            <a (click)="toggleEducation()" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducation()==false }"></i>                               
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span>{{educations.length}}</span>)
-                            </h2>    
+                            </a>    
                             <#if !(isPublicProfile??)> 
                                 <div class="popover-help-container">
                                     <i class="glyphicon glyphicon-question-sign"></i>
@@ -286,7 +286,7 @@
                                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
                                                     <ul class="menu-options education">
                                                         <li>          
-                                                            <a id="add-education" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                                            <a id="add-education" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                                                 <span class="glyphicon glyphicon-plus"></span>
                                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                             </a>
@@ -297,7 +297,7 @@
                                         </div>         
                                     </li>
                                     <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
-                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                        <a class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education' />  
                                         </a>
@@ -316,9 +316,9 @@
                         <#else>
                             <strong>                                
                             <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                            <a href="" (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducationnow' /></a>
+                            <a (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducationnow' /></a>
                             <@orcid.msg 'common.or' />
-                            <a href="" (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualificationnow' /></a>
+                            <a (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualificationnow' /></a>
                             <@orcid.msg 'common.now' />                                
                             </strong>
                         </#if>
@@ -338,10 +338,10 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <a name='workspace-distinction-invited-position'></a>
-                            <h2 (click)="workspaceSrvc.toggleDistinctionAndInvitedPosition($event)" class="toggle-text">
+                            <a (click)="workspaceSrvc.toggleDistinctionAndInvitedPosition($event)" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayDistinctionAndInvitedPosition==false}"></i>
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.distinction_invited_position'/> (<span>{{distinctionsAndInvitedPositions.length}}</span>)
-                            </h2>
+                            </a>
                             <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
                                 <i class="glyphicon glyphicon-question-sign"></i>
@@ -400,7 +400,7 @@
                                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_distinction' />
                                                     <ul class="menu-options distinction">                                                    
                                                         <li>                            
-                                                            <a id="add-distinction" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
+                                                            <a id="add-distinction" class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
                                                                 <span class="glyphicon glyphicon-plus"></span>
                                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                             </a>            
@@ -411,7 +411,7 @@
                                         </div>
                                     </li>                                    
                                     <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
+                                        <a class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_distinction' />  
                                         </a>                
@@ -426,7 +426,7 @@
                                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_invited_position' />
                                                     <ul class="menu-options invited-position">                                                    
                                                         <li>                            
-                                                            <a id="add-distinction" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
+                                                            <a id="add-distinction" class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
                                                                 <span class="glyphicon glyphicon-plus"></span>
                                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                             </a>            
@@ -437,7 +437,7 @@
                                         </div>         
                                     </li>                                   
                                     <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
+                                        <a class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_invited_position' />  
                                         </a>                
@@ -455,9 +455,9 @@
                             <#else>
                                 <strong>                                
                                 <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                                <a href="" (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
+                                <a (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
                                 <@orcid.msg 'common.or' />
-                                <a href="" (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
+                                <a (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
                                 <@orcid.msg 'common.now' /> 
                                 </strong>
                             </#if>
@@ -478,10 +478,10 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <a name='workspace-membership-service'></a>
-                            <h2 (click)="workspaceSrvc.toggleMembershipAndService()" class="toggle-text">
+                            <a (click)="workspaceSrvc.toggleMembershipAndService()" class="toggle-text">
                                 <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayMembershipAndService==false}"></i>
                                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.membership_service'/> (<span>{{membershipsAndServices.length}}</span>)
-                            </h2>
+                            </a>
                             <#if !(isPublicProfile??)> 
                             <div class="popover-help-container">
                                 <i class="glyphicon glyphicon-question-sign"></i>
@@ -540,7 +540,7 @@
                                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_membership' />
                                                     <ul class="menu-options distinction">                                                    
                                                         <li>                            
-                                                            <a id="add-membership" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
+                                                            <a id="add-membership" class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
                                                                 <span class="glyphicon glyphicon-plus"></span>
                                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                             </a>            
@@ -551,7 +551,7 @@
                                         </div>
                                     </li>                                    
                                     <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
+                                        <a class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_membership' />  
                                         </a>                
@@ -566,7 +566,7 @@
                                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_service' />
                                                     <ul class="menu-options invited-position">                                                    
                                                         <li>                            
-                                                            <a id="add-service" href="" class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
+                                                            <a id="add-service" class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
                                                                 <span class="glyphicon glyphicon-plus"></span>
                                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                                             </a>            
@@ -577,7 +577,7 @@
                                         </div>         
                                     </li>                                   
                                     <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                        <a href="" class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
+                                        <a class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_service' />  
                                         </a>                
@@ -595,9 +595,9 @@
                             <#else>
                                 <strong>                                
                                 <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                                <a href="" (click)="addAffiliationModal('membership')"><@orcid.msg 'workspace_affiliations_body_list.addmembershipnow' /></a>
+                                <a (click)="addAffiliationModal('membership')"><@orcid.msg 'workspace_affiliations_body_list.addmembershipnow' /></a>
                                 <@orcid.msg 'common.or' />
-                                <a href="" (click)="addAffiliationModal('service')"><@orcid.msg 'workspace_affiliations_body_list.addservicenow' /></a>
+                                <a (click)="addAffiliationModal('service')"><@orcid.msg 'workspace_affiliations_body_list.addservicenow' /></a>
                                 <@orcid.msg 'common.now' />                                
                                 </strong>
                             </#if>

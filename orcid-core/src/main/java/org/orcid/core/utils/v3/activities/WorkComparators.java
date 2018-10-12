@@ -2,11 +2,11 @@ package org.orcid.core.utils.v3.activities;
 
 import java.util.Comparator;
 
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Title;
+import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**

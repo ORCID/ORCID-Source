@@ -91,8 +91,8 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource    
     private V2VersionConverterChain v2VersionConverterChain;
     
-    @Value("${org.orcid.core.works.bulk.max:100}")
-    private Long maxBulkSize;
+    @Value("${org.orcid.core.works.bulk.read.max:100}")
+    private Long bulkReadSize;
 
     private String nonExistingUser = "0000-0000-0000-000X";
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
@@ -1578,7 +1578,7 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testViewBulkWorksWithTooManyPutCodes() {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= maxBulkSize; i++) {
+        for (int i = 1; i <= bulkReadSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         serviceDelegator.viewBulkWorks("0000-0000-0000-0003", tooManyPutCodes.toString());

@@ -7,12 +7,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
-import org.orcid.jaxb.model.v3.rc1.common.Day;
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc1.common.Month;
-import org.orcid.jaxb.model.v3.rc1.common.Year;
+import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
+import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc2.common.Month;
+import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.utils.DateUtils;
 
 public class Date implements ErrorsInterface, Required, Serializable, Comparable<Date> {
@@ -48,14 +48,14 @@ public class Date implements ErrorsInterface, Required, Serializable, Comparable
         return fd;
     }
 
-    public org.orcid.jaxb.model.v3.rc1.common.FuzzyDate toV3FuzzyDate() {
-        org.orcid.jaxb.model.v3.rc1.common.FuzzyDate fd = new org.orcid.jaxb.model.v3.rc1.common.FuzzyDate();
+    public org.orcid.jaxb.model.v3.rc2.common.FuzzyDate toV3FuzzyDate() {
+        org.orcid.jaxb.model.v3.rc2.common.FuzzyDate fd = new org.orcid.jaxb.model.v3.rc2.common.FuzzyDate();
         if (!PojoUtil.isEmpty(this.getDay()))
-            fd.setDay(new org.orcid.jaxb.model.v3.rc1.common.Day(new Integer(this.getDay())));
+            fd.setDay(new org.orcid.jaxb.model.v3.rc2.common.Day(new Integer(this.getDay())));
         if (!PojoUtil.isEmpty(this.getMonth()))
-            fd.setMonth(new org.orcid.jaxb.model.v3.rc1.common.Month(new Integer(this.getMonth())));
+            fd.setMonth(new org.orcid.jaxb.model.v3.rc2.common.Month(new Integer(this.getMonth())));
         if (!PojoUtil.isEmpty(this.getYear()))
-            fd.setYear(new org.orcid.jaxb.model.v3.rc1.common.Year(new Integer(this.getYear())));
+            fd.setYear(new org.orcid.jaxb.model.v3.rc2.common.Year(new Integer(this.getYear())));
         return fd;
     }
 

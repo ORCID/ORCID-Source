@@ -13,7 +13,7 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.GroupIdRecordManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.context.ApplicationContext;

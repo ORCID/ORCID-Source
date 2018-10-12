@@ -18,7 +18,7 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.OrcidType;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;

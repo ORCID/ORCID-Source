@@ -30,7 +30,7 @@ import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;

@@ -3,12 +3,12 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.record.Activity;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
+import org.orcid.jaxb.model.v3.rc2.record.Activity;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 
 /** Generic pojo for representing groups of activity summaries.

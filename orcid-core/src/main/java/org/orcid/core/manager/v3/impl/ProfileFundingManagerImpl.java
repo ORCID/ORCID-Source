@@ -18,11 +18,11 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -201,7 +201,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         profileFundingEntity.setProfile(profile);
-        setIncomingWorkPrivacy(profileFundingEntity, profile);        
+        setIncomingWorkPrivacy(profileFundingEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);        
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
@@ -210,16 +210,21 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }        
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
+    
+	private void setIncomingWorkPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile) {
+		setIncomingWorkPrivacy(workEntity, profile, true);
+	}
 
-    private void setIncomingWorkPrivacy(ProfileFundingEntity profileFundingEntity, ProfileEntity profile) {
-        String incomingWorkVisibility = profileFundingEntity.getVisibility();
-        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {            
-            profileFundingEntity.setVisibility(defaultWorkVisibility);            
-        } else if (incomingWorkVisibility == null) {
-            profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        }
-    }
+	private void setIncomingWorkPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
+		String incomingWorkVisibility = workEntity.getVisibility();
+		String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+
+		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
+			workEntity.setVisibility(defaultWorkVisibility);
+		} else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
+			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+		}
+	}
     
     
     /**
@@ -250,12 +255,13 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
                                      existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }
-    	}    	
-    	        
+    	}
+    	
         orcidSecurityManager.checkSource(pfe);
-        
-        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
-        pfe.setVisibility(originalVisibility.name());        
+        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);   
+    	if (pfe.getVisibility() == null) {
+    		pfe.setVisibility(originalVisibility.name());  
+    	}
         
         //Be sure it doesn't overwrite the source
         pfe.setSourceId(existingSourceId);

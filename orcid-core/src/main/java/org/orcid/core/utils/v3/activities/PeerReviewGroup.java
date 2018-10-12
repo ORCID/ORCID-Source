@@ -3,7 +3,7 @@ package org.orcid.core.utils.v3.activities;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
 
 public class PeerReviewGroup {
     private Set<PeerReviewGroupKey> groupKeys;

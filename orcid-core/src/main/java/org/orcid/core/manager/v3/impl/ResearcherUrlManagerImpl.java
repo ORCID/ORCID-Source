@@ -17,9 +17,9 @@ import org.orcid.core.manager.v3.read_only.impl.ResearcherUrlManagerReadOnlyImpl
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;

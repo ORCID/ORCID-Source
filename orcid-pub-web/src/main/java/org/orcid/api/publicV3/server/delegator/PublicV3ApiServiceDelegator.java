@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
  */
 public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, INVITED_POSITION, FUNDING, GROUP_ID_RECORD, MEMBERSHIP, OTHER_NAME, PEER_REVIEW, QUALIFICATION, RESEARCHER_URL, SERVICE, WORK> {
 
-    static final String LATEST_V3_VERSION = "3.0_rc1";
+    static final String LATEST_V3_VERSION = "3.0_rc2";
 
     Response viewStatusText();
     
@@ -122,10 +122,10 @@ public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response viewServiceSummary(String orcid, Long putCode);
 
-    Response viewResearchResource(String orcid, Long valueOf);
+    Response viewResearchResource(String orcid, Long putCode);
 
     Response viewResearchResources(String orcid);
 
-    Response viewResearchResourceSummary(String orcid, Long valueOf);
+    Response viewResearchResourceSummary(String orcid, Long putCode);
 
 }

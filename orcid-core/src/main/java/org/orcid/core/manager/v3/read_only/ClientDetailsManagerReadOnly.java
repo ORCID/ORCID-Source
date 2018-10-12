@@ -3,7 +3,7 @@ package org.orcid.core.manager.v3.read_only;
 import java.util.Date;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.jaxb.model.v3.rc2.client.Client;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 

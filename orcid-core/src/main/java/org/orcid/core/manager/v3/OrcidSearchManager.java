@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.v3.rc1.search.Search;
+import org.orcid.jaxb.model.v3.rc2.search.Search;
 
 /**
  * Class to retrieve OrcidMessage objects (with nested Search Results) relating

@@ -11,22 +11,22 @@ import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Address;
-import org.orcid.jaxb.model.v3.rc1.record.Addresses;
-import org.orcid.jaxb.model.v3.rc1.record.Biography;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
-import org.orcid.jaxb.model.v3.rc1.record.Name;
-import org.orcid.jaxb.model.v3.rc1.record.OtherName;
-import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc1.record.Person;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.Addresses;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc2.record.Person;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 

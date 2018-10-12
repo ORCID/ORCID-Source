@@ -216,7 +216,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
             ClientResponse noneResponse1 = webResource1.get(ClientResponse.class);
             WebResource webResource2 = client.resource(noneResponse1.getLocation());
             ClientResponse noneResponse2 = webResource2.get(ClientResponse.class);
-            assertTrue(noneResponse2.getLocation().toString().contains("oauth/playground?error=login_required"));
+            assertTrue(noneResponse2.getLocation().toString().contains("oauth/playground#error=login_required"));
         }catch(Exception e){
             throw e;
         }

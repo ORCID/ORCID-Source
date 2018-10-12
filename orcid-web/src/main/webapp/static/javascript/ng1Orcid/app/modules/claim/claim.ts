@@ -43,7 +43,7 @@ export class ClaimNg2Module {}
 //Must convert as much as possible of our code to directives
 
 ClaimModule.directive(
-    'ClaimNg2', 
+    'claimNg2', 
     <any>downgradeComponent(
         {
             component: ClaimComponent
