@@ -163,7 +163,6 @@ export class AccountService {
     
     revoke( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
-        
         return this.http.post( 
             getBaseUri() + '/account/revokeDelegate.json', 
             encoded_data, 
@@ -174,7 +173,8 @@ export class AccountService {
 
     revokeTrustedOrg(applicationSummary): Observable<any> {
         return this.http.post(
-            getBaseUri() + '/account/revoke-application.json?tokenId='+ applicationSummary.tokenId,
+            getBaseUri() + '/account/revoke-application.json?tokenId='+ applicationSummary.tokenId, 
+            null,
             { headers: this.headers }
         )
         
