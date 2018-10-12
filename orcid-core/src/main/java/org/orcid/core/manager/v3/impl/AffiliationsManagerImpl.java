@@ -300,7 +300,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         entity.setProfile(profile);
-        setIncomingWorkPrivacy(entity, profile);
+        setIncomingWorkPrivacy(entity, profile, isApiRequest);
         entity.setAffiliationType(type.name());
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
         
@@ -473,15 +473,20 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         return result;
     }
 
-    private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile) {
+
+    private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile, boolean isApiRequest) {
         String incomingElementVisibility = orgAffiliationRelationEntity.getVisibility();
         String defaultElementVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);
-        } else if (incomingElementVisibility == null) {
-            orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        }
+		if ((isApiRequest && profile.getClaimed()) || (incomingElementVisibility == null && !isApiRequest)) {
+			orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);
+		} else if (isApiRequest && !profile.getClaimed() && incomingElementVisibility == null) {
+			orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+		}
     }
+    
+	private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity workEntity, ProfileEntity profile) {
+		setIncomingWorkPrivacy( workEntity,  profile, true);
+	}
 
     private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity) {
         Item item = new Item();

@@ -32,7 +32,6 @@ import { CommonService }
     from '../../shared/common.service.ts';
 
 
-
 @Component({
     selector: 'affiliation-form-ng2',
     template:  scriptTmpl("affiliation-form-ng2-template")
@@ -46,12 +45,14 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     disambiguatedAffiliation: any;
     editAffiliation: any;
     addAffType: any;
+    togglzDialogPrivacyOption: boolean;
     
 
     constructor(
         private affiliationService: AffiliationService,
         private commonSrvc: CommonService,
         private modalService: ModalService,
+        private featuresService: FeaturesService
     ) {
  
         this.addingAffiliation = false;
@@ -350,8 +351,20 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                             }
                     }
                 } else {
-                    this.editAffiliation = this.getEmptyAffiliation();
-                    this.editAffiliation.affiliationType.value = this.addAffType;
+                    this.affiliationService.getBlankAffiliation()
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            this.editAffiliation = data
+                            this.editAffiliation.affiliationType.value = this.addAffType;
+                            
+                        },
+                        error => {
+                            console.log('Error getting blankAffiliation', error);
+                        } 
+                    );
                 }
             }
         );
@@ -375,6 +388,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     ngOnInit() {
+        this.togglzDialogPrivacyOption = this.featuresService.isFeatureEnabled('DIALOG_PRIVACY_OPTION')
         if( !this.affiliationService.affiliation ){
             this.addAffType = this.affiliationService.type;     
         } 

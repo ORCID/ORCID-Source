@@ -50,6 +50,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     externalIDNamesToDescriptions: any;
     externalIDTypeCache: any;
     types: any;
+    togglzDialogPrivacyOption: boolean;
 
     constructor( 
         private cdr: ChangeDetectorRef,
@@ -467,6 +468,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        this.togglzDialogPrivacyOption = this.featuresService.isFeatureEnabled('DIALOG_PRIVACY_OPTION')
         this.worksService.getExternalIdTypes('')
         .pipe(    
             takeUntil(this.ngUnsubscribe)
