@@ -8,11 +8,14 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated
+import { CommonNg2Module }
+    from './../common/common.ts';
+
 import { TrustedOrganizationsComponent } 
     from './trustedOrganizations.component.ts';
 
-import { CommonNg2Module }
-    from './../common/common.ts';
+import { TrustedOrganizationsRevokeComponent } 
+    from './trustedOrganizationsRevoke.component.ts';
 
 // This is the Angular 1 part of the module
 export const TrustedOrganizationsModule = angular.module(
@@ -27,10 +30,12 @@ export const TrustedOrganizationsModule = angular.module(
             CommonNg2Module
         ],
         declarations: [ 
-            TrustedOrganizationsComponent
+            TrustedOrganizationsComponent,
+            TrustedOrganizationsRevokeComponent
         ],
         entryComponents: [ 
-            TrustedOrganizationsComponent 
+            TrustedOrganizationsComponent,
+            TrustedOrganizationsRevokeComponent 
         ],
         providers: [
             
@@ -48,4 +53,12 @@ TrustedOrganizationsModule.directive(
             component: TrustedOrganizationsComponent,
         }
     )
+    ).directive(
+    'trustedOrganizationsRevokeNg2',
+    <any>downgradeComponent(
+        {
+            component: TrustedOrganizationsRevokeComponent,
+        }
+    )
 );
+

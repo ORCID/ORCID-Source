@@ -16,13 +16,13 @@
                     <tbody>
                         <tr *ngFor="let applicationSummary of applicationSummaryList">
                             <td class="revokeApplicationName">{{applicationSummary.name}}<br />
-                                <a *ngIf="!applicationSummary.websiteValue" href="{{getApplicationUrlLink(applicationSummary)}}" target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
+                                <a *ngIf="applicationSummary.websiteValue" href="{{getApplicationUrlLink(applicationSummary)}}" target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
                             </td>
                             <td width="35%">{{applicationSummary.approvalDate | date:'yyyy-MM-dd'}}</td>
                             <td width="5%">
                                 <div *ngIf="applicationSummary.scopePaths">
-                                    <span *ngFor="let key of applicationSummary.scopePaths | keys">
-                                    {{key}}
+                                    <span *ngFor="let scope of applicationSummary.scopePaths | keys">
+                                    {{scope.value}}<br>
                                     </span>
                                 </div>
                             </td>

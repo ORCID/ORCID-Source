@@ -15,6 +15,9 @@ import { takeUntil }
 import { AccountService } 
     from '../../shared/account.service.ts'; 
 
+import { ModalService } 
+    from '../../shared/modal.service.ts';
+
 @Component({
     selector: 'trusted-organizations-ng2',
     template:  scriptTmpl("trusted-organizations-ng2-template")
@@ -22,33 +25,23 @@ import { AccountService }
 
 export class TrustedOrganizationsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
 
     applicationSummary: any;
     applicationSummaryList: any;
 
     constructor(
-        private accountService: AccountService
+        private accountService: AccountService,
+        private modalService: ModalService
     ) {
         this.applicationSummary = null;
         this.applicationSummaryList = null;
     }
 
-    closeModal(): void {
-        //$.colorbox.close();
-    };
-
     confirmRevoke(applicationSummary): void {
         this.applicationSummary = applicationSummary;
-        /*$.colorbox({
-            html : $compile($('#confirm-revoke-access-modal').html())(this),
-            transition: 'fade',
-            close: '',
-            onLoad: function() {
-                $('#cboxClose').remove();
-            },
-            onComplete: function() {$.colorbox.resize();},
-            scrolling: true
-        });*/
+        this.accountService.notifyOther({applicationSummary:this.applicationSummary});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalTrustedOrganizationsRevoke'});
     };
 
     getApplications(): void {
@@ -78,25 +71,18 @@ export class TrustedOrganizationsComponent implements AfterViewInit, OnDestroy, 
         return '';
     };
 
-    revokeAccess(): void{
-        this.accountService.revokeTrustedOrg(this.applicationSummary)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.getApplications();
-                this.closeModal(); 
-            },
-            error => {
-                //console.log('error revoking trusted org', error);
-            } 
-        );
-    };
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
-        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        //Fire functions AFTER the view inited. Useful when DOM is required or access children directivesload
+        this.subscription = this.accountService.notifyObservable$.subscribe(
+            (res) => {                
+                if(res.action == 'revoke') {
+                    if(res.successful == true) {
+                        this.getApplications();
+                    }
+                }                
+            }
+        );
     };
 
     ngOnDestroy() {

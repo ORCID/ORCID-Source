@@ -280,24 +280,10 @@
         </div>
     </div>
 </script>   
-<script type="text/ng-template" id="confirm-revoke-access-modal">
-    <div class="lightbox-container confirm-revoke-access-modal">        
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">        
-                <h2><@orcid.msg 'manage.application_access.revoke.confirm_title' /></h2>         
-                <p><@orcid.msg 'manage.application_access.revoke.confirm_copy_1' /></p>             
-                <p><@orcid.msg 'manage.application_access.revoke.confirm_copy_2' /> {{applicationSummary.name}} (<@orcid.msg 'manage.application_access.revoke.access' /><span ng-repeat="(key, value) in applicationSummary.scopePaths">{{$last?value:value + ', '}}</span>)</p>
-            </div>          
-        </div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="pull-right">
-                    <a href="" ng-click="closeModal()"><@orcid.msg 'manage.application_access.revoke.confirm_close' /></a>&nbsp;&nbsp<button class="btn btn-danger" ng-click="revokeAccess()" id="confirmRevokeAppBtn"><@orcid.msg 'manage.application_access.revoke.remove' /></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
+<#include "/includes/ng2_templates/trusted-organizations-revoke-ng2-template.ftl">
+<modalngcomponent elementHeight="250" elementId="modalTrustedOrganizationsRevoke" elementWidth="600">
+    <trusted-organizations-revoke-ng2></trusted-organizations-revoke-ng2>
+</modalngcomponent>
 <script type="text/ng-template" id="confirm-add-delegate-modal">
     <div style="padding: 20px;">
        <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>

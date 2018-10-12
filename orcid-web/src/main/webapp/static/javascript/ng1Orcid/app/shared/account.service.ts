@@ -38,8 +38,8 @@ export class AccountService {
         );
     }
 
-    notifyOther(): void {
-        this.notify.next();
+    notifyOther(data?): void {
+        this.notify.next(data);
     }
 
     addDelegate( obj ): Observable<any> {
