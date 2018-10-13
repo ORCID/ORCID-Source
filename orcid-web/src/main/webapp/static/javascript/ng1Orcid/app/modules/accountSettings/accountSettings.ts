@@ -11,6 +11,12 @@ import { downgradeComponent, UpgradeModule }
 import { AccountSettingsComponent } 
     from './accountSettings.component.ts';
 
+import { AltSigninAccountsComponent } 
+    from './altSigninAccounts.component.ts';
+
+import { AltSigninAccountsRevokeComponent } 
+    from './altSigninAccountsRevoke.component.ts';
+
 import { DelegatesComponent } 
     from './delegates.component.ts';
 
@@ -47,6 +53,8 @@ export const AccountSettingsModule = angular.module(
         ],
         declarations: [ 
             AccountSettingsComponent,
+            AltSigninAccountsComponent,
+            AltSigninAccountsRevokeComponent,
             DelegatesComponent,
             DelegatesAddComponent,
             DelegatesRevokeComponent,
@@ -55,6 +63,8 @@ export const AccountSettingsModule = angular.module(
         ],
         entryComponents: [ 
             AccountSettingsComponent,
+            AltSigninAccountsComponent,
+            AltSigninAccountsRevokeComponent,
             DelegatesComponent,
             DelegatesAddComponent,
             DelegatesRevokeComponent,
@@ -75,6 +85,20 @@ AccountSettingsModule.directive(
     <any>downgradeComponent(
         {
             component: AccountSettingsComponent,
+        }
+    )
+    ).directive(
+    'altSigninAccountsNg2',
+    <any>downgradeComponent(
+        {
+            component: AltSigninAccountsComponent,
+        }
+    )
+    ).directive(
+    'altSigninAccountsRevokeNg2',
+    <any>downgradeComponent(
+        {
+            component: AltSigninAccountsRevokeComponent,
         }
     )
     ).directive(

@@ -94,6 +94,13 @@ export class AccountService {
         
     }
 
+    getSocialAccounts(): Observable<any> {
+        return this.http.get(
+            getBaseUri()+'/account/socialAccounts.json'
+        )
+        
+    }
+
     getTrustedOrgs(): Observable<any> {
         return this.http.get(
             getBaseUri()+'/account/get-trusted-orgs.json'
@@ -142,6 +149,16 @@ export class AccountService {
         let encoded_data = JSON.stringify(obj);
         return this.http.post( 
             getBaseUri() + '/account/revokeDelegate.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+
+    revokeSocialAccount( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        return this.http.post( 
+            getBaseUri() + '/account/revokeSocialAccount.json', 
             encoded_data, 
             { headers: this.headers }
         )
