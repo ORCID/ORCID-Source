@@ -153,19 +153,23 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return client;
     }
 
-    @RequestMapping(value = "/reset-client-secret", method = RequestMethod.POST)
-    public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
+    @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
+    public @ResponseBody boolean resetClientSecret(@RequestBody Client client) {
+        if(client == null || PojoUtil.isEmpty(client.getClientId())) {
+            return false;
+        }
+        
         //Verify this client belongs to the member
-        org.orcid.jaxb.model.v3.rc2.client.Client client = clientManagerReadOnly.get(clientId);
-        if(client == null) {
+        org.orcid.jaxb.model.v3.rc2.client.Client theClient = clientManagerReadOnly.get(client.getClientId().getValue());
+        if(theClient == null) {
             return false;
         }
         
-        if(!client.getGroupProfileId().equals(getCurrentUserOrcid())) {
+        if(!theClient.getGroupProfileId().equals(getCurrentUserOrcid())) {
             return false;
         }
         
-        return clientManager.resetClientSecret(clientId);
+        return clientManager.resetClientSecret(client.getClientId().getValue());
     }    
     
     /**

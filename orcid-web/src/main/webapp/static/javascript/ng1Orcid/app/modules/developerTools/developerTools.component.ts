@@ -42,6 +42,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     googleUri: string = 'https://developers.google.com/oauthplayground';
     swaggerUri: string = orcidVar.pubBaseUri +"/v2.0/";
     selectedRedirectUri: string;
+    showResetClientSecret: boolean;
     
     constructor(
             private commonSrvc: CommonService,
@@ -49,7 +50,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
             private emailService: EmailService,
             private cdr:ChangeDetectorRef
         ) {
-        this.client = {};
+        this.client = {clientId: {errors: [], value: ''}, clientSecret: {errors: [], value: ''}, displayName : {errors: [], value: ''}, website: {errors: [], value: ''}, shortDescription: {errors: [], value: ''}};
         this.showTerms = false;
         this.acceptedTerms = false;
         this.verifyEmailSent = false;
@@ -58,6 +59,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.hideGoogleUri = false;
         this.hideSwaggerUri = false;
         this.selectedRedirectUri = '';
+        this.showResetClientSecret = false;
     }
     
     ngOnDestroy() {
@@ -174,11 +176,26 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         );
     };    
     
-    getClientUrl(website): void {
+    getClientUrl(website): String {
         if(typeof website != undefined && website != null && website.lastIndexOf('http://') === -1 && website.lastIndexOf('https://') === -1) {            
                 return '//' + website;            
         }
         return website;
+    };
+    
+    resetClientSecret(): void {
+        this.developerToolsService.resetClientSecret(this.client)
+        .pipe(    
+                takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.getClient();                 
+            },
+            error => {
+                console.log("error resetClientSecret", error);
+            } 
+        );
     };
     
     //Default init functions provided by Angular Core

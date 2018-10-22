@@ -58,4 +58,12 @@ export class DeveloperToolsService {
             { headers: this.headers }
         )        
     }; 
+    
+    resetClientSecret( obj ): Observable<any> {
+        return this.http.post(
+                this.url + '/reset-client-secret.json', 
+                JSON.stringify(obj),
+                { headers: this.headers, responseType: 'text' }
+        )        
+    }; 
 }
