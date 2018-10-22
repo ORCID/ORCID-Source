@@ -126,6 +126,12 @@ export class AccountService {
         
     }
 
+    searchDelegators( input ): Observable<any> {
+        return this.http.get(
+            getBaseUri()+'/delegators/search-for-data/' + input + '?limit=' + 10
+        )       
+    }
+
     sendDeactivateEmail(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/send-deactivate-account.json', {responseType: 'text'}
