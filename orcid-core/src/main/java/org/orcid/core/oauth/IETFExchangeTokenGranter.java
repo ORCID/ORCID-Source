@@ -261,12 +261,17 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         //Note, redirect_uri is left blank.
         
         //Need to update to add OBO table - token - new client id (sp) - original client id (m) - id_token (decoded as JSON field).
-        //TODO: update OBO table or add OBO to token detail
-        //TODO: when revoking M, also revoke M tokens from this table.
+        //DONE: add it as a extra column in the existing token table.
+        //TODO: when revoking M, also revoke M tokens from this table.        
+        //TODO: add assertion-origin to source element in v3.  How?
+        //It's in every table.  Could link to token instead of source.
         //TODO: update all code that modifies database via API to also look at possible OBO and populate assertion origin.
         //DO we need to both with revoking if tokens only last an hour? - answer is no.
         
-        //TODO: create table with M->SP pairs whitelist.  (or blacklist...)
+        //TODO: create table with M->SP pairs whitelist to check.  I think it will have to be a whitelist! (or blacklist...)
+        //TODO: If whitelist empty, everything allowed.  Otherwise check list.
+        
+        //TODO: feature flag this?  or rely on grant_type (yes for now).
     }
 
 }
