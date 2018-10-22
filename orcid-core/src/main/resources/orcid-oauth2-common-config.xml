@@ -127,10 +127,7 @@
 		<constructor-arg ref="tokenServices" />
 	</bean>	
 	
-	<bean id="ietfExchangeTokenChecker" class="org.orcid.core.oauth.IETFExchangeTokenChecker" />
-	
 	<bean id="ietfExchangeTokenGranter" class="org.orcid.core.oauth.IETFExchangeTokenGranter">		
-		<constructor-arg ref="ietfExchangeTokenChecker" />		
 		<constructor-arg ref="tokenServices" />
 	</bean>	
 </beans>
