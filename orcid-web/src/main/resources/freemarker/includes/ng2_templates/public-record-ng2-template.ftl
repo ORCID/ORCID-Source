@@ -261,7 +261,4 @@
             </div>
         </#if> 
     </#if>
-    <div class="clear-fix" id="public-last-modified">
-        <p class="small italic">${springMacroRequestContext.getMessage("public_profile.labelLastModified")} {{lastModifiedDate}}</p>
-    </div>
 </script>
