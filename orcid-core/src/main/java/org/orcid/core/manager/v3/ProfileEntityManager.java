@@ -55,8 +55,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     boolean deactivateRecord(String orcid);
     
-    boolean reactivateRecord(String orcid, String primaryEmail);
-
     void updateLastModifed(String orcid);
 
     void updateLocale(String orcid, Locale locale);

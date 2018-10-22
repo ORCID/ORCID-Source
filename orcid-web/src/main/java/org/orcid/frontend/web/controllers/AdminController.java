@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -260,9 +259,10 @@ public class AdminController extends BaseController {
                 // Don't do nothing, the email doesn't exists
             }
         }
+
         if (profileDetails.getErrors() == null || profileDetails.getErrors().size() == 0) {
-            profileEntityManager.reactivateRecord(orcid, email);
-            profileDetails.setStatus(getMessage("admin.success"));
+            // Null Reactivation object means the reactivation is done by an admin
+            profileEntityManager.reactivate(orcid, email, null);
         }
         return profileDetails;
     }

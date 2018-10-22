@@ -52,5 +52,14 @@ public interface EmailManager extends EmailManagerReadOnly {
     
     Integer clearEmailsAfterReactivation(String orcid);
     
-    void reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility);
+    /**
+     * Reactivates or creates an email address
+     * @param orcid
+     * @param email
+     * @param emailHash
+     * @param visibility
+     * 
+     * @return true if the email is new or it exists but have not been verified
+     * */
+    boolean reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility);
 }
