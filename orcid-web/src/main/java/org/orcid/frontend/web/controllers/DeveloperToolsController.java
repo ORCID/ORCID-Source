@@ -118,7 +118,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         if (client.getErrors().isEmpty()) {
             org.orcid.jaxb.model.v3.rc2.client.Client clientToCreate = client.toModelObject();
             try {
-                clientToCreate = clientManager.createPublicClient(clientToCreate);
+                if(PojoUtil.isEmpty(client.getClientId())) {
+                    clientToCreate = clientManager.createPublicClient(clientToCreate);
+                }                
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
                 String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
@@ -132,7 +134,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return client;
     }
 
-    @RequestMapping(value = "/update-user-credentials.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/update-client.json", method = RequestMethod.POST)
     public @ResponseBody Client updateClient(@RequestBody Client client) {
         validateClient(client);
 

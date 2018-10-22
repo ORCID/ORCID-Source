@@ -81,13 +81,26 @@
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-3">                
                     <ul class="sso-options pull-right">                                 
-                        <li><a (click)="createCredentials();" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>                                                                                                
+                        <li><a (click)="createOrUpdateCredentials();" class="save" title="<@orcid.msg 'manage.developer_tools.tooltip.save' />"><span class="glyphicon glyphicon-floppy-disk"></span></a></li>                                                                                                
                     </ul>                   
                 </div>  
             </div>              
         </div>
         <div class="slidebox" *ngIf="client.clientId.value.length > 0">
-            <div class="row">
+            <div class="row" *ngIf="showResetClientSecret">
+                <div class="col-md-12 col-xs-12 col-sm-12">
+                    <div class="grey-box">
+                        <h3><@orcid.msg 'manage.developer_tools.edit.reset_key.title' /></h3>               
+                        <p><strong>{{client.clientSecret.value}}</strong></p>       
+                        <p><@orcid.msg 'manage.developer_tools.edit.reset_key.description' /></p>
+                        <div class="btn btn-danger" (click)="resetClientSecret()">
+                            <@orcid.msg 'freemarker.btnReset' />
+                        </div>
+                        <a (click)="showResetClientSecret = false"><@orcid.msg 'freemarker.btncancel' /></a>               
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="!showResetClientSecret">
                 <div class="col-md-12 col-sm-12 col-xs-12">                     
                     <div class="grey-box">
                         <div class="row bottomBuffer">
@@ -110,25 +123,14 @@
                             <div class="col-md-3 col-sm-3 col-xs-12">
                             </div>
                             <div class="col-md-9 col-sm-9 col-xs-12">
-                                <a href="" class="btn btn-primary" (click)="showResetClientSecret = true">
-                                        <@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
+                                <a class="btn btn-primary" (click)="showResetClientSecret = true">
+                                    <@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
                                 </a>
                             </div>
                         </div>                                                       
                     </div>
                 </div>   
-            </div>  
-            <div class="row" *ngIf="showResetClientSecret">
-                <div class="col-md-12 col-xs-12 col-sm-12">
-                    <h3><@orcid.msg 'manage.developer_tools.edit.reset_key.title' /></h3>               
-                    <p><strong>{{client.clientSecret.value}}</strong></p>       
-                    <p><@orcid.msg 'manage.developer_tools.edit.reset_key.description' /></p>
-                    <div class="btn btn-danger" (click)="resetClientSecret()">
-                        <@orcid.msg 'freemarker.btnReset' />
-                    </div>
-                    <a href="" (click)="showResetClientSecret = false"><@orcid.msg 'freemarker.btncancel' /></a>
-                </div>
-            </div>
+            </div>            
         </div>        
     </div>    
     <!-- View client -->
@@ -157,117 +159,116 @@
                     <p>{{client.shortDescription.value}}</p>                                                     
                 </div>                          
             </div>        
-            <div class="row">
-                <!-- Redirect URIS -->
+            <div class="row" *ngIf="expandDetails == false">
                 <div class="col-md-12 col-sm-12 col-xs-12">
-                    <h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>                                                                       
-                    <select [(ngModel)]="selectedRedirectUri" (ngModelChange)="selectedRedirectUri = $event" class="input-xlarge-full input-xlarge">
-                        <option *ngFor="let rUrl of client.redirectUris" [ngValue]="rUrl.value.value" >{{rUrl.value.value}}</option>
-                    </select>                                                       
-                </div>
-            </div>
-            <div class="row">                       
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                    <div class="grey-box">
-                        <!-- Client details-->
-                        <div class="row bottomBuffer">
-                            <div class="col-md-3 col-sm-3 col-xs-12">
-                                <strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong>                                  
-                            </div>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                {{client.clientId.value}}                              
-                            </div>
-                        </div>                    
-                        <div class="row bottomBuffer">
-                            <div class="col-md-3 col-sm-3 col-xs-12">
-                                <strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong>                             
-                            </div>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                {{client.clientSecret.value}}                          
-                            </div>
-                        </div>
-                         <!-- Authorize URl and Token URL -->
-                        <div class="row bottomBuffer" ng-hide="playgroundExample != ''">
-                            <div class="col-md-3 col-sm-3 col-xs-12">
-                                <strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong>                          
-                            </div>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{authorizeUrlBase}}
-                                    </div>
-                                </div>
-                                <div class="row">                                                   
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/><br/>
-                                        <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.response_type'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.response_type.code'/><br/>
-                                        <strong><@orcid.msg 'manage.developer_tools.view.description'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <textarea class="input-xlarge-full authorizeURL" ng-model="authorizeURL" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>
-                                    </div>
-                                </div>                              
-                            </div>
-                        </div>
-                        <div class="row bottomBuffer" ng-hide="playgroundExample != ''">
-                            <div class="col-md-3 col-sm-3 col-xs-12">
-                                <strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong>                              
-                            </div>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                    <strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{tokenURL}}<br />
-                                    <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.response_type'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.example.token.response_type'/><br/>
-                                    <strong><@orcid.msg 'manage.developer_tools.view.description'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.example.token.description'/><br/>
-                                    <@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
-                                    <textarea class="input-xlarge-full authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>                            
-                            </div>
-                        </div>                    
-                        <!-- Openid URL -->
-                        <div class="row bottomBuffer" ng-hide="playgroundExample != ''">
-                            <div class="col-md-3 col-sm-3 col-xs-12">
-                                <strong><@orcid.msg 'manage.developer_tools.view.example.openid'/></strong>                         
-                            </div>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{authorizeUrlBase}}
-                                    </div>
-                                </div>
-                                <div class="row">                                                   
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.openid'/><br/>
-                                        <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.response_type'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.response_type.token'/><br/>
-                                        <strong><@orcid.msg 'manage.developer_tools.view.description'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.openid.description'/> (<a href="<@orcid.msg 'manage.developer_tools.view.example.opendid.url' />" target="openidWiki"><@orcid.msg 'manage.developer_tools.view.example.openid.text' /></a>)
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <textarea class="input-xlarge-full authorizeURL" ng-model="sampleOpenId" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>
-                                    </div>
-                                </div>                              
-                            </div>
-                        </div>                    
-                        <div class="row" ng-hide="playgroundExample == ''">
-                            <div class="col-md-3 col-sm-3 col-xs-12">
-                                <strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong>                              
-                            </div>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                                <a href="{{playgroundExample}}" target="'manage.developer_tools.view.example.google">
-                                    <span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
-                                    <span ng-show="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
-                                </a>
-                                <br/>
-                                <span ng-show="selectedRedirectUri.value.value == googleUri">
-                                    <a href="{{googleExampleLinkOpenID}}" target="'manage.developer_tools.view.example.google">
-                                        <@orcid.msg 'manage.developer_tools.view.example.googleOIDC'/>
-                                    </a>
-                                </span>
-                            </div>
-                        </div>                                              
+                    <div class="tab-container">
+                        <a class="tab" (click)="expandDetails = true"><span class="glyphicon glyphicon-chevron-down"></span><@orcid.msg 'common.details.show_details' /></a>
                     </div>
                 </div>
             </div>
-        </div>              
+            <div *ngIf="expandDetails">
+                <div class="row">
+                    <!-- Redirect URIS -->
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>                                                                       
+                        <select [(ngModel)]="selectedRedirectUri" (ngModelChange)="generateSamples($event)" class="input-xlarge-full input-xlarge">
+                            <option *ngFor="let rUrl of client.redirectUris" [ngValue]="rUrl.value.value" >{{rUrl.value.value}}</option>
+                        </select>                                                       
+                    </div>
+                </div>
+                <div class="row">                       
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="grey-box">
+                            <!-- Client details-->
+                            <div class="row bottomBuffer">
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <strong><@orcid.msg 'manage.developer_tools.view.orcid'/></strong>                                  
+                                </div>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    {{client.clientId.value}}                              
+                                </div>
+                            </div>                    
+                            <div class="row bottomBuffer">
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong>                             
+                                </div>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    {{client.clientSecret.value}}                          
+                                </div>
+                            </div>
+                             <!-- Authorize URL and Token URL -->
+                            <div class="row bottomBuffer">
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong>                          
+                                </div>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{authorizeUrlBase}}
+                                        </div>
+                                    </div>
+                                    <div class="row">                                                   
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate'/><br/>
+                                            <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.response_type'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.response_type.code'/><br/>
+                                            <strong><@orcid.msg 'manage.developer_tools.view.description'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.description'/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <textarea class="input-xlarge-full authorizeURL" [(ngModel)]="authorizeURL" readonly="readonly"></textarea>
+                                        </div>
+                                    </div>                              
+                                </div>
+                            </div>
+                            <div class="row bottomBuffer">
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <strong><@orcid.msg 'manage.developer_tools.view.example.token'/></strong>                              
+                                </div>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{tokenURL}}<br />
+                                        <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.response_type'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.example.token.response_type'/><br/>
+                                        <strong><@orcid.msg 'manage.developer_tools.view.description'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.example.token.description'/><br/>
+                                        <@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
+                                        <textarea class="input-xlarge-full authorizeURL" [(ngModel)]="sampleAuthCurl" readonly="readonly"></textarea>                            
+                                </div>
+                            </div>                    
+                            <!-- Openid URL -->
+                            <div class="row bottomBuffer">
+                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                    <strong><@orcid.msg 'manage.developer_tools.view.example.openid'/></strong>                         
+                                </div>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <strong><@orcid.msg 'manage.developer_tools.view.endpoint'/>&nbsp;</strong>{{authorizeUrlBase}}
+                                        </div>
+                                    </div>
+                                    <div class="row">                                                   
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.scope'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.openid'/><br/>
+                                            <strong><@orcid.msg 'manage.developer_tools.view.available_scopes.authenticate.response_type'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.response_type.token'/><br/>
+                                            <strong><@orcid.msg 'manage.developer_tools.view.description'/></strong>&nbsp;<@orcid.msg 'manage.developer_tools.view.available_scopes.openid.description'/> (<a href="<@orcid.msg 'manage.developer_tools.view.example.opendid.url' />" target="openidWiki"><@orcid.msg 'manage.developer_tools.view.example.openid.text' /></a>)
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <textarea class="input-xlarge-full authorizeURL" [(ngModel)]="sampleOpenId" readonly="readonly"></textarea>
+                                        </div>
+                                    </div>                              
+                                </div>
+                            </div>                                                                 
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="expandDetails == true">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="tab-container">
+                            <a class="tab" (click)="expandDetails = false"><span class="glyphicon glyphicon-chevron-up"></span><@orcid.msg 'common.details.hide_details' /></a>
+                        </div>
+                    </div>
+                </div>            
+            </div>
+        </div>         
     </div>
 </div>
