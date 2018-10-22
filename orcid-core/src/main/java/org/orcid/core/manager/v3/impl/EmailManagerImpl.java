@@ -209,11 +209,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    public void reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility) {
+    public boolean reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility) {
         EmailEntity entity = emailDao.find(emailHash);
         // If email doesn't exists, create it
         if(entity == null) {
             emailDao.addEmail(orcid, email, emailHash, visibility.name(), orcid, null);
+            return true;
         } else {
             if(orcid.equals(entity.getProfile().getId())) {
                 entity.setEmail(email);
@@ -223,9 +224,14 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 entity.setLastModified(new Date());
                 emailDao.merge(entity);  
                 emailDao.flush();
+                if(!entity.getVerified()) {
+                    return true;
+                }
             } else {
                 throw new IllegalArgumentException("Email " + email + " belongs to other record than " + orcid);
             }
         }
+        
+        return false;
     }
 }

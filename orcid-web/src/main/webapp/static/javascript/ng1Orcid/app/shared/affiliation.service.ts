@@ -126,7 +126,7 @@ export class AffiliationService {
         );
     }
     
-    getData(): Observable<any> {
+    getBlankAffiliation(): Observable<any> {
         return this.http.get(
             this.urlAffiliation
         );

@@ -281,7 +281,21 @@
                         <div *ngFor='let error of editFunding.url.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
-                
+
+                <!-- visibility controlls -->
+                <div *ngIf="togglzDialogPrivacyOption" class="control-group visibility-container">
+                            <label>
+                                Set visibility:
+                            </label>
+                            <div class="controlls">
+                                <privacy-toggle-ng2 
+                                [dataPrivacyObj]="editFunding" 
+                                elementId="affiliation-privacy-toggle" 
+                                privacyNodeName="visibility" 
+                                ></privacy-toggle-ng2> 
+                            </div>
+                </div>
+                <!-- END visibility controlls -->
                 <div class="control-group">
                     <div class="control-group" *ngIf="editFunding?.putCode?.value != null">
                         <ul class="inline-list margin-separator pull-left">
