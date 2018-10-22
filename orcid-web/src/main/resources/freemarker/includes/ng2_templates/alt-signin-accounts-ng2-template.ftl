@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="alt-signin-accounts-ng2-template">
     <div class="clearfix" id="SocialCtrl">
-          <div *ngIf="!socialAccounts?.length > 0" ng-cloak>
+          <div *ngIf="!socialAccounts?.length > 0">
               <p><@orcid.msg 'manage.none_added.alternateSigninAccounts'/></p>
           </div>
           <div *ngIf="socialAccounts?.length > 0">
