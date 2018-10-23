@@ -8,7 +8,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-				<fn-form update-fn="addMember()">	
+				<div update-fn="addMember()">	
 				<div class="control-group">
 	    			<label class="relative"><@orcid.msg 'manage_groups.group_name'/></label>
     				<div class="relative">
@@ -53,7 +53,7 @@
 					<button class="btn btn-primary" ng-click="addMember()"><@orcid.msg 'manage_groups.btnadd'/></button>
 					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 				</div>
-				</fn-form>
+				</div>
 			</div>							
 		</div>
 	</div>

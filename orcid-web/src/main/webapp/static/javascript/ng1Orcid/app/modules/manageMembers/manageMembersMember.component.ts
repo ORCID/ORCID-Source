@@ -18,23 +18,16 @@ import {
 } from "@angular/core";
 
 import { Observable, Subject, Subscription } from "rxjs";
-import { ModalService } from "../../shared/modal.service.ts";
-import { FormBuilder } from "@angular/forms";
 
 @Component({
-  selector: "add-member-form-ng2",
-  template: scriptTmpl("add-member-form-ng2-template")
+  selector: "manage-members-member-ng2",
+  template: scriptTmpl("manage-member-member-ng2-template")
 })
-export class AddMemberFormComponent
+export class ManageMembersMemberComponent
   implements AfterViewInit, OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
-  form
 
-  constructor(private modalService: ModalService, private fb: FormBuilder) {
-    this.form = fb.group ({
-      "test":[]
-    })
-  }
+  constructor() {}
 
   //Default init functions provid   ed by Angular Core
   ngAfterViewInit() {

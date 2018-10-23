@@ -10,7 +10,7 @@ import { HttpClientModule }
 import { Component, NgModule } 
     from '@angular/core';
 
-import { FormsModule } 
+import { FormsModule, ReactiveFormsModule } 
     from '@angular/forms';
 
 import { HttpModule, JsonpModule, Request, XSRFStrategy } 
@@ -313,6 +313,7 @@ export class RootCmp {
         BrowserModule,
         CommonModule, 
         FormsModule,
+        ReactiveFormsModule,
         HttpClientModule, //angular5
         HttpModule, //Angular2
         JsonpModule,

@@ -43,7 +43,7 @@ export class ManageMembersComponent
   showModal(work): void {
     this.modalService.notifyOther({
       action: "open",
-      moduleId: "addMemberModal"
+      moduleId: "modalAddMember"
     });
   }
 
