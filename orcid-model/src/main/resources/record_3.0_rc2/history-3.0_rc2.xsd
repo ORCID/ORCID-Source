@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/history" xmlns:history="http://www.orcid.org/ns/history"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2018 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+	
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_3.0_rc2/common-3.0_rc2.xsd" />
+	
+	<xs:element name="history">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The history of the researcher's ORCID record
+				</xs:documentation>
+			</xs:annotation>
+			<xs:sequence>
+				<xs:element name="creation-method" type="history:creation-method"
+					minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>The method used to create the ORCID Record
+							* API method - Institution created the record on behalf of the
+							individual
+							* Direct/website methods - Individual registered directly at
+							orcid.org
+							* Member-referred method - Individual registered as
+							part of the OAuth workflow
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="completion-date" type="history:completion-date"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="submission-date" type="history:submission-date"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element ref="common:last-modified-date"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="claimed" type="history:claimed" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
+				<xs:element name="deactivation-date" type="history:deactivation-date"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="verified-email" type="xs:boolean"
+					minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>True if the user has a verified email
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="verified-primary-email" type="xs:boolean"
+					minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>True if the user's current primary email is verified
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="visibility" type="common:visibility" />
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="completion-date">
+		<xs:annotation>
+			<xs:documentation>Only returned on records with a creation method of API, this date is when the user took control of the record and set a password
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:dateTime" />
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="submission-date">
+		<xs:annotation>
+			<xs:documentation>The date time when the ORCID record was first created.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:dateTime" />
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="claimed">
+		<xs:annotation>
+			<xs:documentation>True for all records created via direct/website or member-referred. 
+			If the record was created via the API this will be set to True when the user takes control of the record and sets a password.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:boolean" />
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="deactivation-date">
+		<xs:annotation>
+			<xs:documentation>The date and time when the ORCID Record was
+				deactivated. (If the account is active, this field will be NULL.)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:dateTime" />
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType mixed="true" name="source-reference">
+		<xs:annotation>
+			<xs:documentation>(UNUSED) The identifier or other reference
+				information for the researcher or contributor in the source client
+				application (Member Organization's) system.
+			</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	
+	<xs:complexType name="source-date">
+		<xs:annotation>
+			<xs:documentation>The date time that the source client application
+				(Member organization system) or individual user created/attempted to
+				create the item.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:dateTime" />
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:simpleType name="creation-method">
+		<xs:annotation>
+			<xs:documentation>Indicates how the ORCID record was created.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:non-empty-string">
+			<xs:enumeration value="API">
+				<xs:annotation>
+					<xs:documentation>The ORCID Record was created using the ORCID Member API.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Direct">
+				<xs:annotation>
+					<xs:documentation>The user registered on the ORCID website.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Member-referred">
+				<xs:annotation>
+					<xs:documentation>The user registered as part of the OAuth process.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="website">
+				<xs:annotation>
+					<xs:documentation>DEPRECATED use Direct instead.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

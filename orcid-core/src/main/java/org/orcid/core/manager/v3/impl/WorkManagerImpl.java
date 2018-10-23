@@ -29,17 +29,17 @@ import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -90,11 +90,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource
     private PIDNormalizationService norm;
     
-    @Value("${org.orcid.core.works.bulk.max:100}")
-    private Long maxBulkSize;
+    private Integer maxWorksToWrite;
     
-    public WorkManagerImpl(@Value("${org.orcid.core.works.bulk.max:100}") Integer bulkReadSize) {
+    public WorkManagerImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize, @Value("${org.orcid.core.works.bulk.write.max:100}") Integer bulkWriteSize) {
         super(bulkReadSize);
+        this.maxWorksToWrite = (bulkWriteSize == null) ? 100 : bulkWriteSize;
     }
     
     /**
@@ -182,7 +182,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         
-        setIncomingWorkPrivacy(workEntity, profile);        
+        setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
@@ -215,9 +215,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 throw new ExceedMaxNumberOfElementsException();
             }
             //Check bulk size
-            if(bulk.size() > maxBulkSize) {
+            if(bulk.size() > maxWorksToWrite) {
                 Locale locale = localeManager.getLocale();                
-                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxBulkSize}, locale));                
+                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxWorksToWrite}, locale));                
             }
                                     
             for(int i = 0; i < bulk.size(); i++) {
@@ -346,7 +346,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
         orcidSecurityManager.checkSource(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
-        workEntity.setVisibility(originalVisibility.name());
+    	if (workEntity.getVisibility() == null) {
+    		workEntity.setVisibility(originalVisibility.name());  
+    	}
         
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
@@ -374,15 +376,20 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return result;
     }
     
-    private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-        String incomingWorkVisibility = workEntity.getVisibility();
-        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            workEntity.setVisibility(defaultWorkVisibility);            
-        } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        }
-    }
+	private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
+		setIncomingWorkPrivacy(workEntity, profile, true);
+	}
+
+	private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
+		String incomingWorkVisibility = workEntity.getVisibility();
+		String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+
+		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
+			workEntity.setVisibility(defaultWorkVisibility);
+		} else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
+			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+		}
+	}
 
     private List<Item> createItemList(WorkEntity workEntity) {
         Item item = new Item();

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/client" xmlns:client="http://www.orcid.org/ns/client"
+	xmlns:common="http://www.orcid.org/ns/common"> 
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="client" uri="http://www.orcid.org/ns/client" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_2.1/common-2.1.xsd" />
+
+	<xs:element name="client">
+		<xs:annotation>
+			<xs:documentation>Email element.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="client:name" minOccurs="1" maxOccurs="1" />
+				<xs:element name="description" type="client:description" minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:simpleType name="name">
+		<xs:annotation>
+			<xs:documentation>The client name</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:string-255">
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="description">
+		<xs:annotation>
+			<xs:documentation>The client description</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>	

@@ -3,9 +3,9 @@ package org.orcid.core.manager.v3;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
 
 
 /**
@@ -52,5 +52,14 @@ public interface EmailManager extends EmailManagerReadOnly {
     
     Integer clearEmailsAfterReactivation(String orcid);
     
-    void reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility);
+    /**
+     * Reactivates or creates an email address
+     * @param orcid
+     * @param email
+     * @param emailHash
+     * @param visibility
+     * 
+     * @return true if the email is new or it exists but have not been verified
+     * */
+    boolean reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility);
 }

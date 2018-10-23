@@ -5,10 +5,10 @@
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <h2 (click)="workspaceSrvc.toggleResearchResource()" class="toggle-text">
+                        <a (click)="workspaceSrvc.toggleResearchResource()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayResearchResource==false}"></i>
                             <@orcid.msg 'manage.research_resources'/> (<span>{{researchResourceService.groups.length}}</span>)
-                        </h2>
+                        </a>
                         <#if !(isPublicProfile??)> 
                         <div class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>

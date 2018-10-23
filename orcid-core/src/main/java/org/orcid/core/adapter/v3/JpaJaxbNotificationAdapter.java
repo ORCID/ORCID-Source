@@ -3,7 +3,7 @@ package org.orcid.core.adapter.v3;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.notification.Notification;
+import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 
 /**

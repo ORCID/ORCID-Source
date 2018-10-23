@@ -20,15 +20,15 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -50,13 +50,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     protected WorkEntityCacheManager workEntityCacheManager;
 
-    private final Integer maxBulkSize;
+    private final Integer maxWorksToRead;
     
     @Resource
     private GroupingSuggestionsCacheManager groupingSuggestionsCacheManager;
     
-    public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.max:100}") Integer bulkSize) {
-        this.maxBulkSize = (bulkSize == null || bulkSize > 100) ? 100 : bulkSize;
+    public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
+        this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
     }
     
     public void setWorkDao(WorkDao workDao) {
@@ -173,7 +173,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public Works groupWorks(List<WorkSummary> works, boolean justPublic) {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {
@@ -211,8 +211,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private String[] getPutCodeArray(String putCodesAsString) {
         String[] putCodeArray = putCodesAsString.split(BULK_PUT_CODES_DELIMITER);
-        if (putCodeArray.length > maxBulkSize) {
-            throw new ExceedMaxNumberOfPutCodesException(maxBulkSize);
+        if (putCodeArray.length > maxWorksToRead) {
+            throw new ExceedMaxNumberOfPutCodesException(maxWorksToRead);
         }
         return putCodeArray;
     }

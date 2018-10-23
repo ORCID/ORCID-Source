@@ -3,14 +3,14 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Organization;
+import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -44,7 +44,7 @@ public class ResearchResourceGroupPojo extends ActivityGroup {
         this.defaultResearchResource = defaultResearchResource;
     }
 
-    public static ResearchResourceGroupPojo valueOf(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup researchResourceGroup, int id, String orcid) {
+    public static ResearchResourceGroupPojo valueOf(org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup researchResourceGroup, int id, String orcid) {
         ResearchResourceGroupPojo group = new ResearchResourceGroupPojo();
         group.setGroupId(id);
         group.setResearchResources(new ArrayList<>());
