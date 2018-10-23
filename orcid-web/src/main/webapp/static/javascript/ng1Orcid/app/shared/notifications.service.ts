@@ -36,7 +36,6 @@ export class NotificationsService {
     maxResults: any;
     notificationAlerts: any;
     notifications: any;
-    
     selectionActive: boolean;
     showArchived: boolean;
     unreadCount: any;
@@ -134,64 +133,15 @@ export class NotificationsService {
         this.reloadNotifications();
     }
 
-    
-
-    getNotifications(): any {
+    getNotifications(): Observable<any> {
+        console.log("get notifications");
         var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + this.firstResult + '&maxResults=' + this.maxResults;             
         if(this.showArchived){
             url += "&includeArchived=true";
         }
-
         return this.http.get(
             url
         )
-        .pipe(
-            tap(
-                (data: any) => {
-                    if(data.length === 0 || data.length < this.maxResults){
-                        this.areMoreFlag = false;
-                    }
-                    else{
-                        this.areMoreFlag = true;
-                    }
-                    for(var i = 0; i < data.length; i++){                       
-                        this.notifications.push( data[i] );
-                    }
-                    this.loading = false;
-                    this.loadingMore = false;
-                    this.resizeIframes();
-                    this.retrieveUnreadCount();                                             
-                }
-            )
-        )
-        ;
-
-        /*
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            success: function(data) {
-                if(data.length === 0 || data.length < this.maxResults){
-                    this.areMoreFlag = false;
-                }
-                else{
-                    this.areMoreFlag = true;
-                }
-                for(var i = 0; i < data.length; i++){                       
-                    this.notifications.push(data[i]);
-                }
-                this.loading = false;
-                this.loadingMore = false;
-                this.resizeIframes();
-                this.retrieveUnreadCount();
-            }
-        }).fail(function(e) {
-            this.loading = false;
-            this.loadingMore = false;
-            // something bad is happening!
-            console.log("error with getting notifications");
-        });
-        */
     }
 
     getNotificationAlerts(): any{
@@ -205,58 +155,29 @@ export class NotificationsService {
                     this.retrieveUnreadCount();                                              
                 }
             )
-        )
-        ;
-        /*
-        $.ajax({
-            url: getBaseUri() + '/inbox/notification-alerts.json',
-            type: 'POST',
-            dataType: 'json',
-            success: function(data) {
-                this.notificationAlerts = data;
-                this.retrieveUnreadCount();
-            }
-        }).fail(function(e) {
-            // something bad is happening!
-            console.log("getNotificationsAlerts error in notificationsSrvc");
-        });
-        */
+        );
     }
 
     retrieveUnreadCount(): any {
         this.retrieveCountCalled = true;
-
         return this.http.get(
             getBaseUri() + '/inbox/unreadCount.json'
         )
         .pipe(
             tap(
                 (data) => {
-                    this.unreadCount = data;                                             
+                    this.unreadCount = data;                                            
                 }
             )
-        )
-        ;
-        /*
-        $.ajax({
-            url: getBaseUri() + '/inbox/unreadCount.json',
-            dataType: 'json',
-            success: function(data) {
-                this.unreadCount = data; 
-            }
-        }).fail(function(e) {
-            // something bad is happening!
-            console.log("error with getting count of unread notifications");
-        });
-        */
+        );
     }
 
-    flagAsRead( obj ): any {
+    flagAsRead( notificationId ): any {
             
-        let encoded_data = JSON.stringify( obj );
+        let encoded_data = JSON.stringify( notificationId );
         
         return this.http.post( 
-            getBaseUri() + '/inbox/' + obj + '/read.json', 
+            getBaseUri() + '/inbox/' + notificationId  + '/read.json', 
             encoded_data, 
             { headers: this.headers }
         )
@@ -273,36 +194,14 @@ export class NotificationsService {
                     this.retrieveUnreadCount();                        
                 }
             )
-        )
-        ;
-        /*
-        $.ajax({
-            url: getBaseUri() + '/inbox/' + notificationId + '/read.json',
-            type: 'POST',
-            dataType: 'json',
-            success: function(data) {
-                var updated = data;
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === updated.putCode){
-                        existing.readDate = updated.readDate;
-                    }
-                }
-                this.retrieveUnreadCount();
-                //$rootScope.$apply();
-            }
-        }).fail(function() {
-            // something bad is happening!
-            console.log("error flagging notification as read");
-        });
-        */
+        );
     }
 
-    archive(obj): any {
-        let encoded_data = JSON.stringify( obj );
+    archive( notificationId ): any {
+        let encoded_data = JSON.stringify( notificationId  );
         
         return this.http.post( 
-            getBaseUri() + '/inbox/' + obj + '/archive.json', 
+            getBaseUri() + '/inbox/' + notificationId  + '/archive.json', 
             encoded_data, 
             { headers: this.headers }
         )
@@ -323,34 +222,7 @@ export class NotificationsService {
                     this.retrieveUnreadCount();                       
                 }
             )
-        )
-        ;
-
-        /*
-        $.ajax({
-            url: getBaseUri() + '/inbox/' + notificationId + '/archive.json',
-            type: 'POST',
-            dataType: 'json',
-            success: function(data) {
-                var updated = data;
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === updated.putCode){
-                        this.notifications.splice(i, 1);
-                        if(this.firstResult > 0){
-                            this.firstResult--;
-                        }
-                        break;
-                    }
-                }
-                this.retrieveUnreadCount();
-                //$rootScope.$apply();
-            }
-        }).fail(function() {
-            // something bad is happening!
-            console.log("error flagging notification as archived");
-        });
-        */
+        );
     }
 
     suppressAlert(notificationId): any {      
@@ -374,30 +246,6 @@ export class NotificationsService {
             )
 
         );
-
-        /*
-        $.ajax({
-            url: getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
-            type: 'POST',
-            dataType: 'json',
-            success: function(data) {
-                for(var i = 0;  i < this.notifications.length; i++){
-                    var existing = this.notifications[i];
-                    if(existing.putCode === notificationId){
-                        this.notifications.splice(i, 1);
-                        if(this.firstResult > 0){
-                            this.firstResult--;
-                        }
-                        break;
-                    }
-                }
-                //$rootScope.$apply();
-            }
-        }).fail(function() {
-            // something bad is happening!
-            console.log("error flagging notification alert as suppressed");
-        });
-        */
     }
 
     bulkArchive(): any {            

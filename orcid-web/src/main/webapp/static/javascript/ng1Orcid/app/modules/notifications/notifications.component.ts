@@ -5,12 +5,12 @@ declare var iframeResize: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit, TemplateRef } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
-import { takeUntil } 
+import { takeUntil, tap } 
     from 'rxjs/operators';
 
 import { NotificationsService } 
@@ -29,7 +29,6 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     areMore: any;
     bulkArchiveMap: any;
     bulkChecked: any;
-    getNotifications: any;
     notifications: any;
     reloadNotifications: any;
     showMore: any;
@@ -44,11 +43,34 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
         this.bulkArchiveMap = this.notificationsSrvc.bulkArchiveMap;
         this.bulkChecked = this.notificationsSrvc.bulkChecked;
         this.displayBody = {};
-        this.getNotifications = this.notificationsSrvc.getNotifications;
         this.notifications = this.notificationsSrvc.notifications;
         this.reloadNotifications = this.notificationsSrvc.reloadNotifications;
         this.showMore = this.notificationsSrvc.showMore;
     
+    }
+
+    getNotifications(): void {
+        this.notificationsSrvc.getNotifications()
+        .pipe(    
+        takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data.length === 0 || data.length < this.notificationsSrvc.maxResults){
+                    this.notificationsSrvc.areMoreFlag = false;
+                }
+                else{
+                    this.notificationsSrvc.areMoreFlag = true;
+                }
+                for(var i = 0; i < data.length; i++){                       
+                    this.notificationsSrvc.notifications.push( data[i] );
+                }
+                this.notificationsSrvc.loading = false;
+                this.notificationsSrvc.loadingMore = false;
+                this.notificationsSrvc.resizeIframes();
+                this.notificationsSrvc.retrieveUnreadCount();                                             
+            }
+        );
     }
 
     toggleDisplayBody(notificationId): void {
@@ -80,6 +102,6 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     };
 
     ngOnInit() {
-        this.notificationsSrvc.getNotifications();
+        this.getNotifications();
     }; 
 }
