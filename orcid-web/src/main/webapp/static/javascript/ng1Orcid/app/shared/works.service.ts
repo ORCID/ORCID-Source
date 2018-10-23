@@ -435,10 +435,18 @@ export class WorksService {
     loadAllWorkGroups(sort, sortAsc, callback?): any {
         this.details = new Object();
         this.groups = new Array();
-        
         let url = getBaseUri() + '/works/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
         this.loading = true;
+        return this.http.get(
+            url
+        )  
+    }
 
+    loadAllPublicWorkGroups(sort, sortAsc): any {
+        this.details = new Object();
+        this.groups = new Array();
+        let url = getBaseUri() + '/' + orcidVar.orcidId + '/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
+        this.loading = true;
         return this.http.get(
             url
         )  

@@ -636,6 +636,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
         return fundingGroups;
     }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/allWorks.json", method = RequestMethod.GET)
+    public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("sort") String sort,
+            @RequestParam("sortAsc") boolean sortAsc) {
+        return worksPaginator.getAllWorks(orcid, true, sort, sortAsc);
+    }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort,

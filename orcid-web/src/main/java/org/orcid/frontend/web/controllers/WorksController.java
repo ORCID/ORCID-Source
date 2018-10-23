@@ -710,7 +710,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
-        return worksPaginator.getAllWorks(orcid, sort, sortAsc);
+        return worksPaginator.getAllWorks(orcid, false, sort, sortAsc);
     }
     
     @RequestMapping(value = "/refreshWorks.json", method = RequestMethod.GET)
