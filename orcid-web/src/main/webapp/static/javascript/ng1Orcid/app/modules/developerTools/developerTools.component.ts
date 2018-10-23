@@ -103,6 +103,16 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
                     this.showForm = false;
                     this.selectedRedirectUri = this.client.redirectUris[0].value.value;
                     this.generateSamples(this.selectedRedirectUri);
+                    // Lets hide the test urls if they are already added
+                    var rUri;
+                    for (var i = 0; i < this.client.redirectUris.length; i++) {
+                        rUri = this.client.redirectUris[i].value.value;
+                        if(rUri == this.googleUri) {
+                            this.hideGoogleUri = true;
+                        } else if(rUri == this.swaggerUri) {
+                            this.hideSwaggerUri = true;
+                        }
+                    }                    
                 }
             },
             error => {
@@ -184,6 +194,8 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
                         this.showForm = true;
                     } else {
                         this.showForm = false;
+                        this.selectedRedirectUri = this.client.redirectUris[0].value.value;
+                        this.generateSamples(this.selectedRedirectUri);
                     }
                 }                    
             },
@@ -206,11 +218,13 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
                         this.showForm = true;
                     } else {
                         this.showForm = false;
+                        this.selectedRedirectUri = this.client.redirectUris[0].value.value;
+                        this.generateSamples(this.selectedRedirectUri);
                     }
                 }                    
             },
             error => {
-                console.log("error createCredentials", error);
+                console.log("error updateCredentials", error);
             } 
         );
     };
