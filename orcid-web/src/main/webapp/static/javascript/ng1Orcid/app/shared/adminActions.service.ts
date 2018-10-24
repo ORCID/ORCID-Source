@@ -28,20 +28,19 @@ export class AdminActionsService {
     }
 
     notifyOther(): void {
-        this.notify.next();
-        console.log('notify');
+        this.notify.next();        
     }
 
     adminSwitchUserValidate( obj ): Observable<any> {
         return this.http.get(
-            getBaseUri() + '/admin-actions/admin-switch-user?orcidOrEmail=' + obj
+            getBaseUri() + '/admin-actions/admin-switch-user?orcidOrEmail=' + encodeURIComponent(obj)
         );        
     };
     
     findIds( obj ): Observable<any> {
         return this.http.post( 
             getBaseUri() + '/admin-actions/find-id.json', 
-            encodeURI(obj), 
+            encodeURIComponent(obj), 
             { headers: this.headers }
         )        
     }
@@ -57,7 +56,7 @@ export class AdminActionsService {
     verifyEmail( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/admin-verify-email.json', 
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers, responseType: 'text' }
         )  
     }
@@ -73,7 +72,7 @@ export class AdminActionsService {
     removeSecurityQuestion( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/remove-security-question.json', 
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers, responseType: 'text' }
         )
     }
@@ -97,7 +96,7 @@ export class AdminActionsService {
     deactivateRecord( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/deactivate-records.json', 
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers }
         )        
     };
@@ -128,7 +127,7 @@ export class AdminActionsService {
     unlockRecords( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/unlock-records.json', 
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers }
         )        
     };
@@ -136,7 +135,7 @@ export class AdminActionsService {
     reviewRecords( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/review-records.json', 
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers }
         )        
     };
@@ -144,7 +143,7 @@ export class AdminActionsService {
     unreviewRecords( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/unreview-records.json', 
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers }
         )        
     };
@@ -152,7 +151,7 @@ export class AdminActionsService {
     lookupIdOrEmails( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/lookup-id-or-emails.json', 
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers, responseType: 'text' }
         )
     };
@@ -160,7 +159,7 @@ export class AdminActionsService {
     resendClaimEmail( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/resend-claim.json', 
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers }
         )
     };
@@ -168,7 +167,7 @@ export class AdminActionsService {
     checkClaimedStatus( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/check-claimed-status.json',
-                encodeURI(obj), 
+                encodeURIComponent(obj), 
                 { headers: this.headers }
         )
     };
