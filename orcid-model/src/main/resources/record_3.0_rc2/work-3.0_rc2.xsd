@@ -149,6 +149,7 @@
 			<xs:enumeration value="online-resource" />
 			<xs:enumeration value="other" />
 			<xs:enumeration value="patent" />
+			<xs:enumeration value="preprint" />
 			<xs:enumeration value="registered-copyright" />
 			<xs:enumeration value="report" />
 			<xs:enumeration value="research-technique" />
