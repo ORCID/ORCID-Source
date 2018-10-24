@@ -270,8 +270,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/find-id.json", method = RequestMethod.POST)
     public @ResponseBody List<ProfileDetails> findIdByEmail(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvEmails)
             throws IllegalAccessException, UnsupportedEncodingException {
-        isAdmin(serverRequest, response);
-        csvEmails = URLDecoder.decode(csvEmails, "UTF-8");        
+        isAdmin(serverRequest, response);              
         Map<String, String> emailMap = findIdByEmailHelper(csvEmails);
         List<ProfileDetails> profileDetList = new ArrayList<ProfileDetails>();
         ProfileDetails tempObj;
@@ -296,8 +295,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST)
     public @ResponseBody String lookupIdOrEmails(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvIdOrEmails)
             throws IllegalAccessException, UnsupportedEncodingException {
-        isAdmin(serverRequest, response);
-        csvIdOrEmails = URLDecoder.decode(csvIdOrEmails, "UTF-8");
+        isAdmin(serverRequest, response);        
         List<String> idEmailList = new ArrayList<String>();
         StringBuilder builder = new StringBuilder();
         if (StringUtils.isNotBlank(csvIdOrEmails)) {
