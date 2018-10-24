@@ -51,6 +51,9 @@ import { OrderByPipe }
 import { OrderObjectByPipe }
     from '../../pipes/orderObjectByNg2.ts'
 
+import { SafeUrlPipe }
+    from '../../pipes/safeUrlNg2.ts';
+
 import { UrlProtocolPipe }
     from '../../pipes/urlProtocolNg2.ts';
 
@@ -209,6 +212,7 @@ import { ResendClaimService }
             OrderByAffiliationsPipe,
             OrderByPipe,
             OrderObjectByPipe,
+            SafeUrlPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
 
@@ -231,6 +235,7 @@ import { ResendClaimService }
             OrderByAffiliationsPipe,
             OrderByPipe,
             OrderObjectByPipe,
+            SafeUrlPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
