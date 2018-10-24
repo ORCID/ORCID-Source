@@ -19,7 +19,7 @@ import {
 
 import { Observable, Subject, Subscription } from "rxjs";
 import { ModalService } from "../../shared/modal.service.ts";
-import { FormBuilder } from "@angular/forms";
+import { ManageMembersService } from "../../shared/manageMembers.service.ts"
 
 @Component({
   selector: "add-member-form-ng2",
@@ -28,12 +28,10 @@ import { FormBuilder } from "@angular/forms";
 export class AddMemberFormComponent
   implements AfterViewInit, OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
-  form
+  memberData
 
-  constructor(private modalService: ModalService, private fb: FormBuilder) {
-    this.form = fb.group ({
-      "test":[]
-    })
+  constructor(private modalService: ModalService, private manageMembers: ManageMembersService) {
+
   }
 
   //Default init functions provid   ed by Angular Core
@@ -46,5 +44,27 @@ export class AddMemberFormComponent
     this.ngUnsubscribe.complete();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.manageMembers.getEmptyMember().subscribe((data)=>{
+      this.memberData = data; 
+      console.log (this.memberData )
+    })
+  }
+
+  sendForm () {
+    this.manageMembers.addMember(this.memberData).subscribe (response=> {
+      this.memberData = response;
+      this.modalService.notifyOther({
+        action: "open",
+        moduleId: "modalAddMemberSuccess"
+      });
+    })
+  }
+
+  closeModal() {
+    this.modalService.notifyOther({
+      action: "close",
+      moduleId: "modalAddMember"
+    });
+  }
 }

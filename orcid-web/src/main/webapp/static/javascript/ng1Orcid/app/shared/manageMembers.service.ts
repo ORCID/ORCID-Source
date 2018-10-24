@@ -50,14 +50,25 @@ export class ManageMembersService {
         let encoded_data = JSON.stringify( obj );
         return this.http.get(
             getBaseUri()+'/manage-members/find-consortium.json?id=' + encoded_data
-        )
-        ;
+        );
+    }
+
+    getEmptyMember() {
+        return this.http.get(
+            getBaseUri()+'/manage-members/member.json'
+        );
+    }
+
+    addMember(data) {
+        return this.http.post(
+            getBaseUri()+'/manage-members/create-member.json', data, 
+            { headers: this.headers }
+        );
     }
 
     notifyOther(): void {
         this.notify.next();
         console.log('notify');
     }
-
 
 }
