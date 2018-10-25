@@ -50,7 +50,8 @@
       </#if>
       <div class="workspace-accordion" id="workspace-accordion">
         <!-- Notification alert -->                       
-        <#include "includes/notification_alert.ftl"/>             
+        <#include "/includes/ng2_templates/notification-alerts-ng2-template.ftl">
+        <notification-alerts-ng2></notification-alerts-ng2>           
         <!-- Biography -->        
         <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active">  
           <div class="workspace-accordion-content">

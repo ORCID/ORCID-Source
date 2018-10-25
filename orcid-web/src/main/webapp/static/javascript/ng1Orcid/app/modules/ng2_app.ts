@@ -116,6 +116,9 @@ import { NameNg2Module }
 import { NotificationsNg2Module }
     from './notifications/notifications.ts';
 
+import { NotificationAlertsNg2Module }
+    from './notificationAlerts/notificationAlerts.ts';
+
 import { PeerReviewNg2Module } 
     from './peerReview/peerReview.ts';
 
@@ -328,6 +331,7 @@ export class RootCmp {
         MyOrcidAlertsNg2Module,
         NameNg2Module, //Approved
         NotificationsNg2Module,
+        NotificationAlertsNg2Module,
         PeerReviewNg2Module,
         PeerReviewDeleteNg2Module,
         PersonNg2Module,

@@ -97,6 +97,9 @@ import { NameModule }
 import { NotificationsModule }
     from './notifications/notifications.ts';
 
+import { NotificationAlertsModule }
+    from './notificationAlerts/notificationAlerts.ts';
+
 import { OauthAuthorizationModule } 
     from './oauthAuthorization/oauthAuthorization.ts';
 
@@ -227,6 +230,8 @@ export const orcidApp = angular.module(
         ModalModule.name,
         MyOrcidAlertsModule.name,
         NameModule.name,
+        NotificationsModule.name,
+        NotificationAlertsModule.name,
         OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
         PeerReviewModule.name,
@@ -235,7 +240,6 @@ export const orcidApp = angular.module(
         PrintRecordModule.name,
         PublicEduAffiliationModule.name,
         PublicRecordModule.name,
-        NotificationsModule.name,
         ReactivationModule.name,
         RegisterDuplicatesModule.name,
         RequestPasswordResetModule.name,

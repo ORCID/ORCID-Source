@@ -134,7 +134,7 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
                 this.loading = false;
                 this.loadingMore = false;
                 this.resizeIframes();
-                this.notificationsSrvc.retrieveUnreadCount();                                             
+                this.retrieveUnreadCount();                                             
             }
         );
     }

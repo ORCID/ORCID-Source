@@ -78,14 +78,6 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/notification-alerts.json'
         )
-        .pipe(
-            tap(
-                (data) => {
-                    this.notificationAlerts = data;
-                    this.retrieveUnreadCount();                                              
-                }
-            )
-        );
     }
 
     retrieveUnreadCount(): any {
@@ -108,22 +100,5 @@ export class NotificationsService {
         return this.http.get(
             getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
         )
-        .pipe(
-            tap(
-                (data) => {
-                    for(var i = 0;  i < this.notifications.length; i++){
-                        var existing = this.notifications[i];
-                        if(existing.putCode === notificationId){
-                            this.notifications.splice(i, 1);
-                            if(this.firstResult > 0){
-                                this.firstResult--;
-                            }
-                            break;
-                        }
-                    }                                            
-                }
-            )
-
-        );
     }
 }
