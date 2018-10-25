@@ -52,6 +52,7 @@
                             <td colspan="5">
                                 <div *ngIf="notification.notificationType=='PERMISSION'">
                                     <#include "/includes/ng2_templates/notification-add-activities-ng2-template.ftl">
+                                    <notification-add-activities-ng2 [notification]="notification"></notification-add-activities-ng2>
                                 </div>
                                 <div *ngIf="notification.notificationType=='AMENDED'">
                                     <#include "/includes/ng2_templates/notification-amended-ng2-template.ftl">
