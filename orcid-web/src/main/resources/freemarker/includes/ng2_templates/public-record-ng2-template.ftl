@@ -1,4 +1,5 @@
-<script type="text/ng-template" id="public-record-ng2-template">                       
+<script type="text/ng-template" id="public-record-ng2-template">    
+<#escape x as x?html>                   
     <#if (locked)?? && !locked>
         <!-- Other Names -->
         <#if (publicGroupedOtherNames)?? && (publicGroupedOtherNames?size != 0)>
@@ -261,4 +262,5 @@
             </div>
         </#if> 
     </#if>
+</#escape>
 </script>
