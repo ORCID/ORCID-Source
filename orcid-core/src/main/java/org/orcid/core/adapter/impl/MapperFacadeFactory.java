@@ -1125,6 +1125,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             return WorkType.OTHER;
         }
         
+        // dissertation-thesis is a new work type supported from 3.0_rc2, for previous versions, it should be downgraded to dissertation
+        if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name().equals(name)) {
+            return WorkType.DISSERTATION;
+        }
+        
         return WorkType.valueOf(name);
     }
     

@@ -25,8 +25,8 @@ public enum WorkType implements Serializable {
     DICTIONARY_ENTRY("dictionary-entry"),
     @XmlEnumValue("disclosure")
     DISCLOSURE("disclosure"),
-    @XmlEnumValue("dissertation")
-    DISSERTATION("dissertation"),
+    @XmlEnumValue("dissertation-thesis")
+    DISSERTATION_THESIS("dissertation-thesis"),
     @XmlEnumValue("edited-book")
     EDITED_BOOK("edited-book"),
     @XmlEnumValue("encyclopedia-entry")
