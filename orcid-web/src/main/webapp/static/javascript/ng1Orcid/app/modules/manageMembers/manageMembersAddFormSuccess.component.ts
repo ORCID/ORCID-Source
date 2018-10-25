@@ -49,7 +49,6 @@ export class ManageMemberAddFormSuccessComponent
     this.modalService.notifyObservable$.subscribe ( (data)=>{
       if (data && data.moduleId === "modalAddMemberSuccess") {
         this.newMember = data.newMember;
-        console.log ("data ", this.newMember)
       }
     })
 

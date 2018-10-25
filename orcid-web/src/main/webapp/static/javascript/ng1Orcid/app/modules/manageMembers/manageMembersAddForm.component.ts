@@ -19,7 +19,7 @@ import {
 
 import { Observable, Subject, Subscription } from "rxjs";
 import { ModalService } from "../../shared/modal.service.ts";
-import { ManageMembersService } from "../../shared/manageMembers.service.ts"
+import { ManageMembersService } from "../../shared/manageMembers.service.ts";
 
 @Component({
   selector: "manage-member-add-form-ng2",
@@ -28,11 +28,12 @@ import { ManageMembersService } from "../../shared/manageMembers.service.ts"
 export class ManageMemberAddFormComponent
   implements AfterViewInit, OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
-  memberData
+  memberData;
 
-  constructor(private modalService: ModalService, private manageMembers: ManageMembersService) {
-
-  }
+  constructor(
+    private modalService: ModalService,
+    private manageMembers: ManageMembersService
+  ) {}
 
   //Default init functions provid   ed by Angular Core
   ngAfterViewInit() {
@@ -45,29 +46,36 @@ export class ManageMemberAddFormComponent
   }
 
   ngOnInit() {
-    this.manageMembers.getEmptyMember().subscribe((data)=>{
-      this.memberData = data; 
-    })
-  }
-
-  sendForm () {
-    this.manageMembers.addMember(this.memberData).subscribe (response=> {
-      this.memberData = response;
-      if (this.memberData.errors.length === 0) {
-        this.modalService.notifyOther({
-          action: "close",
-          moduleId: "modalAddMember"
-        });
-        this.modalService.notifyOther({
-          action: "open",
-          moduleId: "modalAddMemberSuccess",
-          newMember: response
+    this.modalService.notifyObservable$.subscribe(data => {
+      if (data && data.moduleId === "modalAddMember" && !this.memberData) {
+        this.manageMembers.getEmptyMember().subscribe(data => {
+          this.memberData = data;
         });
       }
-    }, 
-    error => {
-      console.log ("Error adding the member ", error)
-    })
+    });
+  }
+
+  sendForm() {
+    this.manageMembers.addMember(this.memberData).subscribe(
+      response => {
+        this.memberData = response;
+        if (this.memberData.errors.length === 0) {
+          this.modalService.notifyOther({
+            action: "close",
+            moduleId: "modalAddMember"
+          });
+          this.modalService.notifyOther({
+            action: "open",
+            moduleId: "modalAddMemberSuccess",
+            newMember: response
+          });
+          this.memberData = null;
+        }
+      },
+      error => {
+        console.log("Error adding the member ", error);
+      }
+    );
   }
 
   closeModal() {
