@@ -33,6 +33,9 @@ import { DashToSpacePipe }
 import { ExternalIdentifierHtmlPipe }
     from '../../pipes/externalIdentifierHtmlNg2.ts';
 
+import { ExtractContentFromBodyPipe }
+    from '../../pipes/extractContentFromBodyNg2.ts';
+
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
 
@@ -50,6 +53,9 @@ import { OrderByPipe }
 
 import { OrderObjectByPipe }
     from '../../pipes/orderObjectByNg2.ts'
+
+import { ReplaceSeparatorWithSpacePipe }
+    from '../../pipes/replaceSeparatorWithSpaceNg2.ts'
 
 import { SafeUrlPipe }
     from '../../pipes/safeUrlNg2.ts';
@@ -209,12 +215,14 @@ import { ResendClaimService }
             ContributorFilterPipe,
             DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
+            ExtractContentFromBodyPipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
             OrderByAffiliationsPipe,
             OrderByPipe,
             OrderObjectByPipe,
+            ReplaceSeparatorWithSpacePipe,
             SafeUrlPipe,
             UriPipe,
             UrlProtocolPipe,
@@ -233,12 +241,14 @@ import { ResendClaimService }
             ContributorFilterPipe,
             DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
+            ExtractContentFromBodyPipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
             OrderByAffiliationsPipe,
             OrderByPipe,
             OrderObjectByPipe,
+            ReplaceSeparatorWithSpacePipe,
             SafeUrlPipe,
             UriPipe,
             UrlProtocolPipe,

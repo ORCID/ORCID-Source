@@ -88,6 +88,7 @@ public class NotificationController extends BaseController {
         notifications = archiveObsoleteNotifications(currentOrcid, notifications);
         addSubjectToNotifications(notifications);
         setOverwrittenSourceName(notifications);
+        addSourceDescription(notifications);
         return notifications;
     }
 
@@ -369,6 +370,21 @@ public class NotificationController extends BaseController {
                 ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
                 if (clientDetails != null) {
                     notification.setSourceDescription(clientDetails.getClientDescription());
+                }
+            }
+        }
+    }
+    
+    private void addSourceDescription(List<Notification> notifications) {
+        for (Notification notification : notifications) {
+            Source source = notification.getSource();
+            if (source != null) {
+                String sourcePath = source.retrieveSourcePath();
+                if (sourcePath != null) {
+                    ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
+                    if (clientDetails != null) {
+                        notification.setSourceDescription(clientDetails.getClientDescription());
+                    }
                 }
             }
         }

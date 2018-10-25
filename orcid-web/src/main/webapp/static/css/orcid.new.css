@@ -6658,6 +6658,10 @@ a#reset-password-toggle-text:hover:active {
     padding-top: 15px
 }
 
+.cancel-left {
+    margin-right: 15px
+}
+
 .cancel-right {
     margin-left: 15px
 }

@@ -50,7 +50,17 @@
                         </tr>
                         <tr *ngIf="displayBody[notification.putCode]">
                             <td colspan="5">
-                                <iframe id="{{notification.putCode}}" [src]="'<@orcid.rootPath '/inbox'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html' | safeUrl" class="notification-iframe" frameborder="0" width="100%" scrolling="no"></iframe>
+                                <div *ngIf="notification.notificationType=='PERMISSION'">
+                                    <#include "/includes/ng2_templates/notification-add-activities-ng2-template.ftl">
+                                </div>
+                                <div *ngIf="notification.notificationType=='AMENDED'">
+                                    <#include "/includes/ng2_templates/notification-amended-ng2-template.ftl">
+                                </div>
+                                <div *ngIf="notification.notificationType=='ADMINISTRATIVE' || notification.notificationType=='CUSTOM' || notification.notificationType=='SERVICE_ANNOUNCEMENT' || notification.notificationType=='TIP'" [innerHTML]="notification.bodyHtml | extractContentFromBody">
+                                </div>
+                                <div *ngIf="notification.notificationType=='INSTITUTIONAL_CONNECTION'">
+                                    <#include "/includes/ng2_templates/notification-institutional-connection-ng2-template.ftl">
+                                </div>
                             </td>
                         </tr>
                     </ng-container>                 
