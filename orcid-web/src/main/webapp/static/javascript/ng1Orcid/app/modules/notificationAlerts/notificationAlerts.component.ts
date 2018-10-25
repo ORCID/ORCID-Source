@@ -22,7 +22,7 @@ import { NotificationsService }
 })
 export class NotificationAlertsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-   
+    
     constructor(
         private notificationsSrvc: NotificationsService
     ) {
@@ -35,10 +35,10 @@ export class NotificationAlertsComponent implements AfterViewInit, OnDestroy, On
         ).subscribe(
             data => {
                 var updated = data;
-                for(var i = 0;  i < this.notificationsSrvc.notifications.length; i++){
-                    var existing = this.notificationsSrvc.notifications[i];
+                for(var i = 0;  i < this.notificationsSrvc.notificationAlerts.length; i++){
+                    var existing = this.notificationsSrvc.notificationAlerts[i];
                     if(existing.putCode === updated['putCode']){
-                        this.notificationsSrvc.notifications.splice(i, 1);
+                        this.notificationsSrvc.notificationAlerts.splice(i, 1);
                         if(this.notificationsSrvc.firstResult > 0){
                             this.notificationsSrvc.firstResult--;
                         }
@@ -82,10 +82,10 @@ export class NotificationAlertsComponent implements AfterViewInit, OnDestroy, On
         )
         .subscribe(
             data => {
-                for(var i = 0;  i < this.notificationsSrvc.notifications.length; i++){
-                    var existing = this.notificationsSrvc.notifications[i];
+                for(var i = 0;  i < this.notificationsSrvc.notificationAlerts.length; i++){
+                    var existing = this.notificationsSrvc.notificationAlerts[i];
                     if(existing.putCode === notificationId){
-                        this.notificationsSrvc.notifications.splice(i, 1);
+                        this.notificationsSrvc.notificationAlerts.splice(i, 1);
                         if(this.notificationsSrvc.firstResult > 0){
                             this.notificationsSrvc.firstResult--;
                         }
