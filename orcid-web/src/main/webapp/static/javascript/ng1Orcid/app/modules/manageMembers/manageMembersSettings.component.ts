@@ -20,10 +20,10 @@ import {
 import { Observable, Subject, Subscription } from "rxjs";
 
 @Component({
-  selector: "manage-members-member-ng2",
-  template: scriptTmpl("manage-member-member-ng2-template")
+  selector: "manage-members-settings-ng2",
+  template: scriptTmpl("manage-member-settings-ng2-template")
 })
-export class ManageMembersMemberComponent
+export class ManageMembersSettingsComponent
   implements AfterViewInit, OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 

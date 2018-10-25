@@ -119,9 +119,10 @@
 
 	<!-- Right menu bar -->
 	<#include "../includes/ng2_templates/manage-member-ng2-template.ftl">
-	<manage-members-ng2 class="col-md-9 col-sm-12 col-xs-12 admin-options"></manage-members-ng2>
+	
 
-	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">	
+	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">
+		<manage-members-ng2></manage-members-ng2>
 		<!-- Add new client group -->
 		<a name="add-client"></a>
 		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>			

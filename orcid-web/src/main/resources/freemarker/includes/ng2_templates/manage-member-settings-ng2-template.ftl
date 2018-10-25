@@ -1,4 +1,4 @@
-<script type="text/ng-template" id="manage-member-member-ng2-template">
+<script type="text/ng-template" id="manage-member-settings-ng2-template">
 	<div *ngIf="consortium != null" ng-cloak>
 		<div class="admin-edit-consortium">
 			<div class="row">

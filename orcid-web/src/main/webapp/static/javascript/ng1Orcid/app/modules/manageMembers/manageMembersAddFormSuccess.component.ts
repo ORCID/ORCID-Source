@@ -22,15 +22,15 @@ import { ModalService } from "../../shared/modal.service.ts";
 import { ManageMembersService } from "../../shared/manageMembers.service.ts"
 
 @Component({
-  selector: "add-member-form-ng2",
-  template: scriptTmpl("add-member-form-ng2-template")
+  selector: "manage-member-add-form-success-ng2",
+  template: scriptTmpl("manage-member-add-form-success-ng2-template")
 })
-export class AddMemberFormComponent
+export class ManageMemberAddFormSuccessComponent
   implements AfterViewInit, OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
-  memberData
+  newMember
 
-  constructor(private modalService: ModalService, private manageMembers: ManageMembersService) {
+  constructor(private modalService: ModalService) {
 
   }
 
@@ -45,26 +45,20 @@ export class AddMemberFormComponent
   }
 
   ngOnInit() {
-    this.manageMembers.getEmptyMember().subscribe((data)=>{
-      this.memberData = data; 
-      console.log (this.memberData )
+    
+    this.modalService.notifyObservable$.subscribe ( (data)=>{
+      if (data && data.moduleId === "modalAddMemberSuccess") {
+        this.newMember = data.newMember;
+        console.log ("data ", this.newMember)
+      }
     })
-  }
 
-  sendForm () {
-    this.manageMembers.addMember(this.memberData).subscribe (response=> {
-      this.memberData = response;
-      this.modalService.notifyOther({
-        action: "open",
-        moduleId: "modalAddMemberSuccess"
-      });
-    })
   }
 
   closeModal() {
     this.modalService.notifyOther({
       action: "close",
-      moduleId: "modalAddMember"
+      moduleId: "modalAddMemberSuccess"
     });
   }
 }

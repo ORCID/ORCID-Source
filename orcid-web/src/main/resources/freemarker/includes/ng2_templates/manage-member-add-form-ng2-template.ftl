@@ -1,4 +1,4 @@
-<script type="text/ng-template" id="add-member-form-ng2-template">
+<script type="text/ng-template" id="manage-member-add-form-ng2-template">
 <!-- Add new client group -->
 	<div class="colorbox-content">
 		<div class="row">
@@ -51,7 +51,7 @@
 					</div>
 					<div class="control-group">
 						<button (click)="sendForm()" class="btn btn-primary"><@orcid.msg 'manage_groups.btnadd'/></button>
-						<a href="" class="cancel-action" (click)="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+						<a class="cancel-action" (click)="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 					</div>
 				</form>
 			</div>							
