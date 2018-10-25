@@ -14,11 +14,11 @@
                 </li>
             </ul>   
         </div>
-        <div *ngIf="notificationsSrvc?.loading == true" class="text-center" id="notificationsSpinner">
+        <div *ngIf="loading == true" class="text-center" id="notificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
         </div>
-        <div  *ngIf="notificationsSrvc?.loading == false && notifications?.length == 0  && !areMore">${springMacroRequestContext.getMessage("notifications.none")}</div>
-        <div  *ngIf="notificationsSrvc?.loading == false && notifications?.length > 0">            
+        <div  *ngIf="loading == false && notificationsSrvc?.notifications?.length == 0  && !areMore">${springMacroRequestContext.getMessage("notifications.none")}</div>
+        <div *ngIf="loading == false && notificationsSrvc?.notifications?.length > 0">            
             <table class="table table-responsive table-condensed notifications">
                 <thead>                 
                     <tr>                        
@@ -32,7 +32,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container *ngFor="let notification of notifications"> 
+                    <ng-container *ngFor="let notification of notificationsSrvc?.notifications"> 
                         <tr [ngClass]="{unread: !notification.readDate, archived: notification.archivedDate}">                       
                             <td (click)="toggleDisplayBody(notification.putCode)">
                                 <i class="glyphicon-chevron-down glyphicon x0" [ngClass]="{'glyphicon-chevron-right':!displayBody[notification.putCode]}"></i>
@@ -57,13 +57,13 @@
                 </tbody>
             </table>
         </div>
-        <div *ngIf="!(notificationsSrvc?.loading == false && notifications?.length > 0)">
+        <div *ngIf="!(loading == false && notificationsSrvc?.notifications?.length > 0)">
             <br/><br/>
         </div>   
         <div >
-            <button *ngIf="areMore && notificationsSrvc?.loadingMore == false" (click)="showMore()" class="btn btn-primary" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
+            <button *ngIf="areMore && loadingMore == false" (click)="showMore()" class="btn btn-primary" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
         </div>
-        <div  *ngIf="notificationsSrvc?.loadingMore == true" id="moreNotificationsSpinner">
+        <div  *ngIf="loadingMore == true" id="moreNotificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
         </div>
     </div>

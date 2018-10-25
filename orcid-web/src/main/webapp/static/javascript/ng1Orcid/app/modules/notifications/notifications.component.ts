@@ -30,7 +30,6 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     displayBody: any;
     loading: boolean;
     loadingMore: boolean;
-    notifications: any;
     selectionActive: boolean;
 
     constructor(
@@ -42,8 +41,7 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
         this.bulkChecked = false;
         this.displayBody = {};
         this.loading = true;
-        this.loadingMore = false;
-        this.notifications = this.notificationsSrvc.notifications;   
+        this.loadingMore = false;  
         this.selectionActive = false;
     }
 
@@ -134,7 +132,7 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
                 this.loading = false;
                 this.loadingMore = false;
                 this.resizeIframes();
-                this.retrieveUnreadCount();                                             
+                this.retrieveUnreadCount();                                      
             }
         );
     }
