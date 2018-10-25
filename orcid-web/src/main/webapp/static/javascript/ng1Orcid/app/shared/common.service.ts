@@ -262,4 +262,10 @@ export class CommonService {
                 {responseType: 'text'}
         );         
     };
+    
+    getUserStatus(): Observable<any> {        
+       return this.http.get(
+           getBaseUri() + '/userStatus.json'
+       );         
+    }; 
 }
