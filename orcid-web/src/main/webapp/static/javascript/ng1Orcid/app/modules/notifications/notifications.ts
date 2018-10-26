@@ -11,8 +11,8 @@ import { downgradeComponent, UpgradeModule }
 import { NotificationsComponent } 
     from './notifications.component.ts';
 
-import { NotificationAddActivitiesComponent } 
-    from './notificationAddActivities.component.ts';
+import { NotificationBodyComponent } 
+    from './notificationBody.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';
@@ -31,11 +31,11 @@ export const NotificationsModule = angular.module(
         ],
         declarations: [ 
             NotificationsComponent,
-            NotificationAddActivitiesComponent
+            NotificationBodyComponent
         ],
         entryComponents: [ 
             NotificationsComponent,
-            NotificationAddActivitiesComponent
+            NotificationBodyComponent
         ],
         providers: [
             
@@ -54,10 +54,10 @@ NotificationsModule.directive(
         }
     )
     ).directive(
-    'notificationAddActivitiesNg2',
+    'notificationBodyNg2',
     <any>downgradeComponent(
         {
-            component: NotificationAddActivitiesComponent,
+            component: NotificationBodyComponent,
         }
     )
 );

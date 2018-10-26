@@ -22,7 +22,6 @@ export class NotificationsService {
 
     public retrieveCountCalled: boolean;
 
-    
     notifyObservable$ = this.notify.asObservable();
 
     defaultMaxResults: number;
@@ -60,8 +59,13 @@ export class NotificationsService {
         )
     }
 
-    getUnreadCount(): any {
-        return this.unreadCount;
+    flagAsRead( notificationId ): any {   
+        let encoded_data = JSON.stringify( notificationId );
+        return this.http.post( 
+            getBaseUri() + '/inbox/' + notificationId  + '/read.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
     }
 
     getNotifications(): Observable<any> {
@@ -80,19 +84,14 @@ export class NotificationsService {
         )
     }
 
+    getUnreadCount(): any {
+        return this.unreadCount;
+    }
+
     retrieveUnreadCount(): any {
         this.retrieveCountCalled = true;
         return this.http.get(
             getBaseUri() + '/inbox/unreadCount.json'
-        )
-    }
-
-    flagAsRead( notificationId ): any {   
-        let encoded_data = JSON.stringify( notificationId );
-        return this.http.post( 
-            getBaseUri() + '/inbox/' + notificationId  + '/read.json', 
-            encoded_data, 
-            { headers: this.headers }
         )
     }
 

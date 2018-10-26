@@ -50,18 +50,7 @@
                         </tr>
                         <tr *ngIf="displayBody[notification.putCode]">
                             <td colspan="5">
-                                <div *ngIf="notification.notificationType=='PERMISSION'">
-                                    <#include "/includes/ng2_templates/notification-add-activities-ng2-template.ftl">
-                                    <notification-add-activities-ng2 [notification]="notification"></notification-add-activities-ng2>
-                                </div>
-                                <div *ngIf="notification.notificationType=='AMENDED'">
-                                    <#include "/includes/ng2_templates/notification-amended-ng2-template.ftl">
-                                </div>
-                                <div *ngIf="notification.notificationType=='ADMINISTRATIVE' || notification.notificationType=='CUSTOM' || notification.notificationType=='SERVICE_ANNOUNCEMENT' || notification.notificationType=='TIP'" [innerHTML]="notification.bodyHtml | extractContentFromBody">
-                                </div>
-                                <div *ngIf="notification.notificationType=='INSTITUTIONAL_CONNECTION'">
-                                    <#include "/includes/ng2_templates/notification-institutional-connection-ng2-template.ftl">
-                                </div>
+                                <notification-body-ng2 [notification]="notification"></notification-body-ng2>
                             </td>
                         </tr>
                     </ng-container>                 

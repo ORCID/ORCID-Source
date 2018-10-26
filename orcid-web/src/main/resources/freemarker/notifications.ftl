@@ -5,6 +5,7 @@
         <#include "admin_menu.ftl"/>
     </div>
     <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
+    <#include "/includes/ng2_templates/notification-body-ng2-template.ftl">
     <notifications-ng2></notifications-ng2>
 </div>
 

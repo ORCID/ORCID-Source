@@ -5363,6 +5363,29 @@ ul.oauth-icons li {
     vertical-align: top
 }
 
+.notification .workspace-accordion-header{
+    color: #FFF;
+    font-weight: bold;
+    padding: 5px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+        
+.notification .notifications-inner{
+    padding: 5px 15px;          
+}       
+        
+.notification .glyphicons{
+    top: -10px;
+    padding-left: 21px;
+    
+}
+
+.notification .glyphicons:before{
+    color: #FFF;
+    font: 16px/1em 'Glyphicons Regular'
+}
+
 .notification-top-bar {
     display: block;
     height: 40px;

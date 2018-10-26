@@ -14,7 +14,6 @@ export class ReplaceSeparatorWithSpacePipe implements PipeTransform {
     }
 
     transform(str: string): string {
-        console.log(str);
         return this.commonService.replaceSeparatorWithSpace(str);
     }
 }
