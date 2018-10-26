@@ -76,7 +76,10 @@ public class WorkManagerTest extends BaseTest {
     
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
-    
+
+    @Resource(name = "orcidSecurityManagerV3")
+    private OrcidSecurityManager orcidSecurityManager;
+
     @Resource
     private WorkDao workDao;
     
@@ -93,6 +96,7 @@ public class WorkManagerTest extends BaseTest {
 
     @Before
     public void before() {
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManager", groupingSuggestionManager);
         TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManagerReadOnly", groupingSuggestionManagerReadOnly);

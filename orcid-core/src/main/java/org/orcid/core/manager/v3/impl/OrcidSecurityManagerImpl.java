@@ -224,7 +224,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         //String sourceIdOfUpdater = sourceManager.retrieveActiveSourceId();
         //if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
         Source activeSource = sourceManager.retrieveActiveSource();
-        if (SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity)) {
+        if (!SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
             throw new WrongSourceException(params);

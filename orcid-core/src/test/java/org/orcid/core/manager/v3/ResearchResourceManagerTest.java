@@ -59,6 +59,9 @@ public class ResearchResourceManagerTest extends BaseTest {
     
     @Resource(name = "researchResourceManagerV3")
     private ResearchResourceManager researchResourceManager;
+    
+    @Resource(name = "orcidSecurityManagerV3")
+    private OrcidSecurityManager orcidSecurityManager;
 
     @Resource(name = "researchResourceManagerReadOnlyV3")
     private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
@@ -73,6 +76,7 @@ public class ResearchResourceManagerTest extends BaseTest {
 
     @Before
     public void before() {
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(researchResourceManager, "sourceManager", sourceManager);
     }
     

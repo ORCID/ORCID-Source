@@ -287,6 +287,8 @@ public class GroupIdRecordManagerTest extends BaseTest  {
             assertNotNull(g1);
             assertEquals("orcid-generated:other-valid-group-id", g1.getGroupId());
         } catch(Exception e) {
+            if (AssertionError.class.isAssignableFrom(e.getClass()))
+                throw e;
             fail();
         }
         
