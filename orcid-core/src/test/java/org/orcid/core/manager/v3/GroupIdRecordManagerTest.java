@@ -48,7 +48,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
     @Before
     public void before() {
         TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "sourceManager", sourceManager); 
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID)));
+        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID)));
     }
     
     @BeforeClass

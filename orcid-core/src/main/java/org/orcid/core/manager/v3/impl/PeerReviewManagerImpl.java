@@ -20,6 +20,7 @@ import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
@@ -63,22 +64,22 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         
     @Override    
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
 
         // If request comes from the API, perform the validations
         if (isApiRequest) {
             // Validate it have at least one ext id
-            activityValidator.validatePeerReview(peerReview, sourceEntity, true, isApiRequest, null);
+            activityValidator.validatePeerReview(peerReview, activeSource, true, isApiRequest, null);
 
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid, getLastModified(orcid));
             // If it is the user adding the peer review, allow him to add
             // duplicates
-            if (!SourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
+            if (!(activeSource.getSourceOrcid() != null && activeSource.getSourceOrcid().getPath().equals(orcid))) {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
                         activityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
-                                sourceEntity);
+                                activeSource);
                     }
                 }
             }else{
@@ -98,12 +99,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         entity.setOrg(updatedOrganization);
         
         //Set the source
-        if(sourceEntity.getSourceProfile() != null) {
-            entity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-        if(sourceEntity.getSourceClient() != null) {
-            entity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        } 
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);      
         entity.setProfile(profile);        
@@ -119,22 +115,21 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
         Visibility originalVisibility = Visibility.valueOf(existingEntity.getVisibility());
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         
         //Save the original source
-        String existingSourceId = existingEntity.getSourceId();
-        String existingClientSourceId = existingEntity.getClientSourceId();
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(existingEntity);
         
         // If request comes from the API perform validations
         if (isApiRequest) {
-            activityValidator.validatePeerReview(peerReview, sourceEntity, false, isApiRequest, originalVisibility);
+            activityValidator.validatePeerReview(peerReview, activeSource, false, isApiRequest, originalVisibility);
             validateGroupId(peerReview);
             List<PeerReview> existingReviews = this.findPeerReviews(orcid);
             for (PeerReview existing : existingReviews) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(peerReview.getPutCode())) {
                     activityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
-                            sourceManager.retrieveSourceEntity());
+                            activeSource);
                 }
             }
         }else{
@@ -144,15 +139,14 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
         PeerReviewEntity updatedEntity = new PeerReviewEntity();        
         
-        orcidSecurityManager.checkSource(existingEntity);        
+        orcidSecurityManager.checkSourceAndThrow(existingEntity);        
         
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, updatedEntity);
         updatedEntity.setProfile(new ProfileEntity(orcid));
         updatedEntity.setVisibility(originalVisibility.name());
         
         //Be sure it doesn't overwrite the source
-        updatedEntity.setSourceId(existingSourceId);
-        updatedEntity.setClientSourceId(existingClientSourceId);
+        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
         
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         updatedEntity.setOrg(updatedOrganization);
@@ -165,7 +159,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     @Override
     public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
-        orcidSecurityManager.checkSource(pr);
+        orcidSecurityManager.checkSourceAndThrow(pr);
         boolean result = deletePeerReview(pr, orcid);
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr));
         return result;

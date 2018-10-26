@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
 import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Title;
 import org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
@@ -127,26 +128,26 @@ public class ResearchResourceManagerTest extends BaseTest {
     
     @Test(expected = InvalidDisambiguatedOrgException.class)
     public void testCreateWithoutDisambiguatedOrg(){
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         researchResourceManager.createResearchResource(USER_ORCID, generateResearchResourceWithoutDisambiguatedOrg("title1","id1"), true);
     }
 
     @Test
     public void testCreateWithoutDisambiguatedOrg2(){
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         researchResourceManager.createResearchResource(USER_ORCID, generateResearchResourceWithoutDisambiguatedOrg("title1","id2"), false);
     }
 
     @Test(expected = ActivityIdentifierValidationException.class)
     public void testCreateWithoutExternalIdentifiers(){
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         researchResourceManager.createResearchResource(USER_ORCID, generateResearchResourceWithoutExternalID("title1","id2"), false);
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void testCreate(){
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         ResearchResource rr1 = researchResourceManager.createResearchResource(USER_ORCID, generateResearchResource("title2","id2"), true);
         assertNotNull(rr1.getCreatedDate());
         assertNotNull(rr1.getLastModifiedDate());
@@ -186,7 +187,7 @@ public class ResearchResourceManagerTest extends BaseTest {
     
     @Test
     public void testUpdate(){
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         ResearchResource r1 = researchResourceManager.createResearchResource(USER_ORCID,generateResearchResourceWithItems("title5","id5"),true);
         ResearchResource r2 = generateResearchResourceWithItems("title5","id5");
         r2.setPutCode(r1.getPutCode());
@@ -233,7 +234,7 @@ public class ResearchResourceManagerTest extends BaseTest {
 
     @Test(expected = javax.persistence.NoResultException.class)
     public void testDelete(){
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         ResearchResource rr1 = researchResourceManager.createResearchResource(USER_ORCID, generateResearchResource("title6","id6"), true);
         researchResourceManager.checkSourceAndRemoveResearchResource(USER_ORCID, rr1.getPutCode());
         ResearchResource rr2 = researchResourceManager.getResearchResource(USER_ORCID, rr1.getPutCode());
@@ -241,7 +242,7 @@ public class ResearchResourceManagerTest extends BaseTest {
     
     @Test
     public void testUpdateOrgDoesntUpdateOthers(){
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         ResearchResource r1 = researchResourceManager.createResearchResource(USER_ORCID,generateResearchResourceWithItems("title6","id6"),true);
         ResearchResource r2 = researchResourceManager.createResearchResource(USER_ORCID,generateResearchResourceWithItems("title7","id7"),true);
         

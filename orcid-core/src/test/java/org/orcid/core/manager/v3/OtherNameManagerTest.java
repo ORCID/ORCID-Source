@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
@@ -60,7 +61,7 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void testAddOtherNameToUnclaimedRecordPreserveOtherNameVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         OtherName otherName = getOtherName();
         
         otherName = otherNameManager.createOtherName(unclaimedOrcid, otherName, true);
@@ -72,7 +73,7 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void testAddOtherNameToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         OtherName otherName = getOtherName();
         
         otherName = otherNameManager.createOtherName(claimedOrcid, otherName, true);
@@ -84,7 +85,7 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromUI");
         
@@ -97,7 +98,7 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromAPI");
         

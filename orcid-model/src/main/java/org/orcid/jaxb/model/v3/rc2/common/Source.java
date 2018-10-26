@@ -191,6 +191,7 @@ public class Source implements Serializable {
         return result;
     }
 
+    //TODO: consider empty subclasses == null subclasses...
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -223,4 +224,9 @@ public class Source implements Serializable {
         return true;
     }
 
+    public static Source forClient(String clientId) {
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(clientId));
+        return s;
+    }
 }

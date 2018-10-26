@@ -76,7 +76,7 @@ public class EmailManagerTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(emailManager, "sourceManager", mockSourceManager);
         SourceEntity source = new SourceEntity();
         source.setSourceProfile(new ProfileEntity(ORCID));
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(source);
+        when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(source);
     }
     
     @BeforeClass

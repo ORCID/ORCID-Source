@@ -30,6 +30,7 @@ import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Title;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
@@ -106,7 +107,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testAddWorkToUnclaimedRecordPreserveWorkVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         Work work = getWork(null);
         
         work = workManager.createWork(unclaimedOrcid, work, true);        
@@ -119,7 +120,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testAddWorkToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         Work work = getWork(null);
         
         work = workManager.createWork(claimedOrcid, work, true);        
@@ -132,7 +133,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testAddMultipleModifiesIndexingStatus() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Work w1 = getWork("extId1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         
@@ -159,7 +160,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
@@ -170,7 +171,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
@@ -182,7 +183,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWork() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         Work work = new Work();
         WorkTitle title1 = new WorkTitle();
@@ -205,7 +206,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testUpdateWork() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         Work work = new Work();
         WorkTitle title1 = new WorkTitle();
@@ -235,7 +236,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorksWithBulk_OneSelfOnePartOf_NoDupError() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -291,7 +292,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorkWithBulk_TwoSelf_DupError() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -346,7 +347,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorkWithBulk_TwoSelf_DupError_CaseSensitive() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -402,7 +403,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorksWithBulkAllOK() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         WorkBulk bulk = new WorkBulk();
         for(int i = 0; i < 5; i++) {
@@ -450,7 +451,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWorksWithBulkSomeOKSomeErrors() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
         
         //Lets send a bulk of 6 works
         WorkBulk bulk = new WorkBulk();
@@ -546,7 +547,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWorksWithBulkAllErrors() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         //Set up data: 
         //Create one work with a DOI doi-1 so we can create a duplicate

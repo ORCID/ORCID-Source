@@ -612,8 +612,8 @@ public class ActivityValidatorTest {
     
     @Test(expected = InvalidPutCodeException.class)
     public void validatePeerReview_invalidPutCodeTest() {   
-        SourceEntity source = mock(SourceEntity.class);
-        when(source.getCachedSourceName()).thenReturn("source name");
+        Source source = mock(Source.class);
+        when(source.getSourceName()).thenReturn(new SourceName("Source name"));
         PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.setPutCode(1L);
         activityValidator.validatePeerReview(pr, source, true, true, Visibility.PUBLIC);
@@ -749,9 +749,9 @@ public class ActivityValidatorTest {
     @SuppressWarnings("deprecation")
     @Test
     public void validateDuplicatedExtIds_noDuplicatesTest() {                
-        SourceEntity source1 = mock(SourceEntity.class);
-        when(source1.getCachedSourceName()).thenReturn("source name");
-        when(source1.getCachedSourceId()).thenReturn("APP-00000000000000");
+        Source source1 = mock(Source.class);
+        when(source1.getSourceName()).thenReturn(new SourceName("source name"));
+        when(source1.getSourceClientId()).thenReturn(new SourceClientId("APP-00000000000000"));
         
         SourceOrcid sourceOrcid = new SourceOrcid();
         sourceOrcid.setPath("0000-0000-0000-0000");
@@ -764,18 +764,17 @@ public class ActivityValidatorTest {
         activityValidator.checkExternalIdentifiersForDuplicates(extIds1, extIds2, source2, source1);
     }
     
-    @SuppressWarnings("deprecation")
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void validateDuplicatedExtIds_duplicatesFoundTest() {
-        SourceEntity source1 = mock(SourceEntity.class);
-        when(source1.getCachedSourceName()).thenReturn("source name");
-        when(source1.getCachedSourceId()).thenReturn("APP-00000000000000");
+        Source source1 = new Source();
+        source1.setSourceName(new SourceName("source name"));
+        source1.setSourceClientId(new SourceClientId("APP-00000000000000"));
         
         SourceClientId sourceClientId = new SourceClientId();
         sourceClientId.setPath("APP-00000000000000");
-        Source source2 = mock(Source.class);
-        when(source2.getSourceName()).thenReturn(new SourceName("source name"));
-        when(source2.getSourceClientId()).thenReturn(sourceClientId);
+        Source source2 = new Source();
+        source2.setSourceName(new SourceName("source name"));
+        source2.setSourceClientId(sourceClientId);
         ExternalIDs extIds1 = getExternalIDs();
         
         ExternalIDs extIds2 = getExternalIDs();
@@ -850,15 +849,15 @@ public class ActivityValidatorTest {
         ExternalIDs ids2 = new ExternalIDs();
         ids2.getExternalIdentifier().add(id2);
         
-        SourceEntity source1 = mock(SourceEntity.class);
-        when(source1.getCachedSourceName()).thenReturn("source name");
-        when(source1.getCachedSourceId()).thenReturn("APP-00000000000000");
+        Source source1 = new Source();
+        source1.setSourceName(new SourceName("source name"));
+        source1.setSourceClientId(new SourceClientId("APP-00000000000000"));
         
+        Source source2 = new Source();
+        source2.setSourceName(new SourceName("source name"));
         SourceClientId sourceClientId = new SourceClientId();
         sourceClientId.setPath("APP-00000000000000");
-        Source source2 = mock(Source.class);
-        when(source2.getSourceName()).thenReturn(new SourceName("source name"));
-        when(source2.getSourceClientId()).thenReturn(sourceClientId);
+        source2.setSourceClientId(sourceClientId);
         activityValidator.checkExternalIdentifiersForDuplicates(ids1, ids2, source2, source1);
     }
 }

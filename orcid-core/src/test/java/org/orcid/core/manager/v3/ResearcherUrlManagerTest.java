@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
@@ -61,7 +62,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Test
     public void testAddResearcherUrlToUnclaimedRecordPreserveResearcherUrlVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         ResearcherUrl rUrl = getResearcherUrl();
         
         rUrl = researcherUrlManager.createResearcherUrl(unclaimedOrcid, rUrl, true);
@@ -73,7 +74,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Test
     public void testAddResearcherUrToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         ResearcherUrl rUrl = getResearcherUrl();
         
         rUrl = researcherUrlManager.createResearcherUrl(claimedOrcid, rUrl, true);
@@ -85,7 +86,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         ResearcherUrl rUrl = getResearcherUrl();
         rUrl.getUrl().setValue(rUrl.getUrl().getValue() + "/fromUI");
         
@@ -98,7 +99,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         ResearcherUrl rUrl = getResearcherUrl();
         rUrl.getUrl().setValue(rUrl.getUrl().getValue() + "/fromAPI");
         

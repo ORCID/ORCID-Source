@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
 import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
@@ -86,7 +87,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddDistinctionToUnclaimedRecordPreserveDistinctionVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Distinction element = getDistinction();
         element = affiliationsManager.createDistinctionAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getDistinctionAffiliation(unclaimedOrcid, element.getPutCode());
@@ -97,7 +98,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEducationToUnclaimedRecordPreserveEducationVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Education element = getEducation();
         element = affiliationsManager.createEducationAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getEducationAffiliation(unclaimedOrcid, element.getPutCode());
@@ -108,7 +109,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEmploymentToUnclaimedRecordPreserveEmploymentVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         
         Employment element = getEmployment();
         element = affiliationsManager.createEmploymentAffiliation(unclaimedOrcid, element, true);
@@ -120,7 +121,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddInvitedPositionToUnclaimedRecordPreserveInvitedPositionVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         InvitedPosition element = getInvitedPosition();
         element = affiliationsManager.createInvitedPositionAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getInvitedPositionAffiliation(unclaimedOrcid, element.getPutCode());
@@ -131,7 +132,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddMembershipToUnclaimedRecordPreserveMembershipVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Membership element = getMembership();
         element = affiliationsManager.createMembershipAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getMembershipAffiliation(unclaimedOrcid, element.getPutCode());
@@ -142,7 +143,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddQualificationToUnclaimedRecordPreserveQualificationVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Qualification element = getQualification();
         element = affiliationsManager.createQualificationAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getQualificationAffiliation(unclaimedOrcid, element.getPutCode());
@@ -153,7 +154,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddServiceToUnclaimedRecordPreserveServiceVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Service element = getService();
         element = affiliationsManager.createServiceAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getServiceAffiliation(unclaimedOrcid, element.getPutCode());
@@ -164,7 +165,8 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddDistinctionToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID)); 
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Distinction element = getDistinction();
         element = affiliationsManager.createDistinctionAffiliation(claimedOrcid, element, true);
         element = affiliationsManager.getDistinctionAffiliation(claimedOrcid, element.getPutCode());
@@ -175,7 +177,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEducationToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         Education element = getEducation();
         element = affiliationsManager.createEducationAffiliation(claimedOrcid, element, true);
         element = affiliationsManager.getEducationAffiliation(claimedOrcid, element.getPutCode());
@@ -186,7 +188,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEmploymentToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Employment element = getEmployment();
         element = affiliationsManager.createEmploymentAffiliation(claimedOrcid, element, true);
@@ -198,7 +200,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddInvitedPositionToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         InvitedPosition element = getInvitedPosition();
         element = affiliationsManager.createInvitedPositionAffiliation(claimedOrcid, element, true);
@@ -210,7 +212,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddMembershipToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Membership element = getMembership();
         element = affiliationsManager.createMembershipAffiliation(claimedOrcid, element, true);
@@ -222,7 +224,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddQualificationToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Qualification element = getQualification();
         element = affiliationsManager.createQualificationAffiliation(claimedOrcid, element, true);
@@ -234,7 +236,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddServiceToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Service element = getService();
         element = affiliationsManager.createServiceAffiliation(claimedOrcid, element, true);

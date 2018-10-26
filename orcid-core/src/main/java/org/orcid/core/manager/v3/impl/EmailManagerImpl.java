@@ -132,7 +132,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public void addEmail(HttpServletRequest request, String orcid, Email email) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
         String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();
         String emailHash = null;

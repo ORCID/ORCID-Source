@@ -84,7 +84,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void testAddPeerReviewToUnclaimedRecordPreservePeerReviewVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         PeerReview peer = getPeerReview(null);
         
         peer = peerReviewManager.createPeerReview(unclaimedOrcid, peer, true);
@@ -96,7 +96,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void testAddPeerReviewToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         PeerReview peer = getPeerReview(null);
         
         peer = peerReviewManager.createPeerReview(claimedOrcid, peer, true);
@@ -108,7 +108,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void testAddMultipleModifiesIndexingStatus() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("extId1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
         
@@ -135,7 +135,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("fromUI-1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, false);
         PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
@@ -146,7 +146,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("fromAPI-1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
         PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());

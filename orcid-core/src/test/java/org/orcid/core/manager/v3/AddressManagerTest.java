@@ -22,6 +22,7 @@ import org.orcid.core.BaseTest;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.v3.rc2.common.Country;
 import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.Addresses;
@@ -67,7 +68,7 @@ public class AddressManagerTest extends BaseTest {
     
     @Test
     public void testAddAddressToUnclaimedRecordPreserveAddressVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
         Address address = getAddress(Iso3166Country.CR);
         
         address = addressManager.createAddress(unclaimedOrcid, address, true);
@@ -79,7 +80,7 @@ public class AddressManagerTest extends BaseTest {
     
     @Test
     public void testAddAddressToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         Address address = getAddress(Iso3166Country.US);
         
         address = addressManager.createAddress(claimedOrcid, address, true);
@@ -91,7 +92,7 @@ public class AddressManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
         Address address = getAddress(Iso3166Country.MX);
         
         address = addressManager.createAddress(claimedOrcid, address, false);
@@ -103,7 +104,7 @@ public class AddressManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
         Address address = getAddress(Iso3166Country.PE);
         
         address = addressManager.createAddress(claimedOrcid, address, true);
