@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -96,7 +97,8 @@ public class WorkManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
+        //TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
+        //TargetProxyHelper.injectIntoProxy(workManager, "orcidSecurityManager", orcidSecurityManager);
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManager", groupingSuggestionManager);
         TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManagerReadOnly", groupingSuggestionManagerReadOnly);
@@ -544,12 +546,12 @@ public class WorkManagerTest extends BaseTest {
         
         //Delete new works
         for(Long putCode : worksToDelete) {
-            assertTrue(workManager.checkSourceAndRemoveWork(orcid, putCode));  
+            assertTrue(workManager.removeWorks(orcid, Arrays.asList(putCode)));  
         }                
     }
     
     @Test
-    public void testCreateWorksWithBulkAllErrors() {
+    public void testCreateWorksWithBulkAllErrors() throws InterruptedException {
         String orcid = "0000-0000-0000-0003";
         when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
@@ -617,7 +619,7 @@ public class WorkManagerTest extends BaseTest {
         }                
         
         //Delete the work
-        assertTrue(workManager.checkSourceAndRemoveWork(orcid, putCode));         
+        assertTrue(workManager.removeWorks(orcid, Arrays.asList(putCode)));  
     }
     
     private ExternalID getDuplicateExternalId() {

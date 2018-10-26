@@ -219,12 +219,15 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
     }
 
+    /** This is odd.  
+     * 
+     */
     @Override
     public void checkSourceAndThrow(SourceAwareEntity<?> existingEntity) {
-        //String sourceIdOfUpdater = sourceManager.retrieveActiveSourceId();
-        //if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
-        Source activeSource = sourceManager.retrieveActiveSource();
-        if (!SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity)) {
+        String sourceIdOfUpdater = sourceManager.retrieveActiveSourceId();
+        if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
+        //Source activeSource = sourceManager.retrieveActiveSource();
+        //if (activeSource !=null && !SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
             throw new WrongSourceException(params);
@@ -848,7 +851,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     private void checkClientType() {
         String clientId = sourceManager.retrieveActiveSourceId();
-
         ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
         if (client.getClientType() == null || ClientType.PUBLIC_CLIENT.name().equals(client.getClientType())) {
             throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
