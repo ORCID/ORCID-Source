@@ -74,6 +74,7 @@ import org.orcid.jaxb.model.v3.rc2.record.Service;
 import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
@@ -512,7 +513,28 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("shortDescription", "description");
         workClassMap.field("workCitation.workCitationType", "citationType");
         workClassMap.field("workCitation.citation", "citation");
-        workClassMap.field("workType", "workType");
+        workClassMap.exclude("workType").customize(new CustomMapper<Work, WorkEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Work a, WorkEntity b, MappingContext context) {
+                b.setWorkType(a.getWorkType().name());                               
+            }
+            
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(WorkEntity b, Work a, MappingContext context) {
+                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name().equals(b.getWorkType())) {
+                    a.setWorkType(WorkType.DISSERTATION_THESIS);
+                } else {
+                    a.setWorkType(WorkType.valueOf(b.getWorkType()));
+                }               
+            }
+            
+        });
         workClassMap.field("publicationDate", "publicationDate");        
         workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workClassMap.field("url.value", "workUrl");
@@ -529,7 +551,28 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         workSummaryClassMap.field("journalTitle.content", "journalTitle");
-        workSummaryClassMap.field("type", "workType");
+        workSummaryClassMap.customize(new CustomMapper<WorkSummary, WorkEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(WorkSummary a, WorkEntity b, MappingContext context) {
+                b.setWorkType(a.getType().name());                               
+            }
+            
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(WorkEntity b, WorkSummary a, MappingContext context) {
+                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name().equals(b.getWorkType())) {
+                    a.setType(WorkType.DISSERTATION_THESIS);
+                } else {
+                    a.setType(WorkType.valueOf(b.getWorkType()));
+                }               
+            }
+            
+        });
         workSummaryClassMap.field("publicationDate", "publicationDate");
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
@@ -543,7 +586,28 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryMinimizedClassMap.field("title.title.content", "title");
         workSummaryMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
-        workSummaryMinimizedClassMap.field("type", "workType");
+        workSummaryMinimizedClassMap.customize(new CustomMapper<WorkSummary, MinimizedWorkEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(WorkSummary a, MinimizedWorkEntity b, MappingContext context) {
+                b.setWorkType(a.getType().name());                               
+            }
+            
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(MinimizedWorkEntity b, WorkSummary a, MappingContext context) {
+                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name().equals(b.getWorkType())) {
+                    a.setType(WorkType.DISSERTATION_THESIS);
+                } else {
+                    a.setType(WorkType.valueOf(b.getWorkType()));
+                }               
+            }
+            
+        });;
         workSummaryMinimizedClassMap.field("publicationDate.year.value", "publicationYear");
         workSummaryMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
         workSummaryMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
@@ -563,7 +627,28 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         minimizedWorkClassMap.field("workTitle.translatedTitle.languageCode", "translatedTitleLanguageCode");
         minimizedWorkClassMap.field("workTitle.subtitle.content", "subtitle");
         minimizedWorkClassMap.field("shortDescription", "description");
-        minimizedWorkClassMap.field("workType", "workType");
+        minimizedWorkClassMap.customize(new CustomMapper<Work, MinimizedWorkEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Work a, MinimizedWorkEntity b, MappingContext context) {
+                b.setWorkType(a.getWorkType().name());                               
+            }
+            
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(MinimizedWorkEntity b, Work a, MappingContext context) {
+                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name().equals(b.getWorkType())) {
+                    a.setWorkType(WorkType.DISSERTATION_THESIS);
+                } else {
+                    a.setWorkType(WorkType.valueOf(b.getWorkType()));
+                }               
+            }
+            
+        });;
         minimizedWorkClassMap.field("publicationDate.year.value", "publicationYear");
         minimizedWorkClassMap.field("publicationDate.month.value", "publicationMonth");
         minimizedWorkClassMap.field("publicationDate.day.value", "publicationDay");
