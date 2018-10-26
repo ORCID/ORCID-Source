@@ -501,7 +501,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
         
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
-        workClassMap.byDefault();
         workClassMap.field("putCode", "id");
         addV3DateFields(workClassMap);
         registerSourceConverters(mapperFactory, workClassMap);
@@ -542,6 +541,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("languageCode", "languageCode");
         workClassMap.field("country.value", "iso2Country");
         workClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        workClassMap.byDefault();
         workClassMap.register();
 
         ClassMapBuilder<WorkSummary, WorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, WorkEntity.class);
@@ -618,7 +618,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryMinimizedClassMap.register();
 
         ClassMapBuilder<Work, MinimizedWorkEntity> minimizedWorkClassMap = mapperFactory.classMap(Work.class, MinimizedWorkEntity.class);
-        minimizedWorkClassMap.byDefault();
         registerSourceConverters(mapperFactory, minimizedWorkClassMap);
         minimizedWorkClassMap.field("putCode", "id");
         minimizedWorkClassMap.field("journalTitle.content", "journalTitle");
@@ -627,7 +626,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         minimizedWorkClassMap.field("workTitle.translatedTitle.languageCode", "translatedTitleLanguageCode");
         minimizedWorkClassMap.field("workTitle.subtitle.content", "subtitle");
         minimizedWorkClassMap.field("shortDescription", "description");
-        minimizedWorkClassMap.customize(new CustomMapper<Work, MinimizedWorkEntity>() {
+        minimizedWorkClassMap.exclude("workType").customize(new CustomMapper<Work, MinimizedWorkEntity>() {
             /**
              * From model object to database object
              */            
@@ -648,13 +647,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 }               
             }
             
-        });;
+        });
         minimizedWorkClassMap.field("publicationDate.year.value", "publicationYear");
         minimizedWorkClassMap.field("publicationDate.month.value", "publicationMonth");
         minimizedWorkClassMap.field("publicationDate.day.value", "publicationDay");
         minimizedWorkClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         minimizedWorkClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         minimizedWorkClassMap.field("url.value", "workUrl");
+        minimizedWorkClassMap.byDefault();
         minimizedWorkClassMap.register();
 
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")

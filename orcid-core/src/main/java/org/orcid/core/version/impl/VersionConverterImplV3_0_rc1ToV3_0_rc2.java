@@ -158,7 +158,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             }
             
         }).byDefault().register();
-        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).exclude("workType").customize(new CustomMapper<WorkSummary, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary>() {
+        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).exclude("type").customize(new CustomMapper<WorkSummary, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary>() {
             /**
              * From model object to database object
              */            
