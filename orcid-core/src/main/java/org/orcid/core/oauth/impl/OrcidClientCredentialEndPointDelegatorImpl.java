@@ -173,6 +173,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         return result == 0 ? result : (System.currentTimeMillis() + (result * 1000));
     }
     
+    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String grantType) {
+        return generateToken(client, scopes, null, null, grantType, null, null, null, false, 0L, null, null, null);
+    }
+    
     protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization, boolean revokeOld, Long expiresIn, String subjectToken, String subjectTokenType, String requestedTokenType) {        
         String clientId = client.getName();
         Map<String, String> authorizationParameters = new HashMap<String, String>();

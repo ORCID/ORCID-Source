@@ -125,27 +125,6 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         return false;
     }
     
-    /*
-     *     private boolean isDuplicated(ExternalIdentifierEntity existing, PersonExternalIdentifier newExternalIdentifier, SourceEntity source) {
-        if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
-            // If they have the same source
-            String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
-                // And they have the same reference
-                if ((PojoUtil.isEmpty(existing.getExternalIdReference()) && PojoUtil.isEmpty(newExternalIdentifier.getValue()))
-                        || (!PojoUtil.isEmpty(existing.getExternalIdReference()) && existing.getExternalIdReference().equals(newExternalIdentifier.getValue()))) {
-                    // And they have the same type
-                    if ((PojoUtil.isEmpty(existing.getExternalIdCommonName()) && PojoUtil.isEmpty(newExternalIdentifier.getType()))
-                            || (!PojoUtil.isEmpty(existing.getExternalIdCommonName()) && existing.getExternalIdCommonName().equals(newExternalIdentifier.getType()))) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-     */
-
     private void setIncomingPrivacy(ExternalIdentifierEntity entity, ProfileEntity profile) {
         String incomingExternalIdentifierVisibility = entity.getVisibility();
         String defaultExternalIdentifierVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name() : profile.getActivitiesVisibilityDefault();
