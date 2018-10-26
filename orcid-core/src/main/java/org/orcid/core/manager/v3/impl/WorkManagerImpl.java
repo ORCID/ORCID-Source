@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -411,12 +412,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
         JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);
         ExternalIDs allExternalIDs = new ExternalIDs();
-        MinimizedWorkEntity userVersion = null;
+        List<MinimizedWorkEntity> userVersions = new ArrayList<>();
         MinimizedWorkEntity userPreferred = null;
         
         for (MinimizedWorkEntity work : works) {
             if (orcid.equals(work.getSourceId())) {
-                userVersion = work;
+                userVersions.add(work);
             }
             if (userPreferred == null || userPreferred.getDisplayIndex() < work.getDisplayIndex()) {
                 userPreferred = work;
@@ -431,10 +432,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
         
         String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);
-        if (userVersion != null) {
-            WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
-            userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);
-            workDao.merge(userVersionFullEntity);
+        if (!userVersions.isEmpty()) {
+            for (MinimizedWorkEntity userVersion : userVersions) {
+                WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
+                userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);
+                workDao.merge(userVersionFullEntity);
+            }
         } else {
             WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
             allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);
