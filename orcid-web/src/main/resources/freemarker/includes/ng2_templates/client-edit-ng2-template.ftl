@@ -11,7 +11,7 @@
                     <#if is_premium?? && is_premium>
                         <a class="pull-right"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
                     <#else>
-                        <a class="pull-right" ng-hide="clients.length > 0"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
+                        <a class="pull-right" *ngIf="!clients.length > 0"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
                     </#if>                      
                 </#if>
             </div>              
@@ -22,7 +22,7 @@
             </div>
         </div>      
         <!-- View existing credentials -->
-        <div class="listing-clients" *ngIf="listing" ng-cloack>
+        <div class="listing-clients" *ngIf="listing">
             <div class="row">
                 <div class="col-md-12 client-api">
                     <p><@orcid.msg 'manage.developer_tools.group.description.1' />&nbsp;<a href="<@orcid.msg 'manage.developer_tools.group.description.link.url' />"><@orcid.msg 'manage.developer_tools.group.description.link.text' /></a><@orcid.msg 'manage.developer_tools.group.description.2' /></p>     
@@ -107,7 +107,7 @@
                 </div>
             </div>
             <!-- Redirect Uris -->              
-            <div *ngFor="let rUri of newClient.redirectUris" class="margin-bottom-box">
+            <div *ngFor="let rUri of newClient.redirectUris;let index=index" class="margin-bottom-box">
                 <!-- Header -->
                 <div class="row" *ngIf="$first">
                     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -122,7 +122,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="inner-row margin-left-fix">                         
                                 <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge ruri" [(ngModel)]="rUri.value.value" />                                                         
-                                <a (click)="deleteUriOnNewClient($index)" class="glyphicon glyphicon-trash grey"></a>
+                                <a (click)="deleteUriOnNewClient(index)" class="glyphicon glyphicon-trash grey"></a>
                                 <span class="orcid-error" *ngIf="rUri?.errors?.length > 0">
                                     <div *ngFor='let error of rUri.errors' [innerHTML]="error"></div>
                                 </span>                                 
@@ -226,20 +226,7 @@
                 <div class="col-md-9 col-sm-9 col-xs-12">
                     <p><input type="checkbox" disabled="disabled" class="small-element middle" [(ngModel)]="clientDetails.allowAutoDeprecate.value" /></p>
                 </div>                  
-            </div>
-                            
-            <@security.authorize access="hasAnyRole('ROLE_PREMIUM_INSTITUTION', 'ROLE_BASIC_INSTITUTION')">                                                                                 
-                <div class="row bottomBuffer">
-                    <!-- Custom Emails -->
-                    <div class="col-md-3 col-sm-3 col-xs-12">
-                        <span><strong><@orcid.msg 'manage.developer_tools.group.custom_emails.th'/></strong></span>
-                    </div>
-                    <div class="col-md-9 col-sm-9 col-xs-12 dt-description">
-                        <p><a href="<@orcid.rootPath "/group/custom-emails" />?clientId={{clientDetails.clientId.value}}" target="Edit custom emails">Edit custom emails</a></p>
-                    </div>
-                </div>  
-            </@security.authorize>
-            
+            </div>           
             <!-- Slidebox -->
             <div class="slidebox grey-box" *ngIf="expanded == true">
                 <div class="row">
@@ -247,17 +234,18 @@
                     <div  class="col-md-6 col-sm-6 col-xs-12">
                         <h4><@orcid.msg 'manage.developer_tools.redirect_uri'/>:</h4>
                         <select [(ngModel)]="selectedRedirectUri" (ngModelChange)="updateSelectedRedirectUri()">
-                            <option *ngFor="let rUri.value.value of rUri in clientDetails.redirectUris | orderBy:'value.value'">{{rUri.value.value}}</option>
-                        </select>
+                            <option *ngFor="let redirectUri of clientDetails.redirectUris | orderBy:'redirectUri.value.value'" [ngValue]="redirectUri">{{redirectUri.value.value}}</option>
+                        </select> 
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 bottomBuffer">
-                        <h4><@orcid.msg 'manage.developer_tools.view.scope' />:</h4>                            
-                        <multiselect multiple="true" [(ngModel)]="selectedScope" options="scope as scope for scope in availableRedirectScopes" change="updateSelectedRedirectUri()"></multiselect>                         
+                        <h4><@orcid.msg 'manage.developer_tools.view.scope' />:</h4>
+                        {{availableRedirectScopes | json}}                            
+                        <!--<multiselect multiple="true" [(ngModel)]="selectedScope" options="scope as scope for scope in availableRedirectScopes" change="updateSelectedRedirectUri()"></multiselect>-->                         
                     </div>                      
                 </div>                  
                 <!-- Examples -->
-                <div *ngIf="playgroundExample != ''">                                                                                 
-                    <div class="row">
+                <div *ngIf="playgroundExample == ''">
+                   <div class="row">
                         <span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.authorize'/></strong></span>
                         <span class="col-md-9 col-sm-9 col-xs-12">{{authorizeUrlBase}}</span>
                     </div>
@@ -280,16 +268,35 @@
                             <textarea class="input-xlarge authorizeURL" [(ngModel)]="sampleAuthCurl" readonly="readonly" (focus)="inputTextAreaSelectAll($event)"></textarea>
                         </span>
                     </div>
+                    
+                    <div class="row">
+                        <span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.openid'/></strong></span>
+                        <span class="col-md-9 col-sm-9 col-xs-12">
+                            {{authorizeUrlBase}}<br />
+                            <@orcid.msg 'manage.developer_tools.view.available_scopes.openid.description'/> (<a href="<@orcid.msg 'manage.developer_tools.view.example.opendid.url' />" target="openidWiki"><@orcid.msg 'manage.developer_tools.view.example.openid.text' /></a>)
+                        </span>
+                    </div>
+                    <div class="row">
+                        <span class="col-md-3 col-sm-3 col-xs-12"></span>
+                        <span class="col-md-9 col-sm-9 col-xs-12">
+                            <textarea class="input-xlarge authorizeURL" [(ngModel)]="sampleOpenId" readonly="readonly" (focus)="inputTextAreaSelectAll($event)"></textarea>
+                        </span>
+                    </div>
                 </div>
                 <!-- Google playground example -->
-                <div ng-hide="playgroundExample == ''">
+                <div *ngIf="!playgroundExample == ''">
                     <div class="row">
-                        <span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></span>
+                        <span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></span><br/>
                         <span class="col-md-9 col-sm-9 col-xs-12"><a href="{{playgroundExample}}" target="playgroundExample">
                             <span *ngIf="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
                             <span *ngIf="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
                             <span *ngIf="selectedRedirectUri.value.value == swaggerMemberUri"><@orcid.msg 'manage.developer_tools.view.example.swagger_member'/></span>
-                        </a></span>
+                        </a></span><br/>
+                        <span class="col-md-9 col-sm-9 col-xs-12" *ngIf="selectedRedirectUri.value.value == googleUri">
+                            <a href="{{googleExampleLinkOpenID}}" target="'manage.developer_tools.view.example.google">
+                                <@orcid.msg 'manage.developer_tools.view.example.googleOIDC'/>
+                            </a>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -360,22 +367,28 @@
                     <span><strong><@orcid.msg 'manage.developer_tools.view.secret'/></strong></span>
                 </div>
                 <div class="col-md-9 col-sm-9 col-xs-8">
-                    <span>{{clientToEdit.clientSecret.value}}</span>
+                    <p>{{clientToEdit.clientSecret.value}}</p>
+                    <button *ngIf="!showResetClientSecret" class="btn btn-danger"  (click)="showResetClientSecret = true">
+                        <@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
+                    </button>
                 </div>                  
             </div>  
-            <!-- Reset client secret button -->
-            <div class="row">
-                <div class="col-md-3 col-sm-3 col-xs-4">
-                    <span></span>
-                </div>
-                <div class="col-md-9 col-sm-9 col-xs-8">
-                    <a class="btn btn-danger" (click)="confirmResetClientSecret()">                                            
-                        <@orcid.msg 'manage.developer_tools.edit.reset_client_secret' />
-                    </a>
+            <!-- Reset client secret -->
+            <div class="row bottomBuffer" *ngIf="showResetClientSecret">
+                <div class="col-md-12 col-xs-12 col-sm-12">
+                    <div class="grey-box">
+                        <h3><@orcid.msg 'manage.developer_tools.edit.reset_key.title' /></h3>               
+                        <p><strong>{{clientToEdit.clientSecret.value}}</strong></p>       
+                        <p><@orcid.msg 'manage.developer_tools.edit.reset_key.description' /></p>
+                        <button class="btn btn-danger" (click)="resetClientSecret()">
+                            <@orcid.msg 'freemarker.btnReset' />
+                        </button>
+                        <button class="btn btn-white-no-border cancel-right" (click)="showResetClientSecret = false"><@orcid.msg 'freemarker.btncancel' /></button>               
+                    </div>
                 </div>
             </div>
             <!-- Redirect Uris -->              
-            <div *ngFor="let rUri of clientToEdit.redirectUris" class="margin-bottom-box">
+            <div *ngFor="let rUri of clientToEdit.redirectUris;let index=index" class="margin-bottom-box">
                 <!-- Header -->
                 <div class="row" *ngIf="$first">
                     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -390,7 +403,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="inner-row margin-left-fix">                         
                                 <input type="text" class="input-xlarge ruri" [(ngModel)]="rUri.value.value" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>"/>
-                                <a (click)="deleteUriOnExistingClient($index)" class="glyphicon glyphicon-trash grey pull-right"></a>
+                                <a (click)="deleteUriOnExistingClient(index)" class="glyphicon glyphicon-trash grey pull-right"></a>
                                 <span class="orcid-error" *ngIf="rUri?.errors?.length > 0">
                                     <div *ngFor='let error of rUri.errors' [innerHTML]="error"></div>
                                 </span>                                                                                             
