@@ -1,8 +1,11 @@
 package org.orcid.core.utils.v3;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc2.common.SourceName;
 import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -97,6 +100,44 @@ public class SourceEntityUtils {
         return source;
     }
     
+    public static Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager) {
+        Source s = extractSourceFromEntity(b);
+        //Set the source
+        if(s.getSourceOrcid() != null && s.getSourceOrcid().getPath() != null) {
+            s.getSourceOrcid().setHost(orcidUrlManager.getBaseHost());
+            s.getSourceOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + s.getSourceOrcid().getPath());
+            String sourceNameValue = sourceNameCacheManager.retrieve(s.getSourceOrcid().getPath());
+            if (sourceNameValue != null) {
+                s.setSourceName(new SourceName(sourceNameValue));
+            }
+        }
+        if(s.getSourceClientId() != null && s.getSourceClientId().getPath() != null) {
+            s.getSourceClientId().setHost(orcidUrlManager.getBaseHost());
+            s.getSourceClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + s.getSourceClientId().getPath());
+            String sourceNameValue = sourceNameCacheManager.retrieve(s.getSourceClientId().getPath());
+            if (sourceNameValue != null) {
+                s.setSourceName(new SourceName(sourceNameValue));
+            }
+        }   
+        //Set the OBO
+        if(s.getAssertionOriginOrcid() != null && s.getAssertionOriginOrcid().getPath() != null) {
+            s.getAssertionOriginOrcid().setHost(orcidUrlManager.getBaseHost());
+            s.getAssertionOriginOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + s.getAssertionOriginOrcid().getPath());
+            String sourceNameValue = sourceNameCacheManager.retrieve(s.getAssertionOriginOrcid().getPath());
+            if (sourceNameValue != null) {
+                s.setAssertionOriginName(new SourceName(sourceNameValue));
+            }
+        }
+        if(s.getAssertionOriginClientId() != null && s.getAssertionOriginClientId().getPath() != null) {
+            s.getAssertionOriginClientId().setHost(orcidUrlManager.getBaseHost());
+            s.getAssertionOriginClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + s.getAssertionOriginClientId().getPath());
+            String sourceNameValue = sourceNameCacheManager.retrieve(s.getAssertionOriginClientId().getPath());
+            if (sourceNameValue != null) {
+                s.setAssertionOriginName(new SourceName(sourceNameValue));
+            }
+        } 
+        return s;
+    }
     //=================================
     //utils to help refactoring for OBO
     //=================================
