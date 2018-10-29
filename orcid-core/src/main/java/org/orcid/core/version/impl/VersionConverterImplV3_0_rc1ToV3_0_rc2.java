@@ -54,6 +54,7 @@ import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.metadata.ClassMapBuilder;
 
 public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverter {
 
@@ -151,7 +152,20 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.v3.rc2.record.summary.Employments.class).byDefault().register();
         mapperFactory.classMap(Employment.class, org.orcid.jaxb.model.v3.rc2.record.Employment.class).byDefault().register();
         mapperFactory.classMap(EmploymentSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary.class).byDefault().register();
-
+        
+        // RESEARCH RESOURCES
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources.class).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceProposal.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceProposal.class).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup.class).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResource.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceHosts.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceHosts.class).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItems.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItems.class).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem.class).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceTitle.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class).byDefault().register();
+        ClassMapBuilder<org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary> rrSummaryClassMap = mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary.class);
+        rrSummaryClassMap.field("source", "source").field("lastModifiedDate", "lastModifiedDate").field("createdDate", "createdDate").field("proposal", "proposal").field("putCode", "putCode").field("path", "path").field("visibility", "visibility").field("displayIndex", "displayIndex");
+        rrSummaryClassMap.register();
+        
         // PEER REVIEW
         mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews.class).byDefault().register();
         mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.v3.rc2.record.PeerReview.class).byDefault().register();
