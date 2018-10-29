@@ -91,13 +91,14 @@ public class SourceManagerImpl implements SourceManager {
             
             //OBO if needed
             OAuth2AuthenticationDetails authDetails = (OAuth2AuthenticationDetails)((OAuth2Authentication) authentication).getDetails();
-            OrcidOauth2TokenDetail tokenDetail = orcidOauth2TokenDetailDao.findByTokenValue(authDetails.getTokenValue());
-            if (!StringUtils.isEmpty(tokenDetail.getOboClientDetailsId())){
-                ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(tokenDetail.getOboClientDetailsId());
-                source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
-                source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));  
-            }
-            
+            if (authDetails !=null && authDetails.getTokenValue() != null) { //check here because mock tests can't cope otherwise.
+                OrcidOauth2TokenDetail tokenDetail = orcidOauth2TokenDetailDao.findByTokenValue(authDetails.getTokenValue());
+                if (!StringUtils.isEmpty(tokenDetail.getOboClientDetailsId())){
+                    ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(tokenDetail.getOboClientDetailsId());
+                    source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
+                    source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));  
+                }
+            }            
             //TODO: can add OBO person here if client is always OBO person...
             
             return source;
