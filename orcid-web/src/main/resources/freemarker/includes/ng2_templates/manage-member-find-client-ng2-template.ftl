@@ -93,14 +93,14 @@
 								<h3><@orcid.msg 'admin.edit_client.redirect_uris'/></h3>
 							</div>			
 						</div>
-						<div *ngFor="let rUri of _client.redirectUris">
+						<div *ngFor="let rUri of _client.redirectUris; let i = index">
 							<div class="admin-edit-client-redirect-uris">
 								<div class="row">						
 									<!-- URI -->
 									<div class="col-md-12 col-sm-12 col-xs-12">
 										<input type="text" [(ngModel)]="rUri.value.value" class="input-xlarge">
-										<a *ngIf="_client.type.value == 'public-client'" href="" id="delete-redirect-uri" (click)="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a>
-										<a *ngIf="$last && _client.type.value == 'public-client'" href="" id="load-empty-redirect-uri" (click)="addRedirectUri()" class="glyphicon glyphicon-plus grey"></a>										
+										<a *ngIf="_client.type.value == 'public-client'" href="" id="delete-redirect-uri" (click)="deleteRedirectUri(i)" class="glyphicon glyphicon-trash grey"></a>
+										<a *ngIf="(i===_client.redirectUris.length-1) && _client.type.value == 'public-client'" href="" id="load-empty-redirect-uri" (click)="addRedirectUri()" class="glyphicon glyphicon-plus grey"></a>										
 									</div>
 								</div>
 								<div class="row">
@@ -110,9 +110,9 @@
 												<!-- Type -->
 												<div class="col-md-6 col-sm-6 col-xs-12">
 													<span class="edit-client-labels"><@orcid.msg 'manage_members.label.type'/></span><br>
-													<select class="input-large input-xlarge-full" [(ngModel)]="rUri.type.value">
+													<select name="type" class="input-large input-xlarge-full" [(ngModel)]="rUri.type.value" (ngModelChange)="loadDefaultScopes(rUri)">
 														<#list redirectUriTypes?keys as key>
-															<option [attr.value]="${redirectUriTypes[key]}">${redirectUriTypes[key]}</option>
+															<option [attr.value]="$key">${redirectUriTypes[key]}</option>
 														</#list>
 													</select>
 												</div>
@@ -120,11 +120,10 @@
 											<td class="edit-client-table-col">
 												<!-- Scopes -->
 												<div class="col-md-4 col-sm-4 col-xs-12">
-													<div *ngIf="rUri.type.value != 'default'">
+													<div *ngIf="rUri.type.value != 'default' && scopes">
 														<span class="edit-client-labels"><@orcid.msg 'manage_members.label.scope'/></span><br>
-														<p-multiSelect maxSelectedLabels="1" [filter]="false" [options]="scopes" [(ngModel)]="selectedScopes" optionLabel="name">
+														<p-multiSelect maxSelectedLabels="1" [filter]="false" [options]="scopes" [(ngModel)]="rUri.scopes" optionLabel="name">
 														</p-multiSelect>
-														<!--  <multiselect multiple="true" [(ngModel)]="rUri.scopes" options="scope as scope for scope in availableRedirectScopes" change="updateSelectedRedirectUri()"></multiselect>  -->
 													</div>															
 												</div>
 											</td>
@@ -132,7 +131,7 @@
 												<!-- Delete button -->
 												<div class="col-md-1 col-sm-1 col-xs-12">
 													<br>
-								    				<a id="delete-redirect-uri" (click)="deleteRedirectUri($event)" class="glyphicon glyphicon-trash grey"></a>
+								    				<a id="delete-redirect-uri" (click)="deleteRedirectUri(i)" class="glyphicon glyphicon-trash grey"></a>
 												</div>
 											</td>
 										</tr>
@@ -140,8 +139,10 @@
 											<td class="edit-client-table-col">
 												<!-- Activity Type-->
 												<div class="col-md-6 col-sm-6 col-xs-12">
-													<div *ngIf="rUri.type.value == 'import-works-wizard'">
+													<div *ngIf="rUri.type.value == 'import-works-wizard' && rUri.actType.actType">
 														<span class="edit-client-labels"><@orcid.msg 'manage_members.label.work_type'/></span><br>
+														<p-multiSelect maxSelectedLabels="1" [filter]="false" [options]="actTypeList" [(ngModel)]="rUri.actType.actType.value[rUri.type.value]" optionLabel="name">
+														</p-multiSelect>
 														<!--  <multiselect multiple="true" [(ngModel)]="rUri.actType.value[rUri.type.value]" options="actType as actType for actType in importWorkWizard['actTypeList']"></multiselect>  -->
 													</div>
 												</div>
@@ -151,6 +152,8 @@
 												<div class="col-md-4 col-sm-4 col-xs-12">
 													<div *ngIf="rUri.type.value == 'import-works-wizard'">
 														<span class="edit-client-labels"><@orcid.msg 'manage_members.label.geo_area'/></span><br>
+														<p-multiSelect maxSelectedLabels="1" [filter]="false" [options]="geoAreaList" [(ngModel)]="rUri.geoArea.geoArea.value[rUri.type.value]" optionLabel="name">
+														</p-multiSelect>
 														<!--  <multiselect multiple="true" [(ngModel)]="rUri.geoArea.value[rUri.type.value]" options="geoArea as geoArea for geoArea in importWorkWizard['geoAreaList']"></multiselect>  -->
 													</div>
 												</div>
@@ -158,7 +161,7 @@
 											<td>
 												<!-- Add button -->
 												<div class="col-md-1 col-sm-1 col-xs-12">
-								    				<a href="" id="load-empty-redirect-uri" (click)="addRedirectUri()" class="glyphicon glyphicon-plus grey" *ngIf="$last"></a>
+								    				<a  id="load-empty-redirect-uri" (click)="addRedirectUri()" class="glyphicon glyphicon-plus grey" *ngIf="(i===_client.redirectUris.length-1)"></a>
 												</div>
 											</td>
 										</tr>

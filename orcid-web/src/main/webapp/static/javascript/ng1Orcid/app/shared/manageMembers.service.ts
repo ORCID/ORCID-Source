@@ -72,6 +72,15 @@ export class ManageMembersService {
     );
   }
 
+  updateClient(data) {
+    console.log (data)
+    return this.http.post(
+      getBaseUri() + "/manage-members/update-client.json",
+      data,
+      { headers: this.headers }
+    );
+  }
+
   findMember(id) {
     return this.http.get(getBaseUri() + "/manage-members/find.json?id=" + id, {
       headers: this.headers
@@ -80,6 +89,12 @@ export class ManageMembersService {
 
   getAvailableScopes() {
     return this.http.get(getBaseUri() + "/group/developer-tools/get-available-scopes.json", {
+      headers: this.headers
+    });
+  }
+
+  getEmptyRedirectUri() {
+    return this.http.get(getBaseUri() + "/manage-members/empty-redirect-uri.json", {
       headers: this.headers
     });
   }

@@ -67,7 +67,7 @@ export class ManageMembersFindMemberComponent
     this.modalService.notifyOther({
       action: "open",
       moduleId: "modalFindMemberConfirm",
-      member: this.member
+      object: this.member
     });
   }
 
