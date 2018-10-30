@@ -429,6 +429,39 @@ public class AdminController extends BaseController {
     }
 
     /**
+     * Reset password validate
+     * 
+     * @throws IllegalAccessException
+     */
+    @RequestMapping(value = "/reset-password/validate", method = RequestMethod.POST)
+    public @ResponseBody AdminChangePassword resetPasswordValidateId(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody AdminChangePassword form) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        form.setError(null);
+        String orcidOrEmail = form.getOrcidOrEmail().trim();
+        
+        String orcid = null;
+        if (StringUtils.isNotBlank(orcidOrEmail))
+            orcidOrEmail = orcidOrEmail.trim();
+        boolean isOrcid = OrcidStringUtils.isValidOrcid(orcidOrEmail);
+        // If it is not an orcid, check the value from the emails table
+        if (!isOrcid) {
+            Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
+            orcid = email.get(orcidOrEmail);
+        } else {
+            orcid = orcidOrEmail;
+        }
+        
+        if (StringUtils.isNotEmpty(orcid)) {
+            if (!profileEntityManager.orcidExists(orcid)) {                
+                form.setError(getMessage("admin.errors.unexisting_orcid"));
+            }
+        } else {
+            form.setError(getMessage("admin.errors.unable_to_fetch_info"));
+        }
+        return form;
+    }
+        
+    /**
      * Remove security question
      * 
      * @throws IllegalAccessException
