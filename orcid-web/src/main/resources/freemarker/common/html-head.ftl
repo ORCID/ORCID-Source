@@ -97,6 +97,9 @@
     <link rel="stylesheet" href="${staticCdn}/css/bootstrap-rtl.min.css"> <!-- Src: //cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css -->
     </#if>
 
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/nova-light/theme.css"/>
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeicons.css"/>
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeng.min.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     

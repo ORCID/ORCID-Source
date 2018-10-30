@@ -1,10 +1,14 @@
 <#include "/includes/ng2_templates/manage-member-add-form-ng2-template.ftl">
 <#include "/includes/ng2_templates/manage-member-consortium-ng2-template.ftl">
-<#include "/includes/ng2_templates/manage-member-settings-ng2-template.ftl">
+<#include "/includes/ng2_templates/manage-member-find-ng2-template.ftl">
+<#include "/includes/ng2_templates/manage-member-find-member-ng2-template.ftl">
 <#include "/includes/ng2_templates/manage-member-add-form-success-ng2-template.ftl">
+<#include "/includes/ng2_templates/manage-member-find-member-confirm-ng2-template.ftl">
+<#include "/includes/ng2_templates/manage-member-find-client-ng2-template.ftl">
+
 
 <script type="text/ng-template" id="manage-member-ng2-template">
-		<!-- Add new client group -->
+	<!-- Add new client group -->
 		<a name="add-client"></a>
 		<div class="workspace-accordion-item">			
 			<p >
@@ -22,40 +26,15 @@
 		</div>
 		
 		
-		<!-- TODO Find 
+		<!-- TODO Find -->
 		<a name="find"></a>
 			<div class="workspace-accordion-item">			
 			<p>
 				<a (click)="toggleCollapse('findMember')" *ngIf="collapseMenu.findMember"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.find_member'/></a>
 				<a (click)="toggleCollapse('findMember')" *ngIf="!collapseMenu.findMember"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.find_member'/></a>				
 			</p>
-			<div *ngIf="collapseMenu.findMember" class="collapsible bottom-margin-small admin-modal" id="admin_groups_modal">
-				<div class="form-group" ng-show="success_edit_member_message != null">
-	    			<div ng-bind-html="success_edit_member_message" class="alert alert-success"></div>
-	    		</div>
-	    		<div class="form-group" ng-show="success_message != null">
-	    			<div ng-bind-html="success_message" class="alert alert-success"></div>
-	    		</div>
-				
-				
-				<div class="form-group">
-					<div>
-						<label for="client_id"><@orcid.msg 'admin.edit_client.any_id' /></label>
-						<input type="text" id="any_id" ng-enter="findAny()" ng-model="any_id" placeholder="<@orcid.msg 'admin.edit_client.any_id.placeholder' />" class="input-xlarge" />					
-						<span class="orcid-error" ng-show="member.errors.length > 0">
-							<div ng-repeat='error in member.errors' ng-bind-html="error"></div>
-						</span>
-					</div>
-					<div class="controls save-btns pull-left">
-						<span id="bottom-search" ng-click="findAny()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
-					</div>	
-				</div>
-
-				<manage-members-settings-ng2> </manage-members-settings-ng2>
-
-			</div>			
+			<manage-members-find-ng2  *ngIf="collapseMenu.findMember"> </manage-members-find-ng2>		
 		</div>
-		-->
 
 		<!-- TODO Find consortium 
         <a name="find-consortium"></a>
@@ -85,10 +64,14 @@
 
 
 </script>
-<modalngcomponent elementHeight="645" elementId="modalAddMember" elementWidth="400">
+<modalngcomponent elementHeight="500" elementId="modalAddMember" elementWidth="400">
 	<manage-member-add-form-ng2></manage-member-add-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
 <modalngcomponent elementHeight="645" elementId="modalAddMemberSuccess" elementWidth="500">
 	<manage-member-add-form-success-ng2></manage-member-add-form-success-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<modalngcomponent elementHeight="200" elementId="modalFindMemberConfirm" elementWidth="350">
+	<manage-members-find-member-confirm-ng2></manage-members-find-member-confirm-ng2>
 </modalngcomponent><!-- Ng2 component -->

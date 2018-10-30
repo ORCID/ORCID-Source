@@ -13,17 +13,25 @@ import { ManageMemberAddFormComponent } from "./manageMembersAddForm.component.t
 
 import { ManageMembersConsortiumComponent } from "./manageMembersConsortium.component.ts"
 
-import { ManageMembersSettingsComponent } from "./manageMembersSettings.component.ts"
+import { ManageMembersFindComponent } from "./manageMembersFind.component.ts"
 
 import { ManageMemberAddFormSuccessComponent } from "./manageMembersAddFormSuccess.component.ts"
+
+import { ManageMembersFindMemberComponent } from "./manageMembersFindMember.component.ts"
+
+import { ManageMembersFindMemberConfirmComponent } from "./manageMembersFindMemberConfirm.component.ts"
+
+import { ManageMembersFindClientComponent } from "./manageMembersFindClient.component.ts"
+
 // This is the Angular 1 part of the module
 export const ManageMembersModule = angular.module("ManageMembersModule", []);
+
 
 // This is the Angular 2 part of the module
 @NgModule({
   imports: [CommonNg2Module],
-  declarations: [ManageMembersComponent, ManageMemberAddFormComponent, ManageMembersConsortiumComponent, ManageMembersSettingsComponent, ManageMemberAddFormSuccessComponent],
-  entryComponents: [ManageMembersComponent, ManageMemberAddFormComponent, ManageMembersConsortiumComponent, ManageMembersSettingsComponent, ManageMemberAddFormSuccessComponent],
+  declarations: [ManageMembersComponent, ManageMemberAddFormComponent, ManageMembersConsortiumComponent, ManageMembersFindComponent, ManageMemberAddFormSuccessComponent, ManageMembersFindMemberComponent, ManageMembersFindMemberConfirmComponent, ManageMembersFindClientComponent],
+  entryComponents: [ManageMembersComponent, ManageMemberAddFormComponent, ManageMembersConsortiumComponent, ManageMembersFindComponent, ManageMemberAddFormSuccessComponent, ManageMembersFindMemberComponent, ManageMembersFindMemberConfirmComponent, ManageMembersFindClientComponent],
   providers: []
 })
 export class ManageMembersNg2Module {}
@@ -36,10 +44,21 @@ ManageMembersModule.directive("manageMembersNg2", <any>downgradeComponent({
   component: ManageMemberAddFormComponent
 })).directive("manageMembersConsortiumNg2", <any>downgradeComponent({
   component: ManageMembersConsortiumComponent
-})).directive("manageMembersSettingsNg2", <any>downgradeComponent({
-  component: ManageMembersSettingsComponent
+})).directive("manageMembersFindNg2", <any>downgradeComponent({
+  component: ManageMembersFindComponent
 })).directive("manageMemberAddFormSuccessNg2", <any>downgradeComponent({
   component: ManageMemberAddFormSuccessComponent
+})).directive("manageMembersFindMemberNg2", <any>downgradeComponent({
+  component: ManageMembersFindMemberComponent
+})).directive("manageMembersFindMemberConfirmNg2", <any>downgradeComponent({
+  component: ManageMembersFindMemberConfirmComponent
+})).directive("manageMembersFindClientNg2", <any>downgradeComponent({
+  component: ManageMembersFindClientComponent
 }));
+
+
+
+
+
 
 

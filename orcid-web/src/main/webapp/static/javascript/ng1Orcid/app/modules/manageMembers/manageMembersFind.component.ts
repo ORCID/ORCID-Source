@@ -18,16 +18,21 @@ import {
 } from "@angular/core";
 
 import { Observable, Subject, Subscription } from "rxjs";
+import { ManageMembersService } from "../../shared/manageMembers.service.ts";
 
 @Component({
-  selector: "manage-members-settings-ng2",
-  template: scriptTmpl("manage-member-settings-ng2-template")
+  selector: "manage-members-find-ng2",
+  template: scriptTmpl("manage-member-find-ng2-template")
 })
-export class ManageMembersSettingsComponent
+export class ManageMembersFindComponent
   implements AfterViewInit, OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
+  searchId;
+  memberObject;
+  updateMessage;
+  clientObject;
 
-  constructor() {}
+  constructor(private manageMembersService: ManageMembersService) {}
 
   //Default init functions provid   ed by Angular Core
   ngAfterViewInit() {
@@ -40,4 +45,20 @@ export class ManageMembersSettingsComponent
   }
 
   ngOnInit() {}
+
+  find(id) {
+    this.updateMessage = null;
+    this.memberObject = null;
+    this.manageMembersService.findMember(id).subscribe( (response: any) => {
+      if (response.client){
+        this.clientObject = response.clientObject
+      } else {
+        this.memberObject = response.memberObject;
+      }
+    });
+  }
+
+  update(state) {
+    this.updateMessage = state;
+  }
 }
