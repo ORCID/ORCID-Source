@@ -14,12 +14,15 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.WrongSourceException;
+import org.orcid.jaxb.model.v3.rc2.common.Country;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
@@ -30,6 +33,7 @@ import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
 import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc2.record.Distinction;
@@ -59,12 +63,20 @@ public class AffiliationsManagerTest extends BaseTest {
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/RecordNameEntityData.xml");
     
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
+    private static final String CLIENT_2_ID = "APP-5555555555555555";//for obo
+    private static final String CLIENT_3_ID = "APP-5555555555555556";//for obo
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
     
     @Mock
+    private SourceManager mockSourceManager;
+        
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
-    
+
+    @Resource(name = "orcidSecurityManagerV3")
+    OrcidSecurityManager orcidSecurityManager;
+
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
     
@@ -75,8 +87,16 @@ public class AffiliationsManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", mockSourceManager);  
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);        
     }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
+    }
+  
     
     @AfterClass
     public static void removeDBUnitData() throws Exception {
@@ -87,7 +107,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddDistinctionToUnclaimedRecordPreserveDistinctionVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Distinction element = getDistinction();
         element = affiliationsManager.createDistinctionAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getDistinctionAffiliation(unclaimedOrcid, element.getPutCode());
@@ -98,7 +118,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEducationToUnclaimedRecordPreserveEducationVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Education element = getEducation();
         element = affiliationsManager.createEducationAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getEducationAffiliation(unclaimedOrcid, element.getPutCode());
@@ -109,7 +129,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEmploymentToUnclaimedRecordPreserveEmploymentVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         
         Employment element = getEmployment();
         element = affiliationsManager.createEmploymentAffiliation(unclaimedOrcid, element, true);
@@ -121,7 +141,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddInvitedPositionToUnclaimedRecordPreserveInvitedPositionVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         InvitedPosition element = getInvitedPosition();
         element = affiliationsManager.createInvitedPositionAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getInvitedPositionAffiliation(unclaimedOrcid, element.getPutCode());
@@ -132,7 +152,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddMembershipToUnclaimedRecordPreserveMembershipVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Membership element = getMembership();
         element = affiliationsManager.createMembershipAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getMembershipAffiliation(unclaimedOrcid, element.getPutCode());
@@ -143,7 +163,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddQualificationToUnclaimedRecordPreserveQualificationVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Qualification element = getQualification();
         element = affiliationsManager.createQualificationAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getQualificationAffiliation(unclaimedOrcid, element.getPutCode());
@@ -154,7 +174,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddServiceToUnclaimedRecordPreserveServiceVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Service element = getService();
         element = affiliationsManager.createServiceAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getServiceAffiliation(unclaimedOrcid, element.getPutCode());
@@ -165,8 +185,8 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddDistinctionToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID)); 
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID)); 
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Distinction element = getDistinction();
         element = affiliationsManager.createDistinctionAffiliation(claimedOrcid, element, true);
         element = affiliationsManager.getDistinctionAffiliation(claimedOrcid, element.getPutCode());
@@ -177,7 +197,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEducationToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         Education element = getEducation();
         element = affiliationsManager.createEducationAffiliation(claimedOrcid, element, true);
         element = affiliationsManager.getEducationAffiliation(claimedOrcid, element.getPutCode());
@@ -188,7 +208,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEmploymentToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Employment element = getEmployment();
         element = affiliationsManager.createEmploymentAffiliation(claimedOrcid, element, true);
@@ -200,7 +220,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddInvitedPositionToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         InvitedPosition element = getInvitedPosition();
         element = affiliationsManager.createInvitedPositionAffiliation(claimedOrcid, element, true);
@@ -212,7 +232,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddMembershipToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Membership element = getMembership();
         element = affiliationsManager.createMembershipAffiliation(claimedOrcid, element, true);
@@ -224,7 +244,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddQualificationToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Qualification element = getQualification();
         element = affiliationsManager.createQualificationAffiliation(claimedOrcid, element, true);
@@ -236,7 +256,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddServiceToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Service element = getService();
         element = affiliationsManager.createServiceAffiliation(claimedOrcid, element, true);
@@ -855,6 +875,53 @@ public class AffiliationsManagerTest extends BaseTest {
         assertTrue(found4);
         
         found1 = found2 = found3 = found4 = false;
+    }
+    
+    /** Test create, update with valid source
+     * Test update with invlaid sources
+     * 
+     */
+    @Test
+    public void testAssertionOriginUpdate() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        
+        Service element = getService();
+        element = affiliationsManager.createServiceAffiliation(claimedOrcid, element, true);
+        element = affiliationsManager.getServiceAffiliation(claimedOrcid, element.getPutCode());
+        element.setDepartmentName("xxx");
+        element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
+        
+        assertNotNull(element);
+        assertEquals(Visibility.LIMITED, element.getVisibility());
+        Source s = element.getSource();
+        assertEquals(s.getSourceOrcid().getPath(),CLIENT_1_ID);
+        assertEquals(s.getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(s.getSourceName().getContent(),"U. Test");
+        assertEquals(s.getAssertionOriginClientId().getPath(),CLIENT_2_ID);
+        assertEquals(s.getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
+        assertEquals(s.getAssertionOriginName().getContent(),"Source Client 1");
+
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
+            fail();
+        }catch(WrongSourceException e) {
+        }
+        
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
+            element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));                
+            element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
     }
     
     private ExternalID getExternalID(String type, String value) {
