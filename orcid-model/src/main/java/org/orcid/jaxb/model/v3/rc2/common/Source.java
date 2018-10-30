@@ -240,4 +240,16 @@ public class Source implements Serializable {
         }
         return s;
     }
+
+    public static Source forClient(String clientId, String oboId) {
+        Source s = forClient(clientId);
+        if (oboId != null) {
+            if (oboId.startsWith("APP-")) {
+                s.setAssertionOriginClientId(new SourceClientId(oboId));
+            } else {
+                s.setAssertionOriginOrcid(new SourceOrcid(oboId));
+            }
+        }
+        return s;
+    }
 }
