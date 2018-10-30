@@ -31,7 +31,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     authorizeURL: any;
     authorizeUrlBase: any;
     authorizeURLTemplate: any;
-    availableRedirectScopes: any;
     clients: any;
     clientDetails: any;
     clientToEdit: any;
@@ -51,6 +50,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     sampleAuthCurlTemplate: any;
     sampleOpenId: string;
     sampleOpenIdTemplate: string;
+    scopes: any;
     scopeSelectorOpen: any;
     selectedRedirectUri: any;
     selectedScope: any;
@@ -69,7 +69,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.authorizeURL = null;
         this.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
         this.authorizeURLTemplate = this.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scope=[SCOPES]';
-        this.availableRedirectScopes = [];
         this.clients = [];
         this.clientDetails = {};
         this.clientToEdit = null;
@@ -89,6 +88,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [BASE_URI]/oauth/token";
         this.sampleOpenId = '';
         this.sampleOpenIdTemplate = this.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=token&scope=openid&redirect_uri=[REDIRECT_URI]';
+        this.scopes = [];
         this.scopeSelectorOpen = false;
         this.selectedRedirectUri = "";
         this.selectedScope = "";
@@ -245,16 +245,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.expanded = true;
     };
 
-    getAvailableRedirectScopes(): any {
-        var toRemove = '/authenticate';
-        var result = [];
-        result = jQuery.grep(this.availableRedirectScopes, function(value) {
-          return value != toRemove;
-        });
-
-        return result;
-    };
-
     getClients(): void{
 
         this.clientService.getClients()
@@ -295,21 +285,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
     inputTextAreaSelectAll($event): void{
         $event.target.select();
-    };
-
-    loadAvailableScopes(): void {
-        this.clientService.loadAvailableScopes()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.availableRedirectScopes = data;
-            },
-            error => {
-                //console.log('getregisterDataError', error);
-            } 
-        );
     };
 
     resetClientSecret(): void {
@@ -385,17 +360,19 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     updateSelectedRedirectUri(): void {
-        console.log("updateSelectedRedirectUri");
-        console.log(this.selectedRedirectUri);
-        
+        console.log(this.selectedScope);
         var clientId = '';
         var example = null;
         var exampleOIDC = null;
         var sampleCurl = null;
         var sampleOIDC = null;
-        var scope = this.selectedScope;
+        var scope = '';
         var selectedClientSecret = '';
         this.playgroundExample = '';
+        
+        for(let i = 0; i < this.selectedScope.length; i++) {
+            scope += (","+this.selectedScope[i].name);
+        }
 
         if (this.clientDetails != null){
             clientId = this.clientDetails.clientId.value;
@@ -404,7 +381,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
         if(this.selectedRedirectUri.length != 0) {
             this.selectedRedirectUriValue = this.selectedRedirectUri.value.value;
-            console.log(this.selectedRedirectUriValue);
             if(this.googleUri == this.selectedRedirectUriValue) {
                 example = this.googleExampleLink;
                 example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
@@ -448,8 +424,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
               .replace('[CLIENT_ID]', clientId)
               .replace('[REDIRECT_URI]', this.selectedRedirectUriValue);
         }
-        console.log("playground example");
-        console.log(this.playgroundExample);
     };
 
     viewDetails(client): void {
@@ -481,6 +455,12 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getClients();
-        this.loadAvailableScopes();
+        this.clientService.loadAvailableScopes().subscribe(response=> {
+            response.map( (scope) => {
+              this.scopes.push ({
+                name: scope
+              })
+            })
+        })
     }; 
 }

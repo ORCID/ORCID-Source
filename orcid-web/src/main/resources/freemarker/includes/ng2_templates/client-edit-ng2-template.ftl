@@ -239,7 +239,8 @@
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 bottomBuffer">
                         <h4><@orcid.msg 'manage.developer_tools.view.scope' />:</h4>
-                        {{availableRedirectScopes | json}}                            
+                        <p-multiSelect maxSelectedLabels="1" [filter]="false" [options]="scopes" [(ngModel)]="selectedScope" optionLabel="name" (ngModelChange)="updateSelectedRedirectUri()">
+                        </p-multiSelect>                          
                         <!--<multiselect multiple="true" [(ngModel)]="selectedScope" options="scope as scope for scope in availableRedirectScopes" change="updateSelectedRedirectUri()"></multiselect>-->                         
                     </div>                      
                 </div>                  
