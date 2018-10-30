@@ -17,7 +17,7 @@
 					<common:country>US</common:country>
 				</common:address>
 				<common:disambiguated-organization>
-					<common:disambiguated-organization-identifier>grid.400000.c</common:disambiguated-organization-identifier>
+					<common:disambiguated-organization-identifier>grid.455335.1</common:disambiguated-organization-identifier>
 					<common:disambiguation-source>GRID</common:disambiguation-source>
 				</common:disambiguated-organization>
 			</common:organization>
@@ -46,7 +46,7 @@
 				<common:day>02</common:day>
 			</common:end-date>
 			<common:url>http://xsede.org/GiantLaserAward</common:url>
-		</research-resource:proposal>	
+		</research-resource:proposal>
     	<!-- resource(s) -->
 			<research-resource:resource-items>
 				<!-- resource 1 -->
@@ -62,7 +62,7 @@
 								<common:country>US</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>1000</common:disambiguated-organization-identifier>
+								<common:disambiguated-organization-identifier>326290</common:disambiguated-organization-identifier>
 								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</common:organization>
@@ -93,7 +93,7 @@
 								<common:country>US</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>1001</common:disambiguated-organization-identifier>
+								<common:disambiguated-organization-identifier>370780</common:disambiguated-organization-identifier>
 								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</common:organization>
