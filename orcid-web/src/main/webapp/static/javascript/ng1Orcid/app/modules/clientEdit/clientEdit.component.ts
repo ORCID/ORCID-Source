@@ -360,7 +360,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     updateSelectedRedirectUri(): void {
-        console.log(this.selectedScope);
         var clientId = '';
         var example = null;
         var exampleOIDC = null;
