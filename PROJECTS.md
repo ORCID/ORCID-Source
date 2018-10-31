@@ -61,6 +61,10 @@ The following code has been incorporated into the ORCID code:
 
 <!--<br>The jQuery Validation Plugin provides drop-in validation for your existing forms, while making all kinds of customizations to fit your application really easy.<br>-->
 
+* **[Angular](https://github.com/angular/angular/blob/master/LICENSE)** _(LICENSE: [MIT](http://www.opensource.org/licenses/mit-license.php))_
+
+<!--<br>Javascript frame work for building complex client applications.<br>-->
+
 * **[Sizzle.js](http://sizzlejs.com/)** _(LICENSE: MIT, BSD, and GPL Licenses)_
 
 <!--<br>A pure-JavaScript CSS selector engine designed to be easily dropped in to a host library.<br>-->
