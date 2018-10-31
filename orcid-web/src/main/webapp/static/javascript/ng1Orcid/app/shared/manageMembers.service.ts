@@ -73,7 +73,6 @@ export class ManageMembersService {
   }
 
   updateClient(data) {
-    console.log (data)
     return this.http.post(
       getBaseUri() + "/manage-members/update-client.json",
       data,
@@ -101,6 +100,5 @@ export class ManageMembersService {
 
   notifyOther(): void {
     this.notify.next();
-    console.log("notify");
   }
 }
