@@ -2,7 +2,6 @@ package org.orcid.core.salesforce.adapter;
 
 import static org.orcid.core.utils.JsonUtils.extractObject;
 import static org.orcid.core.utils.JsonUtils.extractString;
-import static org.orcid.core.utils.JsonUtils.extractBoolean;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
@@ -131,23 +131,23 @@ public class SalesForceAdapter {
     }
 
     public List<Integration> createIntegrationsListFromJson(JSONObject results) {
-        List<Integration> integrations = new ArrayList<>();
+        List<JSONObject> objectsList;
         try {
-            JSONArray records = results.getJSONArray("records");
-            if (records.length() > 0) {
-                JSONObject firstRecord = records.getJSONObject(0);
-                JSONObject integrationsObject = extractObject(firstRecord, "Integrations__r");
-                if (integrationsObject != null) {
-                    JSONArray integrationRecords = integrationsObject.getJSONArray("records");
-                    for (int i = 0; i < integrationRecords.length(); i++) {
-                        integrations.add(createIntegrationFromSalesForceRecord(integrationRecords.getJSONObject(i)));
-                    }
-                }
-            }
+            objectsList = extractObjectListFromRecords(results);
+            return objectsList.stream().map(e -> mapperFacade.map(e, Integration.class)).collect(Collectors.toList());
         } catch (JSONException e) {
-            throw new RuntimeException("Error getting integrations records from SalesForce JSON", e);
+            throw new RuntimeException("Error getting integrations from SalesForce JSON", e);
         }
-        return integrations;
+    }
+
+    public List<Badge> createBadgesListFromJson(JSONObject results) {
+        List<JSONObject> objectsList;
+        try {
+            objectsList = extractObjectListFromRecords(results);
+            return objectsList.stream().map(e -> mapperFacade.map(e, Badge.class)).collect(Collectors.toList());
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting badges from SalesForce JSON", e);
+        }
     }
 
     public String extractParentOrgNameFromJson(JSONObject results) {
@@ -172,19 +172,7 @@ public class SalesForceAdapter {
     }
 
     private Integration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
-        Integration integration = new Integration();
-        String name = extractString(integrationRecord, "Name");
-        integration.setName(name);
-        integration.setBadgeAwarded(extractBoolean(integrationRecord, "BadgeAwarded__c"));
-        integration.setDescription(extractString(integrationRecord, "Description__c"));
-        integration.setLevel(extractString(integrationRecord, "Level__c"));
-        integration.setStage(extractString(integrationRecord, "Integration_Stage__c"));
-        try {
-            integration.setResourceUrl(extractURL(integrationRecord, "Integration_URL__c"));
-        } catch (MalformedURLException e) {
-            LOGGER.info("Malformed resource URL for member: {}", name, e);
-        }
-        return integration;
+        return mapperFacade.map(integrationRecord, Integration.class);
     }
 
     public Opportunity createOpportunityFromSalesForceRecord(JSONObject jsonObject) {

@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.resolvers.LinkResolver;
 import org.orcid.core.utils.v3.identifiers.resolvers.MetadataResolver;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;

@@ -2930,7 +2930,8 @@ input.error {
 }
 
 .settings-table {
-    border-radius: 0
+    border-radius: 0;
+    width: 100%;
 }
 
 .account-settings {
@@ -6784,10 +6785,6 @@ ul.comma li:last-child:after {
 
 .no-padding-left {
     padding-left: 0
-}
-
-.no-padding-right {
-    padding-right: 0
 }
 
 .footer-main {

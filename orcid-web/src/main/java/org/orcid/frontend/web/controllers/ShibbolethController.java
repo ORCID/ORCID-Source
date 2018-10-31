@@ -132,9 +132,8 @@ public class ShibbolethController extends BaseController {
         } else {
             // To avoid confusion, force the user to login to ORCID again
             mav.addObject("linkType", "shibboleth");
-            mav.addObject("firstName",
-                    (headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER) == null) ? "" : headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER));
-            mav.addObject("lastName", (headers.get(InstitutionalSignInManager.SN_HEADER) == null) ? "" : headers.get(InstitutionalSignInManager.SN_HEADER));
+            mav.addObject("firstName", institutionalSignInManager.retrieveFirstName(headers));
+            mav.addObject("lastName", institutionalSignInManager.retrieveLastName(headers));
         }
         return mav;
     }

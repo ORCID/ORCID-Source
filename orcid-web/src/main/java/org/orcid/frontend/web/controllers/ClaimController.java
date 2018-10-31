@@ -10,14 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -146,18 +145,20 @@ public class ClaimController extends BaseController {
         claimPasswordValidate(claim);
         claimPasswordConfirmValidate(claim);
         claimTermsOfUseValidate(claim);
+        activitiesVisibilityDefaultValidate(claim.getActivitiesVisibilityDefault());
 
         copyErrors(claim.getPassword(), claim);
         copyErrors(claim.getPasswordConfirm(), claim);
         copyErrors(claim.getTermsOfUse(), claim);
+        copyErrors(claim.getActivitiesVisibilityDefault(), claim);
 
         if (claim.getErrors().size() > 0) {
             return claim;
         }
 
         Locale requestLocale = RequestContextUtils.getLocale(request);
-        org.orcid.jaxb.model.v3.rc1.common.Locale userLocale = (requestLocale == null) ? null
-                : org.orcid.jaxb.model.v3.rc1.common.Locale.fromValue(requestLocale.toString());
+        org.orcid.jaxb.model.v3.rc2.common.Locale userLocale = (requestLocale == null) ? null
+                : org.orcid.jaxb.model.v3.rc2.common.Locale.fromValue(requestLocale.toString());
         
         boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
         if (!claimed) {

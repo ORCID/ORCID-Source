@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
@@ -56,6 +57,11 @@ public class MembersListController extends BaseController {
     @RequestMapping(value = "/members/communityTypes.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> retrieveCommunityTypes() {
         return generateCommunityTypeMap();
+    }
+
+    @RequestMapping(value = "/members/badges.json", method = RequestMethod.GET)
+    public @ResponseBody Map<String, Badge> retrieveBadges() {
+        return salesForceManager.retrieveBadgesMap();
     }
 
     @RequestMapping("/consortia")

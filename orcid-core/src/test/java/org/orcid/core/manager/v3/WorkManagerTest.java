@@ -30,20 +30,20 @@ import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.common.Url;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.common.Title;
+import org.orcid.jaxb.model.v3.rc2.common.Url;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -79,8 +79,8 @@ public class WorkManagerTest extends BaseTest {
     @Resource
     private WorkDao workDao;
     
-    @Value("${org.orcid.core.works.bulk.max:100}")
-    private Long maxBulkSize;
+    @Value("${org.orcid.core.works.bulk.read.max:100}")
+    private Long bulkReadSize;
     
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
@@ -971,7 +971,7 @@ public class WorkManagerTest extends BaseTest {
     @Test(expected = ExceedMaxNumberOfPutCodesException.class)
     public void testFindWorkBulkTooManyPutCodes() {
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= maxBulkSize; i++) {
+        for (int i = 1; i <= bulkReadSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         
@@ -1085,6 +1085,44 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
     }
     
+    @Test
+    public void testCreateNewWorkGroupUserSourceWorks() {
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
+        WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
+        
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManager);
+        
+        MinimizedWorkEntity firstWork = getBasicMinimizedWork();
+        firstWork.setId(1l);
+        firstWork.setDisplayIndex(1l);
+        firstWork.setSourceId("some-orcid");
+        firstWork.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"ISSN\",\"workExternalIdentifierId\":{\"content\":\"1234-5678\"}},{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
+        
+        
+        MinimizedWorkEntity secondWork = getBasicMinimizedWork();
+        secondWork.setId(2l);
+        secondWork.setSourceId("some-orcid");
+        secondWork.setDisplayIndex(1l);
+        secondWork.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"ISSN\",\"workExternalIdentifierId\":{\"content\":\"1234-5678\"}}]}");
+        
+        List<MinimizedWorkEntity> works = Arrays.asList(firstWork, secondWork);
+        Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
+        
+        Mockito.when(mockDao.getWork(Mockito.eq("some-orcid"), Mockito.eq(Long.valueOf(1)))).thenReturn(getUserSourceWorkEntity("some-orcid"));
+        Mockito.when(mockDao.getWork(Mockito.eq("some-orcid"), Mockito.eq(Long.valueOf(2)))).thenReturn(getUserSourceWorkEntity("some-orcid"));
+        
+        workManager.createNewWorkGroup(Arrays.asList(1l, 2l), "some-orcid");
+        
+        // both user versions should be merged
+        Mockito.verify(mockDao, Mockito.times(2)).merge(Mockito.any(WorkEntity.class));
+        
+        // reset dao
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
+    }
+    
     private WorkEntity getUserPreferredWork() {
         WorkEntity userPreferred = new WorkEntity();
         userPreferred.setId(4l);
@@ -1096,29 +1134,12 @@ public class WorkManagerTest extends BaseTest {
     }
     
     private List<MinimizedWorkEntity> getMinimizedWorksListForGrouping() {
-        Date date = DateUtils.convertToDate("2018-01-01T10:15:20");
         List<MinimizedWorkEntity> minWorks = new ArrayList<>();
         
         for (long l = 1; l <= 4; l++) {
-            MinimizedWorkEntity work = new MinimizedWorkEntity();
-            work.setDateCreated(date);
-            work.setLastModified(date);
-            work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
+            MinimizedWorkEntity work = getBasicMinimizedWork();
             work.setDisplayIndex(l);
-            work.setDateCreated(date);
-            work.setDescription("work:description");
             work.setId(l);
-            work.setJournalTitle("work:journalTitle");
-            work.setLanguageCode("EN");
-            work.setLastModified(date);
-            work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
-            work.setSubtitle("work:subtitle");
-            work.setTitle("work:title");
-            work.setTranslatedTitle("work:translatedTitle");
-            work.setTranslatedTitleLanguageCode("ES");
-            work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
-            work.setWorkUrl("work:url");
-            work.setDisplayIndex(l);
             
             if (l == 4l) {
                 work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
@@ -1128,6 +1149,27 @@ public class WorkManagerTest extends BaseTest {
             minWorks.add(work);
         }
         return minWorks;
+    }
+    
+    private MinimizedWorkEntity getBasicMinimizedWork() {
+        Date date = DateUtils.convertToDate("2018-01-01T10:15:20");
+        MinimizedWorkEntity work = new MinimizedWorkEntity();
+        work.setDateCreated(date);
+        work.setLastModified(date);
+        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
+        work.setDateCreated(date);
+        work.setDescription("work:description");
+        work.setJournalTitle("work:journalTitle");
+        work.setLanguageCode("EN");
+        work.setLastModified(date);
+        work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
+        work.setSubtitle("work:subtitle");
+        work.setTitle("work:title");
+        work.setTranslatedTitle("work:translatedTitle");
+        work.setTranslatedTitleLanguageCode("ES");
+        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
+        work.setWorkUrl("work:url");
+        return work;
     }
     
     private WorkEntity getUserSourceWorkEntity(String sourceId) {

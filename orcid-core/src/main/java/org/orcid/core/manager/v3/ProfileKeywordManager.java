@@ -1,8 +1,8 @@
 package org.orcid.core.manager.v3;
 
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
 
 public interface ProfileKeywordManager extends ProfileKeywordManagerReadOnly {
     boolean deleteKeyword(String orcid, Long putCode, boolean checkSource);

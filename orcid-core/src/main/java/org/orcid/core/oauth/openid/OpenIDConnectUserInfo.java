@@ -1,8 +1,7 @@
 package org.orcid.core.oauth.openid;
 
-import org.orcid.jaxb.model.v3.rc1.record.Person;
-import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
-import org.springframework.beans.factory.annotation.Value;
+import org.orcid.jaxb.model.v3.rc2.record.Person;
+import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 
 public class OpenIDConnectUserInfo {
     

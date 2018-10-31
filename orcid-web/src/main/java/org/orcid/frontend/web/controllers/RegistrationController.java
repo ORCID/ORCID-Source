@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
@@ -484,7 +484,7 @@ public class RegistrationController extends BaseController {
                 
                 boolean verified = emailManager.verifyEmail(decryptedEmail, orcid);
                 if(verified) {                    
-                    profileEntityManager.updateLocale(decryptedEmail, org.orcid.jaxb.model.v3.rc1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+                    profileEntityManager.updateLocale(decryptedEmail, org.orcid.jaxb.model.v3.rc2.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
                     redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
                     redirectAttributes.addFlashAttribute("emailVerifiedMessage", getMessage("orcid.frontend.web.email_verified", decryptedEmail));

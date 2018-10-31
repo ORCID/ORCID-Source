@@ -41,6 +41,10 @@ public class SourceManagerImpl implements SourceManager {
         if (authentication == null) {
             return null;
         }
+        // Token endpoint
+        if (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
+            return ((UsernamePasswordAuthenticationToken) authentication).getName();
+        }
         // API
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();

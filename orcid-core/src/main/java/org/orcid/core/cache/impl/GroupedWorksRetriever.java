@@ -22,7 +22,7 @@ import javax.transaction.Transactional;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.cache.Retriever;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 
 /**
  * 

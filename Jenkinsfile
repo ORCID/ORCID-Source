@@ -20,9 +20,9 @@ node {
     stage('SETUP VERSION') {
         try {
             sh "mkdir -p $EHCACHE_LOCATION"
-            do_maven("versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-test/pom.xml")
-            do_maven("versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME} -f orcid-model/pom.xml")
-            do_maven("versions:set -DnewVersion=${BUILD_NUMBER}-${BRANCH_NAME}")
+            do_maven("versions:set -DnewVersion=${BRANCH_NAME}-${BUILD_NUMBER} -f orcid-test/pom.xml")
+            do_maven("versions:set -DnewVersion=${BRANCH_NAME}-${BUILD_NUMBER} -f orcid-model/pom.xml")
+            do_maven("versions:set -DnewVersion=${BRANCH_NAME}-${BUILD_NUMBER}")
         } catch(Exception err) {
             orcid_notify("Failed to update artifact versions ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             deleteDir()
@@ -30,27 +30,7 @@ node {
         }
     }
 
-    stage('TEST') {
-        try {
-            do_maven("clean")
-            do_maven("-D maven.test.skip=true -D license.skip=true -f orcid-test/pom.xml clean install")
-        } catch(Exception err) {
-            orcid_notify("test compile failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            deleteDir()
-            throw err
-        }
-    }
-    stage('MODEL') {
-        try {
-            do_maven("-D maven.test.skip=true -D license.skip=true -f orcid-model/pom.xml clean install")
-        } catch(Exception err) {
-            orcid_notify("model compile failed ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            deleteDir()
-            throw err
-        }
-    }
-
-    stage('PARENT') {
+    stage('BUILD') {
         try {
             do_maven("-D maven.test.skip=true -D license.skip=true clean install")
         } catch(Exception err) {
@@ -78,9 +58,9 @@ node {
 }
 
 def report_and_clean(){
+    sh "rm -rf /var/lib/jenkins/.m2/repository/org/orcid/**/${BRANCH_NAME}-${BUILD_NUMBER}"
     junit '**/target/surefire-reports/*.xml'
     deleteDir()
-    sh "rm -rf /var/lib/jenkins/.m2/repository/org/orcid/orcid-**/${BUILD_NUMBER}-${BRANCH_NAME}"
 }
 
 def orcid_notify(message, level){
