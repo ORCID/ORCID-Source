@@ -136,7 +136,7 @@ export class ManageMembersFindClientComponent
         data.input === "update"
       ) {
         this.manageMembers.updateClient(data.object).subscribe(
-          response => {
+          (response: any) => {
             if (response.errors.length === 0) {
               this._client = null;
               this.update.emit(om.get("admin.edit_client.success"));

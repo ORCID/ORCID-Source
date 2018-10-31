@@ -8590,10 +8590,6 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
     content: "All";
 }
 
-<<<<<<< HEAD
 .ui-multiselect {
-=======
-.ng-tns-c0-0.ui-multiselect {
->>>>>>> origin/clientEditNg2
     width: 150px;
 }

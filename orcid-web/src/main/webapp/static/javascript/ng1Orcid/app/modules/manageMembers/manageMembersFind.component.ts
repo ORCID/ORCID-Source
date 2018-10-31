@@ -49,13 +49,18 @@ export class ManageMembersFindComponent
   find(id) {
     this.updateMessage = null;
     this.memberObject = null;
-    this.manageMembersService.findMember(id).subscribe( (response: any) => {
-      if (response.client){
-        this.clientObject = response.clientObject
-      } else {
-        this.memberObject = response.memberObject;
+    this.manageMembersService.findMember(id).subscribe(
+      (response: any) => {
+        if (response.client) {
+          this.clientObject = response.clientObject;
+        } else if (response.email != null) {
+          this.memberObject = response.memberObject;
+        }
+      },
+      error => {
+        console.log("Error searching for value:" + id + " " + error);
       }
-    });
+    );
   }
 
   update(state) {
