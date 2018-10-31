@@ -18,6 +18,8 @@ import {
 } from "@angular/core";
 
 import { Observable, Subject, Subscription } from "rxjs";
+import { ManageMembersService } from "../../shared/manageMembers.service.ts";
+import { ModalService } from "../../shared/modal.service.ts";
 
 @Component({
   selector: "manage-members-consortium-ng2",
@@ -26,8 +28,15 @@ import { Observable, Subject, Subscription } from "rxjs";
 export class ManageMembersConsortiumComponent
   implements AfterViewInit, OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
+  salesForceId;
+  consortium;
+  findConsortiumError;
+  successEditMemberMessage;
 
-  constructor() {}
+  constructor(
+    private manageMembersService: ManageMembersService,
+    private modalService: ModalService
+  ) {}
 
   //Default init functions provid   ed by Angular Core
   ngAfterViewInit() {
@@ -39,5 +48,56 @@ export class ManageMembersConsortiumComponent
     this.ngUnsubscribe.complete();
   }
 
-  ngOnInit() {}
+  findConsortium() {
+    this.successEditMemberMessage = null;
+    this.consortium = null; 
+    this.findConsortiumError = null; 
+    
+    this.manageMembersService.findConsortium(this.salesForceId).subscribe(
+      (response: any) => {
+        this.consortium = response;
+        console.log(this.consortium);
+      },
+      (error: any) => {
+        this.findConsortiumError = false;
+        console.log("Error finding the consortium");
+      }
+    );
+  }
+
+  confirmUpdateConsortium(work): void {
+    this.modalService.notifyOther({
+      action: "open",
+      moduleId: "modalFindMemberConfirm",
+      object: this.consortium
+    });
+  }
+
+  updateConsortium() {
+    this.manageMembersService
+      .updateConsortium(this.consortium)
+      .subscribe((response: any) => {
+        console.log("UPDATE ", response);
+        if (response.errors.length == 0) {
+          this.successEditMemberMessage = om.get(
+            "manage_member.edit_member.success"
+          );
+        }
+        this.consortium = response;
+      });
+  }
+
+  ngOnInit() {
+    this.modalService.notifyObservable$.subscribe((data: any) => {
+      console.log("RESPONSE ", data);
+      if (
+        data &&
+        data.moduleId === "modalFindMemberConfirm" &&
+        data.action === "close" &&
+        data.input === "update"
+      ) {
+        this.updateConsortium();
+      }
+    });
+  }
 }

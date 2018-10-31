@@ -36,7 +36,7 @@
 			<manage-members-find-ng2  *ngIf="collapseMenu.findMember"> </manage-members-find-ng2>		
 		</div>
 
-		<!-- TODO Find consortium 
+		<!-- Find consortium-->
         <a name="find-consortium"></a>
 		<div class="workspace-accordion-item">		
 			<p>
@@ -44,23 +44,9 @@
 				<a (click)="toggleCollapse('findConsortium')" *ngIf="!collapseMenu.findConsortium"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.manage_consortia'/></a>				
 			</p>
 			<div *ngIf="collapseMenu.findConsortium" class="collapsible bottom-margin-small admin-modal" id="admin_groups_modal">
-					
-					<div class="form-group">
-						<div>
-							<label for="salesForceId"><@orcid.msg 'manage_consortium.salesforce_id' /></label>
-							<input type="text" id="salesForceId" ng-enter="findConsortium()" ng-model="salesForceId" placeholder="<@orcid.msg 'manage_consortium.salesforce_id' />" class="input-xlarge" />                   
-						</div>  
-						<span class="orcid-error" ng-show="findConsortiumError" ng-cloak>  
-							<@spring.message "manage_consortium.salesforce_id_not_found"/>
-						</span>
-						<div class="controls save-btns pull-left">
-							<span id="bottom-search" ng-click="findConsortium()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
-						</div>  
-					</div>
 					<manage-members-consortium-ng2> </manage-members-consortium-ng2>
 			</div>
 		</div>
-		-->
 
 
 </script>

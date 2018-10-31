@@ -46,9 +46,8 @@ export class ManageMembersService {
   }
 
   findConsortium(obj): Observable<any> {
-    let encoded_data = JSON.stringify(obj);
     return this.http.get(
-      getBaseUri() + "/manage-members/find-consortium.json?id=" + encoded_data
+      getBaseUri() + "/manage-members/find-consortium.json?id=" + obj
     );
   }
 

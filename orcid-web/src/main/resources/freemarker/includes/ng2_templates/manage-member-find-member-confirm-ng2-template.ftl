@@ -5,7 +5,8 @@
 				<h3><@orcid.msg 'manage_member.edit_member.confirm_update.title' /></h3>	
 				<p><@orcid.msg 'manage_member.edit_memeber.confirm_update.text' /></p>			
 				<p *ngIf="object.groupName"><strong>{{object.groupName.value}}</strong></p>	
-				<p *ngIf="object.displayName"><strong>{{object.displayName.value}}</strong></p>										
+				<p *ngIf="object.displayName"><strong>{{object.displayName.value}}</strong></p>	
+				<p *ngIf="object.name"><strong>{{object.name.value}}</strong></p>										
     			<div class="btn btn-danger" (click)="update()">
     				<@orcid.msg 'manage_member.edit_member.btn.update' />
     			</div>

@@ -50,7 +50,6 @@ export class ManageMembersFindMemberComponent
           response => {
             this.member = response;
             if (this.member.errors.length === 0) {
-              console.log (this.member)
               this.update.emit(om.get('manage_member.edit_member.success'))
             }
           },

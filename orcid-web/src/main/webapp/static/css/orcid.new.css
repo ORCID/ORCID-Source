@@ -8592,6 +8592,6 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
     content: "All";
 }
 
-.ng-tns-c0-0.ui-multiselect {
+.ui-multiselect {
     width: 150px;
 }
