@@ -8,6 +8,7 @@ import org.orcid.core.version.V3VersionConverter;
 import org.orcid.core.version.V3VersionObjectFactory;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidIdBase;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
@@ -48,6 +49,7 @@ import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 
+import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
@@ -77,8 +79,11 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         return UPPER_VERSION;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public VersionConverterImplV3_0_rc1ToV3_0_rc2() {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+
+        OrcidIdBaseMapper orcidIdBaseMapper = new OrcidIdBaseMapper();
 
         // GROUP ID
         mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords.class).byDefault().register();
@@ -89,17 +94,17 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.v3.rc2.record.ExternalID.class).byDefault().register();
 
         // Contributor
-        mapperFactory.classMap(ContributorOrcid.class, org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid.class).byDefault().register();
-        
+        mapperFactory.classMap(ContributorOrcid.class, org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid.class).customize(orcidIdBaseMapper).register();
+
         // Source Orcid
-        mapperFactory.classMap(SourceOrcid.class, org.orcid.jaxb.model.v3.rc2.common.SourceOrcid.class).byDefault().register();
-        
+        mapperFactory.classMap(SourceOrcid.class, org.orcid.jaxb.model.v3.rc2.common.SourceOrcid.class).customize(orcidIdBaseMapper).register();
+
         // Source client ID
-        mapperFactory.classMap(SourceClientId.class, org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class).byDefault().register();
-        
+        mapperFactory.classMap(SourceClientId.class, org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class).customize(orcidIdBaseMapper).register();
+
         // Orcid identifier
-        mapperFactory.classMap(OrcidIdentifier.class, org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier.class).byDefault().register();
-        
+        mapperFactory.classMap(OrcidIdentifier.class, org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier.class).customize(orcidIdBaseMapper).register();
+
         // Other names
         mapperFactory.classMap(OtherNames.class, org.orcid.jaxb.model.v3.rc2.record.OtherNames.class).byDefault().register();
         mapperFactory.classMap(OtherName.class, org.orcid.jaxb.model.v3.rc2.record.OtherName.class).byDefault().register();
@@ -122,7 +127,9 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
 
         // Emails
         mapperFactory.classMap(Emails.class, org.orcid.jaxb.model.v3.rc2.record.Emails.class).byDefault().register();
-        mapperFactory.classMap(Email.class, org.orcid.jaxb.model.v3.rc2.record.Email.class).byDefault().register();
+        mapperFactory.classMap(Email.class, org.orcid.jaxb.model.v3.rc2.record.Email.class).field("source", "source").field("lastModifiedDate", "lastModifiedDate")
+                .field("createdDate", "createdDate").field("email", "email").field("path", "path").field("visibility", "visibility").customize(new EmailMapper())
+                .register();
 
         // WORK
         mapperFactory.classMap(WorkGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup.class).byDefault().register();
@@ -147,20 +154,32 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.v3.rc2.record.summary.Employments.class).byDefault().register();
         mapperFactory.classMap(Employment.class, org.orcid.jaxb.model.v3.rc2.record.Employment.class).byDefault().register();
         mapperFactory.classMap(EmploymentSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary.class).byDefault().register();
-        
+
         // RESEARCH RESOURCES
-        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources.class).byDefault().register();
-        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceProposal.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceProposal.class).byDefault().register();
-        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup.class).byDefault().register();
-        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResource.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class).byDefault().register();
-        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceHosts.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceHosts.class).byDefault().register();
-        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItems.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItems.class).byDefault().register();
-        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem.class).byDefault().register();
-        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceTitle.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class).byDefault().register();
-        ClassMapBuilder<org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary> rrSummaryClassMap = mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary.class);
-        rrSummaryClassMap.field("source", "source").field("lastModifiedDate", "lastModifiedDate").field("createdDate", "createdDate").field("proposal", "proposal").field("putCode", "putCode").field("path", "path").field("visibility", "visibility").field("displayIndex", "displayIndex");
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources.class)
+                .byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceProposal.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceProposal.class)
+                .byDefault().register();
+        mapperFactory
+                .classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup.class)
+                .byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResource.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class).byDefault()
+                .register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceHosts.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceHosts.class).byDefault()
+                .register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItems.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItems.class).byDefault()
+                .register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem.class).byDefault()
+                .register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceTitle.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class).byDefault()
+                .register();
+        ClassMapBuilder<org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary> rrSummaryClassMap = mapperFactory
+                .classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary.class,
+                        org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary.class);
+        rrSummaryClassMap.field("source", "source").field("lastModifiedDate", "lastModifiedDate").field("createdDate", "createdDate").field("proposal", "proposal")
+                .field("putCode", "putCode").field("path", "path").field("visibility", "visibility").field("displayIndex", "displayIndex");
         rrSummaryClassMap.register();
-        
+
         // PEER REVIEW
         mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews.class).byDefault().register();
         mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.v3.rc2.record.PeerReview.class).byDefault().register();
@@ -177,10 +196,10 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
 
         // OrcidError
         mapperFactory.classMap(OrcidError.class, org.orcid.jaxb.model.v3.rc2.error.OrcidError.class).byDefault().register();
-        
+
         mapper = mapperFactory.getMapperFacade();
-    }    
-    
+    }
+
     @Override
     public V3Convertible downgrade(V3Convertible objectToDowngrade) {
         Object objectToConvert = objectToDowngrade.getObjectToConvert();
@@ -196,8 +215,29 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         Object objectToConvert = objectToUpgrade.getObjectToConvert();
         Object targetObject = v3VersionObjectFactory.createEquivalentInstance(objectToConvert, UPPER_VERSION);
         MappingContext context = new MappingContext.Factory().getContext();
-        context.setProperty("downgrade", false);        
+        context.setProperty("downgrade", false);
         mapper.map(objectToConvert, targetObject, context);
         return new V3Convertible(targetObject, UPPER_VERSION);
-    }        
+    }
+
+    private class OrcidIdBaseMapper<Y, A> extends CustomMapper<OrcidIdBase, org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase> {
+
+        @Override
+        public void mapBtoA(org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, OrcidIdBase a, MappingContext context) {
+            a.setHost(b.getHost());
+            a.setPath(b.getPath());
+            a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/") + b.getPath());
+        }
+    }
+
+    private class EmailMapper extends CustomMapper<Email, org.orcid.jaxb.model.v3.rc2.record.Email> {
+
+        @Override
+        public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Email b, Email a, MappingContext context) {
+            a.setCurrent(b.isCurrent());
+            a.setPrimary(b.isPrimary());
+            a.setVerified(b.isVerified());
+        }
+
+    }
 }
