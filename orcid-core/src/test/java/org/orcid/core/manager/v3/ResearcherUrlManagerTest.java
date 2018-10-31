@@ -13,16 +13,20 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -34,11 +38,20 @@ public class ResearcherUrlManagerTest extends BaseTest {
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
+    private static final String CLIENT_2_ID = "APP-5555555555555556";//obo
+    private static final String CLIENT_3_ID = "4444-4444-4444-4498";//obo
+
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
 
     @Mock
+    private SourceManager mockSourceManager;
+
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
+    
+    @Resource(name = "orcidSecurityManagerV3")
+    OrcidSecurityManager orcidSecurityManager;
 
     @Resource(name = "researcherUrlManagerV3")
     private ResearcherUrlManager researcherUrlManager;
@@ -50,9 +63,15 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(researcherUrlManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(researcherUrlManager, "sourceManager", mockSourceManager);
     }
 
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(researcherUrlManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
+    }
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
@@ -62,7 +81,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Test
     public void testAddResearcherUrlToUnclaimedRecordPreserveResearcherUrlVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         ResearcherUrl rUrl = getResearcherUrl();
         
         rUrl = researcherUrlManager.createResearcherUrl(unclaimedOrcid, rUrl, true);
@@ -74,7 +93,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Test
     public void testAddResearcherUrToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         ResearcherUrl rUrl = getResearcherUrl();
         
         rUrl = researcherUrlManager.createResearcherUrl(claimedOrcid, rUrl, true);
@@ -86,7 +105,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         ResearcherUrl rUrl = getResearcherUrl();
         rUrl.getUrl().setValue(rUrl.getUrl().getValue() + "/fromUI");
         
@@ -99,7 +118,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         ResearcherUrl rUrl = getResearcherUrl();
         rUrl.getUrl().setValue(rUrl.getUrl().getValue() + "/fromAPI");
         
@@ -149,6 +168,62 @@ public class ResearcherUrlManagerTest extends BaseTest {
         assertEquals(1, elements.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), elements.getResearcherUrls().get(0).getPutCode());
     }
+    
+    @Test
+    public void testAssertionOriginUpdate() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        ResearcherUrl rUrl = getResearcherUrl();
+        
+        rUrl = researcherUrlManager.createResearcherUrl(unclaimedOrcid, rUrl, true);
+        rUrl = researcherUrlManager.getResearcherUrl(unclaimedOrcid, rUrl.getPutCode());
+
+        assertNotNull(rUrl);
+        
+        assertEquals(rUrl.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
+        assertEquals(rUrl.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(rUrl.getSource().getSourceName().getContent(),"U. Test");
+        assertEquals(rUrl.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
+        assertEquals(rUrl.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
+        assertEquals(rUrl.getSource().getAssertionOriginName().getContent(),"Source Client 2");
+        
+        //make a duplicate
+        ResearcherUrl rUrl2 = getResearcherUrl();
+        try {
+            rUrl2 = researcherUrlManager.createResearcherUrl(unclaimedOrcid, rUrl2, true);
+            fail();
+        }catch(OrcidDuplicatedElementException e) {
+            
+        }
+        
+        //make a duplicate as a different assertion origin
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        rUrl2 = researcherUrlManager.createResearcherUrl(unclaimedOrcid, rUrl2, true);
+        
+        rUrl.setUrl(new Url("http://no.no"));
+        //wrong sources:
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            researcherUrlManager.updateResearcherUrl(unclaimedOrcid, rUrl, true);
+            fail();
+        }catch(WrongSourceException e) {
+        }
+        
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
+            researcherUrlManager.updateResearcherUrl(unclaimedOrcid, rUrl, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));  
+            researcherUrlManager.updateResearcherUrl(unclaimedOrcid, rUrl, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+    }
+    
     
     private ResearcherUrl getResearcherUrl() {
         ResearcherUrl rUrl = new ResearcherUrl();

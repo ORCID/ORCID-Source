@@ -62,4 +62,24 @@
 				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
 		</addColumn>		
     </changeSet>
+    
+    <changeSet author="Tom Demeranville" id="update_assertion_origin_constraints">
+    <!-- remove these then add back but with  assertion_origin_client_source_id and assertion_origin_source_id
+    //researcher_url
+    //CONSTRAINT researcher_url_orcid_client_source_unique_key UNIQUE (url, orcid, client_source_id),
+    //CONSTRAINT researcher_url_orcid_source_unique_key UNIQUE (url, orcid, source_id)
+    //external_identifiers
+    CONSTRAINT unique_external_identifiers_allowing_multiple_sources UNIQUE (orcid, external_id_reference, external_id_type, source_id, client_source_id)
+     -->
+         <dropUniqueConstraint 
+            constraintName="researcher_url_orcid_client_source_unique_key"
+            tableName="researcher_url"/>
+         <dropUniqueConstraint 
+            constraintName="researcher_url_orcid_source_unique_key"
+            tableName="researcher_url"/>
+         <dropUniqueConstraint 
+            constraintName="unique_external_identifiers_allowing_multiple_sources"
+            tableName="researcher_url"/>
+</changeSet>
+    
 </databaseChangeLog>

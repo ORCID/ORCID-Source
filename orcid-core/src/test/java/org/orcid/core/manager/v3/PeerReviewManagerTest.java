@@ -491,21 +491,21 @@ public class PeerReviewManagerTest extends BaseTest {
         //wrong sources:
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
-            peerReviewManager.updatePeerReview(claimedOrcid, pr, true);
+            peerReviewManager.updatePeerReview(claimedOrcid, p2, true);
             fail();
         }catch(WrongSourceException e) {
         }
         
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
-            peerReviewManager.updatePeerReview(claimedOrcid, pr, true);
+            peerReviewManager.updatePeerReview(claimedOrcid, p2, true);
             fail();
         }catch(WrongSourceException e) {
             
         }
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));  
-            peerReviewManager.updatePeerReview(claimedOrcid, pr, true);
+            peerReviewManager.updatePeerReview(claimedOrcid, p2, true);
             fail();
         }catch(WrongSourceException e) {
             
