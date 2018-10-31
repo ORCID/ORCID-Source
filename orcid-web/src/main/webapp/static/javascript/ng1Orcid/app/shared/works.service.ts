@@ -396,6 +396,7 @@ export class WorksService {
     }
 
     getWorksPage( accessType, sort, sortAsc): Observable<any> {
+        this.showLoadMore = false;
         this.details = new Object();
         let url = getBaseUri();
         if (accessType == this.constants.access_type.USER) {

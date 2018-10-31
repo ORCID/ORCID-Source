@@ -1074,7 +1074,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.bulkEditMap = {};
                     }
                 } 
-                if(res.action == 'add') {
+                if(res.action == 'add' || res.action == 'cancel') {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
