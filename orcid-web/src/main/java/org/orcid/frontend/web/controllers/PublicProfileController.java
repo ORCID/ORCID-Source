@@ -119,8 +119,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private LocaleManager localeManager;
 
-    @Resource(name = "workManagerV3")
-    private WorkManager workManager;
+    @Resource(name = "workManagerReadOnlyV3")
+    private WorkManager workManagerReadOnly;
 
     @Resource(name = "peerReviewManagerReadOnlyV3")
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
@@ -383,7 +383,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         // TODO: DO we need this? It's reads ALL works from the DB, groups and
         // counts them!
-        if (worksPaginator.getPublicWorksCount(orcid) > 0) {
+        if (workManagerReadOnly.hasPublicWorks(orcid)) {
             isProfileEmtpy = false;
         } else {
             mav.addObject("worksEmpty", true);
@@ -670,7 +670,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId);
+        Work workObj = workManagerReadOnly.getWork(orcid, workId);
         if (workObj != null) {
             validateVisibility(workObj.getVisibility());
             sourceUtils.setSourceName(workObj);

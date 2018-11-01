@@ -232,5 +232,13 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         }
         return works;
     }
+
+    @Override
+    public boolean hasPublicWorks(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM work WHERE orcid=:orcid AND visibility='PUBLIC'");
+        query.setParameter("orcid", orcid);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return (result != null && result > 0);
+    }
 }
 
