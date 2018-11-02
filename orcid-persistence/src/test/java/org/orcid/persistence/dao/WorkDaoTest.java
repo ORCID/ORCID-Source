@@ -2,6 +2,7 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,5 +69,10 @@ public class WorkDaoTest extends DBUnitTest {
             existingIds.remove(w.getId());
         }
         assertTrue("Elements not found: " + existingIds, existingIds.isEmpty());
+    }
+    
+    @Test
+    public void testHasPublicWorks() {
+        fail();
     }
 }

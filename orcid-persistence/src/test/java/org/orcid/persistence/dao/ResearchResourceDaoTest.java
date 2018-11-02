@@ -1,10 +1,11 @@
 package org.orcid.persistence.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,7 +24,6 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
@@ -160,4 +160,8 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     }
 
 
+    @Test
+    public void testHasPublicResearchResources() {
+        fail();
+    }
 }

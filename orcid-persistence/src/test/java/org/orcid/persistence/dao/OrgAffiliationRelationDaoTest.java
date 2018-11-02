@@ -2,6 +2,7 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
@@ -53,5 +54,10 @@ public class OrgAffiliationRelationDaoTest extends DBUnitTest {
         assertEquals(0, finalNumberOfElementsThatBelogsToUser);
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
+    }
+    
+    @Test
+    public void hasPublicAffiliationsTest() {
+        fail();
     }
 }

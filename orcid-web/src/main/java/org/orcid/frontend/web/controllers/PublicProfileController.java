@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -378,7 +377,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
         mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
 
-        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
 
         // TODO: DO we need this? It's reads ALL works from the DB, groups and
@@ -388,14 +386,13 @@ public class PublicProfileController extends BaseWorkspaceController {
         } else {
             mav.addObject("worksEmpty", true);
         }
-        if (researchResourcePaginator.getPublicCount(orcid) > 0) {
+        if (researchResourceManager.hasPublicResearchResources(orcid)) {
             isProfileEmtpy = false;
         } else {
             mav.addObject("researchResourcesEmpty", true);
         }
 
-        affiliationMap = activityManager.affiliationMap(orcid);
-        if (affiliationMap.size() > 0) {
+        if (affiliationsManager.hasPublicAffiliations(orcid)) {
             isProfileEmtpy = false;
         } else {
             mav.addObject("affiliationsEmpty", true);
@@ -417,9 +414,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            String affiliationIdsJson = mapper.writeValueAsString(affiliationMap.keySet());
             String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
-            mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
             mav.addObject("isProfileEmpty", isProfileEmtpy);
         } catch (JsonGenerationException e) {
@@ -808,35 +803,5 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
         }
         return result;
-    }
-}
-
-class OrcidInfo {
-    public String orcid = "";
-    public String name = "";
-    public HashMap<String, String> values = new HashMap<String, String>();
-
-    public String getOrcid() {
-        return orcid;
-    }
-
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setValue(String name, String value) {
-        values.put(name, value);
-    }
-
-    public String getValue(String name) {
-        return values.get(name);
     }
 }
