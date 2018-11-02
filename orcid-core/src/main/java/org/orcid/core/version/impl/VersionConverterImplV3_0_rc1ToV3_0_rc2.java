@@ -226,7 +226,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         public void mapBtoA(org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, OrcidIdBase a, MappingContext context) {
             a.setHost(b.getHost());
             a.setPath(b.getPath());
-            a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/") + b.getPath());
+            a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class) ? "/client/" : "/") + b.getPath());
         }
     }
 
