@@ -48,23 +48,25 @@ public class JSONWorkExternalIdentifiersConverterV2 extends BidirectionalConvert
     public ExternalIDs convertFrom(String source, Type<ExternalIDs> destinationType) {
         JSONWorkExternalIdentifiers workExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, JSONWorkExternalIdentifiers.class);
         ExternalIDs externalIDs = new ExternalIDs();
-        for (JSONWorkExternalIdentifier workExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier()) {
-            ExternalID id = new ExternalID();
-            if (workExternalIdentifier.getWorkExternalIdentifierType() == null) {
-                id.setType(WorkExternalIdentifierType.OTHER_ID.value());
-            } else {
-                id.setType(conv.convertFrom(workExternalIdentifier.getWorkExternalIdentifierType(), null));
-            }
-            if (workExternalIdentifier.getWorkExternalIdentifierId() != null) {
-                id.setValue(workExternalIdentifier.getWorkExternalIdentifierId().content);
-            } 
-            if (workExternalIdentifier.getUrl() != null) {
-                id.setUrl(new Url(workExternalIdentifier.getUrl().getValue()));
-            }
-            if (workExternalIdentifier.getRelationship() != null) {
-                id.setRelationship(Relationship.fromValue(conv.convertFrom(workExternalIdentifier.getRelationship(), null)));
-            }
-            externalIDs.getExternalIdentifier().add(id);
+        for (JSONWorkExternalIdentifier workExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier()) {            
+            if(workExternalIdentifier.getRelationship() != null && !org.orcid.jaxb.model.v3.rc2.record.Relationship.VERSION_OF.name().equals(workExternalIdentifier.getRelationship())) {
+                ExternalID id = new ExternalID();
+                if (workExternalIdentifier.getWorkExternalIdentifierType() == null) {
+                    id.setType(WorkExternalIdentifierType.OTHER_ID.value());
+                } else {
+                    id.setType(conv.convertFrom(workExternalIdentifier.getWorkExternalIdentifierType(), null));
+                }
+                if (workExternalIdentifier.getWorkExternalIdentifierId() != null) {
+                    id.setValue(workExternalIdentifier.getWorkExternalIdentifierId().content);
+                } 
+                if (workExternalIdentifier.getUrl() != null) {
+                    id.setUrl(new Url(workExternalIdentifier.getUrl().getValue()));
+                }
+                if (workExternalIdentifier.getRelationship() != null) {
+                    id.setRelationship(Relationship.fromValue(conv.convertFrom(workExternalIdentifier.getRelationship(), null)));
+                }
+                externalIDs.getExternalIdentifier().add(id);
+            }                        
         }
         return externalIDs;
     }
