@@ -90,6 +90,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     showRegisterForm: any;
     showRegisterProcessing: any;
     showUpdateIcon: any;
+    showNotYouDescription: any;
     socialSignInForm: any;
     loadTime: any;
     generalRegistrationError: any;
@@ -141,6 +142,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.requestInfoForm = null;    
         this.registrationForm = {};
         this.scriptsInjected = false;
+        this.showNotYouDescription = false;
         this.showBulletIcon = false;
         this.showClientDescription = false;
         this.showDeactivatedError = false;
@@ -247,6 +249,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.cdr.detectChanges();
     };
 
+    toggleNotYouDescription(): void {
+        this.showNotYouDescription = !this.showNotYouDescription;
+    };
+
     toggleClientDescription(): void {
         this.showClientDescription = !this.showClientDescription;
     };
@@ -329,6 +335,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 if(data){
+                    console.log (data)
                     this.requestInfoForm = data;
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {

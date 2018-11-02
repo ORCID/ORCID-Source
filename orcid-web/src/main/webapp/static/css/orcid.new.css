@@ -8573,3 +8573,39 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 #saveRecoverCodesHeading {
     color: red;
 }
+
+.pi-check { 
+    color: gray;
+}
+
+.ui-state-highlight{
+    background: #a6ce39 !important;
+}
+
+.ui-widget-header.ui-corner-all {
+    display: flex;
+}
+.ui-widget-header.ui-corner-all:after {
+    content: "All";
+}
+
+.ui-multiselect {
+    width: 150px;
+}
+
+span.notYouUrl {
+    display: flex;
+    align-items: center;
+    width: 80px;
+    justify-content: space-between;
+}
+
+span.notYouUrl > a {
+    height: 15px;
+}
+
+.clearfix.pull-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
