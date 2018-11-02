@@ -8360,7 +8360,8 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .header .navigation>.menu>li.active-trail>.menu {
-    flex-direction: row-reverse
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
 }
 
 .lang-rl .header .search form .conditions {
