@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -20,8 +21,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class OrgAffiliationRelationDaoTest extends DBUnitTest {
 
-    private static String USER_ORCID = "0000-0000-0000-0003";
-    private static String OTHER_USER_ORCID = "4444-4444-4444-4443";
+    private static String USER_ORCID = "4444-4444-4444-4443";
+    private static String OTHER_USER_ORCID = "0000-0000-0000-0003";
     
     @Resource(name = "orgAffiliationRelationDao")
     private OrgAffiliationRelationDao dao;
@@ -42,9 +43,9 @@ public class OrgAffiliationRelationDaoTest extends DBUnitTest {
         long initialNumber = dao.countAll();
         long elementThatBelogsToUser = dao.getByUser(USER_ORCID).size();
         long otherUserElements = dao.getByUser(OTHER_USER_ORCID).size();
-        assertEquals(35, elementThatBelogsToUser);
+        assertEquals(3, elementThatBelogsToUser);
         assertTrue(elementThatBelogsToUser < initialNumber);
-        assertEquals(3, otherUserElements);
+        assertEquals(35, otherUserElements);
         //Remove all elements that belongs to USER_ORCID
         dao.removeAllAffiliations(USER_ORCID);
         
@@ -58,6 +59,7 @@ public class OrgAffiliationRelationDaoTest extends DBUnitTest {
     
     @Test
     public void hasPublicAffiliationsTest() {
-        fail();
+        assertTrue(dao.hasPublicAffiliations("0000-0000-0000-0003"));
+        assertFalse(dao.hasPublicAffiliations("0000-0000-0000-0002"));
     }
 }

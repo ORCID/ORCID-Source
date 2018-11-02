@@ -1,6 +1,5 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -18,7 +17,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -102,10 +100,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
@@ -357,10 +351,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
         mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
 
-        LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-
-        // TODO: DO we need this? It's reads ALL works from the DB, groups and
-        // counts them!
         if (workManagerReadOnly.hasPublicWorks(orcid)) {
             isProfileEmtpy = false;
         } else {
@@ -378,10 +368,9 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("affiliationsEmpty", true);
         }
 
-        fundingMap = activityManager.fundingMap(orcid);
-        if (fundingMap.size() > 0)
+        if (profileFundingManagerReadOnly.hasPublicFunding(orcid)) {
             isProfileEmtpy = false;
-        else {
+        } else {
             mav.addObject("fundingEmpty", true);
         }
         
@@ -391,19 +380,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("peerReviewEmpty", true);
         }
         
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
-            mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
-            mav.addObject("isProfileEmpty", isProfileEmtpy);
-        } catch (JsonGenerationException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mav.addObject("isProfileEmpty", isProfileEmtpy);
 
         if (!profile.isReviewed()) {
             if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {

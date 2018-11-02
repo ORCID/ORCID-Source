@@ -88,6 +88,50 @@ last_modified="2010-07-02 15:31:00.00"
 source_id="4444-4444-4444-4442"
 />
 
+<research_resource
+id="5" 
+orcid="0000-0000-0000-0003"			
+external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}"
+title="the title5"
+translated_title="the translated title5"
+translated_title_language_code="EN"
+proposal_type="the proposal type5"
+url="the url5"
+display_index="2"
+visibility="PUBLIC"
+start_year="2011"
+start_month="08"
+start_day="03"
+end_year="2012"
+end_month="08"
+end_day="03"
+date_created="2010-07-02 15:31:00.00"
+last_modified="2010-07-02 15:31:00.00"
+source_id="4444-4444-4444-4442"
+/>
+
+<research_resource
+id="6" 
+orcid="0000-0000-0000-0002"			
+external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}"
+title="the title6"
+translated_title="the translated title6"
+translated_title_language_code="EN"
+proposal_type="the proposal type6"
+url="the url6"
+display_index="2"
+visibility="LIMITED"
+start_year="2011"
+start_month="08"
+start_day="03"
+end_year="2012"
+end_month="08"
+end_day="03"
+date_created="2010-07-02 15:31:00.00"
+last_modified="2010-07-02 15:31:00.00"
+source_id="4444-4444-4444-4442"
+/>
+
 <!-- couple of items -->
 <research_resource_item 
 id="1"

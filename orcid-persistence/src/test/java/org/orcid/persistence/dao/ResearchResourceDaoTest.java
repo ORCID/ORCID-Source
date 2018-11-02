@@ -1,7 +1,9 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -121,25 +123,25 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         
         List<ResearchResourceEntity> e1 = dao.getByUser(USER_ORCID, new Date().getTime());
 
-        assertEquals(2,e1.size());
+        assertEquals(3,e1.size());
 
-        assertEquals(4l,e1.get(1).getDisplayIndex().longValue());
-        assertEquals("the title4",e1.get(1).getTitle());
-        assertEquals("the translated title4",e1.get(1).getTranslatedTitle());
-        assertEquals("DE",e1.get(1).getTranslatedTitleLanguageCode());
-        assertEquals("the proposal type4",e1.get(1).getProposalType());
-        assertEquals("the url4",e1.get(1).getUrl());
-        assertEquals("PRIVATE",e1.get(1).getVisibility());
-        assertEquals(2003,e1.get(1).getStartDate().getYear().intValue());
-        assertEquals(2,e1.get(1).getStartDate().getMonth().intValue());
-        assertEquals(1,e1.get(1).getStartDate().getDay().intValue());
-        assertEquals(2003,e1.get(1).getEndDate().getYear().intValue());
-        assertEquals(2,e1.get(1).getEndDate().getMonth().intValue());
-        assertEquals(1,e1.get(1).getEndDate().getDay().intValue());
-        assertEquals(Date.parse("2010/07/02 15:31"),e1.get(1).getDateCreated().getTime());
-        assertNotNull(e1.get(1).getLastModified().getTime());
-        assertEquals(USER_ORCID,e1.get(1).getProfile().getUsername());
-        assertEquals("4444-4444-4444-4442",e1.get(1).getClientSourceId());
+        assertEquals(4l,e1.get(2).getDisplayIndex().longValue());
+        assertEquals("the title4",e1.get(2).getTitle());
+        assertEquals("the translated title4",e1.get(2).getTranslatedTitle());
+        assertEquals("DE",e1.get(2).getTranslatedTitleLanguageCode());
+        assertEquals("the proposal type4",e1.get(2).getProposalType());
+        assertEquals("the url4",e1.get(2).getUrl());
+        assertEquals("PRIVATE",e1.get(2).getVisibility());
+        assertEquals(2003,e1.get(2).getStartDate().getYear().intValue());
+        assertEquals(2,e1.get(2).getStartDate().getMonth().intValue());
+        assertEquals(1,e1.get(2).getStartDate().getDay().intValue());
+        assertEquals(2003,e1.get(2).getEndDate().getYear().intValue());
+        assertEquals(2,e1.get(2).getEndDate().getMonth().intValue());
+        assertEquals(1,e1.get(2).getEndDate().getDay().intValue());
+        assertEquals(Date.parse("2010/07/02 15:31"),e1.get(2).getDateCreated().getTime());
+        assertNotNull(e1.get(2).getLastModified().getTime());
+        assertEquals(USER_ORCID,e1.get(2).getProfile().getUsername());
+        assertEquals("4444-4444-4444-4442",e1.get(2).getClientSourceId());
         assertEquals("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}",e.getExternalIdentifiersJson());
         
     }
@@ -162,6 +164,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
 
     @Test
     public void testHasPublicResearchResources() {
-        fail();
+        assertTrue(dao.hasPublicResearchResources("0000-0000-0000-0003"));
+        assertFalse(dao.hasPublicResearchResources("0000-0000-0000-0002"));
     }
 }

@@ -250,4 +250,20 @@
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;3&quot;}}],&quot;scope&quot;:null}"
           display_index="2"
             />
+            
+	<work work_id="18"
+          publication_year="2016"
+          publication_month="1"
+          publication_day="1"
+          title="PRIVATE"
+          work_type="JOURNAL_ARTICLE"
+          date_created="2016-04-01 15:31:00.00"
+          last_modified="2016-04-01 15:31:00.00"
+          orcid="0000-0000-0000-0002"
+          source_id="0000-0000-0000-0002"
+          added_to_profile_date="2016-04-01 11:09:28.636"
+          visibility="PRIVATE"     
+          external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;3&quot;}}],&quot;scope&quot;:null}"
+          display_index="2"
+            />
 </dataset>

@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -23,8 +24,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class WorkDaoTest extends DBUnitTest {
 
-    private static String USER_ORCID = "0000-0000-0000-0003";
-    private static String OTHER_USER_ORCID = "4444-4444-4444-4443";
+    private static String USER_ORCID = "4444-4444-4444-4443";
+    private static String OTHER_USER_ORCID = "0000-0000-0000-0003";    
     
     @Resource(name = "workDao")
     private WorkDao dao;
@@ -47,7 +48,7 @@ public class WorkDaoTest extends DBUnitTest {
         long otherUserElements = dao.getWorkLastModifiedList(OTHER_USER_ORCID).size();
         assertTrue(elementThatBelogsToUser > 0);
         assertTrue(elementThatBelogsToUser < initialNumber);
-        assertEquals(3, otherUserElements);
+        assertEquals(6, otherUserElements);
         //Remove all elements that belongs to USER_ORCID
         dao.removeWorks(USER_ORCID);
         
@@ -73,6 +74,7 @@ public class WorkDaoTest extends DBUnitTest {
     
     @Test
     public void testHasPublicWorks() {
-        fail();
+        assertTrue(dao.hasPublicWorks("0000-0000-0000-0003"));
+        assertFalse(dao.hasPublicWorks("0000-0000-0000-0002"));
     }
 }
