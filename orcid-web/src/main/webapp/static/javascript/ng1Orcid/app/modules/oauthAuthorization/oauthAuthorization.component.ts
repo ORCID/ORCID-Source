@@ -335,7 +335,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 if(data){
-                    console.log (data)
                     this.requestInfoForm = data;
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
