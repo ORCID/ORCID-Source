@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.converter.PeerReviewSubjectTypeConverter;
 import org.orcid.core.adapter.converter.VisibilityConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV2;
@@ -819,10 +820,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV2());
         converterFactory.registerConverter("workExternalIdentifierConverterId", new JSONPeerReviewWorkExternalIdentifierConverterV2());
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
+        converterFactory.registerConverter("peerReviewSubjectTypeConverter", new PeerReviewSubjectTypeConverter());
 
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
-        addV2CommonFields(classMap);
-        registerSourceConverters(mapperFactory, classMap);
+        classMap.fieldMap("subjectType", "subjectType").converter("peerReviewSubjectTypeConverter").add();
         classMap.field("url.value", "url");
         classMap.field("organization.name", "org.name");
         classMap.field("organization.address.city", "org.city");
@@ -831,7 +832,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         classMap.field("groupId", "groupId");
-        classMap.field("subjectType", "subjectType");
         classMap.field("subjectUrl.value", "subjectUrl");
         classMap.field("subjectName.title.content", "subjectName");
         classMap.field("subjectName.translatedTitle.content", "subjectTranslatedName");
@@ -840,6 +840,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        registerSourceConverters(mapperFactory, classMap);
+        addV2CommonFields(classMap);
         classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);

@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Organization;
@@ -37,11 +38,13 @@ import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.PeerReviewType;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Role;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class PeerReviewManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -75,6 +78,19 @@ public class PeerReviewManagerTest extends BaseTest {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
         Collections.reverse(reversedDataFiles);
         removeDBUnitData(reversedDataFiles);
+    }
+    
+    @Test
+    public void testGetPeerReview() {
+        PeerReviewDao peerReviewDao = (PeerReviewDao) ReflectionTestUtils.getField(peerReviewManager, "peerReviewDao");
+        PeerReviewDao mockPeerReviewDao = Mockito.mock(PeerReviewDao.class);
+        ReflectionTestUtils.setField(peerReviewManager, "peerReviewDao", mockPeerReviewDao);
+        
+        when(mockPeerReviewDao.getPeerReview(Mockito.eq("orcid"), Mockito.eq(1l))).thenReturn(getPeerReviewEntityWithInvalidSubjectType());
+        PeerReview peerReview = peerReviewManager.getPeerReview("orcid", 1l);
+        assertEquals(WorkType.OTHER, peerReview.getSubjectType());
+        
+        ReflectionTestUtils.setField(peerReviewManager, "peerReviewDao", peerReviewDao);
     }
     
     @Test
@@ -413,6 +429,13 @@ public class PeerReviewManagerTest extends BaseTest {
         extIds.getExternalIdentifier().add(extId);
         summary.setExternalIdentifiers(extIds);
         return summary;
+    }
+    
+    private PeerReviewEntity getPeerReviewEntityWithInvalidSubjectType() {
+        PeerReviewEntity e = new PeerReviewEntity();
+        e.setId(1L);
+        e.setSubjectType("GRANT");
+        return e;
     }
     
     private PeerReview getPeerReview(String extIdValue) {
