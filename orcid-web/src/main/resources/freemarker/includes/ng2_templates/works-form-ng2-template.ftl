@@ -285,6 +285,11 @@
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="part-of" />
                                         <@orcid.msg "common.part_of" />
                                     </label>                            
+                                    
+                                    <label class="checkbox-inline">
+                                        <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="version-of" />
+                                        <@orcid.msg "common.version_of" />
+                                    </label>    
                                     <button *ngIf="editWork.workExternalIdentifiers.length > 1" (click)="deleteExternalIdentifier(i)" class="glyphicon glyphicon-trash grey action-icon-align-right"></button>                            
                                 </div>
                                 <div *ngIf="last" class="add-item-link clearfix">   
