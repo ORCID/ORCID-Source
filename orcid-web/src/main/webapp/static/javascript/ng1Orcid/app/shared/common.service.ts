@@ -87,6 +87,12 @@ export class CommonService {
         return true;
     };
 
+    extractContentFromBody(html:string): string {
+        var start = html.indexOf("<body>")+"<body>".length;
+        var end = html.indexOf("</body>", start);
+        return html.substring(start, end);
+    }
+
     formatDate(oldDate): string {
         let date:any = new Date(oldDate);
         let day:any = date.getDate();
@@ -206,6 +212,10 @@ export class CommonService {
         $.colorbox.close();
     };
 
+    replaceSeparatorWithSpace(str): string {
+        return str.replace(/-|_|\./g, ' ');
+    }
+
     showPrivacyHelp(elem, event, offsetArrow): void{
         let top = $(event.target.parentNode).parent().prop('offsetTop');
         let left = $(event.target.parentNode).parent().prop('offsetLeft');
@@ -254,5 +264,18 @@ export class CommonService {
         if (pojoMember != null && pojoMember.value != null && (pojoMember.value.charAt(0) == ' ' || pojoMember.value.charAt(pojoMember.value.length - 1) == ' ')) {
             pojoMember.value = pojoMember.value.trim();
         }
-    };            
+    };   
+    
+    randomString(): Observable<any> {        
+       return this.http.get(
+                getBaseUri() + '/generate-random-string.json',
+                {responseType: 'text'}
+        );         
+    };
+    
+    getUserStatus(): Observable<any> {        
+       return this.http.get(
+           getBaseUri() + '/userStatus.json'
+       );         
+    }; 
 }

@@ -29,37 +29,30 @@ export class ClaimService {
         );
         this.url = window.location.href.split("?")[0]+".json";
     }
+    
     notifyOther(): void {
-        this.notify.next();
-        console.log('notify');
+        this.notify.next();        
     }
 
     getClaim(): Observable<any> {
         return this.http.get(
             this.url
-        )
-        
+        )        
     }
 
     postClaim( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        
         return this.http.post( 
             this.url, 
-            encoded_data, 
+            JSON.stringify(obj), 
             { headers: this.headers }
-        )
-        
+        )        
     }
 
     serverValidate( obj, field ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        
         return this.http.post( 
             getBaseUri() + '/claim' + field + 'Validate.json', 
-            encoded_data, 
+            JSON.stringify(obj), 
             { headers: this.headers }
-        )
-        
+        )        
     }
 }

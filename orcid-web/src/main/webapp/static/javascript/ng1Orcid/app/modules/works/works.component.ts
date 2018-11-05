@@ -9,7 +9,7 @@ declare var populateWorkAjaxForm: any;
 declare var workIdLinkJs: any;
 
 import { NgForOf, NgIf } 
-    from '@angular/common'; 
+    from '@angular/common';
 
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit } 
     from '@angular/core';
@@ -44,6 +44,7 @@ import { WorkspaceService }
 })
 export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() publicView: any;
+    @Input() printView: any;
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -128,6 +129,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.moreInfoOpen = false;
         this.noLinkFlag = true;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
+        this.printView = elementRef.nativeElement.getAttribute('printView');
         this.savingBibtex = false;
         this.scriptsLoaded = false;
         this.selectedGeoArea = null;
@@ -291,7 +293,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 }
             }
-            this.worksService.notifyOther({worksToMerge:worksToMerge});      
+            this.worksService.notifyOther({worksToMerge:worksToMerge});   
             this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
             this.worksService.notifyOther({mergeCount:mergeCount});
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
@@ -565,23 +567,43 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     loadMore(): void {
         if(this.publicView === "true") {
-            this.worksService.getWorksPage(this.worksService.constants.access_type.ANONYMOUS, this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]
-            )
-            .pipe(    
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe(
-                data => {
-                    this.formData = data;
-                    this.worksService.handleWorkGroupData( this.formData );
-                    this.worksService.loading = false;
-                },
-                error => {
-                    this.worksService.loading = false;
-                    console.log('worksLoadMore', error);
-                } 
-            );
+            if(this.printView === "true") {
+                this.worksService.loadAllPublicWorkGroups(this.sortState.predicateKey, 
+                    !this.sortState.reverseKey[this.sortState.predicateKey]
+                )
+                .pipe(    
+                    takeUntil(this.ngUnsubscribe)
+                )
+                .subscribe(
+                    data => {
+                        this.formData = data;
+                        this.worksService.handleWorkGroupData( this.formData );
+                        this.worksService.loading = false;
+                    },
+                    error => {
+                        this.worksService.loading = false;
+                        console.log('worksLoadMore', error);
+                    } 
+                );
+            } else {
+                this.worksService.getWorksPage(this.worksService.constants.access_type.ANONYMOUS, this.sortState.predicateKey, 
+                    !this.sortState.reverseKey[this.sortState.predicateKey]
+                )
+                .pipe(    
+                    takeUntil(this.ngUnsubscribe)
+                )
+                .subscribe(
+                    data => {
+                        this.formData = data;
+                        this.worksService.handleWorkGroupData( this.formData );
+                        this.worksService.loading = false;
+                    },
+                    error => {
+                        this.worksService.loading = false;
+                        console.log('worksLoadMore', error);
+                    } 
+                );
+            }
         } else {
             this.worksService.getWorksPage(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
                 !this.sortState.reverseKey[this.sortState.predicateKey]
@@ -1016,6 +1038,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    toggleSectionDisplay($event): void {
+        $event.stopPropagation();
+        this.workspaceSrvc.displayWorks = !this.workspaceSrvc.displayWorks;
+        if(this.workspaceSrvc.displayWorks==false){
+            this.workImportWizard=false;
+        }
+    }
+
     toggleSelectMenu(): void {                   
         this.bulkDisplayToggle = !this.bulkDisplayToggle;                    
     };
@@ -1066,7 +1096,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.bulkEditMap = {};
                     }
                 } 
-                if(res.action == 'add') {
+                if(res.action == 'add' || res.action == 'cancel') {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();

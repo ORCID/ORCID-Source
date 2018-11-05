@@ -55,8 +55,8 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Resource
     private SlackManager slackManager;
 
-    public WorkEntityCacheManagerImpl(@Value("${org.orcid.works.db.batch_size:10}") Integer batchSize, @Value("${org.orcid.core.works.bulk.max:100}") Integer bulkSize) {
-        this.batchSize = (batchSize == null || batchSize < 1 || batchSize > bulkSize) ? (bulkSize == null ? 100 : bulkSize) : batchSize;
+    public WorkEntityCacheManagerImpl(@Value("${org.orcid.works.db.batch_size:10}") Integer batchSize, @Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
+        this.batchSize = (batchSize == null || batchSize < 1 || batchSize > bulkReadSize) ? (bulkReadSize == null || bulkReadSize > 100 ? 100 : bulkReadSize) : batchSize;
     }
     
     public void setWorkDao(WorkDao workDao) {

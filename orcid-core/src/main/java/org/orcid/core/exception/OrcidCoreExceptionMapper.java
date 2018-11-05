@@ -31,6 +31,7 @@ public class OrcidCoreExceptionMapper {
     public static final String V2 = "2.0";
     public static final String V2_1 = "2.1";
     public static final String V3_RC1 = "3.0_rc1";
+    public static final String V3_RC2 = "3.0_rc2";
 
     private static final String latest = "2.0";
     
@@ -119,8 +120,8 @@ public class OrcidCoreExceptionMapper {
         return (org.orcid.jaxb.model.error_v2.OrcidError) getOrcidError(t, latest);
     }
     
-    public org.orcid.jaxb.model.v3.rc1.error.OrcidError getV3OrcidError(Throwable t) {
-        return (org.orcid.jaxb.model.v3.rc1.error.OrcidError) getOrcidError(t, V3_RC1);
+    public org.orcid.jaxb.model.v3.rc2.error.OrcidError getV3OrcidError(Throwable t) {
+        return (org.orcid.jaxb.model.v3.rc2.error.OrcidError) getOrcidError(t, V3_RC2);
     }
     
     public Object getOrcidError(Throwable t, String version) {
@@ -143,6 +144,8 @@ public class OrcidCoreExceptionMapper {
             orcidError = (org.orcid.jaxb.model.error_rc2.OrcidError) getOrcidErrorV2Rc2(errorCode, status, t);
         } else if (V3_RC1.equals(version)) {
             orcidError = (org.orcid.jaxb.model.v3.rc1.error.OrcidError) getOrcidErrorV3Rc1(errorCode, status, t);
+        } else if (V3_RC2.equals(version)) {
+            orcidError = (org.orcid.jaxb.model.v3.rc2.error.OrcidError) getOrcidErrorV3Rc2(errorCode, status, t);
         } else {
             orcidError = (OrcidError) getOrcidErrorV2Rc1(errorCode, status, t);
         }
@@ -229,6 +232,21 @@ public class OrcidCoreExceptionMapper {
     public org.orcid.jaxb.model.v3.rc1.error.OrcidError getOrcidErrorV3Rc1(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
         org.orcid.jaxb.model.v3.rc1.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.rc1.error.OrcidError();
+        orcidError.setResponseCode(status);
+        orcidError.setErrorCode(errorCode);
+        orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
+        Map<String, String> params = null;
+        if (t instanceof ApplicationException) {
+            params = ((ApplicationException) t).getParams();
+        }
+        orcidError.setDeveloperMessage(getDeveloperMessage(errorCode, t, params));
+        orcidError.setUserMessage(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params));
+        return orcidError;
+    }
+    
+    public org.orcid.jaxb.model.v3.rc2.error.OrcidError getOrcidErrorV3Rc2(int errorCode, int status, Throwable t) {
+        Locale locale = localeManager.getLocale();
+        org.orcid.jaxb.model.v3.rc2.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.rc2.error.OrcidError();
         orcidError.setResponseCode(status);
         orcidError.setErrorCode(errorCode);
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));

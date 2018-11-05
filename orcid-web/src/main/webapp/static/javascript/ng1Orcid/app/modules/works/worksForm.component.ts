@@ -50,6 +50,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     externalIDNamesToDescriptions: any;
     externalIDTypeCache: any;
     types: any;
+    togglzDialogPrivacyOption: boolean;
 
     constructor( 
         private cdr: ChangeDetectorRef,
@@ -350,18 +351,21 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.types = data;
+                this.types = data;                
                 if(this.editWork != null && this.editWork.workCategory != null) {
                     // if the edit works doesn't have a value that matches types
-                    var hasType = false;
+                    var hasType = false;                    
                     for (var idx in this.types){
-                        if (this.types[idx].key == this.editWork.workType.value){
-                            hasType = true;
-                        } 
                         if(this.types[idx].key == 'other'){
                             this.types.push(this.types.splice(idx, 1)[0]);
                         }
                     }
+                    for (var idx in this.types){                        
+                        if (this.types[idx].key == this.editWork.workType.value){
+                            hasType = true;
+                            break;
+                        }                        
+                    }                    
                     if(!hasType) {
                         switch (this.editWork.workCategory.value){
                         case "conference":
@@ -464,6 +468,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        this.togglzDialogPrivacyOption = this.featuresService.isFeatureEnabled('DIALOG_PRIVACY_OPTION')
         this.worksService.getExternalIdTypes('')
         .pipe(    
             takeUntil(this.ngUnsubscribe)

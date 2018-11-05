@@ -2,11 +2,11 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 
 public interface WorkManagerReadOnly extends ManagerReadOnlyBase{           
@@ -28,6 +28,15 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * @return the list of works associated to the specific user 
      * */
     List<Work> findPublicWorks(String orcid);
+    
+    /**
+     * Checks if there is any public work for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public work for a specific user
+     * */
+    Boolean hasPublicWorks(String orcid);
     
     /**
      * Get the given Work from the database
@@ -71,9 +80,9 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
     WorkBulk findWorkBulk(String orcid, String putCodesAsString);
     
     /**
-     * Returns a org.orcid.jaxb.model.v3.rc1.record.summary.Works object containing grouped WorkSummary objects for the given user.
+     * Returns a org.orcid.jaxb.model.v3.rc2.record.summary.Works object containing grouped WorkSummary objects for the given user.
      * @param orcid
-     * @return org.orcid.jaxb.model.v3.rc1.record.summary.Works object
+     * @return org.orcid.jaxb.model.v3.rc2.record.summary.Works object
      */
     Works getWorksAsGroups(String orcid);
 

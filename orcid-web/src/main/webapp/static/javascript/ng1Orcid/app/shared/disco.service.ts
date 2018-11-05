@@ -9,7 +9,6 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Observable, Subject } 
     from 'rxjs';
 
-
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
@@ -60,9 +59,6 @@ export class DiscoService {
                 }
                 return name;
             }
-        }
-        if(entityId === "facebook" || entityId === "google"){
-            return entityId.charAt(0).toUpperCase() + entityId.slice(1);
         }
         return entityId;
     };

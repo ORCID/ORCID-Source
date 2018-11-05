@@ -234,6 +234,12 @@ export class WorksService {
                         titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
+                        type: "preprint",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    
+                    {
                         type: "research-technique",
                         titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
                         titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
@@ -390,6 +396,7 @@ export class WorksService {
     }
 
     getWorksPage( accessType, sort, sortAsc): Observable<any> {
+        this.showLoadMore = false;
         this.details = new Object();
         let url = getBaseUri();
         if (accessType == this.constants.access_type.USER) {
@@ -429,10 +436,18 @@ export class WorksService {
     loadAllWorkGroups(sort, sortAsc, callback?): any {
         this.details = new Object();
         this.groups = new Array();
-        
         let url = getBaseUri() + '/works/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
         this.loading = true;
+        return this.http.get(
+            url
+        )  
+    }
 
+    loadAllPublicWorkGroups(sort, sortAsc): any {
+        this.details = new Object();
+        this.groups = new Array();
+        let url = getBaseUri() + '/' + orcidVar.orcidId + '/allWorks.json?sort=' + sort + '&sortAsc=' + sortAsc;
+        this.loading = true;
         return this.http.get(
             url
         )  

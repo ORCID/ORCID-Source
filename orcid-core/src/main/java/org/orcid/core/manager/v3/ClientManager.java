@@ -1,6 +1,6 @@
 package org.orcid.core.manager.v3;
 
-import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.jaxb.model.v3.rc2.client.Client;
 
 public interface ClientManager {
 

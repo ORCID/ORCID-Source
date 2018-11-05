@@ -2,6 +2,7 @@ package org.orcid.core.salesforce.dao;
 
 import java.util.List;
 
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
@@ -99,6 +100,8 @@ public interface SalesForceDao {
     void removeContactRole(String contactRoleId);
 
     String createOpportunityContactRole(OpportunityContactRole contactRole);
+    
+    List<Badge> retrieveBadges();
 
     String getAccessToken();
 

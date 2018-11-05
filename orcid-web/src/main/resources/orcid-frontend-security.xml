@@ -274,6 +274,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliations.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationDetails.json(\?.*)?"
@@ -509,6 +511,8 @@
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>                    
     
-    <bean id="revokeTokenEndpointFilter" class="org.orcid.api.common.security.oauth.RevokeTokenEndpointFilter" />    
+    <bean id="revokeTokenEndpointFilter" class="org.orcid.api.common.security.oauth.RevokeTokenEndpointFilter" />
+    
+    <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
     
 </beans>

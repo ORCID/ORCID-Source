@@ -8,15 +8,15 @@ import org.junit.Test;
 import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.InvalidJSONException;
-import org.orcid.jaxb.model.v3.rc1.common.Day;
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc1.common.Month;
-import org.orcid.jaxb.model.v3.rc1.common.Year;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc2.common.Month;
+import org.orcid.jaxb.model.v3.rc2.common.Year;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.test.helper.v3.Utils;
 import org.xml.sax.SAXException;
 
@@ -30,8 +30,8 @@ public class JSONInputValidatorTest {
         validator.validateJSONInput(education);
     }
 
-    @Test(expected = ApplicationException.class)
-    public void testValidateJSONValidInputForInvalidV3Education() throws JAXBException, SAXException, IOException {
+    @Test
+    public void testValidateJSONValidInputForV3EducationWithNullStartDate() throws JAXBException, SAXException, IOException {
         Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         education.setStartDate(null);
         validator.validateJSONInput(education);
@@ -56,8 +56,8 @@ public class JSONInputValidatorTest {
         validator.validateJSONInput(employment);
     }
 
-    @Test(expected = InvalidJSONException.class)
-    public void testValidateJSONValidInputForInvalidV3Employment() throws JAXBException, SAXException, IOException {
+    @Test
+    public void testValidateJSONValidInputForV3EmploymentWithNullStartDate() throws JAXBException, SAXException, IOException {
         Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setStartDate(null);
         validator.validateJSONInput(employment);

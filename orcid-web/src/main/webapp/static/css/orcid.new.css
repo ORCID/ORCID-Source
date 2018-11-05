@@ -371,7 +371,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 }
 
 .btn-white-no-border {
-    background-color: #fff;
+    background-color: transparent;
     border: 0;
     color: #338caf;
     padding: 0
@@ -1219,7 +1219,8 @@ ul.privacyHelp li {
     float: left;
 }
 
-#register .visibilityDefault{
+#register .visibilityDefault,
+#claim .visibilityDefault{
     width: 85%;
 }
 
@@ -2382,7 +2383,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .settings-table #emailFrequency input[type=checkbox], 
-#register input[type=checkbox]{
+#register input[type=checkbox],
+#claim input[type=checkbox]{
     margin: 0 4px 0 0;
 }
 
@@ -2922,7 +2924,7 @@ input.error {
 }
 
 .workspace-header-public.no-border {
-    margin-top: 0
+    margin-top: 0;
 }
 
 .header .main>.menu>li>.menu>li:last-of-type {
@@ -2930,7 +2932,8 @@ input.error {
 }
 
 .settings-table {
-    border-radius: 0
+    border-radius: 0;
+    width: 100%;
 }
 
 .account-settings {
@@ -3095,7 +3098,7 @@ ul.personal-inf-display li:last-child {
     width: 100%
 }
 
-.add-item-link a {
+.add-item-link button {
     float: right
 }
 
@@ -3600,7 +3603,8 @@ ul.sso-options li {
     display: block;
     height: 35px;
     padding: 9px 10px;
-    width: 35px
+    width: 35px;
+    margin: 2px;
 }
 
 .developer-tools .sso-options-light {
@@ -5357,11 +5361,33 @@ ul.oauth-icons li {
 
 .notifications .unread {
     font-weight: 700;
-    background: #fff
 }
 
 .notifications .archive-checkbox {
     vertical-align: top
+}
+
+.notification .workspace-accordion-header{
+    color: #FFF;
+    font-weight: bold;
+    padding: 5px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+        
+.notification .notifications-inner{
+    padding: 5px 15px;          
+}       
+        
+.notification .glyphicons{
+    top: -10px;
+    padding-left: 21px;
+    
+}
+
+.notification .glyphicons:before{
+    color: #FFF;
+    font: 16px/1em 'Glyphicons Regular'
 }
 
 .notification-top-bar {
@@ -5612,7 +5638,9 @@ ul.oauth-scopes li {
 .action-icon-align-right {
     position: absolute;
     top: 8px;
-    right: 5px
+    right: 5px;
+    border: none;
+    font-size: 14px;
 }
 
 .action-icon-inside {
@@ -6503,16 +6531,18 @@ a#reset-password-toggle-text:hover:active {
     top: -40px
 }
 
-#register .dark-label,#register p,.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span,.self-service .pending-addition a:hover,.self-service .pending-removal a:hover {
+#register .dark-label,#register p,#claim .dark-label,#claim p,.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span,.self-service .pending-addition a:hover,.self-service .pending-removal a:hover {
     color: #494a4c
 }
 
-#register p{
+#register p,
+#claim p{
     font-size: 12px;
     line-height: normal;
 }
 
-#register #notificationSettings label {
+#register #notificationSettings label,
+#claim #notificationSettings label {
     font-weight: bold;
     display: inline;
 }
@@ -6657,6 +6687,10 @@ a#reset-password-toggle-text:hover:active {
     padding-top: 15px
 }
 
+.cancel-left {
+    margin-right: 15px
+}
+
 .cancel-right {
     margin-left: 15px
 }
@@ -6782,10 +6816,6 @@ ul.comma li:last-child:after {
 
 .no-padding-left {
     padding-left: 0
-}
-
-.no-padding-right {
-    padding-right: 0
 }
 
 .footer-main {
@@ -8366,7 +8396,8 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .header .navigation>.menu>li.active-trail>.menu {
-    flex-direction: row-reverse
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
 }
 
 .lang-rl .header .search form .conditions {
@@ -8578,4 +8609,23 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 
 #saveRecoverCodesHeading {
     color: red;
+}
+
+.pi-check { 
+    color: gray;
+}
+
+.ui-state-highlight{
+    background: #a6ce39 !important;
+}
+
+.ui-widget-header.ui-corner-all {
+    display: flex;
+}
+.ui-widget-header.ui-corner-all:after {
+    content: "All";
+}
+
+.ng-tns-c0-0.ui-multiselect {
+    width: 150px;
 }

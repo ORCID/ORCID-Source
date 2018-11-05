@@ -2,9 +2,9 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Fundings;
 
 public interface ProfileFundingManagerReadOnly {    
     /**
@@ -65,4 +65,13 @@ public interface ProfileFundingManagerReadOnly {
      * @return Fundings element with the FundingSummary elements grouped                  
      * */
     Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic);
+
+    /**
+     * Checks if there is any public funding for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public funding for a specific user
+     * */
+    Boolean hasPublicFunding(String orcid);
 }

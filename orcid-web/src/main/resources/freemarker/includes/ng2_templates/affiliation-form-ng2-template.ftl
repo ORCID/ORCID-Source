@@ -228,7 +228,21 @@
                             <div *ngFor='let error of editAffiliation.endDate.errors' [innerHtml]="error"></div>
                         </span>
                         
-                    </div>                
+                    </div>     
+                    <!-- visibility controlls -->
+                    <div *ngIf="togglzDialogPrivacyOption" class="control-group visibility-container">
+                            <label>
+                                Set visibility:
+                            </label>
+                            <div class="controlls">
+                                <privacy-toggle-ng2 
+                                [dataPrivacyObj]="editAffiliation" 
+                                elementId="affiliation-privacy-toggle" 
+                                privacyNodeName="visibility" 
+                                ></privacy-toggle-ng2> 
+                            </div>
+                    </div>
+                    <!-- END visibility controlls -->
                     <div class="control-group">
                         <ul class="inline-list margin-separator pull-left">
                             <li>

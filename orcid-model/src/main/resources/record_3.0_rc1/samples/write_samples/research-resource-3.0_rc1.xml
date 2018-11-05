@@ -6,18 +6,18 @@
 	<!-- proposal title and host(s) -->
 	<research-resource:proposal> <!-- proposal/award/credential section -->
 		<research-resource:title>
-			<common:title>Giant Laser Award</common:title>
+			<common:title>Giant Rocket Award</common:title>
 		</research-resource:title>
 		<research-resource:hosts>
 			<common:organization>
-				<common:name>XSEDE</common:name>
+				<common:name>NASA</common:name>
 				<common:address>
-					<common:city>city</common:city>
-					<common:region>region</common:region>
+					<common:city>Washington</common:city>
+					<common:region>District of Columbia</common:region>
 					<common:country>US</common:country>
 				</common:address>
 				<common:disambiguated-organization>
-					<common:disambiguated-organization-identifier>grid.400000.c</common:disambiguated-organization-identifier>
+					<common:disambiguated-organization-identifier>grid.238252.c</common:disambiguated-organization-identifier>
 					<common:disambiguation-source>GRID</common:disambiguation-source>
 				</common:disambiguated-organization>
 			</common:organization>
@@ -46,7 +46,7 @@
 				<common:day>02</common:day>
 			</common:end-date>
 			<common:url>http://xsede.org/GiantLaserAward</common:url>
-		</research-resource:proposal>	
+		</research-resource:proposal>
     	<!-- resource(s) -->
 			<research-resource:resource-items>
 				<!-- resource 1 -->
@@ -55,14 +55,14 @@
 					<research-resource:resource-type>infrastructures</research-resource:resource-type>
 					<research-resource:hosts>
 						<common:organization>
-							<common:name>Lasers-R-US</common:name>
+							<common:name>Spectra-Physics Laser Division</common:name>
 							<common:address>
-								<common:city>city</common:city>
-								<common:region>region</common:region>
+								<common:city>Santa Clara</common:city>
+								<common:region>California</common:region>
 								<common:country>US</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>1000</common:disambiguated-organization-identifier>
+								<common:disambiguated-organization-identifier>93560</common:disambiguated-organization-identifier>
 								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</common:organization>
@@ -86,14 +86,14 @@
 					<research-resource:resource-type>infrastructures</research-resource:resource-type>
 					<research-resource:hosts>
 						<common:organization>
-							<common:name>Moon Holdings Ltd</common:name>
+							<common:name>NASA</common:name>
 							<common:address>
-								<common:city>city</common:city>
-								<common:region>region</common:region>
+								<common:city>Washington</common:city>
+								<common:region>District of Columbia</common:region>
 								<common:country>US</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>1001</common:disambiguated-organization-identifier>
+								<common:disambiguated-organization-identifier>3997</common:disambiguated-organization-identifier>
 								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</common:organization>

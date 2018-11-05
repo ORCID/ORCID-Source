@@ -55,6 +55,8 @@ public enum WorkType implements Serializable {
     OTHER("other"),
     @XmlEnumValue("patent")
     PATENT("patent"),
+    @XmlEnumValue("preprint")
+    PREPRINT("preprint"),
     @XmlEnumValue("registered-copyright")
     REGISTERED_COPYRIGHT("registered-copyright"),
     @XmlEnumValue("report")

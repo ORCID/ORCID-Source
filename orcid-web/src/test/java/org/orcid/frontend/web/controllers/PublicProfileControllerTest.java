@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,16 +27,16 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Address;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Biography;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.OtherName;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
@@ -189,17 +188,10 @@ public class PublicProfileControllerTest extends DBUnitTest {
         List<PersonExternalIdentifier> publicExternalIdentifiers = extIds.get("public_type:public_ref");        
         assertEquals(Long.valueOf(13), publicExternalIdentifiers.get(0).getPutCode());
         assertEquals("http://ext-id/public_ref", publicExternalIdentifiers.get(0).getUrl().getValue());
-        assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());               
         
-        assertTrue(model.containsKey("affiliationIdsJson"));
-        assertEquals("[17,47,42,37,32,27,20]", model.get("affiliationIdsJson"));
-        
-        assertTrue(model.containsKey("fundingIdsJson"));
-        assertEquals("[10]", model.get("fundingIdsJson"));
-        
-        assertTrue(model.containsKey("isProfileEmpty"));
-        Boolean isProfileEmpty = (Boolean) model.get("isProfileEmpty");
-        assertFalse(isProfileEmpty);
+        assertTrue(model.containsKey("isProfileEmpty"));       
+        assertFalse((Boolean) model.get("isProfileEmpty"));
         assertFalse(model.containsKey("noIndex"));
     }
     

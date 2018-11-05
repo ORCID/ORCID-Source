@@ -50,7 +50,8 @@
       </#if>
       <div class="workspace-accordion" id="workspace-accordion">
         <!-- Notification alert -->                       
-        <#include "includes/notification_alert.ftl"/>             
+        <#include "/includes/ng2_templates/notification-alerts-ng2-template.ftl">
+        <notification-alerts-ng2></notification-alerts-ng2>           
         <!-- Biography -->        
         <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active">  
           <div class="workspace-accordion-content">
@@ -58,8 +59,9 @@
             <biography-ng2></biography-ng2>
           </div>
         </div>    
-        <!-- Affiliations / Education / Employment -->
-        <#include "workspace_affiliations_body_list_v3.ftl"/>
+        <!-- Affiliations -->
+        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+        <affiliation-ng2 publicView="false"></affiliation-ng2>
         <!-- Funding -->
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
         <funding-ng2></funding-ng2>
@@ -101,11 +103,12 @@
     <works-delete-ng2></works-delete-ng2> 
 </modalngcomponent><!-- Ng2 component -->
 
-
+<#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
 <modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->

@@ -2,6 +2,7 @@ package org.orcid.core.salesforce.adapter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -15,9 +16,12 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.orcid.core.salesforce.model.Achievement;
+import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRoleType;
+import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OrgId;
@@ -213,6 +217,48 @@ public class SalesForceAdapterTest {
         contact.setAccountId("1234");
         JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromOrgId(contact);
         assertEquals("{\"Organization__c\":\"1234\"}", contactJson.toString());
+    }
+    
+    @Test
+    public void testCreateIntegrationsListFromJson() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_integrations_list.json"));
+        JSONObject inputObject = new JSONObject(inputString);
+        
+        List<Integration> membersList = salesForceAdapter.createIntegrationsListFromJson(inputObject);
+        
+        assertEquals(3, membersList.size());
+        
+        Integration integrationNewStyleBadgeAwarded = membersList.get(0);
+        assertEquals("Will's custom system new style", integrationNewStyleBadgeAwarded.getName());
+        List<Achievement> achievements = integrationNewStyleBadgeAwarded.getAchievements();
+        assertNotNull(achievements);
+        assertEquals(2, achievements.size());
+        assertEquals("a0N3D000001Jy5cUAC", achievements.get(0).getBadgeId());
+        assertEquals("a0N3D000001Jy5eUAC", achievements.get(1).getBadgeId());
+        
+        Integration integrationNoBadge = membersList.get(1);
+        assertEquals("Integration using Will's vendor system", integrationNoBadge.getName());
+        
+        
+        Integration integrationOldStyleBadAwarded = membersList.get(2);
+        assertEquals("Will's custom system old style", integrationOldStyleBadAwarded.getName());
+    }
+    
+    @Test
+    public void testCreateBadgesListFromJson() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_badges_list.json"));
+        JSONObject inputObject = new JSONObject(inputString);
+        
+        List<Badge> badgesList = salesForceAdapter.createBadgesListFromJson(inputObject);
+        
+        assertEquals(5, badgesList.size());
+        
+        Badge authenticateBadge = badgesList.get(0);
+        assertEquals("a0N3D000001Jy5eUAC", authenticateBadge.getId());
+        assertEquals("AUTHENTICATE", authenticateBadge.getName());
+        assertEquals("Authenticating ORCID iDs using API ensures that the iD belongs to the researcher, that it is correct (e.g., no data entry typographical errors), and that the researcher agrees to it being used. In addition, the API enables verification through an OAuth pr", authenticateBadge.getPublicDescription());
+        assertEquals(1.0f, authenticateBadge.getIndex(), 0);
+        assertEquals("1 - AUTHENTICATE", authenticateBadge.getIndexAndName());
     }
 
 }

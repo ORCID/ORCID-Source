@@ -14,14 +14,14 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.PeerReviewDuplicateGroupComparator;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupGenerator;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupKey;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewDuplicateGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewDuplicateGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
@@ -84,7 +84,7 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         PeerReviewGroupGenerator groupGenerator = new PeerReviewGroupGenerator();
         PeerReviews result = new PeerReviews();
         for (PeerReviewSummary peerReview : peerReviews) {
-            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
+            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {

@@ -10,12 +10,11 @@ import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.PeerReviewManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.utils.RecordNameUtils;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -26,10 +25,7 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
     private PeerReviewManager peerReviewManager;
     
     @Resource(name = "profileFundingManagerV3")
-    private ProfileFundingManager profileFundingManager;
-    
-    @Resource(name = "workManagerV3")
-    private WorkManager workManager;
+    private ProfileFundingManager profileFundingManager;    
     
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;

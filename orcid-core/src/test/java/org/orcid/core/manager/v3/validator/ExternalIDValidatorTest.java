@@ -8,12 +8,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
-import org.orcid.jaxb.model.v3.rc1.common.Url;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Items;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.common.Url;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Items;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 

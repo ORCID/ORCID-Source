@@ -28,37 +28,37 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc1.common.Amount;
-import org.orcid.jaxb.model.v3.rc1.common.Contributor;
-import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.rc1.common.Day;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.Month;
-import org.orcid.jaxb.model.v3.rc1.common.MultipleOrganizationHolder;
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.OrganizationHolder;
-import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.rc1.common.Source;
-import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.common.Year;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc1.record.CitationType;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc2.common.Amount;
+import org.orcid.jaxb.model.v3.rc2.common.Contributor;
+import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.Month;
+import org.orcid.jaxb.model.v3.rc2.common.MultipleOrganizationHolder;
+import org.orcid.jaxb.model.v3.rc2.common.Organization;
+import org.orcid.jaxb.model.v3.rc2.common.OrganizationHolder;
+import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Year;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc2.record.CitationType;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
+import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -371,10 +371,6 @@ public class ActivityValidator {
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = affiliation.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }
-
-        if (affiliation.getStartDate() == null) {
-            throw new OrcidValidationException("Education start date is required");
         }
 
         if (isApiRequest) {

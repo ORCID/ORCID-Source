@@ -14,7 +14,7 @@ import org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc1.record.Person;
+import org.orcid.jaxb.model.v3.rc2.record.Person;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -132,6 +132,7 @@ public class OpenIDController {
 
     @JsonInclude(Include.NON_NULL) 
     public static class OpenIDConnectUserInfoAccessDenied extends OpenIDConnectUserInfo{
+        @JsonProperty("error")
         String error = "access_denied";
         @JsonProperty("error-description")
         String errorDescription="access_token is invalid";

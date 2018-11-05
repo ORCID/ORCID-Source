@@ -24,10 +24,10 @@ import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkCategory;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkCategory;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
@@ -111,8 +111,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/group/{workIdsStr}", method = RequestMethod.POST)
     public @ResponseBody List<Long> groupWorks(@PathVariable("workIdsStr") String workIdsStr) {
         List<Long> workIds = Arrays.stream(workIdsStr.split(",")).mapToLong(n -> Long.parseLong(n)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        Long preferredId = workIds.remove(0);
-        workManager.setPreferredAndCreateGroup(preferredId, workIds, getCurrentUserOrcid());
+        workManager.createNewWorkGroup(workIds, getCurrentUserOrcid());
         return workIds;
     }
 
@@ -146,7 +145,7 @@ public class WorksController extends BaseWorkspaceController {
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = profile.getActivitiesVisibilityDefault() == null
                     ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(defaultVis);
             w.setVisibility(v);
@@ -710,7 +709,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
-        return worksPaginator.getAllWorks(orcid, sort, sortAsc);
+        return worksPaginator.getAllWorks(orcid, false, sort, sortAsc);
     }
     
     @RequestMapping(value = "/refreshWorks.json", method = RequestMethod.GET)
@@ -729,7 +728,7 @@ public class WorksController extends BaseWorkspaceController {
         ArrayList<Long> workIds = new ArrayList<Long>();
         for (String workId : workIdsStr.split(","))
             workIds.add(new Long(workId));
-        workManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibilityStr));
+        workManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibilityStr));
         return workIds;
     }
 

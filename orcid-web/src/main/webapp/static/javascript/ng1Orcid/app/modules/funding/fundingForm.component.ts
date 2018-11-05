@@ -22,6 +22,9 @@ import { FundingService }
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 
+import { FeaturesService } 
+    from '../../shared/features.service.ts';
+
 @Component({
     selector: 'funding-form-ng2',
     template:  scriptTmpl("funding-form-ng2-template")
@@ -36,11 +39,13 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     editFunding: any;
     editTranslatedTitle: any;
     lastIndexedTerm: any;
+    togglzDialogPrivacyOption: boolean;
 
     constructor(
         private commonService: CommonService,
         private fundingService: FundingService,
         private modalService: ModalService,
+        private featuresService: FeaturesService
     ) {
         this.addingFunding = false;
         this.disambiguatedFunding = {};
@@ -488,7 +493,19 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.getDisambiguatedFunding(this.editFunding.orgDisambiguatedId.value);
                     }
                 } else {
-                    this.editFunding = this.getEmptyFunding();
+                    this.fundingService.getFundingEmpty()
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            this.editFunding = data
+                            
+                        },
+                        error => {
+                            console.log('Error getting blankFunding', error);
+                        } 
+                    );
                 }
 
                 if (this.editFunding.putCode == null) {
@@ -571,7 +588,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        
+        this.togglzDialogPrivacyOption = this.featuresService.isFeatureEnabled('DIALOG_PRIVACY_OPTION')
     }; 
 }
 

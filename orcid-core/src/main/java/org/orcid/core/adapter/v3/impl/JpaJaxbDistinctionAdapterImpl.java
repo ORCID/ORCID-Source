@@ -6,8 +6,8 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.v3.JpaJaxbDistinctionAdapter;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

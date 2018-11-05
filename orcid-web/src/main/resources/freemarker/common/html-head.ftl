@@ -9,9 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     
     <#if (noIndex)??>
-    <meta name="googlebot" content="noindex">
-    <meta name="robots" content="noindex">
-    <meta name="BaiduSpider" content="noindex">
+        <meta name="googlebot" content="noindex">
+        <meta name="robots" content="noindex">
+        <meta name="BaiduSpider" content="noindex">
     </#if>
     
     <#include "/layout/google_analytics.ftl">
@@ -42,7 +42,7 @@
         </#if>
 
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
-        orcidVar.lastModified = '${(lastModifiedTime)!}';
+        orcidVar.lastModified = '${(lastModifiedTime?datetime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
         orcidVar.resetParams = '${(resetParams)!}';
@@ -77,26 +77,21 @@
         
         <#if verifiedEmail??>
             orcidVar.loginId = "${verifiedEmail}";
-        </#if>
-        
+        </#if> 
     </script>
 
     <#include "/macros/orcid_ga.ftl">
     
-    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
     <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css"/>
     <link rel="stylesheet" href="${staticLoc}/css/social.css"/>
     <link rel="stylesheet" href="${staticLoc}/css/filetypes.css"/>    
     
     <!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
-    
-    <#if locale?? && (locale == 'rl' || locale == 'ar' )>
-    <!-- just a prototype to show what RTL, expect to switch the cdn to ours -->
-    <!-- Load Bootstrap RTL theme from RawGit -->
-    <link rel="stylesheet" href="${staticCdn}/css/bootstrap-rtl.min.css"> <!-- Src: //cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css -->
-    </#if>
 
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/nova-light/theme.css"/>
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeicons.css"/>
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeng.min.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     
@@ -126,44 +121,15 @@
     </style>    
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
-    <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />  
+    <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />
     <link rel="stylesheet" href="${staticLoc}/css/noto-font.css"/> 
 
     <!-- ***************************************************** -->
     <!-- Ng2 Templates - BEGIN -->
-    
-    <@orcid.checkFeatureStatus 'ANGULAR2_DEV'> 
-        <!-- NG2: Under development -->
-        <#include "/includes/ng2_templates/client-edit-ng2-template.ftl">
-        <#include "/includes/ng2_templates/notifications-ng2-template.ftl">
-    </@orcid.checkFeatureStatus> 
- 
-        <#if springMacroRequestContext.requestUri?contains("/social") ||  springMacroRequestContext.requestUri?contains("/shibboleth/signin") || (RequestParameters['linkRequest'])??>
-            
-        </#if>
-
-    <!-- NG2: QA -->
-    <@orcid.checkFeatureStatus 'ANGULAR2_QA'>  
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") >
-            <#include "/includes/ng2_templates/external-identifier-ng2-template.ftl">
-        </#if>
-    </@orcid.checkFeatureStatus> 
-
-    <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
-            <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
-            <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
-            <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
-            <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
-        </#if>
-    </@orcid.checkFeatureStatus> 
-   
     <#include "/includes/ng2_templates/modal-ng2-template.ftl">
     <#include "/includes/ng2_templates/ext-id-popover-ng2-template.ftl">
-    <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/developer-tools") || springMacroRequestContext.requestUri?contains("/inbox") || springMacroRequestContext.requestUri?contains("/my-orcid")>
-        
+    <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/developer-tools") || springMacroRequestContext.requestUri?contains("/inbox") || springMacroRequestContext.requestUri?contains("/my-orcid")> 
         <#include "/includes/ng2_templates/privacy-toggle-ng2-template.ftl">
-        
     </#if>
 
     <!-- Ng2 Templates - END -->

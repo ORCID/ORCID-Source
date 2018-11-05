@@ -21,27 +21,27 @@ import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.GroupableActivityComparator;
-import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc1.record.Membership;
-import org.orcid.jaxb.model.v3.rc1.record.Qualification;
-import org.orcid.jaxb.model.v3.rc1.record.Service;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc2.record.Membership;
+import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.Service;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -367,7 +367,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                if(!justPublic || org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.name().equals(affiliation.getVisibility())) {
+                if(!justPublic || org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.name().equals(affiliation.getVisibility())) {
                     if (AffiliationType.DISTINCTION.name().equals(affiliation.getAffiliationType())) {
                         distinctionsGroupGenerator.group(jpaJaxbDistinctionAdapter.toDistinctionSummary(affiliation));
                     } else if (AffiliationType.EDUCATION.name().equals(affiliation.getAffiliationType())) {
@@ -403,7 +403,7 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     public <T extends AffiliationSummary> List<AffiliationGroup<T>> groupAffiliations(List<T> summaries, boolean justPublic) {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         for (AffiliationSummary summary : summaries) {
-            if (!justPublic || summary.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
+            if (!justPublic || summary.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
                 groupGenerator.group(summary);
             }
         }
@@ -449,5 +449,20 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         if(!entity.getAffiliationType().equals(type.name())) {
             throw new IllegalArgumentException("Given affiliation " + entity.getId() + " doesn't match the desired type " + type.value());
         }
+    }
+
+    /**
+     * Checks if there is any public affiliation for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public affiliation for a specific user
+     * */
+    @Override
+    public Boolean hasPublicAffiliations(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+            return false;
+        }
+        return orgAffiliationRelationDao.hasPublicAffiliations(orcid);
     }
 }

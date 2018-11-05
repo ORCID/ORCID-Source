@@ -16,23 +16,23 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.common.CreatedDate;
-import org.orcid.jaxb.model.v3.rc1.common.Day;
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc1.common.Month;
-import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.rc1.common.Source;
-import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
-import org.orcid.jaxb.model.v3.rc1.common.Subtitle;
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.common.Year;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
+import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc2.common.Month;
+import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc2.common.Subtitle;
+import org.orcid.jaxb.model.v3.rc2.common.Title;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Year;
+import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
 
@@ -146,9 +146,23 @@ public class WorksPaginatorTest {
     public void testGetAllWorks() {
         Works works = get1000PublicWorkGroups();
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", false, WorksPaginator.TITLE_SORT_KEY, true);
         assertEquals(1000, page.getTotalGroups());
         assertEquals(1000, page.getGroups().size());
+    }
+    
+    @Test
+    public void testGetAllPublic() {
+        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroups());
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", true, WorksPaginator.DATE_SORT_KEY, true);
+        assertFalse(WorksPaginator.PAGE_SIZE == page.getGroups().size());
+        assertTrue((WorksPaginator.PAGE_SIZE / 2) == page.getGroups().size());
+
+        for (org.orcid.pojo.grouping.WorkGroup workGroup : page.getGroups()) {
+            for (WorkForm workForm : workGroup.getWorks()) {
+                assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
+            }
+        }
     }
     
     /**
@@ -164,7 +178,7 @@ public class WorksPaginatorTest {
         works.getWorkGroup().add(workGroup);
         
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", WorksPaginator.TITLE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", false, WorksPaginator.TITLE_SORT_KEY, true);
         
         for (org.orcid.pojo.grouping.WorkGroup group : page.getGroups()) {
             for (WorkForm work : group.getWorks()) {

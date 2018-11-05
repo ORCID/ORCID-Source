@@ -17,9 +17,9 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc1.record.Name;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.Names;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -192,7 +192,13 @@ public class LoginController extends OauthControllerBase {
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
                 String redirectUriWithParams = requestInfoForm.getRedirectUrl();
-                redirectUriWithParams += "#error=login_required";
+                
+                if (requestInfoForm.getResponseType().contains(OrcidOauth2Constants.CODE_RESPONSE_TYPE)) 
+                    redirectUriWithParams += "?";
+                else
+                    redirectUriWithParams += "#";
+                    
+                redirectUriWithParams += "error=login_required";
                 RedirectView rView = new RedirectView(redirectUriWithParams);
                 ModelAndView error = new ModelAndView();
                 error.setView(rView);

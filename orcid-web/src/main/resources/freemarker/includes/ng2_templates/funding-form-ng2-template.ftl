@@ -267,10 +267,10 @@
                                 <input type="radio" name="relationship{{i}}" [(ngModel)]="editFunding.externalIdentifiers[i].relationship.value" value="part-of">
                                 <@orcid.msg "common.part_of" />
                             </label>                            
-                            <a href (click)="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" *ngIf="!first"></a>
+                            <button (click)="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" *ngIf="!first"></button>
                         </div>
                         <div *ngIf="last" class="add-item-link">
-                            <span><a href (click)="addFundingExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.external_identifier.add_another' /></a></span>
+                            <span><button class="btn-white-no-border" (click)="addFundingExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.external_identifier.add_another' /></button></span>
                         </div>
                     </div>
                 </div>
@@ -281,7 +281,21 @@
                         <div *ngFor='let error of editFunding.url.errors' [innerHtml]="error"></div>
                     </span>                    
                 </div>
-                
+
+                <!-- visibility controlls -->
+                <div *ngIf="togglzDialogPrivacyOption" class="control-group visibility-container">
+                            <label>
+                                Set visibility:
+                            </label>
+                            <div class="controlls">
+                                <privacy-toggle-ng2 
+                                [dataPrivacyObj]="editFunding" 
+                                elementId="affiliation-privacy-toggle" 
+                                privacyNodeName="visibility" 
+                                ></privacy-toggle-ng2> 
+                            </div>
+                </div>
+                <!-- END visibility controlls -->
                 <div class="control-group">
                     <div class="control-group" *ngIf="editFunding?.putCode?.value != null">
                         <ul class="inline-list margin-separator pull-left">

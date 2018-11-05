@@ -3,9 +3,9 @@ package org.orcid.core.manager.v3;
 import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
 
 public interface WorkManager extends WorkManagerReadOnly {
     
@@ -95,11 +95,4 @@ public interface WorkManager extends WorkManagerReadOnly {
      */
     void createNewWorkGroup(List<Long> workIds, String orcid);    
     
-    /** 
-     * For user driven grouping - user chooses preferred work and then groups
-     * @param preferredId
-     * @param workIds
-     * @param orcid
-     */
-    void setPreferredAndCreateGroup(Long preferredId, List<Long> workIds, String orcid);
 }

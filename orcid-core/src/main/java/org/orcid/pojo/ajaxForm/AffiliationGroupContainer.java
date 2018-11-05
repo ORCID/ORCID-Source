@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
 
 public class AffiliationGroupContainer implements Serializable {
     private static final long serialVersionUID = 364517151433889152L;

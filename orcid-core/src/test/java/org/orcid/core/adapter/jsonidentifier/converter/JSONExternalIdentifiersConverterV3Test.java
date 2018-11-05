@@ -16,9 +16,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 
 public class JSONExternalIdentifiersConverterV3Test {
 

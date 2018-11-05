@@ -3,8 +3,8 @@ package org.orcid.core.adapter.v3;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 

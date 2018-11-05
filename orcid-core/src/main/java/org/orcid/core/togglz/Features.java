@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 	
+    @Label("Change view privacy from work/funding/affiliation form dialogs")
+    DIALOG_PRIVACY_OPTION,
+	
     @Label("Shows an alert message when a user goes to /signin and is already signed in\n")
     RE_LOGGIN_ALERT,
 
@@ -15,8 +18,8 @@ public enum Features implements Feature {
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
 
-    @Label("Badges on member details")
-    BADGES,
+    @Label("New style badges on member details")
+    NEW_BADGES,
     
     @Label("Cookie policy banner")
     COOKIE_BANNER,
@@ -75,9 +78,6 @@ public enum Features implements Feature {
     @Label("Disable reCAPTCHA")
     DISABLE_RECAPTCHA,
 
-    @Label("Display the new affiliation types in the workspace")
-    DISPLAY_NEW_AFFILIATION_TYPES,
-
     @Label("Disable 1.2 API from the public API")
     DISABLE_1_2_ON_PUB_API,
 
@@ -108,6 +108,7 @@ public enum Features implements Feature {
     @Label("Grouping suggestions")
     GROUPING_SUGGESTIONS;
     
+
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
