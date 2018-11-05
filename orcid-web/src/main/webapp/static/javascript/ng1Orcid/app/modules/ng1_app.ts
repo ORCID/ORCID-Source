@@ -194,7 +194,10 @@ import { WorksMergeChoosePreferredVersionModule }
     from './works/worksMergeChoosePreferredVersion.ts';
     
 import { WorksMergeSuggestionsModule } 
-    from './works/worksMergeSuggestions.ts';   
+    from './works/worksMergeSuggestions.ts';
+
+import { RecordCorrectionsModule }
+    from './recordCorrections/recordCorrections.ts'
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -264,6 +267,7 @@ export const orcidApp = angular.module(
         WorksModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
+        RecordCorrectionsModule.name
     ]
 );
 

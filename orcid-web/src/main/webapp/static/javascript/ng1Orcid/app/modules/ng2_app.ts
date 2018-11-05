@@ -215,6 +215,9 @@ import { WorksMergeChoosePreferredVersionNg2Module }
 import { WorksMergeSuggestionsNg2Module } 
     from './works/worksMergeSuggestions.ts';
     
+import { RecordCorrectionsNg2Module }
+    from './recordCorrections/recordCorrections.ts'
+    
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
     }
@@ -364,6 +367,7 @@ export class RootCmp {
         WorksNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,
         WorksMergeSuggestionsNg2Module,
+        RecordCorrectionsNg2Module
     ],
     providers: [
         { 
