@@ -82,8 +82,8 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                     <div class="pull-left">
-                                        <button id="bottom-submit" class="btn btn-primary" (click)="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button>
-                                        <button class="btn btn-white-no-border cancel-right" (click)="cancelEditModal('modalDeprecateAccountConfirm')"><@orcid.msg 'freemarker.btncancel' /></button>
+                                        <button id="bottom-submit" class="btn btn-primary" (click)="deprecateProfileConfirm()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button>
+                                        <button class="btn btn-white-no-border cancel-right" (click)="cancelDeprecateModal('modalDeprecateAccountConfirm')"><@orcid.msg 'freemarker.btncancel' /></button>
                                     </div>
                                 </div>
                             </div>

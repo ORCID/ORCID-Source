@@ -401,13 +401,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
     
     @Override
-    public void setPreferredAndCreateGroup(Long preferredId, List<Long> workIds, String orcid) {
-        updateToMaxDisplay(orcid, preferredId);
-        workIds.add(preferredId);
-        createNewWorkGroup(workIds, orcid);
-    }
-
-    @Override
     public void createNewWorkGroup(List<Long> workIds, String orcid) {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
         JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);

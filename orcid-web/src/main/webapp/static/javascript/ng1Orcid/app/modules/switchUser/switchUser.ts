@@ -11,8 +11,8 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated components
-import { CommonModule } 
-    from '@angular/common'; 
+import { CommonNg2Module }
+    from './../common/common.ts';
 
 import { SwitchUserComponent } 
     from './switchUser.component.ts';
@@ -42,7 +42,7 @@ export const SwitchUserModule = angular.module(
             SwitchUserComponent
         ],
         imports: [
-            CommonModule,
+            CommonNg2Module,
             FormsModule
         ],
         providers: [

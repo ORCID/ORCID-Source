@@ -5,7 +5,19 @@
         </h1>            
     </div>
     <div class="clearfix" *ngIf="delegators?.length > 0">
-        <tr> 
+        <#if springMacroRequestContext.requestUri?contains("/delegators")>
+            <p>
+            <@orcid.msg 'manage_delegators.description' />
+            </p>
+            <p>
+                <a href="<@orcid.msg 'manage_delegators.learn_more.link.url' />" target="manage_delegators.learn_more.link.text"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a>&nbsp;<@orcid.msg 'manage_delegators.learn_more.text' />
+            </p>
+            <p><@orcid.msg 'manage_delegators.search'/></p>
+            <div class="form-group">
+                <input id="delegatorsSearch" name="delegatorsSearch" type="text" placeholder="<@orcid.msg 'manage_delegators.search.placeholder' />" class="form-control input-xlarge inline-input" (selectItem)="selectDelegator($event.item)" [ngbTypeahead]="searchDelegators" [inputFormatter]="formatSearchDelegatorsInput" [resultFormatter]="formatSearchDelegatorsResult" [focusFirst]=true [editable]=false [showHint]=true />
+            </div>
+        </#if>
+            <tr> 
             <td colspan="2">
                 <div>        
                     <table class="table table-bordered settings-table normal-width">

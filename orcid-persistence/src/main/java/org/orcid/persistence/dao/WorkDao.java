@@ -110,4 +110,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     @Deprecated
     List<WorkEntity> getWorksByOrcidId(String orcid);
+    
+    boolean hasPublicWorks(String orcid);
 }

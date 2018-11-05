@@ -128,14 +128,6 @@
     <!-- Ng2 Templates - BEGIN -->
     <#include "/includes/ng2_templates/modal-ng2-template.ftl">
     <#include "/includes/ng2_templates/ext-id-popover-ng2-template.ftl">
-    <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
-            <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
-            <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
-            <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
-            <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
-        </#if>
-    </@orcid.checkFeatureStatus> 
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/developer-tools") || springMacroRequestContext.requestUri?contains("/inbox") || springMacroRequestContext.requestUri?contains("/my-orcid")> 
         <#include "/includes/ng2_templates/privacy-toggle-ng2-template.ftl">
     </#if>
