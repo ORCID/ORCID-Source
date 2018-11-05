@@ -29,7 +29,9 @@
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<ul class="oauth-scopes" id="scopes-ul">
 			<li *ngFor="let theScope of requestInfoForm?.scopes">
-				<span *ngIf="theScope.name != 'EMAIL_READ_PRIVATE'" (mouseenter)="toggleLongDescription(theScope.name)" (mouseleave)="toggleLongDescription(theScope.name)">{{theScope.description}}</span>
+				<span *ngIf="theScope.name != 'EMAIL_READ_PRIVATE'" (mouseenter)="toggleLongDescription(theScope.name)" (mouseleave)="toggleLongDescription(theScope.name)">{{theScope.description}} 
+					<img  *ngIf="theScope.name == 'READ_LIMITED'" class="readLimitedIcon" src="${staticCdn}/img/limited-icon.png" alt="ORCID logo" /> 
+				</span>
 				<div *ngIf="theScope.name != 'EMAIL_READ_PRIVATE'" class="popover bottom scopeLongDesc" [ngClass]="{'popover bottom inline':showLongDescription[theScope.name] == true}">
 					<div class="arrow"></div>
 					<div class="lightbox-container">{{theScope.longDescription}}</div>
