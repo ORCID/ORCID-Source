@@ -219,6 +219,9 @@ import { ManageMembersNg2Module }
     from './manageMembers/manageMembers.ts';
     
     
+import { RecordCorrectionsNg2Module }
+    from './recordCorrections/recordCorrections.ts'
+    
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
     }
@@ -369,7 +372,8 @@ export class RootCmp {
         WorksNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,
         WorksMergeSuggestionsNg2Module,
-        ManageMembersNg2Module
+        ManageMembersNg2Module,
+        RecordCorrectionsNg2Module
     ],
     providers: [
         { 

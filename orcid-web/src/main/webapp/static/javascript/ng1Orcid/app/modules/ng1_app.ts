@@ -199,6 +199,9 @@ import { WorksMergeSuggestionsModule }
 import { ManageMembersModule } 
     from './manageMembers/manageMembers.ts';     
     
+import { RecordCorrectionsModule }
+    from './recordCorrections/recordCorrections.ts'
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -267,7 +270,8 @@ export const orcidApp = angular.module(
         WorksModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
-        ManageMembersModule.name
+        ManageMembersModule.name,
+        RecordCorrectionsModule.name
     ]
 );
 

@@ -6912,6 +6912,11 @@ ul.comma li:last-child:after {
     display: flex;
 }
 
+.record-corrections-table {
+    overflow: hidden;
+    word-break: break-word;
+}
+
 @media (max-width:767px) {
     .container {
         min-width: 320px
@@ -8623,4 +8628,26 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 
 .ui-multiselect {
     width: 150px;
+}
+
+span.notYouUrl {
+    display: flex;
+    align-items: center;
+    width: 80px;
+    justify-content: space-between;
+}
+
+span.notYouUrl > a {
+    height: 15px;
+}
+
+.clearfix.pull-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.readLimitedIcon {
+    height: 20px;
+    margin-top: -2px;
 }
