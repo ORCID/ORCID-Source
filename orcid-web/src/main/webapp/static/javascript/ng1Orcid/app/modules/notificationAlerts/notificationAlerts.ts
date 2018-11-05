@@ -9,7 +9,7 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { NotificationAlertsComponent } 
-    from './notificationsAlert.component.ts';
+    from './notificationAlerts.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';

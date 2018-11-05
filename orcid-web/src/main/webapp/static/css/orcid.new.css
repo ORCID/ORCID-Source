@@ -5361,11 +5361,33 @@ ul.oauth-icons li {
 
 .notifications .unread {
     font-weight: 700;
-    background: #fff
 }
 
 .notifications .archive-checkbox {
     vertical-align: top
+}
+
+.notification .workspace-accordion-header{
+    color: #FFF;
+    font-weight: bold;
+    padding: 5px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+        
+.notification .notifications-inner{
+    padding: 5px 15px;          
+}       
+        
+.notification .glyphicons{
+    top: -10px;
+    padding-left: 21px;
+    
+}
+
+.notification .glyphicons:before{
+    color: #FFF;
+    font: 16px/1em 'Glyphicons Regular'
 }
 
 .notification-top-bar {
@@ -6663,6 +6685,10 @@ a#reset-password-toggle-text:hover:active {
 .confirm-deprecate-account-modal,.deprecate-account-confirmation-modal {
     max-width: 600px;
     padding-top: 15px
+}
+
+.cancel-left {
+    margin-right: 15px
 }
 
 .cancel-right {
