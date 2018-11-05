@@ -1,5 +1,4 @@
 //Import all the angular components
-
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
@@ -14,52 +13,58 @@ import { takeUntil }
 import { AccountService } 
     from '../../shared/account.service.ts';
 
-import { EmailService }
-    from '../../shared/email.service.ts';
-
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'deactivate-account-message-ng2',
-    template:  scriptTmpl("deactivate-account-message-ng2-template")
+    selector: 'trusted-organizations-revoke-ng2',
+    template:  scriptTmpl("trusted-organizations-revoke-ng2-template")
 })
-export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestroy, OnInit {
+export class TrustedOrganizationsRevokeComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-   
-    primaryEmail: string;
+    private subscription: Subscription;
+
+    applicationSummary: any;
 
     constructor(
         private accountService: AccountService,
-        private emailService: EmailService,
         private modalService: ModalService
     ) {
-        this.primaryEmail = "";
+
+
     }
 
     closeModal(): void {
-        this.modalService.notifyOther({action:'close', moduleId: 'modalDeactivateAccountMessage'});
+        this.modalService.notifyOther({action:'close', moduleId: 'modalTrustedOrganizationsRevoke'});
     };
 
-    getEmails(): any {
-        this.emailService.getEmails()
+    revokeAccess(): void{
+        this.accountService.revokeTrustedOrg(this.applicationSummary)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.primaryEmail = this.emailService.getEmailPrimary().value;
+                this.accountService.notifyOther({action:'revoke', successful:true});
+                this.closeModal(); 
+
             },
             error => {
-                //console.log('getEmails', error);
+                //console.log('error revoking trusted org', error);
             } 
         );
-    }
-
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        this.subscription = this.accountService.notifyObservable$.subscribe(
+            (res) => {
+                if( res.applicationSummary ) {
+                    this.applicationSummary = res.applicationSummary;
+                }
+            }
+        );
     };
 
     ngOnDestroy() {
@@ -68,6 +73,5 @@ export class DeactivateAccountMessageComponent implements AfterViewInit, OnDestr
     };
 
     ngOnInit() {
-        this.getEmails();
     }; 
 }

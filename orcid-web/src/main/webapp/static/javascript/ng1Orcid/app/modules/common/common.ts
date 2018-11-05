@@ -68,26 +68,14 @@ import { HeaderNg2Module }
 import { LanguageNg2Module }
     from './../language/language.ts';
 
-import { NotificationPreferenceNg2Module }
-    from './../notificationPreferences/notificationPreference.ts';
-
 import { OrgIdentifierPopoverNg2Module } 
     from './../orgIdentifierPopover/orgIdentifierPopover.ts';
-
-import { PasswordEditNg2Module }
-    from './../passwordEdit/passwordEdit.ts';
 
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
 import { RequestPasswordResetNg2Module }
     from './../requestPasswordReset/requestPasswordReset.ts';
-
-import { SecurityQuestionEditNg2Module }
-    from './../securityQuestionEdit/securityQuestionEdit.ts';
-
-import { SwitchUserNg2Module }
-    from './../switchUser/switchUser.ts';
 
 //User generated services
 
@@ -202,15 +190,12 @@ import { ResendClaimService }
             FormsModule,
             NgbModule,
             //User Modules
-            //DelegatesNg2Module,
-            //EditTableNg2Module,
             ExtIdPopoverNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
-            SwitchUserNg2Module,
         ],
         declarations: [ 
             FocusMe,
@@ -249,15 +234,12 @@ import { ResendClaimService }
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
-            //DelegatesNg2Module,
-            //EditTableNg2Module,
             ExtIdPopoverNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
-            SwitchUserNg2Module,
         ],
         providers: [
             AccountService,

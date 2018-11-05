@@ -32,6 +32,12 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 
 //User generated modules imports
 
+import { AccountSettingsNg2Module } 
+    from './accountSettings/accountSettings.ts';
+
+import { AdminActionsNg2Module } 
+    from './adminActions/adminActions.ts';    
+
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
 
@@ -50,17 +56,14 @@ import { AllConsortiumContactsNg2Module }
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 
+import { ClaimNg2Module }
+    from './claim/claim.ts';
+
 import { ClientEditNg2Module } 
-    from './clientEdit/clientEdit.ts';
+    from './clientEdit/clientEdit.ts'; 
 
-import { DeactivateAccountNg2Module }
-    from './deactivateAccount/deactivateAccount.ts';
-
-import { DeactivateAccountMessageNg2Module }
-    from './deactivateAccount/deactivateAccountMessage.ts';
-
-import { DeprecateAccountNg2Module }
-    from './deprecateAccount/deprecateAccount.ts';
+import { DelegatorsNg2Module } 
+    from './delegators/delegators.ts';  
 
 import { EmailsNg2Module } 
     from './emails/emails.ts';
@@ -113,9 +116,6 @@ import { NameNg2Module }
 import { NotificationsNg2Module }
     from './notifications/notifications.ts';
 
-import { PasswordEditNg2Module } 
-    from './passwordEdit/passwordEdit.ts';
-
 import { PeerReviewNg2Module } 
     from './peerReview/peerReview.ts';
 
@@ -155,14 +155,14 @@ import { ResearchResourceNg2Module }
 import { ResearchResourceDeleteNg2Module } 
     from './researchResource/researchResourceDelete.ts';
 
+import { ResendClaimNg2Module }
+    from './resendClaim/resendClaim.ts';    
+
 import { ResetPasswordNg2Module }
     from './resetPassword/resetPassword.ts';
 
 import { SearchNg2Module } 
     from './search/search.ts';
-
-import { SecurityQuestionEditNg2Module } 
-    from './securityQuestionEdit/securityQuestionEdit.ts';
 
 import { SelfServiceNg2Module } 
     from './selfService/selfService.ts';
@@ -188,8 +188,8 @@ import { SwitchUserNg2Module }
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
 
-import { TwoFaStateNg2Module }
-    from './2FAState/twoFAState.ts';
+import { UnsubscribeNg2Module }
+    from './unsubscribe/unsubscribe.ts';  
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
@@ -205,36 +205,12 @@ import { WorksFormNg2Module }
 
 import { WorksNg2Module } 
     from './works/works.ts';
-
-import { SearchService } 
-    from '../shared/search.service.ts'; 
-
-import { WorkspaceService } 
-    from '../shared/workspace.service.ts'; 
-
-import { WorksPrivacyPreferencesNg2Module } 
-    from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
-
-import { UnsubscribeNg2Module }
-    from './unsubscribe/unsubscribe.ts';
-
-import { DelegatorsNg2Module } 
-    from './delegators/delegators.ts';    
-
-import { ClaimNg2Module }
-    from './claim/claim.ts';
-    
-import { ResendClaimNg2Module }
-    from './resendClaim/resendClaim.ts';    
     
 import { WorksMergeChoosePreferredVersionNg2Module } 
     from './works/worksMergeChoosePreferredVersion.ts';
     
 import { WorksMergeSuggestionsNg2Module } 
     from './works/worksMergeSuggestions.ts';
-
-import { AdminActionsNg2Module } 
-    from './adminActions/adminActions.ts';    
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -324,16 +300,17 @@ export class RootCmp {
         NgbModule.forRoot(),
         UpgradeModule,
         /* User Generated Modules */
+        AccountSettingsNg2Module,
+        AdminActionsNg2Module,
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
         AlertBannerNg2Module,
         AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
+        ClaimNg2Module,
         ClientEditNg2Module,
-        DeactivateAccountNg2Module,
-        DeactivateAccountMessageNg2Module,
-        DeprecateAccountNg2Module,
+        DelegatorsNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved
@@ -351,14 +328,12 @@ export class RootCmp {
         MyOrcidAlertsNg2Module,
         NameNg2Module, //Approved
         NotificationsNg2Module,
-        PasswordEditNg2Module,
         PeerReviewNg2Module,
         PeerReviewDeleteNg2Module,
         PersonNg2Module,
         PrintRecordNg2Module,
         PublicEduAffiliationNg2Module,
         PublicRecordNg2Module,
-        SecurityQuestionEditNg2Module,
         OauthAuthorizationNg2Module,
         OrgIdentifierPopoverNg2Module,
         ReactivationNg2Module,
@@ -366,6 +341,7 @@ export class RootCmp {
         RequestPasswordResetNg2Module,
         ResearchResourceNg2Module,
         ResearchResourceDeleteNg2Module,
+        ResendClaimNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
@@ -375,7 +351,6 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         SwitchUserNg2Module,
-        TwoFaStateNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
         WidgetNg2Module, //Approved
@@ -383,13 +358,8 @@ export class RootCmp {
         WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
-        WorksPrivacyPreferencesNg2Module,
-        DelegatorsNg2Module,
-        ClaimNg2Module,
-        ResendClaimNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,
         WorksMergeSuggestionsNg2Module,
-        AdminActionsNg2Module
     ],
     providers: [
         { 

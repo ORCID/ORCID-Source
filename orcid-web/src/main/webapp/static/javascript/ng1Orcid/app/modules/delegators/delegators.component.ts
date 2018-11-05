@@ -2,6 +2,8 @@ declare var $: any;
 declare var getBaseUri: any;
 declare var logAjaxError: any;
 declare var om: any;
+declare var typeahead: any;
+
 //Import all the angular components
 
 import { NgForOf, NgIf } 
@@ -10,10 +12,14 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Observable, of, Subject, Subscription } 
     from 'rxjs';
-import { takeUntil } 
+
+import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } 
     from 'rxjs/operators';
+
+import { AccountService } 
+    from '../../shared/account.service.ts'; 
 
 import { GenericService } 
     from '../../shared/generic.service.ts'; 
@@ -31,7 +37,8 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     url_path: string;
 
     constructor(
-        private delegatorsService: GenericService
+        private delegatorsService: GenericService,
+        private accountService: AccountService
     ) {
         this.sort = {
             column: 'delegateSummary.giverName.value',
@@ -52,6 +59,10 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    formatSearchDelegatorsInput = (result: {value: string}) => result.value;
+
+    formatSearchDelegatorsResult = (result: {value: string, orcid: string}) => result.value + " (" + result.orcid + ")";
+
     getDelegators(): void {
         this.delegatorsService.getData( this.url_path )
         .pipe(    
@@ -68,10 +79,21 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     };
 
+    searchDelegators = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(term =>
+        this.accountService.searchDelegators(term).pipe(
+          catchError(() => {
+            return of([]);
+          }))
+        )
+      );
+
     selectDelegator(datum): void {
         window.location.href = getBaseUri() + '/switch-user?username=' + datum.orcid;
     };
-
     
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
@@ -85,33 +107,5 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getDelegators();
-
-        (<any>$("#delegatorsSearch")).typeahead({
-            name: 'delegatorsSearch',
-            remote: {
-                url: getBaseUri()+'/delegators/search-for-data/%QUERY?limit=' + 10
-            },
-            template: function (datum) {
-                var forDisplay;
-                if(datum.length == 0){
-                    forDisplay = "<span class=\'no-delegator-matches\'>" + om.get('delegators.nomatches') + "</span>";
-                }
-                else{
-                    forDisplay =
-                        '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span>'
-                        +'<span style=\'font-size: 80%;\'> (' + datum.orcid + ')</span>';
-                }
-                return forDisplay;
-            }
-        });
-
-        $("#delegatorsSearch").bind(
-            "typeahead:selected", 
-            function(obj, datum) {
-                if(datum.orcid != null){
-                    this.selectDelegator(datum);
-                }
-            }
-        );
     }; 
 }
