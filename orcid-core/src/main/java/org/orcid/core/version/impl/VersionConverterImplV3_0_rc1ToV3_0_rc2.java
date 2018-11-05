@@ -307,6 +307,13 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             a.setPath(b.getPath());
             a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class) ? "/client/" : "/") + b.getPath());
         }
+        
+        @Override
+        public void mapAtoB(OrcidIdBase a, org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, MappingContext context) {
+            b.setHost(a.getHost());
+            b.setPath(a.getPath());
+            b.setUri(orcidUrlManager.getBaseUrl() + (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc1.common.SourceClientId.class) ? "/client/" : "/") + a.getPath());
+        }
     }
 
     private class EmailMapper extends CustomMapper<Email, org.orcid.jaxb.model.v3.rc2.record.Email> {

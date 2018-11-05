@@ -27,8 +27,6 @@ public class V3VersionConverterChainTest {
         XMLGregorianCalendar gc2 = DateUtils.convertToXMLGregorianCalendar(new GregorianCalendar(2019, 1, 1));
         
         org.orcid.jaxb.model.v3.rc1.record.Work rc1Work = new org.orcid.jaxb.model.v3.rc1.record.Work();
-        // Set work type
-        rc1Work.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
         rc1Work.setCountry(new org.orcid.jaxb.model.v3.rc1.common.Country(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US));                
         rc1Work.setCreatedDate(new org.orcid.jaxb.model.v3.rc1.common.CreatedDate(gc1));        
         rc1Work.setJournalTitle(new org.orcid.jaxb.model.v3.rc1.common.Title("Journal title"));
@@ -53,19 +51,80 @@ public class V3VersionConverterChainTest {
         org.orcid.jaxb.model.v3.rc1.record.WorkContributors wc = new org.orcid.jaxb.model.v3.rc1.record.WorkContributors();
         wc.getContributor().add(c);
         rc1Work.setWorkContributors(wc);
+        org.orcid.jaxb.model.v3.rc1.record.ExternalIDs extIds = new org.orcid.jaxb.model.v3.rc1.record.ExternalIDs();
+        org.orcid.jaxb.model.v3.rc1.record.ExternalID extId = new org.orcid.jaxb.model.v3.rc1.record.ExternalID();
+        extId.setRelationship(org.orcid.jaxb.model.v3.rc1.record.Relationship.SELF);
+        extId.setType("type");
+        extId.setUrl(new org.orcid.jaxb.model.v3.rc1.common.Url("http://www.orcid.org") );
+        extId.setValue("extId1");
+        extIds.getExternalIdentifier().add(extId);
+        rc1Work.setWorkExternalIdentifiers(extIds);        
+        org.orcid.jaxb.model.v3.rc1.record.WorkTitle title = new org.orcid.jaxb.model.v3.rc1.record.WorkTitle();
+        title.setSubtitle(new org.orcid.jaxb.model.v3.rc1.common.Subtitle("The subtitle"));
+        title.setTitle(new org.orcid.jaxb.model.v3.rc1.common.Title("The title"));
+        title.setTranslatedTitle(new org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle("Translated", "EN"));
+        rc1Work.setWorkTitle(title);
+        rc1Work.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
         
-        rc1Work.setWorkExternalIdentifiers();
-        rc1Work.setWorkTitle();
-        rc1Work.setWorkType();
-        
-        // TODO Set external identifiers        
-        
-        
+        // Map and test        
         org.orcid.jaxb.model.v3.rc2.record.Work rc2Work = (org.orcid.jaxb.model.v3.rc2.record.Work)(v3VersionConverterChain.upgrade(new V3Convertible(rc1Work, "3.0_rc1"), "3.0_rc2")).getObjectToConvert();
         assertNotNull(rc2Work);
-        // Verify work type
+        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, rc2Work.getCountry().getValue());
+        assertEquals(new org.orcid.jaxb.model.v3.rc2.common.CreatedDate(gc1), rc2Work.getCreatedDate());
+        assertEquals("Journal title", rc2Work.getJournalTitle().getContent());
+        assertEquals("EN", rc2Work.getLanguageCode());
+        assertEquals(new org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate(gc2), rc2Work.getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0000/rcX/work/123", rc2Work.getPath());
+        assertEquals("2018", rc2Work.getPublicationDate().getYear().getValue());
+        assertEquals("01", rc2Work.getPublicationDate().getMonth().getValue());
+        assertEquals("01", rc2Work.getPublicationDate().getDay().getValue());
+        assertEquals(Long.valueOf(123), rc2Work.getPutCode());
+        assertEquals("Short description", rc2Work.getShortDescription());
+        assertEquals(new org.orcid.jaxb.model.v3.rc2.common.Source("0000-0000-0000-0000"), rc2Work.getSource());
+        assertEquals("http://www.orcid.org", rc2Work.getUrl().getValue());
+        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED, rc2Work.getVisibility());
+        assertEquals("This is the citation", rc2Work.getWorkCitation().getCitation());
+        assertEquals(org.orcid.jaxb.model.v3.rc2.record.CitationType.FORMATTED_UNSPECIFIED, rc2Work.getWorkCitation().getWorkCitationType());
+        assertEquals(1, rc2Work.getWorkContributors().getContributor().size());
+        assertEquals(org.orcid.jaxb.model.v3.rc2.common.ContributorRole.ASSIGNEE, rc2Work.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorRole());
+        assertEquals(org.orcid.jaxb.model.v3.rc2.record.SequenceType.ADDITIONAL, rc2Work.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorSequence());
+        assertEquals("contributor@orcid.org", rc2Work.getWorkContributors().getContributor().get(0).getContributorEmail().getValue());
+        assertEquals("0000-0000-0000-0000", rc2Work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertEquals("Credit Name", rc2Work.getWorkContributors().getContributor().get(0).getCreditName().getContent());
+        assertEquals(1, rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF, rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("type", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://www.orcid.org", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("extId1", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("The subtitle", rc2Work.getWorkTitle().getSubtitle().getContent());
+        assertEquals("The title", rc2Work.getWorkTitle().getTitle().getContent());
+        assertEquals("Translated", rc2Work.getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("EN", rc2Work.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS, rc2Work.getWorkType());
-        // TODO Verify external identifiers
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary rc1WorkSummary = new org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary();
