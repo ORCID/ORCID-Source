@@ -45,6 +45,14 @@ export class AdminActionsService {
         )        
     }
     
+    resetPasswordValidate( obj ): Observable<any> {
+        return this.http.post( 
+            getBaseUri() + '/admin-actions/reset-password/validate', 
+            JSON.stringify(obj), 
+            { headers: this.headers }
+        )        
+    }
+    
     resetPassword( obj ): Observable<any> {
         return this.http.post( 
             getBaseUri() + '/admin-actions/reset-password.json', 
