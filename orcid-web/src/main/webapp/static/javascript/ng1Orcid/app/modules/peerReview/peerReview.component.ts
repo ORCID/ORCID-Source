@@ -272,7 +272,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         if(this.showPeerReviewDetails[putCode] == true){
             this.closePopover($event);
             this.moreInfoOpen = true;
-            $(event.target).next().css('display','inline');
+            $($event.target).next().css('display','inline');
             if(this.peerReviewService.details[putCode] == undefined){
                 this.getDetails(putCode);
             }
