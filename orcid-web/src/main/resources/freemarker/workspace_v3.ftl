@@ -59,30 +59,9 @@
             <biography-ng2></biography-ng2>
           </div>
         </div>    
-        <!-- Affiliations / Education / Employment -->
-        <#include "includes/affiliate/del_affiliate_inc.ftl"/>
-        <#include "includes/affiliate/add_affiliate_inc.ftl"/>
-        <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-            <affiliation-ng2 publicView="false"></affiliation-ng2>
-        </@orcid.checkFeatureStatus>
-        <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES' false> 
-            <div ng-controller="AffiliationCtrl">
-                <!-- Education -->
-                <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" >
-                    <#include "includes/affiliate/edu_section_header_inc.ftl" />
-                    <div ng-if="workspaceSrvc.displayEducation" class="workspace-accordion-content">
-                        <#include "includes/affiliate/edu_body_inc.ftl" />
-                    </div>
-                </div>
-                <!-- Employment -->
-                <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" >
-                    <#include "includes/affiliate/emp_section_header_inc.ftl" />
-                    <div ng-if="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
-                        <#include "includes/affiliate/emp_body_inc.ftl" />
-                    </div>
-                </div>
-            </div>
-        </@orcid.checkFeatureStatus>
+        <!-- Affiliations -->
+        <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
+        <affiliation-ng2 publicView="false"></affiliation-ng2>
         <!-- Funding -->
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
         <funding-ng2></funding-ng2>
@@ -124,11 +103,12 @@
     <works-delete-ng2></works-delete-ng2> 
 </modalngcomponent><!-- Ng2 component -->
 
-
+<#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalAffiliationDelete" elementWidth="300">
     <affiliation-delete-ng2></affiliation-delete-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
 <modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->

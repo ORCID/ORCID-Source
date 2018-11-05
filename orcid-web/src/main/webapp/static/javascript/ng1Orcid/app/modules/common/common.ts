@@ -15,6 +15,12 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
 
+import {BrowserAnimationsModule} 
+    from '@angular/platform-browser/animations';
+
+import {MultiSelectModule} 
+    from 'primeng/multiselect'
+
 //User generated attribute directives
 import { FocusMe }
     from '../../directives/focusMe.directive.ts'; 
@@ -201,6 +207,8 @@ import { ResendClaimService }
             CommonModule,
             FormsModule,
             NgbModule,
+            BrowserAnimationsModule,
+            MultiSelectModule,
             //User Modules
             ExtIdPopoverNg2Module,
             LanguageNg2Module,
@@ -234,6 +242,7 @@ import { ResendClaimService }
             CommonModule,
             FormsModule,
             NgbModule,
+            MultiSelectModule,
             //User directives
             FocusMe,
             //User Pipes

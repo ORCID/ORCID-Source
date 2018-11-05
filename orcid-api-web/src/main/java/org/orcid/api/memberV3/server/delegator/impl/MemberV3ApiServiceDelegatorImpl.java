@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -66,7 +65,6 @@ import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.version.impl.Api3_0_RC2LastModifiedDatesHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
-import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
@@ -252,8 +250,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Resource
     private StatusManager statusManager;
 
-    private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
-
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -369,15 +365,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             for (int i = 0; i < works.getBulk().size(); i++) {
                 if (Work.class.isAssignableFrom(works.getBulk().get(i).getClass())) {
                     Work work = (Work) works.getBulk().get(i);
-
-                    try {
-                        schemaValidator.validate(work);
-                        clearSource(work);
-                    } catch (WebApplicationException e) {
-                        OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV3Rc2(9001, 400, e);
-                        works.getBulk().remove(i);
-                        works.getBulk().add(i, error);
-                    }
+                    clearSource(work);
                 }
             }
         }

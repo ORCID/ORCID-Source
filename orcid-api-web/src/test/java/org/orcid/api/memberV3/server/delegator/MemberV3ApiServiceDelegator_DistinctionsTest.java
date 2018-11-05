@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
@@ -351,14 +350,6 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         
         //Remove new element
         serviceDelegator.deleteAffiliation(ORCID, putCode);
-    }
-    
-    @Test(expected = OrcidValidationException.class)
-    public void testAddDistinctionNoStartDate() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
-        distinction.setStartDate(null);
-        serviceDelegator.createDistinction(ORCID, distinction);
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)

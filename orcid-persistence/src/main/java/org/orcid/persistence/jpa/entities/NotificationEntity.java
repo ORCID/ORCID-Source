@@ -40,6 +40,7 @@ import javax.persistence.Table;
     query = "SELECT DISTINCT(n.orcid), COALESCE(p.completed_date, p.date_created)" +
             " FROM notification n, email_frequency f, profile p " +
             " WHERE n.sent_date IS NULL " +
+            " AND n.archived_date IS NULL " + 
             " AND n.orcid = p.orcid " +
             " AND p.claimed = true " +
             " AND p.profile_deactivation_date IS NULL " +  

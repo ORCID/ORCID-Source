@@ -60,5 +60,14 @@ public interface ResearchResourceManagerReadOnly {
      * @return researchResources element with the researchResourceSummary elements grouped                  
      * */
     ResearchResources groupResearchResources(List<ResearchResourceSummary> researchResources, boolean justPublic);
+    
+    /**
+     * Checks if there is any public research resource for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public research resource for a specific user
+     * */
+    Boolean hasPublicResearchResources(String orcid);
 
 }

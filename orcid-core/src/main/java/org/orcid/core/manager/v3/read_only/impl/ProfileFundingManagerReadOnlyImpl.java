@@ -22,6 +22,7 @@ import org.orcid.jaxb.model.v3.rc2.record.summary.Fundings;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 
 public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileFundingManagerReadOnly {
@@ -174,5 +175,19 @@ public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl i
             result.getFundingGroup().add(fundingGroup);
         }       
         return result;
+    }
+    
+    /**
+     * Checks if there is any public funding for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public funding for a specific user
+     * */
+    public Boolean hasPublicFunding(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+            return false;
+        }
+        return profileFundingDao.hasPublicFunding(orcid);
     }
 }

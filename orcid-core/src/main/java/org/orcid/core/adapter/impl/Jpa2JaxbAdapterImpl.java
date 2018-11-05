@@ -837,6 +837,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 orcidWork.setWorkType(WorkType.OTHER);
             } else if(org.orcid.jaxb.model.v3.rc1.record.WorkType.PREPRINT.name().equals(work.getWorkType())) {
                 orcidWork.setWorkType(WorkType.OTHER);
+            } else if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name().equals(work.getWorkType())) {
+                orcidWork.setWorkType(WorkType.DISSERTATION);
             } else {
                 orcidWork.setWorkType(WorkType.valueOf(work.getWorkType()));
             }            

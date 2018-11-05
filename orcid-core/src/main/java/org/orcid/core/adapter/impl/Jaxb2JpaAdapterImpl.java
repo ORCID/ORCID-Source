@@ -84,6 +84,7 @@ import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -303,7 +304,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }            
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
             if(orcidWork.getWorkType() != null) {
-                workEntity.setWorkType(orcidWork.getWorkType().name());   
+                if(WorkType.DISSERTATION.equals(orcidWork.getWorkType())) {
+                    workEntity.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());   
+                } else {
+                    workEntity.setWorkType(orcidWork.getWorkType().name());   
+                }                
             }                        
             
             if(orcidWork.getVisibility() != null) {
