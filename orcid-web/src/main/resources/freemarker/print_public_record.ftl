@@ -85,7 +85,7 @@
                     <!-- Works -->
                     <#if !(worksEmpty)??> 
 	                    <#include "/includes/ng2_templates/works-ng2-template.ftl">
-	                    <works-ng2  publicView="true"></works-ng2>
+	                    <works-ng2 publicView="true" printView="true"></works-ng2>
                     </#if>
                     <!-- Peer Review -->
                     <#if !(peerReviewEmpty)??> 
