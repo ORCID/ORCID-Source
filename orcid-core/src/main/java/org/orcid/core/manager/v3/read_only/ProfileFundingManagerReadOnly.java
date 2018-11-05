@@ -65,4 +65,13 @@ public interface ProfileFundingManagerReadOnly {
      * @return Fundings element with the FundingSummary elements grouped                  
      * */
     Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic);
+
+    /**
+     * Checks if there is any public funding for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public funding for a specific user
+     * */
+    Boolean hasPublicFunding(String orcid);
 }

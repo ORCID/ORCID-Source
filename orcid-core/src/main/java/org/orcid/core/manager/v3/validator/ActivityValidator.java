@@ -373,10 +373,6 @@ public class ActivityValidator {
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
 
-        if (affiliation.getStartDate() == null) {
-            throw new OrcidValidationException("Education start date is required");
-        }
-
         if (isApiRequest) {
             validateDisambiguatedOrg(affiliation);
             if (affiliation.getEndDate() != null) {

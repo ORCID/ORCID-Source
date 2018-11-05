@@ -74,21 +74,22 @@ public class WorksPaginator {
         return worksPage;
     }
     
-    public Page<WorkGroup> getAllWorks(String orcid, String sort, boolean sortAsc) {
+    public Page<WorkGroup> getAllWorks(String orcid, boolean justPublic, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
+        List<org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
+        filteredGroups = sort(filteredGroups, sort, sortAsc);
 
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
-        worksPage.setTotalGroups(sortedGroups.size());
+        worksPage.setTotalGroups(filteredGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
-        for (int i = 0; i < sortedGroups.size(); i++) {
-            org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup group = sortedGroups.get(i);
+        for (int i = 0; i < filteredGroups.size(); i++) {
+            org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup group = filteredGroups.get(i);
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
 
         worksPage.setGroups(workGroups);
-        worksPage.setNextOffset(sortedGroups.size());
+        worksPage.setNextOffset(filteredGroups.size());
         return worksPage;
     }
 

@@ -274,4 +274,12 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
+    
+    @Override
+    public Boolean hasPublicFunding(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM profile_funding WHERE orcid=:orcid AND visibility='PUBLIC'");
+        query.setParameter("orcid", orcid);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return (result != null && result > 0);
+    }
 }

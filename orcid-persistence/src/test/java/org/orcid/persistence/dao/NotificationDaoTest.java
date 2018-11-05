@@ -445,6 +445,37 @@ public class NotificationDaoTest extends DBUnitTest {
 
         results = notificationDao.findNotificationsToSend(date2, orcid, recordOldEnough);
         assertEquals(0, results.size());
+        
+        // Test #7: Include them all now
+        emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.IMMEDIATELY);
+        emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.IMMEDIATELY);
+        emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.IMMEDIATELY);        
+ 
+        results = notificationDao.findNotificationsToSend(date1, orcid, recordOldEnough);
+        assertEquals(5, results.size());
+        assertEquals(Long.valueOf(1003), results.get(0).getId());
+        assertEquals("INSTITUTIONAL_CONNECTION", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1005), results.get(1).getId());
+        assertEquals("PERMISSION", results.get(1).getNotificationType());
+        assertEquals(Long.valueOf(1007), results.get(2).getId());
+        assertEquals("AMENDED", results.get(2).getNotificationType());
+        assertEquals(Long.valueOf(1009), results.get(3).getId());
+        assertEquals("CUSTOM", results.get(3).getNotificationType());
+        assertEquals(Long.valueOf(1011), results.get(4).getId());
+        assertEquals("ADMINISTRATIVE", results.get(4).getNotificationType());
+
+        results = notificationDao.findNotificationsToSend(date2, orcid, recordOldEnough);
+        assertEquals(5, results.size());
+        assertEquals(Long.valueOf(1003), results.get(0).getId());
+        assertEquals("INSTITUTIONAL_CONNECTION", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1005), results.get(1).getId());
+        assertEquals("PERMISSION", results.get(1).getNotificationType());
+        assertEquals(Long.valueOf(1007), results.get(2).getId());
+        assertEquals("AMENDED", results.get(2).getNotificationType());
+        assertEquals(Long.valueOf(1009), results.get(3).getId());
+        assertEquals("CUSTOM", results.get(3).getNotificationType());
+        assertEquals(Long.valueOf(1011), results.get(4).getId());
+        assertEquals("ADMINISTRATIVE", results.get(4).getNotificationType());        
     }
 
     @Test

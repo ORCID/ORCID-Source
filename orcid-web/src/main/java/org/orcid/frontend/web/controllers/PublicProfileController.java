@@ -1,11 +1,9 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -19,31 +17,25 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.ActivitiesSummaryManager;
 import org.orcid.core.manager.v3.ActivityManager;
-import org.orcid.core.manager.v3.AddressManager;
-import org.orcid.core.manager.v3.AffiliationsManager;
-import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.ExternalIdentifierManager;
-import org.orcid.core.manager.v3.GroupIdRecordManager;
-import org.orcid.core.manager.v3.OtherNameManager;
-import org.orcid.core.manager.v3.PersonalDetailsManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.manager.v3.ProfileKeywordManager;
-import org.orcid.core.manager.v3.ResearchResourceManager;
-import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -109,30 +101,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
 
-    @Resource
-    private LocaleManager localeManager;
-
-    @Resource(name = "workManagerV3")
-    private WorkManager workManager;
+    @Resource(name = "workManagerReadOnlyV3")
+    private WorkManagerReadOnly workManagerReadOnly;
 
     @Resource(name = "peerReviewManagerReadOnlyV3")
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
     
-    @Resource(name = "profileFundingManagerV3")
-    private ProfileFundingManager profileFundingManager;
+    @Resource(name = "profileFundingManagerReadOnlyV3")
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
 
     @Resource
     private WorksPaginator worksPaginator;
-
-    @Resource
-    private EncryptionManager encryptionManager;
 
     @Resource(name = "activityManagerV3")
     private ActivityManager activityManager;
@@ -141,19 +123,16 @@ public class PublicProfileController extends BaseWorkspaceController {
     private LanguagesMap lm;
 
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;    
 
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntManager;
+    @Resource(name = "groupIdRecordManagerReadOnlyV3")
+    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
 
-    @Resource(name = "groupIdRecordManagerV3")
-    private GroupIdRecordManager groupIdRecordManager;
+    @Resource(name = "addressManagerReadOnlyV3")
+    private AddressManagerReadOnly addressManagerReadOnly;
 
-    @Resource(name = "addressManagerV3")
-    private AddressManager addressManager;
-
-    @Resource(name = "personalDetailsManagerV3")
-    private PersonalDetailsManager personalDetailsManager;
+    @Resource(name = "personalDetailsManagerReadOnlyV3")
+    private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
 
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
@@ -161,40 +140,34 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
-    @Resource(name = "otherNameManagerV3")
-    private OtherNameManager otherNameManager;
+    @Resource(name = "profileKeywordManagerReadOnlyV3")
+    private ProfileKeywordManagerReadOnly keywordManagerReadOnly;
 
-    @Resource(name = "profileKeywordManagerV3")
-    private ProfileKeywordManager keywordManager;
+    @Resource(name = "researcherUrlManagerReadOnlyV3")
+    private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;
 
-    @Resource(name = "researcherUrlManagerV3")
-    private ResearcherUrlManager researcherUrlManager;
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
 
-    @Resource(name = "emailManagerV3")
-    private EmailManager emailManager;
-
-    @Resource(name = "externalIdentifierManagerV3")
-    private ExternalIdentifierManager externalIdentifierManager;
+    @Resource(name = "externalIdentifierManagerReadOnlyV3")
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
 
     @Resource(name = "sourceUtilsV3")
     private SourceUtils sourceUtils;
 
-    @Resource(name = "activitiesSummaryManagerV3")
-    private ActivitiesSummaryManager activitiesSummaryManager;
-
-    @Resource(name = "affiliationsManagerV3")
-    private AffiliationsManager affiliationsManager;
+    @Resource(name = "affiliationsManagerReadOnlyV3")
+    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
 
     @Resource
-    ResearchResourcePaginator researchResourcePaginator;
+    private ResearchResourcePaginator researchResourcePaginator;
 
-    @Resource(name = "researchResourceManagerV3")
-    ResearchResourceManager researchResourceManager;
+    @Resource(name = "researchResourceManagerReadOnlyV3")
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
 
     public static int ORCID_HASH_LENGTH = 8;
 
     private Long getLastModifiedTime(String orcid) {
-        return profileEntManager.getLastModified(orcid);
+        return profileEntityManager.getLastModified(orcid);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
@@ -228,7 +201,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("effectiveUserOrcid", orcid);
             String displayName = "";
             if (e instanceof OrcidDeprecatedException) {
-                PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
+                PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
                 if (publicPersonalDetails.getName() != null) {
                     Name name = publicPersonalDetails.getName();
                     if (name.getVisibility().equals(Visibility.PUBLIC)) {
@@ -282,7 +255,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         boolean isProfileEmtpy = true;
 
-        PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
+        PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
 
         // Fill personal details
         if (publicPersonalDetails != null) {
@@ -339,7 +312,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         // Fill biography elements
 
         // Fill country
-        Addresses publicAddresses = addressManager.getPublicAddresses(orcid);
+        Addresses publicAddresses = addressManagerReadOnly.getPublicAddresses(orcid);
         Map<String, String> countryNames = new HashMap<String, String>();
         if (publicAddresses != null && publicAddresses.getAddress() != null) {
             Address publicAddress = null;
@@ -359,52 +332,45 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         // Fill keywords
-        Keywords publicKeywords = keywordManager.getPublicKeywords(orcid);
+        Keywords publicKeywords = keywordManagerReadOnly.getPublicKeywords(orcid);
         Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
         mav.addObject("publicGroupedKeywords", groupedKeywords);
 
         // Fill researcher urls
-        ResearcherUrls publicResearcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid);
+        ResearcherUrls publicResearcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
         Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
         mav.addObject("publicGroupedResearcherUrls", groupedResearcherUrls);
 
         // Fill emails
-        Emails publicEmails = emailManager.getPublicEmails(orcid);
+        Emails publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
         Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
         mav.addObject("publicGroupedEmails", groupedEmails);
 
         // Fill external identifiers
-        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid);
+        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
         Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
         mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
 
-        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
-        LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-
-        // TODO: DO we need this? It's reads ALL works from the DB, groups and
-        // counts them!
-        if (worksPaginator.getPublicWorksCount(orcid) > 0) {
+        if (workManagerReadOnly.hasPublicWorks(orcid)) {
             isProfileEmtpy = false;
         } else {
             mav.addObject("worksEmpty", true);
         }
-        if (researchResourcePaginator.getPublicCount(orcid) > 0) {
+        if (researchResourceManagerReadOnly.hasPublicResearchResources(orcid)) {
             isProfileEmtpy = false;
         } else {
             mav.addObject("researchResourcesEmpty", true);
         }
 
-        affiliationMap = activityManager.affiliationMap(orcid);
-        if (affiliationMap.size() > 0) {
+        if (affiliationsManagerReadOnly.hasPublicAffiliations(orcid)) {
             isProfileEmtpy = false;
         } else {
             mav.addObject("affiliationsEmpty", true);
         }
 
-        fundingMap = activityManager.fundingMap(orcid);
-        if (fundingMap.size() > 0)
+        if (profileFundingManagerReadOnly.hasPublicFunding(orcid)) {
             isProfileEmtpy = false;
-        else {
+        } else {
             mav.addObject("fundingEmpty", true);
         }
         
@@ -414,21 +380,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("peerReviewEmpty", true);
         }
         
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            String affiliationIdsJson = mapper.writeValueAsString(affiliationMap.keySet());
-            String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
-            mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
-            mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
-            mav.addObject("isProfileEmpty", isProfileEmtpy);
-        } catch (JsonGenerationException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mav.addObject("isProfileEmpty", isProfileEmtpy);
 
         if (!profile.isReviewed()) {
             if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {
@@ -583,7 +535,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (id == null)
             return null;        
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        Funding funding = profileFundingManager.getFunding(orcid, id);
+        Funding funding = profileFundingManagerReadOnly.getFunding(orcid, id);
         if (funding != null) {
             validateVisibility(funding.getVisibility());
             sourceUtils.setSourceName(funding);
@@ -615,8 +567,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<FundingGroup> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
             @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         List<FundingGroup> fundingGroups = new ArrayList<>();
-        List<FundingSummary> summaries = profileFundingManager.getFundingSummaryList(orcid);
-        Fundings fundings = profileFundingManager.groupFundings(summaries, true);
+        List<FundingSummary> summaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
+        Fundings fundings = profileFundingManagerReadOnly.groupFundings(summaries, true);
         for (org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup group : fundings.getFundingGroup()) {
             FundingGroup fundingGroup = FundingGroup.valueOf(group);
             for(org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary summary : summaries) {
@@ -636,6 +588,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
         return fundingGroups;
     }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/allWorks.json", method = RequestMethod.GET)
+    public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("sort") String sort,
+            @RequestParam("sortAsc") boolean sortAsc) {
+        return worksPaginator.getAllWorks(orcid, true, sort, sortAsc);
+    }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
@@ -651,7 +609,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResource.json", method = RequestMethod.GET)
     public @ResponseBody ResearchResource getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
-        org.orcid.jaxb.model.v3.rc2.record.ResearchResource r = this.researchResourceManager.getResearchResource(orcid, Long.valueOf(id));
+        org.orcid.jaxb.model.v3.rc2.record.ResearchResource r = researchResourceManagerReadOnly.getResearchResource(orcid, Long.valueOf(id));
         validateVisibility(r.getVisibility());
         sourceUtils.setSourceName(r);
         return ResearchResource.fromValue(r);
@@ -670,7 +628,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId);
+        Work workObj = workManagerReadOnly.getWork(orcid, workId);
         if (workObj != null) {
             validateVisibility(workObj.getVisibility());
             sourceUtils.setSourceName(workObj);
@@ -695,7 +653,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 for (Contributor contributor : work.getContributors()) {
                     if (!PojoUtil.isEmpty(contributor.getOrcid())) {
                         String contributorOrcid = contributor.getOrcid().getValue();
-                        if (profileEntManager.orcidExists(contributorOrcid)) {
+                        if (profileEntityManager.orcidExists(contributorOrcid)) {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = activityManager.getPublicCreditName(profileEntity);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));
@@ -723,7 +681,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, true);
         for (org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
-            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManagerReadOnly.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
             PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
             for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
                 for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
@@ -745,7 +703,7 @@ public class PublicProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/public/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") Long groupId) {
-        return groupIdRecordManager.getGroupIdRecord(groupId);
+        return groupIdRecordManagerReadOnly.getGroupIdRecord(groupId);
     }
 
     /**
@@ -770,19 +728,19 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody AffiliationForm getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id, @RequestParam("type") String type) {        
         Affiliation aff; 
         if (type.equals("distinction")) {
-            aff = affiliationsManager.getDistinctionAffiliation(orcid, id);
+            aff = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, id);
         } else if (type.equals("education")) {
-            aff = affiliationsManager.getEducationAffiliation(orcid, id);
+            aff = affiliationsManagerReadOnly.getEducationAffiliation(orcid, id);
         } else if (type.equals("employment")) {
-            aff = affiliationsManager.getEmploymentAffiliation(orcid, id);
+            aff = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, id);
         } else if (type.equals("invited-position")) {
-            aff = affiliationsManager.getInvitedPositionAffiliation(orcid, id);
+            aff = affiliationsManagerReadOnly.getInvitedPositionAffiliation(orcid, id);
         } else if (type.equals("membership")) {
-            aff = affiliationsManager.getMembershipAffiliation(orcid, id);
+            aff = affiliationsManagerReadOnly.getMembershipAffiliation(orcid, id);
         } else if (type.equals("qualification")) {
-            aff = affiliationsManager.getQualificationAffiliation(orcid, id);
+            aff = affiliationsManagerReadOnly.getQualificationAffiliation(orcid, id);
         } else if (type.equals("service")) {
-            aff = affiliationsManager.getServiceAffiliation(orcid, id);
+            aff = affiliationsManagerReadOnly.getServiceAffiliation(orcid, id);
         } else {
             throw new IllegalArgumentException("Invalid affiliation type: " + type);
         }
@@ -795,7 +753,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)
     public @ResponseBody AffiliationGroupContainer getGroupedAffiliations(@PathVariable("orcid") String orcid) {        
         AffiliationGroupContainer result = new AffiliationGroupContainer();
-        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, true);
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
         for (AffiliationType type : AffiliationType.values()) {
             if (affiliationsMap.containsKey(type)) {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
@@ -808,35 +766,5 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
         }
         return result;
-    }
-}
-
-class OrcidInfo {
-    public String orcid = "";
-    public String name = "";
-    public HashMap<String, String> values = new HashMap<String, String>();
-
-    public String getOrcid() {
-        return orcid;
-    }
-
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setValue(String name, String value) {
-        values.put(name, value);
-    }
-
-    public String getValue(String name) {
-        return values.get(name);
     }
 }

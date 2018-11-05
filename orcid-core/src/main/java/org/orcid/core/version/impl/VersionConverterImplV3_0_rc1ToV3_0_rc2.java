@@ -134,8 +134,60 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         // WORK
         mapperFactory.classMap(WorkGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup.class).byDefault().register();
         mapperFactory.classMap(Works.class, org.orcid.jaxb.model.v3.rc2.record.summary.Works.class).byDefault().register();
-        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).byDefault().register();
-        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).byDefault().register();
+        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).exclude("workType").customize(new CustomMapper<Work, org.orcid.jaxb.model.v3.rc2.record.Work>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Work a, org.orcid.jaxb.model.v3.rc2.record.Work b, MappingContext context) {
+                // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
+                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getWorkType())) {
+                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+                } else {
+                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.fromValue(a.getWorkType().value()));
+                }                
+            }
+            
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Work b, Work a, MappingContext context) {
+                if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.equals(b.getWorkType())) {
+                    a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
+                } else {
+                    a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getWorkType().value()));
+                }                
+            }
+            
+        }).byDefault().register();
+        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).exclude("type").customize(new CustomMapper<WorkSummary, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(WorkSummary a, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, MappingContext context) {
+                // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
+                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getType())) {
+                    b.setType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+                } else {
+                    b.setType(org.orcid.jaxb.model.v3.rc2.record.WorkType.fromValue(a.getType().value()));
+                }                
+            }
+            
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, WorkSummary a, MappingContext context) {
+                if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.equals(b.getType())) {
+                    a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
+                } else {
+                    a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getType().value()));
+                }                
+            }
+            
+        }).byDefault().register();
 
         // FUNDING
         mapperFactory.classMap(FundingGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup.class).byDefault().register();
@@ -226,7 +278,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         public void mapBtoA(org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, OrcidIdBase a, MappingContext context) {
             a.setHost(b.getHost());
             a.setPath(b.getPath());
-            a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/") + b.getPath());
+            a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class) ? "/client/" : "/") + b.getPath());
         }
     }
 
