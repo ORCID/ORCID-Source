@@ -111,8 +111,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/group/{workIdsStr}", method = RequestMethod.POST)
     public @ResponseBody List<Long> groupWorks(@PathVariable("workIdsStr") String workIdsStr) {
         List<Long> workIds = Arrays.stream(workIdsStr.split(",")).mapToLong(n -> Long.parseLong(n)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        Long preferredId = workIds.remove(0);
-        workManager.setPreferredAndCreateGroup(preferredId, workIds, getCurrentUserOrcid());
+        workManager.createNewWorkGroup(workIds, getCurrentUserOrcid());
         return workIds;
     }
 
