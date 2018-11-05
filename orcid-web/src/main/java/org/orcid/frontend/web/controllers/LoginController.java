@@ -192,7 +192,13 @@ public class LoginController extends OauthControllerBase {
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
                 String redirectUriWithParams = requestInfoForm.getRedirectUrl();
-                redirectUriWithParams += "#error=login_required";
+                
+                if (requestInfoForm.getResponseType().contains(OrcidOauth2Constants.CODE_RESPONSE_TYPE)) 
+                    redirectUriWithParams += "?";
+                else
+                    redirectUriWithParams += "#";
+                    
+                redirectUriWithParams += "error=login_required";
                 RedirectView rView = new RedirectView(redirectUriWithParams);
                 ModelAndView error = new ModelAndView();
                 error.setView(rView);

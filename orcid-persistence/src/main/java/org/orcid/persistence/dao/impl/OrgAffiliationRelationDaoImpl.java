@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -269,5 +270,13 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("putCode", putCode);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
+    }
+
+    @Override
+    public Boolean hasPublicAffiliations(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM org_affiliation_relation WHERE orcid=:orcid AND visibility='PUBLIC'");
+        query.setParameter("orcid", orcid);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return (result != null && result > 0);
     }
 }

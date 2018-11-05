@@ -15,6 +15,12 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
 
+import {BrowserAnimationsModule} 
+    from '@angular/platform-browser/animations';
+
+import {MultiSelectModule} 
+    from 'primeng/multiselect'
+
 //User generated attribute directives
 import { FocusMe }
     from '../../directives/focusMe.directive.ts'; 
@@ -32,6 +38,9 @@ import { DashToSpacePipe }
 
 import { ExternalIdentifierHtmlPipe }
     from '../../pipes/externalIdentifierHtmlNg2.ts';
+
+import { ExtractContentFromBodyPipe }
+    from '../../pipes/extractContentFromBodyNg2.ts';
 
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'
@@ -51,6 +60,15 @@ import { OrderByPipe }
 import { OrderObjectByPipe }
     from '../../pipes/orderObjectByNg2.ts'
 
+import { ReplaceSeparatorWithSpacePipe }
+    from '../../pipes/replaceSeparatorWithSpaceNg2.ts'
+
+import { SafeUrlPipe }
+    from '../../pipes/safeUrlNg2.ts';
+
+import { UriPipe }
+    from '../../pipes/uriNg2.ts';
+
 import { UrlProtocolPipe }
     from '../../pipes/urlProtocolNg2.ts';
 
@@ -68,26 +86,14 @@ import { HeaderNg2Module }
 import { LanguageNg2Module }
     from './../language/language.ts';
 
-import { NotificationPreferenceNg2Module }
-    from './../notificationPreferences/notificationPreference.ts';
-
 import { OrgIdentifierPopoverNg2Module } 
     from './../orgIdentifierPopover/orgIdentifierPopover.ts';
-
-import { PasswordEditNg2Module }
-    from './../passwordEdit/passwordEdit.ts';
 
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle.ts';
 
 import { RequestPasswordResetNg2Module }
     from './../requestPasswordReset/requestPasswordReset.ts';
-
-import { SecurityQuestionEditNg2Module }
-    from './../securityQuestionEdit/securityQuestionEdit.ts';
-
-import { SwitchUserNg2Module }
-    from './../switchUser/switchUser.ts';
 
 //User generated services
 
@@ -204,16 +210,15 @@ import { DeveloperToolsService }
             CommonModule,
             FormsModule,
             NgbModule,
+            BrowserAnimationsModule,
+            MultiSelectModule,
             //User Modules
-            //DelegatesNg2Module,
-            //EditTableNg2Module,
             ExtIdPopoverNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
-            SwitchUserNg2Module,
         ],
         declarations: [ 
             FocusMe,
@@ -221,12 +226,16 @@ import { DeveloperToolsService }
             ContributorFilterPipe,
             DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
+            ExtractContentFromBodyPipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
             OrderByAffiliationsPipe,
             OrderByPipe,
             OrderObjectByPipe,
+            ReplaceSeparatorWithSpacePipe,
+            SafeUrlPipe,
+            UriPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
 
@@ -236,6 +245,7 @@ import { DeveloperToolsService }
             CommonModule,
             FormsModule,
             NgbModule,
+            MultiSelectModule,
             //User directives
             FocusMe,
             //User Pipes
@@ -243,24 +253,25 @@ import { DeveloperToolsService }
             ContributorFilterPipe,
             DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
+            ExtractContentFromBodyPipe,
             FilterImportWizardsPipe,
             KeysPipe,
             LatexPipe,
             OrderByAffiliationsPipe,
             OrderByPipe,
             OrderObjectByPipe,
+            ReplaceSeparatorWithSpacePipe,
+            SafeUrlPipe,
+            UriPipe,
             UrlProtocolPipe,
             WorkExternalIdentifierHtmlPipe,
             //User Modules
-            //DelegatesNg2Module,
-            //EditTableNg2Module,
             ExtIdPopoverNg2Module,
             LanguageNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
-            SwitchUserNg2Module,
         ],
         providers: [
             AccountService,

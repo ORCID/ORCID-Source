@@ -27,6 +27,12 @@
 		</#if>
 	</div>
 	<div class="clearfix pull-right">
-		<span><a href="" onclick="logOffReload('show_login'); return false;">(<@orcid.msg'confirm-oauth-access.notYou'/>?)</a></span>
+		<span class="notYouUrl"><a href="" onclick="logOffReload('show_login'); return false;">(<@orcid.msg'confirm-oauth-access.notYou'/>)</a>
+            <h3 (click)="toggleNotYouDescription()">
+                <a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>               
+            </h3>
+        </span>
+        <div *ngIf="showNotYouDescription"><@orcid.msg'confirm-oauth-access.notYou.longDesc'/></div>
+        
 	</div>
 </div>

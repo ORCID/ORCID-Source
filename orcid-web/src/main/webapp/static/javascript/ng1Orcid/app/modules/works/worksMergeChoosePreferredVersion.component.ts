@@ -117,7 +117,7 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
                 if( res.worksToMerge ) {
                     this.worksToMerge = res.worksToMerge;
                 }
-                if( res.externalIdsPresent ) {
+                if( res.externalIdsPresent != undefined ) {
                     this.externalIdsPresent = res.externalIdsPresent;
                 }
                 if( res.suggestionId ) {

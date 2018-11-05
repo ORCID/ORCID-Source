@@ -546,7 +546,7 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     public Response viewClient(String clientId) {
         return memberV3ApiServiceDelegator.viewClient(clientId);
     }
-    
+
     @Override
     public Response viewStatus() {
         return memberV3ApiServiceDelegator.viewStatus();
@@ -763,11 +763,7 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     }
 
     private Response processReponse(Response response) {
-        if (externalVersion.equals("2.1")) {
-            return upgradeResponse(response);
-        } else {
-            return downgradeResponse(response);
-        }
+        return downgradeResponse(response);
     }
 
     private Response downgradeResponse(Response response) {
@@ -780,36 +776,14 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
         return response;
     }
 
-    private Response upgradeResponse(Response response) {
-        Object entity = response.getEntity();
-        V3Convertible result = null;
-        if (entity != null) {
-            result = v3VersionConverterChain.upgrade(new V3Convertible(entity, MemberV3ApiServiceDelegator.LATEST_V3_VERSION), externalVersion);
-            return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
-        }
-        return response;
-    }
-
     private Object processObject(Object object) {
-        if (externalVersion.equals("3.0_rc2")) {
-            return downgradeObject(object);
-        } else {
-            return upgradeObject(object);
-        }
+        return upgradeObject(object);
     }
 
     private Object upgradeObject(Object entity) {
         V3Convertible result = null;
         if (entity != null) {
             result = v3VersionConverterChain.upgrade(new V3Convertible(entity, externalVersion), MemberV3ApiServiceDelegator.LATEST_V3_VERSION);
-        }
-        return result.getObjectToConvert();
-    }
-
-    private Object downgradeObject(Object entity) {
-        V3Convertible result = null;
-        if (entity != null) {
-            result = v3VersionConverterChain.downgrade(new V3Convertible(entity, externalVersion), MemberV3ApiServiceDelegator.LATEST_V3_VERSION);
         }
         return result.getObjectToConvert();
     }

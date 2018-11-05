@@ -43,7 +43,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     private subscription: Subscription;
 
     disambiguatedAffiliation: any;
-    displayNewAffiliationTypesFeatureEnabled: boolean;
     distinctionsAndInvitedPositions: any;
     editAffiliation: any;
     editSources: any;
@@ -57,7 +56,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     orgIdsFeatureEnabled: boolean;
     privacyHelp: any;
     privacyHelpCurKey: any;
-    sectionOneElements: any;
     showElement: any;
     sortAscDistinctions: boolean;
     sortAscEducations: boolean;
@@ -108,8 +106,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.educationsAndQualifications = [];
         this.distinctionsAndInvitedPositions = [];
         this.membershipsAndServices = [];
-        this.sectionOneElements = [];
-        this.displayNewAffiliationTypesFeatureEnabled = this.featuresService.isFeatureEnabled('DISPLAY_NEW_AFFILIATION_TYPES');
         this.orgIdsFeatureEnabled = this.featuresService.isFeatureEnabled('AFFILIATION_ORG_ID');
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
@@ -358,12 +354,6 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         
         this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.MEMBERSHIP);
         this.membershipsAndServices = this.membershipsAndServices.concat(data.affiliationGroups.SERVICE);
-
-        if(this.displayNewAffiliationTypesFeatureEnabled) {
-            this.sectionOneElements = this.educationsAndQualifications;
-        } else {
-            this.sectionOneElements = this.educations;
-        }
     }
 
     selectAffiliation(datum): void {

@@ -47,7 +47,7 @@ public class BaseWorkspaceController extends BaseController {
     protected SecurityQuestionManager securityQuestionManager;
 
     @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;
+    protected ProfileEntityManager profileEntityManager;
 
     @Resource(name = "visibilityFilter")
     protected VisibilityFilter visibilityFilter;

@@ -220,7 +220,7 @@ public class V3WorkToCiteprocTranslator {
         case DICTIONARY_ENTRY:
             builder.type(CSLType.ENTRY_DICTIONARY);
             break;
-        case DISSERTATION:
+        case DISSERTATION_THESIS:
             builder.type(CSLType.THESIS);
             break;
         case ENCYCLOPEDIA_ENTRY:
