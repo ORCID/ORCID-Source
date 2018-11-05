@@ -5361,11 +5361,33 @@ ul.oauth-icons li {
 
 .notifications .unread {
     font-weight: 700;
-    background: #fff
 }
 
 .notifications .archive-checkbox {
     vertical-align: top
+}
+
+.notification .workspace-accordion-header{
+    color: #FFF;
+    font-weight: bold;
+    padding: 5px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+        
+.notification .notifications-inner{
+    padding: 5px 15px;          
+}       
+        
+.notification .glyphicons{
+    top: -10px;
+    padding-left: 21px;
+    
+}
+
+.notification .glyphicons:before{
+    color: #FFF;
+    font: 16px/1em 'Glyphicons Regular'
 }
 
 .notification-top-bar {
@@ -6665,6 +6687,10 @@ a#reset-password-toggle-text:hover:active {
     padding-top: 15px
 }
 
+.cancel-left {
+    margin-right: 15px
+}
+
 .cancel-right {
     margin-left: 15px
 }
@@ -6884,6 +6910,11 @@ ul.comma li:last-child:after {
 
 .biography-controller > .row > div.col-md-9.col-sm-8.col-xs-4 {
     display: flex;
+}
+
+.record-corrections-table {
+    overflow: hidden;
+    word-break: break-word;
 }
 
 @media (max-width:767px) {
@@ -8595,6 +8626,28 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
     content: "All";
 }
 
-.ng-tns-c0-0.ui-multiselect {
+.ui-multiselect {
     width: 150px;
+}
+
+span.notYouUrl {
+    display: flex;
+    align-items: center;
+    width: 80px;
+    justify-content: space-between;
+}
+
+span.notYouUrl > a {
+    height: 15px;
+}
+
+.clearfix.pull-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.readLimitedIcon {
+    height: 20px;
+    margin-top: -2px;
 }

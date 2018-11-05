@@ -97,6 +97,9 @@ import { NameModule }
 import { NotificationsModule }
     from './notifications/notifications.ts';
 
+import { NotificationAlertsModule }
+    from './notificationAlerts/notificationAlerts.ts';
+
 import { OauthAuthorizationModule } 
     from './oauthAuthorization/oauthAuthorization.ts';
 
@@ -191,7 +194,10 @@ import { WorksMergeChoosePreferredVersionModule }
     from './works/worksMergeChoosePreferredVersion.ts';
     
 import { WorksMergeSuggestionsModule } 
-    from './works/worksMergeSuggestions.ts';   
+    from './works/worksMergeSuggestions.ts';
+
+import { RecordCorrectionsModule }
+    from './recordCorrections/recordCorrections.ts'
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -227,6 +233,8 @@ export const orcidApp = angular.module(
         ModalModule.name,
         MyOrcidAlertsModule.name,
         NameModule.name,
+        NotificationsModule.name,
+        NotificationAlertsModule.name,
         OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
         PeerReviewModule.name,
@@ -235,7 +243,6 @@ export const orcidApp = angular.module(
         PrintRecordModule.name,
         PublicEduAffiliationModule.name,
         PublicRecordModule.name,
-        NotificationsModule.name,
         ReactivationModule.name,
         RegisterDuplicatesModule.name,
         RequestPasswordResetModule.name,
@@ -260,6 +267,7 @@ export const orcidApp = angular.module(
         WorksModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
+        RecordCorrectionsModule.name
     ]
 );
 

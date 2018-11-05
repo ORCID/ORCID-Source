@@ -116,6 +116,9 @@ import { NameNg2Module }
 import { NotificationsNg2Module }
     from './notifications/notifications.ts';
 
+import { NotificationAlertsNg2Module }
+    from './notificationAlerts/notificationAlerts.ts';
+
 import { PeerReviewNg2Module } 
     from './peerReview/peerReview.ts';
 
@@ -211,6 +214,9 @@ import { WorksMergeChoosePreferredVersionNg2Module }
     
 import { WorksMergeSuggestionsNg2Module } 
     from './works/worksMergeSuggestions.ts';
+    
+import { RecordCorrectionsNg2Module }
+    from './recordCorrections/recordCorrections.ts'
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -328,6 +334,7 @@ export class RootCmp {
         MyOrcidAlertsNg2Module,
         NameNg2Module, //Approved
         NotificationsNg2Module,
+        NotificationAlertsNg2Module,
         PeerReviewNg2Module,
         PeerReviewDeleteNg2Module,
         PersonNg2Module,
@@ -360,6 +367,7 @@ export class RootCmp {
         WorksNg2Module,
         WorksMergeChoosePreferredVersionNg2Module,
         WorksMergeSuggestionsNg2Module,
+        RecordCorrectionsNg2Module
     ],
     providers: [
         { 
