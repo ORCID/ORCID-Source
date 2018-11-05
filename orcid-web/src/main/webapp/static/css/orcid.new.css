@@ -371,7 +371,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 }
 
 .btn-white-no-border {
-    background-color: #fff;
+    background-color: transparent;
     border: 0;
     color: #338caf;
     padding: 0
@@ -1219,7 +1219,8 @@ ul.privacyHelp li {
     float: left;
 }
 
-#register .visibilityDefault{
+#register .visibilityDefault,
+#claim .visibilityDefault{
     width: 85%;
 }
 
@@ -2382,7 +2383,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .settings-table #emailFrequency input[type=checkbox], 
-#register input[type=checkbox]{
+#register input[type=checkbox],
+#claim input[type=checkbox]{
     margin: 0 4px 0 0;
 }
 
@@ -2922,7 +2924,7 @@ input.error {
 }
 
 .workspace-header-public.no-border {
-    margin-top: 0
+    margin-top: 0;
 }
 
 .header .main>.menu>li>.menu>li:last-of-type {
@@ -3601,7 +3603,8 @@ ul.sso-options li {
     display: block;
     height: 35px;
     padding: 9px 10px;
-    width: 35px
+    width: 35px;
+    margin: 2px;
 }
 
 .developer-tools .sso-options-light {
@@ -6506,16 +6509,18 @@ a#reset-password-toggle-text:hover:active {
     top: -40px
 }
 
-#register .dark-label,#register p,.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span,.self-service .pending-addition a:hover,.self-service .pending-removal a:hover {
+#register .dark-label,#register p,#claim .dark-label,#claim p,.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span,.self-service .pending-addition a:hover,.self-service .pending-removal a:hover {
     color: #494a4c
 }
 
-#register p{
+#register p,
+#claim p{
     font-size: 12px;
     line-height: normal;
 }
 
-#register #notificationSettings label {
+#register #notificationSettings label,
+#claim #notificationSettings label {
     font-weight: bold;
     display: inline;
 }
@@ -8360,7 +8365,8 @@ ul.comma li:last-child:after {
 }
 
 .lang-rl .header .navigation>.menu>li.active-trail>.menu {
-    flex-direction: row-reverse
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
 }
 
 .lang-rl .header .search form .conditions {
@@ -8572,4 +8578,23 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 
 #saveRecoverCodesHeading {
     color: red;
+}
+
+.pi-check { 
+    color: gray;
+}
+
+.ui-state-highlight{
+    background: #a6ce39 !important;
+}
+
+.ui-widget-header.ui-corner-all {
+    display: flex;
+}
+.ui-widget-header.ui-corner-all:after {
+    content: "All";
+}
+
+.ng-tns-c0-0.ui-multiselect {
+    width: 150px;
 }

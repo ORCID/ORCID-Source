@@ -25,7 +25,7 @@ public class OpenIDConnectDiscoveryService {
         private List<String> subject_types_supported  = Lists.newArrayList("public");
         private List<String> response_types_supported = Lists.newArrayList("code","id_token","id_token token");
         private Boolean claims_parameter_supported = false;
-        private List<String> token_endpoint_auth_methods_supported = Lists.newArrayList("client_secret_basic");
+        private List<String> token_endpoint_auth_methods_supported = Lists.newArrayList("client_secret_basic","client_secret_post");
         private List<String> grant_types_supported = Lists.newArrayList("authorization_code","implicit","refresh_token");
         public String getIssuer() {
             return path;

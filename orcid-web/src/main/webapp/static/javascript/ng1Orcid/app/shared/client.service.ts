@@ -61,12 +61,11 @@ export class ClientService {
         
     }
 
-    resetClientSecret( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
+    resetClientSecret( str ): Observable<any> {
         
         return this.http.post( 
             getBaseUri() + '/group/developer-tools/reset-client-secret.json', 
-            encoded_data, 
+            str, 
             { headers: this.headers }
         )
         
@@ -77,16 +76,5 @@ export class ClientService {
             getBaseUri() + '/group/developer-tools/client.json'
         )
         
-    }
-
-    submitEditClient( obj ): Observable<any> {
-        let encoded_data = JSON.stringify(obj);
-        
-        return this.http.post( 
-            getBaseUri() + '/group/developer-tools/edit-client.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        
-    }    
+    }   
 }

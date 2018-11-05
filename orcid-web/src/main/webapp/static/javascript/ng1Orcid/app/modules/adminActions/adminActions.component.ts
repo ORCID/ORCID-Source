@@ -242,7 +242,21 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     
     confirmResetPassword(): void {
         if(this.resetPasswordParams != null && this.resetPasswordParams.orcidOrEmail != null && this.resetPasswordParams.password != null) {
-            this.showResetPasswordConfirm = true;
+            this.adminActionsService.resetPasswordValidate( this.resetPasswordParams ) 
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.resetPasswordParams = data;
+                    if(this.resetPasswordParams.error == undefined || this.resetPasswordParams.error == '') {
+                        this.showResetPasswordConfirm = true;
+                    }
+                },
+                error => {
+                    console.log('admin: confirmResetPassword error', error);
+                } 
+            );                                                   
         }        
     };
     

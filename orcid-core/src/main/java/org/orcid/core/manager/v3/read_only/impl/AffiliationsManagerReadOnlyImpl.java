@@ -450,4 +450,19 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
             throw new IllegalArgumentException("Given affiliation " + entity.getId() + " doesn't match the desired type " + type.value());
         }
     }
+
+    /**
+     * Checks if there is any public affiliation for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public affiliation for a specific user
+     * */
+    @Override
+    public Boolean hasPublicAffiliations(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+            return false;
+        }
+        return orgAffiliationRelationDao.hasPublicAffiliations(orcid);
+    }
 }

@@ -25,6 +25,8 @@
     "intl": "1.2.5",
     "jquery": "3.3.1",
     "mdn-polyfills": "5.8.0",
+    "primeicons": "^1.0.0",
+    "primeng": "^7.0.0-beta.1",
     "reflect-metadata": "0.1.12",
     "rxjs": "6.2.0",
     "systemjs": "0.21.4",
