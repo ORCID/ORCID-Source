@@ -78,9 +78,6 @@ public enum Features implements Feature {
     @Label("Disable reCAPTCHA")
     DISABLE_RECAPTCHA,
 
-    @Label("Display the new affiliation types in the workspace")
-    DISPLAY_NEW_AFFILIATION_TYPES,
-
     @Label("Disable 1.2 API from the public API")
     DISABLE_1_2_ON_PUB_API,
 
