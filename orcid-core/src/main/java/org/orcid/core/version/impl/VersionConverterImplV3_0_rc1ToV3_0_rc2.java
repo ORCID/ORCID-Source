@@ -12,6 +12,7 @@ import org.orcid.jaxb.model.v3.rc1.common.OrcidIdBase;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords;
@@ -33,6 +34,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Person;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
@@ -134,9 +136,34 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         // WORK
         mapperFactory.classMap(WorkGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup.class).byDefault().register();
         mapperFactory.classMap(Works.class, org.orcid.jaxb.model.v3.rc2.record.summary.Works.class).byDefault().register();
-        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).exclude("workType").customize(new CustomMapper<Work, org.orcid.jaxb.model.v3.rc2.record.Work>() {
+        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class)
+        .fieldAToB("externalIdentifiers", "externalIdentifiers")
+        .fieldBToA("externalIdentifiers", "externalIdentifiers").customize(new CustomMapper<Work, org.orcid.jaxb.model.v3.rc2.record.Work>() {
             /**
-             * From model object to database object
+             * From rc2 object to rc1 object
+             */
+            @Override
+            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Work b, Work a, MappingContext context) {
+                if(b.getExternalIdentifiers() != null) {                    
+                    for(org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2ExtId : b.getExternalIdentifiers().getExternalIdentifier()) {
+                        if(!org.orcid.jaxb.model.v3.rc2.record.Relationship.VERSION_OF.equals(rc2ExtId.getRelationship())) {
+                            ExternalID rc1ExtId = new ExternalID();
+                            rc1ExtId.setRelationship(Relationship.fromValue(rc2ExtId.getValue()));
+                            rc1ExtId.setType(rc2ExtId.getType());
+                            if(rc2ExtId.getUrl() != null) {
+                                rc1ExtId.setUrl(new Url(rc2ExtId.getUrl().getValue()));
+                            }
+                            rc1ExtId.setValue(rc2ExtId.getValue());
+                            a.getExternalIdentifiers().getExternalIdentifier().add(rc1ExtId);
+                        }
+                    }
+                }                
+            }
+            
+        })
+        .exclude("workType").customize(new CustomMapper<Work, org.orcid.jaxb.model.v3.rc2.record.Work>() {
+            /**
+             * From rc1 object to rc2 object
              */            
             @Override
             public void mapAtoB(Work a, org.orcid.jaxb.model.v3.rc2.record.Work b, MappingContext context) {
@@ -149,7 +176,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             }
             
             /**
-             * From database to model object
+             * From rc2 object to rc1 object
              */
             @Override
             public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Work b, Work a, MappingContext context) {
@@ -163,7 +190,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         }).byDefault().register();
         mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).exclude("type").customize(new CustomMapper<WorkSummary, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary>() {
             /**
-             * From model object to database object
+             * From rc1 object to rc2 object
              */            
             @Override
             public void mapAtoB(WorkSummary a, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, MappingContext context) {
@@ -176,7 +203,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             }
             
             /**
-             * From database to model object
+             * From rc2 object to rc1 object
              */
             @Override
             public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, WorkSummary a, MappingContext context) {
