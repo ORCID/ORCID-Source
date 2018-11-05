@@ -371,7 +371,7 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
 }
 
 .btn-white-no-border {
-    background-color: #fff;
+    background-color: transparent;
     border: 0;
     color: #338caf;
     padding: 0
@@ -3603,7 +3603,8 @@ ul.sso-options li {
     display: block;
     height: 35px;
     padding: 9px 10px;
-    width: 35px
+    width: 35px;
+    margin: 2px;
 }
 
 .developer-tools .sso-options-light {
@@ -8576,4 +8577,23 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 
 #saveRecoverCodesHeading {
     color: red;
+}
+
+.pi-check { 
+    color: gray;
+}
+
+.ui-state-highlight{
+    background: #a6ce39 !important;
+}
+
+.ui-widget-header.ui-corner-all {
+    display: flex;
+}
+.ui-widget-header.ui-corner-all:after {
+    content: "All";
+}
+
+.ng-tns-c0-0.ui-multiselect {
+    width: 150px;
 }

@@ -89,6 +89,9 @@
     <!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
 
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/nova-light/theme.css"/>
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeicons.css"/>
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeng.min.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     
