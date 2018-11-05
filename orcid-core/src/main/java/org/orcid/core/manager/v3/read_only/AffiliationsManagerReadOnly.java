@@ -270,5 +270,14 @@ public interface AffiliationsManagerReadOnly {
      * @return Affiliations element with the AffiliationSummary elements grouped                  
      * */
     <T extends AffiliationSummary> List<AffiliationGroup<T>> groupAffiliations(List<T> affiliations, boolean justPublic);
+    
+    /**
+     * Checks if there is any public affiliation for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public affiliation for a specific user
+     * */
+    Boolean hasPublicAffiliations(String orcid);
 
 }

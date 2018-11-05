@@ -33,6 +33,7 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -79,6 +80,23 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
+    /**
+     * Checks if there is any public work for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public work for a specific user
+     * */
+    @Override
+    public Boolean hasPublicWorks(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+            return false;
+        }
+        return workDao.hasPublicWorks(orcid);
+    }
+    
+    
+    
     /**
      * Find the public works for a specific user
      * 
@@ -272,5 +290,4 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         result.getWorkGroup().sort(WorkComparators.GROUP);
         return result;
     }
-
 }

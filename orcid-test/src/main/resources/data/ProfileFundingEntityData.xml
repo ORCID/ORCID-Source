@@ -220,4 +220,20 @@
 			display_index="4"
 			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;5&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://test.orcid.org/5.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
 			/>
+			
+	<profile_funding 
+			id="15" 
+			orcid="0000-0000-0000-0002" 
+			org_id="1" 
+			title="SELF PRIVATE" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PRIVATE" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			source_id="0000-0000-0000-0002"
+			display_index="4"
+			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;5&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://test.orcid.org/5.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			/>			
 </dataset>

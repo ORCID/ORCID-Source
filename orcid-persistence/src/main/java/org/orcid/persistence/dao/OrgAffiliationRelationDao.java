@@ -142,4 +142,13 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * @return true if it was able to update the display index
      * */
     Boolean updateToMaxDisplay(String orcid, Long putCode);
+    
+    /**
+     * Checks if there is any public affiliation for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public affiliation for a specific user
+     * */
+    Boolean hasPublicAffiliations(String orcid);
 }
