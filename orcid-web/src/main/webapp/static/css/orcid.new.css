@@ -1219,7 +1219,8 @@ ul.privacyHelp li {
     float: left;
 }
 
-#register .visibilityDefault{
+#register .visibilityDefault,
+#claim .visibilityDefault{
     width: 85%;
 }
 
@@ -2382,7 +2383,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .settings-table #emailFrequency input[type=checkbox], 
-#register input[type=checkbox]{
+#register input[type=checkbox],
+#claim input[type=checkbox]{
     margin: 0 4px 0 0;
 }
 
@@ -2922,7 +2924,7 @@ input.error {
 }
 
 .workspace-header-public.no-border {
-    margin-top: 0
+    margin-top: 0;
 }
 
 .header .main>.menu>li>.menu>li:last-of-type {
@@ -6506,16 +6508,18 @@ a#reset-password-toggle-text:hover:active {
     top: -40px
 }
 
-#register .dark-label,#register p,.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span,.self-service .pending-addition a:hover,.self-service .pending-removal a:hover {
+#register .dark-label,#register p,#claim .dark-label,#claim p,.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span,.self-service .pending-addition a:hover,.self-service .pending-removal a:hover {
     color: #494a4c
 }
 
-#register p{
+#register p,
+#claim p{
     font-size: 12px;
     line-height: normal;
 }
 
-#register #notificationSettings label {
+#register #notificationSettings label,
+#claim #notificationSettings label {
     font-weight: bold;
     display: inline;
 }
