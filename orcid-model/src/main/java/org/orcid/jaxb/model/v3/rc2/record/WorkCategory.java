@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 public enum WorkCategory {
     @XmlEnumValue("publication")
-    PUBLICATION("publication", WorkType.BOOK_CHAPTER, WorkType.BOOK_REVIEW, WorkType.BOOK, WorkType.DICTIONARY_ENTRY, WorkType.DISSERTATION, WorkType.EDITED_BOOK,
+    PUBLICATION("publication", WorkType.BOOK_CHAPTER, WorkType.BOOK_REVIEW, WorkType.BOOK, WorkType.DICTIONARY_ENTRY, WorkType.DISSERTATION_THESIS, WorkType.EDITED_BOOK,
             WorkType.ENCYCLOPEDIA_ENTRY, WorkType.JOURNAL_ARTICLE, WorkType.JOURNAL_ISSUE, WorkType.MAGAZINE_ARTICLE, WorkType.MANUAL, WorkType.NEWSLETTER_ARTICLE,
             WorkType.NEWSPAPER_ARTICLE, WorkType.ONLINE_RESOURCE, WorkType.REPORT, WorkType.RESEARCH_TOOL, WorkType.SUPERVISED_STUDENT_PUBLICATION, WorkType.TEST,
             WorkType.TRANSLATION, WorkType.WEBSITE, WorkType.WORKING_PAPER), @XmlEnumValue("conference")

@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -27,6 +29,7 @@ import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -155,6 +158,54 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId.getType());
     }
 
+    @Test
+    public void dissertationThesisToDissertationTest() {
+        WorkEntity work = getWorkEntity();
+        work.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+        
+        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
+        assertNotNull(ws);
+        assertEquals(WorkType.DISSERTATION, ws.getType());
+        
+        Work w = jpaJaxbWorkAdapter.toWork(work);
+        assertNotNull(w);
+        assertEquals(WorkType.DISSERTATION, w.getWorkType());        
+    
+        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        mWork.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
+        assertEquals(WorkType.DISSERTATION, summaries.get(0).getType());
+    }
+    
+    @Test
+    public void dissertationToDisertationThesisTest() throws JAXBException {
+        Work w = getWork(true);
+        w.setWorkType(WorkType.DISSERTATION);
+        
+        WorkEntity we = jpaJaxbWorkAdapter.toWorkEntity(w);
+        assertNotNull(we);
+        assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name(), we.getWorkType());
+    }
+    
+    @Test
+    public void dissertationToDissertationTest() {
+        WorkEntity work = getWorkEntity();
+        work.setWorkType(WorkType.DISSERTATION.name());
+        
+        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
+        assertNotNull(ws);
+        assertEquals(WorkType.DISSERTATION, ws.getType());
+        
+        Work w = jpaJaxbWorkAdapter.toWork(work);
+        assertNotNull(w);
+        assertEquals(WorkType.DISSERTATION, w.getWorkType());        
+    
+        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        mWork.setWorkType(WorkType.DISSERTATION.name());
+        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
+        assertEquals(WorkType.DISSERTATION, summaries.get(0).getType());
+    }
+    
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -165,7 +216,6 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);
     }
-
 
     private WorkEntity getWorkEntity() {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");

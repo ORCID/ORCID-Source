@@ -134,7 +134,7 @@
 			<xs:enumeration value="data-set" />
 			<xs:enumeration value="dictionary-entry" />
 			<xs:enumeration value="disclosure" />
-			<xs:enumeration value="dissertation" />
+			<xs:enumeration value="dissertation-thesis" />
 			<xs:enumeration value="edited-book" />
 			<xs:enumeration value="encyclopedia-entry" />
 			<xs:enumeration value="invention" />
