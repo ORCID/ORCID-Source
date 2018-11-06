@@ -18,7 +18,7 @@
     <#if emailVerified?? && emailVerified>
       <div class="alert alert-success">
           <strong>
-              ${emailVerifiedMessage}
+            <@spring.message "orcid.frontend.web.email_verified"/> ${verifiedEmail}
               <#if primaryEmailUnverified?? && primaryEmailUnverified>
                   <div class="row">
                     <div class="col-md-12 col-xs-12 col-sm-12">
