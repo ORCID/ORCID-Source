@@ -23,6 +23,7 @@ import { NotificationsService }
 })
 export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
    
     areMore: boolean;
     bulkArchiveMap: any;
@@ -33,7 +34,7 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     selectionActive: boolean;
 
     constructor(
-        private notificationsSrvc: NotificationsService
+        private notificationsService: NotificationsService
     ) {
 
         this.areMore = false;   
@@ -46,18 +47,18 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     }
 
     archive( notificationId ): any {
-        this.notificationsSrvc.archive(notificationId)
+        this.notificationsService.archive(notificationId)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         ).subscribe(
             data => {
                 var updated = data;
-                for(var i = 0;  i < this.notificationsSrvc.notifications.length; i++){
-                    var existing = this.notificationsSrvc.notifications[i];
+                for(var i = 0;  i < this.notificationsService.notifications.length; i++){
+                    var existing = this.notificationsService.notifications[i];
                     if(existing.putCode === updated['putCode']){
-                        this.notificationsSrvc.notifications.splice(i, 1);
-                        if(this.notificationsSrvc.firstResult > 0){
-                            this.notificationsSrvc.firstResult--;
+                        this.notificationsService.notifications.splice(i, 1);
+                        if(this.notificationsService.firstResult > 0){
+                            this.notificationsService.firstResult--;
                         }
                         break;
                     }
@@ -85,8 +86,8 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
                 count++;
             }
         }                      
-        for (let i = 0; i < this.notificationsSrvc.notifications.length; i++){
-            if (this.notificationsSrvc.notifications[i].archivedDate == null) {
+        for (let i = 0; i < this.notificationsService.notifications.length; i++){
+            if (this.notificationsService.notifications[i].archivedDate == null) {
                 totalNotifications++;            
             }
             
@@ -96,14 +97,14 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     }
 
     flagAsRead( notificationId ): any {       
-        this.notificationsSrvc.flagAsRead(notificationId)
+        this.notificationsService.flagAsRead(notificationId)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         ).subscribe(
             data => {
                 var updated = data;
-                for(var i = 0;  i < this.notificationsSrvc.notifications.length; i++){
-                    var existing = this.notificationsSrvc.notifications[i];
+                for(var i = 0;  i < this.notificationsService.notifications.length; i++){
+                    var existing = this.notificationsService.notifications[i];
                     if(existing.putCode === updated['putCode']){
                         existing.readDate = updated['readDate'];
                     }
@@ -114,20 +115,20 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     }
 
     getNotifications(): void {
-        this.notificationsSrvc.getNotifications()
+        this.notificationsService.getNotifications()
         .pipe(    
         takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                if(data.length === 0 || data.length < this.notificationsSrvc.maxResults){
+                if(data.length === 0 || data.length < this.notificationsService.maxResults){
                     this.areMore = false;
                 }
                 else{
                     this.areMore = true;
                 }
                 for(var i = 0; i < data.length; i++){                       
-                    this.notificationsSrvc.notifications.push( data[i] );
+                    this.notificationsService.notifications.push( data[i] );
                 }
                 this.loading = false;
                 this.loadingMore = false;
@@ -139,9 +140,9 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
 
     reloadNotifications(): void {
         this.loading = true;
-        this.notificationsSrvc.notifications.length = 0;
-        this.notificationsSrvc.firstResult = 0;
-        this.notificationsSrvc.maxResults = this.notificationsSrvc.defaultMaxResults;
+        this.notificationsService.notifications.length = 0;
+        this.notificationsService.firstResult = 0;
+        this.notificationsService.maxResults = this.notificationsService.defaultMaxResults;
         this.getNotifications();            
     }
 
@@ -153,20 +154,20 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     }
 
     retrieveUnreadCount(): any {
-        this.notificationsSrvc.retrieveUnreadCount()
+        this.notificationsService.retrieveUnreadCount()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.notificationsSrvc.unreadCount = data;                                            
+                this.notificationsService.unreadCount = data;                                            
             }
         );
     }
 
     showMore(): void {
         this.loadingMore = true;
-        this.notificationsSrvc.firstResult += this.notificationsSrvc.maxResults;
+        this.notificationsService.firstResult += this.notificationsService.maxResults;
         this.getNotifications();
     }
 
@@ -175,15 +176,15 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
         if(this.bulkChecked == false) {
             this.bulkArchiveMap.length = 0;
         } else {
-            for (let idx in this.notificationsSrvc.notifications) {
-                this.bulkArchiveMap[this.notificationsSrvc.notifications[idx].putCode] = this.bulkChecked;
+            for (let idx in this.notificationsService.notifications) {
+                this.bulkArchiveMap[this.notificationsService.notifications[idx].putCode] = this.bulkChecked;
             }
             this.selectionActive = true;
         }
     }
 
     toggleArchived(): void {
-        this.notificationsSrvc.showArchived = !this.notificationsSrvc.showArchived;
+        this.notificationsService.showArchived = !this.notificationsService.showArchived;
         this.reloadNotifications();
     }
 
@@ -196,6 +197,13 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        this.subscription = this.notificationsService.notifyObservable$.subscribe(
+            (res) => {                
+                if (res.action == 'archive' && res.putCode) {
+                    this.archive(res.putCode);
+                }                
+            }
+        );
     };
 
     ngOnDestroy() {
