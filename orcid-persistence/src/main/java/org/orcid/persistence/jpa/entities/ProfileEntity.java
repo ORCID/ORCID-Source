@@ -727,7 +727,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     @Basic
     @Column(name = "enable_developer_tools")
-    public boolean getEnableDeveloperTools() {
+    public Boolean getEnableDeveloperTools() {
         return this.enableDeveloperTools;
     }
 

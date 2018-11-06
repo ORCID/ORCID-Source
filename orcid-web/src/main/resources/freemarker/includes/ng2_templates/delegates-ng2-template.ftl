@@ -68,7 +68,7 @@
                         <td width="10%">
                             <span *ngIf="effectiveUserOrcid !== result['orcid-identifier'].path">
                                 <span *ngIf="!delegatesByOrcid[result['orcid-identifier'].path]"
-                                    (click)="confirmAddDelegate(result['given-names'] + ' ' + result['family-name'], result['orcid-identifier'].path, $index)"
+                                    (click)="confirmAddDelegate(result['credit-name'], result['given-names'], result['family-name'], result['orcid-identifier'].path, $index)"
                                     class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
                                 <a *ngIf="delegatesByOrcid[result['orcid-identifier'].path]"
                                     (click)="confirmRevoke(result['given-names'] + ' ' + result['family-name'], result['orcid-identifier'].path, $index)"
@@ -85,7 +85,7 @@
                 <span id="ajax-loader" class="" *ngIf="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
             </div>
         </div>
-        <div *ngIf="noResults" id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
+        <div *ngIf="noResults" id="no-results-alert" class="alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </#if>
     </div>
 </script>

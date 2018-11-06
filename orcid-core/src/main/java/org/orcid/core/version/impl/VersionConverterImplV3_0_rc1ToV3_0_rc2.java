@@ -12,6 +12,7 @@ import org.orcid.jaxb.model.v3.rc1.common.OrcidIdBase;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords;
@@ -33,6 +34,7 @@ import org.orcid.jaxb.model.v3.rc1.record.Person;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
@@ -136,7 +138,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         mapperFactory.classMap(Works.class, org.orcid.jaxb.model.v3.rc2.record.summary.Works.class).byDefault().register();
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).exclude("workType").customize(new CustomMapper<Work, org.orcid.jaxb.model.v3.rc2.record.Work>() {
             /**
-             * From model object to database object
+             * From rc1 object to rc2 object
              */            
             @Override
             public void mapAtoB(Work a, org.orcid.jaxb.model.v3.rc2.record.Work b, MappingContext context) {
@@ -149,7 +151,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             }
             
             /**
-             * From database to model object
+             * From rc2 object to rc1 object
              */
             @Override
             public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Work b, Work a, MappingContext context) {
@@ -163,7 +165,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         }).byDefault().register();
         mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).exclude("type").customize(new CustomMapper<WorkSummary, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary>() {
             /**
-             * From model object to database object
+             * From rc1 object to rc2 object
              */            
             @Override
             public void mapAtoB(WorkSummary a, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, MappingContext context) {
@@ -176,7 +178,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             }
             
             /**
-             * From database to model object
+             * From rc2 object to rc1 object
              */
             @Override
             public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, WorkSummary a, MappingContext context) {
@@ -279,6 +281,13 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             a.setHost(b.getHost());
             a.setPath(b.getPath());
             a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class) ? "/client/" : "/") + b.getPath());
+        }
+        
+        @Override
+        public void mapAtoB(OrcidIdBase a, org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, MappingContext context) {
+            b.setHost(a.getHost());
+            b.setPath(a.getPath());
+            b.setUri(orcidUrlManager.getBaseUrl() + (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc1.common.SourceClientId.class) ? "/client/" : "/") + a.getPath());
         }
     }
 

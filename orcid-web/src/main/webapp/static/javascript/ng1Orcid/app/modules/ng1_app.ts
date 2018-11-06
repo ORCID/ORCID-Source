@@ -46,6 +46,9 @@ import { ClientEditModule }
 import { DelegatorsModule } 
     from './delegators/delegators.ts';
 
+import { DeveloperToolsModule } 
+    from './developerTools/developerTools.ts';  
+
 import { EmailsModule } 
     from './emails/emails.ts';
 
@@ -126,6 +129,9 @@ import { PublicRecordModule }
 
 import { ReactivationModule } 
     from './reactivation/reactivation.ts';
+    
+import { RecordCorrectionsModule }
+    from './recordCorrections/recordCorrections.ts'
 
 import { RegisterDuplicatesModule } 
     from './registerDuplicates/registerDuplicates.ts';
@@ -199,9 +205,6 @@ import { WorksMergeSuggestionsModule }
 import { ManageMembersModule } 
     from './manageMembers/manageMembers.ts';     
     
-import { RecordCorrectionsModule }
-    from './recordCorrections/recordCorrections.ts'
-    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -220,6 +223,7 @@ export const orcidApp = angular.module(
         ClaimModule.name, 
         ClientEditModule.name,
         DelegatorsModule.name,
+        DeveloperToolsModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
         EmailUnverifiedWarningModule.name,
@@ -247,6 +251,7 @@ export const orcidApp = angular.module(
         PublicEduAffiliationModule.name,
         PublicRecordModule.name,
         ReactivationModule.name,
+        RecordCorrectionsModule.name,
         RegisterDuplicatesModule.name,
         RequestPasswordResetModule.name,
         ResetPasswordModule.name,
@@ -270,8 +275,7 @@ export const orcidApp = angular.module(
         WorksModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
-        ManageMembersModule.name,
-        RecordCorrectionsModule.name
+        ManageMembersModule.name
     ]
 );
 

@@ -308,8 +308,10 @@ public class DeveloperToolsControllerTest {
     @Test
     public void resetClientSecretTest() throws Exception {
         String clientId = CLIENT_3;
+        Client c = new Client();
+        c.setClientId(Text.valueOf(clientId));
         SecurityContextTestUtils.setupSecurityContextForWebUser(USER_ORCID, "test@email.com");
-        assertTrue(developerToolsController.resetClientSecret(clientId));
+        assertTrue(developerToolsController.resetClientSecret(c));
         verify(mockClientManager, times(1)).resetClientSecret(clientId);
     }
 }
