@@ -68,7 +68,7 @@
                         <td width="10%">
                             <span *ngIf="effectiveUserOrcid !== result['orcid-identifier'].path">
                                 <span *ngIf="!delegatesByOrcid[result['orcid-identifier'].path]"
-                                    (click)="confirmAddDelegate(result['given-names'] + ' ' + result['family-name'], result['orcid-identifier'].path, $index)"
+                                    (click)="confirmAddDelegate(result['credit-name'], result['given-names'], result['family-name'], result['orcid-identifier'].path, $index)"
                                     class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
                                 <a *ngIf="delegatesByOrcid[result['orcid-identifier'].path]"
                                     (click)="confirmRevoke(result['given-names'] + ' ' + result['family-name'], result['orcid-identifier'].path, $index)"

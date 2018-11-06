@@ -100,8 +100,12 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    confirmAddDelegate(delegateName, delegateId, delegateIdx): void {
-        this.delegateNameToAdd = delegateName;
+    confirmAddDelegate(delegateCreditName, delegateGivenNames, delegateFamilyName, delegateId, delegateIdx): void {
+        if(delegateCreditName){
+            this.delegateNameToAdd = delegateCreditName;
+        } else{
+            this.delegateNameToAdd = delegateGivenNames + " " + delegateFamilyName;
+        }
         this.delegateToAdd = delegateId;
         this.delegateIdx = delegateIdx;
         this.accountService.notifyOther({delegateNameToAdd:this.delegateNameToAdd, delegateToAdd:this.delegateToAdd, delegateIdx:this.delegateIdx});
@@ -265,6 +269,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
             (res) => {                
                 if(res.action == 'add') {
                     if(res.successful == true) {
+                        this.allResults.splice(this.delegateIdx, 1);
                         this.input = {};
                         this.getDelegates();
                     }
