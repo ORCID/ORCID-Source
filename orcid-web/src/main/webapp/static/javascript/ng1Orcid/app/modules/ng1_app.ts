@@ -196,6 +196,12 @@ import { WorksMergeChoosePreferredVersionModule }
 import { WorksMergeSuggestionsModule } 
     from './works/worksMergeSuggestions.ts';
 
+import { DeveloperToolsModule } 
+    from './developerTools/developerTools.ts';    
+
+import { AdminActionsModule } 
+    from './adminActions/adminActions.ts';       
+
 import { RecordCorrectionsModule }
     from './recordCorrections/recordCorrections.ts'
     
@@ -267,6 +273,8 @@ export const orcidApp = angular.module(
         WorksModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
+        DeveloperToolsModule.name,
+        AdminActionsModule.name,
         RecordCorrectionsModule.name
     ]
 );
