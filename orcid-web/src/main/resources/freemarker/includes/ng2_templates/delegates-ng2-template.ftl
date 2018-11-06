@@ -85,7 +85,7 @@
                 <span id="ajax-loader" class="" *ngIf="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
             </div>
         </div>
-        <div *ngIf="noResults" id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
+        <div *ngIf="noResults" id="no-results-alert" class="alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </#if>
     </div>
 </script>
