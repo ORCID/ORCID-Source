@@ -270,6 +270,7 @@ public class V3VersionConverterChainTest {
 
         // Double confirm we have 2 ext ids, one with a version-of identifier
         assertEquals(2, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.VERSION_OF, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
        
         org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary rc1WorkSummary = (org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary) (v3VersionConverterChain
@@ -277,7 +278,9 @@ public class V3VersionConverterChainTest {
         assertNotNull(rc1WorkSummary);
         assertEquals(new org.orcid.jaxb.model.v3.rc1.common.CreatedDate(gc1), rc1WorkSummary.getCreatedDate());
         assertEquals("1", rc1WorkSummary.getDisplayIndex());
+        // Confirm we have only one external identifier
         assertEquals(1, rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().size());
+        // Confirm it is the SELF one and not the VERSION_OF
         assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.SELF, rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("type", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("http://www.orcid.org", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());

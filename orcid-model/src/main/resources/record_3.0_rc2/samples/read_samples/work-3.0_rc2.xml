@@ -35,7 +35,7 @@
 			<common:external-id-type>agr</common:external-id-type>
 			<common:external-id-value>work:external-identifier-id</common:external-id-value>			
 			<common:external-id-url>http://orcid.org</common:external-id-url>
-			<common:external-id-relationship>self</common:external-id-relationship>
+			<common:external-id-relationship>version-of</common:external-id-relationship>
 		</common:external-id>
 	</common:external-ids>
 	<common:url>http://tempuri.org</common:url>

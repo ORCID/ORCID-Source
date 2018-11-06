@@ -31,7 +31,7 @@
 			<common:external-id-type>doi</common:external-id-type>
 			<common:external-id-value>10.1087/20120404</common:external-id-value>			
 			<common:external-id-url>https://doi.org/10.1087/20120404</common:external-id-url>
-			<common:external-id-relationship>self</common:external-id-relationship>
+			<common:external-id-relationship>version-of</common:external-id-relationship>
 		</common:external-id>
 	</common:external-ids>
 	<common:url>http://alt-uri.org</common:url>
