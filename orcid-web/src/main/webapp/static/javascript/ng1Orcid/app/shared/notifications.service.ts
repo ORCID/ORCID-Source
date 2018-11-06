@@ -94,7 +94,6 @@ export class NotificationsService {
         }
     }
 
-
     retrieveUnreadCount(): any {
         this.retrieveCountCalled = true;
         return this.http.get(
