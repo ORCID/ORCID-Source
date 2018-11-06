@@ -11,6 +11,7 @@ import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
 import org.orcid.jaxb.model.v3.rc2.notification.permission.Items;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -56,6 +57,8 @@ public class ExternalIDValidator {
         if (ids == null) // yeuch
             return;
         List<String> errors = Lists.newArrayList();
+        boolean hasVersionOfIdentifier = false;
+        boolean hasSelfOfIdentifier = false;
         for (ExternalID id : ids.getExternalIdentifier()) {
             if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
                 errors.add(id.getType());
@@ -70,7 +73,20 @@ public class ExternalIDValidator {
                     errors.add("relationship");
                 }
             }
+            
+            if(Relationship.VERSION_OF.equals(id.getRelationship())) {
+                hasVersionOfIdentifier = true;
+            }
+            
+            if(Relationship.SELF.equals(id.getRelationship())) {
+                hasSelfOfIdentifier = true;
+            }
         }
+        
+        if(hasVersionOfIdentifier && !hasSelfOfIdentifier) {
+            errors.add("version-of requires at least one self identifier");
+        } 
+        
         checkAndThrow(errors);
     }
 

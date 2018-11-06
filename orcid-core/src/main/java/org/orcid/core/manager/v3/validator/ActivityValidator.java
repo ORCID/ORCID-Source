@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.naming.OperationNotSupportedException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
@@ -28,11 +27,11 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
-import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.MultipleOrganizationHolder;
