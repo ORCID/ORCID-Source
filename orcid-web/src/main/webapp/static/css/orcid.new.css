@@ -1,19 +1,25 @@
+body a, 
 a {
-    color: #338caf !important;
+    color: #338caf;
     cursor: pointer;
-    text-decoration: none !important;
+    text-decoration: none;
     word-wrap: break-word
 }
 
-a:active,a:hover {
-    color: #9fc836 !important;
+body a:active,
+body a:hover,
+a:active,
+a:hover {
+    color: #9fc836;
     text-decoration: inherit
 }
 
+body a:active,
 a:active {
     outline: 0
 }
 
+body a:focus,
 a:focus {
     outline: thin dotted #333;
     outline: 5px auto -webkit-focus-ring-color;
@@ -21,10 +27,10 @@ a:focus {
     text-decoration: none
 }
 
+body a:visited,
 a:visited {
     text-decoration: none
 }
-
 article,aside,details,figcaption,figure,footer,header,hgroup,nav,section {
     display: block
 }
