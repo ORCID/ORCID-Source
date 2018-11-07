@@ -20,6 +20,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.helper.UserSession;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.NotificationAmended;
@@ -250,13 +251,15 @@ public class NotificationController extends BaseController {
     private void addSourceDescription(List<Notification> notifications) {
         for (Notification notification : notifications) {
             Source source = notification.getSource();
-            if (source != null) {
+            SourceClientId clientId = source.getSourceClientId();
+            if (clientId != null) {
                 String sourcePath = source.retrieveSourcePath();
                 if (sourcePath != null) {
                     ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
                     if (clientDetails != null) {
                         notification.setSourceDescription(clientDetails.getClientDescription());
                     }
+
                 }
             }
         }

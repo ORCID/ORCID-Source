@@ -8,8 +8,8 @@
                 <li>&nbsp;</li>
                 <li>
                     <button class="btn btn-primary" (click)="toggleArchived()">
-                        <span *ngIf="!notificationsSrvc.showArchived" >${springMacroRequestContext.getMessage("notifications.show_archived")}</span>
-                        <span *ngIf="notificationsSrvc.showArchived" >${springMacroRequestContext.getMessage("notifications.hide_archived")}</span>
+                        <span *ngIf="!notificationsService.showArchived" >${springMacroRequestContext.getMessage("notifications.show_archived")}</span>
+                        <span *ngIf="notificationsService.showArchived" >${springMacroRequestContext.getMessage("notifications.hide_archived")}</span>
                     </button>                   
                 </li>
             </ul>   
@@ -17,8 +17,8 @@
         <div *ngIf="loading == true" class="text-center" id="notificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
         </div>
-        <div  *ngIf="loading == false && notificationsSrvc?.notifications?.length == 0  && !areMore">${springMacroRequestContext.getMessage("notifications.none")}</div>
-        <div *ngIf="loading == false && notificationsSrvc?.notifications?.length > 0">            
+        <div  *ngIf="loading == false && notificationsService?.notifications?.length == 0  && !areMore">${springMacroRequestContext.getMessage("notifications.none")}</div>
+        <div *ngIf="loading == false && notificationsService?.notifications?.length > 0">            
             <table class="table table-responsive table-condensed notifications">
                 <thead>                 
                     <tr>                        
@@ -32,12 +32,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container *ngFor="let notification of notificationsSrvc?.notifications"> 
+                    <ng-container *ngFor="let notification of notificationsService?.notifications"> 
                         <tr [ngClass]="{unread: !notification.readDate, archived: notification.archivedDate}">                       
                             <td (click)="toggleDisplayBody(notification.putCode)">
                                 <i class="glyphicon-chevron-down glyphicon x0" [ngClass]="{'glyphicon-chevron-right':!displayBody[notification.putCode]}"></i>
                                 <span *ngIf="notification.overwrittenSourceName">{{notification.overwrittenSourceName}}</span>
-                                <span *ngIf="!notification.overwrittenSourceName && notification.source" >{{notification.source.sourceName.content}}</span><span *ngIf="!notification.overwrittenSourceName || !notification.source" >ORCID</span>
+                                <span *ngIf="!notification.overwrittenSourceName && notification.source" >{{notification.source.sourceName.content}}</span><span *ngIf="!notification.overwrittenSourceName && !notification.source">ORCID</span>
                             </td>
                             <td (click)="toggleDisplayBody(notification.putCode)"><span >{{notification.subject}}</span></td>
                             <td (click)="toggleDisplayBody(notification.putCode)"><span >{{notification.createdDate | date:'yyyy-MM-dd'}}</span></td>
@@ -57,7 +57,7 @@
                 </tbody>
             </table>
         </div>
-        <div *ngIf="!(loading == false && notificationsSrvc?.notifications?.length > 0)">
+        <div *ngIf="!(loading == false && notificationsService?.notifications?.length > 0)">
             <br/><br/>
         </div>   
         <div >

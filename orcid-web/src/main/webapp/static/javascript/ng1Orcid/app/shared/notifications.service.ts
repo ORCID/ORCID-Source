@@ -88,6 +88,12 @@ export class NotificationsService {
         return this.unreadCount;
     }
 
+    notifyOther(data: any): void {
+        if (data) {
+            this.notify.next(data);
+        }
+    }
+
     retrieveUnreadCount(): any {
         this.retrieveCountCalled = true;
         return this.http.get(
