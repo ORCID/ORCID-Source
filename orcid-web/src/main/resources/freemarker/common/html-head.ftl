@@ -77,7 +77,13 @@
         
         <#if verifiedEmail??>
             orcidVar.loginId = "${verifiedEmail}";
-        </#if> 
+        </#if>
+        
+        <#if (developerToolsEnabled)??>            
+            orcidVar.developerToolsEnabled = ${developerToolsEnabled?c};            
+        <#else>
+            orcidVar.developerToolsEnabled = false;
+        </#if>
     </script>
 
     <#include "/macros/orcid_ga.ftl">

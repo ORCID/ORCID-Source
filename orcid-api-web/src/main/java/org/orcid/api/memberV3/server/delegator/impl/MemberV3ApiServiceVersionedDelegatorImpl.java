@@ -3,6 +3,7 @@ package org.orcid.api.memberV3.server.delegator.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ws.rs.WebApplicationException;
@@ -14,7 +15,7 @@ import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.version.V3Convertible;
 import org.orcid.core.version.V3VersionConverterChain;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -32,9 +33,6 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     private V3VersionConverterChain v3VersionConverterChain;
 
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-
-    @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
     private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
@@ -45,6 +43,9 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     @Resource
     private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
 
+    @Resource(name = "workManagerReadOnlyV3")
+    private WorkManagerReadOnly workManagerReadOnly;
+    
     @Override
     public Response viewStatusText() {
         return memberV3ApiServiceDelegator.viewStatusText();
@@ -63,17 +64,24 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     }
 
     @Override
+    public Response viewWorks(String orcid) {
+        checkProfileStatus(orcid, true);
+        //TODO
+        if("3.0_rc1".equals(externalVersion)) {
+            Response response = memberV3ApiServiceDelegator.viewWorks(orcid);
+            response.getEntity()
+        } else {
+            //TODO
+            return processReponse(memberV3ApiServiceDelegator.viewWorks(orcid));
+        }
+    }
+
+    @Override
     public Response viewWork(String orcid, Long putCode) {
         checkProfileStatus(orcid, true);
         return processReponse(memberV3ApiServiceDelegator.viewWork(orcid, putCode));
     }
-
-    @Override
-    public Response viewWorks(String orcid) {
-        checkProfileStatus(orcid, true);
-        return processReponse(memberV3ApiServiceDelegator.viewWorks(orcid));
-    }
-
+    
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
         checkProfileStatus(orcid, true);

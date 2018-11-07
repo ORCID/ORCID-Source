@@ -92,47 +92,8 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         mapperFactory.classMap(GroupIdRecord.class, org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord.class).byDefault().register();
 
         // ExternalIDs
-        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs.class).customize(new CustomMapper<ExternalIDs, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs>() {
-            /**
-             * From rc1 object to rc2 object
-             */            
-            @Override
-            public void mapAtoB(ExternalIDs a, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs b, MappingContext context) {                
-                if(a.getExternalIdentifier() != null) {
-                    for(ExternalID rc1 : a.getExternalIdentifier()) {
-                        org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
-                        rc2.setRelationship(org.orcid.jaxb.model.v3.rc2.record.Relationship.fromValue(rc1.getRelationship().value()));
-                        rc2.setType(rc1.getType());
-                        if(rc1.getUrl() != null) {
-                            rc2.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url(rc1.getUrl().getValue()));
-                        }
-                        rc2.setValue(rc1.getValue());
-                        b.getExternalIdentifier().add(rc2);
-                    }
-                }                                
-            }
-            
-            /**
-             * From rc2 object to rc1 object
-             */
-            @Override
-            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.ExternalIDs b, ExternalIDs a, MappingContext context) {
-                if(b.getExternalIdentifier() != null) {
-                    for(org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2 : b.getExternalIdentifier()) {
-                        if(!org.orcid.jaxb.model.v3.rc2.record.Relationship.VERSION_OF.equals(rc2.getRelationship())) {
-                            ExternalID rc1 = new ExternalID();
-                            rc1.setRelationship(Relationship.fromValue(rc2.getRelationship().value()));
-                            rc1.setType(rc2.getType());
-                            if(rc2.getUrl() != null) {
-                                rc1.setUrl(new Url(rc2.getUrl().getValue()));
-                            }
-                            rc1.setValue(rc2.getValue());
-                            a.getExternalIdentifier().add(rc1);
-                        }                        
-                    }
-                }
-            }            
-        }).register();
+        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs.class).byDefault().register();
+        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.v3.rc2.record.ExternalID.class).byDefault().register();
         
         // Contributor
         mapperFactory.classMap(ContributorOrcid.class, org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid.class).customize(orcidIdBaseMapper).register();

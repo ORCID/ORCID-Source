@@ -18,6 +18,9 @@ import { catchError, map, tap }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
+import { NotificationsService } 
+    from '../../shared/notifications.service.ts';
+
 @Component({
     selector: 'notification-body-ng2',
     template:  scriptTmpl("notification-body-ng2-template"),
@@ -42,6 +45,7 @@ export class NotificationBodyComponent implements OnInit {
 
     constructor(
         private commonService: CommonService,
+        private notificationsService: NotificationsService,
         private elementRef: ElementRef,
     ) {
         this.notification = elementRef.nativeElement.getAttribute('notification');
@@ -56,6 +60,10 @@ export class NotificationBodyComponent implements OnInit {
         this.peerReviewsList = "";
         this.worksList = "";
     }
+
+    archive(putCode): void {
+        this.notificationsService.notifyOther({action:'archive', putCode:putCode});
+    };
 
     ngOnInit() {
         if(this.notification.items){

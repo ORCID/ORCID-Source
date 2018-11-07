@@ -290,4 +290,10 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         result.getWorkGroup().sort(WorkComparators.GROUP);
         return result;
     }
+
+    @Override
+    public Works filterVersionOfIdentifiersAndRegroupWorks(Object work) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

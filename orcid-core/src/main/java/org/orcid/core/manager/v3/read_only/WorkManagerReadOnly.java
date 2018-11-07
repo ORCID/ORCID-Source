@@ -103,4 +103,13 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
     ExternalIDs getAllExternalIDs(String orcid);
 
     Works groupWorksAndGenerateGroupingSuggestions(List<WorkSummary> summaries, String orcid);
+    
+    /**
+     * Generate a grouped list of works with the given list of works
+     * 
+     * @param works
+     *          The Works element to be filtered
+     * @return Works element with any version-of identifier filtered
+     * */
+    Works filterVersionOfIdentifiersAndRegroupWorks(Object work);
 }

@@ -100,8 +100,12 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    confirmAddDelegate(delegateName, delegateId, delegateIdx): void {
-        this.delegateNameToAdd = delegateName;
+    confirmAddDelegate(delegateCreditName, delegateGivenNames, delegateFamilyName, delegateId, delegateIdx): void {
+        if(delegateCreditName){
+            this.delegateNameToAdd = delegateCreditName;
+        } else{
+            this.delegateNameToAdd = delegateGivenNames + " " + delegateFamilyName;
+        }
         this.delegateToAdd = delegateId;
         this.delegateIdx = delegateIdx;
         this.accountService.notifyOther({delegateNameToAdd:this.delegateNameToAdd, delegateToAdd:this.delegateToAdd, delegateIdx:this.delegateIdx});
@@ -163,7 +167,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                         result['family-name'] = namesResult['name']['family-name']['value'];
                     }
                     if(namesResult['name']['credit-name']) {
-                        result['credit-name'] = namesResult['name']['credit-name'];
+                        result['credit-name'] = namesResult['name']['credit-name']['value'];
                     }
                 }
             );
@@ -179,6 +183,8 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.newResults = data['result'];
                 this.numFound = data['num-found'];
+                console.log(this.numFound);
+                console.log(typeof this.numFound);
 
                 for(var i = 0; i < this.newResults.length; i++){
                     this.getNames(this.newResults[i]);
@@ -186,12 +192,12 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
 
                 this.allResults = this.allResults.concat(this.newResults); 
                 this.cdr.detectChanges();
+                
+                this.showLoader = false;
 
                 if(!this.numFound){
                     this.noResults = true;
                 }
-                
-                this.showLoader = false;
 
                 this.areMoreResults = this.numFound > (this.input.start + this.input.rows);
                 
@@ -263,6 +269,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
             (res) => {                
                 if(res.action == 'add') {
                     if(res.successful == true) {
+                        this.allResults.splice(this.delegateIdx, 1);
                         this.input = {};
                         this.getDelegates();
                     }

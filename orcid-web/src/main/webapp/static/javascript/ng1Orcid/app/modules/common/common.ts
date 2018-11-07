@@ -198,6 +198,9 @@ import { UnsubscribeService }
 
 import { ResendClaimService }
     from '../../shared/resendClaim.service.ts';    
+
+import { DeveloperToolsService }
+    from '../../shared/developerTools.service.ts';
     
 // This is the Angular 2 part of the module
 @NgModule(
@@ -304,7 +307,8 @@ import { ResendClaimService }
             WorksService,
             WorkspaceService,
             UnsubscribeService,
-            ResendClaimService
+            ResendClaimService,
+            DeveloperToolsService,
         ]
     }
 )

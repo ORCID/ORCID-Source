@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
@@ -249,6 +248,16 @@ public class MemberV3ApiServiceDelegatorImpl implements
     
     @Resource
     private StatusManager statusManager;
+    
+    private String externalVersion;
+    
+    public String getExternalVersion() {
+        return externalVersion;
+    }
+
+    public void setExternalVersion(String externalVersion) {
+        this.externalVersion = externalVersion;
+    }
 
     @Override
     public Response viewStatusText() {

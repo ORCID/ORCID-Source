@@ -86,4 +86,6 @@
     </div>
 </div>
 </#escape>
+<!--Org ID popover template used in v3 affiliations and research resources-->
+<#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
 </@public>
