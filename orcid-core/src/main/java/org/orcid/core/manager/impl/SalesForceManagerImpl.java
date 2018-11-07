@@ -694,7 +694,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         List<SalesForceConnectionEntity> existingConnections = salesForceConnectionDao.findByAccountId(accountId);
         List<String> contactOrcids = contacts.stream().map(c -> c.getOrcid()).collect(Collectors.toList());
         // Remove any connections no longer in the contacts list
-        existingConnections.stream().filter(c -> !contactOrcids.contains(c.getOrcid())).forEach(c -> salesForceConnectionDao.remove(c));
+        existingConnections.stream().filter(c -> !contactOrcids.contains(c.getOrcid())).forEach(c -> salesForceConnectionDao.remove(c.getId()));
         // Give access to any contacts that do not already have access
         List<String> existingConnectionsOrcids = existingConnections.stream().map(c -> c.getOrcid()).collect(Collectors.toList());
         contacts.stream().filter(c -> c.getOrcid() != null && !existingConnectionsOrcids.contains(c.getOrcid())).forEach(c -> addSalesForceConnection(accountId, c));
@@ -788,7 +788,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             String updatedContactRoleId = updatedContact.getRole().getId();
             Contact existingContact = existingContactsMap.get(updatedContactRoleId);
             if (existingContact == null) {
-                throw new IllegalStateException("Should be able to update a non-existent contact");
+                throw new IllegalStateException("Shouldn't be able to update a non-existent contact");
             }
             if (contactChanged(existingContact, updatedContact)) {
                 ContactPermission permission = permissionsMap.get(existingContact.getRole().getId());
