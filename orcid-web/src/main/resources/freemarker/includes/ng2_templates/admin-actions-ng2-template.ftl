@@ -8,7 +8,7 @@
     <div class="collapsible bottom-margin-small admin-modal" id="switch_user_section" *ngIf="showSwitchUser">
         <div class="form-group">
             <label for="orcidOrEmail"><@orcid.msg 'admin.switch_user.orcid.label' /></label>
-            <input type="text" id="orcidOrEmail" (keyup.enter)="switchUser()" [(ngModel)]="switchId" placeholder="<@orcid.msg 'admin.switch_user.orcid.placeholder' />" class="input-xlarge" />
+            <input type="text" id="orcidOrEmail" [(ngModel)]="switchId" (keyup.enter)="switchUser(switchId)" placeholder="<@orcid.msg 'admin.switch_user.orcid.placeholder' />" class="input-xlarge" />
             <span class="orcid-error" *ngIf="switchUserError">
                 <@spring.message "orcid.frontend.web.invalid_switch_orcid"/>
             </span>    
@@ -285,11 +285,11 @@
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showReactivateRecord">    
         <div class="form-group">
             <label for="orcidId"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
-            <input type="text" id="orcidId" (keyup.enter)="reactivateRecord()" [(ngModel)]="elementToReactivate.orcid" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
+            <input type="text" id="orcidId" (keyup.enter)="showReactivateRecordConfirm = true" [(ngModel)]="elementToReactivate.orcid" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="input-xlarge" />
         </div>
         <div class="form-group">
             <label for="email"><@orcid.msg 'admin.profile_reactivation.primary_email' /></label>
-            <input type="text" id="email" (keyup.enter)="reactivateRecord()" [(ngModel)]="elementToReactivate.email" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.primary_email' />" class="input-xlarge" />
+            <input type="text" id="email" (keyup.enter)="showReactivateRecordConfirm = true" [(ngModel)]="elementToReactivate.email" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.primary_email' />" class="input-xlarge" />
         </div>
         <div *ngIf="elementToReactivate.errors?.length > 0">
             <span class="orcid-error" *ngFor='let error of elementToReactivate.errors' [innerHTML]="error"></span><br />
@@ -428,7 +428,7 @@
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showLookupIdOrEmail">
         <div class="form-group">
             <label for="orcid_to_unreview"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
-            <input type="text" id="orcid_to_unreview" (keyup.enter)="unreviewRecords()" [(ngModel)]="csvIdsOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
+            <input type="text" id="orcid_to_unreview" (keyup.enter)="lookupIdOrEmails()" [(ngModel)]="csvIdsOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
         </div>
         <div class="controls save-btns pull-left" *ngIf="!idsString.length">
             <span id="bottom-confirm-lookup" (click)="lookupIdOrEmails()" class="btn btn-primary"><@orcid.msg 'admin.lookup_id_email.button'/></span>
