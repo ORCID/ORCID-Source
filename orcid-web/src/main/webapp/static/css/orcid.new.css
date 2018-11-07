@@ -1,12 +1,12 @@
 a {
-    color: #338caf;
+    color: #338caf !important;
     cursor: pointer;
-    text-decoration: none;
+    text-decoration: none !important;
     word-wrap: break-word
 }
 
 a:active,a:hover {
-    color: #9fc836;
+    color: #9fc836 !important;
     text-decoration: inherit
 }
 
