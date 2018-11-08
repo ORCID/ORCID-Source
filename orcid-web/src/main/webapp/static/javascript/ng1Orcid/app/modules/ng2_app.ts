@@ -110,9 +110,6 @@ import { ModalNg2Module }
 import { MyOrcidAlertsNg2Module } 
     from './myOrcidAlerts/myOrcidAlerts.ts';
 
-import { NameNg2Module } 
-    from './name/name.ts';
-
 import { NotificationsNg2Module }
     from './notifications/notifications.ts';
 
@@ -184,9 +181,6 @@ import { SelfServiceRemoveSubMemberNg2Module }
 
 import { Social2FANg2Module }
     from './social2FA/social2FA.ts';
-    
-import { SwitchUserNg2Module }
-    from './switchUser/switchUser.ts';
 
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
@@ -220,6 +214,12 @@ import { RecordCorrectionsNg2Module }
     
 import { DeveloperToolsNg2Module } 
     from './developerTools/developerTools.ts';    
+
+import { idBannerNg2Module }  
+    from './idBanner/idBanner.ts'
+
+import { qrcodeNg2Module } 
+    from './qrcode/qrcode.ts'
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -335,7 +335,6 @@ export class RootCmp {
         MembersListNg2Module, //Approved
         ModalNg2Module, //Approved
         MyOrcidAlertsNg2Module,
-        NameNg2Module, //Approved
         NotificationsNg2Module,
         NotificationAlertsNg2Module,
         PeerReviewNg2Module,
@@ -360,7 +359,6 @@ export class RootCmp {
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
-        SwitchUserNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
         WidgetNg2Module, //Approved
@@ -372,7 +370,9 @@ export class RootCmp {
         WorksMergeSuggestionsNg2Module,
         DeveloperToolsNg2Module,
         AdminActionsNg2Module,
-        RecordCorrectionsNg2Module
+        RecordCorrectionsNg2Module,
+        idBannerNg2Module,
+        qrcodeNg2Module
     ],
     providers: [
         { 

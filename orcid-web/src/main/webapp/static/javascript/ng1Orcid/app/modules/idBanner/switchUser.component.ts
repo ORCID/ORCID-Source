@@ -74,6 +74,7 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
     openMenu(event): void{
         this.isDroppedDown = true;
         event.stopPropagation();
+        this.cdr.detectChanges();
     };
 
     search(): void {
@@ -134,6 +135,7 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        console.log ("init switch user")
         this.getDelegates();
 
         //close delegate dropdown
@@ -144,6 +146,7 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(event.target.id !== "delegators-search"){
                         this.isDroppedDown = false;
                         this.searchTerm = '';
+                        this.cdr.detectChanges();
                     }
                 }
             ).bind(this)

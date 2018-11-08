@@ -94,9 +94,6 @@ import { ModalModule }
 import { MyOrcidAlertsModule } 
     from './myOrcidAlerts/myOrcidAlerts.ts';
 
-import { NameModule } 
-    from './name/name.ts';
-
 import { NotificationsModule }
     from './notifications/notifications.ts';
 
@@ -171,9 +168,6 @@ import { SelfServiceRemoveSubMemberModule }
 
 import { Social2FAModule }
     from './social2FA/social2FA.ts';
-    
-import { SwitchUserModule }
-    from './switchUser/switchUser.ts';
 
 import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
@@ -200,7 +194,13 @@ import { WorksMergeChoosePreferredVersionModule }
     from './works/worksMergeChoosePreferredVersion.ts';
     
 import { WorksMergeSuggestionsModule } 
-    from './works/worksMergeSuggestions.ts';        
+    from './works/worksMergeSuggestions.ts';    
+    
+import { idBannerModule } 
+    from './idBanner/idBanner.ts'
+
+import { qrcodeModule } 
+    from './qrcode/qrcode.ts';
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -236,7 +236,6 @@ export const orcidApp = angular.module(
         MembersListModule.name,
         ModalModule.name,
         MyOrcidAlertsModule.name,
-        NameModule.name,
         NotificationsModule.name,
         NotificationAlertsModule.name,
         OauthAuthorizationModule.name,
@@ -262,7 +261,6 @@ export const orcidApp = angular.module(
         SelfServiceRemoveContactModule.name,
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
-        SwitchUserModule.name,
         TwoFaSetupModule.name,
         UnsubscribeModule.name,
         WidgetModule.name,
@@ -272,6 +270,8 @@ export const orcidApp = angular.module(
         WorksModule.name,
         WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
+        idBannerModule.name,
+        qrcodeModule.name
     ]
 );
 
