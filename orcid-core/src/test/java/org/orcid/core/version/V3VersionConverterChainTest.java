@@ -202,7 +202,7 @@ public class V3VersionConverterChainTest {
         extId1.setValue("extId1");
         extIds.getExternalIdentifier().add(extId1);
         org.orcid.jaxb.model.v3.rc2.record.ExternalID extId2 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
-        extId2.setRelationship(org.orcid.jaxb.model.v3.rc2.record.Relationship.VERSION_OF);
+        extId2.setRelationship(org.orcid.jaxb.model.v3.rc2.record.Relationship.PART_OF);
         extId2.setType("type");
         extId2.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         extId2.setValue("extId2");
@@ -214,10 +214,6 @@ public class V3VersionConverterChainTest {
         title.setTranslatedTitle(new org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle("Translated", "EN"));
         rc2Work.setWorkTitle(title);
         rc2Work.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
-
-        // Double confirm we have 2 ext ids, one with a version-of identifier
-        assertEquals(2, rc2Work.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.VERSION_OF, rc2Work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
         
         // Map and test
         org.orcid.jaxb.model.v3.rc1.record.Work rc1Work = (org.orcid.jaxb.model.v3.rc1.record.Work) (v3VersionConverterChain
@@ -250,11 +246,17 @@ public class V3VersionConverterChainTest {
         assertEquals("contributor@orcid.org", rc1Work.getWorkContributors().getContributor().get(0).getContributorEmail().getValue());
         assertEquals("0000-0000-0000-0000", rc1Work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
         assertEquals("Credit Name", rc1Work.getWorkContributors().getContributor().get(0).getCreditName().getContent());
-        assertEquals(1, rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(2, rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().size());
         assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.SELF, rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("type", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("http://www.orcid.org", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("extId1", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.PART_OF, rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals("type", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("http://www.orcid.org", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("extId2", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getValue());        
+        
         assertEquals("The subtitle", rc1Work.getWorkTitle().getSubtitle().getContent());
         assertEquals("The title", rc1Work.getWorkTitle().getTitle().getContent());
         assertEquals("Translated", rc1Work.getWorkTitle().getTranslatedTitle().getContent());
@@ -279,23 +281,22 @@ public class V3VersionConverterChainTest {
         rc2WorkSummary.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         rc2WorkSummary.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED);
 
-        // Double confirm we have 2 ext ids, one with a version-of identifier
-        assertEquals(2, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.VERSION_OF, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
-       
         org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary rc1WorkSummary = (org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary) (v3VersionConverterChain
                 .downgrade(new V3Convertible(rc2WorkSummary, "3.0_rc2"), "3.0_rc1")).getObjectToConvert();
         assertNotNull(rc1WorkSummary);
         assertEquals(new org.orcid.jaxb.model.v3.rc1.common.CreatedDate(gc1), rc1WorkSummary.getCreatedDate());
         assertEquals("1", rc1WorkSummary.getDisplayIndex());
-        // Confirm we have only one external identifier
-        assertEquals(1, rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().size());
-        // Confirm it is the SELF one and not the VERSION_OF
+        assertEquals(2, rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.SELF, rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("type", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("http://www.orcid.org", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("extId1", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.PART_OF, rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals("type", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("http://www.orcid.org", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("extId2", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());        
+        
         assertEquals("Journal title", rc1WorkSummary.getJournalTitle().getContent());
         assertEquals(new org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate(gc2), rc1WorkSummary.getLastModifiedDate());
         assertEquals("/0000-0000-0000-0000/rcX/work/123", rc1WorkSummary.getPath());
