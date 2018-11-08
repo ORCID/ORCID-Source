@@ -3,7 +3,6 @@ package org.orcid.api.memberV3.server.delegator.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ws.rs.WebApplicationException;
@@ -24,7 +23,6 @@ import org.orcid.jaxb.model.record.bulk.BulkElementContainer;
 public class MemberV3ApiServiceVersionedDelegatorImpl implements
         MemberV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
-    @Resource
     private MemberV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV3ApiServiceDelegator;
 
     private String externalVersion;
@@ -66,14 +64,7 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response viewWorks(String orcid) {
         checkProfileStatus(orcid, true);
-        //TODO
-        if("3.0_rc1".equals(externalVersion)) {
-            Response response = memberV3ApiServiceDelegator.viewWorks(orcid);
-            response.getEntity()
-        } else {
-            //TODO
-            return processReponse(memberV3ApiServiceDelegator.viewWorks(orcid));
-        }
+        return processReponse(memberV3ApiServiceDelegator.viewWorks(orcid));
     }
 
     @Override

@@ -47,7 +47,7 @@ public class RecordManagerTest extends DBUnitTest {
     
     @Test
     public void testGetRecord() {
-        Record record = recordManager.getRecord(ORCID);
+        Record record = recordManager.getRecord(ORCID, false);
         assertNotNull(record);
         assertNotNull(record.getActivitiesSummary());
         assertNotNull(record.getPerson());
@@ -136,7 +136,7 @@ public class RecordManagerTest extends DBUnitTest {
     
     @Test
     public void testGetPublicRecord() {
-        Record record = recordManager.getPublicRecord(ORCID);
+        Record record = recordManager.getPublicRecord(ORCID, false);
         assertNotNull(record);
         assertNotNull(record.getActivitiesSummary());
         assertNotNull(record.getPerson());

@@ -210,12 +210,18 @@
     </bean>  
     
     <!-- member 3.0 -->
+    <bean id="memberV3ApiServiceDelegatorRc1_FilterVersionOfIdsOnWorks" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceDelegatorImpl">
+    	<property name="filterVersionOfIdentifiers" value="true" />
+    </bean>
     <bean id="memberV3ApiServiceDelegator" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceDelegatorImpl" />
+    
     <bean id="memberV3ApiServiceDelegatorRc1" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="3.0_rc1" />
+        <property name="memberV3ApiServiceDelegator" ref="memberV3ApiServiceDelegatorRc1_FilterVersionOfIdsOnWorks" />
     </bean>      
     <bean id="memberV3ApiServiceDelegatorRc2" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="3.0_rc2" />
+        <property name="memberV3ApiServiceDelegator" ref="memberV3ApiServiceDelegator" />
     </bean>      
     <bean id="memberV3ApiServiceImplV3_0_rc1" class="org.orcid.api.memberV3.server.MemberV3ApiServiceImplV3_0_rc1">     
         <property name="serviceDelegator" ref="memberV3ApiServiceDelegatorRc1"/>

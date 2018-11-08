@@ -58,7 +58,7 @@ public class ExternalIDValidator {
             return;
         List<String> errors = Lists.newArrayList();
         boolean hasVersionOfIdentifier = false;
-        boolean hasSelfOfIdentifier = false;
+        boolean hasSelfIdentifier = false;
         for (ExternalID id : ids.getExternalIdentifier()) {
             if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
                 errors.add(id.getType());
@@ -79,11 +79,11 @@ public class ExternalIDValidator {
             }
             
             if(Relationship.SELF.equals(id.getRelationship())) {
-                hasSelfOfIdentifier = true;
+                hasSelfIdentifier = true;
             }
         }
         
-        if(hasVersionOfIdentifier && !hasSelfOfIdentifier) {
+        if(hasVersionOfIdentifier && !hasSelfIdentifier) {
             errors.add("version-of requires at least one self identifier");
         } 
         

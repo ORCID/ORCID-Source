@@ -44,7 +44,7 @@ public class ActivitiesSummaryManagerTest extends DBUnitTest {
     
     @Test
     public void testGetActivitiesSummary() {
-        ActivitiesSummary summary = activitiesSummaryManager.getActivitiesSummary(ORCID);
+        ActivitiesSummary summary = activitiesSummaryManager.getActivitiesSummary(ORCID, false);
         
         assertNotNull(summary);
         assertNotNull(summary.getDistinctions());
@@ -91,7 +91,7 @@ public class ActivitiesSummaryManagerTest extends DBUnitTest {
     
     @Test
     public void testGetPublicActivitiesSummary() {
-        ActivitiesSummary summary = activitiesSummaryManager.getPublicActivitiesSummary(ORCID);
+        ActivitiesSummary summary = activitiesSummaryManager.getPublicActivitiesSummary(ORCID, false);
         
         assertNotNull(summary);
         assertNotNull(summary.getDistinctions());

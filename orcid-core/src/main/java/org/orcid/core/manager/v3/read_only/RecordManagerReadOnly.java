@@ -9,9 +9,9 @@ import org.orcid.jaxb.model.v3.rc2.record.Record;
  * 
  */
 public interface RecordManagerReadOnly {
-    Record getPublicRecord(String orcid);
+    Record getPublicRecord(String orcid, boolean filterVersionOfIdentifiers);
 
-    Record getRecord(String orcid);
+    Record getRecord(String orcid, boolean filterVersionOfIdentifiers);
 
     public OrcidIdentifier getOrcidIdentifier(String orcid);
 }
