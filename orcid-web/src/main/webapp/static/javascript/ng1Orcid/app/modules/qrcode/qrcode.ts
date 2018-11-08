@@ -1,8 +1,7 @@
 import * as angular from "angular";
-import { Directive, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { downgradeComponent, UpgradeModule } from "@angular/upgrade/static";
 import { qrcodeComponent } from './qrcode.components.ts'
-import { OrderByPipe } from "../../pipes/orderByNg2Child.ts";
 import { CommonNg2Module } from "../common/common.ts";
 
 // This is the Angular 1 part of the module

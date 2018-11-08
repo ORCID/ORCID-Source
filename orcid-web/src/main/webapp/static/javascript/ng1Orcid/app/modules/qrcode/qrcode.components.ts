@@ -1,11 +1,6 @@
 //Import all the angular components
-import { NgForOf, NgIf } from "@angular/common";
 import { AfterViewInit, Component, OnDestroy, OnInit } from "@angular/core";
-import { Observable, Subject, Subscription } from "rxjs";
-import { takeUntil } from "rxjs/operators";
-import { GenericService } from "../../shared/generic.service.ts";
-import { EmailService } from "../../shared/email.service.ts";
-
+import { Subject } from "rxjs";
 
 @Component({
   selector: "qrcode-ng2",
@@ -26,6 +21,5 @@ export class qrcodeComponent implements AfterViewInit, OnDestroy, OnInit {
     this.ngUnsubscribe.complete();
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 }

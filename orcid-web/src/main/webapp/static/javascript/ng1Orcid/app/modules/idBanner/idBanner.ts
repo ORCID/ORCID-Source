@@ -1,5 +1,5 @@
 import * as angular from "angular";
-import { Directive, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { downgradeComponent, UpgradeModule } from "@angular/upgrade/static";
 import { CommonNg2Module } from "./../common/common.ts";
 import { idBannerComponent } from "./idBanner.component.ts";
