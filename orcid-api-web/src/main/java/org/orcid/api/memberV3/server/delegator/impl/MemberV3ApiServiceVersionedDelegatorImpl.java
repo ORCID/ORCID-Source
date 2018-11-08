@@ -14,7 +14,6 @@ import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.version.V3Convertible;
 import org.orcid.core.version.V3VersionConverterChain;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -41,9 +40,6 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     @Resource
     private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
 
-    @Resource(name = "workManagerReadOnlyV3")
-    private WorkManagerReadOnly workManagerReadOnly;
-    
     @Override
     public Response viewStatusText() {
         return memberV3ApiServiceDelegator.viewStatusText();
@@ -72,7 +68,7 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, true);
         return processReponse(memberV3ApiServiceDelegator.viewWork(orcid, putCode));
     }
-    
+
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
         checkProfileStatus(orcid, true);

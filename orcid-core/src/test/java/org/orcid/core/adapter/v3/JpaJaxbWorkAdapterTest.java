@@ -85,7 +85,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(02, publicationDateEntity.getMonth().intValue());
         assertEquals(02, publicationDateEntity.getDay().intValue());
         assertEquals(
-                "{\"workExternalIdentifier\":[{\"relationship\":\"VERSION_OF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
+                "{\"workExternalIdentifier\":[{\"relationship\":\"VERSION_OF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}},{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"work:doi\"}}]}",
                 workEntity.getExternalIdentifiersJson());
         assertEquals("http://tempuri.org", workEntity.getWorkUrl());
         assertEquals(
