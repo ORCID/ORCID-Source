@@ -439,13 +439,6 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
         boolean primaryValidation = true;
-        if(affiliationForm.getStartDate() == null) {
-            Date date = new Date();
-            date.setDay(new String());
-            date.setMonth(new String());
-            date.setYear(new String());
-            affiliationForm.setStartDate(date);
-        }
         
         affiliationForm.getStartDate().setErrors(new ArrayList<String>());
         
@@ -455,11 +448,15 @@ public class AffiliationsController extends BaseWorkspaceController {
         if (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !validDate(affiliationForm.getStartDate())) {
             primaryValidation = false;
             setError(affiliationForm.getStartDate(), "common.dates.invalid");
-        }            
+        }
         
         if (!PojoUtil.isEmpty(affiliationForm.getEndDate()) && !validDate(affiliationForm.getEndDate())) {
             primaryValidation = false;
             setError(affiliationForm.getEndDate(), "common.dates.invalid");
+        }
+        
+        if (primaryValidation && (PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
+            setError(affiliationForm.getStartDate(), "common.dates.start_date_required");
         }
         
         if (primaryValidation && (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
