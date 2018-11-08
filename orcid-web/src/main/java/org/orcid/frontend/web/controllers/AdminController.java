@@ -520,18 +520,10 @@ public class AdminController extends BaseController {
         }
 
         Map<String, String> result = new HashMap<String, String>();
-        if (StringUtils.isNotEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-            if (!profileEntity.getClaimed()) {
-                result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is unclaimed.").toString());
-            } else if (profileEntity.getDeactivationDate() != null) {
-                result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is deactivated.").toString());
-            } else if (!profileEntity.isAccountNonLocked()) {
-                result.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is locked.").toString());
-            }
-            result.put("id", orcid);
-        } else {
+        if (StringUtils.isEmpty(orcid) || !profileEntityManager.orcidExists(orcid)) {            
             result.put("errorMessg", "Invalid id " + orcidOrEmail);
+        } else {
+            result.put("id", orcid);
         }
         return result;
     }
