@@ -220,6 +220,9 @@ import { idBannerNg2Module }
 
 import { qrcodeNg2Module } 
     from './qrcode/qrcode.ts'
+
+import { lastModifiedNg2Module } 
+    from './lastModified/lastModified.ts';
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -244,6 +247,7 @@ import { Observable }
     from 'rxjs';
 
 import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
+
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -372,7 +376,8 @@ export class RootCmp {
         AdminActionsNg2Module,
         RecordCorrectionsNg2Module,
         idBannerNg2Module,
-        qrcodeNg2Module
+        qrcodeNg2Module,
+        lastModifiedNg2Module
     ],
     providers: [
         { 

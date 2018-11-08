@@ -61,9 +61,8 @@
                     <peer-review-ng2 publicView="true"></peer-review-ng2>
                     </#if>
                 </#if> 
-                <div id="public-last-modified">
-                    <p class="small italic">${springMacroRequestContext.getMessage("public_profile.labelLastModified")} ${(lastModifiedTime?datetime)!}</p>
-                </div>                
+                <#include "/includes/ng2_templates/last-modified-ng2-template.ftl">
+                <last-modified-ng2> </last-modified-ng2>
             </div>
         </div>
     </div>
