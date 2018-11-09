@@ -1,4 +1,6 @@
 <@public>
+
+<script type="text/ng-template" id="home-ng2-template">
 	<div id="home" class="content col-md-10">
 		<div class="headline col-md-offset-1">
 			<h1><@orcid.msg 'home.distinguish_yourself'/><br />
@@ -36,7 +38,7 @@
 			</p>
 		</div>
 	</div>
-<script type="text/ng-template" id="home-ng2-template">
+	
 	<!--Latest News Column-->
 	<div id="home-blog-list" class="aside col-md-2">
 		<div class="inner-box">
