@@ -23,9 +23,7 @@
             </div>
         </div>
     </div>
-    <#if (locked)?? && !locked>
-        <#include "/includes/ng2_templates/switch-user-ng2-template.ftl">
-        <switch-user-ng2></switch-user-ng2> 
-    </#if>
+    <#include "/includes/ng2_templates/switch-user-ng2-template.ftl">
+    <switch-user-ng2></switch-user-ng2>     
 </div>
 </#escape>

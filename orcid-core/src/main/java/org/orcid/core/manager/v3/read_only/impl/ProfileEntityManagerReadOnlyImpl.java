@@ -19,5 +19,10 @@ public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     @Override
     public ProfileEntity findByOrcid(String orcid) {
         return profileDao.find(orcid);
+    }
+
+    @Override
+    public Boolean isLocked(String orcid) {
+        return profileDao.isLocked(orcid);
     }       
 }
