@@ -22,6 +22,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.v3.activities.FundingComparators;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -698,7 +699,9 @@ public class FundingsController extends BaseWorkspaceController {
             @RequestParam(value = "funders-only") boolean fundersOnly) {
         List<Map<String, String>> datums = new ArrayList<>();
         for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit, true)) {
-            datums.add(orgDisambiguated.toMap());
+            if (!OrgDisambiguatedSourceType.LEI.name().equals(orgDisambiguated.getSourceType())) {
+                datums.add(orgDisambiguated.toMap());
+            }
         }
         return datums;
     }
