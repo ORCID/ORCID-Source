@@ -21,6 +21,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes;
@@ -828,7 +829,7 @@ public class ActivityValidatorTest {
     private DisambiguatedOrganization getDisambiguatedOrganization() {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
         disambiguatedOrganization.setDisambiguatedOrganizationIdentifier("some-identifier");
-        disambiguatedOrganization.setDisambiguationSource("FUNDREF");
+        disambiguatedOrganization.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
         return disambiguatedOrganization;
     }
     

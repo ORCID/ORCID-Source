@@ -34,6 +34,7 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -415,7 +416,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        disambiguatedOrg.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
         peerReview.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
         
         try {
@@ -533,7 +534,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        disambiguatedOrg.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
         peerReview.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
         
         peerReview.setPutCode(null);

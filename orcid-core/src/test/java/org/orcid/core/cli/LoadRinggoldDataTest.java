@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -86,7 +87,7 @@ public class LoadRinggoldDataTest {
 
     @Test
     public void test_EmptyDB() throws URISyntaxException {
-        when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(anyString(), eq("RINGGOLD"))).thenReturn(null);
+        when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(anyString(), eq(OrgDisambiguatedSourceType.RINGGOLD.name()))).thenReturn(null);
         when(mockOrgDao.findByNameCityRegionAndCountry(anyString(), anyString(), anyString(), any())).thenReturn(null);
 
         Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_base/").toURI());
@@ -105,7 +106,7 @@ public class LoadRinggoldDataTest {
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for (OrgDisambiguatedEntity entity : newOrgDisambiguatedEntities) {
             assertEquals(IndexingStatus.PENDING, entity.getIndexingStatus());
-            assertEquals("RINGGOLD", entity.getSourceType());
+            assertEquals(OrgDisambiguatedSourceType.RINGGOLD.name(), entity.getSourceType());
             switch (entity.getSourceId()) {
             case "1":
                 assertNull(entity.getSourceParentId());
@@ -362,7 +363,7 @@ public class LoadRinggoldDataTest {
         assertEquals("State#5", entity.getRegion());
         assertEquals("5", entity.getSourceId());
         assertEquals("4", entity.getSourceParentId());
-        assertEquals("RINGGOLD", entity.getSourceType());
+        assertEquals(OrgDisambiguatedSourceType.RINGGOLD.name(), entity.getSourceType());
         
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(any());
@@ -460,7 +461,7 @@ public class LoadRinggoldDataTest {
         assertEquals("State#1", entity.getRegion());
         assertEquals("1", entity.getSourceId());
         assertEquals("4", entity.getSourceParentId());
-        assertEquals("RINGGOLD", entity.getSourceType());
+        assertEquals(OrgDisambiguatedSourceType.RINGGOLD.name(), entity.getSourceType());
         assertEquals("DEPRECATED", entity.getStatus());        
         
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(any());
@@ -541,7 +542,7 @@ public class LoadRinggoldDataTest {
     
     private void setupInitialMocks() {
         
-        when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(anyString(), eq("RINGGOLD"))).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(anyString(), eq(OrgDisambiguatedSourceType.RINGGOLD.name()))).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
 
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -552,7 +553,7 @@ public class LoadRinggoldDataTest {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(ringgoldId * 1000); // 1000, 2000, 3000, 4000
                 entity.setSourceId(String.valueOf(ringgoldId));
-                entity.setSourceType("RINGGOLD");
+                entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
                 OrgDisambiguatedExternalIdentifierEntity extId1, extId2;
                 Set<OrgDisambiguatedExternalIdentifierEntity> extIds;
                 switch (String.valueOf(ringgoldId)) {
