@@ -62,7 +62,11 @@ export class ExtIdPopoverComponent implements OnInit {
     ngOnInit() {
         switch(this.activityType){
             case "affiliation":
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
                 if(this.extID.url){
                     if(this.extID.url.value){
@@ -72,7 +76,11 @@ export class ExtIdPopoverComponent implements OnInit {
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
             case "funding":
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
                 if(this.extID.url){
                     if(this.extID.url.value){
@@ -82,7 +90,11 @@ export class ExtIdPopoverComponent implements OnInit {
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
             case "researchResource":
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
                 if(this.extID.url){
                     if(this.extID.url.value){
@@ -93,7 +105,11 @@ export class ExtIdPopoverComponent implements OnInit {
                 break;
             case "work":
                 this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
-                this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 if(this.extID.url){
                     if(this.extID.url.value){
                         this.url = JSON.parse(JSON.stringify(this.extID.url.value));
@@ -102,8 +118,12 @@ export class ExtIdPopoverComponent implements OnInit {
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
             default:
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 if(this.extID.url){
                     if(this.extID.url.value){
                         this.url = JSON.parse(JSON.stringify(this.extID.url.value));
