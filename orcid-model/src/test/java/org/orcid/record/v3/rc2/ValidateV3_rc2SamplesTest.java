@@ -26,9 +26,9 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc2.common.Locale;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.Addresses;
@@ -530,7 +530,7 @@ public class ValidateV3_rc2SamplesTest {
                 "/record_3.0_rc2/preferences-3.0_rc2.xsd");
         assertNotNull(preferences);
         assertNotNull(preferences.getLocale());
-        assertEquals(Locale.EN, preferences.getLocale());
+        assertEquals(AvailableLocales.EN, preferences.getLocale());
     }
 
     @Test

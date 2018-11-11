@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 @XmlType(name = "locale")
 @XmlEnum
 public enum AvailableLocales {
@@ -39,6 +41,11 @@ public enum AvailableLocales {
 
     public String value() {
         return value;
+    }
+    
+    @JsonValue
+    public String jsonValue() {
+        return this.name();
     }
     
     public static AvailableLocales fromValue(String v) {
