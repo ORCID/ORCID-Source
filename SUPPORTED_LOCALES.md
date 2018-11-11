@@ -17,6 +17,6 @@ ZH_TW | ZH_TW | zh_TW | Traditional Chinese
 
 Any locale added should be documented below
 
-## Nov 2018
+### 2018-11-11
 
 * Initial set of locales: AR, EN, ES, IT, JA, KO, PT, RU, ZH_CN, ZH_TW
