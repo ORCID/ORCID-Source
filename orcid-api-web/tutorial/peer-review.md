@@ -27,7 +27,7 @@ This workflow can be used with Member API credentials on sandbox or the producti
 
 **Posting a peer-review requires a valid group-id**
 
-Peer-review items are grouped on ORCID records based on who or what the review was done for this can be an organization, a publication or other. This is assigned a group-id. Posting a peer-review requires a valid group-id, we suggest searching existing peer-review groups before creating new ones to avoid duplicate entries. For how to search for existing groups and more about group-ids, please refer to this guide [GROUP-ID-RECORD API](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/group-id-2.0).
+Peer-review items are grouped on ORCID records based on who or what the review was done for this can be an organization, a publication or other. This is assigned a group-id. Posting a peer-review requires a valid group-id, we suggest searching existing peer-review groups before creating new ones to avoid duplicate entries. For how to search for existing groups and more about group-ids, please refer to this guide [Group ID record Tutorial](https://github.com/ORCID/ORCID-Source/orcid-api-web/tutorial/group_id.md)
 
 ## Permission to edit the record
 Editing the peer-review section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading peer-review activities. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
