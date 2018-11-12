@@ -202,14 +202,14 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="locale">
+	<xs:simpleType name="locale">
 		<xs:annotation>
 			<xs:documentation>For the up to date supported locale list see https://github.com/ORCID/ORCID-Source/SUPPORTED_LOCALES.md</xs:documentation>
-		</xs:annotation>		
-		<xs:simpleContent>
-			<xs:extension base="xs:language" />
-		</xs:simpleContent>	
-	</xs:complexType>
+		</xs:annotation>				
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-zA-Z]{1,8}((-|_)[a-zA-Z0-9]{1,8})*" />
+		</xs:restriction>						
+	</xs:simpleType>
 
 	<xs:simpleType name="non-empty-string">
 		<xs:annotation>

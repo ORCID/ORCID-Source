@@ -752,7 +752,7 @@ public class ValidateV2SamplesTest {
         assertNotNull(record);
         Preferences preferences = record.getPreferences();
         assertNotNull(preferences);
-        assertEquals(AvailableLocales.EN, preferences.getLocale());
+        assertEquals(AvailableLocales.ZH_CN, preferences.getLocale());
         //Check activities
         assertNotNull(record.getActivitiesSummary());
         ActivitiesSummary activities = record.getActivitiesSummary();
