@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDao;
@@ -45,7 +46,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class LoadLEIData {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadLEIData.class);
-    private static final String LEI_SOURCE_TYPE = "LEI";
     private static final QName QNAME_TYPE = new QName("type");
     private static final String TRANSLITERATED_LEGAL_NAME_TYPE = "PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME";
 
@@ -129,7 +129,7 @@ public class LoadLEIData {
                     String startElement = event.asStartElement().getName().getLocalPart();
                     if (startElement.equals("LEIRecord")) {
                         org = new LEIOrganization();
-                    } else if (startElement.equals("LEI")) {
+                    } else if (startElement.equals(OrgDisambiguatedSourceType.LEI.name())) {
                         org.id = r.getElementText();
                     } else if (startElement.equals("LegalName")) {
                         org.name = r.getElementText();
@@ -217,7 +217,7 @@ public class LoadLEIData {
      */
     public void processOrg(LEIOrganization org) {
         Date now = new Date();
-        OrgDisambiguatedEntity existingDO = orgDisambiguatedDao.findBySourceIdAndSourceType(org.id, LEI_SOURCE_TYPE);
+        OrgDisambiguatedEntity existingDO = orgDisambiguatedDao.findBySourceIdAndSourceType(org.id, OrgDisambiguatedSourceType.LEI.name());
         if (existingDO != null) {
             // update
             if (org.differentFrom(existingDO)) {
@@ -260,7 +260,7 @@ public class LoadLEIData {
             else if ("INACTIVE".equals(org.status)) {
                 orgDisambiguatedEntity.setStatus(OrganizationStatus.OBSOLETE.name());
             }
-            orgDisambiguatedEntity.setSourceType(LEI_SOURCE_TYPE);
+            orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.LEI.name());
             LOGGER.info("Creating LEI:" + org.id);
             orgDisambiguatedDao.persist(orgDisambiguatedEntity);
             existingDO = orgDisambiguatedEntity;

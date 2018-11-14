@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
@@ -57,7 +58,7 @@ public class LoadLEIDataTest {
         assertEquals(null, argument.getValue().getRegion());
         assertEquals("PENDING", argument.getValue().getIndexingStatus().toString());
         assertEquals(null, argument.getValue().getStatus());
-        assertEquals("LEI", argument.getValue().getSourceType());
+        assertEquals(OrgDisambiguatedSourceType.LEI.name(), argument.getValue().getSourceType());
     }
     
     @Test
@@ -78,7 +79,7 @@ public class LoadLEIDataTest {
         assertEquals("BG-22", argument.getValue().getRegion());
         assertEquals("PENDING", argument.getValue().getIndexingStatus().toString());
         assertEquals(null, argument.getValue().getStatus());
-        assertEquals("LEI", argument.getValue().getSourceType());        
+        assertEquals(OrgDisambiguatedSourceType.LEI.name(), argument.getValue().getSourceType());        
         assertEquals("MONBAT PLC",orgArgument.getAllValues().get(0).getName());
         assertEquals("SOFIA", orgArgument.getAllValues().get(0).getCity());
         assertEquals("BG", orgArgument.getAllValues().get(0).getCountry());
@@ -93,7 +94,7 @@ public class LoadLEIDataTest {
         //fake finding existing
         OrgDisambiguatedEntity found = new OrgDisambiguatedEntity();
         found.setSourceId("213800ZH4VUOQOUVYX93");
-        found.setSourceType("LEI");
+        found.setSourceType(OrgDisambiguatedSourceType.LEI.name());
         Mockito.when(orgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.anyString(), Mockito.anyString())).thenReturn(found);
         //capture merge
         ArgumentCaptor<OrgDisambiguatedEntity> argument = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
@@ -114,7 +115,7 @@ public class LoadLEIDataTest {
         assertEquals("BG-22", argument.getValue().getRegion());
         assertEquals("PENDING", argument.getValue().getIndexingStatus().toString());
         assertEquals(null, argument.getValue().getStatus());
-        assertEquals("LEI", argument.getValue().getSourceType()); 
+        assertEquals(OrgDisambiguatedSourceType.LEI.name(), argument.getValue().getSourceType()); 
     }
     
     @Test 
@@ -124,7 +125,7 @@ public class LoadLEIDataTest {
         //fake finding existing
         OrgDisambiguatedEntity found = new OrgDisambiguatedEntity();
         found.setSourceId("213800ZH4VUOQOUVYX93");
-        found.setSourceType("LEI");
+        found.setSourceType(OrgDisambiguatedSourceType.LEI.name());
         Mockito.when(orgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.anyString(), Mockito.anyString())).thenReturn(found);
         //capture merge
         ArgumentCaptor<OrgDisambiguatedEntity> argument = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
@@ -145,7 +146,7 @@ public class LoadLEIDataTest {
         assertEquals("BG-22", argument.getValue().getRegion());
         assertEquals("PENDING", argument.getValue().getIndexingStatus().toString());
         assertEquals(null, argument.getValue().getStatus());
-        assertEquals("LEI", argument.getValue().getSourceType());
+        assertEquals(OrgDisambiguatedSourceType.LEI.name(), argument.getValue().getSourceType());
         assertEquals("MONBAT PLC",orgArgument.getAllValues().get(0).getName());
         assertEquals("SOFIA", orgArgument.getAllValues().get(0).getCity());
         assertEquals("BG", orgArgument.getAllValues().get(0).getCountry());

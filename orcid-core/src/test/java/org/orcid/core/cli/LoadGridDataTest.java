@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
@@ -77,10 +78,10 @@ public class LoadGridDataTest {
 
     @Test
     public void execute_Stats_Test_3() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", "GRID")).thenReturn(new OrgDisambiguatedEntity());
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", "GRID")).thenReturn(new OrgDisambiguatedEntity());
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", "GRID")).thenReturn(new OrgDisambiguatedEntity());
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", "GRID")).thenReturn(new OrgDisambiguatedEntity());
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", OrgDisambiguatedSourceType.GRID.name())).thenReturn(new OrgDisambiguatedEntity());
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", OrgDisambiguatedSourceType.GRID.name())).thenReturn(new OrgDisambiguatedEntity());
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", OrgDisambiguatedSourceType.GRID.name())).thenReturn(new OrgDisambiguatedEntity());
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", OrgDisambiguatedSourceType.GRID.name())).thenReturn(new OrgDisambiguatedEntity());
 
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
@@ -96,7 +97,7 @@ public class LoadGridDataTest {
     
     @Test
     public void execute_JustAddOneExeternalIdentifier_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -107,7 +108,7 @@ public class LoadGridDataTest {
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType("GRID");
+                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
                 entity.setUrl("http://link1.com");
                 return entity;
             }
@@ -117,7 +118,7 @@ public class LoadGridDataTest {
         OrgDisambiguatedExternalIdentifierEntity extIdPreferred = new OrgDisambiguatedExternalIdentifierEntity();
         extIdPreferred.setPreferred(Boolean.TRUE);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extIdPreferred);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", OrgDisambiguatedSourceType.FUNDREF.name())).thenReturn(extIdPreferred);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
@@ -140,7 +141,7 @@ public class LoadGridDataTest {
 
     @Test
     public void execute_UpdateExistingInstitute_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -151,7 +152,7 @@ public class LoadGridDataTest {
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType("GRID");
+                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
                 entity.setStatus("active");
                 entity.setUrl("http://link1.com");
                 return entity;
@@ -162,7 +163,7 @@ public class LoadGridDataTest {
         OrgDisambiguatedExternalIdentifierEntity extIdPreferred = new OrgDisambiguatedExternalIdentifierEntity();
         extIdPreferred.setPreferred(Boolean.TRUE);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extIdPreferred);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", OrgDisambiguatedSourceType.FUNDREF.name())).thenReturn(extIdPreferred);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
@@ -192,7 +193,7 @@ public class LoadGridDataTest {
         assertEquals("type_1,type_2", orgToBeUpdated.getOrgType());
         assertEquals("San Jose", orgToBeUpdated.getRegion());
         assertEquals("grid.1", orgToBeUpdated.getSourceId());
-        assertEquals("GRID", orgToBeUpdated.getSourceType());
+        assertEquals(OrgDisambiguatedSourceType.GRID.name(), orgToBeUpdated.getSourceType());
         assertEquals("active", orgToBeUpdated.getStatus());
         assertEquals("http://link1.com/updated", orgToBeUpdated.getUrl());
     }
@@ -200,7 +201,7 @@ public class LoadGridDataTest {
     @SuppressWarnings("deprecation")
     @Test
     public void execute_NothingToCreateNothingToUpdate_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -211,7 +212,7 @@ public class LoadGridDataTest {
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType("GRID");
+                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
                 entity.setUrl("http://link1.com");
                 return entity;
             }
@@ -221,7 +222,7 @@ public class LoadGridDataTest {
         OrgDisambiguatedExternalIdentifierEntity extIdPreferred = new OrgDisambiguatedExternalIdentifierEntity();
         extIdPreferred.setPreferred(Boolean.TRUE);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extIdPreferred);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", OrgDisambiguatedSourceType.FUNDREF.name())).thenReturn(extIdPreferred);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
@@ -245,7 +246,7 @@ public class LoadGridDataTest {
     @SuppressWarnings("deprecation")
     @Test
     public void execute_DeprecatedObsoleteInstitutes_1_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -254,7 +255,7 @@ public class LoadGridDataTest {
                 return entity;
             }
         });
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -263,7 +264,7 @@ public class LoadGridDataTest {
                 return entity;
             }
         });
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -273,7 +274,7 @@ public class LoadGridDataTest {
             }
         });
 
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -370,7 +371,7 @@ public class LoadGridDataTest {
     
     @Test
     public void execute_AddMissingWikipediaExtId_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -381,7 +382,7 @@ public class LoadGridDataTest {
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType("GRID");
+                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
                 entity.setStatus("active");
                 entity.setUrl("http://link1.com");
                 return entity;
@@ -394,7 +395,7 @@ public class LoadGridDataTest {
         extIdPreferred.setPreferred(true);
         
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", "FUNDREF")).thenReturn(extIdPreferred);
+        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", OrgDisambiguatedSourceType.FUNDREF.name())).thenReturn(extIdPreferred);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);        
 
@@ -423,7 +424,7 @@ public class LoadGridDataTest {
     @SuppressWarnings("deprecation")
     @Test
     public void execute_UpdatePreferredIndicator_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", "GRID")).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
@@ -434,7 +435,7 @@ public class LoadGridDataTest {
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType("GRID");
+                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
                 entity.setUrl("http://link1.com");
                 return entity;
             }

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
 import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
@@ -27,7 +28,6 @@ import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
-import org.orcid.pojo.ResearchResource;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
@@ -71,15 +71,15 @@ public class AffiliationsController extends BaseWorkspaceController {
         affiliationsManager.removeAffiliation(getCurrentUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()));
         return affiliation;
     }
-    
+
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.DELETE)
     public @ResponseBody Errors removeAffiliationJson(@RequestParam(value = "id") String affiliationId) {
-    	Errors errors = new Errors();
-    	boolean deleted = affiliationsManager.removeAffiliation(getCurrentUserOrcid(), Long.valueOf(affiliationId));        
-        if(!deleted) {
-        	//TODO: Log error in case the affiliation wasn't deleted
+        Errors errors = new Errors();
+        boolean deleted = affiliationsManager.removeAffiliation(getCurrentUserOrcid(), Long.valueOf(affiliationId));
+        if (!deleted) {
+            // TODO: Log error in case the affiliation wasn't deleted
         }
-    	return errors;
+        return errors;
     }
 
     /**
@@ -104,7 +104,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
 
         return affiliationList;
-    }    
+    }
 
     /**
      * Returns a blank affiliation form
@@ -114,7 +114,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         AffiliationForm affiliationForm = new AffiliationForm();
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        
+
         Visibility v = null;
         org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = null;
         if (profile.getActivitiesVisibilityDefault() != null) {
@@ -167,11 +167,11 @@ public class AffiliationsController extends BaseWorkspaceController {
 
         return affiliationForm;
     }
-    
+
     @RequestMapping(value = "/affiliationDetails.json", method = RequestMethod.GET)
     public @ResponseBody AffiliationForm getAffiliationDetails(@RequestParam("id") Long id, @RequestParam("type") String type) {
-        String orcid = getCurrentUserOrcid();       
-        
+        String orcid = getCurrentUserOrcid();
+
         if (type.equals("distinction")) {
             return AffiliationForm.valueOf(affiliationsManager.getDistinctionAffiliation(orcid, id));
         } else if (type.equals("education")) {
@@ -303,16 +303,16 @@ public class AffiliationsController extends BaseWorkspaceController {
             for (Affiliation affiliation : affiliationsList) {
                 AffiliationForm form = AffiliationForm.valueOf(affiliation);
                 form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, form.getCountry().getValue())));
-                if(form.getOrgDisambiguatedId() != null){
+                if (form.getOrgDisambiguatedId() != null) {
                     OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
                     form.setOrgDisambiguatedName(orgDisambiguated.getValue());
                     form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
                     form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
                     form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
                     form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
-                    if(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                    if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
                         form.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
-                    }                    
+                    }
                 }
                 affiliationsMap.put(form.getPutCode().getValue(), form);
                 affiliationIds.add(form.getPutCode().getValue());
@@ -321,13 +321,14 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
         return affiliationIds;
     }
-    
+
     /**
      * Updates an affiliation visibility
      */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
-        org.orcid.jaxb.model.v3.rc2.common.Visibility visibility = org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(affiliation.getVisibility().getVisibility().value());
+        org.orcid.jaxb.model.v3.rc2.common.Visibility visibility = org.orcid.jaxb.model.v3.rc2.common.Visibility
+                .fromValue(affiliation.getVisibility().getVisibility().value());
         affiliationsManager.updateVisibility(getEffectiveUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()), visibility);
         return affiliation;
     }
@@ -336,7 +337,8 @@ public class AffiliationsController extends BaseWorkspaceController {
      * Updates visibility on multiple affiliations
      */
     @RequestMapping(value = "/{affiliationIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
-    public @ResponseBody ArrayList<Long> updateAffiliationVisibilities(@PathVariable("affiliationIdsStr") String affiliationIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
+    public @ResponseBody ArrayList<Long> updateAffiliationVisibilities(@PathVariable("affiliationIdsStr") String affiliationIdsStr,
+            @PathVariable("visibilityStr") String visibilityStr) {
         String orcid = getEffectiveUserOrcid();
         ArrayList<Long> affIds = new ArrayList<Long>();
         for (String affId : affiliationIdsStr.split(","))
@@ -344,7 +346,6 @@ public class AffiliationsController extends BaseWorkspaceController {
         affiliationsManager.updateVisibilities(orcid, affIds, org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibilityStr));
         return affIds;
     }
-    
 
     /**
      * Search DB for disambiguated affiliations to suggest to user
@@ -353,7 +354,9 @@ public class AffiliationsController extends BaseWorkspaceController {
     public @ResponseBody List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
         for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit, false)) {
-            datums.add(orgDisambiguated.toMap());
+            if (!OrgDisambiguatedSourceType.LEI.name().equals(orgDisambiguated.getSourceType())) {
+                datums.add(orgDisambiguated.toMap());
+            }
         }
         return datums;
     }
@@ -419,10 +422,9 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
         return affiliationForm;
     }
-    
+
     @RequestMapping(value = "/affiliation/urlValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    AffiliationForm urlValidate(@RequestBody AffiliationForm affiliationForm) {
+    public @ResponseBody AffiliationForm urlValidate(@RequestBody AffiliationForm affiliationForm) {
         validateUrl(affiliationForm.getUrl());
         return affiliationForm;
     }
@@ -439,9 +441,8 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
         boolean primaryValidation = true;
-        
         affiliationForm.getStartDate().setErrors(new ArrayList<String>());
-        
+
         if (!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             affiliationForm.getEndDate().setErrors(new ArrayList<String>());
         
@@ -449,7 +450,7 @@ public class AffiliationsController extends BaseWorkspaceController {
             primaryValidation = false;
             setError(affiliationForm.getStartDate(), "common.dates.invalid");
         }
-        
+
         if (!PojoUtil.isEmpty(affiliationForm.getEndDate()) && !validDate(affiliationForm.getEndDate())) {
             primaryValidation = false;
             setError(affiliationForm.getEndDate(), "common.dates.invalid");
@@ -466,62 +467,64 @@ public class AffiliationsController extends BaseWorkspaceController {
 
         return affiliationForm;
     }
-    
+
     @RequestMapping(value = "/affiliationGroups.json", method = RequestMethod.GET)
     public @ResponseBody AffiliationGroupContainer getGroupedAffiliations() {
-        String orcid = getCurrentUserOrcid();        
+        String orcid = getCurrentUserOrcid();
         AffiliationGroupContainer result = new AffiliationGroupContainer();
-        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, false);        
-        for(AffiliationType type : AffiliationType.values()) {
-            if(affiliationsMap.containsKey(type)) {
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, false);
+        for (AffiliationType type : AffiliationType.values()) {
+            if (affiliationsMap.containsKey(type)) {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
                 List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
-                IntStream.range(0, elementsList.size()).forEach(idx -> {                
+                IntStream.range(0, elementsList.size()).forEach(idx -> {
                     AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), type.name() + '_' + idx, orcid);
-                    // Fill country and org disambiguated data on the default affiliation
+                    // Fill country and org disambiguated data on the default
+                    // affiliation
                     AffiliationForm defaultAffiliation = groupForm.getDefaultAffiliation();
-                    if(defaultAffiliation != null) {
+                    if (defaultAffiliation != null) {
                         // Set country name
                         defaultAffiliation.setCountryForDisplay(groupForm.getDefaultAffiliation().getCountry().getValue());
                         // Set org disambiguated data
-                        if(!PojoUtil.isEmpty(defaultAffiliation.getOrgDisambiguatedId())) {
+                        if (!PojoUtil.isEmpty(defaultAffiliation.getOrgDisambiguatedId())) {
                             OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(defaultAffiliation.getOrgDisambiguatedId().getValue()));
                             defaultAffiliation.setOrgDisambiguatedName(orgDisambiguated.getValue());
                             defaultAffiliation.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
                             defaultAffiliation.setOrgDisambiguatedCity(orgDisambiguated.getCity());
                             defaultAffiliation.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
                             defaultAffiliation.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
-                            if(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                            if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
                                 defaultAffiliation.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
                             }
                         }
                     }
-                    
-                    // Fill country and org disambiguated data for each affiliation
-                    for(AffiliationForm aff : groupForm.getAffiliations()) {
+
+                    // Fill country and org disambiguated data for each
+                    // affiliation
+                    for (AffiliationForm aff : groupForm.getAffiliations()) {
                         // Set country name
                         aff.setCountryForDisplay(aff.getCountry().getValue());
                         // Set org disambiguated data
-                        if(!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {
-                            if(!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {
+                        if (!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {
+                            if (!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {
                                 OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(aff.getOrgDisambiguatedId().getValue()));
                                 aff.setOrgDisambiguatedName(orgDisambiguated.getValue());
                                 aff.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
                                 aff.setOrgDisambiguatedCity(orgDisambiguated.getCity());
                                 aff.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
                                 aff.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
-                                if(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                                if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
                                     aff.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
                                 }
                             }
                         }
                     }
-                    
+
                     elementsFormList.add(groupForm);
                 });
                 result.getAffiliationGroups().put(type, elementsFormList);
             }
-        }        
+        }
         return result;
     }
 
