@@ -9,12 +9,12 @@ import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
-import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.record_v2.CompletionDate;
 import org.orcid.jaxb.model.record_v2.DeactivationDate;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -102,7 +102,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
     private Preferences getPreferences(String orcid) {
         Preferences preferences = new Preferences();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        AvailableLocales profileEntityLocale = AvailableLocales.valueOf(profile.getLocale());        
+        Locale profileEntityLocale = Locale.valueOf(profile.getLocale());        
         if (profileEntityLocale != null) {
             preferences.setLocale(profileEntityLocale);
         }

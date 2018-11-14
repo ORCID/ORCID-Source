@@ -23,11 +23,10 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.common_v2.Locale;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Educations;
@@ -522,7 +521,7 @@ public class ValidateV2RC2SamplesTest {
                 "/record_2.0_rc2/preferences-2.0_rc2.xsd");
         assertNotNull(preferences);   
         assertNotNull(preferences.getLocale());
-        assertEquals(AvailableLocales.EN, preferences.getLocale());
+        assertEquals(Locale.EN, preferences.getLocale());
     }
     
     @Test

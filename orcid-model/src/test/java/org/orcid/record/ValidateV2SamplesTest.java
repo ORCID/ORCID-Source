@@ -24,8 +24,8 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
@@ -501,7 +501,7 @@ public class ValidateV2SamplesTest {
                 "/record_2.0/preferences-2.0.xsd");
         assertNotNull(preferences);   
         assertNotNull(preferences.getLocale());
-        assertEquals(AvailableLocales.EN, preferences.getLocale());
+        assertEquals(Locale.EN, preferences.getLocale());
     }
     
     @Test
@@ -752,7 +752,7 @@ public class ValidateV2SamplesTest {
         assertNotNull(record);
         Preferences preferences = record.getPreferences();
         assertNotNull(preferences);
-        assertEquals(AvailableLocales.ZH_CN, preferences.getLocale());
+        assertEquals(Locale.ZH_CN, preferences.getLocale());
         //Check activities
         assertNotNull(record.getActivitiesSummary());
         ActivitiesSummary activities = record.getActivitiesSummary();
