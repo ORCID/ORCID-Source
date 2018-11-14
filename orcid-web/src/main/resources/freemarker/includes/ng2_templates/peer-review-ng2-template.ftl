@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="peer-review-ng2-template">
-    <div *ngIf="peerReviewService.groups?.length > 0">
+    <div>
         <!-- PEER REVIEW -->
         <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && peerReviewService.groups.length < 1">
             <div class="workspace-accordion-header clearfix">
@@ -22,7 +22,7 @@
                         </#if>                     
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayPeerReview">
-                        <#escape x as x?html>                        
+                        <#escape x as x?html>
                         <!--Sort menu-->
                         <div class="menu-container">                                     
                             <ul class="toggle-menu">
@@ -63,6 +63,31 @@
                             </ul>                                   
                         </div>
                         <!--End sort menu-->
+
+                        
+                        <ul class="workspace-bar-menu" *ngIf="noLinkFlag">
+                        <!--Add works-->    
+                            <li class="hidden-xs">
+                                <div class="menu-container" id="add-peer-review-container">
+                                    <ul class="toggle-menu">
+                                        <li [ngClass]="{'green-bg' : peerReviewImportWizard == true}"> 
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msg 'groups.common.add_works'/>
+                                            <ul class="menu-options works">
+                                            <!--Search & link-->
+                                                <li>
+                                                    <a class="action-option manage-button" (click)="showPeerReviewImportWizard()">
+                                                        <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                        <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>  
+                            </li>  
+                        </ul>    
+                            
                         </#escape>                                
                     </div>
                 </div>
@@ -74,7 +99,15 @@
                     </li>
                 </ul>
                 <div *ngIf="peerReviewService.loading == false && peerReviewService.groups.length == 0">
-                    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} <a *ngIf="noLinkFlag" (click)="showPeerReviewImportWizard()" class="no-wrap">${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}</a></#if></strong>
+                    <strong>
+                    <#if (publicProfile)?? && publicProfile == true>
+                        ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}
+                    <#else>
+                        ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} 
+                        <a *ngIf="noLinkFlag" (click)="showPeerReviewImportWizard()" class="no-wrap">
+                        ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}
+                        </a>
+                    </#if></strong> 
                 </div>
             </div>                                                   
         </div>      

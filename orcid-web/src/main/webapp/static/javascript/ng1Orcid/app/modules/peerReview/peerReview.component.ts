@@ -60,6 +60,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     showPeerReviewDetails: any;
     showResourceItemDetails: any;
     sortState: any;
+    peerReviewImportWizard: boolean = false;
 
     constructor(
         private peerReviewService: PeerReviewService,
@@ -362,6 +363,10 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         );
     };
+
+    showPeerReviewImportWizard () {
+        this.peerReviewImportWizard = !this.peerReviewImportWizard;
+    }
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();
