@@ -93,7 +93,7 @@
                 </div>
             </div>    
             <!-- Peer Review Import Wizard -->
-            <div *ngIf="peerReviewImportWizard" class="work-import-wizard">
+            <div *ngIf="peerReviewImportWizard && workspaceSrvc.displayPeerReview" class="work-import-wizard">
                 <div class="ie7fix-inner">
                     <div class="row"> 
                         <div class="col-md-12 col-sm-12 col-xs-12">
