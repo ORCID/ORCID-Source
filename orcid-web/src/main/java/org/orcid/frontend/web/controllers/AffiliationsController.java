@@ -439,32 +439,24 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
         boolean primaryValidation = true;
-        if(affiliationForm.getStartDate() == null) {
-            Date date = new Date();
-            date.setDay(new String());
-            date.setMonth(new String());
-            date.setYear(new String());
-            affiliationForm.setStartDate(date);
-        }
         
         affiliationForm.getStartDate().setErrors(new ArrayList<String>());
         
         if (!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             affiliationForm.getEndDate().setErrors(new ArrayList<String>());
-        if ((PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth())
-                && PojoUtil.isEmpty(affiliationForm.getStartDate().getDay()))) {
+        
+        if (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !validDate(affiliationForm.getStartDate())) {
             primaryValidation = false;
-            setError(affiliationForm.getStartDate(), "common.dates.start_date_required");
-        } else {
-            if (!validDate(affiliationForm.getStartDate())) {
-                primaryValidation = false;
-                setError(affiliationForm.getStartDate(), "common.dates.invalid");
-            }            
+            setError(affiliationForm.getStartDate(), "common.dates.invalid");
         }
         
         if (!PojoUtil.isEmpty(affiliationForm.getEndDate()) && !validDate(affiliationForm.getEndDate())) {
             primaryValidation = false;
             setError(affiliationForm.getEndDate(), "common.dates.invalid");
+        }
+        
+        if (primaryValidation && (PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
+            setError(affiliationForm.getStartDate(), "common.dates.start_date_required");
         }
         
         if (primaryValidation && (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {

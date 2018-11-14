@@ -178,19 +178,18 @@
                     <!--  -->
                     <div class="form-group">
                         <label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
-                        <span class="required" [ngClass]="isValidStartDate(editAffiliation.startDate)">*</span>
                         <div>
-                            <select id="startYear" name="startYear" [(ngModel)]="editAffiliation.startDate.year" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
+                            <select id="startYear" name="startYear" [(ngModel)]="editAffiliation.startDate.year">
                                 <#list years?keys as key>
                                     <option value="${key}">${years[key]}</option>
                                 </#list>
                             </select>                          
-                            <select id="startMonth" name="startMonth" [(ngModel)]="editAffiliation.startDate.month" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
+                            <select id="startMonth" name="startMonth" [(ngModel)]="editAffiliation.startDate.month">
                                 <#list months?keys as key>
                                     <option value="${key}">${months[key]}</option>
                                 </#list>
                             </select>                   
-                            <select id="startDay" name="startDay" [(ngModel)]="editAffiliation.startDate.day" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
+                            <select id="startDay" name="startDay" [(ngModel)]="editAffiliation.startDate.day">
                                 <#list days?keys as key>
                                     <option value="${key}">${days[key]}</option>
                                 </#list>
@@ -234,7 +233,7 @@
                             <label>
                                 Set visibility:
                             </label>
-                            <div class="controlls">
+                            <div class="controls">
                                 <privacy-toggle-ng2 
                                 [dataPrivacyObj]="editAffiliation" 
                                 elementId="affiliation-privacy-toggle" 
