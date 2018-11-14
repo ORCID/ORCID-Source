@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
@@ -136,7 +135,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(record.getHistory());
         assertEquals(OrcidType.USER, record.getOrcidType());
         assertNotNull(record.getPreferences());
-        assertEquals(AvailableLocales.EN, record.getPreferences().getLocale());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
         History history = record.getHistory();
         assertTrue(history.getClaimed());
         assertNotNull(history.getCompletionDate());
@@ -162,7 +161,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(record.getHistory());
         assertEquals(OrcidType.USER, record.getOrcidType());
         assertNotNull(record.getPreferences());
-        assertEquals(AvailableLocales.EN, record.getPreferences().getLocale());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
         History history = record.getHistory();
         assertTrue(history.getClaimed());
         assertNotNull(history.getCompletionDate());

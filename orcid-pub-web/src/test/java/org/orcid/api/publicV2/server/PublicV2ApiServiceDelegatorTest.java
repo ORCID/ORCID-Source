@@ -45,8 +45,8 @@ import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.core.manager.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
-import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -1417,7 +1417,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(record.getHistory());
         assertEquals(OrcidType.USER, record.getOrcidType());
         assertNotNull(record.getPreferences());
-        assertEquals(AvailableLocales.EN, record.getPreferences().getLocale());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
         History history = record.getHistory();
         assertTrue(history.getClaimed());
         assertNotNull(history.getCompletionDate());
