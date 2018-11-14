@@ -8,6 +8,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class JSONWorkExternalIdentifiersConverterV1 {
@@ -50,17 +51,19 @@ public class JSONWorkExternalIdentifiersConverterV1 {
         JSONWorkExternalIdentifiers jsonWorkExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, JSONWorkExternalIdentifiers.class);
         WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
         for (JSONWorkExternalIdentifier jsonWorkExternalIdentifier : jsonWorkExternalIdentifiers.getWorkExternalIdentifier()) {
-            WorkExternalIdentifier workExternalIdentifier = new WorkExternalIdentifier();
-            try {
-                workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(conv.convertFrom(jsonWorkExternalIdentifier.getWorkExternalIdentifierType(), null)));
-            } catch (Exception e) {
-                workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID);
-            }
-            workExternalIdentifier.setWorkExternalIdentifierId(new org.orcid.jaxb.model.message.WorkExternalIdentifierId());
-            if (jsonWorkExternalIdentifier.getWorkExternalIdentifierId() != null) {
-                workExternalIdentifier.getWorkExternalIdentifierId().setContent(jsonWorkExternalIdentifier.getWorkExternalIdentifierId().content);
-            }
-            workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
+            if(jsonWorkExternalIdentifier.getRelationship() != null && !Relationship.VERSION_OF.name().equals(jsonWorkExternalIdentifier.getRelationship())) {
+                WorkExternalIdentifier workExternalIdentifier = new WorkExternalIdentifier();
+                try {
+                    workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(conv.convertFrom(jsonWorkExternalIdentifier.getWorkExternalIdentifierType(), null)));
+                } catch (Exception e) {
+                    workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID);
+                }
+                workExternalIdentifier.setWorkExternalIdentifierId(new org.orcid.jaxb.model.message.WorkExternalIdentifierId());
+                if (jsonWorkExternalIdentifier.getWorkExternalIdentifierId() != null) {
+                    workExternalIdentifier.getWorkExternalIdentifierId().setContent(jsonWorkExternalIdentifier.getWorkExternalIdentifierId().content);
+                }
+                workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
+            }            
         }
         return workExternalIdentifiers;
     }

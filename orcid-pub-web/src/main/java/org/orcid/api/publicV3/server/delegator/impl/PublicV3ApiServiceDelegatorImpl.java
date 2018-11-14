@@ -4,6 +4,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,7 @@ import org.orcid.jaxb.model.v3.rc2.record.Distinction;
 import org.orcid.jaxb.model.v3.rc2.record.Education;
 import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.rc2.record.Keyword;
@@ -74,6 +76,7 @@ import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc2.record.Qualification;
 import org.orcid.jaxb.model.v3.rc2.record.Record;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
@@ -209,6 +212,16 @@ public class PublicV3ApiServiceDelegatorImpl
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
+    private Boolean filterVersionOfIdentifiers = false;
+    
+    public Boolean getFilterVersionOfIdentifiers() {
+        return filterVersionOfIdentifiers;
+    }
+
+    public void setFilterVersionOfIdentifiers(Boolean filterVersionOfIdentifiers) {
+        this.filterVersionOfIdentifiers = filterVersionOfIdentifiers;
+    }
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -234,7 +247,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewActivities(String orcid) {
         checkProfileStatus(orcid);
-        ActivitiesSummary as = activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid);
+        ActivitiesSummary as = activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid, filterVersionOfIdentifiers);
         publicAPISecurityManagerV3.filter(as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
@@ -259,6 +272,20 @@ public class PublicV3ApiServiceDelegatorImpl
     public Response viewWorks(String orcid) {
         checkProfileStatus(orcid);
         List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
+        // Should we filter the version-of identifiers before grouping?
+        if(filterVersionOfIdentifiers) {
+            for(WorkSummary w : works) {
+                if(w.getExternalIdentifiers() != null && !w.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                    Iterator<ExternalID> it = w.getExternalIdentifiers().getExternalIdentifier().iterator();
+                    while(it.hasNext()) {
+                        ExternalID extId = it.next();
+                        if(Relationship.VERSION_OF.equals(extId.getRelationship())) {
+                            it.remove();
+                        }
+                    }
+                }
+            }
+        }
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicAPISecurityManagerV3.filter(publicWorks);
         ActivityUtils.cleanEmptyFields(publicWorks);
@@ -610,7 +637,7 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewRecord(String orcid) {
         checkProfileStatus(orcid);
-        Record record = recordManagerReadOnly.getPublicRecord(orcid);
+        Record record = recordManagerReadOnly.getPublicRecord(orcid, filterVersionOfIdentifiers);
         publicAPISecurityManagerV3.filter(record);
         if (record.getPerson() != null) {
             sourceUtilsReadOnly.setSourceName(record.getPerson());

@@ -14,8 +14,7 @@ import org.orcid.core.version.V3Convertible;
 import org.orcid.core.version.V3VersionConverterChain;
 
 public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
-
-    @Resource
+    
     private PublicV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> publicV3ApiServiceDelegator;    
     
     private String externalVersion;
@@ -29,6 +28,11 @@ public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServ
     @Resource
     private OrcidSecurityManager orcidSecurityManager;    
     
+    public void setPublicV3ApiServiceDelegator(
+            PublicV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> publicV3ApiServiceDelegator) {
+        this.publicV3ApiServiceDelegator = publicV3ApiServiceDelegator;
+    }
+
     @Override
     public Response viewStatusText() {
         return publicV3ApiServiceDelegator.viewStatusText();

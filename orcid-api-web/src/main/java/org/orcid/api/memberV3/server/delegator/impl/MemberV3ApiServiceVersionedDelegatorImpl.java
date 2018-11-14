@@ -15,7 +15,6 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V3Convertible;
 import org.orcid.core.version.V3VersionConverterChain;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -24,16 +23,12 @@ import org.orcid.jaxb.model.record.bulk.BulkElementContainer;
 public class MemberV3ApiServiceVersionedDelegatorImpl implements
         MemberV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
-    @Resource
     private MemberV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV3ApiServiceDelegator;
 
     private String externalVersion;
 
     @Resource
     private V3VersionConverterChain v3VersionConverterChain;
-
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -64,15 +59,15 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     }
 
     @Override
-    public Response viewWork(String orcid, Long putCode) {
-        checkProfileStatus(orcid, true);
-        return processReponse(memberV3ApiServiceDelegator.viewWork(orcid, putCode));
-    }
-
-    @Override
     public Response viewWorks(String orcid) {
         checkProfileStatus(orcid, true);
         return processReponse(memberV3ApiServiceDelegator.viewWorks(orcid));
+    }
+
+    @Override
+    public Response viewWork(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
+        return processReponse(memberV3ApiServiceDelegator.viewWork(orcid, putCode));
     }
 
     @Override
