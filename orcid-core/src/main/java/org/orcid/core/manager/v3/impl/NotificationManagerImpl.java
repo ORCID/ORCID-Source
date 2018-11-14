@@ -23,7 +23,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
@@ -42,6 +41,7 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
 import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
@@ -64,7 +64,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
-import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
@@ -78,7 +77,6 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -820,7 +818,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = LocaleUtils.toLocale("en");
         
         if(locale != null) {
-            org.orcid.jaxb.model.v3.rc2.common.Locale loc = org.orcid.jaxb.model.v3.rc2.common.Locale.valueOf(managedEntity.getLocale());
+            AvailableLocales loc = AvailableLocales.valueOf(managedEntity.getLocale());
             userLocale = LocaleUtils.toLocale(loc.value());
         }        
 
@@ -1140,7 +1138,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Locale locale = org.orcid.jaxb.model.common_v2.Locale.valueOf(profile.getLocale());
+        AvailableLocales locale = AvailableLocales.valueOf(profile.getLocale());
         if (locale != null) {
             return LocaleUtils.toLocale(locale.value());
         }

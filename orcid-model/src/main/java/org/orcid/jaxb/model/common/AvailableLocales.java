@@ -26,6 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum AvailableLocales {
     @XmlEnumValue("ar")
     AR("ar"), 
+    @XmlEnumValue("cs")
+    CS("cs"), 
     @XmlEnumValue("en")
     EN("en"), 
     @XmlEnumValue("es")
@@ -69,7 +71,7 @@ public enum AvailableLocales {
                 return c;
             }
         }
-        // if we don't support the specified language return english
+        // if we don't support the specified language return English
         return AvailableLocales.EN;
     }
 
