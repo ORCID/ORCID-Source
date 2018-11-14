@@ -68,25 +68,25 @@ See sample [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/master
 
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
-| Read all peer-review groups   | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_dev1/group-id-record/?page-size=10&page=1 |
-| Read one peer-review group   | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_dev1/group-id-record/[PUT-CODE] |
-| Add new peer-review group    | POST        | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_dev1/group-id-record            |
-| Update peer-review group | PUT         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_dev1/group-id-record/[PUT-CODE] |
-| Delete peer-review group | DELETE*      | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_dev1/group-id-record/[PUT-CODE] |
-| Search for a peer-review group by name | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_dev1/?name=Name+you+are+searching+for&page-size=10&page=1 |
+| Read all peer-review groups   | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record/?page-size=10&page=1 |
+| Read one peer-review group   | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record/[PUT-CODE] |
+| Add new peer-review group    | POST        | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record            |
+| Update peer-review group | PUT         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record/[PUT-CODE] |
+| Delete peer-review group | DELETE*      | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record/[PUT-CODE] |
+| Search for a peer-review group by name | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/?name=Name+you+are+searching+for&page-size=10&page=1 |
 
 *Peer-review groups that are referenced by existing peer-review items can not be deleted.
 
 **Curl example to post a new group**
 ```
-curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -d '@group.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/group-id-record'
+curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -d '@group.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/group-id-record'
 ```
 
 Example response
 ```
 HTTP/1.1 201 Created
 ...
-Location: http://api.sandbox.orcid.org/v3.0_dev1/group-id-record/1348
+Location: http://api.sandbox.orcid.org/v3.0_rc1/group-id-record/1348
 ```
 For more information on working with peer-review groups see [Group id record API](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/README.md)
 
@@ -198,7 +198,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 
 **Example request in curl**
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/peer-review/1374'
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/peer-review/1374'
 ```
 
 Example response
