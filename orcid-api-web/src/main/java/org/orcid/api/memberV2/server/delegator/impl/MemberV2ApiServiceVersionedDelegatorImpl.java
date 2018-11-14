@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -115,11 +116,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
                         workBulk.getBulk().remove(i);
                         errors.put(i, error);
                         workBulk.getBulk().add(i, error);
-                    } else {
+                    } else if (org.orcid.jaxb.model.record_v2.Work.class.isAssignableFrom(bulkElement.getClass())) {
                         org.orcid.jaxb.model.error_v2.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2(9001, 400, e);
                         workBulk.getBulk().remove(i);
                         errors.put(i, error);
                         workBulk.getBulk().add(i, error);
+                    } else {
+                        throw new OrcidBadRequestException("Invalid bulk element found");
                     }
                 }
             }

@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +16,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
@@ -75,6 +75,7 @@ import org.orcid.jaxb.model.v3.rc2.record.Education;
 import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.rc2.record.Keyword;
@@ -89,6 +90,7 @@ import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc2.record.Qualification;
 import org.orcid.jaxb.model.v3.rc2.record.Record;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
@@ -249,7 +251,17 @@ public class MemberV3ApiServiceDelegatorImpl implements
     
     @Resource
     private StatusManager statusManager;
+    
+    private Boolean filterVersionOfIdentifiers = false;
+    
+    public Boolean getFilterVersionOfIdentifiers() {
+        return filterVersionOfIdentifiers;
+    }
 
+    public void setFilterVersionOfIdentifiers(Boolean filterVersionOfIdentifiers) {
+        this.filterVersionOfIdentifiers = filterVersionOfIdentifiers;
+    }
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -264,7 +276,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewRecord(String orcid) {
-        Record record = recordManagerReadOnly.getRecord(orcid);
+        Record record = recordManagerReadOnly.getRecord(orcid, filterVersionOfIdentifiers);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
             sourceUtils.setSourceName(record.getPerson());
@@ -280,7 +292,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = activitiesSummaryManagerReadOnly.getActivitiesSummary(orcid);
+        ActivitiesSummary as = activitiesSummaryManagerReadOnly.getActivitiesSummary(orcid, filterVersionOfIdentifiers);
         orcidSecurityManager.checkAndFilter(orcid, as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
@@ -312,6 +324,20 @@ public class MemberV3ApiServiceDelegatorImpl implements
         worksList = filteredList;
 
         orcidSecurityManager.checkAndFilter(orcid, worksList, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        // Should we filter the version-of identifiers before grouping?
+        if(filterVersionOfIdentifiers) {
+            for(WorkSummary w : worksList) {
+                if(w.getExternalIdentifiers() != null && !w.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                    Iterator<ExternalID> it = w.getExternalIdentifiers().getExternalIdentifier().iterator();
+                    while(it.hasNext()) {
+                        ExternalID extId = it.next();
+                        if(Relationship.VERSION_OF.equals(extId.getRelationship())) {
+                            it.remove();
+                        }
+                    }
+                }
+            }
+        }
         Works works = workManager.groupWorks(worksList, false);
         Api3_0_RC2LastModifiedDatesHelper.calculateLastModified(works);
         ActivityUtils.cleanEmptyFields(works);

@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.naming.OperationNotSupportedException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
@@ -23,16 +22,17 @@ import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
+import org.orcid.core.exception.MissingStartDateException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
-import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.MultipleOrganizationHolder;
@@ -310,6 +310,9 @@ public class ActivityValidator {
             validateDisambiguatedOrg(funding);
             if (funding.getEndDate() != null) {
                 validateFuzzyDate(funding.getEndDate());
+                if (funding.getStartDate() == null) {
+                    throw new MissingStartDateException();
+                }
             }
             if (funding.getStartDate() != null) {
                 validateFuzzyDate(funding.getStartDate());
@@ -371,12 +374,15 @@ public class ActivityValidator {
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = affiliation.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }
+        } 
 
         if (isApiRequest) {
             validateDisambiguatedOrg(affiliation);
             if (affiliation.getEndDate() != null) {
                 validateFuzzyDate(affiliation.getEndDate());
+                if (affiliation.getStartDate() == null) {
+                    throw new MissingStartDateException();
+                }
             }
             if (affiliation.getStartDate() != null) {
                 validateFuzzyDate(affiliation.getStartDate());
@@ -507,8 +513,13 @@ public class ActivityValidator {
             throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Proposal");
         }
         externalIDValidator.validateWorkOrPeerReview(rr.getProposal().getExternalIdentifiers());
-        if (isApiRequest)
+        if (isApiRequest) {
             validateDisambiguatedOrg(rr.getProposal().getHosts());
+            if (rr.getProposal().getEndDate() != null && rr.getProposal().getStartDate() == null) {
+                throw new MissingStartDateException();
+            }
+        }
+        
         for (ResearchResourceItem i:rr.getResourceItems()){
             if (i.getExternalIdentifiers() == null || i.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Item");

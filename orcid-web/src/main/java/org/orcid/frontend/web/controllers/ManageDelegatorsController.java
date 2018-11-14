@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.Text;
@@ -44,6 +45,9 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
     @Resource
     private OrcidIdentifierUtils orcidIdentifierUtils;
     
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
+    
     @RequestMapping
     public ModelAndView manageDelegators() {
         return new ModelAndView("manage_delegators");
@@ -54,16 +58,18 @@ public class ManageDelegatorsController extends BaseWorkspaceController {
         Map<String, Object> map = new HashMap<>();
         String realUserOrcid = getRealUserOrcid();
         
+        Boolean isLocked = profileEntityManagerReadOnly.isLocked(realUserOrcid);
+        
         List<DelegateForm> delegates = new ArrayList<DelegateForm>();
         
         // Don't fetch the delegates if it is in delegation mode
-        if(!isInDelegationMode()) {
+        if(!isLocked && !isInDelegationMode()) {
             delegates = givenPermissionToManagerReadOnly.findByReceiver(realUserOrcid, getLastModified(realUserOrcid));            
         }
         
         map.put("delegators", delegates);
 
-        if (sourceManager.isInDelegationMode()) {
+        if (isInDelegationMode()) {
             // Add me, so I can switch back to me
             DelegateForm form = new DelegateForm();
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(realUserOrcid));

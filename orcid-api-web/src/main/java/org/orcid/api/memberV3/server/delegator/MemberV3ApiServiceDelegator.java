@@ -17,9 +17,9 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response viewActivities(String orcid);
 
-    Response viewWork(String orcid, Long putCode);
-
     Response viewWorks(String orcid);
+    
+    Response viewWork(String orcid, Long putCode);
 
     Response viewWorkSummary(String orcid, Long putCode);
 

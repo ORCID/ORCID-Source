@@ -68,7 +68,8 @@
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showResetPassword">
         <div class="form-group">
             <label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
-            <input type="text" id="orcid" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
+            <input type="text" id="orcid" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" (ngModelChange)="validateResetPassword()"/>
+            <a href class="glyphicon glyphicon-ok green" *ngIf="emailAddressVerified"></a>
             <label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
             <input type="text" id="password" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
             <a (click)="randomString()" class="glyphicon glyphicon-random blue"></a>
