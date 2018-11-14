@@ -54,7 +54,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **role-title** _(optional)_ The title given for the position, or the degree earned
 
-- **start-date** _(optional, required in 3.0+)_ The date the affiliation began
+- **start-date** _(optional)_ The date the affiliation began
 
 - **end-date** _(optional)_ The date the affiliation ended or will end
 
