@@ -267,14 +267,23 @@
                                         {{contributor.creditName?.value}} <span>{{contributor | contributorFilter}}</span>
                                     </div>
                                 </div>                                      
+                            </div> 
+                        </div>
+                        <!--Added/last modified dates-->                
+                        <div class="row bottomBuffer">
+                            <div class="col-md-6">
+                                <div class="bottomBuffer">
+                                    <strong><@orcid.msg 'groups.common.added'/></strong><br> 
+                                    <span>{{worksService.details[work.putCode.value].createdDate | ajaxFormDateToISO8601}}</span>
+                                </div>    
                             </div>
                             <div class="col-md-6">
                                 <div class="bottomBuffer">
-                                    <strong><@orcid.msg 'groups.common.created'/></strong><br />
-                                    <div>{{worksService.details[work.putCode.value].createdDate | ajaxFormDateToISO8601}}</div>
-                                </div>      
-                            </div>    
-                        </div>
+                                    <strong><@orcid.msg 'groups.common.last_modified'/></strong><br> 
+                                    <span>{{worksService.details[work.putCode.value].lastModified | ajaxFormDateToISO8601}}</span>
+                                </div>    
+                            </div>      
+                        </div><!--Added/last modified dates--> 
                         
                     </div>  
                 </div>

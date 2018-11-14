@@ -150,11 +150,21 @@
                                                         </div>                            
                                                         </div>  
                                                         <div class="col-md-12 sources-container-header">
-                                                            <div class="row">
-                                                                <div class="col-md-3 col-sm-3 col-xs-6">
-                                                                    <span class="workspace-title"><@orcid.msg 'groups.common.created'/></span> <span *ngIf="peerReviewService.details[peerReview.putCode.value]?.createdDate">{{peerReviewService.details[peerReview.putCode.value]?.createdDate | ajaxFormDateToISO8601}}</span>
-                                                                </div>              
-                                                            </div>
+                                                            <!--Added/last modified dates-->
+                                                            <div class="row bottomBuffer">
+                                                                <div class="col-md-6">
+                                                                    <div class="bottomBuffer">
+                                                                        <strong><@orcid.msg 'groups.common.added'/></strong><br> 
+                                                                        <span>{{peerReviewService.details[peerReview.putCode.value]?.createdDate | ajaxFormDateToISO8601}}</span>
+                                                                    </div>    
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="bottomBuffer">
+                                                                        <strong><@orcid.msg 'groups.common.last_modified'/></strong><br> 
+                                                                        <span>{{peerReviewService.details[peerReview.putCode.value]?.lastModified | ajaxFormDateToISO8601}}</span>
+                                                                    </div>    
+                                                                </div>      
+                                                            </div><!--Added/last modified dates-->               
                                                         </div>
                                                     </div>
                                                     <!-- Begin of source -->

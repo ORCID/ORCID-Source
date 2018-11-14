@@ -188,14 +188,21 @@
                                 </div>
                             </div>          
                         </div>                                         
-                        <div class="row bottomBuffer">         
+                        <!--Added/last modified dates-->                
+                        <div class="row bottomBuffer">
                             <div class="col-md-6">
                                 <div class="bottomBuffer">
-                                    <strong><@orcid.msg 'groups.common.created'/></strong><br />
-                                    <div>{{researchResourceService.details[researchResource.putCode].createdDate | ajaxFormDateToISO8601}}</div>
-                                </div>      
-                            </div>    
-                        </div>
+                                    <strong><@orcid.msg 'groups.common.added'/></strong><br> 
+                                    <span>{{researchResourceService.details[researchResource.putCode].createdDate | ajaxFormDateToISO8601}}</span>
+                                </div>    
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bottomBuffer">
+                                    <strong><@orcid.msg 'groups.common.last_modified'/></strong><br> 
+                                    <span>{{researchResourceService.details[researchResource.putCode].lastModified | ajaxFormDateToISO8601}}</span>
+                                </div>    
+                            </div>      
+                        </div><!--Added/last modified dates--> 
                         <div class="row bottomBuffer">                                    
                                 <div class="research-resource-list-container col-md-12" *ngIf="researchResourceService.details[researchResource.putCode].items?.length > 0">
                                     <ul class="sources-edit-list">
