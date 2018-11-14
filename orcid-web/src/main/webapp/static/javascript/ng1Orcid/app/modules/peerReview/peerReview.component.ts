@@ -61,6 +61,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     showResourceItemDetails: any;
     sortState: any;
     peerReviewImportWizard: boolean = false;
+    wizardDescExpanded: any = {};
 
     constructor(
         private peerReviewService: PeerReviewService,
@@ -160,6 +161,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
+                    console.log (data)
                     this.peerReviewImportWizardList = data;
                     if(data == null || data.length == 0) {
                         this.noLinkFlag = false;
@@ -367,6 +369,15 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     showPeerReviewImportWizard () {
         this.peerReviewImportWizard = !this.peerReviewImportWizard;
     }
+
+    toggleWizardDesc(id): void{
+        this.wizardDescExpanded[id] = !this.wizardDescExpanded[id];
+    };
+
+    openImportWizardUrlFilter(url, client): void {
+        url = url + '?client_id=' + client.id + '&response_type=code&scope=' + client.scopes + '&redirect_uri=' + client.redirectUri;
+        openImportWizardUrl(url);
+    };
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();

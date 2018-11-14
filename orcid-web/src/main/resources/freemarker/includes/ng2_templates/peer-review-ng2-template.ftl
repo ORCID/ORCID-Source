@@ -72,7 +72,7 @@
                                     <ul class="toggle-menu">
                                         <li [ngClass]="{'green-bg' : peerReviewImportWizard == true}"> 
                                             <span class="glyphicon glyphicon-plus"></span>
-                                            <@orcid.msg 'groups.common.add_works'/>
+                                            <@orcid.msg 'groups.common.add_peer_review'/>
                                             <ul class="menu-options works">
                                             <!--Search & link-->
                                                 <li>
@@ -91,14 +91,51 @@
                         </#escape>                                
                     </div>
                 </div>
-            </div>                        
+            </div>    
+            <!-- Peer Review Import Wizard -->
+            <div *ngIf="peerReviewImportWizard" class="work-import-wizard">
+                <div class="ie7fix-inner">
+                    <div class="row"> 
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_peer_reviews'/></h1>
+                            <span (click)="showPeerReviewImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_peer_review'/></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <p class="wizard-content">
+                                <@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
+                            </p>
+                        </div>
+                    </div>
+       
+                    <div class="row wizards">               
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div *ngFor="let wtw of peerReviewImportWizardList">
+                                <strong><a (click)="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong>
+
+                                <br />                                                                                    
+                                <div class="justify">                       
+                                    <p class="wizard-description" [ngClass]="{'ellipsis-on' : wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null}">
+                                        {{wtw.description}}
+                                        <a (click)="toggleWizardDesc(wtw.id)" *ngIf="wizardDescExpanded[wtw.id]"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+                                    </p>                        
+                                    <a (click)="toggleWizardDesc(wtw.id)" *ngIf="wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+                                </div>
+                                <hr/>
+                            </div>
+                        </div>
+                    </div>
+                </div>            
+            </div>
+                                
             <div *ngIf="workspaceSrvc.displayPeerReview" class="workspace-accordion-content">
-                <ul class="workspace-peer-review workspace-body-list bottom-margin-medium" id="peer-review-header">
+                <ul *ngIf="peerReviewService?.groups?.legth > 0" class="workspace-peer-review workspace-body-list bottom-margin-medium" id="peer-review-header">
                     <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of peerReviewService.groups">
                         <#include "peer-review-details-ng2.ftl"/> 
                     </li>
                 </ul>
-                <div *ngIf="peerReviewService.loading == false && peerReviewService.groups.length == 0">
+                <div *ngIf="peerReviewService.loading == false && peerReviewService.groups.length == 0 && !peerReviewImportWizard">
                     <strong>
                     <#if (publicProfile)?? && publicProfile == true>
                         ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}
