@@ -104,7 +104,7 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <p class="wizard-content">
-                                <@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
+                                <@orcid.msg 'workspace.LinkResearchActivities.description'/>
                             </p>
                         </div>
                     </div>
