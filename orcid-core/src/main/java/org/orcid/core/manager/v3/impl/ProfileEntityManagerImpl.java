@@ -540,10 +540,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
-                LOGGER.info("About to reactivate record, orcid={}", orcid);
-                String orcid = emailManager.findOrcidIdByEmail(primaryEmail);
+                LOGGER.info("About to reactivate record, orcid={}", orcid);                
                 // Populate primary email
-                emailManager.reactivatePrimaryEmail(orcid, primaryEmail, getHash(primaryEmail));
+                String primaryEmailTrim = primaryEmail.trim();
+                String emailToHash = getHash(primaryEmailTrim.toLowerCase());                
+                emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim, getHash(emailToHash));
                 if(reactivation == null) {
                     // Delete any non primary email
                     emailManager.clearEmailsAfterReactivation(orcid);                    
