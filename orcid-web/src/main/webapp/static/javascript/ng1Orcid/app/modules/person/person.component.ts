@@ -48,6 +48,8 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyHelp: any;
     scrollTop: any;
     setFocus: boolean;
+    sortedCountryNames: any;
+    countryNamesToCountryCodes: any;
     
     constructor( 
         private cdr:ChangeDetectorRef,
@@ -85,8 +87,28 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelp = false;
         this.scrollTop = 0;
         this.setFocus = true;
+        this.initCountries();
     }
-
+    
+    initCountries(): void {
+        this.commonSrvc.getCountryNamesMappedToCountryCodes().pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.countryNamesToCountryCodes = data;
+                this.sortedCountryNames = [];
+                for (var key in this.countryNamesToCountryCodes) {
+                    this.sortedCountryNames.push(key);
+                }
+                this.sortedCountryNames.sort();
+            },
+            error => {
+                console.log('error fetching country names to country codes map', error);
+            } 
+        );
+    };
+    
     addSectionItem(sectionName): void {
         let tmpObj;
         switch(sectionName){
