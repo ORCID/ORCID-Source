@@ -553,8 +553,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                     if(reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
                         for(Text additionalEmail : reactivation.getEmailsAdditional()) {
                             if(!PojoUtil.isEmpty(additionalEmail)) {
-                                String email = additionalEmail.getValue();
-                                String hash = getHash(email);
+                                String email = additionalEmail.getValue().trim();
+                                String hash = getHash(email.toLowerCase());
                                 boolean isNewEmailOrShouldNotify = emailManager.reactivateOrCreate(orcid, email, hash, reactivation.getActivitiesVisibilityDefault().getVisibility());                                      
                                 if(isNewEmailOrShouldNotify) {
                                     emailsToNotify.add(email);
