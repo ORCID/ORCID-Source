@@ -199,7 +199,7 @@
                             <div class="col-md-6">
                                 <div class="bottomBuffer">
                                     <strong><@orcid.msg 'groups.common.last_modified'/></strong><br> 
-                                    <span>{{researchResourceService.details[researchResource.putCode].lastModified | ajaxFormDateToISO8601}}</span>
+                                    <span>{{researchResourceService.details[researchResource.putCode].lastModifiedDate | ajaxFormDateToISO8601}}</span>
                                 </div>    
                             </div>      
                         </div><!--Added/last modified dates--> 
