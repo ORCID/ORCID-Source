@@ -542,9 +542,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             public Boolean doInTransaction(TransactionStatus status) {
                 LOGGER.info("About to reactivate record, orcid={}", orcid);                
                 // Populate primary email
-                String primaryEmailTrim = primaryEmail.trim();
-                String emailToHash = getHash(primaryEmailTrim.toLowerCase());                
-                emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim, getHash(emailToHash));
+                String primaryEmailTrim = primaryEmail.trim();                    
+                emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim, getHash(primaryEmailTrim.toLowerCase()));
                 if(reactivation == null) {
                     // Delete any non primary email
                     emailManager.clearEmailsAfterReactivation(orcid);                    
