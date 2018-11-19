@@ -798,25 +798,28 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             numToSave = worksToSave.length;
             for (let work of worksToSave) {
-                this.worksService.postWork(work)
-                .pipe(    
-                    takeUntil(this.ngUnsubscribe)
+                setTimeout (() => {
+                    this.worksService.postWork(work)
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            var index = this.worksFromBibtex.indexOf(work);
+                            this.worksFromBibtex.splice(index, 1);
+                            numToSave--;
+                            if (numToSave == 0){
+                                this.closeAllMoreInfo();
+                                this.refreshWorkGroups();
+                                this.savingBibtex = false;
+                            }
+                        },
+                        error => {
+                            console.log('worksForm.component.ts addWorkError', error);
+                        } 
+                    );
+                },  (worksToSave.indexOf(work)*500 ) 
                 )
-                .subscribe(
-                    data => {
-                        var index = this.worksFromBibtex.indexOf(work);
-                        this.worksFromBibtex.splice(index, 1);
-                        numToSave--;
-                        if (numToSave == 0){
-                            this.closeAllMoreInfo();
-                            this.refreshWorkGroups();
-                            this.savingBibtex = false;
-                        }
-                    },
-                    error => {
-                        console.log('worksForm.component.ts addWorkError', error);
-                    } 
-                );
             }
         }
     };
