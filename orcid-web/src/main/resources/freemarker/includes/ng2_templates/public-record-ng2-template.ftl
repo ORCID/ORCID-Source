@@ -167,7 +167,7 @@
                             <#assign i = 1>
                             <#list publicGroupedResearcherUrls[url] as researcherUrl>                              
                                 <#if (i == 1)>
-                                      <a href="<@orcid.absUrl researcherUrl.url/>" target="researcherUrl.urlName" rel="me nofollow"><#if (researcherUrl.urlName)! != "">${researcherUrl.urlName}<#else>${researcherUrl.url.value}</#if></a><#if url_has_next><br/></#if>
+                                      <a href="<@orcid.absUrl researcherUrl.url/>" target="researcherUrl.urlName" rel="me nofollow"><#if (researcherUrl.urlName)! != "">${researcherUrl.urlName?replace("{","[")?replace("}","]")}<#else>${researcherUrl.url.value?replace("{","[")?replace("}","]")}</#if></a><#if url_has_next><br/></#if>
                                 </#if>          
                                 <#if (i == 1)>                              
                                     <div *ngIf="showSources['websites']" class="source-line separator">
