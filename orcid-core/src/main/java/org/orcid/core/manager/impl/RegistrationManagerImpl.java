@@ -238,11 +238,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         EmailEntity emailEntity = new EmailEntity();
         String email = registration.getEmail().getValue().trim();
         emailEntity.setEmail(email);
-        try {
-            emailEntity.setId(encryptionManager.sha256Hash(email.toLowerCase()));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        emailEntity.setId(encryptionManager.getEmailHash(email));
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
@@ -259,11 +255,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                 EmailEntity emailAdditionalEntity = new EmailEntity();
                 String emailValue = emailAdditional.getValue().trim();
                 emailAdditionalEntity.setEmail(emailValue);
-                try {
-                    emailAdditionalEntity.setId(encryptionManager.sha256Hash(emailValue.toLowerCase()));
-                } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
-                }
+                emailAdditionalEntity.setId(encryptionManager.getEmailHash(email));
                 emailAdditionalEntity.setProfile(newRecord);
                 emailAdditionalEntity.setPrimary(false);
                 emailAdditionalEntity.setCurrent(true);

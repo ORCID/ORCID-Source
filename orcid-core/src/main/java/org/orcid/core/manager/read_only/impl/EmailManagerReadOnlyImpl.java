@@ -40,20 +40,12 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public boolean emailExists(String email) {
-        try {            
-            return emailDao.emailExists(encryptionManager.sha256Hash(email.trim().toLowerCase()));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        return emailDao.emailExists(encryptionManager.getEmailHash(email));        
     }
 
     @Override
-    public String findOrcidIdByEmail(String email) {
-        try {            
-            return emailDao.findOrcidIdByEmailHash(encryptionManager.sha256Hash(email.trim().toLowerCase()));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } 
+    public String findOrcidIdByEmail(String email) {        
+        return emailDao.findOrcidIdByEmailHash(encryptionManager.getEmailHash(email));
     }
     
     @Override
@@ -104,8 +96,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     public boolean isPrimaryEmailVerified(String orcid) {
         return emailDao.isPrimaryEmailVerified(orcid);
     }
-    
-    
+        
     @Override
     public Emails getEmails(String orcid) {
         List<EmailEntity> entities = emailDao.findByOrcid(orcid, getLastModified(orcid));
@@ -140,12 +131,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public EmailEntity find(String email) {
-        try {            
-            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-            return emailDao.find(emailHash);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } 
+        return emailDao.find(encryptionManager.getEmailHash(email));
     }
 
     @Override

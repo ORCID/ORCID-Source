@@ -399,7 +399,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public String getHash(String string) {
+    public String getOrcidHash(String string) {
         if (PojoUtil.isEmpty(string)) {
             return null;
         }
@@ -407,8 +407,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             return encryptionManager.sha256Hash(string);
         } catch(NoSuchAlgorithmException nsae) {
             throw new RuntimeException(nsae);
-        }
-        
+        }        
     }
 
     @Override
@@ -525,12 +524,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public boolean isProfileClaimedByEmail(String email) {
-        try {
-            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-            return profileDao.getClaimedStatusByEmailHash(emailHash);
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
+        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));        
     }
     
     @Override
@@ -543,7 +537,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 LOGGER.info("About to reactivate record, orcid={}", orcid);                
                 // Populate primary email
                 String primaryEmailTrim = primaryEmail.trim();                    
-                emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim, getHash(primaryEmailTrim.toLowerCase()));
+                emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim);
                 if(reactivation == null) {
                     // Delete any non primary email
                     emailManager.clearEmailsAfterReactivation(orcid);                    
@@ -552,9 +546,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                     if(reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
                         for(Text additionalEmail : reactivation.getEmailsAdditional()) {
                             if(!PojoUtil.isEmpty(additionalEmail)) {
-                                String email = additionalEmail.getValue().trim();
-                                String hash = getHash(email.toLowerCase());
-                                boolean isNewEmailOrShouldNotify = emailManager.reactivateOrCreate(orcid, email, hash, reactivation.getActivitiesVisibilityDefault().getVisibility());                                      
+                                String email = additionalEmail.getValue().trim();                                
+                                boolean isNewEmailOrShouldNotify = emailManager.reactivateOrCreate(orcid, email, reactivation.getActivitiesVisibilityDefault().getVisibility());                                      
                                 if(isNewEmailOrShouldNotify) {
                                     emailsToNotify.add(email);
                                 }

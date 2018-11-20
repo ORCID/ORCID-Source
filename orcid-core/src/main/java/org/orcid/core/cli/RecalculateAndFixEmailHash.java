@@ -90,7 +90,7 @@ public class RecalculateAndFixEmailHash {
                 String hash = (String) element[2];
                 
                 if(!PojoUtil.isEmpty(email)) {
-                    String correctedEmailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
+                    String correctedEmailHash = encryptionManager.getEmailHash(email);
                     
                     if(!correctedEmailHash.equals(hash)) {
                         LOG.info(orcid + " - invalid '" + hash + "' valid '" + correctedEmailHash + "'");
