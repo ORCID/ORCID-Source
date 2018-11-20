@@ -58,11 +58,11 @@
                     <div id="public-researcher-urls-div" class="public-content">
                         <#list publicResearcherUrls.researcherUrls as url>
                             <a href="<@orcid.absUrl url.url/>" target="url.urlName" rel="me nofollow">
-                                <#if (url.urlName)! != "">
+                                {{"<#if (url.urlName)! != "">
                                     ${url.urlName}
                                 <#else>
                                     ${url.url.value}
-                                </#if>
+                                </#if>"}}
                             </a>                                
                             <div *ngIf="showSources['websites']" class="source-line separator">                                        
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
