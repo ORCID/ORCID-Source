@@ -30,17 +30,26 @@ public class RecalculateAndFixEmailHash {
     private EncryptionManager encryptionManager;
     private TransactionTemplate transactionTemplate;
 
+    @Option(name = "-o", usage = "Offset")
+    private Integer customOffset;
+    
     @Option(name = "-b", usage = "Batch size")
     private Integer batchSize;
 
     @Option(name = "-f", usage = "Should this fix the problems?")
     private Boolean fixErrors;
     
+    
+    
     public static void main(String... args) throws NoSuchAlgorithmException {
         RecalculateAndFixEmailHash element = new RecalculateAndFixEmailHash();
         CmdLineParser parser = new CmdLineParser(element);
         try {
             parser.parseArgument(args);
+            if(element.customOffset == null) {
+                element.customOffset = 0;
+            }
+            
             // If it is null or too big
             if (element.batchSize == null || element.batchSize > 1000000) {
                 element.batchSize = 50000;
@@ -66,6 +75,9 @@ public class RecalculateAndFixEmailHash {
     private void process() throws NoSuchAlgorithmException {
         LOG.info("Looking at the emails");
         int iteration = 0;
+        if(customOffset > 0) {
+            iteration = customOffset;
+        }
         List emails = Collections.emptyList();
         do {
             LOG.info("Iteration: " + iteration);
