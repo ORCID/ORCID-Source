@@ -34,7 +34,7 @@
         			<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
         		<#else>	            
 	                <#if (biography.content)?? && (biography.content)?has_content>		                	        			
-	        			<div class="workspace-accordion-content" ng-show="displayInfo">
+	        			<div class="workspace-accordion-content">
 	        				<div class="row bottomBuffer">
 	        					<div class="col-md-12 col-sm-12 col-xs-12">
 	        						<h3 class="workspace-title">${springMacroRequestContext.getMessage("public_profile.labelBiography")}</h3>
