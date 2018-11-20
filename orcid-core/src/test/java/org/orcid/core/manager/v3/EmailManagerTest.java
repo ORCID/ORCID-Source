@@ -207,10 +207,13 @@ public class EmailManagerTest extends BaseTest {
         
         assertNotEquals(hashValue, encryptionManager.sha256Hash(emailAddress));
         assertNotEquals(hashValue, encryptionManager.sha256Hash("   " + emailAddress + "   "));
-        assertNotEquals(hashValue, encryptionManager.sha256Hash("   " + emailAddress + "   ".toLowerCase()));
-        assertEquals(hashValue, encryptionManager.sha256Hash("   " + emailAddress + "   ".trim().toLowerCase()));
+        assertNotEquals(hashValue, encryptionManager.sha256Hash(("   " + emailAddress + "   ").toLowerCase()));
+        assertEquals(hashValue, encryptionManager.sha256Hash(("   " + emailAddress + "   ").trim().toLowerCase()));
         assertEquals(hashValue, encryptionManager.getEmailHash(emailAddress));
         assertEquals(hashValue, encryptionManager.getEmailHash("   " + emailAddress + "   "));
+        assertEquals(hashValue, encryptionManager.getEmailHash("test@email.com"));
+        assertEquals(hashValue, encryptionManager.getEmailHash("TEST@EMAIL.COM"));
+        assertEquals(hashValue, encryptionManager.getEmailHash("tEsT@EmAiL.CoM"));
        
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);        
     }

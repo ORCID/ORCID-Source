@@ -255,7 +255,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                 EmailEntity emailAdditionalEntity = new EmailEntity();
                 String emailValue = emailAdditional.getValue().trim();
                 emailAdditionalEntity.setEmail(emailValue);
-                emailAdditionalEntity.setId(encryptionManager.getEmailHash(email));
+                emailAdditionalEntity.setId(encryptionManager.getEmailHash(emailValue));
                 emailAdditionalEntity.setProfile(newRecord);
                 emailAdditionalEntity.setPrimary(false);
                 emailAdditionalEntity.setCurrent(true);
