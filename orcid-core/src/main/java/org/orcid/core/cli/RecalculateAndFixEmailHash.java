@@ -39,7 +39,8 @@ public class RecalculateAndFixEmailHash {
     @Option(name = "-f", usage = "Should this fix the problems?")
     private Boolean fixErrors;
     
-    
+    @Option(name = "-t", usage = "Test just one iteration")
+    private Boolean testMode;
     
     public static void main(String... args) throws NoSuchAlgorithmException {
         RecalculateAndFixEmailHash element = new RecalculateAndFixEmailHash();
@@ -57,6 +58,10 @@ public class RecalculateAndFixEmailHash {
             
             if(element.fixErrors == null) {
                 element.fixErrors = false;
+            }
+            
+            if(element.testMode == null) {
+                element.testMode = false;
             }
         } catch (CmdLineException e) {
             LOG.error(e.getMessage(), e);
@@ -104,7 +109,10 @@ public class RecalculateAndFixEmailHash {
                             });
                         }
                     }
-                }                
+                }
+                if(testMode && iteration > 1) {
+                    emails = null;
+                }
             }
         } while (emails != null && !emails.isEmpty());
         LOG.info("Finished");
