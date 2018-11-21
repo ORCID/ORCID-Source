@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
@@ -190,6 +191,33 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
             assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), r.getVisibility());
         }        
+    }
+    
+    @Test
+    public void testUpdatePassword() {
+        EncryptionManager encryptionManager = (EncryptionManager) ReflectionTestUtils.getField(profileEntityManager, "encryptionManager");
+        ProfileDao profileDao = (ProfileDao) ReflectionTestUtils.getField(profileEntityManager, "profileDao");
+        ProfileHistoryEventManager profileHistoryEventManager = (ProfileHistoryEventManager) ReflectionTestUtils.getField(profileEntityManager, "profileHistoryEventManager");
+        
+        EncryptionManager mockEncryptionManager = Mockito.mock(EncryptionManager.class);
+        ProfileDao mockProfileDao = Mockito.mock(ProfileDao.class);
+        ProfileHistoryEventManager mockProfileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
+        
+        ReflectionTestUtils.setField(profileEntityManager, "encryptionManager", mockEncryptionManager);
+        ReflectionTestUtils.setField(profileEntityManager, "profileDao", mockProfileDao);
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
+        
+        Mockito.when(mockEncryptionManager.hashForInternalUse(Mockito.eq("password"))).thenReturn("encryptedPassword");
+        Mockito.doNothing().when(mockProfileDao).updateEncryptedPassword(Mockito.eq("orcid"), Mockito.eq("encryptedPassword"));
+        Mockito.doNothing().when(mockProfileHistoryEventManager).recordEvent(Mockito.eq(ProfileHistoryEventType.RESET_PASSWORD), Mockito.eq("orcid"));
+        
+        profileEntityManager.updatePassword("orcid", "password");
+        
+        Mockito.verify(mockProfileHistoryEventManager, Mockito.times(1)).recordEvent(Mockito.eq(ProfileHistoryEventType.RESET_PASSWORD), Mockito.eq("orcid"));
+        
+        ReflectionTestUtils.setField(profileEntityManager, "encryptionManager", encryptionManager);
+        ReflectionTestUtils.setField(profileEntityManager, "profileDao", profileDao);
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
     }
     
     @Test

@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
@@ -8,6 +9,8 @@ import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.Distinctions;
@@ -64,16 +67,16 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
     }  
 
     @Override
-    public ActivitiesSummary getActivitiesSummary(String orcid) {
-        return getActivitiesSummary(orcid, false);
+    public ActivitiesSummary getActivitiesSummary(String orcid, boolean filterVersionOfIdentifiers) {
+        return getActivitiesSummary(orcid, false, filterVersionOfIdentifiers);
     }
 
     @Override
-    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {
-        return getActivitiesSummary(orcid, true);
+    public ActivitiesSummary getPublicActivitiesSummary(String orcid, boolean filterVersionOfIdentifiers) {
+        return getActivitiesSummary(orcid, true, filterVersionOfIdentifiers);
     }
 
-    public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
+    public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic, boolean filterVersionOfIdentifiers) {
         ActivitiesSummary activities = new ActivitiesSummary();
 
         // Set distinctions
@@ -123,6 +126,22 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
 
         // Set works
         List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid);
+        
+        // Should we filter the version-of identifiers before grouping?
+        if(filterVersionOfIdentifiers) {
+            for(WorkSummary w : workSummaries) {
+                if(w.getExternalIdentifiers() != null && !w.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                    Iterator<ExternalID> it = w.getExternalIdentifiers().getExternalIdentifier().iterator();
+                    while(it.hasNext()) {
+                        ExternalID extId = it.next();
+                        if(Relationship.VERSION_OF.equals(extId.getRelationship())) {
+                            it.remove();
+                        }
+                    }
+                }
+            }
+        }
+        
         Works works = workManager.groupWorks(workSummaries, justPublic);        
         activities.setWorks(works);
         

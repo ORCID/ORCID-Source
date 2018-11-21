@@ -74,7 +74,7 @@ public class BibtexManagerImpl implements BibtexManager{
     
     @Override
     public String generateBibtexReferenceList(String orcid) {
-        ActivitiesSummary summary = activitiesManager.getActivitiesSummary(orcid);
+        ActivitiesSummary summary = activitiesManager.getActivitiesSummary(orcid, false);
         List<String> citations = new ArrayList<String>();
         if (summary.getWorks()!=null){
             for (WorkGroup group : summary.getWorks().getWorkGroup()){

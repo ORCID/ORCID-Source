@@ -62,42 +62,72 @@ export class ExtIdPopoverComponent implements OnInit {
     ngOnInit() {
         switch(this.activityType){
             case "affiliation":
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
                 if(this.extID.url){
-                    this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    if(this.extID.url.value){
+                        this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    }
                 }
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
             case "funding":
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
                 if(this.extID.url){
-                    this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    if(this.extID.url.value){
+                        this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    }
                 }
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
             case "researchResource":
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
                 if(this.extID.url){
-                    this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    if(this.extID.url.value){
+                        this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    }
                 }
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
             case "work":
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 if(this.extID.url){
-                    this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    if(this.extID.url.value){
+                        this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    }
                 }
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
             default:
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
                 this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
+                if(this.extID.relationship){
+                    if(this.extID.relationship.value){
+                        this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                    }
+                }
                 if(this.extID.url){
-                    this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    if(this.extID.url.value){
+                        this.url = JSON.parse(JSON.stringify(this.extID.url.value));
+                    }
                 }
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
@@ -106,7 +136,9 @@ export class ExtIdPopoverComponent implements OnInit {
             this.urlProtocol.transform(this.url); 
         } else {
             if(this.extID.normalizedUrl){
-                this.url = this.extID.normalizedUrl.value;
+                if(this.extID.normalizedUrl.value){
+                    this.url = this.extID.normalizedUrl.value;
+                }
             }
         }
         

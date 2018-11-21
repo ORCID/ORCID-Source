@@ -1668,7 +1668,7 @@
 						minOccurs="0" maxOccurs="1" />
 					<xs:element name="role-title" type="common:long-text"
 						minOccurs="0" maxOccurs="1" />
-					<xs:element ref="common:start-date" minOccurs="1"
+					<xs:element ref="common:start-date" minOccurs="0"
 						maxOccurs="1" />
 					<xs:element ref="common:end-date" minOccurs="0"
 						maxOccurs="1" />
@@ -1689,7 +1689,7 @@
 						minOccurs="0" maxOccurs="1" />
 					<xs:element name="role-title" type="common:long-text"
 						minOccurs="0" maxOccurs="1" />
-					<xs:element ref="common:start-date" minOccurs="1"
+					<xs:element ref="common:start-date" minOccurs="0"
 						maxOccurs="1" />
 					<xs:element ref="common:end-date" minOccurs="0"
 						maxOccurs="1" />
@@ -1710,6 +1710,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="self" />
 			<xs:enumeration value="part-of" />
+			<xs:enumeration value="version-of" />
 		</xs:restriction>
 	</xs:simpleType>
 	 

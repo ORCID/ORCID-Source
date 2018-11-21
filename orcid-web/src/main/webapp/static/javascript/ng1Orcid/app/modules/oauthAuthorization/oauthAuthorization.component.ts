@@ -90,6 +90,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     showRegisterForm: any;
     showRegisterProcessing: any;
     showUpdateIcon: any;
+    showNotYouDescription: any;
     socialSignInForm: any;
     loadTime: any;
     generalRegistrationError: any;
@@ -141,6 +142,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.requestInfoForm = null;    
         this.registrationForm = {};
         this.scriptsInjected = false;
+        this.showNotYouDescription = false;
         this.showBulletIcon = false;
         this.showClientDescription = false;
         this.showDeactivatedError = false;
@@ -245,6 +247,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             }
         }
         this.cdr.detectChanges();
+    };
+
+    toggleNotYouDescription(): void {
+        this.showNotYouDescription = !this.showNotYouDescription;
     };
 
     toggleClientDescription(): void {
@@ -737,28 +743,41 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             }
         );
 
-        if (this.togglzReLoginAlert && !orcidVar.oauth2Screens && !orcidVar.originalOauth2Process) {
-
-        this.nameService.getData(this.nameFormUrl).subscribe(response => {
-            this.isLoggedIn = true;
-            if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
-                this.realLoggedInUserName = "";
-                this.realLoggedInUserName += response.real.givenNames.value ? response.real.givenNames.value : "";
-                this.realLoggedInUserName += response.real.givenNames.value && response.real.familyName.value ? " " : "";
-                this.realLoggedInUserName += response.real.familyName.value ? response.real.familyName.value : "";
-                this.isLoggedIn == true;
+        this.commonSrvc.getUserStatus().subscribe( 
+            data => {
+                if(data.loggedIn == true) {
+                    if (this.togglzReLoginAlert && !orcidVar.oauth2Screens && !orcidVar.originalOauth2Process) {
+                        this.nameService.getData(this.nameFormUrl).subscribe(response => {
+                            if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
+                                var giveNamesDefined = (response.real.giveNames && response.real.givenNames.value);
+                                var familyNameDefined = (response.real.familyName && response.real.familyName.value);
+                                this.realLoggedInUserName = "";
+                                this.realLoggedInUserName += giveNamesDefined ? response.real.givenNames.value : "";
+                                this.realLoggedInUserName += giveNamesDefined && familyNameDefined ? " " : "";
+                                this.realLoggedInUserName += familyNameDefined ? response.real.familyName.value : "";
+                                this.isLoggedIn == true;
+                            } 
+                            if (response.effective && (response.effective.givenNames.value || response.effective.familyName.value)) {
+                                var giveNamesDefined = (response.effective.giveNames && response.effective.givenNames.value);
+                                var familyNameDefined = (response.effective.familyName && response.effective.familyName.value);
+                                this.effectiveLoggedInUserName = "";
+                                this.effectiveLoggedInUserName += giveNamesDefined ? response.effective.givenNames.value : "";
+                                this.effectiveLoggedInUserName += giveNamesDefined && familyNameDefined ? " " : "";
+                                this.effectiveLoggedInUserName += familyNameDefined ? response.effective.familyName.value : "";
+                                this.isLoggedIn == true;
+                            }     
+                        }, (error) => {
+                            console.log('Error getting public name')
+                            this.isLoggedIn = false;
+                        })
+                    }
+                } else {
+                    this.isLoggedIn = false;
+                }
+            },
+            error => {
+                console.log('oauthAuthorization: ngOnInit error', error);
             } 
-            if (response.effective && (response.effective.givenNames.value || response.effective.familyName.value)) {
-                this.effectiveLoggedInUserName = "";
-                this.effectiveLoggedInUserName += response.effective.givenNames.value ? response.effective.givenNames.value : "";
-                this.effectiveLoggedInUserName += response.effective.givenNames.value && response.effective.familyName.value ? " " : "";
-                this.effectiveLoggedInUserName += response.effective.familyName.value ? response.effective.familyName.value : "";
-                this.isLoggedIn == true;
-            }     
-            }, (error) => {
-                this.isLoggedIn = false;
-            })
-        }
-
+        );
     };
 }

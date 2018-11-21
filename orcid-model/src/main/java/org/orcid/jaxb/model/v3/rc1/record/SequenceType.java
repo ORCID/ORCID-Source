@@ -6,8 +6,6 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /**
  * @author Declan Newman (declan)
  *         Date: 07/08/2012

@@ -77,7 +77,13 @@
         
         <#if verifiedEmail??>
             orcidVar.loginId = "${verifiedEmail}";
-        </#if> 
+        </#if>
+        
+        <#if (developerToolsEnabled)??>            
+            orcidVar.developerToolsEnabled = ${developerToolsEnabled?c};            
+        <#else>
+            orcidVar.developerToolsEnabled = false;
+        </#if>
     </script>
 
     <#include "/macros/orcid_ga.ftl">
@@ -89,6 +95,9 @@
     <!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
 
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/nova-light/theme.css"/>
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeicons.css"/>
+    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeng.min.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     
@@ -98,14 +107,6 @@
 
     <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css"/>
     
-    <!-- this is a manually patched version, we should update when they accept our changes -->
-    <script src="${staticCdn}/javascript/respond.src.js"></script>
-    
-    <!-- Respond.js proxy on external server -->
-    <link href="${staticCdn}/html/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
-    <link href="${staticCdn}/img/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
-    <script src="${staticCdn}/javascript/respond.proxy.js"></script>
-        
     <style type="text/css">
         /* 
         Allow angular.js to be loaded in body, hiding cloaked elements until 
@@ -125,14 +126,6 @@
     <!-- Ng2 Templates - BEGIN -->
     <#include "/includes/ng2_templates/modal-ng2-template.ftl">
     <#include "/includes/ng2_templates/ext-id-popover-ng2-template.ftl">
-    <@orcid.checkFeatureStatus 'DISPLAY_NEW_AFFILIATION_TYPES'> 
-        <#if springMacroRequestContext.requestUri?contains("/my-orcid") || (isPublicProfile??)>
-            <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
-            <#include "/includes/ng2_templates/affiliation-delete-ng2-template.ftl">
-            <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
-            <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
-        </#if>
-    </@orcid.checkFeatureStatus> 
     <#if springMacroRequestContext.requestUri?contains("/account") || springMacroRequestContext.requestUri?contains("/developer-tools") || springMacroRequestContext.requestUri?contains("/inbox") || springMacroRequestContext.requestUri?contains("/my-orcid")> 
         <#include "/includes/ng2_templates/privacy-toggle-ng2-template.ftl">
     </#if>

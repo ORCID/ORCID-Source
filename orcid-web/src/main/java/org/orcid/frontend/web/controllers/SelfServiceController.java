@@ -22,7 +22,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SubMember;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -224,7 +224,7 @@ public class SelfServiceController extends BaseController {
         EmailEntity emailEntity = emailManager.find(contact.getEmail());
         contact.setOrcid(emailEntity.getProfile().getId());
         RecordNameEntity recordNameEntity = emailEntity.getProfile().getRecordNameEntity();
-        if (Visibility.PUBLIC.equals(recordNameEntity.getVisibility())) {
+        if (Visibility.PUBLIC.name().equals(recordNameEntity.getVisibility())) {
             contact.setFirstName(recordNameEntity.getGivenNames());
             contact.setLastName(recordNameEntity.getFamilyName());
         } else {

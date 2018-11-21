@@ -30,6 +30,15 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
     List<Work> findPublicWorks(String orcid);
     
     /**
+     * Checks if there is any public work for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public work for a specific user
+     * */
+    Boolean hasPublicWorks(String orcid);
+    
+    /**
      * Get the given Work from the database
      * @param orcid
      *          The work owner
@@ -93,5 +102,5 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      */
     ExternalIDs getAllExternalIDs(String orcid);
 
-    Works groupWorksAndGenerateGroupingSuggestions(List<WorkSummary> summaries, String orcid);
+    Works groupWorksAndGenerateGroupingSuggestions(List<WorkSummary> summaries, String orcid);        
 }

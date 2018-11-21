@@ -11,10 +11,10 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V3Convertible;
 import org.orcid.core.version.V3VersionConverterChain;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -23,16 +23,12 @@ import org.orcid.jaxb.model.record.bulk.BulkElementContainer;
 public class MemberV3ApiServiceVersionedDelegatorImpl implements
         MemberV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
-    @Resource
     private MemberV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV3ApiServiceDelegator;
 
     private String externalVersion;
 
     @Resource
     private V3VersionConverterChain v3VersionConverterChain;
-
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -63,15 +59,15 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     }
 
     @Override
-    public Response viewWork(String orcid, Long putCode) {
-        checkProfileStatus(orcid, true);
-        return processReponse(memberV3ApiServiceDelegator.viewWork(orcid, putCode));
-    }
-
-    @Override
     public Response viewWorks(String orcid) {
         checkProfileStatus(orcid, true);
         return processReponse(memberV3ApiServiceDelegator.viewWorks(orcid));
+    }
+
+    @Override
+    public Response viewWork(String orcid, Long putCode) {
+        checkProfileStatus(orcid, true);
+        return processReponse(memberV3ApiServiceDelegator.viewWork(orcid, putCode));
     }
 
     @Override
@@ -107,11 +103,13 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
                         workBulk.getBulk().remove(i);
                         errors.put(i, error);
                         workBulk.getBulk().add(i, error);
-                    } else {
+                    } else if (org.orcid.jaxb.model.v3.rc2.record.Work.class.isAssignableFrom(bulkElement.getClass())) {
                         org.orcid.jaxb.model.v3.rc2.error.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV3Rc2(9001, 400, e);
                         workBulk.getBulk().remove(i);
                         errors.put(i, error);
                         workBulk.getBulk().add(i, error);
+                    } else {
+                        throw new OrcidBadRequestException("Invalid bulk element found"); 
                     }
                 }
             }
@@ -546,7 +544,7 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     public Response viewClient(String clientId) {
         return memberV3ApiServiceDelegator.viewClient(clientId);
     }
-    
+
     @Override
     public Response viewStatus() {
         return memberV3ApiServiceDelegator.viewStatus();
@@ -763,11 +761,7 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     }
 
     private Response processReponse(Response response) {
-        if (externalVersion.equals("2.1")) {
-            return upgradeResponse(response);
-        } else {
-            return downgradeResponse(response);
-        }
+        return downgradeResponse(response);
     }
 
     private Response downgradeResponse(Response response) {
@@ -780,36 +774,14 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
         return response;
     }
 
-    private Response upgradeResponse(Response response) {
-        Object entity = response.getEntity();
-        V3Convertible result = null;
-        if (entity != null) {
-            result = v3VersionConverterChain.upgrade(new V3Convertible(entity, MemberV3ApiServiceDelegator.LATEST_V3_VERSION), externalVersion);
-            return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
-        }
-        return response;
-    }
-
     private Object processObject(Object object) {
-        if (externalVersion.equals("3.0_rc2")) {
-            return downgradeObject(object);
-        } else {
-            return upgradeObject(object);
-        }
+        return upgradeObject(object);
     }
 
     private Object upgradeObject(Object entity) {
         V3Convertible result = null;
         if (entity != null) {
             result = v3VersionConverterChain.upgrade(new V3Convertible(entity, externalVersion), MemberV3ApiServiceDelegator.LATEST_V3_VERSION);
-        }
-        return result.getObjectToConvert();
-    }
-
-    private Object downgradeObject(Object entity) {
-        V3Convertible result = null;
-        if (entity != null) {
-            result = v3VersionConverterChain.downgrade(new V3Convertible(entity, externalVersion), MemberV3ApiServiceDelegator.LATEST_V3_VERSION);
         }
         return result.getObjectToConvert();
     }

@@ -62,25 +62,25 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
     }
 
     @Override
-    public Record getPublicRecord(String orcid) {
+    public Record getPublicRecord(String orcid, boolean filterVersionOfIdentifiers) {
         Record record = new Record();
         record.setOrcidType(getOrcidType(orcid));
         record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
-        record.setActivitiesSummary(activitiesSummaryManager.getPublicActivitiesSummary(orcid));
+        record.setActivitiesSummary(activitiesSummaryManager.getPublicActivitiesSummary(orcid, filterVersionOfIdentifiers));
         record.setPerson(personDetailsManager.getPublicPersonDetails(orcid));        
         return record;
     }
 
     @Override
-    public Record getRecord(String orcid) {
+    public Record getRecord(String orcid, boolean filterVersionOfIdentifiers) {
         Record record = new Record();
         record.setOrcidType(getOrcidType(orcid));
         record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
-        record.setActivitiesSummary(activitiesSummaryManager.getActivitiesSummary(orcid));
+        record.setActivitiesSummary(activitiesSummaryManager.getActivitiesSummary(orcid, filterVersionOfIdentifiers));
         record.setPerson(personDetailsManager.getPersonDetails(orcid));        
         return record;
     }

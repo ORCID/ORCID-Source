@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                     <div>
-                        <span class="title" (click)="showDetailsMouseClick(group,$event);"><span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right'"></span> <span><@orcid.msg 'peer_review.review_activity_for' /> </span><span class="peer-review-title"><span>{{group.name}}</span>({{group?.peerReviewDuplicateGroups?.length}})</span></span>
+                        <span class="title" (click)="showDetailsMouseClick(group,$event)"><span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right'"></span> <span><@orcid.msg 'peer_review.review_activity_for' /> </span><span class="peer-review-title"><span>{{group.name}}</span>({{group?.peerReviewDuplicateGroups?.length}})</span></span>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
@@ -101,7 +101,7 @@
                                                                     <span class="glyphicons expand"></span>  
                                                                     <span class="hidden-xs"><@orcid.msg 'common.details.show_details_lc' /></span>
                                                                 </a> 
-                                                                <a (click)="showMoreDetails(peerReview.putCode.value,$event);" *ngIf="showPeerReviewDetails[peerReview.putCode.value]">
+                                                                <a (click)="showMoreDetails(peerReview.putCode.value,$event)" *ngIf="showPeerReviewDetails[peerReview.putCode.value]">
                                                                     <span class="glyphicons collapse_top"></span>       <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                                                 </a> | 
                                                                 <a href="{{peerReview.url?.value}}" *ngIf="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span *ngIf="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>

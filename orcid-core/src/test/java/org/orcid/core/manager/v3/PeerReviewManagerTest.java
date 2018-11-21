@@ -488,24 +488,25 @@ public class PeerReviewManagerTest extends BaseTest {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
         p2 = peerReviewManager.createPeerReview(claimedOrcid, p2, true);
         
+        p1.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("xxx");
         //wrong sources:
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
-            peerReviewManager.updatePeerReview(claimedOrcid, p2, true);
+            peerReviewManager.updatePeerReview(claimedOrcid, p1, true);
             fail();
         }catch(WrongSourceException e) {
         }
         
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
-            peerReviewManager.updatePeerReview(claimedOrcid, p2, true);
+            peerReviewManager.updatePeerReview(claimedOrcid, p1, true);
             fail();
         }catch(WrongSourceException e) {
             
         }
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));  
-            peerReviewManager.updatePeerReview(claimedOrcid, p2, true);
+            peerReviewManager.updatePeerReview(claimedOrcid, p1, true);
             fail();
         }catch(WrongSourceException e) {
             

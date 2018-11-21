@@ -5,9 +5,9 @@
     <entry key="notifications.unsent">
 SELECT n.* 
 FROM notification n, 
-(SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid AND notification_type = 'AMENDED') amend, (SELECT (send_change_notifications * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) amend_freq, 
-(SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid AND notification_type in ('ADMINISTRATIVE', 'CUSTOM')) administrative, (SELECT (send_administrative_change_notifications * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) administrative_freq, 
-(SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid AND notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION')) permission, (SELECT (send_member_update_requests * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) permission_freq
+(SELECT MAX(sub.sent_date) AS max_sent_date FROM (select sent_date from notification WHERE orcid=:orcid AND notification_type = 'AMENDED' order by sent_date) as sub) amend, (SELECT (send_change_notifications * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) amend_freq, 
+(SELECT MAX(sub.sent_date) AS max_sent_date FROM (select sent_date from notification WHERE orcid=:orcid AND notification_type in ('ADMINISTRATIVE', 'CUSTOM') order by sent_date) as sub) administrative, (SELECT (send_administrative_change_notifications * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) administrative_freq, 
+(SELECT MAX(sub.sent_date) AS max_sent_date FROM (select sent_date from notification WHERE orcid=:orcid AND notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION') order by sent_date) as sub) permission, (SELECT (send_member_update_requests * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) permission_freq
 WHERE n.orcid = :orcid 
 AND (
 	(n.notification_type in ('ADMINISTRATIVE', 'CUSTOM')

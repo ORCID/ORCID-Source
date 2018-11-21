@@ -57,7 +57,7 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                     <div class="pull-left">
-                                        <button class="btn btn-primary cancel-right" (click)="cancelEditModal('modalDeprecateAccountSuccess')"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></button>
+                                        <button class="btn btn-primary cancel-right" (click)="cancelDeprecateModal('modalDeprecateAccountSuccess')"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></button>
                                     </div>
                                 </div>
                             </div>

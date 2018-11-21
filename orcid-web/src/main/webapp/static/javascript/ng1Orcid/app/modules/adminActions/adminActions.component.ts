@@ -42,6 +42,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     resetPasswordParams: any;
     showResetPasswordConfirm: boolean;
     resetPasswordSuccess: boolean;
+    emailAddressVerified: boolean;
     
     // Verify email
     showVerifyEmail: boolean;
@@ -119,6 +120,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.resetPasswordParams = {};
         this.showResetPasswordConfirm = false;
         this.resetPasswordSuccess = false;
+        this.emailAddressVerified = false;
     
         this.showVerifyEmail = false;
         this.verifyEmailMessage = null;
@@ -240,9 +242,44 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
     
+    validateResetPassword(): void {        
+        if(this.resetPasswordParams != null && this.resetPasswordParams.orcidOrEmail != null) {
+            this.adminActionsService.resetPasswordValidate( this.resetPasswordParams ) 
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    if(data.error == undefined || data.error == '') {
+                        this.emailAddressVerified = true;
+                    } else {
+                        this.emailAddressVerified = false;
+                    }                                  
+                },
+                error => {
+                    console.log('admin: validateResetPassword error', error);
+                } 
+            );    
+        }
+    };
+    
     confirmResetPassword(): void {
         if(this.resetPasswordParams != null && this.resetPasswordParams.orcidOrEmail != null && this.resetPasswordParams.password != null) {
-            this.showResetPasswordConfirm = true;
+            this.adminActionsService.resetPasswordValidate( this.resetPasswordParams ) 
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.resetPasswordParams = data;
+                    if(this.resetPasswordParams.error == undefined || this.resetPasswordParams.error == '') {
+                        this.showResetPasswordConfirm = true;
+                    }
+                },
+                error => {
+                    console.log('admin: confirmResetPassword error', error);
+                } 
+            );                                                   
         }        
     };
     
@@ -260,6 +297,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.resetPasswordParams.password = '';
                     this.showResetPasswordConfirm = false;
                     this.resetPasswordSuccess = true;
+                    this.emailAddressVerified = false;
                 }
             },
             error => {

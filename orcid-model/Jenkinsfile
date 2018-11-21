@@ -19,7 +19,30 @@ node {
 
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: 'master'
     def EHCACHE_LOCATION="${WORKSPACE}/tmp/ehcache_master_$BUILD_NUMBER"
+    def ng_home = "$WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid"
 
+    stage('SETUP NODEJS'){
+        try{
+            do_maven "clean install -f orcid-nodejs/pom.xml -DwebpackConfig=ci.webpack.config.js -Dnodejs.workingDirectory='$WORKSPACE/orcid-web/src/main/webapp/static/javascript/ng1Orcid'"
+            orcid_notify("nodejs installation completed OK","SUCCESS")
+        } catch(Exception err) {
+            def err_msg = err.toString()
+            orcid_notify("nodejs installation failed. Please check for errors at ${JOB_URL}","ERR")
+            //deleteDir()
+            throw err
+        }
+    }
+    stage('TEST WEBPACKBUILD'){
+        try{
+            sh "cd $ng_home && $WORKSPACE/orcid-nodejs/target/node/node $ng_home/node_modules/webpack/bin/webpack.js --config $ng_home/ci.webpack.config.js --bail"
+            orcid_notify("webpack build completed OK","SUCCESS")
+        } catch(Exception err) {
+            def err_msg = err.getMessage()
+            orcid_notify("webpack build failed. Please check for errors at ${JOB_URL}","ERR")
+            //deleteDir()
+            throw err
+        }
+    }
     stage('SETUP VERSION') {
         try {
             sh "mkdir -p $EHCACHE_LOCATION"

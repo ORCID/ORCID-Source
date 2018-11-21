@@ -18,7 +18,9 @@
       <div class="orcid-error" *ngIf='preferredNotSelected'>
          <@orcid.msg 'groups.merge.preferred_not_selected'/>
       </div>
-      <div class="orcid-error" *ngIf='!externalIdsPresent'>
+      
+      <span>{{externalIdsPresent}}</span>
+      <div class="orcid-error" *ngIf='externalIdsPresent == false'>
          <@orcid.msg 'groups.merge.no_external_ids_1'/><a href="https://support.orcid.org/hc/articles/360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
          <div class="row"> 
             <div class="right">     
@@ -28,7 +30,7 @@
             </div>        
          </div>  
       </div>
-      <span *ngIf='externalIdsPresent'>
+      <span *ngIf='externalIdsPresent == true'>
           <span *ngFor='let workToMerge of worksToMerge'>
             <div class="row">
                 <div class="col-md-1 col-sm-2 col-xs-2">

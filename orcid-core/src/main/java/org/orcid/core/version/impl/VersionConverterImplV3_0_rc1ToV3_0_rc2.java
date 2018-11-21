@@ -6,27 +6,16 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.version.V3Convertible;
 import org.orcid.core.version.V3VersionConverter;
 import org.orcid.core.version.V3VersionObjectFactory;
+import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidIdBase;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords;
-import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 import org.orcid.jaxb.model.v3.rc1.record.Address;
 import org.orcid.jaxb.model.v3.rc1.record.Addresses;
 import org.orcid.jaxb.model.v3.rc1.record.Education;
@@ -45,15 +34,29 @@ import org.orcid.jaxb.model.v3.rc1.record.Person;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc1.record.Record;
+import org.orcid.jaxb.model.v3.rc1.record.Relationship;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
+import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
 
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.metadata.ClassMapBuilder;
 
 public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverter {
 
@@ -82,7 +85,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
     public VersionConverterImplV3_0_rc1ToV3_0_rc2() {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-        OrcidIdBaseMapper orcidIdBaseMapper = new OrcidIdBaseMapper();        
+        OrcidIdBaseMapper orcidIdBaseMapper = new OrcidIdBaseMapper();
 
         // GROUP ID
         mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords.class).byDefault().register();
@@ -91,19 +94,19 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         // ExternalIDs
         mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs.class).byDefault().register();
         mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.v3.rc2.record.ExternalID.class).byDefault().register();
-
+        
         // Contributor
         mapperFactory.classMap(ContributorOrcid.class, org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid.class).customize(orcidIdBaseMapper).register();
-        
+
         // Source Orcid
         mapperFactory.classMap(SourceOrcid.class, org.orcid.jaxb.model.v3.rc2.common.SourceOrcid.class).customize(orcidIdBaseMapper).register();
-        
+
         // Source client ID
         mapperFactory.classMap(SourceClientId.class, org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class).customize(orcidIdBaseMapper).register();
-        
+
         // Orcid identifier
         mapperFactory.classMap(OrcidIdentifier.class, org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier.class).customize(orcidIdBaseMapper).register();
-        
+
         // Other names
         mapperFactory.classMap(OtherNames.class, org.orcid.jaxb.model.v3.rc2.record.OtherNames.class).byDefault().register();
         mapperFactory.classMap(OtherName.class, org.orcid.jaxb.model.v3.rc2.record.OtherName.class).byDefault().register();
@@ -126,13 +129,67 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
 
         // Emails
         mapperFactory.classMap(Emails.class, org.orcid.jaxb.model.v3.rc2.record.Emails.class).byDefault().register();
-        mapperFactory.classMap(Email.class, org.orcid.jaxb.model.v3.rc2.record.Email.class).byDefault().register();
+        mapperFactory.classMap(Email.class, org.orcid.jaxb.model.v3.rc2.record.Email.class).field("source", "source").field("lastModifiedDate", "lastModifiedDate")
+                .field("createdDate", "createdDate").field("email", "email").field("path", "path").field("visibility", "visibility").customize(new EmailMapper())
+                .register();
 
         // WORK
         mapperFactory.classMap(WorkGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup.class).byDefault().register();
         mapperFactory.classMap(Works.class, org.orcid.jaxb.model.v3.rc2.record.summary.Works.class).byDefault().register();
-        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).byDefault().register();
-        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).byDefault().register();
+        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).exclude("workType").customize(new CustomMapper<Work, org.orcid.jaxb.model.v3.rc2.record.Work>() {
+            /**
+             * From rc1 object to rc2 object
+             */            
+            @Override
+            public void mapAtoB(Work a, org.orcid.jaxb.model.v3.rc2.record.Work b, MappingContext context) {
+                // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
+                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getWorkType())) {
+                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+                } else {
+                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.fromValue(a.getWorkType().value()));
+                }                
+            }
+            
+            /**
+             * From rc2 object to rc1 object
+             */
+            @Override
+            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Work b, Work a, MappingContext context) {
+                if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.equals(b.getWorkType())) {
+                    a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
+                } else {
+                    a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getWorkType().value()));
+                }                
+            }
+            
+        }).byDefault().register();
+        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).exclude("type").customize(new CustomMapper<WorkSummary, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary>() {
+            /**
+             * From rc1 object to rc2 object
+             */            
+            @Override
+            public void mapAtoB(WorkSummary a, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, MappingContext context) {
+                // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
+                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getType())) {
+                    b.setType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+                } else {
+                    b.setType(org.orcid.jaxb.model.v3.rc2.record.WorkType.fromValue(a.getType().value()));
+                }                
+            }
+            
+            /**
+             * From rc2 object to rc1 object
+             */
+            @Override
+            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, WorkSummary a, MappingContext context) {
+                if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.equals(b.getType())) {
+                    a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
+                } else {
+                    a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getType().value()));
+                }                
+            }
+            
+        }).byDefault().register();
 
         // FUNDING
         mapperFactory.classMap(FundingGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup.class).byDefault().register();
@@ -152,6 +209,31 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         mapperFactory.classMap(Employment.class, org.orcid.jaxb.model.v3.rc2.record.Employment.class).byDefault().register();
         mapperFactory.classMap(EmploymentSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary.class).byDefault().register();
 
+        // RESEARCH RESOURCES
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources.class)
+                .byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceProposal.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceProposal.class)
+                .byDefault().register();
+        mapperFactory
+                .classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup.class)
+                .byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResource.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class).byDefault()
+                .register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceHosts.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceHosts.class).byDefault()
+                .register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItems.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItems.class).byDefault()
+                .register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem.class).byDefault()
+                .register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc1.record.ResearchResourceTitle.class, org.orcid.jaxb.model.v3.rc2.record.ResearchResource.class).byDefault()
+                .register();
+        ClassMapBuilder<org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary, org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary> rrSummaryClassMap = mapperFactory
+                .classMap(org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary.class,
+                        org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary.class);
+        rrSummaryClassMap.field("source", "source").field("lastModifiedDate", "lastModifiedDate").field("createdDate", "createdDate").field("proposal", "proposal")
+                .field("putCode", "putCode").field("path", "path").field("visibility", "visibility").field("displayIndex", "displayIndex");
+        rrSummaryClassMap.register();
+
         // PEER REVIEW
         mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews.class).byDefault().register();
         mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.v3.rc2.record.PeerReview.class).byDefault().register();
@@ -168,28 +250,10 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
 
         // OrcidError
         mapperFactory.classMap(OrcidError.class, org.orcid.jaxb.model.v3.rc2.error.OrcidError.class).byDefault().register();
-        
+
         mapper = mapperFactory.getMapperFacade();
-    }    
-    
-    private class OrcidIdBaseMapper<Y, A> extends CustomMapper<OrcidIdBase, OrcidIdBase> {       
-        @Override
-        public void mapAtoB(OrcidIdBase a, OrcidIdBase b, MappingContext context) {
-            b.setHost(a.getHost());
-            b.setPath(a.getPath());
-            if(context.getProperty("downgrade") != null) {
-                boolean isDowngrade = (boolean) context.getProperty("downgrade");
-                if(isDowngrade) {
-                    // From 2.1 to 2.0 set the base http uri
-                    b.setUri(orcidUrlManager.getBaseUriHttp() + (a.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/") + b.getPath());                    
-                } else {
-                    // From 2.0 to 2.1 set the base uri which is https
-                    b.setUri(orcidUrlManager.getBaseUrl() + (a.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/") + a.getPath());
-                }
-            }                        
-        }
-    }    
-    
+    }
+
     @Override
     public V3Convertible downgrade(V3Convertible objectToDowngrade) {
         Object objectToConvert = objectToDowngrade.getObjectToConvert();
@@ -205,8 +269,36 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         Object objectToConvert = objectToUpgrade.getObjectToConvert();
         Object targetObject = v3VersionObjectFactory.createEquivalentInstance(objectToConvert, UPPER_VERSION);
         MappingContext context = new MappingContext.Factory().getContext();
-        context.setProperty("downgrade", false);        
+        context.setProperty("downgrade", false);
         mapper.map(objectToConvert, targetObject, context);
         return new V3Convertible(targetObject, UPPER_VERSION);
-    }        
+    }
+
+    private class OrcidIdBaseMapper<Y, A> extends CustomMapper<OrcidIdBase, org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase> {
+
+        @Override
+        public void mapBtoA(org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, OrcidIdBase a, MappingContext context) {
+            a.setHost(b.getHost());
+            a.setPath(b.getPath());
+            a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class) ? "/client/" : "/") + b.getPath());
+        }
+        
+        @Override
+        public void mapAtoB(OrcidIdBase a, org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, MappingContext context) {
+            b.setHost(a.getHost());
+            b.setPath(a.getPath());
+            b.setUri(orcidUrlManager.getBaseUrl() + (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc1.common.SourceClientId.class) ? "/client/" : "/") + a.getPath());
+        }
+    }
+
+    private class EmailMapper extends CustomMapper<Email, org.orcid.jaxb.model.v3.rc2.record.Email> {
+
+        @Override
+        public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Email b, Email a, MappingContext context) {
+            a.setCurrent(b.isCurrent());
+            a.setPrimary(b.isPrimary());
+            a.setVerified(b.isVerified());
+        }
+
+    }
 }

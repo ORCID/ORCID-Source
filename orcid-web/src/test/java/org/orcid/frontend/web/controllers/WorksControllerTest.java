@@ -17,7 +17,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -32,11 +31,11 @@ import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
-import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -94,13 +93,14 @@ public class WorksControllerTest extends BaseControllerTest {
         
         worksController.groupWorks("1,2,3,4");
         
-        Mockito.verify(mockWorkManager).setPreferredAndCreateGroup(Mockito.eq(1L), idsCaptor.capture(), orcidCaptor.capture());
+        Mockito.verify(mockWorkManager).createNewWorkGroup(idsCaptor.capture(), orcidCaptor.capture());
         
         List<Long> ids = idsCaptor.getValue();
-        assertEquals(3, ids.size());
-        assertEquals(Long.valueOf(2l), ids.get(0));
-        assertEquals(Long.valueOf(3l), ids.get(1));
-        assertEquals(Long.valueOf(4l), ids.get(2));
+        assertEquals(4, ids.size());
+        assertEquals(Long.valueOf(1l), ids.get(0));
+        assertEquals(Long.valueOf(2l), ids.get(1));
+        assertEquals(Long.valueOf(3l), ids.get(2));
+        assertEquals(Long.valueOf(4l), ids.get(3));
         
         ReflectionTestUtils.setField(worksController, "workManager", oldWorkManager);
     }

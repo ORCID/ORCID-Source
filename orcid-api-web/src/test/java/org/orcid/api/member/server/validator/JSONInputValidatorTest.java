@@ -30,8 +30,8 @@ public class JSONInputValidatorTest {
         validator.validateJSONInput(education);
     }
 
-    @Test(expected = ApplicationException.class)
-    public void testValidateJSONValidInputForInvalidV3Education() throws JAXBException, SAXException, IOException {
+    @Test
+    public void testValidateJSONValidInputForV3EducationWithNullStartDate() throws JAXBException, SAXException, IOException {
         Education education = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         education.setStartDate(null);
         validator.validateJSONInput(education);
@@ -56,8 +56,8 @@ public class JSONInputValidatorTest {
         validator.validateJSONInput(employment);
     }
 
-    @Test(expected = InvalidJSONException.class)
-    public void testValidateJSONValidInputForInvalidV3Employment() throws JAXBException, SAXException, IOException {
+    @Test
+    public void testValidateJSONValidInputForV3EmploymentWithNullStartDate() throws JAXBException, SAXException, IOException {
         Employment employment = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         employment.setStartDate(null);
         validator.validateJSONInput(employment);

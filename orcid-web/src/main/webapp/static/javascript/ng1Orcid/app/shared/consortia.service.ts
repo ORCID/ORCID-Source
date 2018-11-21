@@ -56,7 +56,7 @@ export class ConsortiaService {
         this.updateContactsUrl = getBaseUri() + '/self-service/update-contacts.json';
         this.addContactUrl = getBaseUri() + '/self-service/add-contact-by-email.json';
         this.removeContactUrl = getBaseUri() + '/self-service/remove-contact.json';
-        this.searchByEmailUrl = getBaseUri() + '/manage/search-for-delegate-by-email/';
+        this.searchByEmailUrl = getBaseUri() + '/manage/search-for-delegate-by-email';
         this.orgIdsUrl = getBaseUri() + '/self-service/get-org-ids.json?accountId=';
         this.validateSubMemberUrl = getBaseUri() + '/self-service/validate-sub-member.json';
         this.validateSubMemberFieldUrl =  getBaseUri() + '/self-service/validate-sub-member-';

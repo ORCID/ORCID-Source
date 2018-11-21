@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -25,8 +27,10 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -123,12 +127,22 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(WorkType.ARTISTIC_PERFORMANCE.value(), w.getWorkType().value());
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        ExternalID workExtId = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
-        assertNotNull(workExtId.getValue());
-        assertEquals("123", workExtId.getValue());
-        assertNotNull(workExtId.getType());
-        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId.getType());
+        assertEquals(2, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
+        
+        ExternalID workExtId1 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(workExtId1.getValue());
+        assertEquals("123", workExtId1.getValue());
+        assertNotNull(workExtId1.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
+        assertEquals(Relationship.SELF, workExtId1.getRelationship());
+        
+        ExternalID workExtId2 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(1);
+        assertNotNull(workExtId2.getValue());
+        assertEquals("abc", workExtId2.getValue());
+        assertNotNull(workExtId2.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
+        assertEquals(Relationship.PART_OF, workExtId2.getRelationship());
+        
         String sourcePath = w.getSource().retrieveSourcePath();
         assertNotNull(sourcePath);
         assertEquals("APP-5555555555555555", sourcePath);
@@ -137,7 +151,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromProfileWorkEntityToWorkSummaryTest() {
+    public void fromWorkEntityToWorkSummaryTest() {
         WorkEntity work = getWorkEntity();
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
@@ -147,14 +161,70 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("1234567890", ws.getDisplayIndex());
         assertNotNull(ws.getExternalIdentifiers());
         assertNotNull(ws.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, ws.getExternalIdentifiers().getExternalIdentifier().size());
-        ExternalID workExtId = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
-        assertNotNull(workExtId.getValue());
-        assertEquals("123", workExtId.getValue());
-        assertNotNull(workExtId.getType());
-        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId.getType());
+        assertEquals(2, ws.getExternalIdentifiers().getExternalIdentifier().size());
+        ExternalID workExtId1 = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(workExtId1.getValue());
+        assertEquals("123", workExtId1.getValue());
+        assertNotNull(workExtId1.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
+        assertEquals(Relationship.SELF, workExtId1.getRelationship());
+        
+        ExternalID workExtId2 = ws.getExternalIdentifiers().getExternalIdentifier().get(1);
+        assertNotNull(workExtId2.getValue());
+        assertEquals("abc", workExtId2.getValue());
+        assertNotNull(workExtId2.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
+        assertEquals(Relationship.PART_OF, workExtId2.getRelationship());
     }
 
+    @Test
+    public void dissertationThesisToDissertationTest() {
+        WorkEntity work = getWorkEntity();
+        work.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+        
+        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
+        assertNotNull(ws);
+        assertEquals(WorkType.DISSERTATION, ws.getType());
+        
+        Work w = jpaJaxbWorkAdapter.toWork(work);
+        assertNotNull(w);
+        assertEquals(WorkType.DISSERTATION, w.getWorkType());        
+    
+        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        mWork.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
+        assertEquals(WorkType.DISSERTATION, summaries.get(0).getType());
+    }
+    
+    @Test
+    public void dissertationToDisertationThesisTest() throws JAXBException {
+        Work w = getWork(true);
+        w.setWorkType(WorkType.DISSERTATION);
+        
+        WorkEntity we = jpaJaxbWorkAdapter.toWorkEntity(w);
+        assertNotNull(we);
+        assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name(), we.getWorkType());
+    }
+    
+    @Test
+    public void dissertationToDissertationTest() {
+        WorkEntity work = getWorkEntity();
+        work.setWorkType(WorkType.DISSERTATION.name());
+        
+        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
+        assertNotNull(ws);
+        assertEquals(WorkType.DISSERTATION, ws.getType());
+        
+        Work w = jpaJaxbWorkAdapter.toWork(work);
+        assertNotNull(w);
+        assertEquals(WorkType.DISSERTATION, w.getWorkType());        
+    
+        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        mWork.setWorkType(WorkType.DISSERTATION.name());
+        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
+        assertEquals(WorkType.DISSERTATION, summaries.get(0).getType());
+    }
+    
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -165,7 +235,6 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);
     }
-
 
     private WorkEntity getWorkEntity() {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
@@ -193,7 +262,10 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setWorkType(WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");
-        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"VERSION_OF\",\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},"
+                + "{\"relationship\":\"SELF\",\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},"
+                + "{\"relationship\":\"PART_OF\",\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"abc\"}},"
+                + "{\"relationship\":\"VERSION_OF\",\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"456\"}}]}");
         return work;
     }
 }

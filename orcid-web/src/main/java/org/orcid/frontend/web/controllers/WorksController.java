@@ -111,8 +111,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/group/{workIdsStr}", method = RequestMethod.POST)
     public @ResponseBody List<Long> groupWorks(@PathVariable("workIdsStr") String workIdsStr) {
         List<Long> workIds = Arrays.stream(workIdsStr.split(",")).mapToLong(n -> Long.parseLong(n)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        Long preferredId = workIds.remove(0);
-        workManager.setPreferredAndCreateGroup(preferredId, workIds, getCurrentUserOrcid());
+        workManager.createNewWorkGroup(workIds, getCurrentUserOrcid());
         return workIds;
     }
 
@@ -467,6 +466,7 @@ public class WorksController extends BaseWorkspaceController {
             for (ActivityExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
                 copyErrors(wId.getExternalIdentifierId(), work);
                 copyErrors(wId.getExternalIdentifierType(), work);
+                copyErrors(wId.getRelationship(), work);
             }
         }
 
@@ -619,6 +619,8 @@ public class WorksController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/work/workExternalIdentifiersValidate.json", method = RequestMethod.POST)
     public @ResponseBody WorkForm workWorkExternalIdentifiersValidate(@RequestBody WorkForm work) {
+        ActivityExternalIdentifier lastVersionOfIdentifier = null;
+        Boolean hasSelfOfIdentifier = false;
         for (ActivityExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
             if (wId.getExternalIdentifierId() == null)
                 wId.setExternalIdentifierId(new Text());
@@ -626,6 +628,8 @@ public class WorksController extends BaseWorkspaceController {
                 wId.setExternalIdentifierType(new Text());
             wId.getExternalIdentifierId().setErrors(new ArrayList<String>());
             wId.getExternalIdentifierType().setErrors(new ArrayList<String>());
+            if(wId.getRelationship() != null)
+                wId.getRelationship().setErrors(new ArrayList<String>());
             // if has id type must be specified
             if (wId.getExternalIdentifierId().getValue() != null && !wId.getExternalIdentifierId().getValue().trim().equals("")
                     && (wId.getExternalIdentifierType().getValue() == null || wId.getExternalIdentifierType().getValue().equals(""))) {
@@ -648,7 +652,21 @@ public class WorksController extends BaseWorkspaceController {
             }
             
             if (wId.getUrl() != null)
-                validateUrl(wId.getUrl());                        
+                validateUrl(wId.getUrl());  
+            
+            if(wId.getRelationship() != null) {
+                if(Relationship.VERSION_OF.value().equals(wId.getRelationship().getValue())) {
+                    lastVersionOfIdentifier = wId;
+                }
+                
+                if(Relationship.SELF.value().equals(wId.getRelationship().getValue())) {
+                    hasSelfOfIdentifier = true;
+                }
+            }
+        }
+        
+        if(lastVersionOfIdentifier != null && !hasSelfOfIdentifier) {
+            setError(lastVersionOfIdentifier.getRelationship(), "manualWork.ext_ids.self_required");
         }
 
         return work;
@@ -710,7 +728,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
-        return worksPaginator.getAllWorks(orcid, sort, sortAsc);
+        return worksPaginator.getAllWorks(orcid, false, sort, sortAsc);
     }
     
     @RequestMapping(value = "/refreshWorks.json", method = RequestMethod.GET)

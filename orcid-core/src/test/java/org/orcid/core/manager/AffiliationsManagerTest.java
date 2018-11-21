@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.common_v2.Day;
 import org.orcid.jaxb.model.common_v2.DisambiguatedOrganization;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
@@ -219,7 +220,7 @@ public class AffiliationsManagerTest extends BaseTest {
     private DisambiguatedOrganization getDisambiguatedOrganization() {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
         disambiguatedOrganization.setDisambiguatedOrganizationIdentifier("some-identifier");
-        disambiguatedOrganization.setDisambiguationSource("FUNDREF");
+        disambiguatedOrganization.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
         return disambiguatedOrganization;
     }
 }
