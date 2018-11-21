@@ -150,11 +150,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         if (existing.isExpired()) {
             throw new IllegalArgumentException("access_token has expired");
         }
-        if (false) {
-            throw new IllegalArgumentException("You cannot exchange an OBO access_token for an id_token");
-            //TODO: prevent people exchanging OBO id tokens for access tokens.
-        }
-
+        
         try {
             String idTok = openIDConnectTokenEnhancer.buildIdToken(existing,detail.getProfile().getId(), tokenRequest.getClientId(),tokenRequest.getRequestParameters().get(OrcidOauth2Constants.NONCE) );
             return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.idToken(idTok));
@@ -182,9 +178,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
             }
             OBOClient = claims.getJWTClaimsSet().getAudience().get(0);
             OBOOrcid = claims.getJWTClaimsSet().getSubject();
-            //NOTE: we do not check expiration.  id_token exchange is independent of token life.
-            //TODO: check expiration.  Maybe modify code that generates ids to be 1 hr if not already 
-            
+            //NOTE: we do not check expiration.  id_token exchange is independent of token life.            
         } catch (ParseException e) {
             throw new IllegalArgumentException("Unexpected id token value, cannot parse the id_token");
         }
@@ -202,17 +196,10 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         //Calculate scopes (include in response additionalInformation)
         //get list of all tokens for original client.  We have to base this on previous tokens, as you can't revoke a code.
         //this means only "token id_token" requests will work (not code id_token).  Balls.  Just means we must never enable "code id_token".
-
-        //TODO: Support ONLY id_token flow for update permissions.  Generate and store access token behind the scene but only return id_token.
-        
-        //3.3.3.8.  Access Token
-        //If an Access Token is returned from both the Authorization Endpoint and from the Token Endpoint, which is the case for the response_type values code token and code id_token token, their values MAY be the same or they MAY be different. Note that different Access Tokens might be returned be due to the different security characteristics of the two endpoints and the lifetimes and the access to resources granted by them might also be different.
-        
-        //what are the possible scopes for the OBO client?
         List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByClientIdAndUserName(OBOClient, OBOOrcid);
         Set<ScopePathType> scopesOBO = Sets.newHashSet();
         for (OrcidOauth2TokenDetail d: details) {
-            if (d.getTokenDisabled() != null && !d.getTokenDisabled() && d.getTokenExpiration().after(new Date())) {
+            if ((d.getTokenDisabled() == null || !d.getTokenDisabled()) && d.getTokenExpiration().after(new Date())) {
                 //TODO: do we need to check revocation dates?
                 scopesOBO.addAll(ScopePathType.getScopesFromSpaceSeparatedString(d.getScope()));                    
             }
@@ -239,7 +226,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
             tokenScopes.add(s.value());
         }
         
-        //Create access token for calling client - model on OrcidRandomValueTokenServicesImpl.refreshAccessToken() ??
+        //Create access token for calling client
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(OBOOrcid);
         List<OrcidGrantedAuthority> authorities = profileDao.getGrantedAuthoritiesForProfile(profileEntity.getId());
         profileEntity.setAuthorities(authorities);
@@ -258,22 +245,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         OAuth2Authentication authentication = new OAuth2Authentication(request , userAuth);
         OAuth2AccessToken token = tokenServices.createAccessToken(authentication); 
         return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.accessToken(token));
-        //Note, redirect_uri is left blank.
-        
-        //Need to update to add OBO table - token - new client id (sp) - original client id (m) - id_token (decoded as JSON field).
-        //DONE: add it as a extra column in the existing token table.
-        //DONE: add it to the table when generating.
-        
-        //TODO: when revoking M, also revoke M tokens from this table.        
-        //TODO: add assertion-origin to source element in v3.  How?
-        //It's in every table.  Could link to token instead of source.
-        //TODO: update all code that modifies database via API to also look at possible OBO and populate assertion origin.
-        //DO we need to both with revoking if tokens only last an hour? - answer is no.
-        
-        //TODO: create table with M->SP pairs whitelist to check.  I think it will have to be a whitelist! (or blacklist...)
-        //TODO: If whitelist empty, everything allowed.  Otherwise check list.
-        
-        //TODO: feature flag this?  or rely on grant_type (yes for now).
+        //Note, redirect_uri is left blank.                
     }
 
 }
