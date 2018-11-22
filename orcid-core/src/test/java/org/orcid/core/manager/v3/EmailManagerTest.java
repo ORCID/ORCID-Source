@@ -206,7 +206,14 @@ public class EmailManagerTest extends BaseTest {
         String hashValue = captor.getValue();
         
         assertNotEquals(hashValue, encryptionManager.sha256Hash(emailAddress));
-        assertEquals(hashValue, encryptionManager.sha256Hash(emailAddress.toLowerCase()));
+        assertNotEquals(hashValue, encryptionManager.sha256Hash("   " + emailAddress + "   "));
+        assertNotEquals(hashValue, encryptionManager.sha256Hash(("   " + emailAddress + "   ").toLowerCase()));
+        assertEquals(hashValue, encryptionManager.sha256Hash(("   " + emailAddress + "   ").trim().toLowerCase()));
+        assertEquals(hashValue, encryptionManager.getEmailHash(emailAddress));
+        assertEquals(hashValue, encryptionManager.getEmailHash("   " + emailAddress + "   "));
+        assertEquals(hashValue, encryptionManager.getEmailHash("test@email.com"));
+        assertEquals(hashValue, encryptionManager.getEmailHash("TEST@EMAIL.COM"));
+        assertEquals(hashValue, encryptionManager.getEmailHash("tEsT@EmAiL.CoM"));
        
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);        
     }
@@ -215,8 +222,8 @@ public class EmailManagerTest extends BaseTest {
     public void reactivateOrCreateTest() {
         String otherOrcid = "0000-0000-0000-0002";
         String orcid = "0000-0000-0000-0003";
-        String email = "public_0000-0000-0000-0003@test.orcid.org";
-        String hash = "public_0000-0000-0000-0003@test.orcid.org";
+        String email = "pUbLiC_0000-0000-0000-0003@test.orcid.org";
+        String hash = encryptionManager.getEmailHash(email);
         EmailEntity e = new EmailEntity();
         e.setEmail(email);
         e.setId(hash);
@@ -225,7 +232,7 @@ public class EmailManagerTest extends BaseTest {
         
         // Test merging
         when(mockEmailDao.find(hash)).thenReturn(e);
-        emailManager.reactivateOrCreate(orcid, email, hash, Visibility.PUBLIC);
+        emailManager.reactivateOrCreate(orcid, email, Visibility.PUBLIC);
         
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
         Mockito.verify(mockEmailDao).merge(captor.capture());
@@ -239,12 +246,13 @@ public class EmailManagerTest extends BaseTest {
         assertEquals(Visibility.PUBLIC.name(), merged.getVisibility());
         
         // Test creating
-        emailManager.reactivateOrCreate(orcid, "new@email.com", "new@email.com", Visibility.PUBLIC);
-        Mockito.verify(mockEmailDao).addEmail(eq(orcid), eq("new@email.com"), eq("new@email.com"), eq(Visibility.PUBLIC.name()), eq(orcid), eq(null));
+        String newEmail = "NEW@email.com";
+        emailManager.reactivateOrCreate(orcid, newEmail, Visibility.PUBLIC);
+        Mockito.verify(mockEmailDao).addEmail(eq(orcid), eq(newEmail), eq(encryptionManager.getEmailHash(newEmail)), eq(Visibility.PUBLIC.name()), eq(orcid), eq(null));
         
         // Test belong to other record
         try {
-            emailManager.reactivateOrCreate(otherOrcid, email, hash, Visibility.PUBLIC);            
+            emailManager.reactivateOrCreate(otherOrcid, email, Visibility.PUBLIC);
             fail();
         } catch (IllegalArgumentException iae) {
             

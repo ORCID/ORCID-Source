@@ -1,6 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -57,12 +56,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public boolean verifyEmail(String email, String orcid) {
-        boolean verified = emailDao.verifyEmail(email);        
-        
-        if(verified) {
-        	profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);
+        boolean verified = emailDao.verifyEmail(email);
+
+        if (verified) {
+            profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);
         }
-        
+
         return verified;
     }
 
@@ -107,12 +106,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         if (PojoUtil.isEmpty(email)) {
             return false;
         }
-        try {
-            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-            return emailDao.isAutoDeprecateEnableForEmailUsingHash(emailHash);    
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
+        return emailDao.isAutoDeprecateEnableForEmailUsingHash(encryptionManager.getEmailHash(email));        
     }
 
     @Override
@@ -134,18 +128,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     public void addEmail(HttpServletRequest request, String orcid, Email email) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
-        String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();
-        String emailHash = null;
-        try {
-            emailHash = encryptionManager.sha256Hash(email.getEmail().trim().toLowerCase());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();        
         
         Email currentPrimaryEmail = findPrimaryEmail(orcid);
         
         // Create the new email
-        emailDao.addEmail(orcid, email.getEmail(), emailHash, email.getVisibility().name(), sourceId, clientSourceId);
+        emailDao.addEmail(orcid, email.getEmail(), encryptionManager.getEmailHash(email.getEmail()), email.getVisibility().name(), sourceId, clientSourceId);
         
         // if primary email changed send notification.
         if (email.isPrimary() && !StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
@@ -184,7 +172,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     @Transactional
-    public void reactivatePrimaryEmail(String orcid, String email, String hash) {
+    public void reactivatePrimaryEmail(String orcid, String email) {
+        String hash = encryptionManager.getEmailHash(email);
         EmailEntity entity = emailDao.find(hash);
         if(!orcid.equals(entity.getProfile().getId())) {
             throw new IllegalArgumentException("Email with hash {}" + hash + " doesn't belong to " + orcid);
@@ -209,11 +198,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    public boolean reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility) {
-        EmailEntity entity = emailDao.find(emailHash);
+    public boolean reactivateOrCreate(String orcid, String email, Visibility visibility) {
+        String hash = encryptionManager.getEmailHash(email);
+        EmailEntity entity = emailDao.find(hash);
         // If email doesn't exists, create it
         if(entity == null) {
-            emailDao.addEmail(orcid, email, emailHash, visibility.name(), orcid, null);
+            emailDao.addEmail(orcid, email, hash, visibility.name(), orcid, null);
             return true;
         } else {
             if(orcid.equals(entity.getProfile().getId())) {

@@ -76,12 +76,7 @@ public class PopulateEmailHash {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 for (String email : emailsToHash) {
                     LOG.info("Migrating " + email);
-                    String emailHash;
-                    try {
-                        emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-                    } catch (NoSuchAlgorithmException e) {
-                        throw new RuntimeException(e);
-                    }
+                    String emailHash = encryptionManager.getEmailHash(email);
                     emailDao.populateEmailHash(email, emailHash);
                 }
             }
