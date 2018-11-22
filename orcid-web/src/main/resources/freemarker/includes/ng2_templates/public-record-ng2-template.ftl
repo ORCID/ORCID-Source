@@ -35,8 +35,8 @@
                                         </ng-container>
 
                                          <ng-container  *ngIf="otherNameSource.createdDate">
-                                            {{otherNameSource.createdDate.value}}
-                                         </ng-container>
+                                            {{otherNameSource.createdDate.value | ajaxTickDateToISO8601 }}
+                                         </ng-container> 
 
                                          <ng-container *ngIf="!lastSource">
                                          , 
@@ -79,7 +79,7 @@
                                             {{urlSource?.source?.sourceName?.content || urlSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
                                         <ng-container *ngIf="urlSource.createdDate">
-                                            {{urlSource.createdDate.value}}
+                                            {{urlSource.createdDate.value | ajaxTickDateToISO8601 }}
                                         </ng-container>
                                         <ng-container *ngIf="!lastSource">
                                         , 
@@ -131,7 +131,7 @@
                                         </ng-container>
 
                                          <ng-container  *ngIf="addressSource.createdDate">
-                                            {{addressSource.createdDate.value}}
+                                            {{addressSource.createdDate.value | ajaxTickDateToISO8601 }}
                                          </ng-container>
 
                                          <ng-container *ngIf="!lastSource">
@@ -177,7 +177,7 @@
                                         </ng-container>
 
                                          <ng-container  *ngIf="keywordSource.createdDate">
-                                            {{keywordSource.createdDate.value}}
+                                            {{keywordSource.createdDate.value | ajaxTickDateToISO8601 }}
                                          </ng-container>
 
                                          <ng-container *ngIf="!lastSource">
@@ -191,51 +191,8 @@
                     </div>
                 </div>
             </div>
-        <!-- Websites -->                       
-        <#if (publicGroupedResearcherUrls)?? && (publicGroupedResearcherUrls?size != 0)>
-            <div class="workspace-section">
-                <div class="workspace-section-header">
-                    <ul class="inline-list visible workspace-section-heading">
-                        <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
-                        <li class="right">                                      
-                            <span (click)="toggleSourcesDisplay('websites')" class="right toggle" (mouseenter)="showPopover('websites')" (mouseleave)="hidePopover('websites')">
-                                <i [ngClass]="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-                                <div class="popover top" [ngClass]="{'block' : popoverShowing['websites']}">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <span *ngIf="showSources['websites'] == false  || showSources['websites'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-                                        <span *ngIf="showSources['websites']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-                                    </div>
-                                </div>
-                            </span>
-                        </li>                               
-                    </ul>
-                    <div id="public-researcher-urls-div" class="public-content">                                       
-                        <#list publicGroupedResearcherUrls?keys as url>
-                            <#assign i = 1>
-                            <#list publicGroupedResearcherUrls[url] as researcherUrl>                              
-                                <#if (i == 1)>
-                                      <a href="<@orcid.absUrl researcherUrl.url/>" target="researcherUrl.urlName" rel="me nofollow"><#if (researcherUrl.urlName)! != "">${researcherUrl.urlName?replace("{","[")?replace("}","]")}<#else>${researcherUrl.url.value?replace("{","[")?replace("}","]")}</#if></a><#if url_has_next><br/></#if>
-                                </#if>          
-                                <#if (i == 1)>                              
-                                    <div *ngIf="showSources['websites']" class="source-line separator">
-                                </#if>                                              
-                                    <#if (i == 1)>                                                                              
-                                        <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-                                    </#if>                                                                              
-                                    <#if (researcherUrl.source)?? && (researcherUrl.source.sourceName)?? && (researcherUrl.source.sourceName.content)??>${researcherUrl.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (researcherUrl.createdDate)??>(${(researcherUrl.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if researcherUrl_has_next>, </#if>
-                                    <#assign i = i + 1> 
-                            </#list>
-                            </p>
-                            </div>                                      
-                        </#list>    
-                    </div>
-                </div>
-            </div>
-        </#if>                          
         <!-- External Identifiers -->
-        <#if (publicGroupedPersonExternalIdentifiers)?? && (publicGroupedPersonExternalIdentifiers?size != 0)>
-            <div class="workspace-section">
+            <div *ngIf="personData.publicGroupedPersonExternalIdentifiers && objectKeys(personData.publicGroupedPersonExternalIdentifiers).length > 0" class="workspace-section">
                 <div class="workspace-section-header">
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span></li>
@@ -253,31 +210,36 @@
                         </li>                               
                     </ul>                               
                     <div id="public-external-identifiers-div" class="public-content">
-                        <#list publicGroupedPersonExternalIdentifiers?keys as external>
-                            <#assign i = 1>
-                            <#list publicGroupedPersonExternalIdentifiers[external] as externalIdentifier>
-                                <#if (i == 1)>
-                                    <#if (externalIdentifier.url.value)??>
-                                        <a href="${externalIdentifier.url.value}" target="externalIdentifier.value">${(externalIdentifier.type)!}: ${(externalIdentifier.value)!}</a><#if external_has_next><br/><span *ngIf="showSources['external-identifiers'] == false || showSources['external-identifiers'] == null"></span></#if>
-                                    <#else>
-                                        ${(externalIdentifier.type)!}: ${(externalIdentifier.value)!}<#if external_has_next><br/></#if>
-                                    </#if>                                                                  
+                        <ng-container  *ngFor="let external of objectKeys(personData.publicGroupedPersonExternalIdentifiers); let lastExternal = last; let firstExternal = first;">
+                            <ng-container  *ngFor="let externalIdentifier of personData.publicGroupedPersonExternalIdentifiers[external]; let firstExternalIdentifier = first;">
+                                <ng-container *ngIf="firstExternalIdentifier">
+
+                                    <a href="{{externalIdentifier.url.value}}" 
+                                        target="externalIdentifier.value">
+                                        {{externalIdentifier.type}}: {{externalIdentifier.value}}
+                                    </a>
+                                    
+                                    <ng-container *ngIf="lastExternal">
+                                        <br/><span *ngIf="showSources['external-identifiers'] == false || showSources['external-identifiers'] == null">
+                                        </span>
+                                    </ng-container>
+
+                                </ng-container>
+
                                     <div *ngIf="showSources['external-identifiers']" class="source-line separator">                                                                                                                            
                                         <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-                                </#if>
-                                <#if (externalIdentifier.source)?? && (externalIdentifier.source.sourceName)?? && (externalIdentifier.source.sourceName.content)??>${externalIdentifier.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (externalIdentifier.createdDate)??>(${(externalIdentifier.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-                                    <#assign i = i + 1> 
-                           </#list>
-                           </p>
-                       </div>                                                   
-                       </#list>
+                                            {{externalIdentifier?.source?.sourceName?.content || externalIdentifier?.source?.sourceClientId?.path }}
+                                            {{externalIdentifier.createdDate.value | ajaxTickDateToISO8601 }}
+                                        </p>
+                                    </div>
+                            </ng-container>
+                        </ng-container>  
                     </div>
-                 </div>
-             </div>                 
-        </#if>
+                </div>
+            </div>    
         <!-- Email -->
        
-            <div   *ngIf="personData.publicGroupedEmails && objectKeys(personData.publicGroupedEmails).length > 0" class="workspace-section">
+            <div *ngIf="personData.publicGroupedEmails && objectKeys(personData.publicGroupedEmails).length > 0" class="workspace-section">
                 <div class="workspace-section-header">
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span></li>
@@ -306,7 +268,7 @@
                                             {{emailSource?.source?.sourceName?.content || emailSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
                                         <ng-container *ngIf="emailSource.createdDate">
-                                            {{emailSource.createdDate.value}}
+                                            {{emailSource.createdDate.value | ajaxTickDateToISO8601 }}
                                         </ng-container>
                                         <ng-container *ngIf="!lastSource">
                                         , 
