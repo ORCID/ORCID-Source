@@ -30,8 +30,8 @@
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
                                     <ng-container  *ngFor="let otherNameSource of personData.publicGroupedOtherNames[otherName]; let lastSource = last;">
 
-                                        <ng-container  *ngIf="otherNameSource.source && otherNameSource.source.sourceName && otherNameSource.source.sourceName.content">
-                                            {{otherNameSource.source.sourceName.content}}
+                                        <ng-container>
+                                            {{otherNameSource?.source?.sourceName?.content || otherNameSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
 
                                          <ng-container  *ngIf="otherNameSource.createdDate">
@@ -75,8 +75,8 @@
                             <div *ngIf="showSources['websites']" class="source-line separator">                                        
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
                                     <ng-container  *ngFor="let urlSource of personData.publicGroupedResearcherUrls[url]; let lastSource = last;">
-                                        <ng-container  *ngIf="urlSource.source && urlSource.source.sourceName && urlSource.source.sourceName.content ">
-                                            {{urlSource.source.sourceName.content}}
+                                        <ng-container>
+                                            {{urlSource?.source?.sourceName?.content || urlSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
                                         <ng-container *ngIf="urlSource.createdDate">
                                             {{urlSource.createdDate.value}}
@@ -126,8 +126,8 @@
 
                                     <ng-container  *ngFor="let addressSource of personData.publicGroupedAddresses[address]; let lastSource = last;">
 
-                                        <ng-container  *ngIf="addressSource.source && addressSource.source.sourceName && addressSource.source.sourceName.content">
-                                            {{addressSource.source.sourceName.content}}
+                                        <ng-container>
+                                            {{addressSource?.source?.sourceName?.content || addressSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
 
                                          <ng-container  *ngIf="addressSource.createdDate">
@@ -172,8 +172,8 @@
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
                                     <ng-container  *ngFor="let keywordSource of personData.publicGroupedKeywords[keyword]; let lastSource = last;">
 
-                                        <ng-container  *ngIf="keywordSource.source && keywordSource.source.sourceName && keywordSource.source.sourceName.content">
-                                            {{keywordSource.source.sourceName.content}}
+                                        <ng-container>
+                                            {{keywordSource?.source?.sourceName?.content || keywordSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
 
                                          <ng-container  *ngIf="keywordSource.createdDate">
@@ -302,8 +302,8 @@
                             <div *ngIf="showSources['emails']" class="source-line separator">                                        
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
                                     <ng-container  *ngFor="let emailSource of personData.publicGroupedEmails[email]; let lastSource = last;">
-                                        <ng-container  *ngIf="emailSource.source && emailSource.source.sourceName && emailSource.source.sourceName.content ">
-                                            {{emailSource.source.sourceName.content}}
+                                        <ng-container>
+                                            {{emailSource?.source?.sourceName?.content || emailSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
                                         <ng-container *ngIf="emailSource.createdDate">
                                             {{emailSource.createdDate.value}}
