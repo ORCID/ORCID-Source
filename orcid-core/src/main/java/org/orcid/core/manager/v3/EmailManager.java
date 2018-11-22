@@ -48,7 +48,7 @@ public interface EmailManager extends EmailManagerReadOnly {
     
     void setPrimary(String orcid, String email, HttpServletRequest request);
     
-    void reactivatePrimaryEmail(String orcid, String email, String hash);
+    void reactivatePrimaryEmail(String orcid, String email);
     
     Integer clearEmailsAfterReactivation(String orcid);
     
@@ -56,10 +56,9 @@ public interface EmailManager extends EmailManagerReadOnly {
      * Reactivates or creates an email address
      * @param orcid
      * @param email
-     * @param emailHash
      * @param visibility
      * 
      * @return true if the email is new or it exists but have not been verified
      * */
-    boolean reactivateOrCreate(String orcid, String email, String emailHash, Visibility visibility);
+    boolean reactivateOrCreate(String orcid, String email, Visibility visibility);
 }

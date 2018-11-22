@@ -556,13 +556,7 @@ public class SetUpClientsAndUsers {
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    try {
-                        String emailHash;
-                        emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-                        emailDao.populateEmailHash(email, emailHash);
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    }
+                    emailDao.populateEmailHash(email, encryptionManager.getEmailHash(email));                    
                 }
             });
             

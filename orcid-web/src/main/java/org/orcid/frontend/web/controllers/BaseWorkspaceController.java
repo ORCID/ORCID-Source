@@ -144,7 +144,7 @@ public class BaseWorkspaceController extends BaseController {
         if (!PojoUtil.isEmpty(hash)) {
             return hash;
         }
-        hash = profileEntityManager.getHash(getEffectiveUserOrcid());
+        hash = profileEntityManager.getOrcidHash(getEffectiveUserOrcid());
         if (session != null) {
             request.getSession().setAttribute(ORCID_ID_HASH, hash);
         }
