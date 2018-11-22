@@ -26,4 +26,5 @@ public interface EncryptionManager {
 
     String decryptForLegacyExternalUse(String stringToDecrypt);
 
+    String getEmailHash(String email);
 }

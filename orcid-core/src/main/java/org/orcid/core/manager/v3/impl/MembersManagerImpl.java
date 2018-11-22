@@ -129,11 +129,7 @@ public class MembersManagerImpl implements MembersManager {
         EmailEntity emailEntity = new EmailEntity();
         String email = member.getEmail().getValue().trim();
         emailEntity.setEmail(email);
-        try {
-            emailEntity.setId(encryptionManager.sha256Hash(email.toLowerCase()));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        emailEntity.setId(encryptionManager.getEmailHash(email));
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
@@ -207,11 +203,7 @@ public class MembersManagerImpl implements MembersManager {
                     newPrimaryEmail.setLastModified(now);                    
                     newPrimaryEmail.setCurrent(true);
                     newPrimaryEmail.setEmail(email);
-                    try {
-                        newPrimaryEmail.setId(encryptionManager.sha256Hash(email.toLowerCase()));
-                    } catch (NoSuchAlgorithmException e) {
-                        throw new RuntimeException(e);
-                    }
+                    newPrimaryEmail.setId(encryptionManager.getEmailHash(email));
                     newPrimaryEmail.setPrimary(true);
                     newPrimaryEmail.setVerified(true);
                     newPrimaryEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
