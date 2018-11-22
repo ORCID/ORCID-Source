@@ -27,8 +27,6 @@ import { PrivacytoggleNg2Module }
 import { OrderByPipe }
     from '../../pipes/orderByNg2.ts'; 
 
-import { AjaxFormDateToISO8601Pipe }
-    from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
 
 // This is the Angular 1 part of the module
 export const FundingFormModule = angular.module(
