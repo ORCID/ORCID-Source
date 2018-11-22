@@ -218,10 +218,8 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         
         assertEquals(extId1.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
         assertEquals(extId1.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
-        assertEquals(extId1.getSource().getSourceName().getContent(),"Source Client 1");
         assertEquals(extId1.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(extId1.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
-        assertEquals(extId1.getSource().getAssertionOriginName().getContent(),"Source Client 2");
         
         //make a duplicate
         PersonExternalIdentifier extId2 = getExternalIdentifier();

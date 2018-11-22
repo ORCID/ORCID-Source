@@ -31,6 +31,7 @@ import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -1120,10 +1121,8 @@ public class WorkManagerTest extends BaseTest {
         assertEquals("updated", work.getWorkTitle().getTitle().getContent());        
         assertEquals(work.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
         assertEquals(work.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
-        assertEquals(work.getSource().getSourceName().getContent(),"U. Test");
         assertEquals(work.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(work.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
-        assertEquals(work.getSource().getAssertionOriginName().getContent(),"Source Client 1");
         
         //make a duplicate
         Work work2 = getWork(null);

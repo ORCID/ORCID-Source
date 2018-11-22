@@ -896,10 +896,8 @@ public class AffiliationsManagerTest extends BaseTest {
         Source s = element.getSource();
         assertEquals(s.getSourceOrcid().getPath(),CLIENT_1_ID);
         assertEquals(s.getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
-        assertEquals(s.getSourceName().getContent(),"U. Test");
         assertEquals(s.getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(s.getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
-        assertEquals(s.getAssertionOriginName().getContent(),"Source Client 1");
 
         try {
             when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));

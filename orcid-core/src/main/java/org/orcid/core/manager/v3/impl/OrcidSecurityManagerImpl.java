@@ -219,7 +219,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
     }
 
-    /** This is odd.  
+    /** This is odd.   Previous behavior was to get id from either client_source_id or source_id then check against both.
+     * Strictly this was incorrect.  Now checks properly, field for field.  TD 22/11/18
      * 
      */
     @Override

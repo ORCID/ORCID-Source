@@ -62,40 +62,4 @@
 				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
 		</addColumn>		
     </changeSet>
-    
-    <changeSet author="Tom Demeranville" id="UPDATE-ASSERTION-ORIGIN-CONSTRAINTS" dbms="postgresql">
-    <!-- remove these then add back but with  assertion_origin_client_source_id and assertion_origin_source_id
-    //researcher_url
-    //CONSTRAINT researcher_url_orcid_client_source_unique_key UNIQUE (url, orcid, client_source_id),
-    //CONSTRAINT researcher_url_orcid_source_unique_key UNIQUE (url, orcid, source_id)
-    //external_identifiers
-    CONSTRAINT unique_external_identifiers_allowing_multiple_sources UNIQUE (orcid, external_id_reference, external_id_type, source_id, client_source_id)
-     -->
-     
-		 <preConditions onFail="MARK_RAN">
-		    <sqlCheck expectedResult="0">select count (*) from pg_constraint where conname='researcher_url_orcid_source_unique_key'</sqlCheck>
-		 </preConditions>		
-         <dropUniqueConstraint 
-            constraintName="researcher_url_orcid_source_unique_key"
-            tableName="researcher_url"/>
-         <dropUniqueConstraint 
-            constraintName="researcher_url_orcid_client_source_unique_key"
-            tableName="researcher_url"/>
-         <dropUniqueConstraint 
-            constraintName="unique_external_identifiers_allowing_multiple_sources"
-            tableName="external_identifier"/>
-	</changeSet>
-	
-	    <changeSet author="Tom Demeranville" id="UPDATE-ASSERTION-ORIGIN-CONSTRAINTS-HSQL" dbms="hsqldb">	
-         <dropUniqueConstraint 
-            constraintName="researcher_url_orcid_source_unique_key"
-            tableName="researcher_url"/>
-         <dropUniqueConstraint 
-            constraintName="researcher_url_orcid_client_source_unique_key"
-            tableName="researcher_url"/>
-         <dropUniqueConstraint 
-            constraintName="unique_external_identifiers_allowing_multiple_sources"
-            tableName="external_identifier"/>
-	</changeSet>
-    
 </databaseChangeLog>

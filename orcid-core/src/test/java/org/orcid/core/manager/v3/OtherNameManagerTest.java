@@ -180,10 +180,8 @@ public class OtherNameManagerTest extends BaseTest {
         
         assertEquals(otherName.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
         assertEquals(otherName.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
-        assertEquals(otherName.getSource().getSourceName().getContent(),"U. Test");
         assertEquals(otherName.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(otherName.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
-        assertEquals(otherName.getSource().getAssertionOriginName().getContent(),"Source Client 2");
         
         //make a duplicate
         OtherName otherName2 = getOtherName();

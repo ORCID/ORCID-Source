@@ -181,10 +181,8 @@ public class ResearcherUrlManagerTest extends BaseTest {
         
         assertEquals(rUrl.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
         assertEquals(rUrl.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
-        assertEquals(rUrl.getSource().getSourceName().getContent(),"U. Test");
         assertEquals(rUrl.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(rUrl.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
-        assertEquals(rUrl.getSource().getAssertionOriginName().getContent(),"Source Client 2");
         
         //make a duplicate
         ResearcherUrl rUrl2 = getResearcherUrl();

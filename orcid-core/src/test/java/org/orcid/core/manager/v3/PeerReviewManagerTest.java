@@ -470,10 +470,8 @@ public class PeerReviewManagerTest extends BaseTest {
         PeerReview pr = peerReviewManager.getPeerReview(claimedOrcid, p1.getPutCode());        
         assertEquals(pr.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
         assertEquals(pr.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
-        assertEquals(pr.getSource().getSourceName().getContent(),"U. Test");
         assertEquals(pr.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(pr.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
-        assertEquals(pr.getSource().getAssertionOriginName().getContent(),"Source Client 1");
         
         //make a duplicate
         PeerReview p2 = getPeerReview("extId1");
