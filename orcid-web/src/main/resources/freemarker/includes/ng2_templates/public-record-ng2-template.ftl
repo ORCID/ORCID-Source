@@ -1,9 +1,9 @@
 <script type="text/ng-template" id="public-record-ng2-template">    
 <#escape x as x?html>                   
     <#if (locked)?? && !locked>
-    <ng-container *ngIf="personData">
         <!-- Other Names -->
-            <div *ngIf="personData.publicGroupedOtherNames && objectKeys(personData.publicGroupedOtherNames).length > 0" class="workspace-section">
+        <#if (publicGroupedOtherNames)?? && (publicGroupedOtherNames?size != 0)>
+            <div class="workspace-section">
                 <div class="workspace-section-header">
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span></li>
@@ -22,35 +22,23 @@
                     </ul>
                 </div>
                 <div id="public-other-names-div" class="public-content">
-                        <ng-container  *ngFor="let otherName of objectKeys(personData.publicGroupedOtherNames); let lastName = last;">
-                            <span  name="other-name">{{otherName}}</span>
-                            <span *ngIf="!lastName && (showSources['other-names'] == false || showSources['other-names'] == null)">, </span>
-
-                            <div *ngIf="showSources['other-names']" class="source-line separator">
-                                <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-                                    <ng-container  *ngFor="let otherNameSource of personData.publicGroupedOtherNames[otherName]; let lastSource = last;">
-
-                                        <ng-container  *ngIf="otherNameSource.source && otherNameSource.source.sourceName && otherNameSource.source.sourceName.content">
-                                            {{otherNameSource.source.sourceName.content}}
-                                        </ng-container>
-
-                                         <ng-container  *ngIf="otherNameSource.createdDate">
-                                            {{otherNameSource.createdDate.value}}
-                                         </ng-container>
-
-                                         <ng-container *ngIf="!lastSource">
-                                         , 
-                                         </ng-container>
-
-                                    </ng-container>
-                                </p>
-                            </div>
-                        </ng-container>
+                    <#list publicGroupedOtherNames?keys as otherName>
+                        <span name="other-name">${otherName}</span><#if otherName_has_next><span *ngIf="showSources['other-names'] == false || showSources['other-names'] == null">, </span></#if>                                   
+                        <div *ngIf="showSources['other-names']" class="source-line separator">
+                            <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+                                <#list publicGroupedOtherNames[otherName] as otherNameSource>
+                                    <#if (otherNameSource.source)?? && (otherNameSource.source.sourceName)?? && (otherNameSource.source.sourceName.content)??>${otherNameSource.source.sourceName.content!}<#else>${(effectiveUserOrcid)!}</#if>  <#if (otherNameSource.createdDate)??>(${otherNameSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if otherNameSource_has_next>,  </#if>
+                                </#list>
+                            </p>
+                        </div>
+                    </#list>
                 </div>
-            </div>    
+            </div>                    
+        </#if>
         
         <!-- Websites -->                       
-            <div *ngIf="personData && objectKeys(personData.publicGroupedResearcherUrls).length > 0" class="workspace-section">
+        <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
+            <div class="workspace-section">
                 <div class="workspace-section-header">
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
@@ -68,33 +56,28 @@
                         </li>                               
                     </ul>
                     <div id="public-researcher-urls-div" class="public-content">
-                        <ng-container  *ngFor="let url of objectKeys(personData.publicGroupedResearcherUrls); let lastUrl = last;">
-                            <a href="{{personData.publicGroupedResearcherUrls[url].content || url}}" target="{{personData.publicGroupedResearcherUrls[url].urlName || url}}" rel="me nofollow">
-                                {{personData.publicGroupedResearcherUrls[url][0].urlName || url}}
+                        <#list publicResearcherUrls.researcherUrls as url>
+                            <a href="<@orcid.absUrl url.url/>" target="url.urlName" rel="me nofollow">
+                                <#if (url.urlName)! != "">
+                                    ${url.urlName}
+                                <#else>
+                                    ${url.url.value}
+                                </#if>
                             </a>                                
                             <div *ngIf="showSources['websites']" class="source-line separator">                                        
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-                                    <ng-container  *ngFor="let urlSource of personData.publicGroupedResearcherUrls[url]; let lastSource = last;">
-                                        <ng-container  *ngIf="urlSource.source && urlSource.source.sourceName && urlSource.source.sourceName.content ">
-                                            {{urlSource.source.sourceName.content}}
-                                        </ng-container>
-                                        <ng-container *ngIf="urlSource.createdDate">
-                                            {{urlSource.createdDate.value}}
-                                        </ng-container>
-                                        <ng-container *ngIf="!lastSource">
-                                        , 
-                                        </ng-container>
-                                    </ng-container>
+                                    <#if (url.source)?? && (url.source.sourceName)?? && (url.source.sourceName.content)??>${url.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (url.createdDate)??>(${(url.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
                                 </p>                                                                                                                                                        
                             </div>  
-                           <br *ngIf="!lastUrl" />
-                        </ng-container>
+                            <#if url_has_next><br/></#if>
+                        </#list>
                     </div>
                 </div>
             </div>
-       
+        </#if>  
         <!-- Countries -->                                 
-            <div *ngIf="personData.publicGroupedAddresses && objectKeys(personData.publicGroupedAddresses).length > 0" class="workspace-section">
+        <#if (publicAddress)?? || (publicGroupedAddresses)??>
+            <div class="workspace-section">
                 <div class="workspace-section-header">
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>                                   
@@ -112,41 +95,23 @@
                             </li>
                     </ul>                               
                     <div id="public-country-div" class="public-content">
-                        <ng-container  *ngFor="let address of objectKeys(personData.publicGroupedAddresses); let lastAddress = last;">
-                            <span name="country">
-                                {{personData.countryNames[address]}}
-                            </span>
-                            
-                            <span *ngIf="!lastAddress && (showSources['countries'] == false || showSources['countries'] == null)">
-                                ,
-                            </span>   
-
+                        <#list publicGroupedAddresses?keys as address>
+                            <span name="country">${countryNames[address]}</span><#if address_has_next><span *ngIf="showSources['countries'] == false || showSources['countries'] == null">, </span></#if>                                    
                             <div *ngIf="showSources['countries']" class="source-line separator">
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-
-                                    <ng-container  *ngFor="let addressSource of personData.publicGroupedAddresses[address]; let lastSource = last;">
-
-                                        <ng-container  *ngIf="addressSource.source && addressSource.source.sourceName && addressSource.source.sourceName.content">
-                                            {{addressSource.source.sourceName.content}}
-                                        </ng-container>
-
-                                         <ng-container  *ngIf="addressSource.createdDate">
-                                            {{addressSource.createdDate.value}}
-                                         </ng-container>
-
-                                         <ng-container *ngIf="!lastSource">
-                                         , 
-                                         </ng-container>
-
-                                    </ng-container>
+                                    <#list publicGroupedAddresses[address] as addressSource>
+                                        <#if (addressSource.source)?? && (addressSource.source.sourceName)?? && (addressSource.source.sourceName.content)??>${addressSource.source.sourceName.content!}<#else>${(effectiveUserOrcid)!}</#if>  <#if (addressSource.createdDate)??>(${addressSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if addressSource_has_next>, </#if>
+                                    </#list>
                                 </p>
                             </div>
-                        </ng-container>
+                        </#list>
                     </div>
                 </div>
             </div>
+        </#if>
         <!-- Keywords -->
-            <div  *ngIf="personData.publicGroupedKeywords && objectKeys(personData.publicGroupedKeywords).length > 0" class="workspace-section">
+        <#if (publicGroupedKeywords)?? && (publicGroupedKeywords?size != 0)>
+            <div class="workspace-section">
                 <div class="workspace-section-header">
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span></li>
@@ -163,34 +128,21 @@
                             </span>
                         </li>                               
                     </ul>   
-                    <div id="public-keywords-div" class="public-content">   
-                        <ng-container  *ngFor="let keyword of objectKeys(personData.publicGroupedKeywords); let lastkeyword = last;">
-                            <span  name="keywords">{{keyword}}</span>
-                            <span *ngIf="!lastkeyword && (showSources['keywords'] == false || showSources['keywords'] == null)">, </span>
-
+                    <div id="public-keywords-div" class="public-content">                                   
+                        <#list publicGroupedKeywords?keys as keyword>                                                              
+                            <span name="keyword">${keyword}</span><#if keyword_has_next><span *ngIf="showSources['keywords'] == false || showSources['keywords'] == null">, </span></#if>
                             <div *ngIf="showSources['keywords']" class="source-line separator">
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-                                    <ng-container  *ngFor="let keywordSource of personData.publicGroupedKeywords[keyword]; let lastSource = last;">
-
-                                        <ng-container  *ngIf="keywordSource.source && keywordSource.source.sourceName && keywordSource.source.sourceName.content">
-                                            {{keywordSource.source.sourceName.content}}
-                                        </ng-container>
-
-                                         <ng-container  *ngIf="keywordSource.createdDate">
-                                            {{keywordSource.createdDate.value}}
-                                         </ng-container>
-
-                                         <ng-container *ngIf="!lastSource">
-                                         , 
-                                         </ng-container>
-
-                                    </ng-container>
+                                    <#list publicGroupedKeywords[keyword] as keywordSource>                 
+                                        <#if (keywordSource.source)?? && (keywordSource.source.sourceName)?? && (keywordSource.source.sourceName.content)??>${keywordSource.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (keywordSource.createdDate)??>(${(keywordSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if keywordSource_has_next>, </#if>
+                                    </#list>
                                 </p>
                             </div>
-                        </ng-container>                               
+                        </#list>
                     </div>
                 </div>
             </div>
+        </#if>
         <!-- Websites -->                       
         <#if (publicGroupedResearcherUrls)?? && (publicGroupedResearcherUrls?size != 0)>
             <div class="workspace-section">
@@ -276,8 +228,8 @@
              </div>                 
         </#if>
         <!-- Email -->
-       
-            <div   *ngIf="personData.publicGroupedEmails && objectKeys(personData.publicGroupedEmails).length > 0" class="workspace-section">
+        <#if (publicGroupedEmails)?? && (publicGroupedEmails?size != 0)>
+            <div class="workspace-section">
                 <div class="workspace-section-header">
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span></li>
@@ -295,34 +247,20 @@
                         </li>                               
                     </ul>                               
                     <div class="public-content" id="public-emails-div">
-                        <ng-container  *ngFor="let email of objectKeys(personData.publicGroupedEmails); let lastEmail = last;">
-                            <a href="{{email}}" target="{{email}}" rel="me nofollow">
-                                {{email}}
-                            </a>                                
-                            <div *ngIf="showSources['emails']" class="source-line separator">                                        
+                         <#list publicGroupedEmails?keys as email>                                                              
+                            <div name="email">${email}</div>    
+                            <div *ngIf="showSources['emails']" class="source-line separator">                                      
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-                                    <ng-container  *ngFor="let emailSource of personData.publicGroupedEmails[email]; let lastSource = last;">
-                                        <ng-container  *ngIf="emailSource.source && emailSource.source.sourceName && emailSource.source.sourceName.content ">
-                                            {{emailSource.source.sourceName.content}}
-                                        </ng-container>
-                                        <ng-container *ngIf="emailSource.createdDate">
-                                            {{emailSource.createdDate.value}}
-                                        </ng-container>
-                                        <ng-container *ngIf="!lastSource">
-                                        , 
-                                        </ng-container>
-                                    </ng-container>
-                                </p>                                                                                                                                                        
-                            </div>  
-                           <br *ngIf="!lastEmail" />
-                        </ng-container>
+                                    <#list publicGroupedEmails[email] as emailSource>                                                                                                       
+                                        <#if (emailSource.source)?? && (emailSource.source.sourceName)?? && (emailSource.source.sourceName.content)??>${emailSource.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (emailSource.createdDate)??>(${(emailSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+                                    </#list>
+                                </p>
+                            </div>                          
+                         </#list>
                     </div>                              
                 </div>
             </div>
-
-        </ng-container>
-
+        </#if> 
     </#if>
-
 </#escape>
 </script>
