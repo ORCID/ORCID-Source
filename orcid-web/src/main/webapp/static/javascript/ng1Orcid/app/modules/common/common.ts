@@ -27,6 +27,9 @@ import { FocusMe }
 
 //User generated filters
 
+import { AjaxTickDateToISO8601Pipe }
+    from '../../pipes/ajaxTickDateToISO8601Ng2.ts'; 
+
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
 
@@ -223,6 +226,7 @@ import { DeveloperToolsService }
         declarations: [ 
             FocusMe,
             AjaxFormDateToISO8601Pipe,
+            AjaxTickDateToISO8601Pipe,
             ContributorFilterPipe,
             DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
@@ -250,6 +254,7 @@ import { DeveloperToolsService }
             FocusMe,
             //User Pipes
             AjaxFormDateToISO8601Pipe,
+            AjaxTickDateToISO8601Pipe,
             ContributorFilterPipe,
             DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
