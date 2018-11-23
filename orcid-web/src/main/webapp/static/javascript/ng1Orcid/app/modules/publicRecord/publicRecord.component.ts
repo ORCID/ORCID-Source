@@ -1,37 +1,55 @@
 declare var orcidVar: any;
 
-//Import all the angular components
-
-import { Component } 
-    from '@angular/core';
-
-import { CommonService } 
-    from '../../shared/common.service.ts';
+import { Observable, Subject, Subscription } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { Component } from "@angular/core";
+import { CommonService } from "../../shared/common.service.ts";
+import { GenericService } from "../../shared/generic.service.ts";
 
 @Component({
-    selector: 'public-record-ng2',
-    template:  scriptTmpl("public-record-ng2-template")
+  selector: "public-record-ng2",
+  template: scriptTmpl("public-record-ng2-template")
 })
 export class PublicRecordComponent {
-    popoverShowing: any;
-    showSources: any;
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  popoverShowing: any;
+  showSources: any;
+  personEndPoint = "/" + orcidVar.orcidId + "/person.json";
+  personData;
+  objectKeys = Object.keys;
 
-    constructor(
-        private commonService: CommonService
-    ) {
-        this.popoverShowing = new Array();
-        this.showSources = new Array();
-    }
+  constructor(
+    private commonService: CommonService,
+    private genericService: GenericService
+  ) {
+    this.popoverShowing = new Array();
+    this.showSources = new Array();
+  }
 
-    hidePopover(section): void{
-        this.popoverShowing[section] = false;    
-    };
+  ngOnInit() {
+    this.genericService
+      .getData(this.personEndPoint)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(data => {
+        this.personData= data;
+        console.log (this.personData)
+      });
+  }
 
-    showPopover(section): void{
-        this.popoverShowing[section] = true;
-    }; 
+  hidePopover(section): void {
+    this.popoverShowing[section] = false;
+  }
 
-    toggleSourcesDisplay(section): void {        
-        this.showSources[section] = !this.showSources[section];     
-    };
+  showPopover(section): void {
+    this.popoverShowing[section] = true;
+  }
+
+  toggleSourcesDisplay(section): void {
+    this.showSources[section] = !this.showSources[section];
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 }
