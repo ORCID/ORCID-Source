@@ -15,6 +15,7 @@ export const idBannerModule = angular.module("idBannerModule", []);
   imports: [CommonNg2Module],
   declarations: [idBannerComponent, NameComponent, OrderByPipe, SwitchUserComponent],
   entryComponents: [idBannerComponent, NameComponent, SwitchUserComponent],
+  exports: [SwitchUserComponent, NameComponent],
   providers: []
 })
 export class idBannerNg2Module {}
