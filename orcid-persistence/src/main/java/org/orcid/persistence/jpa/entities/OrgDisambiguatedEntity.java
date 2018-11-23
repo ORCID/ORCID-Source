@@ -13,8 +13,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -53,6 +55,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     private Integer popularity = 0;
     private Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers;
     private Set<OrgEntity> orgs;
+    private MemberChosenOrgDisambiguatedEntity memberChosenOrgDisambiguatedEntity;
 
     @Override
     @Id
@@ -208,4 +211,14 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.orgType = orgType;
     }
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id")
+    public MemberChosenOrgDisambiguatedEntity getMemberChosenOrgDisambiguatedEntity() {
+        return memberChosenOrgDisambiguatedEntity;
+    }
+
+    public void setMemberChosenOrgDisambiguatedEntity(MemberChosenOrgDisambiguatedEntity memberChosenOrgDisambiguatedEntity) {
+        this.memberChosenOrgDisambiguatedEntity = memberChosenOrgDisambiguatedEntity;
+    }
+    
 }
