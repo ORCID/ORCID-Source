@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -19,6 +18,7 @@ import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.MemberChosenOrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -228,5 +228,13 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
         }
         return org;
+    }
+
+    @Override
+    public void refreshMemberChosenOrgs(List<Long> chosenIds) {
+        List<MemberChosenOrgDisambiguatedEntity> entities = new ArrayList<>();
+        chosenIds.stream().forEach(id -> entities.add(new MemberChosenOrgDisambiguatedEntity(id)));
+        orgDisambiguatedDao.clearMemberChosenOrgs();
+        entities.stream().forEach(e -> orgDisambiguatedDao.persistChosenOrg(e));
     }
 }

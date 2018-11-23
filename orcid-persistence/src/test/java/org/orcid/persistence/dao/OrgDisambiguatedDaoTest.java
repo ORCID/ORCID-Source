@@ -2,6 +2,7 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.persistence.jpa.entities.MemberChosenOrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -70,6 +72,18 @@ public class OrgDisambiguatedDaoTest extends DBUnitTest {
         assertEquals("An Institution",e.getName());
         assertEquals("GB",e.getCountry());
     }
-
-
+    
+    @Test
+    public void testMemberChosenOrgs() {
+        List<OrgDisambiguatedEntity> orgs = orgDisambiguatedDao.getAll();
+        orgs.forEach(org -> assertNull(org.getMemberChosenOrgDisambiguatedEntity()));
+        orgs.stream().forEach(org -> orgDisambiguatedDao.persistChosenOrg(new MemberChosenOrgDisambiguatedEntity(org.getId())));
+        orgs = orgDisambiguatedDao.getAll();
+        orgs.forEach(org -> assertNotNull(org.getMemberChosenOrgDisambiguatedEntity()));
+        
+        orgDisambiguatedDao.clearMemberChosenOrgs();
+        orgs = orgDisambiguatedDao.getAll();
+        orgs.forEach(org -> assertNull(org.getMemberChosenOrgDisambiguatedEntity()));
+    }
+    
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.MemberChosenOrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 
 /**
@@ -38,5 +39,9 @@ public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, 
     void createUniqueConstraint();
 
     List<OrgDisambiguatedEntity> findDuplicates();
+    
+    void persistChosenOrg(MemberChosenOrgDisambiguatedEntity entity);
+
+    void clearMemberChosenOrgs();
 
 }

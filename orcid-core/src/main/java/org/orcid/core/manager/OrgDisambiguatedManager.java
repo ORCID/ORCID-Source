@@ -2,8 +2,6 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
-import javax.persistence.NoResultException;
-
 import org.orcid.pojo.OrgDisambiguated;
 
 /**
@@ -24,5 +22,7 @@ public interface OrgDisambiguatedManager {
     public OrgDisambiguated findInDB(Long id);
     
     public OrgDisambiguated findInDB(String idValue, String idType);
+
+    void refreshMemberChosenOrgs(List<Long> chosenIds);
 
 }
