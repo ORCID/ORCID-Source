@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -212,7 +213,8 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     }
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id")
+    @JoinColumns({ @JoinColumn(updatable = false, insertable = false, name = "source_id", referencedColumnName = "source_id"),
+            @JoinColumn(updatable = false, insertable = false, name = "source_type", referencedColumnName = "source_type") })
     public MemberChosenOrgDisambiguatedEntity getMemberChosenOrgDisambiguatedEntity() {
         return memberChosenOrgDisambiguatedEntity;
     }
@@ -220,5 +222,5 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     public void setMemberChosenOrgDisambiguatedEntity(MemberChosenOrgDisambiguatedEntity memberChosenOrgDisambiguatedEntity) {
         this.memberChosenOrgDisambiguatedEntity = memberChosenOrgDisambiguatedEntity;
     }
-    
+
 }

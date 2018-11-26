@@ -23,6 +23,4 @@ public interface OrgDisambiguatedManager {
     
     public OrgDisambiguated findInDB(String idValue, String idType);
 
-    void refreshMemberChosenOrgs(List<Long> chosenIds);
-
 }

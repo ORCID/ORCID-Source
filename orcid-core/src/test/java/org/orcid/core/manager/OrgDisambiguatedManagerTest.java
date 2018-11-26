@@ -5,10 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -17,18 +14,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.jpa.entities.MemberChosenOrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.test.TargetProxyHelper;
 
 public class OrgDisambiguatedManagerTest extends BaseTest {
+    
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
 
@@ -52,9 +48,6 @@ public class OrgDisambiguatedManagerTest extends BaseTest {
         when(mockOrgDisambiguatedDaoReadOnly.find(1L)).thenReturn(getOrgDisambiguatedEntity(true));
         when(mockOrgDisambiguatedDaoReadOnly.findBySourceIdAndSourceType("sourceId","sourceType")).thenReturn(getOrgDisambiguatedEntity(true));
         when(mockOrgDisambiguatedDaoReadOnly.find(2L)).thenReturn(getOrgDisambiguatedEntity(false));
-        when(mockOrgDisambiguatedDaoReadOnly.getAll()).thenReturn(getListOfOrgs());
-        Mockito.doNothing().when(mockOrgDisambiguatedDao).clearMemberChosenOrgs();
-        Mockito.doNothing().when(mockOrgDisambiguatedDao).persistChosenOrg(Mockito.any(MemberChosenOrgDisambiguatedEntity.class));
     }
 
     @After
@@ -192,23 +185,4 @@ public class OrgDisambiguatedManagerTest extends BaseTest {
         return entity;
     }
     
-    @Test
-    public void testRefreshMemberChosenOrgDisambiguatedEntities() {
-        List<Long> chosenOrgs = Arrays.asList(1L, 2L, 3L, 4L);
-        orgDisambiguatedManager.refreshMemberChosenOrgs(chosenOrgs);
-
-        Mockito.verify(mockOrgDisambiguatedDao, Mockito.times(1)).clearMemberChosenOrgs();
-        Mockito.verify(mockOrgDisambiguatedDao, Mockito.times(4)).persistChosenOrg(Mockito.any(MemberChosenOrgDisambiguatedEntity.class));
-    }
-
-    private List<OrgDisambiguatedEntity> getListOfOrgs() {
-        List<OrgDisambiguatedEntity> entities = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
-            entity.setId(Long.valueOf(i));
-            entity.setSourceId(Integer.toString(i));
-            entities.add(entity);
-        }
-        return entities;
-    }
 }

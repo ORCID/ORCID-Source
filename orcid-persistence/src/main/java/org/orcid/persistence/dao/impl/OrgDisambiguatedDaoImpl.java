@@ -11,7 +11,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.MemberChosenOrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
@@ -173,16 +172,4 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         return query.getResultList();
     }
     
-    @Override
-    @Transactional
-    public void clearMemberChosenOrgs() {
-        entityManager.createQuery("DELETE from MemberChosenOrgDisambiguatedEntity").executeUpdate();
-    }
-
-    @Override
-    @Transactional
-    public void persistChosenOrg(MemberChosenOrgDisambiguatedEntity chosenOrg) {
-        entityManager.persist(chosenOrg);
-    }
-
 }
