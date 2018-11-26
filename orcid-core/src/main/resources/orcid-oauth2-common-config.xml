@@ -72,6 +72,7 @@
 				<ref bean="clientCredentialsTokenGranter" />
 				<ref bean="authorizationCodeTokenGranter" />
 				<ref bean="refreshTokenTokenGranter" />
+				<ref bean="ietfExchangeTokenGranter" />
 				<ref bean="orcidImplicitTokenGranter" />
 			</list>
 		</constructor-arg>
@@ -123,6 +124,10 @@
 	
 	<bean id="refreshTokenTokenGranter" class="org.orcid.core.oauth.OrcidRefreshTokenTokenGranter">		
 		<constructor-arg ref="orcidRefreshTokenChecker" />		
+		<constructor-arg ref="tokenServices" />
+	</bean>	
+	
+	<bean id="ietfExchangeTokenGranter" class="org.orcid.core.oauth.IETFExchangeTokenGranter">		
 		<constructor-arg ref="tokenServices" />
 	</bean>	
 </beans>

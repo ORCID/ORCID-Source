@@ -462,12 +462,12 @@ public class SelfServiceController extends BaseController {
     }
 
     private boolean isAllowedFullAccess(String memberId) {
-        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveSourceOrcid());
+        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveActiveSourceId());
         return usersAuthorizedAccountIds.contains(memberId);
     }
 
     private void checkAccess(String memberId) {
-        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveSourceOrcid());
+        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveActiveSourceId());
         MemberDetails memberDetails = salesForceManager.retrieveDetails(memberId);
         if (!(usersAuthorizedAccountIds.contains(memberId) || usersAuthorizedAccountIds.contains(memberDetails.getMember().getConsortiumLeadId()))) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);

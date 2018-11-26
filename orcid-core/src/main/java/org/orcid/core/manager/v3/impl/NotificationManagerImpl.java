@@ -271,7 +271,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", baseUri);
         templateParams.put("baseUriHttp", baseUriHttp);
 
-        SourceEntity source = sourceManager.retrieveSourceEntity();
+        SourceEntity source = sourceManager.retrieveActiveSourceEntity();
         if (source != null) {
             String sourceId = SourceEntityUtils.getSourceId(source);
             String sourceName = SourceEntityUtils.getSourceName(source);
@@ -533,7 +533,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> items) {
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();
+        String amenderOrcid = sourceManager.retrieveActiveSourceId();
         
         if (amenderOrcid == null) {
             LOGGER.info("Not sending amend email to {} because amender is null", userOrcid);
@@ -873,7 +873,7 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         notificationEntity.setProfile(profile);
 
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
 
         if (sourceEntity != null) {
             // Set source id
@@ -962,7 +962,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (notificationEntity == null) {
             return null;
         }
-        String sourceId = sourceManager.retrieveSourceOrcid();
+        String sourceId = sourceManager.retrieveActiveSourceId();
         if (validateForApi) {
             if (sourceId != null && !sourceId.equals(notificationEntity.getElementSourceId())) {
                 Map<String, String> params = new HashMap<String, String>();

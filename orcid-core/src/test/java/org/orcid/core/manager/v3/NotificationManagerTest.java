@@ -306,8 +306,8 @@ public class NotificationManagerTest extends DBUnitTest {
         resetMocks();
         
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
+        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
         String testOrcid = "0000-0000-0000-0003";
 
         for (Locale locale : Locale.values()) {
@@ -345,8 +345,8 @@ public class NotificationManagerTest extends DBUnitTest {
         profile.setEmails(emails);
         
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
+        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
         when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(new NotificationCustomEntity());
         
         Email email = new Email();
@@ -494,8 +494,8 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
         resetMocks();
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
+        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
 
         notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");        
     }    

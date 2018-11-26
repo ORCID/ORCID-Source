@@ -89,7 +89,7 @@ public class ClientManagerImpl implements ClientManager {
     }
     
     private Client create(Client newClient, boolean publicClient) {
-        String memberId = sourceManager.retrieveSourceOrcid();
+        String memberId = sourceManager.retrieveActiveSourceId();
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
 
         // Verify if the member type allow him to create another client
@@ -221,7 +221,7 @@ public class ClientManagerImpl implements ClientManager {
                     // client and for the member as well
                     if (result) {
                         clientDetailsDao.updateLastModified(clientId);
-                        profileDao.updateLastModifiedDateWithoutResult(sourceManager.retrieveSourceOrcid());
+                        profileDao.updateLastModifiedDateWithoutResult(sourceManager.retrieveActiveSourceId());
                     }
                     return result;
                 } catch (Exception e) {
