@@ -68,5 +68,29 @@ public class MemberChosenOrgDisambiguatedEntity extends BaseEntity<Long> {
     public void setOrgDisambiguatedEntity(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         this.orgDisambiguatedEntity = orgDisambiguatedEntity;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        MemberChosenOrgDisambiguatedEntity that = (MemberChosenOrgDisambiguatedEntity) o;
+
+        if (!sourceId.equals(that.sourceId))
+            return false;
+        if (!sourceType.equals(that.sourceType))
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = sourceId.hashCode();
+        result = 31 * result + sourceType.hashCode();
+        return result;
+    }
 
 }
