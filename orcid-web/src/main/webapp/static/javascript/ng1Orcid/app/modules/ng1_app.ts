@@ -207,6 +207,9 @@ import { lastModifiedModule }
 
 import { bioModule } 
     from './bio/bio.ts';
+
+import { printIdBannerModule } 
+    from './printIdBanner/printIdBanner.ts';
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -279,7 +282,8 @@ export const orcidApp = angular.module(
         idBannerModule.name,
         qrcodeModule.name,
         lastModifiedModule.name,
-        bioModule.name
+        bioModule.name,
+        printIdBannerModule.name
     ]
 );
 
