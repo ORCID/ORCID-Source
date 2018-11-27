@@ -4,24 +4,11 @@
 <div class="row workspace-top public-profile print">
     <div class="col-md-12">
         <div class="workspace-left workspace-profile">
-        	<div class="id-banner">
-	            <h2 class="full-name">	            	
-					${(displayName)!}	                
-	            </h2>	            	            
-	            
-	            <div class="oid">
-					<div class="id-banner-header">
-						<span><@orcid.msg 'common.orcid_id' /></span>
-					</div>
-					<div class="orcid-id-container">
-						<div class="orcid-id-info">
-	                        <span class="mini-orcid-icon"></span>
-	                        <!-- Reference: orcid.js:removeProtocolString() -->
-	                        <span id="orcid-id" class="orcid-id">${baseUri}/${(effectiveUserOrcid)!}</span>	
-						</div>				
-					</div>
-				</div>
-	        </div>
+
+			<#include "/includes/ng2_templates/print-id-banner-ng2-template.ftl">
+			<print-id-banner-ng2></print-id-banner-ng2>
+
+
 	        <!--Person sections-->
             <#include "/includes/ng2_templates/public-record-ng2-template.ftl">
             <public-record-ng2></public-record-ng2>
