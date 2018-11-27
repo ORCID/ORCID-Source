@@ -1,5 +1,5 @@
 <@public>
-<div class="row workspace-top public-profile">
+<div class="row public-profile">
     <div class="col-md-3 left-aside">
         <div class="workspace-left workspace-profile">
 		
