@@ -18,21 +18,9 @@
             <div class="workspace-inner-public workspace-public workspace-accordion">
                 <#if (isProfileEmpty)?? && isProfileEmpty>
                     <p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
-                <#else>             
-                    <#if (biography.content)?? && (biography.content)?has_content>                                              
-                        <div class="workspace-accordion-content">
-                            <div class="row bottomBuffer">
-                                <div class="col-md-12 col-sm-12 col-xs-12">
-                                    <h3 class="workspace-title">${springMacroRequestContext.getMessage("public_profile.labelBiography")}</h3>
-                                </div>
-                            </div>          
-                            <div class="row bottomBuffer">                  
-                                <div class="col-md-12 col-sm-12 col-xs-12">
-                                    <div class="bio-content">${(biography.content)!}</div>                                  
-                                </div>
-                            </div>                          
-                        </div>
-                    </#if>
+                <#else>                                             
+                    <#include "/includes/ng2_templates/bio-ng2-template.ftl">
+                    <bio-ng2></bio-ng2>
                     <#assign publicProfile = true />
                     <#if !(affiliationsEmpty)??>
                         <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">

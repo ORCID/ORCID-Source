@@ -223,6 +223,9 @@ import { qrcodeNg2Module }
 
 import { lastModifiedNg2Module } 
     from './lastModified/lastModified.ts';
+
+import { bioNg2Module }
+    from './bio/bio.ts';
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -377,7 +380,8 @@ export class RootCmp {
         RecordCorrectionsNg2Module,
         idBannerNg2Module,
         qrcodeNg2Module,
-        lastModifiedNg2Module
+        lastModifiedNg2Module, 
+        bioNg2Module
     ],
     providers: [
         { 

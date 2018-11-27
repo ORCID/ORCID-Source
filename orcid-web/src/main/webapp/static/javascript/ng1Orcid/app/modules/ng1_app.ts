@@ -204,6 +204,9 @@ import { qrcodeModule }
 
 import { lastModifiedModule }
     from './lastModified/lastModified.ts'
+
+import { bioModule } 
+    from './bio/bio.ts';
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -275,7 +278,8 @@ export const orcidApp = angular.module(
         WorksMergeSuggestionsModule.name,
         idBannerModule.name,
         qrcodeModule.name,
-        lastModifiedModule.name
+        lastModifiedModule.name,
+        bioModule.name
     ]
 );
 

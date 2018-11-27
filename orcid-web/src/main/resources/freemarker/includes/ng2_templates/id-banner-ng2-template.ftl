@@ -1,4 +1,6 @@
 <script type="text/ng-template" id="id-banner-ng2-template">
+
+
     <div class="id-banner <#if inDelegationMode>delegation-mode</#if>"> 
         <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
         <!-- Name -->
@@ -9,7 +11,7 @@
 
         <#if !springMacroRequestContext.requestUri?contains("/my-orcid")>
         <h2 class="full-name">                  
-            ${(displayName)!}                   
+            {{displayName}}              
         </h2>  
         </#if>  
 
