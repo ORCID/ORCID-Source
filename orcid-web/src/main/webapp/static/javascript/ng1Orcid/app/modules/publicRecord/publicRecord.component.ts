@@ -4,7 +4,7 @@ import { Observable, Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { Component } from "@angular/core";
 import { CommonService } from "../../shared/common.service.ts";
-import { GenericService } from "../../shared/generic.service.ts";
+import { PersonService } from "../../shared/person.service.ts";
 
 @Component({
   selector: "public-record-ng2",
@@ -20,20 +20,18 @@ export class PublicRecordComponent {
 
   constructor(
     private commonService: CommonService,
-    private genericService: GenericService
+    private personService: PersonService
   ) {
     this.popoverShowing = new Array();
     this.showSources = new Array();
   }
 
   ngOnInit() {
-    this.genericService
-      .getData(this.personEndPoint)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(data => {
-        this.personData= data;
-        console.log (this.personData)
-      });
+    this.personService.getPerson().subscribe(data => {
+      if (data) {
+        this.personData = data;
+      }
+    });
   }
 
   hidePopover(section): void {
