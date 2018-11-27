@@ -115,6 +115,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         } else {
             document.setFundingOrg(false);
         }
+        
+        document.setOrgChosenByMember(entity.getMemberChosenOrgDisambiguatedEntity() != null);
 
         return document;
     }
