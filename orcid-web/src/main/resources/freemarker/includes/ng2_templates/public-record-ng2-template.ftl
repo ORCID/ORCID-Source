@@ -38,8 +38,7 @@
                                             {{otherNameSource.createdDate.value | ajaxTickDateToISO8601 }}
                                          </ng-container> 
 
-                                         <ng-container *ngIf="!lastSource">
-                                         , 
+                                         <ng-container *ngIf="!lastSource">,
                                          </ng-container>
 
                                     </ng-container>
@@ -81,8 +80,7 @@
                                         <ng-container *ngIf="urlSource.createdDate">
                                             {{urlSource.createdDate.value | ajaxTickDateToISO8601 }}
                                         </ng-container>
-                                        <ng-container *ngIf="!lastSource">
-                                        , 
+                                        <ng-container *ngIf="!lastSource">,
                                         </ng-container>
                                     </ng-container>
                                 </p>                                                                                                                                                        
@@ -113,12 +111,9 @@
                     </ul>                               
                     <div id="public-country-div" class="public-content">
                         <ng-container  *ngFor="let address of objectKeys(personData.publicGroupedAddresses); let lastAddress = last;">
-                            <span name="country">
-                                {{personData.countryNames[address]}}
-                            </span>
+                            <span name="country">{{personData.countryNames[address]}}</span>
                             
-                            <span *ngIf="!lastAddress && (showSources['countries'] == false || showSources['countries'] == null)">
-                                ,
+                            <span *ngIf="!lastAddress && (showSources['countries'] == false || showSources['countries'] == null)">,
                             </span>   
 
                             <div *ngIf="showSources['countries']" class="source-line separator">
@@ -134,8 +129,7 @@
                                             {{addressSource.createdDate.value | ajaxTickDateToISO8601 }}
                                          </ng-container>
 
-                                         <ng-container *ngIf="!lastSource">
-                                         , 
+                                         <ng-container *ngIf="!lastSource">, 
                                          </ng-container>
 
                                     </ng-container>
@@ -180,8 +174,7 @@
                                             {{keywordSource.createdDate.value | ajaxTickDateToISO8601 }}
                                          </ng-container>
 
-                                         <ng-container *ngIf="!lastSource">
-                                         , 
+                                         <ng-container *ngIf="!lastSource">, 
                                          </ng-container>
 
                                     </ng-container>
@@ -220,8 +213,7 @@
                                     </a>
                                     
                                     <ng-container *ngIf="lastExternal">
-                                        <br/><span *ngIf="showSources['external-identifiers'] == false || showSources['external-identifiers'] == null">
-                                        </span>
+                                        <br/><span *ngIf="showSources['external-identifiers'] == false || showSources['external-identifiers'] == null"></span>
                                     </ng-container>
 
                                 </ng-container>
@@ -270,8 +262,7 @@
                                         <ng-container *ngIf="emailSource.createdDate">
                                             {{emailSource.createdDate.value | ajaxTickDateToISO8601 }}
                                         </ng-container>
-                                        <ng-container *ngIf="!lastSource">
-                                        , 
+                                        <ng-container *ngIf="!lastSource">, 
                                         </ng-container>
                                     </ng-container>
                                 </p>                                                                                                                                                        
