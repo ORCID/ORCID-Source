@@ -33,7 +33,7 @@
     <div class="col-md-9 right-aside">
         <div class="workspace-right">
             <div class="workspace-inner-public workspace-public workspace-accordion">
-                <#if (isProfileEmpty)?? && isProfileEmpty>
+                <#if (peerReviewEmpty)?? && (affiliationsEmpty)?? && (fundingEmpty)?? && (researchResourcesEmpty)?? && (worksEmpty)?? && (biography.content)?? && (biography.content)?has_content>
                     <p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
                 <#else>             
                     <#if (biography.content)?? && (biography.content)?has_content>                                              
