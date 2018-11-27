@@ -1,4 +1,8 @@
 <script type="text/ng-template" id="bio-ng2-template">
+
+    <#if (peerReviewEmpty)?? && (affiliationsEmpty)?? && (fundingEmpty)?? && (researchResourcesEmpty)?? && (worksEmpty)??>
+        <p *ngIf="!bio" class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
+    </#if> 
     <div *ngIf="bio" class="workspace-accordion-content">
         <div class="row bottomBuffer">
             <div class="col-md-12 col-sm-12 col-xs-12">
