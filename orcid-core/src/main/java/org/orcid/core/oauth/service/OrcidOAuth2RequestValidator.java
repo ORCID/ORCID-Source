@@ -92,9 +92,6 @@ public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
                 }
             }
         }
-        if (responseType!=null && responseType.contains(OrcidOauth2Constants.IMPLICIT_TOKEN_RESPONSE_TYPE) && !ImplicitScopes.isValid(OAuth2Utils.parseParameterList(parameters.get("scope")))){
-            throw new InvalidScopeException("Invalid response_type/scope combination.");           
-        }
     }
     
     public void validateClientIsEnabled(ClientDetailsEntity clientDetails) throws LockedException {
