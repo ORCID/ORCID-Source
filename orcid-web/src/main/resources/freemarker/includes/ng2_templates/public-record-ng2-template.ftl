@@ -265,7 +265,6 @@
                                     </ng-container>
                                 </p>                                                                                                                                                        
                             </div>  
-                           <br *ngIf="!lastEmail" />
                         </ng-container>
                     </div>                              
                 </div>
