@@ -250,9 +250,7 @@
                     </ul>                               
                     <div class="public-content" id="public-emails-div">
                         <ng-container  *ngFor="let email of objectKeys(personData.publicGroupedEmails); let lastEmail = last;">
-                            <a href="{{email}}" target="{{email}}" rel="me nofollow">
-                                {{email}}
-                            </a>                                
+                            <div name="email">{{email}}</div>                                
                             <div *ngIf="showSources['emails']" class="source-line separator">                                        
                                 <p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
                                     <ng-container  *ngFor="let emailSource of personData.publicGroupedEmails[email]; let lastSource = last;">
