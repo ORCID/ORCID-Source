@@ -213,8 +213,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     }
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumns({ @JoinColumn(updatable = false, insertable = false, name = "source_id", referencedColumnName = "source_id"),
-            @JoinColumn(updatable = false, insertable = false, name = "source_type", referencedColumnName = "source_type") })
+    @JoinColumn(name = "id", referencedColumnName = "org_disambiguated_id")
     public MemberChosenOrgDisambiguatedEntity getMemberChosenOrgDisambiguatedEntity() {
         return memberChosenOrgDisambiguatedEntity;
     }

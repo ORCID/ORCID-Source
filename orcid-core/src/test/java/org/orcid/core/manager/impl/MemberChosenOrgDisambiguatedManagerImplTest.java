@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.persistence.dao.MemberChosenOrgDisambiguatedDao;
@@ -37,15 +36,13 @@ public class MemberChosenOrgDisambiguatedManagerImplTest {
         Mockito.when(mockMemberChosenOrgDisambiguatedDao.getAll()).thenReturn(getExistingChosenMemberChosenOrgDisambiguatedEntityList());
         Mockito.when(mockSalesForceManager.retrieveAllOrgIds()).thenReturn(getUpdatedChosenOrgIdList());
         
-        Mockito.when(mockMemberChosenOrgDisambiguatedDao.merge(Mockito.any(MemberChosenOrgDisambiguatedEntity.class))).thenAnswer((Answer<MemberChosenOrgDisambiguatedEntity>) invocation -> {
-            MemberChosenOrgDisambiguatedEntity memberChosenOrgDisambiguatedEntity = (MemberChosenOrgDisambiguatedEntity) invocation.getArgument(0);
-            OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
-            orgDisambiguatedEntity.setSourceType(memberChosenOrgDisambiguatedEntity.getSourceType());
-            orgDisambiguatedEntity.setSourceId(memberChosenOrgDisambiguatedEntity.getSourceId());
-            memberChosenOrgDisambiguatedEntity.setOrgDisambiguatedEntity(orgDisambiguatedEntity);
-            return memberChosenOrgDisambiguatedEntity;
-        });
-        Mockito.when(mockOrgDisambiguatedDao.merge(Mockito.any(OrgDisambiguatedEntity.class))).thenReturn(null);        
+        Mockito.when(mockMemberChosenOrgDisambiguatedDao.merge(Mockito.any(MemberChosenOrgDisambiguatedEntity.class))).thenReturn(null);
+        Mockito.when(mockOrgDisambiguatedDao.merge(Mockito.any(OrgDisambiguatedEntity.class))).thenReturn(null);   
+        Mockito.when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.eq("first"), Mockito.eq("first"))).thenReturn(getOrgDisambiguatedEntity(1L));
+        Mockito.when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.eq("second"), Mockito.eq("second"))).thenReturn(getOrgDisambiguatedEntity(2L));
+        Mockito.when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.eq("third"), Mockito.eq("third"))).thenReturn(getOrgDisambiguatedEntity(3L));
+        Mockito.when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.eq("fourth"), Mockito.eq("fourth"))).thenReturn(getOrgDisambiguatedEntity(4L));
+        Mockito.when(mockOrgDisambiguatedDao.find(Mockito.eq(3L))).thenReturn(getOrgDisambiguatedEntity(3L));
     }
 
     @Test
@@ -58,24 +55,24 @@ public class MemberChosenOrgDisambiguatedManagerImplTest {
     }
 
     private List<MemberChosenOrgDisambiguatedEntity> getExistingChosenMemberChosenOrgDisambiguatedEntityList() {
-        MemberChosenOrgDisambiguatedEntity first = getMemberChosenOrgDisambiguatedEntity("first");
-        MemberChosenOrgDisambiguatedEntity second = getMemberChosenOrgDisambiguatedEntity("second");
-        MemberChosenOrgDisambiguatedEntity third = getMemberChosenOrgDisambiguatedEntity("third");
+        MemberChosenOrgDisambiguatedEntity first = getMemberChosenOrgDisambiguatedEntity(1L);
+        MemberChosenOrgDisambiguatedEntity second = getMemberChosenOrgDisambiguatedEntity(2L);
+        MemberChosenOrgDisambiguatedEntity third = getMemberChosenOrgDisambiguatedEntity(3L);
         return Arrays.asList(first, second, third);
     }
-
-    private MemberChosenOrgDisambiguatedEntity getMemberChosenOrgDisambiguatedEntity(String s) {
-        MemberChosenOrgDisambiguatedEntity e = new MemberChosenOrgDisambiguatedEntity();
-        e.setSourceType(s);
-        e.setSourceId(s);
-        
-        OrgDisambiguatedEntity o = new OrgDisambiguatedEntity();
-        o.setSourceId(s);
-        o.setSourceType(s);
-        e.setOrgDisambiguatedEntity(o);
-        return e;
+    
+    private MemberChosenOrgDisambiguatedEntity getMemberChosenOrgDisambiguatedEntity(Long id) {
+        MemberChosenOrgDisambiguatedEntity chosen = new MemberChosenOrgDisambiguatedEntity();
+        chosen.setOrgDisambiguatedId(id);
+        return chosen;
     }
     
+    private OrgDisambiguatedEntity getOrgDisambiguatedEntity(Long id) {
+        OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
+        entity.setId(id);
+        return entity;
+    }
+
     private List<OrgId> getUpdatedChosenOrgIdList() {
         OrgId first = getOrgId("first");
         OrgId second = getOrgId("second");

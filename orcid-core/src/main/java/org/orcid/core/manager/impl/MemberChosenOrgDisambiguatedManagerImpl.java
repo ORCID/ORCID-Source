@@ -1,7 +1,6 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -14,8 +13,6 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.MemberChosenOrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MemberChosenOrgDisambiguatedManagerImpl implements MemberChosenOrgDisambiguatedManager {
 
@@ -33,23 +30,24 @@ public class MemberChosenOrgDisambiguatedManagerImpl implements MemberChosenOrgD
         List<OrgId> orgIds = salesForceManager.retrieveAllOrgIds();
         List<MemberChosenOrgDisambiguatedEntity> forRemoval = new ArrayList<>(memberChosenOrgDisambiguatedDao.getAll());
         orgIds.stream().forEach(id -> {
-            MemberChosenOrgDisambiguatedEntity e = new MemberChosenOrgDisambiguatedEntity();
-            e.setDateCreated(new Date());
-            e.setLastModified(new Date());
-            e.setSourceId(id.getOrgIdValue());
-            e.setSourceType(id.getOrgIdType());
-            
-            if (forRemoval.contains(e)) {
-                forRemoval.remove(e);
-            } else {
-                e = memberChosenOrgDisambiguatedDao.merge(e);
-                markForReindexing(e.getOrgDisambiguatedEntity());
+            OrgDisambiguatedEntity orgDisambiguated = orgDisambiguatedDao.findBySourceIdAndSourceType(id.getOrgIdValue(), id.getOrgIdType());
+            if (orgDisambiguated != null) {
+                MemberChosenOrgDisambiguatedEntity e = new MemberChosenOrgDisambiguatedEntity();
+                e.setOrgDisambiguatedId(orgDisambiguated.getId());
+                
+                if (forRemoval.contains(e)) {
+                    forRemoval.remove(e);
+                } else {
+                    memberChosenOrgDisambiguatedDao.merge(e);
+                    markForReindexing(orgDisambiguated);
+                }
             }
         });
         
         forRemoval.stream().forEach(e -> {
             memberChosenOrgDisambiguatedDao.remove(e);
-            markForReindexing(e.getOrgDisambiguatedEntity());
+            OrgDisambiguatedEntity org = orgDisambiguatedDao.find(e.getOrgDisambiguatedId());
+            markForReindexing(org);
         });
     }
 
@@ -59,9 +57,4 @@ public class MemberChosenOrgDisambiguatedManagerImpl implements MemberChosenOrgD
     }
 
     
-    public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        MemberChosenOrgDisambiguatedManager manager = (MemberChosenOrgDisambiguatedManager) context.getBean("memberChosenOrgDisambiguatedManager");
-        manager.refreshMemberChosenOrgs();
-    }
 }
