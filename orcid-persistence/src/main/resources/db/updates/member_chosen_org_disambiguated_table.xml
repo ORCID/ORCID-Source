@@ -5,7 +5,7 @@
 	<changeSet id="INSTALL-MEMBER-CHOSEN-ORG-DISAMBIGUATED-TABLE" author="George Nash">
          <createTable tableName="member_chosen_org_disambiguated">
             <column name="org_disambiguated_id" type="bigint">
-                <constraints nullable="false" primaryKey="true" unique="true" primaryKeyName="member_chosen_org_disambiguated_pkey"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="member_chosen_org_disambiguated_pkey"/>
             </column>
         </createTable>           
     </changeSet>
