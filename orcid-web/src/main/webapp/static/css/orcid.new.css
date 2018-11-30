@@ -2865,8 +2865,14 @@ input.error {
 
 .maintenance-header {
     background-color: #f7f7f7;
-    margin: 10px 0;
-    padding: 5px
+    margin: 1em auto;
+    padding: 1em;
+    font-size: 12px;
+    line-height: normal;
+}
+
+.maintenance-header p{
+    margin: 0 0 5px 0;
 }
 
 .oauth-title {
