@@ -2,7 +2,7 @@
 
 ### Before you start
 
-For this test there is a fair amount of set up. You need to have a Consortium Lead account on QA and a Consortium Member account . For the purposes of testing you can use the accounts 0000-0003-0641-4661 for the consortium lead account and 0000-0001-5870-8499 for the consortium member account.
+For this test there is a fair amount of set up. You need to have a Consortium Lead account on QA and a Consortium Member account . For the purposes of testing you can use the accounts 0000-0003-0641-4661 for the consortium lead account and 0000-0001-5870-8499 for the consortium member account. For additional accounts USe the MA testing accounts you created when running throught the MA tests
 
 
 Find and Replace [DD][month][YYYY] in this document with the current day, written month, and four digit year for example 24feb2016.
@@ -13,7 +13,7 @@ Find and Replace [DD][month][YYYY] in this document with the current day, writte
 2. Create new account:
 		 First name: self-service
 		 Last name: [DD][month][YYYY]
-		 Email: self-service_[DD][month][YYYY]@mailinator.com (ex: self-service_24feb2016@mailinator.com)
+		 Email: self-service_[DD][month][YYYY]@mailinator.com (ex: self-service_2feb2016@mailinator.com)
 		 Password: test1234
 		 Default privacy for new activities: Everyone
 		 Subscribe to quarterly emails about new features
@@ -36,7 +36,7 @@ Find and Replace [DD][month][YYYY] in this document with the current day, writte
 
 9. Visit the the org Rob_b Self Service Test Org by going to this url
  https://orcid--consortia.lightning.force.com/lightning/r/Account/0013D00000ZjwqYQAR/view
- 
+
 10. Check that the account you added above has been added to the Membership Contact Roles section for the Consortia Lead Org 'ROb_b Self Service Test Org'.
 
 ### Check adding a consortium member
