@@ -12,16 +12,6 @@
           </span>
         </div>
       </div>
-      <div class="orcid-error" *ngIf='externalIdsPresent == false'>
-         <@orcid.msg 'groups.merge.no_external_ids_1'/><a href="https://support.orcid.org/hc/articles/360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
-         <div class="row"> 
-            <div class="right">     
-                <a (click)="cancelEdit()">
-                  <@orcid.msg 'freemarker.btncancel'/>
-                </a>  
-            </div>        
-         </div>  
-      </div>
       <span *ngIf='externalIdsPresent == true'>
           <hr>
           <span *ngFor='let workToMerge of worksToMerge'>

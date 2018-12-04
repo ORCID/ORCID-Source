@@ -84,6 +84,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showBibtexExport: boolean;
     showBibtexImportWizard: boolean;
     showElement: any;
+    showMergeWorksExtIdsError: boolean;
     sortState: any;
     textFiles: any;
     wizardDescExpanded: any;
@@ -140,6 +141,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showBibtexExport = false;
         this.showBibtexImportWizard = false;
         this.showElement = {};
+        this.showMergeWorksExtIdsError = false;
         this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
         this.textFiles = [];
         this.wizardDescExpanded = {};
@@ -287,6 +289,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
         }
     };
+
+    dismissError(error){
+        if(error == "showMergeWorksExtIdsError"){
+            this.showMergeWorksExtIdsError = false;
+        }
+    }
     
     mergeConfirm(): void {
         var idx: any;
@@ -309,10 +317,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 }
             }
-            this.worksService.notifyOther({worksToMerge:worksToMerge});   
-            this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
-            this.worksService.notifyOther({mergeCount:mergeCount});
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+            if(!externalIdsPresent){
+                this.showMergeWorksExtIdsError = true;
+            } else {
+                this.worksService.notifyOther({worksToMerge:worksToMerge});       
+                this.worksService.notifyOther({mergeCount:mergeCount});
+                this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+
+            }
         }
     };
     

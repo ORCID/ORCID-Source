@@ -412,7 +412,7 @@
                                 </li>
                                 <li>
                                     <div class="left leftBuffer">
-                                        <button class="btn-white-no-border" [disabled]="bulkSelectedCount < 2"  (click)="mergeConfirm()">
+                                        <button class="btn btn-white-no-border" [disabled]="bulkSelectedCount < 2"  (click)="mergeConfirm()">
                                             <span class="edit-option-toolbar glyphicon glyphicon-resize-small"></span>
                                             <span><@orcid.msg 'workspace.bulkedit.merge'/></span>
                                         </button>
@@ -420,7 +420,7 @@
                                 </li>
                                 <li>
                                     <div class="left leftBuffer">
-                                        <button class="btn-white-no-border" [disabled]="bulkSelectedCount < 1" (click)="deleteBulkConfirm()">
+                                        <button class="btn btn-white-no-border" [disabled]="bulkSelectedCount < 1" (click)="deleteBulkConfirm()">
                                             <span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
                                             <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
                                         </button>
@@ -451,6 +451,12 @@
                                     </div> 
                                 </li>
                             </ul>
+                            <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError">
+                                <@orcid.msg 'groups.merge.no_external_ids_1'/> <a target="groups.merge.no_external_ids_2" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
+                                <button class="btn btn-primary cancel-right" (click)="dismissError('showMergeWorksExtIdsError')">
+                                     <@orcid.msg 'common.cookies.dismiss'/>
+                                </button>
+                            </div>
                         </div>
                     </div>  
                 </#if>            
