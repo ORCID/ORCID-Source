@@ -387,6 +387,11 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     color: #a6ce39
 }
 
+.btn-white-no-border:disabled,
+.btn-white-no-border[disabled] {
+    color: #c9c9ca;
+}
+
 .center {
     margin: 0 auto
 }

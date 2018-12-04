@@ -60,6 +60,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bulkDisplayToggle: boolean;
     bulkEditMap: any;
     bulkEditShow: boolean;
+    bulkSelectedCount: number;
     canReadFiles: boolean;
     deleteGroup: any;
     deletePutCode: any;
@@ -115,6 +116,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.bulkDisplayToggle = false;
         this.bulkEditMap = {};
         this.bulkEditShow = false;
+        this.bulkSelectedCount = 0;
         this.canReadFiles = false;
         this.displayURLPopOver = {};
         this.editSources = {};
@@ -232,12 +234,26 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     bulkChangeAll(bool): void {
+        this.bulkSelectedCount = 0;
         this.bulkChecked = bool;
         this.bulkDisplayToggle = false;
         for (var idx in this.worksService.groups){
             this.bulkEditMap[this.worksService.groups[idx].activePutCode] = bool;
+            if(this.bulkChecked == true){
+                this.bulkSelectedCount ++;
+            }
         }
     };
+
+    bulkEditSelect(): void {
+        this.allSelected = false;
+        this.bulkSelectedCount = 0;
+        for (var idx in this.worksService.groups){
+            if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){
+                this.bulkSelectedCount++;
+            }
+        }
+    }
 
     canBeCombined(work): any {
         if (this.userIsSource(work)){
@@ -1053,6 +1069,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     toggleSelectAll(): void {
         this.allSelected = !this.allSelected;
         this.bulkChangeAll(this.allSelected);
+        console.log(this.allSelected);
     }
     
     toggleWizardDesc(id): void {

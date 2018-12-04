@@ -4,7 +4,12 @@
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
+            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+            </@orcid.checkFeatureStatus>
+            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
                 <div class="col-md-3 col-sm-3 col-xs-12">
+            </@orcid.checkFeatureStatus>
                     <div>
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
@@ -23,7 +28,12 @@
                         </#if>
                     </div>
                 </div>
-                <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
+                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
+                    <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
+                </@orcid.checkFeatureStatus> 
+                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
+                    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
+                </@orcid.checkFeatureStatus> 
                     <!--Sort menu-->
                     <div class="menu-container">                                     
                         <ul class="toggle-menu">
@@ -397,23 +407,23 @@
                             <ul class="sources-actions">
                                 <li>
                                     <div class="left">
-                                        <input type="checkbox" [value]="allSelected" (click)="toggleSelectAll()" />
+                                        <input type="checkbox" [ngModel]="allSelected" (click)="toggleSelectAll()" />
                                     </div>
                                 </li>
                                 <li>
                                     <div class="left leftBuffer">
-                                        <a (click)="mergeConfirm()">
+                                        <button class="btn-white-no-border" [disabled]="bulkSelectedCount < 2"  (click)="mergeConfirm()">
                                             <span class="edit-option-toolbar glyphicon glyphicon-resize-small"></span>
                                             <span><@orcid.msg 'workspace.bulkedit.merge'/></span>
-                                        </a>
+                                        </button>
                                     </div>
                                 </li>
                                 <li>
                                     <div class="left leftBuffer">
-                                        <a (click)="deleteBulkConfirm()">
+                                        <button class="btn-white-no-border" [disabled]="bulkSelectedCount < 1" (click)="deleteBulkConfirm()">
                                             <span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
                                             <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
-                                        </a>
+                                        </button>
                                     </div>
                                 </li>
                                 <li>

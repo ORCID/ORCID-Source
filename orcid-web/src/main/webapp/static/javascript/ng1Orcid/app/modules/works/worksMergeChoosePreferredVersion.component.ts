@@ -30,7 +30,6 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
     mergeSubmit: boolean;
     worksToMerge: Array<any>;
     delCountVerify: number;
-    preferredNotSelected: boolean;
     externalIdsPresent: boolean;
     suggestionId: any;
 
@@ -49,61 +48,40 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
     };
 
     merge(): void {
-        var putCodesAsString = '';
-        var preferredPutCode;        
+        var putCodesAsString = '';       
         for (var i in this.worksToMerge) {
             var workToMerge = this.worksToMerge[i];
-            if (workToMerge.preferred) {
-                preferredPutCode = workToMerge.work.putCode.value;
-            } else {
                 putCodesAsString += ',' + workToMerge.work.putCode.value;
-            }
         }
-        if (!preferredPutCode) {
-            this.preferredNotSelected = true;
-        } else {
-            this.preferredNotSelected = false;
-            putCodesAsString = preferredPutCode + putCodesAsString;
-            this.worksService.mergeWorks(putCodesAsString)
-            .pipe(    
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe(
-                data => {
-                    if (this.suggestionId) {
-                        this.worksService.markSuggestionAccepted(this.suggestionId)
-                        .pipe(    
-                            takeUntil(this.ngUnsubscribe)
-                        )
-                        .subscribe(
-                            data => {
-                                this.worksService.notifyOther({action:'merge', successful:true});
-                                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
-                            },
-                            error => {
-                                console.log('error marking suggestion as accepted', error);
-                            } 
-                        );
-                    } else {
-                        this.worksService.notifyOther({action:'merge', successful:true});
-                        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
-                    }
-                },
-                error => {
-                    console.log('error calling mergeWorks', error);
-                } 
-            );
-        }
-    };
-        
-    selectPreferred(preference): void {
-        for (var i in this.worksToMerge) {
-            var workToMerge = this.worksToMerge[i];
-            if (workToMerge.work.putCode != preference.work.putCode) {
-                workToMerge.preferred = false;
-            }
-        }
-        preference.preferred = true;   
+        this.worksService.mergeWorks(putCodesAsString)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if (this.suggestionId) {
+                    this.worksService.markSuggestionAccepted(this.suggestionId)
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            this.worksService.notifyOther({action:'merge', successful:true});
+                            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+                        },
+                        error => {
+                            console.log('error marking suggestion as accepted', error);
+                        } 
+                    );
+                } else {
+                    this.worksService.notifyOther({action:'merge', successful:true});
+                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+                }
+            },
+            error => {
+                console.log('error calling mergeWorks', error);
+            } 
+        );
     };
 
     //Default init functions provided by Angular Core

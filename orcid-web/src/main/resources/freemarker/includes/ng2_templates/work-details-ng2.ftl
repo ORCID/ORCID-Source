@@ -60,7 +60,7 @@
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
                             <#if !(isPublicProfile??)>
-                                <div class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid"></div> 
+                                <div class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
                             </#if>
                         </@orcid.checkFeatureStatus>
                         <h3 class="workspace-title leftBuffer">
