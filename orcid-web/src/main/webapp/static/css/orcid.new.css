@@ -5148,12 +5148,26 @@ ul.workspace-private-toolbar .popover-help-container .popover {
     flex: 1 0 auto
 }
 
-.bulk-delete-modal {
+.bulk-delete-modal,
+.bulk-merge-modal {
     width: 550px
 }
 
-.bulk-delete-modal h3,.bulk-delete-modal p,.dark-grey {
+.bulk-delete-modal h3,
+.bulk-delete-modal p,
+.bulk-merge-modal h3,
+.bulk-merge-modal p,
+.dark-grey {
     color: #494a4c
+}
+
+.bulk-merge-modal hr {
+    margin: 10px 0;
+}
+
+.bulk-delete-modal,
+.bulk-merge-modal {
+    width: 550px
 }
 
 .bulk-delete-modal button {

@@ -1,42 +1,28 @@
-<script type="text/ng-template" id="works-merge-choose-preferred-version-ng2-template">
-    <div class="bulk-delete-modal">     
-    <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <h3><@orcid.msg 'groups.merge.confirm.header'/></h3>
-          <span *ngIf='externalIdsPresent'>
-              <div class="orcid-error">
-                <p>
-                  <@orcid.msg 'groups.merge.choose.preferred.detail'/>
-                </p>
-              </div>
-          </span>
-        </div>
+<script type="text/ng-template" id="works-merge-choose-preferred-version-ng2-template"> 
+    <div class="bulk-merge-modal"> 
+      <div>
+        <h3><@orcid.msg 'groups.merge.confirm.header'/></h3>
+        <p>
+          <@orcid.msg 'groups.merge.choose.preferred.detail'/>
+        </p>
       </div>
-      <span *ngIf='externalIdsPresent == true'>
-          <hr>
-          <span *ngFor='let workToMerge of worksToMerge'>
-            <div class="row">
-                <div class="col-md-11 col-sm-10 col-xs-10">
-                    {{workToMerge.work.title.value}}<br/>
-                    <@orcid.msg 'groups.common.source'/>: {{(workToMerge.work.sourceName == null || workToMerge.work.sourceName == '') ? workToMerge.work.source : workToMerge.work.sourceName }}
-                </div>
-            </div> 
-            <hr>                   
-          </span>
-          <div class="row">
-            <div class="col-md-6 col-sm-12 col-xs-12"> 
-                <span class="glyphicon glyphicon-exclamation-sign"></span>
-                <@orcid.msg 'groups.merge.confirm.cannot_undo'/>
-            </div>
-            <div class="col-md-6 col-sm-12 col-xs-12"> 
-              <div class="right">     
-                <button class="btn btn-primary" (click)="merge()"><@orcid.msg 'freemarker.btnmerge'/></button>&nbsp;&nbsp;
-                <a (click)="cancelEdit()">
-                  <@orcid.msg 'freemarker.btncancel'/>
-                </a>  
-              </div>        
-            </div>  
-          </div>
-      </span>
-    </div>
+      <hr>
+      <div *ngFor="let workToMerge of worksToMerge">
+        <div class="font-size-small">
+          <strong>{{workToMerge.work.title.value}}</strong><br/>
+          <@orcid.msg 'groups.common.source'/>: {{(workToMerge.work.sourceName == null || workToMerge.work.sourceName == '') ? workToMerge.work.source : workToMerge.work.sourceName }}
+        </div>
+        <hr> 
+      </div>              
+      <div > 
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <@orcid.msg 'groups.merge.confirm.cannot_undo'/>
+      </div>
+      <div class="right">     
+        <button class="btn btn-primary" (click)="merge()"><@orcid.msg 'freemarker.btnmerge'/></button>&nbsp;&nbsp;
+        <button class="btn btn-white-no-border cancel-right" (click)="cancelEdit()">
+          <@orcid.msg 'freemarker.btncancel'/>
+        </button>  
+      </div>
+    </div>        
 </script>
