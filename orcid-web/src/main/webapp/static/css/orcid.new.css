@@ -1851,11 +1851,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     line-height: 31px;
 }
 
-.work-bulk-actions .popover-help-container {
-    margin-left: 6px;
-    line-height: 31px;
-}
-
 .work-bulk-actions .bulk-edit-privacy-help-container {
     margin-left: 0;
     line-height: 0;
@@ -4962,6 +4957,16 @@ ul.toggle-menu li:hover ul {
     position: relative
 }
 
+.bulk-edit-delete .popover {
+    top: -50px;
+    left: -100px;
+}
+
+.bulk-edit-merge .popover {
+    top: -66px;
+    left: -100px;
+}
+
 .block {
     display: block!important
 }
@@ -5260,7 +5265,7 @@ ul.workspace-private-toolbar .popover-help-container .popover {
     top: 26px
 }
 
-.bulk-edit-delete .bulk-edit-popover {
+.bulk-edit-delete .bulk-edit-popover{
     top: -40px;
     left: -59px;
     position: absolute

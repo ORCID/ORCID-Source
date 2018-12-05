@@ -19,10 +19,10 @@ import { ModalService }
     from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'works-merge-choose-preferred-version-ng2',
-    template:  scriptTmpl("works-merge-choose-preferred-version-ng2-template")
+    selector: 'works-merge-ng2',
+    template:  scriptTmpl("works-merge-ng2-template")
 })
-export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit, OnDestroy, OnInit {
+export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -44,14 +44,17 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
     cancelEdit(): void {
         this.delCountVerify = 0;
         this.mergeSubmit = false;
-        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
     };
 
     merge(): void {
         var putCodesAsString = '';       
         for (var i in this.worksToMerge) {
             var workToMerge = this.worksToMerge[i];
-                putCodesAsString += ',' + workToMerge.work.putCode.value;
+            putCodesAsString += workToMerge.work.putCode.value;
+            if(Number(i) < (this.worksToMerge.length-1)){
+                putCodesAsString += ',';
+            }
         }
         this.worksService.mergeWorks(putCodesAsString)
         .pipe(    
@@ -67,7 +70,7 @@ export class WorksMergeChoosePreferredVersionComponent implements AfterViewInit,
                     .subscribe(
                         data => {
                             this.worksService.notifyOther({action:'merge', successful:true});
-                            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+                            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
                         },
                         error => {
                             console.log('error marking suggestion as accepted', error);

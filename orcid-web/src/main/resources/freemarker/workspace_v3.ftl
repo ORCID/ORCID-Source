@@ -77,13 +77,13 @@
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<#include "/includes/ng2_templates/works-merge-choose-preferred-version-ng2-template.ftl">
-<modalngcomponent elementHeight="280" elementId="modalWorksMergeChoosePreferredVersion" elementWidth="600">
-    <works-merge-choose-preferred-version-ng2></works-merge-choose-preferred-version-ng2>
+<#include "/includes/ng2_templates/works-merge-ng2-template.ftl">
+<modalngcomponent elementHeight="350" elementId="modalWorksMerge" elementWidth="600">
+    <works-merge-ng2></works-merge-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/works-merge-suggestions-ng2-template.ftl">
-<modalngcomponent elementHeight="320" elementId="modalWorksMergeSuggestions" elementWidth="600">
+<modalngcomponent elementHeight="300" elementId="modalWorksMergeSuggestions" elementWidth="600">
     <works-merge-suggestions-ng2></works-merge-suggestions-ng2>
 </modalngcomponent><!-- Ng2 component -->
 

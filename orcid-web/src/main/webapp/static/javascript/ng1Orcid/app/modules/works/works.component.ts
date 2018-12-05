@@ -304,7 +304,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 mergeCount++;
             }
         }
-        
         if (mergeCount > 1) {
             var worksToMerge = new Array();
             var externalIdsPresent = false;
@@ -322,7 +321,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             } else {
                 this.worksService.notifyOther({worksToMerge:worksToMerge});       
                 this.worksService.notifyOther({mergeCount:mergeCount});
-                this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+                this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
 
             }
         }
@@ -1114,6 +1113,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.refreshWorkGroups();
                         this.allSelected = false;
                         this.bulkEditMap = {};
+                        this.bulkEditSelect();
                     }
                 } 
                 if(res.action == 'deleteBulk') {

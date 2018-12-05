@@ -411,19 +411,32 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="left leftBuffer">
+                                    <div class="left leftBuffer bulk-edit-merge popover-help-container" (mouseenter)="showTooltip('worksBulkEditMerge')" 
+                                        (mouseleave)="hideTooltip('worksBulkEditMerge')">
                                         <button class="btn btn-white-no-border" [disabled]="bulkSelectedCount < 2"  (click)="mergeConfirm()">
                                             <span class="edit-option-toolbar glyphicon glyphicon-resize-small"></span>
                                             <span><@orcid.msg 'workspace.bulkedit.merge'/></span>
                                         </button>
+                                        <div class="popover top" [ngClass]="showElement['worksBulkEditMerge'] == true ? 'block' : ''">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <@orcid.msg 'groups.merge.helpPopoverMerge_1'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'groups.merge.helpPopoverMerge_2'/></a>
+                                            </div>                
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="left leftBuffer">
+                                    <div class="left leftBuffer bulk-edit-delete popover-help-container" (mouseenter)="showTooltip('worksBulkEditDelete')" (mouseleave)="hideTooltip('worksBulkEditDelete')">
                                         <button class="btn btn-white-no-border" [disabled]="bulkSelectedCount < 1" (click)="deleteBulkConfirm()">
                                             <span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
                                             <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
                                         </button>
+                                        <div class="popover top" [ngClass]="showElement['worksBulkEditDelete'] == true ? 'block' : ''">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <@orcid.msg 'groups.bulk_delete.helpPopover'/>
+                                            </div>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -435,20 +448,6 @@
                                         limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
                                         privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
                                     </div>
-                                </li>
-                                <li>
-                                    <div class="popover-help-container">
-                                        <i class="glyphicon glyphicon-question-sign"></i>
-                                        <div class="bulk-actions-popover popover bottom">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <p>
-                                                    <span class="helpPopoverMergeHeading"><@orcid.msg 'groups.merge.helpPopoverMergeHeading'/></span><@orcid.msg 'groups.merge.helpPopoverMerge'/><br />
-                                                    <span class="helpPopoverDeleteBulkEditHeading"><@orcid.msg 'groups.merge.helpPopoverDeleteBulkEditHeading'/></span><@orcid.msg 'groups.merge.helpPopoverDeleteBulkEdit'/>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div> 
                                 </li>
                             </ul>
                             <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError">
