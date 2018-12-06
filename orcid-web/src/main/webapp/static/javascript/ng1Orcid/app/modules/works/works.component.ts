@@ -833,23 +833,28 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         
         if(putCodes.length > 0) {
-            this.worksService.updateVisibility(putCodes, priv)
+            this.callServerBulkPrivacyUpdate (putCodes, priv) 
+        }
+                   
+    };
+
+    callServerBulkPrivacyUpdate(putCodes, priv) {
+            this.worksService.updateVisibility(putCodes.splice(0, 50), priv)
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
                 data => {
                     if (putCodes.length > 0) {
-                        this.worksService.updateVisibility(putCodes, priv);
+                        this.callServerBulkPrivacyUpdate(putCodes, priv);
                     }
                     //group.activeVisibility = priv;
                 },
                 error => {
                     console.log('Error updating group visibility', error);
                 } 
-            );
-        }                
-    };
+            );  
+    }
 
     setGroupPrivacy(putCode, priv): void {
         var group = this.worksService.getGroup(putCode);
