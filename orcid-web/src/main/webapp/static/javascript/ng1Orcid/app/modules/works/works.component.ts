@@ -72,6 +72,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     fixedTitle: any;
     formData: any;
     geoArea: any;
+    groupingSuggestionsPresent: boolean;
+    groupingSuggestionsWorksToMerge: any;
     loadingScripts: any;
     moreInfo: any;
     moreInfoOpen: boolean;
@@ -127,6 +129,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             works: null
         };
         this.geoArea = ['All'];
+        this.groupingSuggestionsPresent = false;
         this.loadingScripts = false;
         this.moreInfo = {};
         this.moreInfoOpen = false;
@@ -663,21 +666,23 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             .subscribe(
                 data => {
                     if (data) {
-                        var worksToMerge = new Array();
+                        this.groupingSuggestionsPresent = true;
+                        this.groupingSuggestionsWorksToMerge = new Array();
                         var externalIdsPresent = false;
-                        for (var i in data.putCodes.workPutCodes) {
-                            var workPutCode = data.putCodes.workPutCodes[i];
+                        for (var i in data.putCodes) {
+                            var workPutCode = data.putCodes[i];
                             var work = this.worksService.getWork(workPutCode);
-                            worksToMerge.push({ work: work, preferred: false});
+                            this.groupingSuggestionsWorksToMerge.push({ work: work, preferred: false});
                             if (work.workExternalIdentifiers.length > 0) {
                                 externalIdsPresent = true;
                             }
                         }
-                        this.worksService.notifyOther({suggestionId:data.id});
+                        console.log(this.groupingSuggestionsWorksToMerge);
+                        /*this.worksService.notifyOther({suggestionId:data.id});
                         this.worksService.notifyOther({worksToMerge:worksToMerge});
                         this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
                         this.worksService.notifyOther({mergeCount:worksToMerge.length});
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeSuggestions'});
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeSuggestions'});*/
                     }
                 },
                 error => {

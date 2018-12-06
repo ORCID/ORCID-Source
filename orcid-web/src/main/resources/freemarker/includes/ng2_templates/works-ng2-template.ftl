@@ -402,8 +402,16 @@
         <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
             <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
                 <#if !(isPublicProfile??)>
-                    <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
                         <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
+                                <@orcid.checkFeatureStatus featureName='GROUPING_SUGGESTIONS'>
+                                    <div class="pull-right" *ngIf="groupingSuggestionsPresent">
+                                        <div class="alert">
+                                            <span class="edit-option-toolbar glyphicon glyphicon-exclamation-sign"></span>
+                                            <small>{{groupingSuggestionsWorksToMerge.length}} <@orcid.msg 'groups.merge.suggestion.alert'/></small>
+                                        </div>
+                                    </div>
+                                </@orcid.checkFeatureStatus>
                             <ul class="sources-actions">
                                 <li>
                                     <div class="left">
