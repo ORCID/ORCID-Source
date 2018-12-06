@@ -2496,6 +2496,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     background-color: #fff;
     font-size: 14px
 }
+.workspace-private-toolbar .popover-help-container .popover {
+    left: -267px;
+    top: -172px;
+}
 
 .work-bulk-actions .popover-help-container .bulk-works-privacy-popover {
     display: none;
@@ -4838,7 +4842,7 @@ ul.toggle-menu li:hover ul {
 .bulk-edit ul.bulk-edit-toolbar>li.bulk-edit-toolbar-item div.popover-help-container {
     position: relative!important;
     left: -38px!important;
-    top: -35px;
+    top: -187px;
     float: left;
     margin-left: 5px
 }
