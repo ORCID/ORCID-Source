@@ -29,26 +29,24 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     mergeCount: any;
     mergeSubmit: boolean;
     worksToMerge: Array<any>;
-    delCountVerify: number;
     externalIdsPresent: boolean;
-    suggestionId: any;
+    groupingSuggestion: any;
 
     constructor(
         private worksService: WorksService,
         private modalService: ModalService
     ) {
         this.mergeSubmit = false;
-        this.delCountVerify = 0;
+        this.groupingSuggestion = false;
     }
 
     cancelEdit(): void {
-        this.delCountVerify = 0;
         this.mergeSubmit = false;
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
     };
 
     merge(): void {
-        var putCodesAsString = '';       
+        var putCodesAsString = '';      
         for (var i in this.worksToMerge) {
             var workToMerge = this.worksToMerge[i];
             putCodesAsString += workToMerge.work.putCode.value;
@@ -62,27 +60,26 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                if (this.suggestionId) {
-                    this.worksService.markSuggestionAccepted(this.suggestionId)
-                    .pipe(    
-                        takeUntil(this.ngUnsubscribe)
-                    )
-                    .subscribe(
-                        data => {
-                            this.worksService.notifyOther({action:'merge', successful:true});
-                            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-                        },
-                        error => {
-                            console.log('error marking suggestion as accepted', error);
-                        } 
-                    );
-                } else {
-                    this.worksService.notifyOther({action:'merge', successful:true});
-                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeChoosePreferredVersion'});
-                }
+                this.worksService.notifyOther({action:'merge', successful:true});
+                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
             },
             error => {
                 console.log('error calling mergeWorks', error);
+            } 
+        );
+    };
+
+    rejectSuggestion(): void {
+        this.worksService.markSuggestionRejected(this.groupingSuggestion)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(
+            data => {
+                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
+                this.worksService.notifyOther({action:'cancel', successful:true});
+            },
+            error => {
+                console.log('error marking suggestion as rejected', error);
             } 
         );
     };
@@ -101,8 +98,8 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( res.externalIdsPresent != undefined ) {
                     this.externalIdsPresent = res.externalIdsPresent;
                 }
-                if( res.suggestionId ) {
-                    this.suggestionId = res.suggestionId;
+                if( res.groupingSuggestion ) {
+                    this.groupingSuggestion = res.groupingSuggestion;
                 }
             }
         );

@@ -6846,6 +6846,10 @@ ul.comma li:last-child:after {
     font-size: 12px
 }
 
+.line-height-normal {
+    line-height: normal
+}
+
 .no-padding {
     padding: 0
 }

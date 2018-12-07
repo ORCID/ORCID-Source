@@ -2,27 +2,40 @@
     <div class="bulk-merge-modal"> 
       <div>
         <h3><@orcid.msg 'groups.merge.confirm.header'/></h3>
-        <p>
-          {{mergeCount}} <@orcid.msg 'groups.merge.choose.preferred.detail'/>
+        <p *ngIf="!groupingSuggestion">
+          {{mergeCount}} <@orcid.msg 'groups.merge.choose.preferred.detail'/><br>
+          <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'groups.merge.helpPopoverMerge_2'/></a>
+        </p>
+        <p *ngIf="groupingSuggestion">
+          {{mergeCount}} <@orcid.msg 'groups.merge.suggestion.detail'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'groups.merge.helpPopoverMerge_2'/></a>
         </p>
       </div>
       <hr>
       <div *ngFor="let workToMerge of worksToMerge">
-        <div class="font-size-small">
+        <div class="font-size-small line-height-normal">
           <strong>{{workToMerge.work.title.value}}</strong><br/>
-          <@orcid.msg 'groups.common.source'/>: {{(workToMerge.work.sourceName == null || workToMerge.work.sourceName == '') ? workToMerge.work.source : workToMerge.work.sourceName }}
+            <span class="rightBuffer">
+              <@orcid.msg 'groups.common.source'/>: {{(workToMerge.work.sourceName == null || workToMerge.work.sourceName == '') ? workToMerge.work.source : workToMerge.work.sourceName }}
+            </span>
+            <span>
+              <@orcid.msg 'groups.common.added'/>:
+              {{workToMerge.work.createdDate | ajaxFormDateToISO8601}}
+            </span>
         </div>
         <hr> 
       </div>              
-      <div > 
+      <div class="orcid-error"> 
           <span class="glyphicon glyphicon-exclamation-sign"></span>
           <@orcid.msg 'groups.merge.confirm.cannot_undo'/>
       </div>
-      <div class="right">     
+      <div class="left topBuffer">     
         <button class="btn btn-primary" (click)="merge()"><@orcid.msg 'freemarker.btnmerge'/></button>&nbsp;&nbsp;
-        <button class="btn btn-white-no-border cancel-right" (click)="cancelEdit()">
+        <button class="btn btn-white-no-border cancel-right" *ngIf="!groupingSuggestion" (click)="cancelEdit()">
           <@orcid.msg 'freemarker.btncancel'/>
-        </button>  
+        </button>
+        <button class="btn btn-white-no-border cancel-right" *ngIf="groupingSuggestion" (click)="rejectSuggestion()">
+          <@orcid.msg 'freemarker.btncancel'/> <@orcid.msg 'groups.merge.suggestion.reject'/>
+        </button>    
       </div>
     </div>        
 </script>
