@@ -72,6 +72,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     fixedTitle: any;
     formData: any;
     geoArea: any;
+    groupingSuggestionExtIdsPresent: boolean;
     groupingSuggestionPresent: boolean;
     groupingSuggestion: any;
     groupingSuggestionWorksToMerge: any;
@@ -130,6 +131,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             works: null
         };
         this.geoArea = ['All'];
+        this.groupingSuggestionExtIdsPresent = false;
         this.groupingSuggestionPresent = false;
         this.loadingScripts = false;
         this.moreInfo = {};
@@ -333,28 +335,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeSuggestionConfirm(): void {
-        this.groupingSuggestionWorksToMerge = new Array();
-        var externalIdsPresent = false;
-        for (var i in this.groupingSuggestion.putCodes) {
-            var workPutCode = this.groupingSuggestion.putCodes[i];
-            this.worksService.getDetails(workPutCode, this.worksService.constants.access_type.USER)
-            .pipe(    
-                takeUntil(this.ngUnsubscribe)
-            )
-            .subscribe(
-                data => {
-                    console.log(data);
-                    this.groupingSuggestionWorksToMerge.push({ work: data, preferred: false});
-                },
-                error => {
-                    console.log('loadGroupingSuggestions', error);
-                } 
-            );
-
-            /*if (work.workExternalIdentifiers.length > 0) {
-                externalIdsPresent = true;
-            }*/
-        }
         this.worksService.notifyOther({worksToMerge:this.groupingSuggestionWorksToMerge});
         this.worksService.notifyOther({groupingSuggestion:this.groupingSuggestion});    
         this.worksService.notifyOther({mergeCount:this.groupingSuggestion.putCodes.length});
@@ -688,6 +668,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     loadGroupingSuggestions(): void {
+        this.groupingSuggestionExtIdsPresent = false;
+        this.groupingSuggestionPresent = false;
         if(this.publicView != "true") {
             this.worksService.getWorksGroupingSuggestions(
             )
@@ -699,6 +681,27 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if (data) {
                         this.groupingSuggestionPresent = true;
                         this.groupingSuggestion = data;
+                        this.groupingSuggestionWorksToMerge = new Array();
+                        var externalIdsPresent = false;
+                        for (var i in this.groupingSuggestion.putCodes) {
+                            var workPutCode = this.groupingSuggestion.putCodes[i];
+                            this.worksService.getDetails(workPutCode, this.worksService.constants.access_type.USER)
+                            .pipe(    
+                                takeUntil(this.ngUnsubscribe)
+                            )
+                            .subscribe(
+                                data => {
+                                    this.groupingSuggestionWorksToMerge.push({ work: data, preferred: false});
+                                    if (data.workExternalIdentifiers.length > 0) {
+                                        this.groupingSuggestionExtIdsPresent = true;
+                                    }
+                                },
+                                error => {
+                                    console.log('loadGroupingSuggestions', error);
+                                } 
+                            );
+
+                        }
                     }
                 },
                 error => {
@@ -1100,7 +1103,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     toggleSelectAll(): void {
         this.allSelected = !this.allSelected;
         this.bulkChangeAll(this.allSelected);
-        console.log(this.allSelected);
     }
     
     toggleWizardDesc(id): void {
@@ -1131,6 +1133,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                        this.loadMore();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                         this.bulkEditSelect();
