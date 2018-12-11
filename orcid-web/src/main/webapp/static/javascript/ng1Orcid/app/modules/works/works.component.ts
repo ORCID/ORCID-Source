@@ -694,24 +694,24 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.groupingSuggestionWorksToMerge = new Array();
                         var externalIdsPresent = false;
                         for (var i in this.groupingSuggestion.putCodes) {
-                            var workPutCode = this.groupingSuggestion.putCodes[i];
-                            this.worksService.getDetails(workPutCode, this.worksService.constants.access_type.USER)
-                            .pipe(    
-                                takeUntil(this.ngUnsubscribe)
-                            )
-                            .subscribe(
-                                data => {
-                                    this.groupingSuggestionWorksToMerge.push({ work: data, preferred: false});
-                                    if (data.workExternalIdentifiers.length > 0) {
+                            var putCode = this.groupingSuggestion.putCodes[i];
+                            this.groupingSuggestionWorksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
+                        }
+                        forkJoin(this.worksToMerge).subscribe(
+                            dataGroup => {
+                                for(var i in dataGroup){
+                                    if(dataGroup[i].workExternalIdentifiers.length > 0){
                                         this.groupingSuggestionExtIdsPresent = true;
                                     }
-                                },
-                                error => {
-                                    console.log('loadGroupingSuggestions', error);
+                                }
+                                if(!externalIdsPresent){
+                                    this.showMergeWorksExtIdsError = true;
                                 } 
-                            );
-
-                        }
+                            },
+                            error => {
+                                console.log('loadGroupingSuggestions', error);
+                            } 
+                        );
                     }
                 },
                 error => {
