@@ -9,6 +9,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit }
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
+
 import { takeUntil } 
     from 'rxjs/operators';
 
@@ -49,7 +50,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
         var putCodesAsString = '';      
         for (var i in this.worksToMerge) {
             var workToMerge = this.worksToMerge[i];
-            putCodesAsString += workToMerge.work.putCode.value;
+            putCodesAsString += workToMerge.putCode.value;
             if(Number(i) < (this.worksToMerge.length-1)){
                 putCodesAsString += ',';
             }

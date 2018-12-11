@@ -14,7 +14,7 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { forkJoin, Observable, Subject, Subscription } 
     from 'rxjs';
 
 import { takeUntil } 
@@ -94,6 +94,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     wizardDescExpanded: any;
     workImportWizard: boolean;
     workImportWizardsOriginal: any;
+    worksToMerge: Array<any>;
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
@@ -304,6 +305,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     }
     
     mergeConfirm(): void {
+        this.worksToMerge = new Array();
         var idx: any;
         var mergeCount = 0;       
         for (idx in this.worksService.groups){
@@ -312,25 +314,33 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }
         if (mergeCount > 1) {
-            var worksToMerge = new Array();
             var externalIdsPresent = false;
             for (var putCode in this.bulkEditMap) {
-                if (this.bulkEditMap[putCode]) {
-                    var work = this.worksService.getWork(putCode);
-                    worksToMerge.push({ work: work, preferred: false});
-                    if (work.workExternalIdentifiers.length > 0) {
-                        externalIdsPresent = true;
-                    }
+                if (this.bulkEditMap[putCode]) { 
+                    this.worksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
                 }
-            }
-            if(!externalIdsPresent){
-                this.showMergeWorksExtIdsError = true;
-            } else {
-                this.worksService.notifyOther({worksToMerge:worksToMerge});       
-                this.worksService.notifyOther({mergeCount:mergeCount});
-                this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+            }       
+            forkJoin(this.worksToMerge).subscribe(
+                dataGroup => {
+                    for(var i in dataGroup){
+                        if(dataGroup[i].workExternalIdentifiers.length > 0){
+                            externalIdsPresent = true;
+                        }
+                    }
+                    if(!externalIdsPresent){
+                        this.showMergeWorksExtIdsError = true;
+                    } else {
+                        this.worksService.notifyOther({worksToMerge:dataGroup});       
+                        this.worksService.notifyOther({mergeCount:mergeCount});
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
 
-            }
+                    }   
+                    
+                },
+                error => {
+                    console.log('mergeConfirm', error);
+                } 
+            );
         }
     };
 

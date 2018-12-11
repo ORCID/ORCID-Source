@@ -463,7 +463,7 @@
                             </ul>
                             <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError">
                                 <@orcid.msg 'groups.merge.no_external_ids_1'/> <a target="groups.merge.no_external_ids_2" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
-                                <button class="btn btn-primary cancel-right" (click)="dismissError('showMergeWorksExtIdsError')">
+                                <button class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
                                      <@orcid.msg 'common.cookies.dismiss'/>
                                 </button>
                             </div>
