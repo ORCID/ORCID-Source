@@ -7,10 +7,16 @@
         </p>
       </div>
       <hr>
-      <div *ngFor="let workToMerge of worksToMerge">
-        <div class="font-size-small">
-          <strong>{{workToMerge.work.title.value}}</strong><br/>
-          <@orcid.msg 'groups.common.source'/>: {{(workToMerge.work.sourceName == null || workToMerge.work.sourceName == '') ? workToMerge.work.source : workToMerge.work.sourceName }}
+      <div *ngFor="let workToMerge of worksToMerge;let i=index">
+        <div class="font-size-small line-height-normal">
+          <strong>{{workToMerge.title.value}}</strong><br/>
+            <span class="rightBuffer">
+              <@orcid.msg 'groups.common.source'/>: {{(workToMerge.sourceName == null || workToMerge.sourceName == '') ? workToMerge.source : workToMerge.sourceName }}
+            </span>
+            <span>
+              <@orcid.msg 'groups.common.added'/>:
+              {{workToMerge.createdDate | ajaxFormDateToISO8601}}
+            </span>
         </div>
         <hr> 
       </div>              
