@@ -89,6 +89,32 @@
                                         <span class="glyphicon glyphicon-plus"></span>
                                         <@orcid.msg 'groups.common.add_works'/>
                                         <ul class="menu-options works">
+
+                                            <!--Search & link-->
+                                            <li *ngIf="noLinkFlag">
+                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
+                                                    <span class="ai ai-arxiv"></span>
+                                                    Add ArXiv Id
+                                                    <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
+                                                </a>
+                                            </li>
+
+                                           <!--Search & link-->
+                                            <li *ngIf="noLinkFlag">
+                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
+                                                    <span class="ai ai-doi"></span>
+                                                    Add DOI
+                                                    <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
+                                                </a>
+                                            </li>
+                                            <!--Search & link-->
+                                            <li *ngIf="noLinkFlag">
+                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
+                                                    <span class="ai ai-pubmed"></span>
+                                                    Add PubMed Id
+                                                    <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
+                                                </a>
+                                            </li>
                                           <!--Search & link-->
                                             <li *ngIf="noLinkFlag">
                                                 <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="showWorkImportWizard()">

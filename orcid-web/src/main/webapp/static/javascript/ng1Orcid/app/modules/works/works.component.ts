@@ -227,6 +227,26 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    addWorkExternalIdModal(externalIdType): void {
+        this.emailService.getEmails()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalExternalIdForm', externalIdType: externalIdType});                
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                console.log('getEmails', error);
+            } 
+        );
+    };
+
     bibtexShowToggle(putCode): void {
         this.showBibtex[putCode] = !(this.showBibtex[putCode]);
     };

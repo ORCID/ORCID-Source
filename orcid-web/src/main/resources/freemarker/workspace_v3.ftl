@@ -147,6 +147,11 @@
     <works-form-ng2></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<#include "/includes/ng2_templates/works-external-id-form-ng2-template.ftl">
+<modalngcomponent elementHeight="300" elementId="modalExternalIdForm" elementWidth="700">
+    <works-external-id-form-ng2></works-external-id-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <!--Org ID popover template used in v3 affiliations and research resources-->
 <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
 
