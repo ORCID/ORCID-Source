@@ -387,6 +387,11 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     color: #a6ce39
 }
 
+.btn-white-no-border:disabled,
+.btn-white-no-border[disabled] {
+    color: #c9c9ca;
+}
+
 .center {
     margin: 0 auto
 }
@@ -1842,11 +1847,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .workspace-accordion-header .popover-help-container {
-    margin-left: 6px;
-    line-height: 31px;
-}
-
-.work-bulk-actions .popover-help-container {
     margin-left: 6px;
     line-height: 31px;
 }
@@ -4957,6 +4957,16 @@ ul.toggle-menu li:hover ul {
     position: relative
 }
 
+.bulk-edit-delete .popover {
+    top: -50px;
+    left: -100px;
+}
+
+.bulk-edit-merge .popover {
+    top: -84px;
+    left: -100px;
+}
+
 .block {
     display: block!important
 }
@@ -5143,12 +5153,26 @@ ul.workspace-private-toolbar .popover-help-container .popover {
     flex: 1 0 auto
 }
 
-.bulk-delete-modal {
+.bulk-delete-modal,
+.bulk-merge-modal {
     width: 550px
 }
 
-.bulk-delete-modal h3,.bulk-delete-modal p,.dark-grey {
+.bulk-delete-modal h3,
+.bulk-delete-modal p,
+.bulk-merge-modal h3,
+.bulk-merge-modal p,
+.dark-grey {
     color: #494a4c
+}
+
+.bulk-merge-modal hr {
+    margin: 10px 0;
+}
+
+.bulk-delete-modal,
+.bulk-merge-modal {
+    width: 550px
 }
 
 .bulk-delete-modal button {
@@ -5241,7 +5265,7 @@ ul.workspace-private-toolbar .popover-help-container .popover {
     top: 26px
 }
 
-.bulk-edit-delete .bulk-edit-popover {
+.bulk-edit-delete .bulk-edit-popover{
     top: -40px;
     left: -59px;
     position: absolute

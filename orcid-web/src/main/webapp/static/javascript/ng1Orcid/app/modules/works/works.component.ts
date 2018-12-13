@@ -14,7 +14,7 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { forkJoin, Observable, Subject, Subscription } 
     from 'rxjs';
 
 import { takeUntil } 
@@ -60,6 +60,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bulkDisplayToggle: boolean;
     bulkEditMap: any;
     bulkEditShow: boolean;
+    bulkSelectedCount: number;
     canReadFiles: boolean;
     deleteGroup: any;
     deletePutCode: any;
@@ -83,11 +84,13 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showBibtexExport: boolean;
     showBibtexImportWizard: boolean;
     showElement: any;
+    showMergeWorksExtIdsError: boolean;
     sortState: any;
     textFiles: any;
     wizardDescExpanded: any;
     workImportWizard: boolean;
     workImportWizardsOriginal: any;
+    worksToMerge: Array<any>;
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
@@ -116,6 +119,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.bulkDisplayToggle = false;
         this.bulkEditMap = {};
         this.bulkEditShow = false;
+        this.bulkSelectedCount = 0;
         this.canReadFiles = false;
         this.displayURLPopOver = {};
         this.editSources = {};
@@ -139,6 +143,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showBibtexExport = false;
         this.showBibtexImportWizard = false;
         this.showElement = {};
+        this.showMergeWorksExtIdsError = false;
         this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
         this.textFiles = [];
         this.wizardDescExpanded = {};
@@ -233,12 +238,26 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     bulkChangeAll(bool): void {
+        this.bulkSelectedCount = 0;
         this.bulkChecked = bool;
         this.bulkDisplayToggle = false;
         for (var idx in this.worksService.groups){
             this.bulkEditMap[this.worksService.groups[idx].activePutCode] = bool;
+            if(this.bulkChecked == true){
+                this.bulkSelectedCount ++;
+            }
         }
     };
+
+    bulkEditSelect(): void {
+        this.allSelected = false;
+        this.bulkSelectedCount = 0;
+        for (var idx in this.worksService.groups){
+            if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){
+                this.bulkSelectedCount++;
+            }
+        }
+    }
 
     canBeCombined(work): any {
         if (this.userIsSource(work)){
@@ -272,8 +291,15 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
         }
     };
+
+    dismissError(error){
+        if(error == "showMergeWorksExtIdsError"){
+            this.showMergeWorksExtIdsError = false;
+        }
+    }
     
     mergeConfirm(): void {
+        this.worksToMerge = new Array();
         var idx: any;
         var mergeCount = 0;       
         for (idx in this.worksService.groups){
@@ -281,23 +307,34 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 mergeCount++;
             }
         }
-        
         if (mergeCount > 1) {
-            var worksToMerge = new Array();
             var externalIdsPresent = false;
             for (var putCode in this.bulkEditMap) {
-                if (this.bulkEditMap[putCode]) {
-                    var work = this.worksService.getWork(putCode);
-                    worksToMerge.push({ work: work, preferred: false});
-                    if (work.workExternalIdentifiers.length > 0) {
-                        externalIdsPresent = true;
-                    }
+                if (this.bulkEditMap[putCode]) { 
+                    this.worksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
                 }
-            }
-            this.worksService.notifyOther({worksToMerge:worksToMerge});   
-            this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
-            this.worksService.notifyOther({mergeCount:mergeCount});
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+            }       
+            forkJoin(this.worksToMerge).subscribe(
+                dataGroup => {
+                    for(var i in dataGroup){
+                        if(dataGroup[i].workExternalIdentifiers.length > 0){
+                            externalIdsPresent = true;
+                        }
+                    }
+                    if(!externalIdsPresent){
+                        this.showMergeWorksExtIdsError = true;
+                    } else {
+                        this.worksService.notifyOther({worksToMerge:dataGroup});       
+                        this.worksService.notifyOther({mergeCount:mergeCount});
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+
+                    }   
+                    
+                },
+                error => {
+                    console.log('mergeConfirm', error);
+                } 
+            );
         }
     };
     
@@ -1122,6 +1159,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.refreshWorkGroups();
                         this.allSelected = false;
                         this.bulkEditMap = {};
+                        this.bulkEditSelect();
                     }
                 } 
                 if(res.action == 'deleteBulk') {
