@@ -16,6 +16,8 @@ public class ResearchResource implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Date createdDate;
+    
+    private Date lastModifiedDate;
 
     private String path;
     
@@ -58,9 +60,17 @@ public class ResearchResource implements Serializable {
     public Date getCreatedDate() {
         return createdDate;
     }
-
+    
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+    
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
     public String getPath() {
@@ -209,6 +219,8 @@ public class ResearchResource implements Serializable {
         }
         
         researchResource.setCreatedDate(Date.valueOf(resource.getCreatedDate()));
+        
+        researchResource.setLastModifiedDate(Date.valueOf(resource.getLastModifiedDate()));
         
         if(resource.getProposal().getStartDate() != null) {
             researchResource.setStartDate(Date.valueOf(resource.getProposal().getStartDate()));
