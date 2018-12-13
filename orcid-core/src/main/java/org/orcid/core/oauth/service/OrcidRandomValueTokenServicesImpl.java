@@ -49,6 +49,9 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 /**
  * @author Declan Newman (declan) Date: 11/05/2012
  */
@@ -61,6 +64,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     private int readValiditySeconds;
     @Value("${org.orcid.core.token.implicit_validity_seconds:600}")
     private int implicitValiditySeconds;
+    @Value("${org.orcid.core.token.write_validity_seconds:3600}")
+    private int ietfTokenExchangeValiditySeconds;
     
     private TokenStore orcidTokenStore;
 
@@ -95,6 +100,34 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
 
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
+        
+        //Do we have an implicit request with update permissions?
+        if (OrcidOauth2Constants.IMPLICIT_GRANT_TYPE.equals(authentication.getOAuth2Request().getGrantType())) {
+            // authentication.getOAuth2Request().getResponseTypes().contains("token")) {
+            Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authentication.getOAuth2Request().getScope());
+            Set<String> readOnlyScopes = Sets.newHashSet();
+            for (ScopePathType s: requestedScopes) {
+                if (s.isReadOnlyScope()) {
+                    readOnlyScopes.add(s.value());
+                }
+            }
+            //If so, create a long life update token in the background
+            if (requestedScopes.size() != readOnlyScopes.size()) {
+                //create token behind the scenes.
+                DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(UUID.randomUUID().toString());
+                accessToken.setExpiration(new Date(System.currentTimeMillis() + (readValiditySeconds * 1000L)));
+                accessToken.setScope(authentication.getOAuth2Request().getScope());
+                accessToken = new DefaultOAuth2AccessToken(customTokenEnhancer.enhance(accessToken, authentication));
+                //accessToken.setAdditionalInformation(Maps.newHashMap());
+                orcidTokenStore.storeAccessToken(accessToken, authentication);
+                
+                //create a read only token request
+                OAuth2Request r = authentication.getOAuth2Request().narrowScope(readOnlyScopes);
+                authentication = new OAuth2Authentication(r, authentication.getUserAuthentication());
+            }
+        }
+        
+        //create the regular token
         DefaultOAuth2AccessToken accessToken = generateAccessToken(authentication);
         try {
             orcidTokenStore.storeAccessToken(accessToken, authentication);
@@ -163,9 +196,11 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             }
         } else if(OrcidOauth2Constants.IMPLICIT_GRANT_TYPE.equals(authorizationRequest.getGrantType())){
             return implicitValiditySeconds;
+        } else if(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(authorizationRequest.getGrantType())) {
+            return ietfTokenExchangeValiditySeconds;
         } else if (isPersistentTokenEnabled(authorizationRequest)) {
             return readValiditySeconds;
-        }
+        } 
 
         return writeValiditySeconds;
     }
