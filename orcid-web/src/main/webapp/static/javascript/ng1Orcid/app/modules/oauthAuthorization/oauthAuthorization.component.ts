@@ -755,7 +755,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                                 this.realLoggedInUserName += giveNamesDefined ? response.real.givenNames.value : "";
                                 this.realLoggedInUserName += giveNamesDefined && familyNameDefined ? " " : "";
                                 this.realLoggedInUserName += familyNameDefined ? response.real.familyName.value : "";
-                                this.isLoggedIn == true;
+                                this.isLoggedIn = true;
                             } 
                             if (response.effective && (response.effective.givenNames.value || response.effective.familyName.value)) {
                                 var giveNamesDefined = (response.effective.giveNames && response.effective.givenNames.value);
@@ -764,7 +764,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                                 this.effectiveLoggedInUserName += giveNamesDefined ? response.effective.givenNames.value : "";
                                 this.effectiveLoggedInUserName += giveNamesDefined && familyNameDefined ? " " : "";
                                 this.effectiveLoggedInUserName += familyNameDefined ? response.effective.familyName.value : "";
-                                this.isLoggedIn == true;
+                                this.isLoggedIn = true;
                             }     
                         }, (error) => {
                             console.log('Error getting public name')

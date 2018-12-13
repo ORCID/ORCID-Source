@@ -58,7 +58,14 @@ export class NotificationAlertsComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 this.notificationsSrvc.notificationAlerts = data;
-                this.retrieveUnreadCount();                                             
+                this.retrieveUnreadCount();
+                for(var i = 0;  i < this.notificationsSrvc.notificationAlerts.length; i++) {
+                    if (this.notificationsSrvc.notificationAlerts[i].authorizationUrl){
+                        var encodedUrl = encodeURIComponent(this.notificationsSrvc.notificationAlerts[i].authorizationUrl.uri);
+                        this.notificationsSrvc.notificationAlerts[i].authorizationUrl.uri = encodedUrl;
+                    }
+                }
+
             }
         );
     }

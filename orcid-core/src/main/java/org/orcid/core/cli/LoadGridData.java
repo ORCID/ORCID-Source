@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -33,7 +34,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 public class LoadGridData {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadGridData.class);
-    private static final String GRID_SOURCE_TYPE = "GRID";
     private static final String WIKIPEDIA_URL = "wikipedia_url";
 
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
@@ -182,7 +182,7 @@ public class LoadGridData {
     }
 
     private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
-        OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
+        OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.GRID.name());
         if (existingBySourceId != null) {
             if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType)) {
                 existingBySourceId.setCity(city);
@@ -321,7 +321,7 @@ public class LoadGridData {
         orgDisambiguatedEntity.setUrl(url);
         orgDisambiguatedEntity.setOrgType(orgType);
         orgDisambiguatedEntity.setSourceId(sourceId);
-        orgDisambiguatedEntity.setSourceType(GRID_SOURCE_TYPE);
+        orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
         addedDisambiguatedOrgs++;
         return orgDisambiguatedEntity;
@@ -351,7 +351,7 @@ public class LoadGridData {
      */
     private void deprecateOrg(String sourceId, String primarySourceId) {
         LOGGER.info("Deprecating org {} for {}", sourceId, primarySourceId);
-        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
+        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.GRID.name());
         Date now = new Date();
         if (existingEntity != null) {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.DEPRECATED.name())
@@ -365,7 +365,7 @@ public class LoadGridData {
             }
         } else {
             OrgDisambiguatedEntity deprecatedEntity = new OrgDisambiguatedEntity();
-            deprecatedEntity.setSourceType(GRID_SOURCE_TYPE);
+            deprecatedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
             deprecatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
             deprecatedEntity.setSourceId(sourceId);
             deprecatedEntity.setSourceParentId(primarySourceId);
@@ -383,7 +383,7 @@ public class LoadGridData {
      */
     private void obsoleteOrg(String sourceId) {
         LOGGER.info("Marking or as obsolete {}", sourceId);
-        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, GRID_SOURCE_TYPE);
+        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.GRID.name());
         Date now = new Date();
         if (existingEntity != null) {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.OBSOLETE.name())) {
@@ -395,7 +395,7 @@ public class LoadGridData {
             }
         } else {
             OrgDisambiguatedEntity obsoletedEntity = new OrgDisambiguatedEntity();
-            obsoletedEntity.setSourceType(GRID_SOURCE_TYPE);
+            obsoletedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
             obsoletedEntity.setStatus(OrganizationStatus.OBSOLETE.name());
             obsoletedEntity.setSourceId(sourceId);            
             obsoletedEntity.setDateCreated(now);

@@ -155,7 +155,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
     @Path("/")
-    @ApiOperation( nickname="viewSwaggerV3dev", value = "Fetch the HTML swagger UI interface", hidden = true)
+    @ApiOperation( nickname="viewSwaggerV3Rc1", value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
         return new SwaggerUIBuilder().buildSwaggerHTML(baseUri, pubBaseUri, false);
     }
@@ -163,7 +163,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
-    @ApiOperation( nickname="viewStatusTextV3dev", value = "Check the server status", response = String.class)
+    @ApiOperation( nickname="viewStatusTextV3Rc1", value = "Check the server status", response = String.class)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
     }
@@ -179,7 +179,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
-    @ApiOperation( nickname="viewActivitiesV3dev", value = "Fetch all Activities", response = ActivitiesSummary.class)
+    @ApiOperation( nickname="viewActivitiesV3Rc1", value = "Fetch all Activities", response = ActivitiesSummary.class)
     public Response viewActivities(@PathParam("orcid") String orcid, @Context HttpServletRequest httpRequest) {
         return serviceDelegator.viewActivities(orcid);
     }
@@ -188,7 +188,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON,
             OrcidApiConstants.APPLICATION_CITEPROC })
     @Path(WORK + PUTCODE)
-    @ApiOperation( nickname="viewWorkV3dev", value = "Fetch a Work", notes = "More notes about this method", response = Work.class)
+    @ApiOperation( nickname="viewWorkV3Rc1", value = "Fetch a Work", notes = "More notes about this method", response = Work.class)
     public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode, @Context HttpServletRequest httpRequest) {
         if (OrcidApiConstants.APPLICATION_CITEPROC.equals(httpRequest.getHeader("Accept")))
             return serviceDelegator.viewWorkCitation(orcid, putCode);
@@ -198,7 +198,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK_SUMMARY + PUTCODE)
-    @ApiOperation( nickname="viewWorkSummaryV3dev", value = "Fetch a Work Summary", response = WorkSummary.class)
+    @ApiOperation( nickname="viewWorkSummaryV3Rc1", value = "Fetch a Work Summary", response = WorkSummary.class)
     public Response viewWorkSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewWorkSummary(orcid, putCode);
     }
@@ -206,7 +206,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS)
-    @ApiOperation( nickname="viewWorksV3dev", value = "Fetch all works", response = Works.class)
+    @ApiOperation( nickname="viewWorksV3Rc1", value = "Fetch all works", response = Works.class)
     public Response viewWorks(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewWorks(orcid);
     }
@@ -214,7 +214,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BULK_WORKS)
-    @ApiOperation( nickname="viewSpecifiedWorksV3dev", value = "Fetch specified works", response = WorkBulk.class)
+    @ApiOperation( nickname="viewSpecifiedWorksV3Rc1", value = "Fetch specified works", response = WorkBulk.class)
     public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @PathParam("putCodes") String putCodes) {
         return serviceDelegator.viewBulkWorks(orcid, putCodes);
     }
@@ -222,7 +222,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING + PUTCODE)
-    @ApiOperation( nickname="viewFundingV3dev", value = "Fetch a Funding", response = Funding.class)
+    @ApiOperation( nickname="viewFundingV3Rc1", value = "Fetch a Funding", response = Funding.class)
     public Response viewFunding(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewFunding(orcid, putCode);
     }
@@ -230,7 +230,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_SUMMARY + PUTCODE)
-    @ApiOperation( nickname="viewFundingSummaryV3dev", value = "Fetch a Funding Summary", response = FundingSummary.class)
+    @ApiOperation( nickname="viewFundingSummaryV3Rc1", value = "Fetch a Funding Summary", response = FundingSummary.class)
     public Response viewFundingSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewFundingSummary(orcid, putCode);
     }
@@ -238,7 +238,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDINGS)
-    @ApiOperation( nickname="viewFundingsV3dev", value = "Fetch all fundings", response = Fundings.class)    
+    @ApiOperation( nickname="viewFundingsV3Rc1", value = "Fetch all fundings", response = Fundings.class)    
     public Response viewFundings(@PathParam("orcid") String orcid) {        
         return serviceDelegator.viewFundings(orcid);
     }
@@ -246,7 +246,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION + PUTCODE)
-    @ApiOperation( nickname="viewEducationV3dev", value = "Fetch an Education", response = Education.class)
+    @ApiOperation( nickname="viewEducationV3Rc1", value = "Fetch an Education", response = Education.class)
     public Response viewEducation(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewEducation(orcid, putCode);
     }
@@ -254,7 +254,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION_SUMMARY + PUTCODE)
-    @ApiOperation( nickname="viewEducationSummaryV3dev", value = "Fetch an Education Summary", response = EducationSummary.class)
+    @ApiOperation( nickname="viewEducationSummaryV3Rc1", value = "Fetch an Education Summary", response = EducationSummary.class)
     public Response viewEducationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewEducationSummary(orcid, putCode);
     }
@@ -262,7 +262,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATIONS)
-    @ApiOperation( nickname="viewEducationsV3dev", value = "Fetch all educations", response = Educations.class)    
+    @ApiOperation( nickname="viewEducationsV3Rc1", value = "Fetch all educations", response = Educations.class)    
     public Response viewEducations(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEducations(orcid);
     }
@@ -270,7 +270,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENT + PUTCODE)
-    @ApiOperation( nickname="viewEmploymentV3dev", value = "Fetch an Employment", notes = "Retrive a specific education representation", response = Employment.class)
+    @ApiOperation( nickname="viewEmploymentV3Rc1", value = "Fetch an Employment", notes = "Retrive a specific education representation", response = Employment.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Employment found", response = Employment.class),
             @ApiResponse(code = 404, message = "Employment not found") })
     public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
@@ -280,7 +280,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENT_SUMMARY + PUTCODE)
-    @ApiOperation( nickname="viewEmploymentSummaryV3dev", value = "Fetch an Employment Summary", response = EmploymentSummary.class)
+    @ApiOperation( nickname="viewEmploymentSummaryV3Rc1", value = "Fetch an Employment Summary", response = EmploymentSummary.class)
     public Response viewEmploymentSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewEmploymentSummary(orcid, putCode);
     }
@@ -288,7 +288,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENTS)
-    @ApiOperation( nickname="viewEmploymentsV3dev", value = "Fetch all employments", response = Fundings.class)    
+    @ApiOperation( nickname="viewEmploymentsV3Rc1", value = "Fetch all employments", response = Fundings.class)    
     public Response viewEmployments(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmployments(orcid);
     }
@@ -296,7 +296,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEW + PUTCODE)
-    @ApiOperation( nickname="viewPeerReviewV3dev", value = "Fetch a Peer Review", response = PeerReview.class)
+    @ApiOperation( nickname="viewPeerReviewV3Rc1", value = "Fetch a Peer Review", response = PeerReview.class)
     public Response viewPeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewPeerReview(orcid, putCode);
     }
@@ -304,7 +304,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEW_SUMMARY + PUTCODE)
-    @ApiOperation( nickname="viewPeerReviewSummaryV3dev", value = "Fetch a Peer Review Summary", response = PeerReviewSummary.class)
+    @ApiOperation( nickname="viewPeerReviewSummaryV3Rc1", value = "Fetch a Peer Review Summary", response = PeerReviewSummary.class)
     public Response viewPeerReviewSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewPeerReviewSummary(orcid, putCode);
     }
@@ -312,7 +312,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEWS)
-    @ApiOperation( nickname="viewPeerReviewsV3dev", value = "Fetch all peer reviews", response = PeerReviews.class)    
+    @ApiOperation( nickname="viewPeerReviewsV3Rc1", value = "Fetch all peer reviews", response = PeerReviews.class)    
     public Response viewPeerReviews(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPeerReviews(orcid);
     }
@@ -320,7 +320,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS)
-    @ApiOperation( nickname="viewResearcherUrlsV3dev", value = "Fetch all researcher urls for an ORCID ID")
+    @ApiOperation( nickname="viewResearcherUrlsV3Rc1", value = "Fetch all researcher urls for an ORCID ID")
     public Response viewResearcherUrls(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewResearcherUrls(orcid);
     }
@@ -328,7 +328,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS + PUTCODE)
-    @ApiOperation( nickname="viewResearcherUrlV3dev", value = "Fetch one researcher url for an ORCID ID")
+    @ApiOperation( nickname="viewResearcherUrlV3Rc1", value = "Fetch one researcher url for an ORCID ID")
     public Response viewResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewResearcherUrl(orcid, Long.valueOf(putCode));
     }
@@ -336,7 +336,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMAIL)
-    @ApiOperation( nickname="viewEmailsV3dev", value = "Fetch all emails for an ORCID ID")
+    @ApiOperation( nickname="viewEmailsV3Rc1", value = "Fetch all emails for an ORCID ID")
     public Response viewEmails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmails(orcid);
     }
@@ -344,7 +344,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
-    @ApiOperation( nickname="viewPersonalDetailsV3dev", value = "Fetch personal details for an ORCID ID")
+    @ApiOperation( nickname="viewPersonalDetailsV3Rc1", value = "Fetch personal details for an ORCID ID")
     public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPersonalDetails(orcid);
     }
@@ -352,7 +352,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES)
-    @ApiOperation( nickname="viewOtherNamesV3dev", value = "Fetch Other names")
+    @ApiOperation( nickname="viewOtherNamesV3Rc1", value = "Fetch Other names")
     public Response viewOtherNames(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewOtherNames(orcid);
     }
@@ -360,7 +360,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES + PUTCODE)
-    @ApiOperation( nickname="viewOtherNameV3dev", value = "Fetch Other name")
+    @ApiOperation( nickname="viewOtherNameV3Rc1", value = "Fetch Other name")
     public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewOtherName(orcid, Long.valueOf(putCode));
     }
@@ -368,7 +368,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS)
-    @ApiOperation( nickname="viewExternalIdentifiersV3dev", value = "Fetch external identifiers", authorizations = {
+    @ApiOperation( nickname="viewExternalIdentifiersV3Rc1", value = "Fetch external identifiers", authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     public Response viewExternalIdentifiers(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewExternalIdentifiers(orcid);
@@ -377,7 +377,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
-    @ApiOperation( nickname="viewExternalIdentifierV3dev", value = "Fetch external identifier")
+    @ApiOperation( nickname="viewExternalIdentifierV3Rc1", value = "Fetch external identifier")
     public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewExternalIdentifier(orcid, Long.valueOf(putCode));
     }
@@ -385,7 +385,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS)
-    @ApiOperation( nickname="viewKeywordsV3dev", value = "Fetch keywords")
+    @ApiOperation( nickname="viewKeywordsV3Rc1", value = "Fetch keywords")
     public Response viewKeywords(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewKeywords(orcid);
     }
@@ -393,7 +393,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(KEYWORDS + PUTCODE)
-    @ApiOperation( nickname="viewKeywordV3dev", value = "Fetch keyword")
+    @ApiOperation( nickname="viewKeywordV3Rc1", value = "Fetch keyword")
     public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
     }
@@ -401,7 +401,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS)
-    @ApiOperation( nickname="viewAddressesV3dev", value = "Fetch all addresses")
+    @ApiOperation( nickname="viewAddressesV3Rc1", value = "Fetch all addresses")
     public Response viewAddresses(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewAddresses(orcid);
     }
@@ -409,7 +409,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS + PUTCODE)
-    @ApiOperation( nickname="viewAddressV3dev", value = "Fetch an address")
+    @ApiOperation( nickname="viewAddressV3Rc1", value = "Fetch an address")
     public Response viewAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewAddress(orcid, Long.valueOf(putCode));
     }
@@ -417,7 +417,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIOGRAPHY)
-    @ApiOperation( nickname="viewBiographyV3dev", value = "Get biography details")
+    @ApiOperation( nickname="viewBiographyV3Rc1", value = "Get biography details")
     public Response viewBiography(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewBiography(orcid);
     }
@@ -425,7 +425,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSON)
-    @ApiOperation( nickname="viewPersonV3dev", value = "Fetch person details")
+    @ApiOperation( nickname="viewPersonV3Rc1", value = "Fetch person details")
     public Response viewPerson(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPerson(orcid);
     }
@@ -434,7 +434,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, JSON_LD })
     @Path(OrcidApiConstants.RECORD_SIMPLE)
-    @ApiOperation( nickname="viewRecordV3dev", value = "Fetch record details")
+    @ApiOperation( nickname="viewRecordV3Rc1", value = "Fetch record details")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
@@ -444,7 +444,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_RECORD)
-    @ApiOperation( nickname="viewRecordRecordV3dev", value = "Fetch record details2", hidden=true)
+    @ApiOperation( nickname="viewRecordRecordV3Rc1", value = "Fetch record details2", hidden=true)
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecordRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
@@ -453,7 +453,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SEARCH_PATH)
-    @ApiOperation( nickname="searchByQueryV3dev", value = "Search records")
+    @ApiOperation( nickname="searchByQueryV3Rc1", value = "Search records")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
     public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
@@ -464,7 +464,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Path(CLIENT_PATH)
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @ApiOperation( nickname="viewClientV3dev", value = "Fetch client details")
+    @ApiOperation( nickname="viewClientV3Rc1", value = "Fetch client details")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/client-2.0.xsd")
     public Response viewClient(@PathParam("client_id") String clientId) {
         return serviceDelegator.viewClient(clientId);
@@ -473,7 +473,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(DISTINCTION + PUTCODE)
-    @ApiOperation(nickname = "viewDistinctionV3dev", value = "Fetch an Distinction", authorizations = {
+    @ApiOperation(nickname = "viewDistinctionV3Rc1", value = "Fetch an Distinction", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Distinction.class),
             @ApiResponse(code = 404, message = "putCode not found", response = String.class),
@@ -485,7 +485,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(DISTINCTIONS)
-    @ApiOperation(nickname = "viewDistinctionsV3dev", value = "Fetch all distinctions", response = Distinctions.class, authorizations = {
+    @ApiOperation(nickname = "viewDistinctionsV3Rc1", value = "Fetch all distinctions", response = Distinctions.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewDistinctions(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewDistinctions(orcid);
@@ -494,7 +494,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(DISTINCTION_SUMMARY + PUTCODE)
-    @ApiOperation(nickname = "viewDistinctionSummaryV3dev", value = "Fetch an Distinction summary", response = DistinctionSummary.class, authorizations = {
+    @ApiOperation(nickname = "viewDistinctionSummaryV3Rc1", value = "Fetch an Distinction summary", response = DistinctionSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewDistinctionSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewDistinctionSummary(orcid, Long.valueOf(putCode));
@@ -503,7 +503,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(INVITED_POSITION + PUTCODE)
-    @ApiOperation(nickname = "viewInvitedPositionV3dev", value = "Fetch an InvitedPosition", authorizations = {
+    @ApiOperation(nickname = "viewInvitedPositionV3Rc1", value = "Fetch an InvitedPosition", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = InvitedPosition.class),
             @ApiResponse(code = 404, message = "putCode not found", response = String.class),
@@ -515,7 +515,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(INVITED_POSITIONS)
-    @ApiOperation(nickname = "viewInvitedPositionsV3dev", value = "Fetch all invitedPositions", response = InvitedPositions.class, authorizations = {
+    @ApiOperation(nickname = "viewInvitedPositionsV3Rc1", value = "Fetch all invitedPositions", response = InvitedPositions.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewInvitedPositions(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewInvitedPositions(orcid);
@@ -524,7 +524,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(INVITED_POSITION_SUMMARY + PUTCODE)
-    @ApiOperation(nickname = "viewInvitedPositionSummaryV3dev", value = "Fetch an InvitedPosition summary", response = InvitedPositionSummary.class, authorizations = {
+    @ApiOperation(nickname = "viewInvitedPositionSummaryV3Rc1", value = "Fetch an InvitedPosition summary", response = InvitedPositionSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewInvitedPositionSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewInvitedPositionSummary(orcid, Long.valueOf(putCode));
@@ -533,7 +533,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(MEMBERSHIP + PUTCODE)
-    @ApiOperation(nickname = "viewMembershipV3dev", value = "Fetch an Membership", authorizations = {
+    @ApiOperation(nickname = "viewMembershipV3Rc1", value = "Fetch an Membership", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Membership.class),
             @ApiResponse(code = 404, message = "putCode not found", response = String.class),
@@ -545,7 +545,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(MEMBERSHIPS)
-    @ApiOperation(nickname = "viewMembershipsV3dev", value = "Fetch all memberships", response = Memberships.class, authorizations = {
+    @ApiOperation(nickname = "viewMembershipsV3Rc1", value = "Fetch all memberships", response = Memberships.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewMemberships(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewMemberships(orcid);
@@ -554,7 +554,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(MEMBERSHIP_SUMMARY + PUTCODE)
-    @ApiOperation(nickname = "viewMembershipSummaryV3dev", value = "Fetch an Membership summary", response = MembershipSummary.class, authorizations = {
+    @ApiOperation(nickname = "viewMembershipSummaryV3Rc1", value = "Fetch an Membership summary", response = MembershipSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewMembershipSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewMembershipSummary(orcid, Long.valueOf(putCode));
@@ -563,7 +563,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(QUALIFICATION + PUTCODE)
-    @ApiOperation(nickname = "viewQualificationV3dev", value = "Fetch an Qualification", authorizations = {
+    @ApiOperation(nickname = "viewQualificationV3Rc1", value = "Fetch an Qualification", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Qualification.class),
             @ApiResponse(code = 404, message = "putCode not found", response = String.class),
@@ -575,7 +575,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(QUALIFICATIONS)
-    @ApiOperation(nickname = "viewQualificationsV3dev", value = "Fetch all qualifications", response = Qualifications.class, authorizations = {
+    @ApiOperation(nickname = "viewQualificationsV3Rc1", value = "Fetch all qualifications", response = Qualifications.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewQualifications(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewQualifications(orcid);
@@ -584,7 +584,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(QUALIFICATION_SUMMARY + PUTCODE)
-    @ApiOperation(nickname = "viewQualificationSummaryV3dev", value = "Fetch an Qualification summary", response = QualificationSummary.class, authorizations = {
+    @ApiOperation(nickname = "viewQualificationSummaryV3Rc1", value = "Fetch an Qualification summary", response = QualificationSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewQualificationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewQualificationSummary(orcid, Long.valueOf(putCode));
@@ -593,7 +593,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SERVICE + PUTCODE)
-    @ApiOperation(nickname = "viewServiceV3dev", value = "Fetch an Service", authorizations = {
+    @ApiOperation(nickname = "viewServiceV3Rc1", value = "Fetch an Service", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = Service.class),
             @ApiResponse(code = 404, message = "putCode not found", response = String.class),
@@ -605,7 +605,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SERVICES)
-    @ApiOperation(nickname = "viewServicesV3dev", value = "Fetch all services", response = Services.class, authorizations = {
+    @ApiOperation(nickname = "viewServicesV3Rc1", value = "Fetch all services", response = Services.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewServices(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewServices(orcid);
@@ -614,7 +614,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SERVICE_SUMMARY + PUTCODE)
-    @ApiOperation(nickname = "viewServiceSummaryV3dev", value = "Fetch an Service summary", response = ServiceSummary.class, authorizations = {
+    @ApiOperation(nickname = "viewServiceSummaryV3Rc1", value = "Fetch an Service summary", response = ServiceSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewServiceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewServiceSummary(orcid, Long.valueOf(putCode));
@@ -623,7 +623,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCH_RESOURCE + PUTCODE)
-    @ApiOperation(nickname = "viewResearchResourceV3dev", value = "Fetch a Research Resource", authorizations = {
+    @ApiOperation(nickname = "viewResearchResourceV3Rc1", value = "Fetch a Research Resource", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResearchResource.class),
             @ApiResponse(code = 404, message = "putCode not found", response = String.class),
@@ -635,7 +635,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCH_RESOURCES)
-    @ApiOperation(nickname = "viewResearchResourcesV3dev", value = "Fetch all Research Resources", response = ResearchResources.class, authorizations = {
+    @ApiOperation(nickname = "viewResearchResourcesV3Rc1", value = "Fetch all Research Resources", response = ResearchResources.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewResearchResources(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewResearchResources(orcid);
@@ -644,7 +644,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCH_RESOURCE_SUMMARY + PUTCODE)
-    @ApiOperation(nickname = "viewResearchResourceSummaryV3dev", value = "Fetch a Research Resource summary", response = ResearchResourceSummary.class, authorizations = {
+    @ApiOperation(nickname = "viewResearchResourceSummaryV3Rc1", value = "Fetch a Research Resource summary", response = ResearchResourceSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewResearchResourceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewResearchResourceSummary(orcid, Long.valueOf(putCode));

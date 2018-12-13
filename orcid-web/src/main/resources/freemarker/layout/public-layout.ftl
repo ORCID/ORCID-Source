@@ -17,6 +17,19 @@
             height: 100%;
         }
     </style>
+    <noscript>
+        <div class="alert alert-banner">
+             ${springMacroRequestContext.getMessage("common.browser-checks.functionalityofthissite")} <a href="http://www.enable-javascript.com/" target="common.browser-checks.instructionhowtoadd">
+             ${springMacroRequestContext.getMessage("common.browser-checks.instructionhowtoadd")}</a>.<br>
+             ${springMacroRequestContext.getMessage("common.cookies.orcid_uses")} <a href="${baseUri}/privacy-policy#TrackingTechnology" target="common.cookies.learn_more">
+             ${springMacroRequestContext.getMessage("common.cookies.learn_more")}</a>.
+        </div>
+        <style type="text/css">
+        .app-loading {
+            display: none;
+        }
+    </style>
+    </noscript>
     <div class="app-loading">
         <i class="glyphicon glyphicon-refresh spin green x8" id="spinner"></i>
         <!--[if lt IE 8]>    
@@ -100,7 +113,8 @@
                         </nav>
                     </div>
                     <div class="col-md-10">
-                        <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0; height: 16px!important; width: 16px!important; overflow: hidden;" src="${staticCdn}/img/cc-zero.svg" height="16px" width="16px"/></a> To the extent possible under law, the person who associated CC0 with this work has waived all copyright and related or neighboring rights to this work, unless otherwise indicated.</p>
+                        <p>
+                            <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="${staticCdn}/img/cc0_80x15.png" style="border-style: none;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a></p>
                         <nav>
                             <ul class="inline-list">
                                 <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>

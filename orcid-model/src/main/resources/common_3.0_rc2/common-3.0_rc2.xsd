@@ -1688,6 +1688,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="self" />
 			<xs:enumeration value="part-of" />
+			<xs:enumeration value="version-of" />
 		</xs:restriction>
 	</xs:simpleType>
 	 

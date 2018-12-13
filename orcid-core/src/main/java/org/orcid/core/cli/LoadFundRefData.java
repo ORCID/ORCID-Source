@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -55,7 +56,6 @@ public class LoadFundRefData {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadFundRefData.class);
-    private static final String FUNDREF_SOURCE_TYPE = "FUNDREF";
     private static final String STATE_NAME = "STATE";
     private static final String STATE_ABBREVIATION = "abbr";
     private static final String DEPRECATED_INDICATOR = "http://data.crossref.org/fundingdata/vocabulary/Deprecated";
@@ -147,7 +147,7 @@ public class LoadFundRefData {
                         existingEntity.setOrgType(orgType);                        
                         existingEntity.setRegion(rdfOrganization.stateCode);
                         existingEntity.setSourceId(rdfOrganization.doi);
-                        existingEntity.setSourceType(FUNDREF_SOURCE_TYPE);
+                        existingEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
                         existingEntity.setSourceUrl(rdfOrganization.doi);
                         existingEntity.setLastModified(new Date());
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -397,7 +397,7 @@ public class LoadFundRefData {
      * DATABASE FUNCTIONS
      * */
     private OrgDisambiguatedEntity findById(RDFOrganization org) {         
-        return  orgDisambiguatedDao.findBySourceIdAndSourceType(org.doi, FUNDREF_SOURCE_TYPE);              
+        return  orgDisambiguatedDao.findBySourceIdAndSourceType(org.doi, OrgDisambiguatedSourceType.FUNDREF.name());              
     }
 
     /**
@@ -505,7 +505,7 @@ public class LoadFundRefData {
             orgDisambiguatedEntity.setSourceParentId(organization.isReplacedBy);
             orgDisambiguatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
         }
-        orgDisambiguatedEntity.setSourceType(FUNDREF_SOURCE_TYPE);       
+        orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());       
         
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;

@@ -10,6 +10,7 @@ import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.crypto.DesEncrypter;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -210,4 +211,17 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
         md.update(s.getBytes());
         return Hex.encodeHexString(md.digest());
     }
+    
+    @Override
+    public String getEmailHash(String email) {
+        if (PojoUtil.isEmpty(email)) {
+            throw new RuntimeException("Unable to hash null email address");
+        }
+        
+        try {
+            return sha256Hash(email.trim().toLowerCase());
+        } catch(NoSuchAlgorithmException nsae) {
+            throw new RuntimeException(nsae);
+        }
+    } 
 }

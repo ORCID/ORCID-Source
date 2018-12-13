@@ -76,6 +76,7 @@ import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ResearchResource;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
@@ -253,135 +254,25 @@ public class PublicProfileController extends BaseWorkspaceController {
         mav.addObject("effectiveUserOrcid", orcid);
         mav.addObject("lastModifiedTime",  new java.util.Date(lastModifiedTime));
 
-        boolean isProfileEmtpy = true;
-
-        PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
-
-        // Fill personal details
-        if (publicPersonalDetails != null) {
-            // Get display name
-            String displayName = "";
-
-            if (publicPersonalDetails.getName() != null) {
-                Name name = publicPersonalDetails.getName();
-                if (name.getVisibility().equals(Visibility.PUBLIC)) {
-                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
-                        displayName = name.getCreditName().getContent();
-                    } else {
-                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
-                            displayName = name.getGivenNames().getContent() + " ";
-                        }
-                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
-                            displayName += name.getFamilyName().getContent();
-                        }
-                    }
-                }
-            }
-
-            if (!PojoUtil.isEmpty(displayName)) {
-                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
-                // and Researchers
-                mav.addObject("title", getMessage("layout.public-layout.title", displayName.trim(), orcid));
-                mav.addObject("displayName", displayName);
-            }
-
-            // Get biography
-            if (publicPersonalDetails.getBiography() != null) {
-                Biography bio = publicPersonalDetails.getBiography();
-                if (Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
-                    isProfileEmtpy = false;
-                    mav.addObject("biography", bio);
-                }
-            }
-
-            // Fill other names
-            OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
-            if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
-                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
-                while (it.hasNext()) {
-                    OtherName otherName = it.next();
-                    if (!Visibility.PUBLIC.equals(otherName.getVisibility())) {
-                        it.remove();
-                    }
-                }
-            }
-            Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
-            mav.addObject("publicGroupedOtherNames", groupedOtherNames);
-        }
-
-        // Fill biography elements
-
-        // Fill country
-        Addresses publicAddresses = addressManagerReadOnly.getPublicAddresses(orcid);
-        Map<String, String> countryNames = new HashMap<String, String>();
-        if (publicAddresses != null && publicAddresses.getAddress() != null) {
-            Address publicAddress = null;
-            // The primary address will be the one with the lowest display index
-            for (Address address : publicAddresses.getAddress()) {
-                countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));
-                if (publicAddress == null) {
-                    publicAddress = address;
-                }
-            }
-            if (publicAddress != null) {
-                mav.addObject("publicAddress", publicAddress);
-                mav.addObject("countryNames", countryNames);
-                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
-                mav.addObject("publicGroupedAddresses", groupedAddresses);
-            }
-        }
-
-        // Fill keywords
-        Keywords publicKeywords = keywordManagerReadOnly.getPublicKeywords(orcid);
-        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
-        mav.addObject("publicGroupedKeywords", groupedKeywords);
-
-        // Fill researcher urls
-        ResearcherUrls publicResearcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
-        Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
-        mav.addObject("publicGroupedResearcherUrls", groupedResearcherUrls);
-
-        // Fill emails
-        Emails publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
-        Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
-        mav.addObject("publicGroupedEmails", groupedEmails);
-
-        // Fill external identifiers
-        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
-        Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
-        mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
-
-        if (workManagerReadOnly.hasPublicWorks(orcid)) {
-            isProfileEmtpy = false;
-        } else {
+        if (!workManagerReadOnly.hasPublicWorks(orcid)) {
             mav.addObject("worksEmpty", true);
         }
-        if (researchResourceManagerReadOnly.hasPublicResearchResources(orcid)) {
-            isProfileEmtpy = false;
-        } else {
+        if (!researchResourceManagerReadOnly.hasPublicResearchResources(orcid)) {
             mav.addObject("researchResourcesEmpty", true);
         }
 
-        if (affiliationsManagerReadOnly.hasPublicAffiliations(orcid)) {
-            isProfileEmtpy = false;
-        } else {
+        if (!affiliationsManagerReadOnly.hasPublicAffiliations(orcid)) {
             mav.addObject("affiliationsEmpty", true);
         }
 
-        if (profileFundingManagerReadOnly.hasPublicFunding(orcid)) {
-            isProfileEmtpy = false;
-        } else {
+        if (!profileFundingManagerReadOnly.hasPublicFunding(orcid)) {
             mav.addObject("fundingEmpty", true);
         }
         
-        if(peerReviewManagerReadOnly.hasPublicPeerReviews(orcid)) {
-            isProfileEmtpy = false;
-        } else {
+        if(!peerReviewManagerReadOnly.hasPublicPeerReviews(orcid)) {
             mav.addObject("peerReviewEmpty", true);
         }
         
-        mav.addObject("isProfileEmpty", isProfileEmtpy);
-
         if (!profile.isReviewed()) {
             if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {
                 mav.addObject("noIndex", true);
@@ -500,6 +391,108 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         return groups;
+    }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/person.json", method = RequestMethod.GET)
+    public @ResponseBody PublicRecordPersonDetails getPersonDetails(@PathVariable("orcid") String orcid) {
+        PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
+        
+        PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
+
+        // Fill personal details
+        if (publicPersonalDetails != null) {
+            // Get display name
+            String displayName = "";
+
+            if (publicPersonalDetails.getName() != null) {
+                Name name = publicPersonalDetails.getName();
+                if (name.getVisibility().equals(Visibility.PUBLIC)) {
+                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+                        displayName = name.getCreditName().getContent();
+                    } else {
+                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                            displayName = name.getGivenNames().getContent() + " ";
+                        }
+                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                            displayName += name.getFamilyName().getContent();
+                        }
+                    }
+                }
+            }
+
+            if (!PojoUtil.isEmpty(displayName)) {
+                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
+                // and Researchers
+                publicRecordPersonDetails.setTitle(getMessage("layout.public-layout.title", displayName.trim(), orcid));
+                publicRecordPersonDetails.setDisplayName(displayName);
+            }
+
+            // Get biography
+            if (publicPersonalDetails.getBiography() != null) {
+                Biography bio = publicPersonalDetails.getBiography();
+                if (Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
+                    publicRecordPersonDetails.setBiography(bio);
+                }
+            }
+
+            // Fill other names
+            OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
+            if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
+                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
+                while (it.hasNext()) {
+                    OtherName otherName = it.next();
+                    if (!Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                        it.remove();
+                    }
+                }
+            }
+            Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
+            publicRecordPersonDetails.setPublicGroupedOtherNames(groupedOtherNames);
+        }
+
+        // Fill biography elements
+
+        // Fill country
+        Addresses publicAddresses = addressManagerReadOnly.getPublicAddresses(orcid);
+        Map<String, String> countryNames = new HashMap<String, String>();
+        if (publicAddresses != null && publicAddresses.getAddress() != null) {
+            Address publicAddress = null;
+            // The primary address will be the one with the lowest display index
+            for (Address address : publicAddresses.getAddress()) {
+                countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));
+                if (publicAddress == null) {
+                    publicAddress = address;
+                }
+            }
+            if (publicAddress != null) {
+                publicRecordPersonDetails.setPublicAddress(publicAddress);
+                publicRecordPersonDetails.setCountryNames(countryNames);
+                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
+                publicRecordPersonDetails.setPublicGroupedAddresses(groupedAddresses);
+            }
+        }
+
+        // Fill keywords
+        Keywords publicKeywords = keywordManagerReadOnly.getPublicKeywords(orcid);
+        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
+        publicRecordPersonDetails.setPublicGroupedKeywords(groupedKeywords);
+
+        // Fill researcher urls
+        ResearcherUrls publicResearcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
+        Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
+        publicRecordPersonDetails.setPublicGroupedResearcherUrls(groupedResearcherUrls);
+
+        // Fill emails
+        Emails publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
+        Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
+        publicRecordPersonDetails.setPublicGroupedEmails(groupedEmails);
+
+        // Fill external identifiers
+        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
+        Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
+        publicRecordPersonDetails.setPublicGroupedPersonExternalIdentifiers(groupedExternalIdentifiers);
+        
+        return publicRecordPersonDetails;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
