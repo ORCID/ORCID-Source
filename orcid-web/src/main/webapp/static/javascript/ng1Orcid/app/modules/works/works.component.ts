@@ -91,6 +91,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
+    bibTexIntervals: object
 
     constructor( 
         private commonSrvc: CommonService,
@@ -728,6 +729,15 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.showBibtexImportWizard = !(this.showBibtexImportWizard);
                     this.workImportWizard = false;
                     this.worksFromBibtex = null;
+                    if (this.bibTexIntervals && this.savingBibtex) {
+                        // THE UPLOAD WAS CANCELLED DURING THE PROCESS 
+                        Object.keys(this.bibTexIntervals).forEach(interval => {
+                            clearInterval(this.bibTexIntervals[interval])
+                        });
+                        this.closeAllMoreInfo();
+                        this.refreshWorkGroups();
+                        this.savingBibtex = false;
+                    }
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
@@ -786,6 +796,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     saveAllFromBibtex(): any{
+         
         var worksToSave = null;
         var numToSave = null;
         if( this.savingBibtex == false ){
@@ -796,27 +807,53 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     worksToSave.push(work);
                 } 
             }
-            numToSave = worksToSave.length;
+            const batchSize = 20;
+            let numToSave = worksToSave.length;
+            let  currentBatch = 0; 
+            let  worksLeftOfCurrentBatch = batchSize; 
+            this.bibTexIntervals = {}
             for (let work of worksToSave) {
-                this.worksService.postWork(work)
-                .pipe(    
-                    takeUntil(this.ngUnsubscribe)
+                this.bibTexIntervals[worksToSave.indexOf(work)] =  setInterval ( (work) => {
+                    let workIndex = worksToSave.indexOf(work)
+                    let batchNumber = parseInt (workIndex/ batchSize +  '')
+                    if (batchNumber == currentBatch){
+                        // THIS WORK BELLOWS TO THE CURRENT BATCH TO UPLOAD
+                        clearInterval(this.bibTexIntervals [workIndex])
+                        this.worksService.postWork(work)
+                        .pipe(    
+                            takeUntil(this.ngUnsubscribe)
+                        )
+                        .subscribe(
+                            data => {
+                                if (this.savingBibtex) {
+                                    // THE UPLOAD HAVEN'T BEEN CANCELLED
+                                    var index = this.worksFromBibtex.indexOf(work);
+                                    this.worksFromBibtex.splice(index, 1);
+                                    numToSave--;
+                                    worksLeftOfCurrentBatch--;
+                                    if (worksLeftOfCurrentBatch === 0) {
+                                        // UPLOAD BATCH FINISH 
+                                        currentBatch++
+                                        worksLeftOfCurrentBatch = batchSize;
+                                    }
+                                    if (numToSave === 0){
+                                        // ALL WORKS UPLOADED
+                                        this.closeAllMoreInfo();
+                                        this.refreshWorkGroups();
+                                        this.savingBibtex = false;
+                                    }
+                                }
+
+                            },
+                            error => {
+                                console.log('worksForm.component.ts addWorkError', error);
+                            } 
+                        );
+                    }
+                },  (100 ), 
+                work
+
                 )
-                .subscribe(
-                    data => {
-                        var index = this.worksFromBibtex.indexOf(work);
-                        this.worksFromBibtex.splice(index, 1);
-                        numToSave--;
-                        if (numToSave == 0){
-                            this.closeAllMoreInfo();
-                            this.refreshWorkGroups();
-                            this.savingBibtex = false;
-                        }
-                    },
-                    error => {
-                        console.log('worksForm.component.ts addWorkError', error);
-                    } 
-                );
             }
         }
     };
