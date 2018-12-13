@@ -83,7 +83,7 @@ public class ClientManagerTest extends BaseTest {
     public void before() {        
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(clientManager, "sourceManager", sourceManager);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn(MEMBER_ID);        
+        when(sourceManager.retrieveActiveSourceId()).thenReturn(MEMBER_ID);        
     }
     
     @Test

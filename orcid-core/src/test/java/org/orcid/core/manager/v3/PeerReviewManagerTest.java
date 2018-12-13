@@ -16,12 +16,16 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
@@ -35,6 +39,7 @@ import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
 import org.orcid.jaxb.model.v3.rc2.record.Relationship;
@@ -53,12 +58,21 @@ public class PeerReviewManagerTest extends BaseTest {
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/RecordNameEntityData.xml");
     
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
+    private static final String CLIENT_2_ID = "APP-5555555555555555";//obo
+    private static final String CLIENT_3_ID = "APP-5555555555555556";//obo
+
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
     
     @Mock
+    private SourceManager mockSourceManager;
+    
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
     
+    @Resource(name = "orcidSecurityManagerV3")
+    OrcidSecurityManager orcidSecurityManager;
+
     @Resource(name = "peerReviewManagerV3")
     private PeerReviewManager peerReviewManager;
     
@@ -72,7 +86,14 @@ public class PeerReviewManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);        
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
     }
     
     @AfterClass
@@ -84,7 +105,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void testAddPeerReviewToUnclaimedRecordPreservePeerReviewVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         PeerReview peer = getPeerReview(null);
         
         peer = peerReviewManager.createPeerReview(unclaimedOrcid, peer, true);
@@ -96,7 +117,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void testAddPeerReviewToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         PeerReview peer = getPeerReview(null);
         
         peer = peerReviewManager.createPeerReview(claimedOrcid, peer, true);
@@ -108,7 +129,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void testAddMultipleModifiesIndexingStatus() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("extId1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
         
@@ -135,7 +156,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("fromUI-1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, false);
         PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
@@ -146,7 +167,7 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("fromAPI-1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
         PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
@@ -437,6 +458,61 @@ public class PeerReviewManagerTest extends BaseTest {
         assertTrue(foundEmptyGroup);
         assertTrue(found2);
         assertTrue(found3);
+    }
+    
+    @Test
+    public void testAssertionOriginUpdate() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        
+        PeerReview p1 = getPeerReview("extId1");
+        p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
+        
+        PeerReview pr = peerReviewManager.getPeerReview(claimedOrcid, p1.getPutCode());        
+        assertEquals(pr.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
+        assertEquals(pr.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(pr.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
+        assertEquals(pr.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
+        
+        //make a duplicate
+        PeerReview p2 = getPeerReview("extId1");
+        try {
+            p2 = peerReviewManager.createPeerReview(claimedOrcid, p2, true);
+            fail();
+        }catch(OrcidDuplicatedActivityException e) {
+            
+        }
+        
+        //make a duplicate as a different assertion origin
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        p2 = peerReviewManager.createPeerReview(claimedOrcid, p2, true);
+        
+        p1.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("xxx");
+        //wrong sources:
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            peerReviewManager.updatePeerReview(claimedOrcid, p1, true);
+            fail();
+        }catch(WrongSourceException e) {
+        }
+        
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
+            peerReviewManager.updatePeerReview(claimedOrcid, p1, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));  
+            peerReviewManager.updatePeerReview(claimedOrcid, p1, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        
+        //Rollback all changes
+        peerReviewDao.remove(p1.getPutCode());
+        peerReviewDao.remove(p2.getPutCode());
     }
     
     private PeerReviewSummary getPeerReviewSummary(String titleValue, String extIdValue, Visibility visibility) {

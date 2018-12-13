@@ -34,7 +34,7 @@ public interface OrcidSecurityManager {
 
     void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException, DeactivatedException;
 
-    void checkSource(SourceAwareEntity<?> existingEntity);
+    void checkSourceAndThrow(SourceAwareEntity<?> existingEntity);
 
     void checkSource(IdentifierTypeEntity existingEntity);
 
