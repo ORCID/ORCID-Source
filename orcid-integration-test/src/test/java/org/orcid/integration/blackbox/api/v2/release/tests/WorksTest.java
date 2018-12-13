@@ -364,6 +364,32 @@ public class WorksTest extends BlackBoxBaseV2Release {
     }
     
     @Test
+    public void testCreateBulkWorkWithErrorInPost() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();        
+        WorkBulk bulk = new WorkBulk();
+        OrcidError error = new org.orcid.jaxb.model.error_v2.OrcidError();
+        error.setDeveloperMessage("Error element upload");
+        bulk.getBulk().add(error);
+        bulk.getBulk().addAll(createBulk(10, null).getBulk());
+        
+        ClientResponse postResponse = memberV2ApiClient.createWorksXml(this.getUser1OrcidId(), bulk, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());  
+        
+        bulk = postResponse.getEntity(WorkBulk.class); 
+        assertNotNull(bulk);
+        assertNotNull(bulk.getBulk());
+        //All elements might be ok
+        for (BulkElement element : bulk.getBulk()) {
+            if (Work.class.isAssignableFrom(element.getClass())) {
+                Work work = (Work) element;
+                // Remove the work
+                memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), work.getPutCode(), accessToken);
+            }
+        }
+    }
+    
+    @Test
     public void testCreateBulkWithAllErrors() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
         WorkBulk bulk = createBulk(10, "existing-ext-id-" + System.currentTimeMillis());
