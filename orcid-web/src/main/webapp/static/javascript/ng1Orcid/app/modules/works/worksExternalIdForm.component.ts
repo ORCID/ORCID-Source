@@ -43,6 +43,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     togglzDialogPrivacyOption: boolean;
     externalIdType
     serverError
+    loading
 
     externalId = {
         DOI :{
@@ -83,9 +84,16 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     };
 
     addWork() {
+        this.serverError = false
+        this.loading = true
         this.genericService.getData(this.externalId[this.externalIdType].url + this.externalId[this.externalIdType].value).subscribe( data => {
+            this.loading = false
             this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false, externalWork: data});
+        }, 
+        (error)=> {
+            this.serverError = true
+            this.loading = false
         })
     }
     cancelEdit() {

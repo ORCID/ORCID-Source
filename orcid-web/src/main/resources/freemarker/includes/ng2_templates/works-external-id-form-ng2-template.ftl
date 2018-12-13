@@ -30,8 +30,9 @@
                     </div>          
                 </div>
                 <div class="row">           
-                    <div class="col-md-9 col-sm-8 col-xs-9">    
-                        <strong> Add work from DOI </strong>
+                    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"  *ngIf="loading"></i> 
+                    <div class="col-md-9 col-sm-8 col-xs-9" *ngIf="!loading">    
+                        <strong> Add work from {{externalIdType}}</strong>
                         <div> Type or paste the full {{externalIdType}} URL or just the identifier value</div>
                         <input id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="externalId[externalIdType].value" placeholder="{{externalId[externalIdType].placeHolder}}"/>
                         <div class="orcid-error" *ngIf="serverError">
@@ -39,7 +40,8 @@
                         </div>
                         <div class="buttons-container">
                             <button class="btn btn-primary" (click)="addWork()" [disabled]="addingWork" [ngClass]="{disabled:addingWork}">
-                                <@orcid.msg 'freemarker.btnsave'/>
+                               Retrive work details 
+                                <!--  <@orcid.msg 'freemarker.btnsave'/>  -->
                             </button>
                             <a class="cancel-option" (click)="cancelEdit()"><@orcid.msg 'freemarker.btncancel' /></a>
                         </div>
