@@ -28,6 +28,9 @@ import { FeaturesService }
 
 import { ModalService } 
     from '../../shared/modal.service.ts';
+    
+import { GenericService } 
+    from '../../shared/generic.service.ts';
 
 @Component({
     selector: 'works-external-id-form-ng2',
@@ -44,21 +47,25 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     externalId = {
         DOI :{
             placeHolder: "10.1000/xyz123",
-            value: ""
+            value: "",
+            url: '/works/resolve/doi?value='
         },
         arXiv : {
-            placeHolder: "arXiv:1501.00001",
-            value: ""
+            placeHolder: "/arXiv:1501.00001",
+            value: "",
+            url : "/works/resolve/arxiv?value="
         },
         pubMed : {
             placeHolder: "arXiv:1501.00001",
-            value: ""
+            value: "",
+            url: "/works/resolve/pmc?value="
         }
     }
 
     constructor( 
         private worksService : WorksService,
-        private modalService: ModalService
+        private modalService: ModalService,
+        private genericService: GenericService
     ) {
 
     }
@@ -76,8 +83,10 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     };
 
     addWork() {
-        console.log (this.externalId[this.externalIdType].value)
-
+        this.genericService.getData(this.externalId[this.externalIdType].url + this.externalId[this.externalIdType].value).subscribe( data => {
+            this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false, externalWork: data});
+        })
     }
     cancelEdit() {
         this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
