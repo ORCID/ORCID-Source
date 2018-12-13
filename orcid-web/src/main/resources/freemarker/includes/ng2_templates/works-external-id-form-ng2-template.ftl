@@ -18,7 +18,7 @@
 -->
 
 <script type="text/ng-template" id="works-external-id-form-ng2-template">
-    <div class="add-work colorbox-content" *ngIf="externalIdType">
+    <div class="add-work colorbox-content externalIdWorkForm" *ngIf="externalIdType">
             <div class="lightbox-container-ie7"> 
                 <div class="row">           
                     <div class="col-md-9 col-sm-8 col-xs-9">    
@@ -32,15 +32,15 @@
                 <div class="row">           
                     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"  *ngIf="loading"></i> 
                     <div class="col-md-9 col-sm-8 col-xs-9" *ngIf="!loading">    
-                        <strong> Add work from {{externalIdType}}</strong>
-                        <div> Type or paste the full {{externalIdType}} URL or just the identifier value</div>
+                        <strong><@orcid.msg 'externalwork.addworkfrom' /> {{externalIdType}}</strong>
+                        <div> <@orcid.msg 'externalwork.typeorpaste'/> {{externalIdType}} <@orcid.msg 'externalwork.typeorpaste2'/></div>
                         <input id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="externalId[externalIdType].value" placeholder="{{externalId[externalIdType].placeHolder}}"/>
                         <div class="orcid-error" *ngIf="serverError">
-                            The value you entered is not a valid {{externalIdType}}. Pleas enter a valid {{externalIdType}}.
+                            <@orcid.msg 'externalwork.error'/> {{externalIdType}}<@orcid.msg 'externalwork.error2'/> {{externalIdType}}.
                         </div>
                         <div class="buttons-container">
                             <button class="btn btn-primary" (click)="addWork()" [disabled]="addingWork" [ngClass]="{disabled:addingWork}">
-                               Retrive work details 
+                               <@orcid.msg 'externalwork.retrieve'/>
                                 <!--  <@orcid.msg 'freemarker.btnsave'/>  -->
                             </button>
                             <a class="cancel-option" (click)="cancelEdit()"><@orcid.msg 'freemarker.btncancel' /></a>

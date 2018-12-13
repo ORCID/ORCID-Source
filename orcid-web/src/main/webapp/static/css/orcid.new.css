@@ -8663,3 +8663,11 @@ span.notYouUrl > a {
     height: 20px;
     margin-top: -2px;
 }
+
+.externalIdWorkForm .buttons-container {
+    margin-top: 15px;
+}
+
+.externalIdWorkForm input#work-title {
+    margin-top: 10px;
+}

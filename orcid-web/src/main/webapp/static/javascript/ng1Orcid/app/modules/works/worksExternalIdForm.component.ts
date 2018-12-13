@@ -52,12 +52,12 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
             url: '/works/resolve/doi?value='
         },
         arXiv : {
-            placeHolder: "/arXiv:1501.00001",
+            placeHolder: "1501.00001",
             value: "",
             url : "/works/resolve/arxiv?value="
         },
         pubMed : {
-            placeHolder: "arXiv:1501.00001",
+            placeHolder: "12345678",
             value: "",
             url: "/works/resolve/pmc?value="
         }
