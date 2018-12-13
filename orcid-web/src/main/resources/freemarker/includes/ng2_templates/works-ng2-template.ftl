@@ -164,7 +164,7 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <p class="wizard-content">
-                            <@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
+                            <@orcid.msg 'workspace.LinkResearchActivities.description'/> <a target="workspace.LinkResearchActivities.description.more_info" href="https://support.orcid.org/hc/en-us/articles/360006973653-Add-works-by-direct-import-from-other-systems"> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/> </a>
                         </p>
                     </div>
                 </div>
