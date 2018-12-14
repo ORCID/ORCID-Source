@@ -447,6 +447,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 if (res.moduleId == "modalWorksForm") {
                     if (res.externalWork) {
                         this.editWork = res.externalWork;
+                        this.loadWorkTypes();
                     }
                 }
             }
