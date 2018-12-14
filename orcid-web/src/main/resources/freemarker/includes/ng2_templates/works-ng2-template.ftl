@@ -88,6 +88,7 @@
                                     <li [ngClass]="{'green-bg' : showBibtexImportWizard == true || workImportWizard == true}"> 
                                         <span class="glyphicon glyphicon-plus"></span>
                                         <@orcid.msg 'groups.common.add_works'/>
+                                        <span class="ai ai-arxiv" style="opacity: 0;width: 0;"></span>
                                         <ul class="menu-options works">
                                             <ng-container *ngIf="TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID">
                                             <li *ngIf="noLinkFlag">
