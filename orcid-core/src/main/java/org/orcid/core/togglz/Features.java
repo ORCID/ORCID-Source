@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 	
+    @Label("Add works based on ArXiv, DOI or PubMed id metadata")
+    ADD_WORKS_WITH_EXTERNAL_ID,
+	
     @Label("Change view privacy from work/funding/affiliation form dialogs")
     DIALOG_PRIVACY_OPTION,
 	

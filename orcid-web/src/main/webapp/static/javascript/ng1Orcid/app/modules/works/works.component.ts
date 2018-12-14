@@ -91,6 +91,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
+    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean
 
     constructor( 
         private commonSrvc: CommonService,
@@ -103,6 +104,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private worksService: WorksService
     ) {
 
+        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID')
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexExportLoading = false;

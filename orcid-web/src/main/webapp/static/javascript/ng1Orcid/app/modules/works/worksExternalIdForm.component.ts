@@ -40,7 +40,6 @@ import { GenericService }
 export class WorksExternalIdFormComponent implements AfterViewInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    togglzDialogPrivacyOption: boolean;
     externalIdType
     serverError
     loading
@@ -64,7 +63,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     }
 
     constructor( 
-        private worksService : WorksService,
+    private worksService : WorksService,    
         private modalService: ModalService,
         private genericService: GenericService
     ) {
