@@ -30,7 +30,7 @@
                     </div>          
                 </div>
                 <div class="row">           
-                    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"  *ngIf="loading"></i> 
+                    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"  *ngIf="loading" style="margin-left: 15px; margin-top: 31px;"></i> 
                     <div class="col-md-9 col-sm-8 col-xs-9" *ngIf="!loading">    
                         <strong><@orcid.msg 'externalwork.addworkfrom' /> {{externalIdType}}</strong>
                         <div> <@orcid.msg 'externalwork.typeorpaste'/> {{externalIdType}} <@orcid.msg 'externalwork.typeorpaste2'/></div>
