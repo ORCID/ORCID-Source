@@ -707,6 +707,7 @@ public class SetUpClientsAndUsers {
         clientAuthorizedGrantTypes.add("refresh_token");
         if (client1ClientId.equals(params.get(CLIENT_ID))){
             clientAuthorizedGrantTypes.add("implicit");
+            clientAuthorizedGrantTypes.add("urn:ietf:params:oauth:grant-type:token-exchange");
         }
         
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();

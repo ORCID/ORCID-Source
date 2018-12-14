@@ -72,6 +72,7 @@ public class ActivitiesStatusManagerTest {
         assertNotNull(entity);
         assertEquals(orcid, entity.getId());
         assertEquals(Integer.valueOf(3), entity.getEducationsStatus());
+        activitiesStatusManager.markAsSent(orcid, ActivityType.EDUCATIONS);
     }
 
     @Test

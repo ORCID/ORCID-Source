@@ -31,9 +31,7 @@
                 </div>
             </div>
         </div>
-        <#if (locked)?? && !locked>
             <switch-user-ng2></switch-user-ng2> 
-        </#if>
     </div>
 </script>
 <#include "/includes/ng2_templates/name-ng2-template.ftl">

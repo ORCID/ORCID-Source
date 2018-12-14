@@ -10,7 +10,7 @@ import { HttpClientModule }
 import { Component, NgModule } 
     from '@angular/core';
 
-import { FormsModule } 
+import { FormsModule, ReactiveFormsModule } 
     from '@angular/forms';
 
 import { HttpModule, JsonpModule, Request, XSRFStrategy } 
@@ -205,6 +205,9 @@ import { WorksNg2Module }
     
 import { WorksMergeSuggestionsNg2Module } 
     from './works/worksMergeSuggestions.ts';
+
+import { ManageMembersNg2Module } 
+    from './manageMembers/manageMembers.ts';
     
 import { RecordCorrectionsNg2Module }
     from './recordCorrections/recordCorrections.ts'
@@ -310,6 +313,7 @@ export class RootCmp {
         BrowserModule,
         CommonModule, 
         FormsModule,
+        ReactiveFormsModule,
         HttpClientModule, //angular5
         HttpModule, //Angular2
         JsonpModule,
@@ -374,7 +378,9 @@ export class RootCmp {
         WorksFormNg2Module,
         WorksNg2Module,
         WorksMergeSuggestionsNg2Module,
+        ManageMembersNg2Module,
         DeveloperToolsNg2Module,
+        RecordCorrectionsNg2Module,
         AdminActionsNg2Module,
         RecordCorrectionsNg2Module,
         idBannerNg2Module,

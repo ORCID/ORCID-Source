@@ -102,6 +102,8 @@ public class ResearchResourceGroupPojo extends ActivityGroup {
         
         researchResource.setCreatedDate(Date.valueOf(researchResourceSummary.getCreatedDate()));
         
+        researchResource.setLastModifiedDate(Date.valueOf(researchResourceSummary.getLastModifiedDate()));
+        
         if(researchResourceSummary.getProposal().getStartDate() != null) {
             researchResource.setStartDate(Date.valueOf(researchResourceSummary.getProposal().getStartDate()));
         }
