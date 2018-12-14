@@ -26,7 +26,7 @@ public class StatisticsController extends BaseController {
     @Resource
     MessageSource messageSource;
     
-    @Scheduled(fixedDelayString = "${statistics.key.interval.delay:600000}")
+    @Scheduled(fixedDelayString = "${statistics.key.interval.delay:60000000}")
     public void updateToLatestStatisticsSummary() {  
         statisticsCacheManager.setLatestStatisticsSummary();
     }

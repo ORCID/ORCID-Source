@@ -12,12 +12,6 @@ import { BrowserModule }
 import { platformBrowserDynamic } 
 	from '@angular/platform-browser-dynamic';
 
-import { UpgradeModule } 
-	from '@angular/upgrade/static';
-
-import { orcidApp } 
-    from './modules/ng1_app.ts';
-
 import { Ng2AppModule } 
     from './modules/ng2_app.ts';
 
@@ -30,11 +24,6 @@ if (NODE_ENV === 'production') {
     console.log("prod mode");
     enableProdMode();
 }
-platformBrowserDynamic().bootstrapModule(Ng2AppModule).then(
-    platformRef => {
-        const upgrade = (<any>platformRef.instance).upgrade; 
 
-        // bootstrap angular1
-        upgrade.bootstrap(document.body, [orcidApp.name]);
-    }
-);
+platformBrowserDynamic().bootstrapModule(Ng2AppModule)
+  .catch(err => console.log(err));

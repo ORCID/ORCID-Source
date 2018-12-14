@@ -25,9 +25,6 @@ import { platformBrowserDynamic }
 import { RouterModule, UrlHandlingStrategy } 
     from '@angular/router';
 
-import { UpgradeModule } 
-    from '@angular/upgrade/static';
-
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 
 //User generated modules imports
@@ -95,6 +92,9 @@ import { HomeNg2Module }
 import { HeaderNg2Module } 
     from './header/header.ts';
 
+import { HeaderComponent } 
+    from './header/header.component.ts';
+
 import { LanguageNg2Module }
     from './language/language.ts';
 
@@ -128,9 +128,6 @@ import { PersonNg2Module }
 import { PrintRecordNg2Module } 
     from './printRecord/printRecord.ts';
 
-import { PublicEduAffiliationNg2Module }
-    from './publicEduAffiliation/publicEduAffiliation.ts';
-
 import { PublicRecordNg2Module } 
     from './publicRecord/publicRecord.ts';
 
@@ -151,9 +148,6 @@ import { RequestPasswordResetNg2Module }
 
 import { ResearchResourceNg2Module } 
     from './researchResource/researchResource.ts';
-
-import { ResearchResourceDeleteNg2Module } 
-    from './researchResource/researchResourceDelete.ts';
 
 import { ResendClaimNg2Module }
     from './resendClaim/resendClaim.ts';    
@@ -318,7 +312,6 @@ export class RootCmp {
         HttpModule, //Angular2
         JsonpModule,
         NgbModule.forRoot(),
-        UpgradeModule,
         /* User Generated Modules */
         AccountSettingsNg2Module,
         AdminActionsNg2Module,
@@ -352,7 +345,6 @@ export class RootCmp {
         PeerReviewDeleteNg2Module,
         PersonNg2Module,
         PrintRecordNg2Module,
-        PublicEduAffiliationNg2Module,
         PublicRecordNg2Module,
         OauthAuthorizationNg2Module,
         OrgIdentifierPopoverNg2Module,
@@ -360,7 +352,6 @@ export class RootCmp {
         RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,
         ResearchResourceNg2Module,
-        ResearchResourceDeleteNg2Module,
         ResendClaimNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
@@ -403,9 +394,4 @@ export class RootCmp {
 
 })
 
-export class Ng2AppModule {
-    constructor( public upgrade: UpgradeModule ){
-        console.log('v0.9.23');
-    }
-}
-
+export class Ng2AppModule {}
