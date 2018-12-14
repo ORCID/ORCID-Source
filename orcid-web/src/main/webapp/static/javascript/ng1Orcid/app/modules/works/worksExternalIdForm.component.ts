@@ -63,7 +63,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     }
 
     constructor( 
-    private worksService : WorksService,    
+        private worksService : WorksService,
         private modalService: ModalService,
         private genericService: GenericService
     ) {
@@ -76,6 +76,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
                 if(res.moduleId == "modalExternalIdForm") {
                     if(res.action == "open") {
                         this.externalIdType = res.externalIdType;
+                        this.serverError = false;
                     }
                 }
             }
