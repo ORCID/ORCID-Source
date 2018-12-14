@@ -405,7 +405,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
                                 <@orcid.checkFeatureStatus featureName='GROUPING_SUGGESTIONS'>
-                                    <div class="pull-right" *ngIf="groupingSuggestionPresent && groupingSuggestionExtIdsPresent">
+                                    <div class="pull-right" *ngIf="groupingSuggestionPresent">
                                         <div class="orcid-error font-size-small">
                                             <span class="edit-option-toolbar glyphicon glyphicon-exclamation-sign"></span>
                                             {{groupingSuggestion.putCodes.length}} <@orcid.msg 'groups.merge.suggestion.alert'/>

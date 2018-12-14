@@ -346,10 +346,22 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeSuggestionConfirm(): void {
-        this.worksService.notifyOther({worksToMerge:this.groupingSuggestionWorksToMerge});
-        this.worksService.notifyOther({groupingSuggestion:this.groupingSuggestion});    
-        this.worksService.notifyOther({mergeCount:this.groupingSuggestion.putCodes.length});
-        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+        this.groupingSuggestionWorksToMerge = new Array();
+        for (var i in this.groupingSuggestion.putCodes) {
+            var putCode = this.groupingSuggestion.putCodes[i];
+            this.groupingSuggestionWorksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
+        }
+        forkJoin(this.groupingSuggestionWorksToMerge).subscribe(
+            dataGroup => {
+                this.worksService.notifyOther({worksToMerge:dataGroup});
+                this.worksService.notifyOther({groupingSuggestion:this.groupingSuggestion});    
+                this.worksService.notifyOther({mergeCount:this.groupingSuggestion.putCodes.length});
+                this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+            },
+            error => {
+                console.log('mergeSuggestionConfirm', error);
+            } 
+        );
     };
     
     deleteWorkConfirm(putCode, deleteGroup): void {
@@ -679,7 +691,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     loadGroupingSuggestions(): void {
-        this.groupingSuggestionExtIdsPresent = false;
         this.groupingSuggestionPresent = false;
         if(this.publicView != "true") {
             this.worksService.getWorksGroupingSuggestions(
@@ -692,27 +703,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if (data) {
                         this.groupingSuggestionPresent = true;
                         this.groupingSuggestion = data;
-                        this.groupingSuggestionWorksToMerge = new Array();
-                        var externalIdsPresent = false;
-                        for (var i in this.groupingSuggestion.putCodes) {
-                            var putCode = this.groupingSuggestion.putCodes[i];
-                            this.groupingSuggestionWorksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
-                        }
-                        forkJoin(this.worksToMerge).subscribe(
-                            dataGroup => {
-                                for(var i in dataGroup){
-                                    if(dataGroup[i].workExternalIdentifiers.length > 0){
-                                        this.groupingSuggestionExtIdsPresent = true;
-                                    }
-                                }
-                                if(!externalIdsPresent){
-                                    this.showMergeWorksExtIdsError = true;
-                                } 
-                            },
-                            error => {
-                                console.log('loadGroupingSuggestions', error);
-                            } 
-                        );
                     }
                 },
                 error => {
