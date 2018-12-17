@@ -22,7 +22,7 @@
 				<div class="control-group">
 	    			<span><strong><@orcid.msg 'manage_groups.group_orcid'/></strong></span>
     				<div class="relative">
-      					<span>{{newMember.groupOrcid.value}}&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{newMember.groupOrcid.value}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</span>
+      					<span>{{newMember.groupOrcid.value}}&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="${baseUri}/switch-user?username={{newMember.groupOrcid.value}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</span>
     				</div>
   				</div>
 				<div class="control-group" ng-show="newMember.salesforceId != null">
