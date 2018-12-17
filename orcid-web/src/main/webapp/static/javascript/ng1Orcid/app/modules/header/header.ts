@@ -14,9 +14,6 @@ import { CommonNg2Module }
 // This is the Angular 2 part of the module
 @NgModule(
     {
-        bootstrap: [
-            HeaderComponent     
-        ],
         imports: [
             CommonNg2Module
         ],

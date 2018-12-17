@@ -12,8 +12,11 @@ import { BrowserModule }
 import { platformBrowserDynamic } 
 	from '@angular/platform-browser-dynamic';
 
-import { Ng2AppModule } 
-    from './modules/ng2_app.ts';
+import { HomeAppModule } 
+    from './modules/homeApp.ts';
+
+import { SigninAppModule } 
+    from './modules/signinApp.ts';
 
 import { enableProdMode } 
     from '@angular/core';
@@ -25,5 +28,13 @@ if (NODE_ENV === 'production') {
     enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(Ng2AppModule)
-  .catch(err => console.log(err));
+console.log(window.location.pathname);
+if(window.location.pathname.indexOf("signin") > -1){
+    console.log("bootstrapping signin");
+    platformBrowserDynamic().bootstrapModule(SigninAppModule)
+  .catch(err => console.log(err));    
+} else {
+    platformBrowserDynamic().bootstrapModule(HomeAppModule)
+  .catch(err => console.log(err));    
+}
+

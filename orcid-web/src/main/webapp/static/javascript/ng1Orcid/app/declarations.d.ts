@@ -1,5 +1,5 @@
 //Declare all the external variables 
-//declare var $: any;
+declare var $: any;
 declare var colorbox: any;
 declare var contains: any;
 declare var getBaseUri: any;
