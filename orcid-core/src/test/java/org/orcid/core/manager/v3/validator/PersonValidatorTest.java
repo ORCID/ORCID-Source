@@ -11,6 +11,8 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.SourceName;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
@@ -26,14 +28,14 @@ public class PersonValidatorTest {
     @Test
     public void validateExternalIdentifierTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, true);
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, true);
     }
     
     @Test(expected = OrcidValidationException.class)
     public void validateExternalIdentifier_invalidTypeTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setType(null);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, true);
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, true);
         fail();
     }
     
@@ -41,7 +43,7 @@ public class PersonValidatorTest {
     public void validateExternalIdentifier_invalidValueTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setValue(null);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, true);
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, true);
         fail();
     }
     
@@ -49,7 +51,7 @@ public class PersonValidatorTest {
     public void validateExternalIdentifier_invalidRelationship1_flagOnTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setRelationship(null);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, true);
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, true);
         fail();
     }
     
@@ -57,7 +59,7 @@ public class PersonValidatorTest {
     public void validateExternalIdentifier_invalidRelationship2_flagOnTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setRelationship(Relationship.PART_OF);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, true);
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, true);
         fail();
     }
     
@@ -65,21 +67,21 @@ public class PersonValidatorTest {
     public void validateExternalIdentifier_invalidRelationship1_flagOffTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setRelationship(null);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, false);       
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, false);       
     }
     
     @Test
     public void validateExternalIdentifier_invalidRelationship2_flagOffTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setRelationship(Relationship.PART_OF);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, false);        
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, false);        
     }
     
     @Test(expected = OrcidValidationException.class)
     public void validateExternalIdentifier_invalidUrl_emptyUrlTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setUrl(new Url());
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, true);        
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, true);        
         fail();
     }
     
@@ -87,7 +89,7 @@ public class PersonValidatorTest {
     public void validateExternalIdentifier_invalidUrl_nullUrlTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setUrl(null);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, true);        
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, true);        
         fail();
     }
     
@@ -95,7 +97,7 @@ public class PersonValidatorTest {
     public void validateExternalIdentifier_invalidPutCodeOnCreateTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setPutCode(1L);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), true, true, Visibility.PUBLIC, true);        
+        PersonValidator.validateExternalIdentifier(extId, getSource(), true, true, Visibility.PUBLIC, true);        
         fail();
     }
     
@@ -103,7 +105,7 @@ public class PersonValidatorTest {
     public void validateExternalIdentifier_invalidPutCodeOnUpdateTest() {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setPutCode(null);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), false, true, Visibility.PUBLIC, true);        
+        PersonValidator.validateExternalIdentifier(extId, getSource(), false, true, Visibility.PUBLIC, true);        
         fail();
     }
     
@@ -112,7 +114,7 @@ public class PersonValidatorTest {
         PersonExternalIdentifier extId = getPersonExternalIdentifier();
         extId.setPutCode(1L);
         extId.setVisibility(Visibility.LIMITED);
-        PersonValidator.validateExternalIdentifier(extId, getSourceEntity(), false, true, Visibility.PUBLIC, true);        
+        PersonValidator.validateExternalIdentifier(extId, getSource(), false, true, Visibility.PUBLIC, true);        
         fail();
     }
             
@@ -126,9 +128,9 @@ public class PersonValidatorTest {
         return extId;
     }
     
-    private SourceEntity getSourceEntity() {
-        SourceEntity source = mock(SourceEntity.class);
-        when(source.getCachedSourceName()).thenReturn("source name");
+    private Source getSource() {
+        Source source = mock(Source.class);
+        when(source.getSourceName()).thenReturn(new SourceName("source name"));
         return source;
     }
 }

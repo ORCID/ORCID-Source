@@ -68,40 +68,7 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         // this means we do not have to support using them for authentication
         // purposes. Some APIs support it, but it is not part of the spec.
         try {
-            String orcid = authentication.getName();
-            Builder claims = new JWTClaimsSet.Builder();
-            claims.audience(params.get(OrcidOauth2Constants.CLIENT_ID_PARAM));
-            if (Features.OPENID_SIMPLE_SUBJECT.isActive()){
-                claims.subject(orcid);   
-            }else{
-                claims.subject("https://orcid.org"+"/"+orcid);
-                claims.claim("id_path", orcid);
-            }
-            claims.issuer(path);
-            claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
-            Date now = new Date();
-            claims.expirationTime(new Date(now.getTime() + 600000));
-            claims.issueTime(now);
-            claims.jwtID(UUID.randomUUID().toString());
-            if (params.get(OrcidOauth2Constants.NONCE) != null)
-                claims.claim(OrcidOauth2Constants.NONCE, params.get(OrcidOauth2Constants.NONCE));
-            claims.claim(OrcidOauth2Constants.AUTH_TIME, profileEntityManager.getLastLogin(orcid));
-
-            Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
-            if (person.getName() != null) {
-                if (person.getName().getCreditName() != null) {
-                    claims.claim("name", person.getName().getCreditName().getContent());
-                }
-                if (person.getName().getFamilyName() != null) {
-                    claims.claim("family_name", person.getName().getFamilyName().getContent());
-                }
-                if (person.getName().getGivenNames() != null) {
-                    claims.claim("given_name", person.getName().getGivenNames().getContent());
-                }
-            }
-
-            SignedJWT signedJWT = keyManager.sign(claims.build());
-            String idTok = signedJWT.serialize();
+            String idTok = buildIdToken(accessToken, authentication.getName(), params.get(OrcidOauth2Constants.CLIENT_ID_PARAM),params.get(OrcidOauth2Constants.NONCE) );
             accessToken.getAdditionalInformation().put(OrcidOauth2Constants.ID_TOKEN, idTok);
         } catch (JOSEException e) {
             e.printStackTrace();
@@ -111,6 +78,42 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
 
         return accessToken;
 
+    }
+
+    public String buildIdToken(OAuth2AccessToken accessToken, String orcid, String clientID, String nonce) throws JOSEException {
+        Builder claims = new JWTClaimsSet.Builder();
+        claims.audience(clientID);
+        if (Features.OPENID_SIMPLE_SUBJECT.isActive()){
+            claims.subject(orcid);   
+        }else{
+            claims.subject("https://orcid.org"+"/"+orcid);
+            claims.claim("id_path", orcid);
+        }
+        claims.issuer(path);
+        claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
+        Date now = new Date();
+        claims.expirationTime(new Date(now.getTime() + 600000));
+        claims.issueTime(now);
+        claims.jwtID(UUID.randomUUID().toString());
+        if (nonce != null)
+            claims.claim(OrcidOauth2Constants.NONCE, nonce);
+        claims.claim(OrcidOauth2Constants.AUTH_TIME, profileEntityManager.getLastLogin(orcid));
+
+        Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
+        if (person.getName() != null) {
+            if (person.getName().getCreditName() != null) {
+                claims.claim("name", person.getName().getCreditName().getContent());
+            }
+            if (person.getName().getFamilyName() != null) {
+                claims.claim("family_name", person.getName().getFamilyName().getContent());
+            }
+            if (person.getName().getGivenNames() != null) {
+                claims.claim("given_name", person.getName().getGivenNames().getContent());
+            }
+        }
+
+        SignedJWT signedJWT = keyManager.sign(claims.build());
+        return signedJWT.serialize();
     }
 
     /**

@@ -137,7 +137,7 @@ public class MembersManagerImpl implements MembersManager {
         // Email is private by default
         emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile().getId();
         emailEntity.setSourceId(sourceId);
         Set<EmailEntity> emails = new HashSet<>();

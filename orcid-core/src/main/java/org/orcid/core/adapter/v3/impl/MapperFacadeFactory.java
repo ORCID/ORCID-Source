@@ -27,6 +27,7 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.client.Client;
@@ -343,51 +344,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private class SourceMapper<T, U> extends CustomMapper<SourceAware, SourceAwareEntity<?>> {
-
         @Override
-        public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {
-            String sourceId = b.getElementSourceId();
-            if (StringUtils.isEmpty(sourceId)) {
-                return;
-            }
-            Source source = null;
-            if (isClient(sourceId)) {
-                source = createClientSource(sourceId);
-            } else {
-                source = createOrcidSource(sourceId);
-            }
+        public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {            
+            Source source  = SourceEntityUtils.extractSourceFromEntityComplete(b,sourceNameCacheManager,orcidUrlManager);
             a.setSource(source);
-            
-            String sourceNameValue = sourceNameCacheManager.retrieve(sourceId);
-            if (sourceNameValue != null) {
-                source.setSourceName(new SourceName(sourceNameValue));
-            }
         }
-
-        private boolean isClient(String sourceId) {
-            return OrcidStringUtils.isClientId(sourceId) || clientDetailsManagerReadOnly.isLegacyClientId(sourceId);
-        }
-
-        private Source createClientSource(String sourceId) {
-            Source source = new Source();
-            SourceClientId sourceClientId = new SourceClientId();
-            source.setSourceClientId(sourceClientId);
-            sourceClientId.setHost(orcidUrlManager.getBaseHost());
-            sourceClientId.setUri(orcidUrlManager.getBaseUrl() + "/client/" + sourceId);
-            sourceClientId.setPath(sourceId);
-            return source;
-        }
-
-        private Source createOrcidSource(String sourceId) {
-            Source source = new Source();
-            SourceOrcid sourceOrcid = new SourceOrcid();
-            source.setSourceOrcid(sourceOrcid);
-            sourceOrcid.setHost(orcidUrlManager.getBaseHost());
-            sourceOrcid.setUri(orcidUrlManager.getBaseUrl() + "/" + sourceId);
-            sourceOrcid.setPath(sourceId);
-            return source;
-        }
-
     }
     
     public MapperFacade getExternalIdentifierMapperFacade() {

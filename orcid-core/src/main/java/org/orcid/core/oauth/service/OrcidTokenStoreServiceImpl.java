@@ -1,5 +1,6 @@
 package org.orcid.core.oauth.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +39,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.nimbusds.jwt.SignedJWT;
 
 /**
  * @author Declan Newman (declan) Date: 15/04/2012
@@ -397,6 +400,18 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         } else {
             detail.setPersistent(false);
         }
+        
+        //Set OBO client if possible.
+        if(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(authentication.getOAuth2Request().getGrantType()) 
+                && authentication.getOAuth2Request().getRequestParameters().containsKey(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN)
+                && OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN.equals(authentication.getOAuth2Request().getRequestParameters().get(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE))) {
+            try {
+                SignedJWT claims = SignedJWT.parse(authentication.getOAuth2Request().getRequestParameters().get(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN));
+                detail.setOboClientDetailsId(claims.getJWTClaimsSet().getAudience().get(0));
+            } catch (ParseException e) {
+                throw new IllegalArgumentException("Unexpected id token value, cannot parse the id_token");
+            }
+        }       
 
         return detail;
     }

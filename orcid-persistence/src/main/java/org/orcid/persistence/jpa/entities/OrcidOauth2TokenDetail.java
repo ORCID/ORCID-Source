@@ -49,6 +49,7 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
     private String authorizationCode;
     private Date revocationDate;
     private String revokeReason;
+    private String oboClientDetailsId;
     
     /**
      * This should be implemented by all entity classes to return the id of the
@@ -274,5 +275,14 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
 
     public void setRevokeReason(String revokeReason) {
         this.revokeReason = revokeReason;
-    }        
+    } 
+    
+    @Column(name = "obo_client_details_id")
+    public String getOboClientDetailsId() {
+        return oboClientDetailsId;
+    }
+
+    public void setOboClientDetailsId(String oboClientDetailsId) {
+        this.oboClientDetailsId = oboClientDetailsId;
+    }
 }
