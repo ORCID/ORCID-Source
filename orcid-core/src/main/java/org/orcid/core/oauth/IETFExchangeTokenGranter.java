@@ -243,7 +243,8 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                 resourceIds, redirectUri, responseTypes,extensionProperties);
         
         OAuth2Authentication authentication = new OAuth2Authentication(request , userAuth);
-        OAuth2AccessToken token = tokenServices.createAccessToken(authentication); 
+        OAuth2AccessToken token = tokenServices.createAccessToken(authentication);
+        
         return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.accessToken(token));
         //Note, redirect_uri is left blank.                
     }

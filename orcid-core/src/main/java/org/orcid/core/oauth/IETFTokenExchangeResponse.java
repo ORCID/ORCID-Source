@@ -37,10 +37,16 @@ public class IETFTokenExchangeResponse implements OAuth2AccessToken {
         IETFTokenExchangeResponse token = new IETFTokenExchangeResponse();
         token.additionalInformation.put("issued_token_type", OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN );
         token.value = accessToken.getValue();
-        token.tokenType="Bearer";
+        token.tokenType="bearer";
         token.expiration = accessToken.getExpiration();
         token.expiresIn = accessToken.getExpiresIn();
         token.scope = accessToken.getScope();
+        if (accessToken.getAdditionalInformation().containsKey("orcid")) {
+            token.additionalInformation.put("orcid",accessToken.getAdditionalInformation().get("orcid"));
+        }
+        if (accessToken.getAdditionalInformation().containsKey("name")) {
+            token.additionalInformation.put("name",accessToken.getAdditionalInformation().get("name"));
+        }
         return token;
     }
     
