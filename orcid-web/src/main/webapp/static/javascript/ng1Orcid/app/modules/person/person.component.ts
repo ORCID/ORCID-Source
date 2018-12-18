@@ -163,7 +163,10 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData[sectionName][sectionName].splice(len,1);
                 this.cdr.detectChanges();
             }
-        }        
+        } 
+        if(this.formData[sectionName][sectionName].length==0){
+            this.addSectionItem(sectionName);    
+        }       
     };
 
     getFormData(sectionName): void {
@@ -241,9 +244,8 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     cancelEditModal(sectionName, id): void{
-        this.formData[sectionName] = JSON.parse(JSON.stringify(this.formDataBeforeChange[sectionName]));
-        this.cdr.detectChanges();
         this.genericService.close(id);
+        this.getFormData(sectionName);
     };
 
     openModal(id: string){
