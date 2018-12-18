@@ -8700,3 +8700,7 @@ span.notYouUrl > a {
     height: 20px;
     margin-top: -2px;
 }
+
+_::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
+    z-index: unset;
+ }
