@@ -204,55 +204,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     public void setMailGunManager(MailGunManager mailGunManager) {
         this.mailGunManager = mailGunManager;
-    }
-
-    @Override
-    public void sendWelcomeEmail(String userOrcid, String email) {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
-        Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        String subject = getSubject("email.subject.register.thanks", userLocale);
-        String emailName = deriveEmailFriendlyName(profileEntity);
-        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        String orcidId = userOrcid;
-        String baseUri = orcidUrlManager.getBaseUrl();
-        String baseUriHttp = orcidUrlManager.getBaseUriHttp();
-
-        templateParams.put("subject", subject);
-        templateParams.put("emailName", emailName);
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("orcidId", orcidId);
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("baseUriHttp", baseUriHttp);
-
-        SourceEntity source = sourceManager.retrieveSourceEntity();
-        if (source != null) {
-            String sourceId = SourceEntityUtils.getSourceId(source);
-            String sourceName = SourceEntityUtils.getSourceName(source);
-            // If the source is not the user itself
-            if (sourceId != null && !sourceId.equals(orcidId)) {
-                if (!PojoUtil.isEmpty(sourceName)) {
-                    String paramValue = " " + messages.getMessage("common.through", null, userLocale) + " " + sourceName + ".";
-                    templateParams.put("source_name_if_exists", paramValue);
-                } else {
-                    templateParams.put("source_name_if_exists", ".");
-                }
-            } else {
-                templateParams.put("source_name_if_exists", ".");
-            }
-        } else {
-            templateParams.put("source_name_if_exists", ".");
-        }
-
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("welcome_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("welcome_email_html.ftl", templateParams);
-
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
-    }
+    }    
 
     @Override
     public void sendOrcidDeactivateEmail(String userOrcid) {

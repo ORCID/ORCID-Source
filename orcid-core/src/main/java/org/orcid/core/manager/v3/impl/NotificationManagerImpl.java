@@ -249,14 +249,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
         Map<String, Object> templateParams = new HashMap<String, Object>();
         
-        boolean useV2Template = false;
-        String subject;
-        try {
-            subject = messageSourceNoFallback.getMessage("email.subject.register.welcome", null, userLocale);
-            useV2Template = true;
-        } catch(NoSuchMessageException e) {
-            subject = messages.getMessage("email.subject.register.thanks", null, userLocale);
-        }
+        String subject = messageSourceNoFallback.getMessage("email.subject.register.welcome", null, userLocale);
         
         String emailName = deriveEmailFriendlyName(profileEntity);
         String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
@@ -293,9 +286,9 @@ public class NotificationManagerImpl implements NotificationManager {
         addMessageParams(templateParams, userLocale);
 
         // Generate body from template
-        String body = (useV2Template) ? templateManager.processTemplate("welcome_email_v2.ftl", templateParams) : templateManager.processTemplate("welcome_email.ftl", templateParams);
+        String body = templateManager.processTemplate("welcome_email_v2.ftl", templateParams);
         // Generate html from template
-        String html = (useV2Template) ? templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams): templateManager.processTemplate("welcome_email_html.ftl", templateParams);
+        String html = templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams);
 
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
     }

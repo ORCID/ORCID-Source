@@ -193,15 +193,7 @@ public class NotificationManagerTest extends DBUnitTest {
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         return TargetProxyHelper.getTargetObject(proxy, targetClass);
     }
-
-    @Test
-    public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
-        OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
-        OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendWelcomeEmail(orcidProfile.getOrcidIdentifier().getPath(),
-                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-    }
-
+    
     @Test
     public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
