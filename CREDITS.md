@@ -27,7 +27,7 @@ ORCID appreciates the several significant contributions from the Open Source com
     * [RDF support for ORCID - FOAF profile](https://github.com/ORCID/ORCID-Source/pull/235)
     * [patches for contribution above](https://github.com/ORCID/ORCID-Source/pull/656)
 
-###Localizations###
+### Localizations
 
 * Arabic Registry & Outreach Resources localization: Massoud Alshareef <a href="https://orcid.org/0000-0003-2277-2717" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, Dina Hashim, and Mohamad Mostafa <a href="https://orcid.org/0000-0003-0768-6642" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>
 
