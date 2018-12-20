@@ -13,8 +13,6 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 
 @XmlType(namespace = "http://www.orcid.org/ns/common")
 @XmlEnum
@@ -22,7 +20,9 @@ public enum Relationship implements Serializable {
     @XmlEnumValue("part-of")
     PART_OF("part-of"),
     @XmlEnumValue("self")
-    SELF("self"); 
+    SELF("self"),
+    @XmlEnumValue("version-of")
+    VERSION_OF("version-of"); 
     private final String value;
 
     Relationship(String v) {

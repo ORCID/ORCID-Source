@@ -27,6 +27,9 @@ import { FocusMe }
 
 //User generated filters
 
+import { AjaxTickDateToISO8601Pipe }
+    from '../../pipes/ajaxTickDateToISO8601Ng2.ts'; 
+
 import { AjaxFormDateToISO8601Pipe }
     from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
 
@@ -201,6 +204,9 @@ import { ResendClaimService }
 
 import { DeveloperToolsService }
     from '../../shared/developerTools.service.ts';
+
+import { PersonService } 
+    from '../../shared/person.service.ts';
     
 // This is the Angular 2 part of the module
 @NgModule(
@@ -223,6 +229,7 @@ import { DeveloperToolsService }
         declarations: [ 
             FocusMe,
             AjaxFormDateToISO8601Pipe,
+            AjaxTickDateToISO8601Pipe,
             ContributorFilterPipe,
             DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
@@ -250,6 +257,7 @@ import { DeveloperToolsService }
             FocusMe,
             //User Pipes
             AjaxFormDateToISO8601Pipe,
+            AjaxTickDateToISO8601Pipe,
             ContributorFilterPipe,
             DashToSpacePipe,
             ExternalIdentifierHtmlPipe,
@@ -309,6 +317,7 @@ import { DeveloperToolsService }
             UnsubscribeService,
             ResendClaimService,
             DeveloperToolsService,
+            PersonService
         ]
     }
 )

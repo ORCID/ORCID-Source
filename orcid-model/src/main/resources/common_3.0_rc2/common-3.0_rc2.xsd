@@ -141,6 +141,28 @@
 			</xs:choice>
 			<xs:element name="source-name" type="common:source-name"
 				minOccurs="0" />
+			
+			<xs:choice minOccurs="0">
+				<xs:element name="assertion-origin-orcid" type="common:orcid-id">
+					<xs:annotation>
+						<xs:documentation>The ORCID identifier for the individual user (or
+							legacy client application) made the assertion.
+							If missing, source is the same as assertion origin.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="assertion-origin-client-id" type="common:client-id">
+					<xs:annotation>
+						<xs:documentation>The client ID for the client application (Member
+							organization system) that made the assertion.  
+							If missing, source is the same as assertion origin.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="assertion-origin-name" type="common:source-name"
+				minOccurs="0" />
+				
 		</xs:sequence>
 	</xs:complexType>
 
@@ -1688,6 +1710,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="self" />
 			<xs:enumeration value="part-of" />
+			<xs:enumeration value="version-of" />
 		</xs:restriction>
 	</xs:simpleType>
 	 

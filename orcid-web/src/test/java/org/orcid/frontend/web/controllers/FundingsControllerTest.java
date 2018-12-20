@@ -12,6 +12,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -23,12 +24,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
@@ -42,6 +47,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,6 +107,43 @@ public class FundingsControllerTest extends BaseControllerTest {
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES));
+    }
+    
+    @Test
+    public void testSearchDisambiguated() {
+        OrgDisambiguatedManager mockOrgDisambiguatedManager = Mockito.mock(OrgDisambiguatedManager.class);
+        OrgDisambiguatedManager oldOrgDisambiguatedManager = (OrgDisambiguatedManager) ReflectionTestUtils.getField(fundingController, "orgDisambiguatedManager");
+        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", mockOrgDisambiguatedManager);
+        
+        Mockito.when(mockOrgDisambiguatedManager.searchOrgsFromSolr(Mockito.eq("search"), Mockito.eq(0), Mockito.eq(0), Mockito.eq(true))).thenReturn(getListOfMixedOrgsDiambiguated());
+        
+        List<Map<String, String>> results = fundingController.searchDisambiguated("search", 0, true);
+        assertEquals(3, results.size());
+        assertEquals("first", results.get(0).get("value"));
+        assertEquals("second", results.get(1).get("value"));
+        assertEquals("third", results.get(2).get("value"));
+        
+        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", oldOrgDisambiguatedManager);
+    }
+
+    private List<OrgDisambiguated> getListOfMixedOrgsDiambiguated() {
+        OrgDisambiguated first = new OrgDisambiguated();
+        first.setValue("first");
+        first.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
+        
+        OrgDisambiguated second = new OrgDisambiguated();
+        second.setValue("second");
+        second.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
+        
+        OrgDisambiguated third = new OrgDisambiguated();
+        third.setValue("third");
+        third.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+        
+        OrgDisambiguated fourth = new OrgDisambiguated();
+        fourth.setValue("fourth");
+        fourth.setSourceType(OrgDisambiguatedSourceType.LEI.name());
+        
+        return Arrays.asList(first, second, third, fourth);
     }
 
     @Test

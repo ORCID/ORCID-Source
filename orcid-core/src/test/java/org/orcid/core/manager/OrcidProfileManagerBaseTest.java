@@ -58,7 +58,7 @@ import org.orcid.persistence.jpa.entities.SubjectEntity;
 /**
  * @author Will Simpson
  */
-public class OrcidProfileManagerBaseTest extends BaseTest {
+public abstract class OrcidProfileManagerBaseTest extends BaseTest {
 
     protected static final String APPLICATION_ORCID = "2222-2222-2222-2228";
 

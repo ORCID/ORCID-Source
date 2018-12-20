@@ -88,6 +88,7 @@
 
     <#include "/macros/orcid_ga.ftl">
     
+    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
     <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css"/>
     <link rel="stylesheet" href="${staticLoc}/css/social.css"/>
     <link rel="stylesheet" href="${staticLoc}/css/filetypes.css"/>    
@@ -107,14 +108,6 @@
 
     <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css"/>
     
-    <!-- this is a manually patched version, we should update when they accept our changes -->
-    <script src="${staticCdn}/javascript/respond.src.js"></script>
-    
-    <!-- Respond.js proxy on external server -->
-    <link href="${staticCdn}/html/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
-    <link href="${staticCdn}/img/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
-    <script src="${staticCdn}/javascript/respond.proxy.js"></script>
-        
     <style type="text/css">
         /* 
         Allow angular.js to be loaded in body, hiding cloaked elements until 

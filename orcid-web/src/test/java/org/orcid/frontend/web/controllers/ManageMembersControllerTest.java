@@ -94,7 +94,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceProfile(new ProfileEntity("5555-5555-5555-0000"));
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
+        when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
     }
     
     @BeforeClass

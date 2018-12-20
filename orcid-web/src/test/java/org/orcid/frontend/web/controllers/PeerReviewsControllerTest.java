@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,13 +17,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
 
@@ -60,6 +66,43 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES));
+    }
+    
+    @Test
+    public void testSearchDisambiguated() {
+        OrgDisambiguatedManager mockOrgDisambiguatedManager = Mockito.mock(OrgDisambiguatedManager.class);
+        OrgDisambiguatedManager oldOrgDisambiguatedManager = (OrgDisambiguatedManager) ReflectionTestUtils.getField(peerReviewsController, "orgDisambiguatedManager");
+        ReflectionTestUtils.setField(peerReviewsController, "orgDisambiguatedManager", mockOrgDisambiguatedManager);
+        
+        Mockito.when(mockOrgDisambiguatedManager.searchOrgsFromSolr(Mockito.eq("search"), Mockito.eq(0), Mockito.eq(0), Mockito.eq(false))).thenReturn(getListOfMixedOrgsDiambiguated());
+        
+        List<Map<String, String>> results = peerReviewsController.searchDisambiguated("search", 0);
+        assertEquals(3, results.size());
+        assertEquals("first", results.get(0).get("value"));
+        assertEquals("second", results.get(1).get("value"));
+        assertEquals("third", results.get(2).get("value"));
+        
+        ReflectionTestUtils.setField(peerReviewsController, "orgDisambiguatedManager", oldOrgDisambiguatedManager);
+    }
+
+    private List<OrgDisambiguated> getListOfMixedOrgsDiambiguated() {
+        OrgDisambiguated first = new OrgDisambiguated();
+        first.setValue("first");
+        first.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
+        
+        OrgDisambiguated second = new OrgDisambiguated();
+        second.setValue("second");
+        second.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
+        
+        OrgDisambiguated third = new OrgDisambiguated();
+        third.setValue("third");
+        third.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+        
+        OrgDisambiguated fourth = new OrgDisambiguated();
+        fourth.setValue("fourth");
+        fourth.setSourceType(OrgDisambiguatedSourceType.LEI.name());
+        
+        return Arrays.asList(first, second, third, fourth);
     }
     
     @Test

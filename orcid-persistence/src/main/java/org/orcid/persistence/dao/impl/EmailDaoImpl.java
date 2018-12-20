@@ -290,5 +290,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         Query query = entityManager.createNativeQuery("delete from email where email is null and orcid=:orcid");
         query.setParameter("orcid", orcid);
         return query.executeUpdate();        
+    }
+
+    @Override
+    public List getEmailAndHash(int iteration, int batchSize) {        
+        int offset = iteration * batchSize;
+        Query query = entityManager.createNativeQuery("select orcid, email, email_hash from email order by email");
+        query.setFirstResult(offset);
+        query.setMaxResults(batchSize);        
+        return query.getResultList();
     }       
 }
