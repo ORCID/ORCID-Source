@@ -10,7 +10,7 @@ import { HttpClientModule }
 import { Component, NgModule } 
     from '@angular/core';
 
-import { FormsModule } 
+import { FormsModule, ReactiveFormsModule } 
     from '@angular/forms';
 
 import { HttpModule, JsonpModule, Request, XSRFStrategy } 
@@ -110,9 +110,6 @@ import { ModalNg2Module }
 import { MyOrcidAlertsNg2Module } 
     from './myOrcidAlerts/myOrcidAlerts.ts';
 
-import { NameNg2Module } 
-    from './name/name.ts';
-
 import { NotificationsNg2Module }
     from './notifications/notifications.ts';
 
@@ -184,9 +181,6 @@ import { SelfServiceRemoveSubMemberNg2Module }
 
 import { Social2FANg2Module }
     from './social2FA/social2FA.ts';
-    
-import { SwitchUserNg2Module }
-    from './switchUser/switchUser.ts';
 
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
@@ -209,17 +203,32 @@ import { WorksFormNg2Module }
 import { WorksNg2Module } 
     from './works/works.ts';
     
-import { WorksMergeChoosePreferredVersionNg2Module } 
-    from './works/worksMergeChoosePreferredVersion.ts';
-    
 import { WorksMergeSuggestionsNg2Module } 
     from './works/worksMergeSuggestions.ts';
+
+import { ManageMembersNg2Module } 
+    from './manageMembers/manageMembers.ts';
     
 import { RecordCorrectionsNg2Module }
     from './recordCorrections/recordCorrections.ts'
     
 import { DeveloperToolsNg2Module } 
     from './developerTools/developerTools.ts';    
+
+import { idBannerNg2Module }  
+    from './idBanner/idBanner.ts'
+
+import { qrcodeNg2Module } 
+    from './qrcode/qrcode.ts'
+
+import { lastModifiedNg2Module } 
+    from './lastModified/lastModified.ts';
+
+import { bioNg2Module }
+    from './bio/bio.ts';
+
+import { printIdBannerNg2Module } 
+    from './printIdBanner/printIdBanner.ts';
     
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
@@ -244,6 +253,7 @@ import { Observable }
     from 'rxjs';
 
 import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
+
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -303,6 +313,7 @@ export class RootCmp {
         BrowserModule,
         CommonModule, 
         FormsModule,
+        ReactiveFormsModule,
         HttpClientModule, //angular5
         HttpModule, //Angular2
         JsonpModule,
@@ -335,7 +346,6 @@ export class RootCmp {
         MembersListNg2Module, //Approved
         ModalNg2Module, //Approved
         MyOrcidAlertsNg2Module,
-        NameNg2Module, //Approved
         NotificationsNg2Module,
         NotificationAlertsNg2Module,
         PeerReviewNg2Module,
@@ -360,7 +370,6 @@ export class RootCmp {
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
-        SwitchUserNg2Module,
         TwoFaSetupNg2Module,
         UnsubscribeNg2Module,
         WidgetNg2Module, //Approved
@@ -368,11 +377,17 @@ export class RootCmp {
         WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
-        WorksMergeChoosePreferredVersionNg2Module,
         WorksMergeSuggestionsNg2Module,
+        ManageMembersNg2Module,
         DeveloperToolsNg2Module,
+        RecordCorrectionsNg2Module,
         AdminActionsNg2Module,
-        RecordCorrectionsNg2Module
+        RecordCorrectionsNg2Module,
+        idBannerNg2Module,
+        qrcodeNg2Module,
+        lastModifiedNg2Module, 
+        bioNg2Module,
+        printIdBannerNg2Module
     ],
     providers: [
         { 

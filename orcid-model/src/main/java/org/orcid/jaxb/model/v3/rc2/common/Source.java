@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "sourceOrcid", "sourceClientId", "sourceName" })
+@XmlType(propOrder = { "sourceOrcid", "sourceClientId", "sourceName","assertionOriginOrcid", "assertionOriginClientId", "assertionOriginName" })
 @XmlRootElement(name = "source", namespace = "http://www.orcid.org/ns/common")
 public class Source implements Serializable {
 
@@ -40,6 +40,13 @@ public class Source implements Serializable {
     protected SourceClientId sourceClientId;
     @XmlElement(name="source-name", namespace="http://www.orcid.org/ns/common")
     protected SourceName sourceName;
+    
+    @XmlElement(name="assertion-origin-orcid", namespace = "http://www.orcid.org/ns/common")
+    protected SourceOrcid assertionOriginOrcid;
+    @XmlElement(name="assertion-origin-client-id", namespace="http://www.orcid.org/ns/common")
+    protected SourceClientId assertionOriginClientId;
+    @XmlElement(name="assertion-origin-name", namespace="http://www.orcid.org/ns/common")
+    protected SourceName assertionOriginName;
 
     public Source() {
     }
@@ -108,6 +115,30 @@ public class Source implements Serializable {
     public void setSourceName(SourceName value) {
         this.sourceName = value;
     }
+    
+    public SourceOrcid getAssertionOriginOrcid() {
+        return assertionOriginOrcid;
+    }
+
+    public void setAssertionOriginOrcid(SourceOrcid assertionOriginOrcid) {
+        this.assertionOriginOrcid = assertionOriginOrcid;
+    }
+
+    public SourceClientId getAssertionOriginClientId() {
+        return assertionOriginClientId;
+    }
+
+    public void setAssertionOriginClientId(SourceClientId assertionOriginClientId) {
+        this.assertionOriginClientId = assertionOriginClientId;
+    }
+
+    public SourceName getAssertionOriginName() {
+        return assertionOriginName;
+    }
+
+    public void setAssertionOriginName(SourceName assertionOriginName) {
+        this.assertionOriginName = assertionOriginName;
+    }
 
     public String retrieveSourcePath() {
         if (sourceClientId != null) {
@@ -115,6 +146,16 @@ public class Source implements Serializable {
         }
         if (sourceOrcid != null) {
             return sourceOrcid.getPath();
+        }
+        return null;
+    }
+    
+    public String retrieveAssertionOriginPath() {
+        if (assertionOriginClientId != null) {
+            return assertionOriginClientId.getPath();
+        }
+        if (assertionOriginOrcid != null) {
+            return assertionOriginOrcid.getPath();
         }
         return null;
     }
@@ -128,16 +169,29 @@ public class Source implements Serializable {
         }
         return null;
     }
-
+    
+    public String retriveAssertionOriginUri() {
+        if (assertionOriginClientId != null) {
+            return assertionOriginClientId.getUri();
+        }
+        if (assertionOriginOrcid != null) {
+            return assertionOriginOrcid.getUri();
+        }
+        return null;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((assertionOriginClientId == null) ? 0 : assertionOriginClientId.hashCode());
+        result = prime * result + ((assertionOriginOrcid == null) ? 0 : assertionOriginOrcid.hashCode());
         result = prime * result + ((sourceClientId == null) ? 0 : sourceClientId.hashCode());
         result = prime * result + ((sourceOrcid == null) ? 0 : sourceOrcid.hashCode());
         return result;
     }
 
+    //TODO: consider empty subclasses == null subclasses...
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -147,6 +201,16 @@ public class Source implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Source other = (Source) obj;
+        if (assertionOriginClientId == null) {
+            if (other.assertionOriginClientId != null)
+                return false;
+        } else if (!assertionOriginClientId.equals(other.assertionOriginClientId))
+            return false;
+        if (assertionOriginOrcid == null) {
+            if (other.assertionOriginOrcid != null)
+                return false;
+        } else if (!assertionOriginOrcid.equals(other.assertionOriginOrcid))
+            return false;
         if (sourceClientId == null) {
             if (other.sourceClientId != null)
                 return false;
@@ -160,4 +224,32 @@ public class Source implements Serializable {
         return true;
     }
 
+    /** Logic taken from SourceEntity constructor
+     * 
+     * @param clientId
+     * @return
+     */
+    public static Source forClient(String clientId) {
+        Source s = new Source();
+        if (clientId != null) {
+            if (clientId.startsWith("APP-")) {
+                s.setSourceClientId(new SourceClientId(clientId));
+            } else {
+                s.setSourceOrcid(new SourceOrcid(clientId));
+            }
+        }
+        return s;
+    }
+
+    public static Source forClient(String clientId, String oboId) {
+        Source s = forClient(clientId);
+        if (oboId != null) {
+            if (oboId.startsWith("APP-")) {
+                s.setAssertionOriginClientId(new SourceClientId(oboId));
+            } else {
+                s.setAssertionOriginOrcid(new SourceOrcid(oboId));
+            }
+        }
+        return s;
+    }
 }

@@ -730,6 +730,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
         fundingClassMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();
         fundingClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        fundingClassMap.byDefault();
         fundingClassMap.register();
 
         ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
@@ -749,6 +750,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
         fundingSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        fundingSummaryClassMap.byDefault();
         fundingSummaryClassMap.register();
 
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
@@ -773,6 +775,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         educationClassMap.field("departmentName", "department");
         educationClassMap.field("roleTitle", "title");
         educationClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();   
+        educationClassMap.byDefault();
         educationClassMap.register();
 
         ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> educationSummaryClassMap = mapperFactory.classMap(EducationSummary.class,
@@ -789,6 +792,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         educationSummaryClassMap.field("departmentName", "department");
         educationSummaryClassMap.field("roleTitle", "title");
         educationSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();   
+        educationSummaryClassMap.byDefault();
         educationSummaryClassMap.register();
 
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
@@ -811,6 +815,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();   
+        classMap.byDefault();
         classMap.register();
 
         ClassMapBuilder<EmploymentSummary, OrgAffiliationRelationEntity> employmentSummaryClassMap = mapperFactory.classMap(EmploymentSummary.class,
@@ -827,6 +832,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         employmentSummaryClassMap.field("departmentName", "department");
         employmentSummaryClassMap.field("roleTitle", "title");
         employmentSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();   
+        employmentSummaryClassMap.byDefault();
         employmentSummaryClassMap.register();
 
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
@@ -862,6 +868,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
         registerSourceConverters(mapperFactory, classMap);
         addV2CommonFields(classMap);
+        classMap.byDefault();
         classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
@@ -875,6 +882,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         peerReviewSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        peerReviewSummaryClassMap.byDefault();
         peerReviewSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
@@ -893,6 +901,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("groupId", "groupId");
         classMap.field("description", "groupDescription");
         classMap.field("type", "groupType");
+        classMap.byDefault();
         classMap.register();
 
         return mapperFactory.getMapperFacade();
@@ -1028,7 +1037,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private void addV2CommonFields(ClassMapBuilder<?, ?> classMap) {
-        classMap.byDefault();
         classMap.field("putCode", "id");
         addV2DateFields(classMap);
     }

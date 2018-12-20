@@ -25,6 +25,7 @@ import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
@@ -84,7 +85,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(02, publicationDateEntity.getMonth().intValue());
         assertEquals(02, publicationDateEntity.getDay().intValue());
         assertEquals(
-                "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
+                "{\"workExternalIdentifier\":[{\"relationship\":\"VERSION_OF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}},{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"work:doi\"}}]}",
                 workEntity.getExternalIdentifiersJson());
         assertEquals("http://tempuri.org", workEntity.getWorkUrl());
         assertEquals(
@@ -125,21 +126,32 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(WorkType.ARTISTIC_PERFORMANCE.value(), w.getWorkType().value());
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        ExternalID workExtId = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
-        assertNotNull(workExtId.getValue());
-        assertEquals("123", workExtId.getValue());
-        assertNotNull(workExtId.getType());
-        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId.getType());
+        assertEquals(2, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
+        
+        ExternalID workExtId1 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(workExtId1.getValue());
+        assertEquals("123", workExtId1.getValue());
+        assertNotNull(workExtId1.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
+        assertEquals(Relationship.VERSION_OF, workExtId1.getRelationship());
+        
+        ExternalID workExtId2 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(1);
+        assertNotNull(workExtId2.getValue());
+        assertEquals("abc", workExtId2.getValue());
+        assertNotNull(workExtId2.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
+        assertEquals(Relationship.SELF, workExtId2.getRelationship());
+        
         String sourcePath = w.getSource().retrieveSourcePath();
         assertNotNull(sourcePath);
         assertEquals("APP-5555555555555555", sourcePath);
+        
         // Identifier URIs should always be http, event if base url is https
         assertEquals("https://testserver.orcid.org/client/APP-5555555555555555", w.getSource().retriveSourceUri());
     }
 
     @Test
-    public void fromProfileWorkEntityToWorkSummaryTest() {
+    public void fromWorkEntityToWorkSummaryTest() {
         WorkEntity work = getWorkEntity();
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
@@ -149,12 +161,22 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("1234567890", ws.getDisplayIndex());
         assertNotNull(ws.getExternalIdentifiers());
         assertNotNull(ws.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, ws.getExternalIdentifiers().getExternalIdentifier().size());
-        ExternalID workExtId = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
-        assertNotNull(workExtId.getValue());
-        assertEquals("123", workExtId.getValue());
-        assertNotNull(workExtId.getType());
-        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId.getType());
+        assertEquals(2, ws.getExternalIdentifiers().getExternalIdentifier().size());
+        ExternalID workExtId1 = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(workExtId1.getValue());
+        assertEquals("123", workExtId1.getValue());
+        assertNotNull(workExtId1.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
+        assertEquals(Relationship.VERSION_OF, workExtId1.getRelationship());
+        
+        ExternalID workExtId2 = ws.getExternalIdentifiers().getExternalIdentifier().get(1);
+        assertNotNull(workExtId2.getValue());
+        assertEquals("abc", workExtId2.getValue());
+        assertNotNull(workExtId2.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
+        assertEquals(Relationship.SELF, workExtId2.getRelationship());
+        
+        
         assertEquals("work:journalTitle", ws.getJournalTitle().getContent());
         assertEquals("work:url",ws.getUrl().getValue());
     }
@@ -210,9 +232,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/work-3.0_rc1.xml";
+        String name = "/record_3.0_rc2/samples/read_samples/work-3.0_rc2.xml";
         if (full) {
-            name = "/record_3.0_rc1/samples/read_samples/work-full-3.0_rc1.xml";
+            name = "/record_3.0_rc2/samples/read_samples/work-full-3.0_rc2.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);
@@ -244,7 +266,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");
-        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"VERSION_OF\",\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},"
+                + "{\"relationship\":\"SELF\",\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"abc\"}}]}");
         return work;
     }
 }

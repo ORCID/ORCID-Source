@@ -251,17 +251,20 @@ public class NotificationController extends BaseController {
     private void addSourceDescription(List<Notification> notifications) {
         for (Notification notification : notifications) {
             Source source = notification.getSource();
-            SourceClientId clientId = source.getSourceClientId();
-            if (clientId != null) {
-                String sourcePath = source.retrieveSourcePath();
-                if (sourcePath != null) {
-                    ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
-                    if (clientDetails != null) {
-                        notification.setSourceDescription(clientDetails.getClientDescription());
-                    }
+            if (source != null) {
+                SourceClientId clientId = source.getSourceClientId();
+                if (clientId != null) {
+                    String sourcePath = source.retrieveSourcePath();
+                    if (sourcePath != null) {
+                        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
+                        if (clientDetails != null) {
+                            notification.setSourceDescription(clientDetails.getClientDescription());
+                        }
 
+                    }
                 }
-            }
+  
+            }        
         }
     }
 }

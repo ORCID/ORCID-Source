@@ -291,7 +291,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(adminController.getMessage("admin.errors.deactivated_account.primary_email_required"), proDetails.getErrors().get(0));
         
         // Test reactivate
-        proDetails.setEmail("andrew@timothy.com");
+        proDetails.setEmail("aNdReW@tImOtHy.com");
         proDetails = adminController.reactivateOrcidRecord(mockRequest, mockResponse, proDetails);
         assertEquals(0, proDetails.getErrors().size());
 

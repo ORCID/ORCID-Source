@@ -105,7 +105,7 @@ public class OrgManagerImpl implements OrgManager {
             return match;
         }
         
-        SourceEntity entity = sourceManager.retrieveSourceEntity();
+        SourceEntity entity = sourceManager.retrieveActiveSourceEntity();
         if (entity != null) {
             SourceEntity newEntity = new SourceEntity();
             if(entity.getSourceClient() != null) {

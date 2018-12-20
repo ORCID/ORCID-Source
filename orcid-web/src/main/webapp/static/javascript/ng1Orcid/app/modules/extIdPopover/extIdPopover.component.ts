@@ -104,7 +104,7 @@ export class ExtIdPopoverComponent implements OnInit {
                 this.value = JSON.parse(JSON.stringify(this.extID.externalIdentifierId.value));
                 break;
             case "work":
-                this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));
+                this.type = JSON.parse(JSON.stringify(this.extID.externalIdentifierType.value));
                 if(this.extID.relationship){
                     if(this.extID.relationship.value){
                         this.relationship = JSON.parse(JSON.stringify(this.extID.relationship.value));

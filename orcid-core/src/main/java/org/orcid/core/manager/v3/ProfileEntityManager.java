@@ -47,7 +47,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     void disableApplication(Long tokenId, String userOrcid);
     
-    String getHash(String orcid);
+    String getOrcidHash(String orcid);
     
     String retrivePublicDisplayName(String orcid);
     

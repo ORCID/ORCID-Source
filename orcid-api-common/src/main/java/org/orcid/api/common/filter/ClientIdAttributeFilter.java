@@ -26,7 +26,7 @@ public class ClientIdAttributeFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         filterChain.doFilter(request, response);
-        String clientId = sourceManager.retrieveSourceOrcid();
+        String clientId = sourceManager.retrieveActiveSourceId();
         request.setAttribute(CLIENT_ID_REQUEST_ATTRIBUTE, clientId);
     }
 

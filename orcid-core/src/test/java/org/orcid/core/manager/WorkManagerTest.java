@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -75,7 +76,7 @@ public class WorkManagerTest extends BaseTest {
     public void before() {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
     }
-    
+        
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);

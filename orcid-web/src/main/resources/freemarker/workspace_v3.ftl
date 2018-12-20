@@ -2,32 +2,21 @@
 <#escape x as x?html>
 <#include "/includes/ng2_templates/my-orcid-alerts-ng2-template.ftl">
 <my-orcid-alerts-ng2 checkEmailValidated=${(Session.CHECK_EMAIL_VALIDATED?exists?c)!} inDelegationMode=${(inDelegationMode?c)!}></my-orcid-alerts-ng2>
-<div class="row workspace-top public-profile">
+<div class="row public-profile">
   <!--Left col-->
   <div class="col-md-3 lhs left-aside">
     <div class="workspace-profile">
       <!-- ID Banner-->
-      <#include "includes/id_banner.ftl"/>
+      <#include "/includes/ng2_templates/id-banner-ng2-template.ftl"/>
+      <id-banner-ng2> </id-banner-ng2>
       <!--Public record widget-->
       <#include "/includes/ng2_templates/widget-ng2-template.ftl">
       <widget-ng2></widget-ng2>
       <!--Print record-->
       <#include "/includes/ng2_templates/print-record-ng2-template.ftl">
       <print-record-ng2></print-record-ng2>
-      <div class="qrcode-container">
-          <a href="<@orcid.rootPath "/qr-code" />" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
-          <div class="popover-help-container"></a>
-              <i class="glyphicon glyphicon-question-sign"></i>
-              <div id="qrcode-help" class="popover bottom">
-                  <div class="arrow"></div>
-                  <div class="popover-content">
-                      <p><@orcid.msg 'workspace.qrcode.help'/> 
-                          <a href="<@orcid.msg 'common.kb_uri_default'/>360006897654" target="qrcode.help"><@orcid.msg 'common.learn_more'/></a>
-                      </p>
-                  </div>
-              </div>
-          </div>
-      </div>
+      <#include "/includes/ng2_templates/qrcode-ng2-template.ftl">
+      <qrcode-ng2></qrcode-ng2>
       <!-- Person -->
       <#include "/includes/ng2_templates/person-ng2-template.ftl">
       <person-ng2></person-ng2> 
@@ -88,15 +77,18 @@
     <email-verification-sent-messsage-ng2></email-verification-sent-messsage-ng2>
 </modalngcomponent><!-- Ng2 component --> 
 
-<#include "/includes/ng2_templates/works-merge-choose-preferred-version-ng2-template.ftl">
-<modalngcomponent elementHeight="280" elementId="modalWorksMergeChoosePreferredVersion" elementWidth="600">
-    <works-merge-choose-preferred-version-ng2></works-merge-choose-preferred-version-ng2>
+
+<#include "/includes/ng2_templates/works-merge-ng2-template.ftl">
+<modalngcomponent elementHeight="350" elementId="modalWorksMerge" elementWidth="600">
+    <works-merge-ng2></works-merge-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<@orcid.checkFeatureStatus 'GROUPING_SUGGESTIONS'>
 <#include "/includes/ng2_templates/works-merge-suggestions-ng2-template.ftl">
-<modalngcomponent elementHeight="320" elementId="modalWorksMergeSuggestions" elementWidth="600">
+<modalngcomponent elementHeight="300" elementId="modalWorksMergeSuggestions" elementWidth="600">
     <works-merge-suggestions-ng2></works-merge-suggestions-ng2>
 </modalngcomponent><!-- Ng2 component -->
+</@orcid.checkFeatureStatus>
 
 <#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">

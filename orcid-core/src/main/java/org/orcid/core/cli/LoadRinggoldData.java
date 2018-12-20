@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -45,7 +46,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class LoadRinggoldData {
     private static final String RINGGOLD_CHARACTER_ENCODING = "UTF-8";
-    private static final String RINGGOLD_SOURCE_TYPE = "RINGGOLD";
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadRinggoldData.class);
     
     private static final List<String> ALLOWED_EXTERNAL_IDENTIFIERS = Arrays.asList("ISNI", "IPED", "NCES", "OFR");
@@ -327,8 +327,8 @@ public class LoadRinggoldData {
             }
 
             LOGGER.info("Deleting org {} with status {}", oldId, status);
-            OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(oldId), RINGGOLD_SOURCE_TYPE);
-            OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(newId), RINGGOLD_SOURCE_TYPE);
+            OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(oldId), OrgDisambiguatedSourceType.RINGGOLD.name());
+            OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(newId), OrgDisambiguatedSourceType.RINGGOLD.name());
             if (existingEntity != null) {
                 // Check if the status is up to date, if not, update it
                 if (!status.name().equals(existingEntity.getStatus())) {
@@ -380,7 +380,7 @@ public class LoadRinggoldData {
             name = dnNameMap.get(ringgoldId).get("name").asText();
         }
 
-        OrgDisambiguatedEntity entity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(ringgoldId), RINGGOLD_SOURCE_TYPE);
+        OrgDisambiguatedEntity entity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(ringgoldId), OrgDisambiguatedSourceType.RINGGOLD.name());
         Date now = new Date();
         if (entity == null) {
             entity = new OrgDisambiguatedEntity();
@@ -395,7 +395,7 @@ public class LoadRinggoldData {
             if(parentId != null && parentId > 0) {
                 entity.setSourceParentId(String.valueOf(parentId));                
             }
-            entity.setSourceType(RINGGOLD_SOURCE_TYPE);
+            entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
             entity.setIndexingStatus(IndexingStatus.PENDING);
             orgDisambiguatedDao.persist(entity);
             numAdded++;
