@@ -249,7 +249,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
         Map<String, Object> templateParams = new HashMap<String, Object>();
         
-        String subject = messageSourceNoFallback.getMessage("email.subject.register.welcome", null, userLocale);
+        String subject = messages.getMessage("email.subject.register.welcome", null, userLocale);
         
         String emailName = deriveEmailFriendlyName(profileEntity);
         String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
