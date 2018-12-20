@@ -198,28 +198,28 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setFormData( closeAfterAction, sectionName, modalId ): void {
-        console.log(this.formData[sectionName]);
-        if(this.formData[sectionName][sectionName].length==1){
+        for(var i in this.formData[sectionName][sectionName]){
             switch(sectionName){
                 case 'otherNames':
                 case 'keywords': { 
-                    if(this.formData[sectionName][sectionName][0].content==""){
-                        this.formData[sectionName][sectionName].pop();
+                    if(this.formData[sectionName][sectionName][i].content==""){
+                        this.formData[sectionName][sectionName].splice(i,1);
                     }
                     break;
                 } 
                 case 'addresses': {
-                    if(this.formData[sectionName][sectionName][0].iso2Country.value==""){
-                        this.formData[sectionName][sectionName].pop();
+                    if(this.formData[sectionName][sectionName][i].iso2Country.value==""){
+                        this.formData[sectionName][sectionName].splice(i,1);
                     }
                     break;
                 }
                 case 'websites': {
-                    if(!this.formData[sectionName][sectionName][0].url.value){
-                        this.formData[sectionName][sectionName].pop();
+                    if(!this.formData[sectionName][sectionName][i].url.value){
+                        this.formData[sectionName][sectionName].splice(i,1);
                     }
                 }  
-            }   
+            } 
+
         }
         
         this.genericService.setData( this.formData[sectionName], this.urlPath[sectionName] )
