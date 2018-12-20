@@ -317,8 +317,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             forkJoin(this.worksToMerge).subscribe(
                 dataGroup => {
                     for(var i in dataGroup){
-                        if(dataGroup[i].workExternalIdentifiers.length > 0){
-                            externalIdsPresent = true;
+                        for(var j in dataGroup[i].workExternalIdentifiers){
+                            if(dataGroup[i].workExternalIdentifiers[j].relationship.value == 'self'){
+                                externalIdsPresent = true;
+                            }
                         }
                     }
                     if(!externalIdsPresent){
