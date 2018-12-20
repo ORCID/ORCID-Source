@@ -164,7 +164,7 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.cdr.detectChanges();
             }
         } 
-        if(this.formData[sectionName][sectionName].length==0){
+        if(this.formData[sectionName][sectionName].length==0 && sectionName != 'externalIdentifiers' ){
             this.addSectionItem(sectionName);    
         }       
     };
@@ -198,7 +198,30 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setFormData( closeAfterAction, sectionName, modalId ): void {
-        //let sectionToUpdate = this.getSectionData(sectionName);
+        console.log(this.formData[sectionName]);
+        if(this.formData[sectionName][sectionName].length==1){
+            switch(sectionName){
+                case 'otherNames':
+                case 'keywords': { 
+                    if(this.formData[sectionName][sectionName][0].content==""){
+                        this.formData[sectionName][sectionName].pop();
+                    }
+                    break;
+                } 
+                case 'addresses': {
+                    if(this.formData[sectionName][sectionName][0].iso2Country.value==""){
+                        this.formData[sectionName][sectionName].pop();
+                    }
+                    break;
+                }
+                case 'websites': {
+                    if(!this.formData[sectionName][sectionName][0].url.value){
+                        this.formData[sectionName][sectionName].pop();
+                    }
+                }  
+            }   
+        }
+        
         this.genericService.setData( this.formData[sectionName], this.urlPath[sectionName] )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
