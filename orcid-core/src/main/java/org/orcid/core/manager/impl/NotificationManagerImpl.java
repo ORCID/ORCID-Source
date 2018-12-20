@@ -262,23 +262,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String html = templateManager.processTemplate("locked_orcid_email_html.ftl", templateParams);
 
         mailGunManager.sendEmail(LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
-    }
-
-    // look like the following is our best best for i18n emails
-    // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
-    @Override
-    public void sendVerificationEmail(String userOrcid, String email) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(profile);
-        Locale locale = getUserLocaleFromProfileEntity(profile);
-        String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
-        // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
-    }    
+    } 
 
     @Override
     public String createUpdateEmailFrequencyUrl(String email) {

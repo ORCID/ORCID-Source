@@ -17,8 +17,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
 
-    void sendVerificationEmail(String userOrcid, String email);
-
     void sendPasswordResetEmail(String toEmail, String userOrcid);
     
     void sendReactivationEmail(String submittedEmail, String userOrcid);
