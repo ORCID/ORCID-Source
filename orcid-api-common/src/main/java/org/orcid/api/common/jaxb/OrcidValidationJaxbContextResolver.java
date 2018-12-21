@@ -32,11 +32,14 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.web.filters.ApiVersionFilter;
+import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
+
+import com.sun.xml.bind.api.AccessorException;
 
 /**
  * orcid-api - Nov 10, 2011 - OrcidValidationJaxbContextResolver
@@ -470,8 +473,10 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
 
     public class OrcidValidationHandler implements ValidationEventHandler {
         @Override
-        public boolean handleEvent(ValidationEvent event) {            
-            if (event.getSeverity() == ValidationEvent.FATAL_ERROR || event.getSeverity() == ValidationEvent.ERROR) {
+        public boolean handleEvent(ValidationEvent event) {
+            if(event.getLinkedException() != null && AccessorException.class.isAssignableFrom(event.getLinkedException().getClass()) && event.getLinkedException().getCause() != null && IllegalEnumValueException.class.isAssignableFrom(event.getLinkedException().getCause().getClass()))  {
+                throw (IllegalEnumValueException) event.getLinkedException().getCause();
+            } else if (event.getSeverity() == ValidationEvent.FATAL_ERROR || event.getSeverity() == ValidationEvent.ERROR) {
                 logger.error(event.getMessage());
                 throw new OrcidBadRequestException(event.getMessage());
             } else if (event.getSeverity() == ValidationEvent.WARNING) {

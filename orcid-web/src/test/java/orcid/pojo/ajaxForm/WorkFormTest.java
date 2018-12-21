@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
@@ -30,7 +31,6 @@ import org.orcid.jaxb.model.v3.rc2.record.SequenceType;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;

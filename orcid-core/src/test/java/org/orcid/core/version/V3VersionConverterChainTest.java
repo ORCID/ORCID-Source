@@ -112,7 +112,7 @@ public class V3VersionConverterChainTest {
         assertEquals("The title", rc2Work.getWorkTitle().getTitle().getContent());
         assertEquals("Translated", rc2Work.getWorkTitle().getTranslatedTitle().getContent());
         assertEquals("EN", rc2Work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS, rc2Work.getWorkType());
+        assertEquals(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS, rc2Work.getWorkType());
         
         rc2Work = null;
         
@@ -156,7 +156,7 @@ public class V3VersionConverterChainTest {
         assertEquals("The title", rc2WorkSummary.getTitle().getTitle().getContent());
         assertEquals("Translated", rc2WorkSummary.getTitle().getTranslatedTitle().getContent());
         assertEquals("EN", rc2WorkSummary.getTitle().getTranslatedTitle().getLanguageCode());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS, rc2WorkSummary.getType());
+        assertEquals(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS, rc2WorkSummary.getType());
         assertEquals("http://www.orcid.org", rc2WorkSummary.getUrl().getValue());
         assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED, rc2WorkSummary.getVisibility());
     }
@@ -213,7 +213,7 @@ public class V3VersionConverterChainTest {
         title.setTitle(new org.orcid.jaxb.model.v3.rc2.common.Title("The title"));
         title.setTranslatedTitle(new org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle("Translated", "EN"));
         rc2Work.setWorkTitle(title);
-        rc2Work.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+        rc2Work.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
         
         // Map and test
         org.orcid.jaxb.model.v3.rc1.record.Work rc1Work = (org.orcid.jaxb.model.v3.rc1.record.Work) (v3VersionConverterChain
@@ -277,7 +277,7 @@ public class V3VersionConverterChainTest {
         rc2WorkSummary.setPutCode(123L);
         rc2WorkSummary.setSource(new org.orcid.jaxb.model.v3.rc2.common.Source("0000-0000-0000-0000"));
         rc2WorkSummary.setTitle(title);
-        rc2WorkSummary.setType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+        rc2WorkSummary.setType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
         rc2WorkSummary.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         rc2WorkSummary.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED);
 

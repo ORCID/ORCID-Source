@@ -16,7 +16,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.common.adapters.WorkTypeAdapter;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.util.RecordUtil;
 import org.orcid.jaxb.model.v3.rc2.common.Country;
@@ -54,6 +57,7 @@ public class Work implements Filterable, Activity, Serializable, SourceAware, Bu
     protected String shortDescription;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Citation citation;
+    @XmlJavaTypeAdapter(WorkTypeAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkType type;
     @XmlElement(name = "publication-date", namespace = "http://www.orcid.org/ns/common")

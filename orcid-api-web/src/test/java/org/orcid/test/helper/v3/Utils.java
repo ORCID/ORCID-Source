@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.rc2.common.Country;
@@ -62,7 +63,6 @@ import org.orcid.jaxb.model.v3.rc2.record.Role;
 import org.orcid.jaxb.model.v3.rc2.record.Service;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 
 public class Utils {
     public static void assertIsPublicOrSource(VisibilityType v, String sourceId) {

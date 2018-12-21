@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.rc2.record;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
@@ -87,8 +87,7 @@ public enum WorkType implements Serializable {
     WORKING_PAPER("working-paper"),
     @XmlEnumValue("undefined")
     UNDEFINED("undefined");
-        
-    
+            
     private final String value;
     
     WorkType(String v) {
@@ -119,5 +118,5 @@ public enum WorkType implements Serializable {
         }        
         
         throw new IllegalArgumentException(v);
-    }
+    }    
 }

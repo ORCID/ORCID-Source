@@ -26,6 +26,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Locale;
@@ -64,7 +65,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc2.record.Service;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.Distinctions;
