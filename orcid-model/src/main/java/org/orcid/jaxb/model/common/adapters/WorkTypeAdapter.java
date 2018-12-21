@@ -17,6 +17,6 @@ public class WorkTypeAdapter extends XmlAdapter<String, WorkType> {
 
     @Override
     public String marshal(WorkType v) throws Exception {
-        return v.name();
+        return v.value();
     }
 }
