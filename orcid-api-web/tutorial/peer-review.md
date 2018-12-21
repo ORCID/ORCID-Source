@@ -6,6 +6,7 @@ The ```peer-review``` activity type follows the [CASRAI Peer Review Services dat
 
 Peer-review items can only be added and updated by clients. Users can delete but not add or edit peer-reviews.
 
+
 This workflow can be used with Member API credentials on sandbox or the production servers.
 
 ## Overview
@@ -23,6 +24,10 @@ This workflow can be used with Member API credentials on sandbox or the producti
   * [writing a peer-reivew item with the mininal information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-simple-2.1.xml)
   * [writing a peer-reivew item with the detailed information](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-full-2.1.xml)
   * [peer-review group id](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
+
+**Posting a peer-review requires a valid group-id**
+
+Peer-review items are grouped on ORCID records based on who or what the review was done for this can be an organization, a publication or other. This is assigned a group-id. Posting a peer-review requires a valid group-id, we suggest searching existing peer-review groups before creating new ones to avoid duplicate entries. For how to search for existing groups and more about group-ids, please refer to this guide [Group ID record Tutorial](https://github.com/ORCID/ORCID-Source/orcid-api-web/tutorial/group_id.md)
 
 ## Permission to edit the record
 Editing the peer-review section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading peer-review activities. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.

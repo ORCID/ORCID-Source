@@ -387,6 +387,11 @@ privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.
     color: #a6ce39
 }
 
+.btn-white-no-border:disabled,
+.btn-white-no-border[disabled] {
+    color: #c9c9ca;
+}
+
 .center {
     margin: 0 auto
 }
@@ -1846,11 +1851,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     line-height: 31px;
 }
 
-.work-bulk-actions .popover-help-container {
-    margin-left: 6px;
-    line-height: 31px;
-}
-
 .work-bulk-actions .bulk-edit-privacy-help-container {
     margin-left: 0;
     line-height: 0;
@@ -2496,6 +2496,19 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     background-color: #fff;
     font-size: 14px
 }
+.workspace-private-toolbar .popover-help-container .popover {
+    left: -267px;
+    top: -172px;
+}
+
+/* Firefox */
+@-moz-document url-prefix() {
+    .workspace-private-toolbar .popover-help-container .popover {
+        left: -267px;
+        top: -155px;
+    }
+  }
+
 
 .work-bulk-actions .popover-help-container .bulk-works-privacy-popover {
     display: none;
@@ -2865,8 +2878,14 @@ input.error {
 
 .maintenance-header {
     background-color: #f7f7f7;
-    margin: 10px 0;
-    padding: 5px
+    margin: 1em auto;
+    padding: 1em;
+    font-size: 12px;
+    line-height: normal;
+}
+
+.maintenance-header p{
+    margin: 0 0 5px 0;
 }
 
 .oauth-title {
@@ -4832,7 +4851,7 @@ ul.toggle-menu li:hover ul {
 .bulk-edit ul.bulk-edit-toolbar>li.bulk-edit-toolbar-item div.popover-help-container {
     position: relative!important;
     left: -38px!important;
-    top: -35px;
+    top: -187px;
     float: left;
     margin-left: 5px
 }
@@ -4949,6 +4968,16 @@ ul.toggle-menu li:hover ul {
     clear: both;
     margin-right: 10px;
     position: relative
+}
+
+.bulk-edit-delete .popover {
+    top: -50px;
+    left: -100px;
+}
+
+.bulk-edit-merge .popover {
+    top: -84px;
+    left: -100px;
 }
 
 .block {
@@ -5137,12 +5166,26 @@ ul.workspace-private-toolbar .popover-help-container .popover {
     flex: 1 0 auto
 }
 
-.bulk-delete-modal {
+.bulk-delete-modal,
+.bulk-merge-modal {
     width: 550px
 }
 
-.bulk-delete-modal h3,.bulk-delete-modal p,.dark-grey {
+.bulk-delete-modal h3,
+.bulk-delete-modal p,
+.bulk-merge-modal h3,
+.bulk-merge-modal p,
+.dark-grey {
     color: #494a4c
+}
+
+.bulk-merge-modal hr {
+    margin: 10px 0;
+}
+
+.bulk-delete-modal,
+.bulk-merge-modal {
+    width: 550px
 }
 
 .bulk-delete-modal button {
@@ -5235,7 +5278,7 @@ ul.workspace-private-toolbar .popover-help-container .popover {
     top: 26px
 }
 
-.bulk-edit-delete .bulk-edit-popover {
+.bulk-edit-delete .bulk-edit-popover{
     top: -40px;
     left: -59px;
     position: absolute
@@ -8657,3 +8700,7 @@ span.notYouUrl > a {
     height: 20px;
     margin-top: -2px;
 }
+
+_::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
+    z-index: unset;
+ }

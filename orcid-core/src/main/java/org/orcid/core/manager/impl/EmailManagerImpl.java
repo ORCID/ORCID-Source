@@ -79,12 +79,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         if (PojoUtil.isEmpty(email)) {
             return false;
         }
-        try {
-            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-            return emailDao.isAutoDeprecateEnableForEmailUsingHash(emailHash);    
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
+        return emailDao.isAutoDeprecateEnableForEmailUsingHash(encryptionManager.getEmailHash(email));        
     }
 
     @Override

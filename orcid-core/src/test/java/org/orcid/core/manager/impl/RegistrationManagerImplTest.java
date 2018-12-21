@@ -126,13 +126,13 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Test
     public void testCreateMinimalRegistrationWithExistingClaimedEmail() {
         //Create the user
-        String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
+        String email = "NEW_user_" + System.currentTimeMillis() + "@test.orcid.org";
         Registration form = createRegistrationForm(email, true);        
         String userOrcid = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
         assertNotNull(userOrcid);
         assertTrue(OrcidStringUtils.isValidOrcid(userOrcid));
         
-        //Then try to create it again
+        // Then try to create it again
         form = createRegistrationForm(email, true);  
         try {
             registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
@@ -142,6 +142,29 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         }        
+        
+        // Then try to create it again with a lower cased email
+        form = createRegistrationForm(email.toLowerCase(), true);  
+        try {
+            registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            fail();
+        } catch(InvalidRequestException e) {
+            assertEquals("Unable to register user due: Email " + email.toLowerCase() + " already exists and is claimed, so, it can't be used again", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        // Then try again with lowercased email with spaces
+        String spacedEmail = "   " + email.toLowerCase() + "   ";
+        form = createRegistrationForm(spacedEmail, true);  
+        try {
+            registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            fail();
+        } catch(InvalidRequestException e) {
+            assertEquals("Unable to register user due: Email " + spacedEmail + " already exists and is claimed, so, it can't be used again", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
     }
     
     @Test

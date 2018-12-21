@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc2.common.Filterable;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
 import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
@@ -187,7 +188,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if ((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
             // Let the creator access the profile even if it is not claimed and
             // not old enough
-            SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
+            SourceEntity currentSourceEntity = sourceManager.retrieveActiveSourceEntity();
 
             String profileSource = profile.getSource() == null ? null : SourceEntityUtils.getSourceId(profile.getSource());
             String currentSource = currentSourceEntity == null ? null : SourceEntityUtils.getSourceId(currentSourceEntity);
@@ -218,10 +219,16 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
     }
 
+    /** This is odd.   Previous behavior was to get id from either client_source_id or source_id then check against both.
+     * Strictly this was incorrect.  Now checks properly, field for field.  TD 22/11/18
+     * 
+     */
     @Override
-    public void checkSource(SourceAwareEntity<?> existingEntity) {
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
+    public void checkSourceAndThrow(SourceAwareEntity<?> existingEntity) {
+        //String sourceIdOfUpdater = sourceManager.retrieveActiveSourceId();
+        //if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
+        Source activeSource = sourceManager.retrieveActiveSource();
+        if (activeSource !=null && !SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
             throw new WrongSourceException(params);
@@ -230,7 +237,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkSource(IdentifierTypeEntity existingEntity) {
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        String sourceIdOfUpdater = sourceManager.retrieveActiveSourceId();
         String existingEntitySourceId = existingEntity.getSourceClient() == null ? null : existingEntity.getSourceClient().getId();
         if (!Objects.equals(sourceIdOfUpdater, existingEntitySourceId)) {
             Map<String, String> params = new HashMap<String, String>();
@@ -825,7 +832,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         // Verify the client is not a public client
         checkClientType();
 
-        String clientId = sourceManager.retrieveSourceOrcid();
+        String clientId = sourceManager.retrieveActiveSourceId();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         if (userAuthentication != null) {
@@ -844,8 +851,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     private void checkClientType() {
-        String clientId = sourceManager.retrieveSourceOrcid();
-
+        String clientId = sourceManager.retrieveActiveSourceId();
         ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
         if (client.getClientType() == null || ClientType.PUBLIC_CLIENT.name().equals(client.getClientType())) {
             throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");

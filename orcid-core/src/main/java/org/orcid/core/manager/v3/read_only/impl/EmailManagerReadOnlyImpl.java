@@ -1,6 +1,5 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,20 +38,12 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public boolean emailExists(String email) {
-        try {            
-            return emailDao.emailExists(encryptionManager.sha256Hash(email.trim().toLowerCase()));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }          
+        return emailDao.emailExists(encryptionManager.getEmailHash(email));        
     }
 
     @Override
     public String findOrcidIdByEmail(String email) {
-        try {            
-            return emailDao.findOrcidIdByEmailHash(encryptionManager.sha256Hash(email.trim().toLowerCase()));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } 
+        return emailDao.findOrcidIdByEmailHash(encryptionManager.getEmailHash(email));        
     }
     
     @Override
@@ -139,12 +130,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public EmailEntity find(String email) {
-        try {            
-            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-            return emailDao.find(emailHash);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } 
+        return emailDao.find(encryptionManager.getEmailHash(email));
     }
 
     @Override
@@ -153,5 +139,5 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             return null;
         }
         return jpaJaxbEmailAdapter.toEmail(emailDao.findPrimaryEmail(orcid));
-    }    
+    }      
 }

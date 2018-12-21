@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,15 +30,21 @@ import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc2.common.Title;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
@@ -63,11 +70,13 @@ public class WorkManagerTest extends BaseTest {
     
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
     private static final String CLIENT_2_ID = "APP-5555555555555555";
+    private static final String CLIENT_3_ID = "APP-5555555555555556";//obo
+
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
     
     @Mock
-    private SourceManager sourceManager;
+    private SourceManager mockSourceManager;
     
     @Mock
     private GroupingSuggestionManager groupingSuggestionManager;
@@ -77,7 +86,13 @@ public class WorkManagerTest extends BaseTest {
     
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
+
+    @Resource(name = "sourceManagerV3")
+    private SourceManager sourceManager;
     
+    @Resource(name = "orcidSecurityManagerV3")
+    private OrcidSecurityManager orcidSecurityManager;
+
     @Resource
     private WorkDao workDao;
     
@@ -94,9 +109,16 @@ public class WorkManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManager", groupingSuggestionManager);
         TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManagerReadOnly", groupingSuggestionManagerReadOnly);
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
     }
     
     @AfterClass
@@ -108,7 +130,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testAddWorkToUnclaimedRecordPreserveWorkVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         Work work = getWork(null);
         
         work = workManager.createWork(unclaimedOrcid, work, true);        
@@ -121,7 +143,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testAddWorkToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         Work work = getWork(null);
         
         work = workManager.createWork(claimedOrcid, work, true);        
@@ -134,7 +156,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testAddMultipleModifiesIndexingStatus() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Work w1 = getWork("extId1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         
@@ -161,7 +183,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
@@ -172,7 +194,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
@@ -184,7 +206,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWork() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         Work work = new Work();
         WorkTitle title1 = new WorkTitle();
@@ -207,7 +229,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testUpdateWork() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         Work work = new Work();
         WorkTitle title1 = new WorkTitle();
@@ -237,8 +259,10 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateDupWorkTest() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-    
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(source);
+        
         // Work # 1
         Work work1 = new Work();
         WorkTitle title1 = new WorkTitle();
@@ -327,7 +351,9 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorksWithBulk_OneSelfOneVersionOf_NoDupError() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(source);
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -394,7 +420,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorksWithBulk_OneSelfOnePartOf_NoDupError() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -450,7 +476,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorkWithBulk_TwoSelf_DupError() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -505,7 +531,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorkWithBulk_TwoSelf_DupError_CaseSensitive() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -561,7 +587,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorksWithBulkAllOK() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         WorkBulk bulk = new WorkBulk();
         for(int i = 0; i < 5; i++) {
@@ -609,7 +635,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWorksWithBulkSomeOKSomeErrors() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
         
         //Lets send a bulk of 6 works
         WorkBulk bulk = new WorkBulk();
@@ -698,14 +724,14 @@ public class WorkManagerTest extends BaseTest {
         
         //Delete new works
         for(Long putCode : worksToDelete) {
-            assertTrue(workManager.checkSourceAndRemoveWork(orcid, putCode));  
+            assertTrue(workManager.removeWorks(orcid, Arrays.asList(putCode)));  
         }                
     }
     
     @Test
-    public void testCreateWorksWithBulkAllErrors() {
+    public void testCreateWorksWithBulkAllErrors() throws InterruptedException {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         //Set up data: 
         //Create one work with a DOI doi-1 so we can create a duplicate
@@ -771,7 +797,7 @@ public class WorkManagerTest extends BaseTest {
         }                
         
         //Delete the work
-        assertTrue(workManager.checkSourceAndRemoveWork(orcid, putCode));         
+        assertTrue(workManager.removeWorks(orcid, Arrays.asList(putCode)));  
     }
     
     private ExternalID getDuplicateExternalId() {
@@ -1247,6 +1273,60 @@ public class WorkManagerTest extends BaseTest {
     }
     
     @Test
+    public void testAssertionOriginUpdate() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        Work work = getWork(null);
+        work = workManager.createWork(claimedOrcid, work, true);        
+        work = workManager.getWork(claimedOrcid, work.getPutCode());
+        assertEquals("Work title", work.getWorkTitle().getTitle().getContent());        
+        work.getWorkTitle().setTitle(new Title("updated"));
+        work = workManager.updateWork(claimedOrcid, work, true); 
+        
+        assertNotNull(work);
+        assertEquals("updated", work.getWorkTitle().getTitle().getContent());        
+        assertEquals(work.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
+        assertEquals(work.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(work.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
+        assertEquals(work.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
+        
+        //make a duplicate
+        Work work2 = getWork(null);
+        try {
+            workManager.createWork(claimedOrcid, work2, true);
+            fail();
+        }catch(OrcidDuplicatedActivityException e) {
+            
+        }
+        
+        //make a duplicate as a different assertion origin
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        workManager.createWork(claimedOrcid, work2, true);
+        
+        //wrong sources:
+        work.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("x");
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            workManager.updateWork(claimedOrcid, work, true);
+            fail();
+        }catch(WrongSourceException e) {
+        }
+        
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
+            workManager.updateWork(claimedOrcid, work, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));  
+            workManager.updateWork(claimedOrcid, work, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+    }
+    
     public void testCreateNewWorkGroupUserSourceWorks() {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);

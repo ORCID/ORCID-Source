@@ -556,13 +556,7 @@ public class SetUpClientsAndUsers {
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    try {
-                        String emailHash;
-                        emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-                        emailDao.populateEmailHash(email, emailHash);
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    }
+                    emailDao.populateEmailHash(email, encryptionManager.getEmailHash(email));                    
                 }
             });
             
@@ -713,6 +707,7 @@ public class SetUpClientsAndUsers {
         clientAuthorizedGrantTypes.add("refresh_token");
         if (client1ClientId.equals(params.get(CLIENT_ID))){
             clientAuthorizedGrantTypes.add("implicit");
+            clientAuthorizedGrantTypes.add("urn:ietf:params:oauth:grant-type:token-exchange");
         }
         
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();

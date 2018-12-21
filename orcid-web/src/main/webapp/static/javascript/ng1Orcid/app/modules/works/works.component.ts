@@ -14,7 +14,7 @@ import { NgForOf, NgIf }
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { forkJoin, Observable, Subject, Subscription } 
     from 'rxjs';
 
 import { takeUntil } 
@@ -60,6 +60,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bulkDisplayToggle: boolean;
     bulkEditMap: any;
     bulkEditShow: boolean;
+    bulkSelectedCount: number;
     canReadFiles: boolean;
     deleteGroup: any;
     deletePutCode: any;
@@ -83,14 +84,17 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showBibtexExport: boolean;
     showBibtexImportWizard: boolean;
     showElement: any;
+    showMergeWorksExtIdsError: boolean;
     sortState: any;
     textFiles: any;
     wizardDescExpanded: any;
     workImportWizard: boolean;
     workImportWizardsOriginal: any;
+    worksToMerge: Array<any>;
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
+    bibTexIntervals: object
 
     constructor( 
         private commonSrvc: CommonService,
@@ -115,6 +119,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.bulkDisplayToggle = false;
         this.bulkEditMap = {};
         this.bulkEditShow = false;
+        this.bulkSelectedCount = 0;
         this.canReadFiles = false;
         this.displayURLPopOver = {};
         this.editSources = {};
@@ -138,6 +143,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showBibtexExport = false;
         this.showBibtexImportWizard = false;
         this.showElement = {};
+        this.showMergeWorksExtIdsError = false;
         this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
         this.textFiles = [];
         this.wizardDescExpanded = {};
@@ -232,12 +238,26 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     bulkChangeAll(bool): void {
+        this.bulkSelectedCount = 0;
         this.bulkChecked = bool;
         this.bulkDisplayToggle = false;
         for (var idx in this.worksService.groups){
             this.bulkEditMap[this.worksService.groups[idx].activePutCode] = bool;
+            if(this.bulkChecked == true){
+                this.bulkSelectedCount ++;
+            }
         }
     };
+
+    bulkEditSelect(): void {
+        this.allSelected = false;
+        this.bulkSelectedCount = 0;
+        for (var idx in this.worksService.groups){
+            if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){
+                this.bulkSelectedCount++;
+            }
+        }
+    }
 
     canBeCombined(work): any {
         if (this.userIsSource(work)){
@@ -271,8 +291,15 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksBulkDelete'});
         }
     };
+
+    dismissError(error){
+        if(error == "showMergeWorksExtIdsError"){
+            this.showMergeWorksExtIdsError = false;
+        }
+    }
     
     mergeConfirm(): void {
+        this.worksToMerge = new Array();
         var idx: any;
         var mergeCount = 0;       
         for (idx in this.worksService.groups){
@@ -280,23 +307,36 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 mergeCount++;
             }
         }
-        
         if (mergeCount > 1) {
-            var worksToMerge = new Array();
             var externalIdsPresent = false;
             for (var putCode in this.bulkEditMap) {
-                if (this.bulkEditMap[putCode]) {
-                    var work = this.worksService.getWork(putCode);
-                    worksToMerge.push({ work: work, preferred: false});
-                    if (work.workExternalIdentifiers.length > 0) {
-                        externalIdsPresent = true;
-                    }
+                if (this.bulkEditMap[putCode]) { 
+                    this.worksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
                 }
-            }
-            this.worksService.notifyOther({worksToMerge:worksToMerge});   
-            this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
-            this.worksService.notifyOther({mergeCount:mergeCount});
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeChoosePreferredVersion'});
+            }       
+            forkJoin(this.worksToMerge).subscribe(
+                dataGroup => {
+                    for(var i in dataGroup){
+                        for(var j in dataGroup[i].workExternalIdentifiers){
+                            if(dataGroup[i].workExternalIdentifiers[j].relationship.value == 'self'){
+                                externalIdsPresent = true;
+                            }
+                        }
+                    }
+                    if(!externalIdsPresent){
+                        this.showMergeWorksExtIdsError = true;
+                    } else {
+                        this.worksService.notifyOther({worksToMerge:dataGroup});       
+                        this.worksService.notifyOther({mergeCount:mergeCount});
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+
+                    }   
+                    
+                },
+                error => {
+                    console.log('mergeConfirm', error);
+                } 
+            );
         }
     };
     
@@ -728,6 +768,15 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.showBibtexImportWizard = !(this.showBibtexImportWizard);
                     this.workImportWizard = false;
                     this.worksFromBibtex = null;
+                    if (this.bibTexIntervals && this.savingBibtex) {
+                        // THE UPLOAD WAS CANCELLED DURING THE PROCESS 
+                        Object.keys(this.bibTexIntervals).forEach(interval => {
+                            clearInterval(this.bibTexIntervals[interval])
+                        });
+                        this.closeAllMoreInfo();
+                        this.refreshWorkGroups();
+                        this.savingBibtex = false;
+                    }
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
@@ -786,6 +835,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     saveAllFromBibtex(): any{
+         
         var worksToSave = null;
         var numToSave = null;
         if( this.savingBibtex == false ){
@@ -796,27 +846,53 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     worksToSave.push(work);
                 } 
             }
-            numToSave = worksToSave.length;
+            const batchSize = 20;
+            let numToSave = worksToSave.length;
+            let  currentBatch = 0; 
+            let  worksLeftOfCurrentBatch = batchSize; 
+            this.bibTexIntervals = {}
             for (let work of worksToSave) {
-                this.worksService.postWork(work)
-                .pipe(    
-                    takeUntil(this.ngUnsubscribe)
+                this.bibTexIntervals[worksToSave.indexOf(work)] =  setInterval ( (work) => {
+                    let workIndex = worksToSave.indexOf(work)
+                    let batchNumber = parseInt (workIndex/ batchSize +  '')
+                    if (batchNumber == currentBatch){
+                        // THIS WORK BELLOWS TO THE CURRENT BATCH TO UPLOAD
+                        clearInterval(this.bibTexIntervals [workIndex])
+                        this.worksService.postWork(work)
+                        .pipe(    
+                            takeUntil(this.ngUnsubscribe)
+                        )
+                        .subscribe(
+                            data => {
+                                if (this.savingBibtex) {
+                                    // THE UPLOAD HAVEN'T BEEN CANCELLED
+                                    var index = this.worksFromBibtex.indexOf(work);
+                                    this.worksFromBibtex.splice(index, 1);
+                                    numToSave--;
+                                    worksLeftOfCurrentBatch--;
+                                    if (worksLeftOfCurrentBatch === 0) {
+                                        // UPLOAD BATCH FINISH 
+                                        currentBatch++
+                                        worksLeftOfCurrentBatch = batchSize;
+                                    }
+                                    if (numToSave === 0){
+                                        // ALL WORKS UPLOADED
+                                        this.closeAllMoreInfo();
+                                        this.refreshWorkGroups();
+                                        this.savingBibtex = false;
+                                    }
+                                }
+
+                            },
+                            error => {
+                                console.log('worksForm.component.ts addWorkError', error);
+                            } 
+                        );
+                    }
+                },  (100 ), 
+                work
+
                 )
-                .subscribe(
-                    data => {
-                        var index = this.worksFromBibtex.indexOf(work);
-                        this.worksFromBibtex.splice(index, 1);
-                        numToSave--;
-                        if (numToSave == 0){
-                            this.closeAllMoreInfo();
-                            this.refreshWorkGroups();
-                            this.savingBibtex = false;
-                        }
-                    },
-                    error => {
-                        console.log('worksForm.component.ts addWorkError', error);
-                    } 
-                );
             }
         }
     };
@@ -833,23 +909,28 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         
         if(putCodes.length > 0) {
-            this.worksService.updateVisibility(putCodes, priv)
+            this.callServerBulkPrivacyUpdate (putCodes, priv) 
+        }
+                   
+    };
+
+    callServerBulkPrivacyUpdate(putCodes, priv) {
+            this.worksService.updateVisibility(putCodes.splice(0, 50), priv)
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
                 data => {
                     if (putCodes.length > 0) {
-                        this.worksService.updateVisibility(putCodes, priv);
+                        this.callServerBulkPrivacyUpdate(putCodes, priv);
                     }
                     //group.activeVisibility = priv;
                 },
                 error => {
                     console.log('Error updating group visibility', error);
                 } 
-            );
-        }                
-    };
+            );  
+    }
 
     setGroupPrivacy(putCode, priv): void {
         var group = this.worksService.getGroup(putCode);
@@ -1085,6 +1166,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.refreshWorkGroups();
                         this.allSelected = false;
                         this.bulkEditMap = {};
+                        this.bulkEditSelect();
                     }
                 } 
                 if(res.action == 'deleteBulk') {
