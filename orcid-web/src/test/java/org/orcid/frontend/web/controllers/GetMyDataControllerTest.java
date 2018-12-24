@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -225,7 +226,7 @@ public class GetMyDataControllerTest {
                 Funding f = new Funding();
                 Amount a = new Amount();
                 a.setContent("1000");
-                a.setCurrencyCode("$");
+                a.setCurrencyCode(Currency.getInstance("USD"));
                 f.setAmount(a);
                 FundingTitle t = new FundingTitle();
                 t.setTitle(new Title("title"));
@@ -388,7 +389,7 @@ public class GetMyDataControllerTest {
                 assertNotNull(x);
                 assertEquals("title", x.getTitle().getTitle().getContent());
                 assertEquals("1000", x.getAmount().getContent());
-                assertEquals("$", x.getAmount().getCurrencyCode());
+                assertEquals("USD", x.getAmount().getCurrencyCode());
                 assertEquals(Long.valueOf(1), x.getPutCode());
                 validateOrg(x);
                 fundingFound = true;

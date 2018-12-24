@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Currency;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -386,7 +387,7 @@ public class ActivityValidatorTest {
     public void validateFunding_invalidCurrencyCodeTest() {
         try {
             Funding funding = getFunding();
-            funding.getAmount().setCurrencyCode(null);
+            funding.getAmount().setCurrencyCode((Currency) null);
             activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
@@ -449,7 +450,7 @@ public class ActivityValidatorTest {
         Funding funding = new Funding();
         Amount amount = new Amount();
         amount.setContent("1000");
-        amount.setCurrencyCode("$");        
+        amount.setCurrencyCode(Currency.getInstance("USD"));        
         funding.setAmount(amount);
         FundingContributor contributor = new FundingContributor();
 

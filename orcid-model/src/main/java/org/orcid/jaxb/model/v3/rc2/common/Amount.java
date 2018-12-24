@@ -1,6 +1,7 @@
 package org.orcid.jaxb.model.v3.rc2.common;
 
 import java.io.Serializable;
+import java.util.Currency;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,8 +9,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.common.adapters.CurrencyAdapter;
 
 /**
  * <p>
@@ -32,8 +35,9 @@ public class Amount implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
+    @XmlJavaTypeAdapter(CurrencyAdapter.class)
     @XmlAttribute(required = true, name = "currency-code")
-    protected String currencyCode;
+    protected Currency currencyCode;
     
     public String getContent() {
         return content;
@@ -44,11 +48,15 @@ public class Amount implements Serializable {
     }
 
     public String getCurrencyCode() {
-        return currencyCode;
+        return currencyCode.getCurrencyCode();
     }
 
-    public void setCurrencyCode(String currencyCode) {
+    public void setCurrencyCode(Currency currencyCode) {
         this.currencyCode = currencyCode;
+    }
+    
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = Currency.getInstance(currencyCode);
     }
 
     @Override

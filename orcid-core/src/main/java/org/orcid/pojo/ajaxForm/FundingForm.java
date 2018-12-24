@@ -2,6 +2,7 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -260,7 +261,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         if (!PojoUtil.isEmpty(amount))
             orcidAmount.setContent(amount.getValue());
         if (!PojoUtil.isEmpty(currencyCode))
-            orcidAmount.setCurrencyCode(currencyCode.getValue());
+            orcidAmount.setCurrencyCode(Currency.getInstance(currencyCode.getValue()));
         result.setAmount(orcidAmount);
         if (!PojoUtil.isEmpty(description))
             result.setDescription(description.getValue());
