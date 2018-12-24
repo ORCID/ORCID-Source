@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
+import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -44,7 +45,6 @@ import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -396,6 +396,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         List<MinimizedWorkEntity> userVersions = new ArrayList<>();
         MinimizedWorkEntity userPreferred = null;
         
+        boolean groupableExternalIdFound = false;
         for (MinimizedWorkEntity work : works) {
             if (orcid.equals(work.getSourceId())) {
                 userVersions.add(work);
@@ -409,7 +410,15 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if (!allExternalIDs.getExternalIdentifier().contains(externalID)) {
                     allExternalIDs.getExternalIdentifier().add(externalID);
                 }
+                
+                if (externalID.isGroupAble()) {
+                    groupableExternalIdFound = true;
+                }
             }
+        }
+        
+        if (!groupableExternalIdFound) {
+            throw new MissingGroupableExternalIDException();
         }
         
         String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);
