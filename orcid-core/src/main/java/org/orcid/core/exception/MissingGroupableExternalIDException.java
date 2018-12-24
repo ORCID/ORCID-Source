@@ -1,6 +1,6 @@
 package org.orcid.core.exception;
 
-public class MissingGroupableExternalIDException extends ApplicationException {
+public class MissingGroupableExternalIDException extends Exception {
 
     private static final long serialVersionUID = 1L;
 

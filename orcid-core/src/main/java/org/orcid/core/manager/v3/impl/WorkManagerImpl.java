@@ -389,7 +389,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
     
     @Override
-    public void createNewWorkGroup(List<Long> workIds, String orcid) {
+    public void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
         JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);
         ExternalIDs allExternalIDs = new ExternalIDs();

@@ -21,7 +21,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -31,9 +30,7 @@ import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
-import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -44,7 +41,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
@@ -54,10 +50,8 @@ import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
@@ -1058,7 +1052,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void testCreateNewWorkGroup() {
+    public void testCreateNewWorkGroup() throws MissingGroupableExternalIDException {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
         WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
@@ -1118,7 +1112,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test(expected = MissingGroupableExternalIDException.class)
-    public void testCreateNewWorkGroupNoGroupableExternalIDs() {
+    public void testCreateNewWorkGroupNoGroupableExternalIDs() throws MissingGroupableExternalIDException {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager mockCacheManager = Mockito.mock(WorkEntityCacheManager.class);
         WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
@@ -1194,7 +1188,7 @@ public class WorkManagerTest extends BaseTest {
         }
     }
 
-    public void testCreateNewWorkGroupUserSourceWorks() {
+    public void testCreateNewWorkGroupUserSourceWorks() throws MissingGroupableExternalIDException {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
         WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
