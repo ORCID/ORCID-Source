@@ -99,7 +99,7 @@ public class ActivityValidator {
 
             // If translated title language code is null or invalid
             if (!PojoUtil.isEmpty(translatedTitle) && (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
-                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
+                    || !Arrays.stream(LanguageCode.).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
                 Map<String, String> params = new HashMap<String, String>();
                 String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
                 params.put("type", "translated title -> language code");
