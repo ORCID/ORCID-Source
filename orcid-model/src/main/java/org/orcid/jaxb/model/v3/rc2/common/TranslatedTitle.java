@@ -64,7 +64,9 @@ public class TranslatedTitle implements Serializable {
     }
 
     public void setLanguageCode(String languageCode) {
-        this.languageCode = LanguageCode.valueOf(languageCode);
+        if(languageCode != null) {
+            this.languageCode = LanguageCode.valueOf(languageCode);
+        }        
     }
 
     @Override
