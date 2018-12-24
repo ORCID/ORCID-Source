@@ -287,9 +287,9 @@ public class ActivityValidator {
 
         if (funding.getAmount() != null) {
             Amount amount = funding.getAmount();
-            if (PojoUtil.isEmpty(amount.getCurrencyCode()) && !PojoUtil.isEmpty(amount.getContent())) {
+            if (amount.getCurrencyCode() == null && !PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify a currency code");
-            } else if (!PojoUtil.isEmpty(amount.getCurrencyCode()) && PojoUtil.isEmpty(amount.getContent())) {
+            } else if (amount.getCurrencyCode() != null && PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify an amount or remove the amount tag");
             }
         }

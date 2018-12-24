@@ -387,10 +387,10 @@ public class ActivityValidatorTest {
     public void validateFunding_invalidCurrencyCodeTest() {
         try {
             Funding funding = getFunding();
-            funding.getAmount().setCurrencyCode((Currency) null);
+            funding.getAmount().setCurrencyCode(null);
             activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(OrcidValidationException e) {
+        } catch(Exception e) {
             
         }
         
@@ -450,7 +450,7 @@ public class ActivityValidatorTest {
         Funding funding = new Funding();
         Amount amount = new Amount();
         amount.setContent("1000");
-        amount.setCurrencyCode(Currency.getInstance("USD"));        
+        amount.setCurrencyCode("USD");        
         funding.setAmount(amount);
         FundingContributor contributor = new FundingContributor();
 

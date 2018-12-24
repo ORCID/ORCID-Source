@@ -48,15 +48,11 @@ public class Amount implements Serializable {
     }
 
     public String getCurrencyCode() {
-        return currencyCode.getCurrencyCode();
+        return (currencyCode == null) ? null : currencyCode.getCurrencyCode();
     }
 
-    public void setCurrencyCode(Currency currencyCode) {
-        this.currencyCode = currencyCode;
-    }
-    
     public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = Currency.getInstance(currencyCode);
+        this.currencyCode = Currency.getInstance(currencyCode);        
     }
 
     @Override

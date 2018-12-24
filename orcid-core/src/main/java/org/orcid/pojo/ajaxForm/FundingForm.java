@@ -261,7 +261,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         if (!PojoUtil.isEmpty(amount))
             orcidAmount.setContent(amount.getValue());
         if (!PojoUtil.isEmpty(currencyCode))
-            orcidAmount.setCurrencyCode(Currency.getInstance(currencyCode.getValue()));
+            orcidAmount.setCurrencyCode(currencyCode.getValue());
         result.setAmount(orcidAmount);
         if (!PojoUtil.isEmpty(description))
             result.setDescription(description.getValue());

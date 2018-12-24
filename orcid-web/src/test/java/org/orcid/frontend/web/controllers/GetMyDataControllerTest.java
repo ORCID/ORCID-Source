@@ -226,7 +226,7 @@ public class GetMyDataControllerTest {
                 Funding f = new Funding();
                 Amount a = new Amount();
                 a.setContent("1000");
-                a.setCurrencyCode(Currency.getInstance("USD"));
+                a.setCurrencyCode("USD");
                 f.setAmount(a);
                 FundingTitle t = new FundingTitle();
                 t.setTitle(new Title("title"));
