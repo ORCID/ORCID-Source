@@ -42,7 +42,7 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;

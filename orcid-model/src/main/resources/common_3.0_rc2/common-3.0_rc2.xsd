@@ -513,22 +513,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-
-	<xs:simpleType name="orcid-type">
-		<xs:annotation>
-			<xs:documentation>Indicates the ORCID record type for the ORCID iD
-				referenced. NOTE: orcid-types of API client are only used for legacy
-				API clients.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="admin" />
-			<xs:enumeration value="user" />
-			<xs:enumeration value="group" />
-			<xs:enumeration value="client" />
-		</xs:restriction>
-	</xs:simpleType>
-
+	
 	<xs:simpleType name="put-code">
 		<xs:annotation>
 			<xs:documentation>The put-code attribute is present only when reading

@@ -41,9 +41,9 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.common.Locale;
-import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc2.record.Biography;
@@ -377,7 +377,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
 
         // If it is a member, return the credit name
-        if (OrcidType.GROUP.equals(member.getOrcidType())) {
+        if (OrcidType.GROUP.name().equals(member.getOrcidType())) {
             return recordName.getCreditName();
         }
 
