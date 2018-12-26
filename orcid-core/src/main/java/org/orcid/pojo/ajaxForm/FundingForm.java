@@ -6,10 +6,10 @@ import java.util.Currency;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
 import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.rc2.common.OrganizationDefinedFundingSubType;

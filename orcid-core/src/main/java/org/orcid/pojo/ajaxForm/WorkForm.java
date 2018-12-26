@@ -373,7 +373,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         
         // Set country
         if (!PojoUtil.isEmpty(this.getCountryCode())) {
-            work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
+            work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
         }
 
         // Set publication date        

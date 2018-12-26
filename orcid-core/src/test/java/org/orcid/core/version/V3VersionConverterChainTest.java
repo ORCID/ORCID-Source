@@ -78,7 +78,7 @@ public class V3VersionConverterChainTest {
                 .upgrade(new V3Convertible(rc1Work, "3.0_rc1"), "3.0_rc2")).getObjectToConvert();
 
         assertNotNull(rc2Work);
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, rc2Work.getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, rc2Work.getCountry().getValue());
         assertEquals(new org.orcid.jaxb.model.v3.rc2.common.CreatedDate(gc1), rc2Work.getCreatedDate());
         assertEquals("Journal title", rc2Work.getJournalTitle().getContent());
         assertEquals("en", rc2Work.getLanguageCode());
@@ -168,7 +168,7 @@ public class V3VersionConverterChainTest {
 
         // Work test
         org.orcid.jaxb.model.v3.rc2.record.Work rc2Work = new org.orcid.jaxb.model.v3.rc2.record.Work();
-        rc2Work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US));
+        rc2Work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.common.Iso3166Country.US));
         rc2Work.setCreatedDate(new org.orcid.jaxb.model.v3.rc2.common.CreatedDate(gc1));
         rc2Work.setJournalTitle(new org.orcid.jaxb.model.v3.rc2.common.Title("Journal title"));
         rc2Work.setLanguageCode("en");

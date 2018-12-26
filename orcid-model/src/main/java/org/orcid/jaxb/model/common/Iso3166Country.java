@@ -5,7 +5,7 @@
 // Generated on: 2013.08.19 at 01:44:12 PM BST 
 //
 
-package org.orcid.jaxb.model.v3.rc2.common;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 

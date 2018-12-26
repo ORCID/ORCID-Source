@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes;
@@ -15,7 +16,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Country;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.CreditName;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc2.common.Subtitle;
