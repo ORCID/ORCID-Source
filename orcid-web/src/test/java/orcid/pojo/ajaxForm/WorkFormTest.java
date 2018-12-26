@@ -129,7 +129,7 @@ public class WorkFormTest extends XMLTestCase {
         Date date = new Date();                        
         work.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(date)));
         work.setJournalTitle(new Title("Journal Title"));
-        work.setLanguageCode("EN");
+        work.setLanguageCode("en");
         work.setPublicationDate(new PublicationDate(new Year(2015), new Month(1), new Day(1)));
         work.setPutCode(Long.valueOf("12345"));
         work.setShortDescription("Short description");
@@ -157,7 +157,7 @@ public class WorkFormTest extends XMLTestCase {
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(new Title("Work Title"));
         workTitle.setSubtitle(new Subtitle("Subtitle"));
-        TranslatedTitle translated = new TranslatedTitle("Translated", "US");
+        TranslatedTitle translated = new TranslatedTitle("Translated", "en");
         workTitle.setTranslatedTitle(translated);
         work.setWorkTitle(workTitle);
         work.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
