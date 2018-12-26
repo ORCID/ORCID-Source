@@ -52,7 +52,7 @@ public class Amount implements Serializable {
     }
 
     public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = Currency.getInstance(currencyCode);        
+        this.currencyCode = (currencyCode == null) ? null : Currency.getInstance(currencyCode);        
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.orcid.core.manager.v3;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -17,11 +19,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
-import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
@@ -38,7 +39,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem;
@@ -47,8 +47,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ResearchResourceTitle;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
 import org.orcid.persistence.dao.ResearchResourceDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
 public class ResearchResourceManagerTest extends BaseTest {
@@ -352,7 +350,7 @@ public class ResearchResourceManagerTest extends BaseTest {
         rp.setUrl(new Url("http://blah.com"));
         rp.setTitle(new ResearchResourceTitle());
         rp.getTitle().setTitle(new Title(title));
-        rp.getTitle().setTranslatedTitle(new TranslatedTitle("translatedTitle","EN"));
+        rp.getTitle().setTranslatedTitle(new TranslatedTitle("translatedTitle","en"));
         
         ExternalIDs extIds = new ExternalIDs();
         ExternalID extId = new ExternalID();

@@ -122,7 +122,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("work:title", w.getWorkTitle().getTitle().getContent());
         assertEquals("work:subtitle", w.getWorkTitle().getSubtitle().getContent());
         assertEquals("work:translatedTitle", w.getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("ES", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("es", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(WorkType.ARTISTIC_PERFORMANCE.value(), w.getWorkType().value());
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
@@ -256,13 +256,13 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setId(12345L);
         work.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
-        work.setLanguageCode("EN");
+        work.setLanguageCode("en");
         work.setLastModified(date);
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");
         work.setTranslatedTitle("work:translatedTitle");
-        work.setTranslatedTitleLanguageCode("ES");
+        work.setTranslatedTitleLanguageCode("es");
         work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");

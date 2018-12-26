@@ -4,7 +4,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Currency;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -117,13 +116,6 @@ public class ActivityValidatorTest {
     }
     
     @Test(expected = ActivityTypeValidationException.class)
-    public void validateWork_translatedTitleWithInvalidLanguageCodeTest() {
-        Work work = getWork();
-        work.getWorkTitle().getTranslatedTitle().setLanguageCode("xx");
-        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
-    }
-    
-    @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_translatedTitleWithNoLanguageCodeTest() {
         Work work = getWork();
         work.getWorkTitle().getTranslatedTitle().setLanguageCode(null);
@@ -135,14 +127,7 @@ public class ActivityValidatorTest {
         Work work = getWork();
         work.setWorkType(null);
         activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
-    }
-    
-    @Test(expected = ActivityTypeValidationException.class)
-    public void validateWork_invalidLanguageCodeTest() {
-        Work work = getWork();
-        work.setLanguageCode("xx");
-        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
-    }
+    }       
     
     @Test
     public void validateWork_invalidPublicationDateTest() {
@@ -367,14 +352,7 @@ public class ActivityValidatorTest {
         Funding funding = getFunding();
         funding.getTitle().getTitle().setContent(null);
         activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
-    }
-    
-    @Test(expected = ActivityTypeValidationException.class)
-    public void validateFunding_invalidTranslatedTitleLanguageCodeTest() {
-        Funding funding = getFunding();
-        funding.getTitle().getTranslatedTitle().setLanguageCode("xx");
-        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
-    }
+    }        
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validateFunding_emptyExternalIdentifiersTest() {

@@ -385,9 +385,7 @@ public class Work implements Filterable, Activity, Serializable, SourceAware, Bu
      * 
      */
     public void setLanguageCode(String languageCode) {
-        if(languageCode != null) {
-            this.languageCode = LanguageCode.valueOf(languageCode);
-        }        
+        this.languageCode = (languageCode == null) ? null : LanguageCode.valueOf(languageCode);        
     }
 
     /**
