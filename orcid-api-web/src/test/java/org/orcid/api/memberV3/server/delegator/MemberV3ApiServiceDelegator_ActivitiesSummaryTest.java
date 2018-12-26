@@ -378,8 +378,7 @@ public class MemberV3ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
             WorkSummary summary = new WorkSummary();
             summary.setLastModifiedDate(lmd);
             WorkTitle title = new WorkTitle();
-            title.setTitle(new Title("Work " + i));
-            title.setTranslatedTitle(new TranslatedTitle("", ""));
+            title.setTitle(new Title("Work " + i));            
             summary.setTitle(title);
             group.getWorkSummary().add(summary);
         }

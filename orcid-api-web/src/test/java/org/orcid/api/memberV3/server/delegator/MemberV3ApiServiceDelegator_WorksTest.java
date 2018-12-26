@@ -431,7 +431,6 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("My Work"));
         title.setSubtitle(new Subtitle("My subtitle"));
-        title.setTranslatedTitle(new TranslatedTitle("", ""));
         work.setWorkTitle(title);
 
         ActivityUtils.cleanEmptyFields(work);
