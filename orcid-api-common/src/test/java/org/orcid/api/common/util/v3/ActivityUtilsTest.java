@@ -174,7 +174,7 @@ public class ActivityUtilsTest {
         // Test it doesn't remove non empty fields
         s = getEmptyWorkSummary();
         s.getTitle().getTranslatedTitle().setContent("test");
-        s.getTitle().getTranslatedTitle().setLanguageCode("en_us");
+        s.getTitle().getTranslatedTitle().setLanguageCode("en");
         x = new ActivitiesSummary();
         w = new Works();
         g = new WorkGroup();
@@ -182,10 +182,10 @@ public class ActivityUtilsTest {
         w.getWorkGroup().add(g);
         x.setWorks(w);
         assertEquals("test", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
         ActivityUtils.cleanEmptyFields(x);
         assertEquals("test", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
     }
 
     @Test
@@ -203,16 +203,16 @@ public class ActivityUtilsTest {
         // Test it doesn't remove non empty fields
         s = getEmptyWorkSummary();
         s.getTitle().getTranslatedTitle().setContent("test");
-        s.getTitle().getTranslatedTitle().setLanguageCode("en_us");        
+        s.getTitle().getTranslatedTitle().setLanguageCode("en");        
         w = new Works();
         g = new WorkGroup();
         g.getWorkSummary().add(s);
         w.getWorkGroup().add(g);
         assertEquals("test", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
         ActivityUtils.cleanEmptyFields(w);
         assertEquals("test", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());                        
+        assertEquals("en", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());                        
     }
 
     @Test
@@ -226,12 +226,12 @@ public class ActivityUtilsTest {
         // Test it doesn't remove non empty fields
         s = getEmptyWorkSummary();
         s.getTitle().getTranslatedTitle().setContent("test");
-        s.getTitle().getTranslatedTitle().setLanguageCode("en_us");        
+        s.getTitle().getTranslatedTitle().setLanguageCode("en");        
         assertEquals("test", s.getTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", s.getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", s.getTitle().getTranslatedTitle().getLanguageCode());
         ActivityUtils.cleanEmptyFields(s);
         assertEquals("test", s.getTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", s.getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", s.getTitle().getTranslatedTitle().getLanguageCode());
     }
 
     @Test
@@ -249,18 +249,18 @@ public class ActivityUtilsTest {
         // Test it doesn't remove non empty fields
         w = getEmptyWork();
         w.getWorkTitle().getTranslatedTitle().setContent("translated_title");
-        w.getWorkTitle().getTranslatedTitle().setLanguageCode("en_us");
+        w.getWorkTitle().getTranslatedTitle().setLanguageCode("en");
         w.getWorkCitation().setCitation("citation");
         w.getWorkCitation().setWorkCitationType(CitationType.BIBTEX);
         w.getWorkContributors().getContributor().get(0).getCreditName().setContent("credit_name");        
         assertEquals("translated_title", w.getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("citation", w.getWorkCitation().getCitation());
         assertEquals(CitationType.BIBTEX, w.getWorkCitation().getWorkCitationType());
         assertEquals("credit_name", w.getWorkContributors().getContributor().get(0).getCreditName().getContent());
         ActivityUtils.cleanEmptyFields(w);
         assertEquals("translated_title", w.getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("citation", w.getWorkCitation().getCitation());
         assertEquals(CitationType.BIBTEX, w.getWorkCitation().getWorkCitationType());
         assertEquals("credit_name", w.getWorkContributors().getContributor().get(0).getCreditName().getContent());
@@ -281,18 +281,18 @@ public class ActivityUtilsTest {
         // Test it doesn't remove non empty fields
         b = getEmptyWork();
         ((Work) b).getWorkTitle().getTranslatedTitle().setContent("translated_title");
-        ((Work) b).getWorkTitle().getTranslatedTitle().setLanguageCode("en_us");
+        ((Work) b).getWorkTitle().getTranslatedTitle().setLanguageCode("en");
         ((Work) b).getWorkCitation().setCitation("citation");
         ((Work) b).getWorkCitation().setWorkCitationType(CitationType.BIBTEX);
         ((Work) b).getWorkContributors().getContributor().get(0).getCreditName().setContent("credit_name");       
         assertEquals("translated_title", ((Work) b).getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", ((Work) b).getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", ((Work) b).getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("citation", ((Work) b).getWorkCitation().getCitation());
         assertEquals(CitationType.BIBTEX, ((Work) b).getWorkCitation().getWorkCitationType());
         assertEquals("credit_name", ((Work) b).getWorkContributors().getContributor().get(0).getCreditName().getContent());
         ActivityUtils.cleanEmptyFields(b);
         assertEquals("translated_title", ((Work) b).getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", ((Work) b).getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", ((Work) b).getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("citation", ((Work) b).getWorkCitation().getCitation());
         assertEquals(CitationType.BIBTEX, ((Work) b).getWorkCitation().getWorkCitationType());
         assertEquals("credit_name", ((Work) b).getWorkContributors().getContributor().get(0).getCreditName().getContent());        
@@ -316,19 +316,19 @@ public class ActivityUtilsTest {
         bulk = new WorkBulk();
         w = getEmptyWork();        
         w.getWorkTitle().getTranslatedTitle().setContent("translated_title");
-        w.getWorkTitle().getTranslatedTitle().setLanguageCode("en_us");
+        w.getWorkTitle().getTranslatedTitle().setLanguageCode("en");
         w.getWorkCitation().setCitation("citation");
         w.getWorkCitation().setWorkCitationType(CitationType.BIBTEX);
         w.getWorkContributors().getContributor().get(0).getCreditName().setContent("credit_name");        
         bulk.getBulk().add(w);
         assertEquals("translated_title", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("citation", ((Work) bulk.getBulk().get(0)).getWorkCitation().getCitation());
         assertEquals(CitationType.BIBTEX, ((Work) bulk.getBulk().get(0)).getWorkCitation().getWorkCitationType());
         assertEquals("credit_name", ((Work) bulk.getBulk().get(0)).getWorkContributors().getContributor().get(0).getCreditName().getContent());
         ActivityUtils.cleanEmptyFields(bulk);
         assertEquals("translated_title", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("en_us", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("citation", ((Work) bulk.getBulk().get(0)).getWorkCitation().getCitation());
         assertEquals(CitationType.BIBTEX, ((Work) bulk.getBulk().get(0)).getWorkCitation().getWorkCitationType());
         assertEquals("credit_name", ((Work) bulk.getBulk().get(0)).getWorkContributors().getContributor().get(0).getCreditName().getContent());        
