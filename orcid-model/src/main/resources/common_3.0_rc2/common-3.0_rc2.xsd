@@ -919,19 +919,7 @@
 			</xs:documentation>
 		</xs:annotation>
 
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="author" />
-			<xs:enumeration value="assignee" />
-			<xs:enumeration value="editor" />
-			<xs:enumeration value="chair-or-translator" />
-			<xs:enumeration value="co-investigator" />
-			<xs:enumeration value="co-inventor" />
-			<xs:enumeration value="graduate-student" />
-			<xs:enumeration value="other-inventor" />
-			<xs:enumeration value="principal-investigator" />
-			<xs:enumeration value="postdoctoral-researcher" />
-			<xs:enumeration value="support-staff" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
 	<xs:simpleType name="group-type">
