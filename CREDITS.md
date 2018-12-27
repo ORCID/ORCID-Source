@@ -50,4 +50,7 @@ Many thanks to SyncRO Soft for their support in the donation of the oXygen XML E
 
 <a href="http://www.oxygenxml.com" title="Oxygen XML Editor"><img src="http://www.oxygenxml.com/img/resources/oxygen190x62.png" width="190" height="62" alt="Oxygen XML Editor" border="0"/></a>
 
-Thanks also to [![Browserstack](docs/img/browserstack-logo-190x100.png)](https://www.browserstack.com/) for providing robust and agile browser testing for our QA team.
+
+Thanks also BrowserStack to for providing robust and agile browser testing for our development team.
+
+ [![Browserstack](docs/img/browserstack-logo-190x100.png)](https://www.browserstack.com/)
