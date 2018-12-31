@@ -12,13 +12,12 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 @XmlType(namespace = "http://www.orcid.org/ns/common")
 @XmlEnum
 public enum Relationship implements Serializable {
-    PART_OF("part-of"),
-    SELF("self"),
-    VERSION_OF("version-of"); 
+    PART_OF("part-of"), 
+    SELF("self"), 
+    VERSION_OF("version-of");
     private final String value;
 
     Relationship(String v) {
@@ -28,7 +27,7 @@ public enum Relationship implements Serializable {
     public String value() {
         return value;
     }
-    
+
     public static Relationship fromValue(String v) {
         for (Relationship c : Relationship.values()) {
             if (c.value.equals(v)) {
