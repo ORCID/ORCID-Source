@@ -903,37 +903,24 @@
 	<xs:simpleType name="contributor-sequence">
 		<xs:annotation>
 			<xs:documentation>Indication of where in the contributor list the
-				collaborator or other contributor's name would appear
+				collaborator or other contributor's name would appear.
+				ORCID will validate this value against the enumeration 
+				org.orcid.jaxb.model.common.SequenceType and other rules when necessary.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="first" />
-			<xs:enumeration value="additional" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
 	<xs:simpleType name="contributor-role">
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
 				contributor.
+				ORCID will validate this value against the enumeration 
+				org.orcid.jaxb.model.common.ContributorRole and other rules when necessary.
 			</xs:documentation>
 		</xs:annotation>
 
 		<xs:restriction base="xs:string" />
-	</xs:simpleType>
-
-	<xs:simpleType name="group-type">
-		<xs:annotation>
-			<xs:documentation>Indicates the group type for the API client based
-				on the ORCID membership type.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="basic" />
-			<xs:enumeration value="premium" />
-			<xs:enumeration value="basic-institution" />
-			<xs:enumeration value="premium-institution" />
-		</xs:restriction>
 	</xs:simpleType>
 
 	<xs:simpleType name="client-type">

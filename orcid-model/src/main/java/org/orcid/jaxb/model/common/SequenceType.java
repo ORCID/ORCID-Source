@@ -1,12 +1,9 @@
-package org.orcid.jaxb.model.v3.rc2.record;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Declan Newman (declan)
@@ -16,8 +13,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @XmlEnum
 public enum SequenceType implements Serializable {
 
-    @XmlEnumValue("first")
-    FIRST("first"), @XmlEnumValue("additional")
+    FIRST("first"), 
     ADDITIONAL("additional");
 
     private final String value;

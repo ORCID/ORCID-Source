@@ -98,7 +98,7 @@ public class V3VersionConverterChainTest {
 
         assertEquals(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE,
                 rc2Work.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorRole());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.SequenceType.ADDITIONAL,
+        assertEquals(org.orcid.jaxb.model.common.SequenceType.ADDITIONAL,
                 rc2Work.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorSequence());
         assertEquals("contributor@orcid.org", rc2Work.getWorkContributors().getContributor().get(0).getContributorEmail().getValue());
         assertEquals("0000-0000-0000-0000", rc2Work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
@@ -186,7 +186,7 @@ public class V3VersionConverterChainTest {
         org.orcid.jaxb.model.v3.rc2.common.Contributor c = new org.orcid.jaxb.model.v3.rc2.common.Contributor();
         org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes ca = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes();
         ca.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE);
-        ca.setContributorSequence(org.orcid.jaxb.model.v3.rc2.record.SequenceType.ADDITIONAL);
+        ca.setContributorSequence(org.orcid.jaxb.model.common.SequenceType.ADDITIONAL);
         c.setContributorAttributes(ca);
         c.setContributorEmail(new org.orcid.jaxb.model.v3.rc2.common.ContributorEmail("contributor@orcid.org"));
         c.setContributorOrcid(new org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid("0000-0000-0000-0000"));

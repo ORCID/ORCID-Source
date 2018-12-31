@@ -17,8 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.orcid.jaxb.model.common.ContributorRole;
+import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.adapters.ContributorRoleAdapter;
-import org.orcid.jaxb.model.v3.rc2.record.SequenceType;
+import org.orcid.jaxb.model.common.adapters.SequenceTypeAdapter;
 
 /**
  * <p>
@@ -40,6 +41,7 @@ public class ContributorAttributes implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
+    @XmlJavaTypeAdapter(SequenceTypeAdapter.class)
     @XmlElement(name = "contributor-sequence", namespace = "http://www.orcid.org/ns/work", required = true)
     protected SequenceType contributorSequence;
     @XmlJavaTypeAdapter(ContributorRoleAdapter.class)
