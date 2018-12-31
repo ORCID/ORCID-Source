@@ -923,20 +923,6 @@
 		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
-	<xs:simpleType name="client-type">
-		<xs:annotation>
-			<xs:documentation>Indicates the client type for the API client based
-				on the ORCID membership type.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="creator" />
-			<xs:enumeration value="premium-creator" />
-			<xs:enumeration value="updater" />
-			<xs:enumeration value="premium-updater" />
-		</xs:restriction>
-	</xs:simpleType>
-
 	<xs:complexType name="element-summary">
 		<xs:sequence>
 			<xs:element ref="common:created-date" minOccurs="0"
@@ -995,14 +981,13 @@
 	
 	<xs:simpleType name="relationship-type">
 		<xs:annotation>
-			<xs:documentation>Indicates the relationship type.
+			<xs:documentation>
+			Indicates the relationship type.
+			ORCID will validate this value against the enumeration 
+			org.orcid.jaxb.model.common.Relationship and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="self" />
-			<xs:enumeration value="part-of" />
-			<xs:enumeration value="version-of" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 	 
 	<xs:complexType name="external-id">

@@ -19,10 +19,10 @@ import org.orcid.integration.api.pub.PublicV3ApiClientImpl;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v3.rc2.BlackBoxBaseV3_0_rc2;
 import org.orcid.integration.blackbox.api.v3.rc2.MemberV3Rc2ApiClientImpl;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

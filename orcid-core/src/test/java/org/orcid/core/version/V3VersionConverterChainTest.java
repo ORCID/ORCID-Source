@@ -104,7 +104,7 @@ public class V3VersionConverterChainTest {
         assertEquals("0000-0000-0000-0000", rc2Work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
         assertEquals("Credit Name", rc2Work.getWorkContributors().getContributor().get(0).getCreditName().getContent());
         assertEquals(1, rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF, rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals(org.orcid.jaxb.model.common.Relationship.SELF, rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("type", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("http://www.orcid.org", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("extId1", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getValue());
@@ -140,7 +140,7 @@ public class V3VersionConverterChainTest {
         assertEquals(new org.orcid.jaxb.model.v3.rc2.common.CreatedDate(gc1), rc2WorkSummary.getCreatedDate());
         assertEquals("1", rc2WorkSummary.getDisplayIndex());
         assertEquals(1, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals(org.orcid.jaxb.model.common.Relationship.SELF, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("type", rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("http://www.orcid.org", rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("extId1", rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
@@ -196,13 +196,13 @@ public class V3VersionConverterChainTest {
         rc2Work.setWorkContributors(wc);
         org.orcid.jaxb.model.v3.rc2.record.ExternalIDs extIds = new org.orcid.jaxb.model.v3.rc2.record.ExternalIDs();
         org.orcid.jaxb.model.v3.rc2.record.ExternalID extId1 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
-        extId1.setRelationship(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF);
+        extId1.setRelationship(org.orcid.jaxb.model.common.Relationship.SELF);
         extId1.setType("type");
         extId1.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         extId1.setValue("extId1");
         extIds.getExternalIdentifier().add(extId1);
         org.orcid.jaxb.model.v3.rc2.record.ExternalID extId2 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
-        extId2.setRelationship(org.orcid.jaxb.model.v3.rc2.record.Relationship.PART_OF);
+        extId2.setRelationship(org.orcid.jaxb.model.common.Relationship.PART_OF);
         extId2.setType("type");
         extId2.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         extId2.setValue("extId2");

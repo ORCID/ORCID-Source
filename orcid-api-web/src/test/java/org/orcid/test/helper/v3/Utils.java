@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -56,7 +57,6 @@ import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc2.record.Qualification;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc2.record.Role;

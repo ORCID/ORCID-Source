@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
@@ -22,7 +23,6 @@ import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc2.record.Distinction;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
 import org.orcid.utils.DateUtils;

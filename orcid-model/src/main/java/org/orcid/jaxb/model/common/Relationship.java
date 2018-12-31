@@ -5,23 +5,19 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-package org.orcid.jaxb.model.v3.rc2.record;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 
 @XmlType(namespace = "http://www.orcid.org/ns/common")
 @XmlEnum
 public enum Relationship implements Serializable {
-    @XmlEnumValue("part-of")
     PART_OF("part-of"),
-    @XmlEnumValue("self")
     SELF("self"),
-    @XmlEnumValue("version-of")
     VERSION_OF("version-of"); 
     private final String value;
 

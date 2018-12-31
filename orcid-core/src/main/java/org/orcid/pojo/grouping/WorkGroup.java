@@ -3,10 +3,10 @@ package org.orcid.pojo.grouping;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Date;
