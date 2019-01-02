@@ -46,22 +46,22 @@ public enum WorkType implements Serializable {
     UNDEFINED("undefined");
             
     private final String value;
-    
+
     WorkType(String v) {
         value = v;
     }
-    
+
     public String value() {
         return value;
     }
-    
+
     public static WorkType fromValue(String v) {
         for (WorkType c : WorkType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }
         }
-        
+
         // Known maps
         switch (v) {
         case "article-journal":
@@ -72,8 +72,8 @@ public enum WorkType implements Serializable {
             return WorkType.DATA_SET;
         case "standard":
             return WorkType.STANDARDS_AND_POLICY;
-        }        
-        
+        }
+
         throw new IllegalArgumentException(v);
-    }    
+    }
 }
