@@ -6375,6 +6375,8 @@ a#reset-password-toggle-text:hover:active {
     float: left;
     width: 100%;
     word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
 }
 
 .public-profile .workspace-section .workspace-section-header .inline-list .right .popover {
