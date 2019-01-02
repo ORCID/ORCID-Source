@@ -48,9 +48,6 @@ import { LanguageNg2Module }
 import { ModalNg2Module } 
     from './modalNg2/modal-ng.ts';
 
-import { ModalNgComponent } 
-    from './modalNg2/modal-ng.component.ts';
-
 import { OauthAuthorizationNg2Module } 
     from './oauthAuthorization/oauthAuthorization.ts';
 
@@ -60,9 +57,6 @@ import { OauthAuthorizationComponent }
 import { RegisterDuplicatesNg2Module } 
     from './registerDuplicates/registerDuplicates.ts';
 
-import { RegisterDuplicatesComponent } 
-    from './registerDuplicates/registerDuplicates.component.ts';
-
 import { RequestPasswordResetNg2Module } 
     from './requestPasswordReset/requestPasswordReset.ts';
 
@@ -71,8 +65,6 @@ import { RequestPasswordResetNg2Module }
         HeaderComponent, 
         AlertBannerComponent, 
         OauthAuthorizationComponent,
-        ModalNgComponent,
-        RegisterDuplicatesComponent
     ],
     imports: [
         /* Ng Modules */

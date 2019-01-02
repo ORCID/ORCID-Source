@@ -27,6 +27,9 @@ import { RegisterDuplicatesComponent }
         entryComponents: [ 
             RegisterDuplicatesComponent 
         ],
+        exports: [
+            RegisterDuplicatesComponent 
+        ],
         imports: [
             CommonModule,
             FormsModule,

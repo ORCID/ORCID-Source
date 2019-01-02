@@ -1,7 +1,7 @@
 import { NgForOf, NgIf } 
     from '@angular/common';
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -20,12 +20,12 @@ import { OauthService }
     template:  scriptTmpl("register-duplicates-ng2-template")
 })
 export class RegisterDuplicatesComponent {
-    
     private duplicates: any;
     private subscription: Subscription;
     showRegisterProcessing: boolean;
 
     constructor(
+        private cdr: ChangeDetectorRef,
         private modalService: ModalService,
         private oauthService: OauthService
     ) { 
@@ -40,11 +40,21 @@ export class RegisterDuplicatesComponent {
     closeModal(): void {
         this.modalService.notifyOther({action:'close', moduleId: 'modalRegisterDuplicates'});
     };
+
+    ngAfterViewInit() {
+        console.log("after view init")
+        this.subscription = this.modalService.notifyObservable$.subscribe(
+            (res) => { 
+                console.log(res);
+                this.duplicates = res.duplicates; 
+                this.cdr.detectChanges();
+            }
+        );
+    }
     
     ngOnInit() {
-        this.subscription = this.modalService.notifyObservable$.subscribe(
-            (res) => { this.duplicates = res.duplicates; }
-        );
+        console.log("init register duplicates");
+        
     };
 
 }

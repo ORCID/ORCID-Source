@@ -216,4 +216,7 @@
             <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (click)="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
         </#if>
     </div>   
-</div>   
+</div>  
+<modalngcomponent elementHeight="400" elementId="modalRegisterDuplicates" elementWidth="780">
+    <register-duplicates-ng2></register-duplicates-ng2>
+</modalngcomponent> 

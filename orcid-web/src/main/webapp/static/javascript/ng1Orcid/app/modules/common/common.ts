@@ -89,6 +89,9 @@ import { HeaderNg2Module }
 import { LanguageNg2Module }
     from './../language/language.ts';
 
+import { ModalNg2Module } 
+    from './../modalNg2/modal-ng.ts';
+
 import { OrgIdentifierPopoverNg2Module } 
     from './../orgIdentifierPopover/orgIdentifierPopover.ts';
 
@@ -221,6 +224,7 @@ import { PersonService }
             //User Modules
             ExtIdPopoverNg2Module,
             LanguageNg2Module,
+            ModalNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
@@ -276,6 +280,7 @@ import { PersonService }
             //User Modules
             ExtIdPopoverNg2Module,
             LanguageNg2Module,
+            ModalNg2Module,
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,

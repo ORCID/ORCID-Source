@@ -23,6 +23,9 @@ import { ModalNgComponent } from './modal-ng.component.ts';
         ],
         entryComponents: [ 
             ModalNgComponent 
+        ],
+        exports: [ 
+            ModalNgComponent
         ]
     }
 )
