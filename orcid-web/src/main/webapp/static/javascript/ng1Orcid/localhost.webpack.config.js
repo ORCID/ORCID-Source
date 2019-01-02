@@ -2,7 +2,11 @@ var webpack = require('webpack');
 
 module.exports = {
     context: __dirname + "/",
-    entry: "./require.js",
+    entry: {
+        app: "./require.js",
+        signin: "./app/signin_bootstrap.ts",
+        polyfills: "./app/polyfills.ts",
+    },
     mode: 'development',
     module: {
         rules: [
@@ -18,7 +22,7 @@ module.exports = {
     },
     output: {
         path: __dirname + '/',
-        filename: "angular_orcid_generated.js"
+        filename: "[name].js"
     },
     plugins: [
         new webpack.DefinePlugin(

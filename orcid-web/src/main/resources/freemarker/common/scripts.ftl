@@ -28,7 +28,12 @@
 
 <script type="text/javascript" src="${staticCdn}/javascript/script.js"></script>
 
-<script src="${staticCdn}/javascript/ng1Orcid/angular_orcid_generated.js"></script>
+<#if springMacroRequestContext.requestUri?contains("/signin")>
+	<script src="${staticCdn}/javascript/ng1Orcid/polyfills.js"></script>
+    <script src="${staticCdn}/javascript/ng1Orcid/signin.js"></script>
+ <#else>
+ 	<script src="${staticCdn}/javascript/ng1Orcid/app.js"></script>
+ </#if>
 
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');
