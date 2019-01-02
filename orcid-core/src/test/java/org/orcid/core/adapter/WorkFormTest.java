@@ -150,7 +150,7 @@ public class WorkFormTest {
         form.setCitation(new Citation("Citation", "formatted-unspecified"));        
         List<Contributor> çontributors = new ArrayList<Contributor>();
         Contributor contributor = new Contributor();
-        contributor.setContributorRole(Text.valueOf("co_inventor"));
+        contributor.setContributorRole(Text.valueOf("co-inventor"));
         contributor.setContributorSequence(Text.valueOf("first"));
         contributor.setCreditName(Text.valueOf("Contributor credit name"));
         contributor.setEmail(null);
