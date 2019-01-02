@@ -39,7 +39,7 @@
     <xs:import namespace="http://www.orcid.org/ns/common"
         schemaLocation="../common_3.0_rc2/common-3.0_rc2.xsd" />	
 	<xs:import namespace="http://www.orcid.org/ns/work"
-		schemaLocation="work-3.0_rc2.xsd" />
+		schemaLocation="../record_3.0_rc2/work-3.0_rc2.xsd" />
 
 	<xs:element name="peer-review">
 		<xs:complexType>
