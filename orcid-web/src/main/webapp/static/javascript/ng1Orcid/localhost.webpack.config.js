@@ -4,7 +4,8 @@ module.exports = {
     context: __dirname + "/",
     entry: {
         app: "./require.js",
-        signin: "./app/signin_bootstrap.ts",
+        home: "./app/bootstrap_home.ts",
+        signin: "./app/bootstrap_signin.ts",
         polyfills: "./app/polyfills.ts",
     },
     mode: 'development',

@@ -4,19 +4,22 @@ import 'reflect-metadata';
 import 'zone.js';
 
 import { Component, NgModule } 
-	from '@angular/core';
+    from '@angular/core';
 
 import { BrowserModule } 
-	from "@angular/platform-browser";
+    from "@angular/platform-browser";
 
 import { platformBrowserDynamic } 
-	from '@angular/platform-browser-dynamic';
+    from '@angular/platform-browser-dynamic';
 
-import { HomeAppModule } 
-    from './modules/homeApp.ts';
+import { UpgradeModule } 
+    from '@angular/upgrade/static';
 
-import { SigninAppModule } 
-    from './modules/signinApp.ts';
+import { orcidApp } 
+    from './modules/ng1_app.ts';
+
+import { Ng2AppModule } 
+    from './modules/ng2_app.ts';
 
 import { enableProdMode } 
     from '@angular/core';
@@ -28,13 +31,11 @@ if (NODE_ENV === 'production') {
     enableProdMode();
 }
 
-console.log(window.location.pathname);
-if(window.location.pathname.indexOf("signin") > -1){
-    console.log("bootstrapping signin");
-    platformBrowserDynamic().bootstrapModule(SigninAppModule)
-  .catch(err => console.log(err));    
-} else {
-    platformBrowserDynamic().bootstrapModule(HomeAppModule)
-  .catch(err => console.log(err));    
-}
+platformBrowserDynamic().bootstrapModule(Ng2AppModule).then(
+    platformRef => {
+        const upgrade = (<any>platformRef.instance).upgrade; 
 
+        // bootstrap angular1
+        upgrade.bootstrap(document.body, [orcidApp.name]);
+    }
+);

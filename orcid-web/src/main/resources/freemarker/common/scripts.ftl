@@ -28,9 +28,15 @@
 
 <script type="text/javascript" src="${staticCdn}/javascript/script.js"></script>
 
+${springMacroRequestContext.requestUri}
+${baseUri}
+
 <#if springMacroRequestContext.requestUri?contains("/signin")>
 	<script src="${staticCdn}/javascript/ng1Orcid/polyfills.js"></script>
     <script src="${staticCdn}/javascript/ng1Orcid/signin.js"></script>
+ <#elseif springMacroRequestContext.requestUri?ends_with("orcid-web") || springMacroRequestContext.requestUri?ends_with("orcid-web/")>
+ 	<script src="${staticCdn}/javascript/ng1Orcid/polyfills.js"></script>
+    <script src="${staticCdn}/javascript/ng1Orcid/home.js"></script>
  <#else>
  	<script src="${staticCdn}/javascript/ng1Orcid/app.js"></script>
  </#if>
