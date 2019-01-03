@@ -396,9 +396,25 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/person.json", method = RequestMethod.GET)
     public @ResponseBody PublicRecordPersonDetails getPersonDetails(@PathVariable("orcid") String orcid) {
         PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
+        Boolean isDeprecated = false;
         
+        try {
+	            // Check if the profile is deprecated or locked
+	        orcidSecurityManager.checkProfile(orcid);
+        } catch (LockedException | DeactivatedException e) {
+        	publicRecordPersonDetails.setDisplayName(
+        			localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name")
+        			);
+        	return publicRecordPersonDetails;
+        } catch (OrcidNotClaimedException e) {
+        	publicRecordPersonDetails.setDisplayName( localeManager.resolveMessage("orcid.reserved_for_claim"));
+        	return publicRecordPersonDetails;
+        } catch (OrcidDeprecatedException e ) {
+        	isDeprecated = true;
+        	
+        }
+	
         PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
-
         // Fill personal details
         if (publicPersonalDetails != null) {
             // Get display name
@@ -425,6 +441,10 @@ public class PublicProfileController extends BaseWorkspaceController {
                 // and Researchers
                 publicRecordPersonDetails.setTitle(getMessage("layout.public-layout.title", displayName.trim(), orcid));
                 publicRecordPersonDetails.setDisplayName(displayName);
+            }
+            
+            if (isDeprecated) {
+            	return publicRecordPersonDetails;
             }
 
             // Get biography

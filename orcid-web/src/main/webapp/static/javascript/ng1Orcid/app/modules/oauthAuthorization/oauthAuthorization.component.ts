@@ -749,23 +749,22 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     if (this.togglzReLoginAlert && !orcidVar.oauth2Screens && !orcidVar.originalOauth2Process) {
                         this.nameService.getData(this.nameFormUrl).subscribe(response => {
                             if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
-                                var giveNamesDefined = (response.real.giveNames && response.real.givenNames.value);
+                                var giveNamesDefined = (response.real.givenNames && response.real.givenNames.value);
                                 var familyNameDefined = (response.real.familyName && response.real.familyName.value);
                                 this.realLoggedInUserName = "";
                                 this.realLoggedInUserName += giveNamesDefined ? response.real.givenNames.value : "";
                                 this.realLoggedInUserName += giveNamesDefined && familyNameDefined ? " " : "";
                                 this.realLoggedInUserName += familyNameDefined ? response.real.familyName.value : "";
-                                this.isLoggedIn = true;
                             } 
                             if (response.effective && (response.effective.givenNames.value || response.effective.familyName.value)) {
-                                var giveNamesDefined = (response.effective.giveNames && response.effective.givenNames.value);
+                                var giveNamesDefined = (response.effective.givenNames && response.effective.givenNames.value);
                                 var familyNameDefined = (response.effective.familyName && response.effective.familyName.value);
                                 this.effectiveLoggedInUserName = "";
                                 this.effectiveLoggedInUserName += giveNamesDefined ? response.effective.givenNames.value : "";
                                 this.effectiveLoggedInUserName += giveNamesDefined && familyNameDefined ? " " : "";
-                                this.effectiveLoggedInUserName += familyNameDefined ? response.effective.familyName.value : "";
-                                this.isLoggedIn = true;
-                            }     
+                                this.effectiveLoggedInUserName += familyNameDefined ? response.effective.familyName.value : ""; 
+                            }  
+                            this.isLoggedIn = true;   
                         }, (error) => {
                             console.log('Error getting public name')
                             this.isLoggedIn = false;

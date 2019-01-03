@@ -163,7 +163,10 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData[sectionName][sectionName].splice(len,1);
                 this.cdr.detectChanges();
             }
-        }        
+        } 
+        if(this.formData[sectionName][sectionName].length==0 && sectionName != 'externalIdentifiers' ){
+            this.addSectionItem(sectionName);    
+        }       
     };
 
     getFormData(sectionName): void {
@@ -195,7 +198,30 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setFormData( closeAfterAction, sectionName, modalId ): void {
-        //let sectionToUpdate = this.getSectionData(sectionName);
+        for(var i in this.formData[sectionName][sectionName]){
+            switch(sectionName){
+                case 'otherNames':
+                case 'keywords': { 
+                    if(this.formData[sectionName][sectionName][i].content==""){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                    break;
+                } 
+                case 'addresses': {
+                    if(this.formData[sectionName][sectionName][i].iso2Country.value==""){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                    break;
+                }
+                case 'websites': {
+                    if(!this.formData[sectionName][sectionName][i].url.value){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                }  
+            } 
+
+        }
+        
         this.genericService.setData( this.formData[sectionName], this.urlPath[sectionName] )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -241,9 +267,8 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     cancelEditModal(sectionName, id): void{
-        this.formData[sectionName] = JSON.parse(JSON.stringify(this.formDataBeforeChange[sectionName]));
-        this.cdr.detectChanges();
         this.genericService.close(id);
+        this.getFormData(sectionName);
     };
 
     openModal(id: string){
