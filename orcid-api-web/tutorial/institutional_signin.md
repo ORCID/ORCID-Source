@@ -2,7 +2,7 @@
 
 This document provides the information on setting up and troubleshooting institutional sign in with ORCID.
 
-Institutional sign enables researchers to sign in using an existing account provided to them by their institution thereby reducing the burden of effort for the researcher. In addition, Institutional Connect can be enabled which allows an ORCID member institution to request read/write premission to the researcher's ORCID record.
+Institutional sign enables researchers to sign in using an existing account provided to them by their institution thereby reducing the burden of effort for the researcher. In addition, Institutional Connect can be enabled which allows an ORCID member institution to request read/write permission to the researcher's ORCID record.
 
 
 ## Requirements for Institutional sign in
