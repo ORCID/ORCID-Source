@@ -16,6 +16,10 @@ public class LanguageCodeAdapter extends XmlAdapter<String, LanguageCode> {
 
     @Override
     public String marshal(LanguageCode v) throws Exception {
-        return v.name();
+        try {
+            return v.name();
+        } catch (Exception e) {
+            throw new IllegalEnumValueException(LanguageCode.class, String.valueOf(v));
+        }        
     }
 }

@@ -290,22 +290,27 @@ public class OrcidCoreExceptionMapper {
 
         Throwable cause = t.getCause();
         if (cause != null) {
-            String causeMessage = cause.getLocalizedMessage();
-            if (causeMessage != null) {
-                devMessage += " (" + causeMessage + ")";
+            if(IllegalEnumValueException.class.isAssignableFrom(cause.getClass())) {
+                IllegalEnumValueException e = (IllegalEnumValueException) cause;
+                devMessage += " (" + e.getInvalidValue() + " is invalid for " + e.getEnumClass().getName() + ")";
             } else {
-                Throwable secondCause = cause.getCause();
-                String secondCauseMessage = secondCause.getLocalizedMessage();
-                if (secondCauseMessage != null) {
-                    devMessage += " (" + secondCauseMessage + ")";
+                String causeMessage = cause.getLocalizedMessage();
+                if (causeMessage != null) {
+                    devMessage += " (" + causeMessage + ")";
                 } else {
-                    Throwable thirdCause = secondCause.getCause();
-                    String thirdCauseMessage = thirdCause.getLocalizedMessage();
-                    if (thirdCauseMessage != null) {
-                        devMessage += " (" + thirdCauseMessage + ")";
+                    Throwable secondCause = cause.getCause();
+                    String secondCauseMessage = secondCause.getLocalizedMessage();
+                    if (secondCauseMessage != null) {
+                        devMessage += " (" + secondCauseMessage + ")";
+                    } else {
+                        Throwable thirdCause = secondCause.getCause();
+                        String thirdCauseMessage = thirdCause.getLocalizedMessage();
+                        if (thirdCauseMessage != null) {
+                            devMessage += " (" + thirdCauseMessage + ")";
+                        }
                     }
                 }
-            }
+            }            
         }
         
         return resolveMessage(devMessage, params);

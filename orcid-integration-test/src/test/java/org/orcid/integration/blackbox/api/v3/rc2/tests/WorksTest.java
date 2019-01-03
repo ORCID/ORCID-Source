@@ -436,7 +436,7 @@ public class WorksTest extends BlackBoxBaseV3_0_rc2 {
                     break;
                 case 7:
                     assertEquals(Integer.valueOf(9001), error.getErrorCode());
-                    assertTrue(error.getDeveloperMessage().endsWith("Attribute 'language-code' must appear on element 'common:translated-title'.)"));
+                    assertTrue(error.getDeveloperMessage().endsWith("org.orcid.jaxb.model.common.adapters.IllegalEnumValueException (null is invalid for org.orcid.jaxb.model.common.LanguageCode)"));
                     break;
                 }
             } else {

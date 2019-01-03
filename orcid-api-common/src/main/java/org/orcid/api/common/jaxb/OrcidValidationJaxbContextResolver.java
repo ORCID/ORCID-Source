@@ -17,6 +17,7 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.MarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
@@ -38,7 +39,9 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
+import com.sun.istack.SAXException2;
 import com.sun.xml.bind.api.AccessorException;
 
 /**
@@ -350,8 +353,28 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             Validator validator = schema.newValidator();
             validator.validate(source);
         } catch (SAXException | JAXBException | IOException e) {
+            // Check if it is an IllegalEnumValueException
+            if(SAXParseException.class.isAssignableFrom(e.getClass())) {
+                Throwable t = e.getCause();
+                if(t != null && MarshalException.class.isAssignableFrom(t.getClass())) {
+                    MarshalException me = (MarshalException) t;
+                    Throwable linkedException = me.getLinkedException();
+                    if(linkedException != null && SAXException2.class.isAssignableFrom(linkedException.getClass())) {
+                        SAXException2 sa2 = (SAXException2) linkedException;
+                        Exception sa2e = sa2.getException();
+                        if(sa2e != null && AccessorException.class.isAssignableFrom(sa2e.getClass())) {
+                            Throwable cause = sa2e.getCause();
+                            if(cause != null && IllegalEnumValueException.class.isAssignableFrom(cause.getClass())) {
+                                //Validation exceptions should return BAD_REQUEST status
+                                throw new WebApplicationException(cause, Status.BAD_REQUEST.getStatusCode());
+                            }
+                        }
+                    }
+                }
+            } 
+            
             //Validation exceptions should return BAD_REQUEST status
-            throw new WebApplicationException(e, Status.BAD_REQUEST.getStatusCode());
+            throw new WebApplicationException(e, Status.BAD_REQUEST.getStatusCode());                       
         }       
     }
     
