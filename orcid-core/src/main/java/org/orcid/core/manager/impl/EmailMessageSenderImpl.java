@@ -229,7 +229,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
                     if (successfullySent) {
-                        flagAsSent(notifications);
+                        for (Notification notification : notifications) {
+                            notificationDao.flagAsSent(notification.getPutCode());
+                        }
                     }
                 } else {
                     LOGGER.info("There are no notifications to send for orcid: {}", orcid);

@@ -203,6 +203,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if (this.bibtexWork != false){
                         this.worksFromBibtex.splice(this.bibtexWorkIndex, 1);
                         this.bibtexWork = false;
+                        if (!this.worksFromBibtex.length) {
+                            this.openBibTextWizard()
+                        }
                     }
                     this.refreshWorkGroups();
                 }
@@ -324,8 +327,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             forkJoin(this.worksToMerge).subscribe(
                 dataGroup => {
                     for(var i in dataGroup){
-                        if(dataGroup[i].workExternalIdentifiers.length > 0){
-                            externalIdsPresent = true;
+                        for(var j in dataGroup[i].workExternalIdentifiers){
+                            if(dataGroup[i].workExternalIdentifiers[j].relationship.value == 'self'){
+                                externalIdsPresent = true;
+                            }
                         }
                     }
                     if(!externalIdsPresent){
@@ -843,6 +848,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         let index = this.worksFromBibtex.indexOf(work);
         
         this.worksFromBibtex.splice(index, 1);
+        if (!this.worksFromBibtex.length) {
+            this.openBibTextWizard() // CLOSE BIBTEX
+        }
     };
 
     saveAllFromBibtex(): any{
@@ -891,6 +899,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                         this.closeAllMoreInfo();
                                         this.refreshWorkGroups();
                                         this.savingBibtex = false;
+                                        this.openBibTextWizard(); // CLOSE BIBTEX
+                                        
                                     }
                                 }
 

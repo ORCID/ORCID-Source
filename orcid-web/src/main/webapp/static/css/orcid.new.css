@@ -2501,6 +2501,15 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     top: -172px;
 }
 
+/* Firefox */
+@-moz-document url-prefix() {
+    .workspace-private-toolbar .popover-help-container .popover {
+        left: -267px;
+        top: -155px;
+    }
+  }
+
+
 .work-bulk-actions .popover-help-container .bulk-works-privacy-popover {
     display: none;
     position: absolute;
@@ -8695,3 +8704,7 @@ span.notYouUrl > a {
     height: 20px;
     margin-top: -2px;
 }
+
+_::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
+    z-index: unset;
+ }
