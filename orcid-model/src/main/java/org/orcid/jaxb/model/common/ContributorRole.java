@@ -2,14 +2,9 @@ package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * @author Declan Newman (declan) Date: 07/08/2012
  */
-@XmlType(name = "contributorRole")
-@XmlEnum
 public enum ContributorRole implements Serializable {
 
     AUTHOR("author"), 

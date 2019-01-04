@@ -2,15 +2,10 @@ package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * @author Angel Montenegro 
  *         Date: 20/02/2014
  */
-@XmlType(name = "contributorRole", namespace = "http://www.orcid.org/ns/funding")
-@XmlEnum
 public enum FundingContributorRole implements Serializable {
 
     LEAD("lead"), 

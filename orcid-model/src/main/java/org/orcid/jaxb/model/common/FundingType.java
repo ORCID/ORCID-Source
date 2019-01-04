@@ -9,9 +9,6 @@ package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * <p>
  * Java class for orcid-type.
@@ -21,8 +18,6 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  * <p>
  */
-@XmlType(name = "grantType")
-@XmlEnum
 public enum FundingType implements Serializable {
     GRANT("grant"), 
     CONTRACT("contract"), 

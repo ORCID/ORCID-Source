@@ -7,16 +7,11 @@
 
 package org.orcid.jaxb.model.common;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * <p>Java class for citation-type.
  * 
  * 
  */
-@XmlType(name = "citationType", namespace = "http://www.orcid.org/ns/work")
-@XmlEnum
 public enum CitationType {
 
     FORMATTED_UNSPECIFIED("formatted-unspecified"), 

@@ -9,11 +9,6 @@ package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(namespace = "http://www.orcid.org/ns/common")
-@XmlEnum
 public enum Relationship implements Serializable {
     PART_OF("part-of"), 
     SELF("self"), 

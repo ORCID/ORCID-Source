@@ -1,17 +1,9 @@
-package org.orcid.jaxb.model.v3.rc2.record;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlType(name = "type")
-@XmlEnum
 public enum PeerReviewType implements Serializable {
-    @XmlEnumValue("review")
     REVIEW("review"),
-    @XmlEnumValue("evaluation")
     EVALUATION("evaluation");
         
     private final String value;
