@@ -123,7 +123,7 @@ public class FundingContributor implements Serializable {
      * 
      * @return
      *     possible object is
-     *     {@link ContributorAttributes }
+     *     {@link FundingContributorAttributes }
      *     
      */
     public FundingContributorAttributes getContributorAttributes() {
@@ -135,7 +135,7 @@ public class FundingContributor implements Serializable {
      * 
      * @param value
      *     allowed object is
-     *     {@link ContributorAttributes }
+     *     {@link FundingContributorAttributes }
      *     
      */
     public void setContributorAttributes(FundingContributorAttributes value) {

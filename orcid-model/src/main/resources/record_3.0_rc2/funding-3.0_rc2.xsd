@@ -132,20 +132,18 @@
 
 	<xs:simpleType name="funding-type">
 		<xs:annotation>
-			<xs:documentation>The type of funding, selected from the following options:
-    * Award: Peer-reviewed funding providing direct research costs through competitions
-    * Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria
-    * Grant: Peer-reviewed funding providing direct research costs through competitions
-    * Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
+			<xs:documentation>
+			The type of funding, selected from the following options:
+    		* Award: Peer-reviewed funding providing direct research costs through competitions
+    		* Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria
+    		* Grant: Peer-reviewed funding providing direct research costs through competitions
+    		* Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
+    		ORCID will validate this value against the enumeration 
+			org.orcid.jaxb.model.common.FundingType and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
 
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="grant" />
-			<xs:enumeration value="contract" />
-			<xs:enumeration value="award" />
-			<xs:enumeration value="salary-award" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 	
 	<xs:complexType name="contributors">
@@ -188,18 +186,15 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:simpleType name="contributor-role">
+	<xs:simpleType name="contributor-role" />
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
 				contributor.
+				ORCID will validate this value against the enumeration 
+				org.orcid.jaxb.model.common.FundingContributorRole and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="lead" />
-			<xs:enumeration value="co-lead" />
-			<xs:enumeration value="supported-by" />
-			<xs:enumeration value="other-contribution" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
 </xs:schema>

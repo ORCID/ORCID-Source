@@ -6,6 +6,7 @@ import java.util.Currency;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
@@ -20,7 +21,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
-import org.orcid.jaxb.model.v3.rc2.record.FundingType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
 
 public class FundingForm extends VisibilityForm implements ErrorsInterface, Serializable {

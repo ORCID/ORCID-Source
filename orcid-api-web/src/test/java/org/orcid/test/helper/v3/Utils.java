@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
+import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
@@ -42,7 +43,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
-import org.orcid.jaxb.model.v3.rc2.record.FundingType;
 import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.rc2.record.Keyword;
 import org.orcid.jaxb.model.v3.rc2.record.Keywords;

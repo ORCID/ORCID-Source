@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
@@ -21,7 +22,6 @@ import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
 import org.orcid.jaxb.model.v3.rc2.record.Activity;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
-import org.orcid.jaxb.model.v3.rc2.record.FundingType;
 import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 

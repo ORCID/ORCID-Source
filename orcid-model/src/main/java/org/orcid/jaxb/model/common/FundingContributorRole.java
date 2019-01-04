@@ -1,12 +1,9 @@
-package org.orcid.jaxb.model.v3.rc2.record;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Angel Montenegro 
@@ -16,11 +13,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @XmlEnum
 public enum FundingContributorRole implements Serializable {
 
-    @XmlEnumValue("lead")
-    LEAD("lead"), @XmlEnumValue("co-lead")
-    CO_LEAD("co_lead"), @XmlEnumValue("supported-by")
-    SUPPORTED_BY("supported_by"), @XmlEnumValue("other-contribution")
-    OTHER_CONTRIBUTION("other_contribution");
+    LEAD("lead"), 
+    CO_LEAD("co-lead"), 
+    SUPPORTED_BY("supported-by"), 
+    OTHER_CONTRIBUTION("other-contribution");
 
     private final String value;
 
