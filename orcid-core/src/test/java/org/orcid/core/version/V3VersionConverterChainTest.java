@@ -32,7 +32,7 @@ public class V3VersionConverterChainTest {
         rc1Work.setCreatedDate(new org.orcid.jaxb.model.v3.rc1.common.CreatedDate(gc1));        
 
         rc1Work.setJournalTitle(new org.orcid.jaxb.model.v3.rc1.common.Title("Journal title"));
-        rc1Work.setLanguageCode("en");
+        rc1Work.setLanguageCode("EN");
         rc1Work.setLastModifiedDate(new org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate(gc2));
         rc1Work.setPath("/0000-0000-0000-0000/rcX/work/123");
 

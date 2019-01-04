@@ -141,7 +141,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         }
 
         if (address.getCountry() != null) {
-            form.setCountry(Text.valueOf(address.getCountry().value()));
+            form.setCountry(Text.valueOf(address.getCountry().name()));
         } else {
             form.setCountry(new Text());
         }
@@ -227,7 +227,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         }
 
         if (address.getCountry() != null) {
-            form.setCountry(Text.valueOf(address.getCountry().value()));
+            form.setCountry(Text.valueOf(address.getCountry().name()));
         } else {
             form.setCountry(new Text());
         }

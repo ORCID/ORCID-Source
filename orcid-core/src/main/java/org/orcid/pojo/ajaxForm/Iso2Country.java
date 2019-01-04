@@ -32,7 +32,7 @@ public class Iso2Country implements ErrorsInterface, Required, Serializable {
 
     public static Iso2Country valueOf(Iso3166Country country) {
         Iso2Country c = new Iso2Country();
-        c.setValue(org.orcid.jaxb.model.message.Iso3166Country.fromValue(country.value()));
+        c.setValue(org.orcid.jaxb.model.message.Iso3166Country.fromValue(country.name()));
       return c;
     }
     

@@ -64,7 +64,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                 if (isDuplicated(existing, address, activeSource)) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("type", "address");
-                    params.put("value", address.getCountry().getValue().value());
+                    params.put("value", address.getCountry().getValue().name());
                     throw new OrcidDuplicatedElementException(params);
                 }
             }
@@ -91,7 +91,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
             if (isDuplicated(existing, address, activeSource)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "address");
-                params.put("value", address.getCountry().getValue().value());
+                params.put("value", address.getCountry().getValue().name());
                 throw new OrcidDuplicatedElementException(params);
             }            
         }

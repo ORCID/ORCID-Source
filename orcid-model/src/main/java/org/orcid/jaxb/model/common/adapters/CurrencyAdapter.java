@@ -17,6 +17,10 @@ public class CurrencyAdapter extends XmlAdapter<String, Currency> {
 
     @Override
     public String marshal(Currency v) throws Exception {
-        return v.getCurrencyCode();
+        try {
+            return v.getCurrencyCode();
+        } catch (Exception e) {
+            throw new IllegalEnumValueException(Currency.class, String.valueOf(v));
+        }
     }
 }

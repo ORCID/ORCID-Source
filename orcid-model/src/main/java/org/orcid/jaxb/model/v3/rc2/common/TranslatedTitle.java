@@ -48,7 +48,7 @@ public class TranslatedTitle implements Serializable {
 
     public TranslatedTitle(String content, String languageCode) {
         this.content = content;
-        this.languageCode = LanguageCode.valueOf(languageCode);
+        this.languageCode = (languageCode == null) ? null : LanguageCode.valueOf(languageCode);
     }
 
     public String getContent() {
@@ -60,7 +60,7 @@ public class TranslatedTitle implements Serializable {
     }
 
     public String getLanguageCode() {
-        return languageCode == null ? null : languageCode.name();
+        return (languageCode == null) ? null : languageCode.name();
     }
 
     public void setLanguageCode(String languageCode) {

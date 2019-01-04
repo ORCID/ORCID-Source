@@ -17,6 +17,10 @@ public class Iso3166CountryAdapter extends XmlAdapter<String, Iso3166Country> {
 
     @Override
     public String marshal(Iso3166Country v) throws Exception {
-        return v.name();
+        try {
+            return v.name();
+        } catch (Exception e) {
+            throw new IllegalEnumValueException(Iso3166Country.class, String.valueOf(v));
+        }  
     }
 }

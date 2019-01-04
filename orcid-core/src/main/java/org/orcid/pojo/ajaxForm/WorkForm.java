@@ -137,7 +137,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
         // Set country
         if (work.getCountry() != null && work.getCountry().getValue() != null) {
-            w.setCountryCode(Text.valueOf(work.getCountry().getValue().value()));
+            w.setCountryCode(Text.valueOf(work.getCountry().getValue().name()));
         }
 
         // Set publication date

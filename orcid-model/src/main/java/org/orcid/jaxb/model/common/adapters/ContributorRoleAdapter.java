@@ -17,6 +17,10 @@ public class ContributorRoleAdapter extends XmlAdapter<String, ContributorRole> 
 
     @Override
     public String marshal(ContributorRole v) throws Exception {
-        return v.value();
+        try {
+            return v.value();
+        } catch (Exception e) {
+            throw new IllegalEnumValueException(ContributorRole.class, String.valueOf(v));
+        }
     }
 }

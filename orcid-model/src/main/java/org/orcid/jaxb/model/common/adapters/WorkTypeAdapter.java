@@ -17,6 +17,10 @@ public class WorkTypeAdapter extends XmlAdapter<String, WorkType> {
 
     @Override
     public String marshal(WorkType v) throws Exception {
-        return v.value();
+        try {
+            return v.value();
+        } catch (Exception e) {
+            throw new IllegalEnumValueException(WorkType.class, String.valueOf(v));
+        }  
     }
 }

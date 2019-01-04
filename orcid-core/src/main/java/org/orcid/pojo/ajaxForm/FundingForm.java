@@ -426,7 +426,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
             else
                 result.setRegion(new Text());
             if (organizationAddress.getCountry() != null)
-                result.setCountry(Text.valueOf(organizationAddress.getCountry().value()));
+                result.setCountry(Text.valueOf(organizationAddress.getCountry().name()));
             else
                 result.setCountry(new Text());
 
@@ -604,7 +604,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
                 funding.setRegion(new Text());
             }
             if (organizationAddress.getCountry() != null) {
-                funding.setCountry(Text.valueOf(organizationAddress.getCountry().value()));
+                funding.setCountry(Text.valueOf(organizationAddress.getCountry().name()));
             } else {
                 funding.setCountry(new Text());
             }

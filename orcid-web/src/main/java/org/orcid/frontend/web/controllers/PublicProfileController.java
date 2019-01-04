@@ -307,12 +307,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         LinkedHashMap<String, List<Address>> groups = new LinkedHashMap<String, List<Address>>();
         for (Address k : addresses.getAddress()) {
-            if (groups.containsKey(k.getCountry().getValue().value())) {
-                groups.get(k.getCountry().getValue().value()).add(k);
+            if (groups.containsKey(k.getCountry().getValue().name())) {
+                groups.get(k.getCountry().getValue().name()).add(k);
             } else {
                 List<Address> list = new ArrayList<Address>();
                 list.add(k);
-                groups.put(k.getCountry().getValue().value(), list);
+                groups.put(k.getCountry().getValue().name(), list);
             }
         }
 
@@ -479,7 +479,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             Address publicAddress = null;
             // The primary address will be the one with the lowest display index
             for (Address address : publicAddresses.getAddress()) {
-                countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));
+                countryNames.put(address.getCountry().getValue().name(), getcountryName(address.getCountry().getValue().name()));
                 if (publicAddress == null) {
                     publicAddress = address;
                 }

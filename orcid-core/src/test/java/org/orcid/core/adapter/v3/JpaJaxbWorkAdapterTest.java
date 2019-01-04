@@ -112,7 +112,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getCreatedDate().getValue()));
         assertNotNull(w.getLastModifiedDate());
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getLastModifiedDate().getValue()));
-        assertEquals(Iso3166Country.CR.value(), w.getCountry().getValue().value());
+        assertEquals(Iso3166Country.CR.name(), w.getCountry().getValue().name());
         assertEquals("work:citation", w.getWorkCitation().getCitation());
         assertEquals("work:description", w.getShortDescription());
         assertEquals("work:journalTitle", w.getJournalTitle().getContent());

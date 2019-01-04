@@ -364,8 +364,12 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
                         Exception sa2e = sa2.getException();
                         if(sa2e != null && AccessorException.class.isAssignableFrom(sa2e.getClass())) {
                             Throwable cause = sa2e.getCause();
-                            if(cause != null && IllegalEnumValueException.class.isAssignableFrom(cause.getClass())) {
-                                //Validation exceptions should return BAD_REQUEST status
+                            if (cause != null && IllegalEnumValueException.class.isAssignableFrom(cause.getClass())) {
+                                // Validation exceptions should return
+                                // BAD_REQUEST status
+                                // Lets throw the IllegalEnumValueException so
+                                // the end user gets a detailed error message
+                                // and not the default one from spring
                                 throw new WebApplicationException(cause, Status.BAD_REQUEST.getStatusCode());
                             }
                         }

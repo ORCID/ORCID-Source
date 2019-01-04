@@ -81,7 +81,7 @@ public class ActivityValidator {
         if (work.getCountry() != null) {
             if (work.getCountry().getValue() == null) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(Iso3166Country.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+                String values = Arrays.stream(Iso3166Country.values()).map(element -> element.name()).collect(Collectors.joining(", "));
                 params.put("type", "country");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
