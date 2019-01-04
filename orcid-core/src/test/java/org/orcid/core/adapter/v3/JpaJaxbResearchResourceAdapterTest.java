@@ -65,7 +65,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         
         assertEquals(1,m.getResourceItems().size());
         assertEquals("resourceName",m.getResourceItems().get(0).getResourceName());
-        assertEquals("resourceType",m.getResourceItems().get(0).getResourceType());
+        assertEquals("equipment",m.getResourceItems().get(0).getResourceType().name());
         assertEquals("http://blah.com",m.getResourceItems().get(0).getUrl().getValue());
         assertEquals("source-work-id",m.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("id",m.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
@@ -202,7 +202,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         rre.setResourceItems(new ArrayList<ResearchResourceItemEntity>());
         ResearchResourceItemEntity ie = new ResearchResourceItemEntity();
         ie.setResourceName("resourceName");
-        ie.setResourceType("resourceType");
+        ie.setResourceType("equipment");
         ie.setUrl("http://blah.com");
         //ie.setId(id);
         ie.setHosts(new ArrayList<OrgEntity>());

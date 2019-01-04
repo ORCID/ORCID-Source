@@ -396,7 +396,7 @@ public class ResearchResourceManagerTest extends BaseTest {
     public ResearchResourceItem generateResearchResourceItem(String title, String extIdValue){
         ResearchResourceItem ri1 = new ResearchResourceItem();
         ri1.setResourceName(title);
-        ri1.setResourceType(ResourceType.valueOf("infrastrutures"));
+        ri1.setResourceType(ResourceType.valueOf("infrastructures"));
         ri1.setUrl(new Url("http://orcid.org")); 
         
         Organization org1 = new Organization();
