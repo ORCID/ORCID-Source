@@ -8,8 +8,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.orcid.jaxb.model.common.FundingType;
+import org.orcid.jaxb.model.common.adapters.FundingTypeAdapter;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
@@ -31,6 +33,7 @@ import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware, OrganizationHolder {
 
     private static final long serialVersionUID = 7489792970949538708L;
+    @XmlJavaTypeAdapter(FundingTypeAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
     protected FundingType type;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
