@@ -5,13 +5,10 @@
 // Generated on: 2012.10.04 at 01:24:28 PM BST 
 //
 
-package org.orcid.jaxb.model.v3.rc2.record;
+package org.orcid.jaxb.model.common;
 
 import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * <p>Java class for citation-type.
@@ -22,16 +19,15 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @XmlEnum
 public enum CitationType {
 
-    @XmlEnumValue("formatted-unspecified")
-    FORMATTED_UNSPECIFIED("formatted-unspecified"), @XmlEnumValue("bibtex")
-    BIBTEX("bibtex"), @XmlEnumValue("formatted-apa")
-    FORMATTED_APA("formatted-apa"), @XmlEnumValue("formatted-harvard")
-    FORMATTED_HARVARD("formatted-harvard"), @XmlEnumValue("formatted-ieee")
-    FORMATTED_IEEE("formatted-ieee"), @XmlEnumValue("formatted-mla")
-    FORMATTED_MLA("formatted-mla"), @XmlEnumValue("formatted-vancouver")
-    FORMATTED_VANCOUVER("formatted-vancouver"), @XmlEnumValue("formatted-chicago")
+    FORMATTED_UNSPECIFIED("formatted-unspecified"), 
+    BIBTEX("bibtex"), 
+    FORMATTED_APA("formatted-apa"), 
+    FORMATTED_HARVARD("formatted-harvard"), 
+    FORMATTED_IEEE("formatted-ieee"), 
+    FORMATTED_MLA("formatted-mla"), 
+    FORMATTED_VANCOUVER("formatted-vancouver"), 
     FORMATTED_CHICAGO("formatted-chicago"),
-    @XmlEnumValue("ris") RIS("ris");
+    RIS("ris");
     
     private final String value;
 

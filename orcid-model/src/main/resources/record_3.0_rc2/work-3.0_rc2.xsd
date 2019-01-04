@@ -272,18 +272,10 @@
 				website user are localized (translated) in the ORCID Registry web
 				interface. For reference:
 				https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n
+				ORCID will validate this value against the enumeration 
+				org.orcid.jaxb.model.common.CitationType and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="formatted-unspecified" />
-			<xs:enumeration value="bibtex" />
-			<xs:enumeration value="ris" />
-			<xs:enumeration value="formatted-apa" />
-			<xs:enumeration value="formatted-harvard" />
-			<xs:enumeration value="formatted-ieee" />
-			<xs:enumeration value="formatted-mla" />
-			<xs:enumeration value="formatted-vancouver" />
-			<xs:enumeration value="formatted-chicago" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 </xs:schema>

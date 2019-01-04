@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
@@ -11,7 +12,6 @@ import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.Work;

@@ -93,7 +93,7 @@ public class V3VersionConverterChainTest {
         assertEquals("http://www.orcid.org", rc2Work.getUrl().getValue());
         assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED, rc2Work.getVisibility());
         assertEquals("This is the citation", rc2Work.getWorkCitation().getCitation());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.CitationType.FORMATTED_UNSPECIFIED, rc2Work.getWorkCitation().getWorkCitationType());
+        assertEquals(org.orcid.jaxb.model.common.CitationType.FORMATTED_UNSPECIFIED, rc2Work.getWorkCitation().getWorkCitationType());
         assertEquals(1, rc2Work.getWorkContributors().getContributor().size());
 
         assertEquals(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE,
@@ -182,7 +182,7 @@ public class V3VersionConverterChainTest {
         rc2Work.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         rc2Work.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED);
         rc2Work.setWorkCitation(
-                new org.orcid.jaxb.model.v3.rc2.record.Citation("This is the citation", org.orcid.jaxb.model.v3.rc2.record.CitationType.FORMATTED_UNSPECIFIED));
+                new org.orcid.jaxb.model.v3.rc2.record.Citation("This is the citation", org.orcid.jaxb.model.common.CitationType.FORMATTED_UNSPECIFIED));
         org.orcid.jaxb.model.v3.rc2.common.Contributor c = new org.orcid.jaxb.model.v3.rc2.common.Contributor();
         org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes ca = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes();
         ca.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE);

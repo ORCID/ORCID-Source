@@ -12,6 +12,7 @@ import javax.xml.datatype.DatatypeFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
@@ -28,7 +29,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Subtitle;
 import org.orcid.jaxb.model.v3.rc2.common.Title;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.Work;

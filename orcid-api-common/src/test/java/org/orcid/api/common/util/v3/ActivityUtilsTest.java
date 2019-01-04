@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 import org.orcid.jaxb.model.v3.rc2.common.CreditName;
@@ -12,7 +13,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Subtitle;
 import org.orcid.jaxb.model.v3.rc2.common.Title;
 import org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle;
 import org.orcid.jaxb.model.v3.rc2.record.Citation;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
