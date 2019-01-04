@@ -79,7 +79,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(2,e1.get(0).getResourceItems().size());
         ResearchResourceItemEntity i1 = e1.get(0).getResourceItems().iterator().next();
         assertEquals("the resource name1",i1.getResourceName());
-        assertEquals("the resource type1",i1.getResourceType());
+        assertEquals("infrastructures",i1.getResourceType());
         assertEquals("the url1",i1.getUrl());
         assertEquals(2,i1.getHosts().size());
         assertEquals(e1.get(0).getTitle(), i1.getResearchResourceEntity().getTitle());
