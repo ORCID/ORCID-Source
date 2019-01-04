@@ -12,8 +12,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.orcid.jaxb.model.common.FundingContributorRole;
+import org.orcid.jaxb.model.common.adapters.FundingContributorRoleAdapter;
 
 import java.io.Serializable;
 
@@ -34,6 +36,7 @@ public class FundingContributorAttributes implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
+    @XmlJavaTypeAdapter(FundingContributorRoleAdapter.class)
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding", name = "contributor-role")
     protected FundingContributorRole contributorRole;    
 

@@ -186,7 +186,7 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:simpleType name="contributor-role" />
+	<xs:simpleType name="contributor-role">
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
 				contributor.
