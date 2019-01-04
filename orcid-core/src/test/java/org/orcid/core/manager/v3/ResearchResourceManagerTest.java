@@ -26,6 +26,7 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.ResourceType;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
@@ -395,7 +396,7 @@ public class ResearchResourceManagerTest extends BaseTest {
     public ResearchResourceItem generateResearchResourceItem(String title, String extIdValue){
         ResearchResourceItem ri1 = new ResearchResourceItem();
         ri1.setResourceName(title);
-        ri1.setResourceType("infrastrutures");
+        ri1.setResourceType(ResourceType.valueOf("infrastrutures"));
         ri1.setUrl(new Url("http://orcid.org")); 
         
         Organization org1 = new Organization();
