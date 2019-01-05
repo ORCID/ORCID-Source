@@ -22,6 +22,9 @@ import { BrowserModule }
 import { platformBrowserDynamic } 
     from '@angular/platform-browser-dynamic';
 
+import { UpgradeModule } 
+    from '@angular/upgrade/static';
+
 import { RouterModule, UrlHandlingStrategy } 
     from '@angular/router';
 
@@ -86,9 +89,6 @@ import { FundingNg2Module }
 import { FundingFormNg2Module } 
     from './funding/fundingForm.ts';
 
-import { HomeNg2Module } 
-    from './home/home.ts';
-
 import { HeaderNg2Module } 
     from './header/header.ts';
 
@@ -140,14 +140,14 @@ import { OrgIdentifierPopoverNg2Module }
 import { ReactivationNg2Module } 
     from './reactivation/reactivation.ts';
 
-import { RegisterDuplicatesNg2Module } 
-    from './registerDuplicates/registerDuplicates.ts';
-
 import { RequestPasswordResetNg2Module } 
     from './requestPasswordReset/requestPasswordReset.ts';
 
 import { ResearchResourceNg2Module } 
     from './researchResource/researchResource.ts';
+
+import { ResearchResourceDeleteNg2Module } 
+    from './researchResource/researchResourceDelete.ts';
 
 import { ResendClaimNg2Module }
     from './resendClaim/resendClaim.ts';    
@@ -312,6 +312,7 @@ export class RootCmp {
         HttpModule, //Angular2
         JsonpModule,
         NgbModule.forRoot(),
+        UpgradeModule,
         /* User Generated Modules */
         AccountSettingsNg2Module,
         AdminActionsNg2Module,
@@ -333,7 +334,6 @@ export class RootCmp {
         FundingDeleteNg2Module,
         FundingFormNg2Module,
         FundingNg2Module,
-        HomeNg2Module,
         LanguageNg2Module,
         LinkAccountNg2Module,
         MembersListNg2Module, //Approved
@@ -346,12 +346,11 @@ export class RootCmp {
         PersonNg2Module,
         PrintRecordNg2Module,
         PublicRecordNg2Module,
-        OauthAuthorizationNg2Module,
         OrgIdentifierPopoverNg2Module,
         ReactivationNg2Module,
-        RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,
         ResearchResourceNg2Module,
+        ResearchResourceDeleteNg2Module,
         ResendClaimNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
@@ -394,4 +393,8 @@ export class RootCmp {
 
 })
 
-export class Ng2AppModule {}
+export class Ng2AppModule {
+    constructor( public upgrade: UpgradeModule ){
+        console.log('v0.9.23');
+    }
+}

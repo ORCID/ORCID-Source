@@ -14,6 +14,12 @@ import { AlertBannerComponent }
 import { CommonNg2Module }
     from './../common/common.ts';
 
+// This is the Angular 1 part of the module
+export const AlertBannerModule = angular.module(
+    'AlertBannerModule', 
+    []
+);
+
 // This is the Angular 2 part of the module
 @NgModule(
     {
@@ -32,3 +38,14 @@ import { CommonNg2Module }
     }
 )
 export class AlertBannerNg2Module {}
+
+// components migrated to angular 2 should be downgraded here
+//Must convert as much as possible of our code to directives
+AlertBannerModule.directive(
+    'alertBannerNg2', 
+    <any>downgradeComponent(
+        {
+            component: AlertBannerComponent,
+        }
+    )
+);

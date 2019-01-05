@@ -17,6 +17,13 @@ import { CommonModule }
 import { RequestPasswordResetComponent } 
     from './requestPasswordReset.component.ts';
 
+// This is the Angular 1 part of the module
+export const RequestPasswordResetModule = angular.module(
+    'RequestPasswordResetModule', 
+    []
+);
+
+
 // This is the Angular 2 part of the module
 
 @NgModule(
@@ -39,3 +46,15 @@ import { RequestPasswordResetComponent }
     }
 )
 export class RequestPasswordResetNg2Module {}
+
+// components migrated to angular 2 should be downgraded here
+//Must convert as much as possible of our code to directives
+
+RequestPasswordResetModule.directive(
+    'requestPasswordResetNg2', 
+    <any>downgradeComponent(
+        {
+            component: RequestPasswordResetComponent
+        }
+    )
+);
