@@ -3,15 +3,20 @@ package org.orcid.core.utils.v3;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc2.common.SourceName;
 import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.utils.OrcidStringUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.ContextLoader;
 
 public class SourceEntityUtils {
-
+    
     public static String getSourceName(SourceEntity sourceEntity) {
         if (sourceEntity.getCachedSourceName() != null) {
             return sourceEntity.getCachedSourceName();
@@ -86,9 +91,19 @@ public class SourceEntityUtils {
      */
     public static Source extractSourceFromEntity(SourceAwareEntity<?> e) {
         Source source = new Source();
+        
+        String sourceId = e.getSourceId();
+        
         //orcid
-        if (!StringUtils.isEmpty(e.getSourceId()))
-            source.setSourceOrcid(new SourceOrcid(e.getSourceId()));
+        if (!StringUtils.isEmpty(sourceId)) {            
+            ApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
+            ClientDetailsManagerReadOnly clientDetailsManagerReadOnly = (ClientDetailsManagerReadOnly) context.getBean("clientDetailsManagerReadOnlyV3");
+            if(OrcidStringUtils.isClientId(sourceId) || clientDetailsManagerReadOnly.isLegacyClientId(sourceId)) {
+                source.setSourceClientId(new SourceClientId(sourceId));
+            } else {
+                source.setSourceOrcid(new SourceOrcid(sourceId));
+            }            
+        }
         //client
         if (!StringUtils.isEmpty(e.getClientSourceId()))
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
