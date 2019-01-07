@@ -45,7 +45,7 @@ public class PeerReview implements Filterable, Activity, Serializable, Organizat
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-type")
     protected PeerReviewSubjectType subjectType;
     @XmlElement( namespace = "http://www.orcid.org/ns/peer-review", name = "subject-name")
-    protected WorkTitle subjectName;
+    protected SubjectName subjectName;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-url")
     protected Url subjectUrl;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review", name = "convening-organization")
@@ -191,11 +191,11 @@ public class PeerReview implements Filterable, Activity, Serializable, Organizat
         this.subjectType = subjectType;
     }
 
-    public WorkTitle getSubjectName() {
+    public SubjectName getSubjectName() {
         return subjectName;
     }
 
-    public void setSubjectName(WorkTitle subjectName) {
+    public void setSubjectName(SubjectName subjectName) {
         this.subjectName = subjectName;
     }
 
