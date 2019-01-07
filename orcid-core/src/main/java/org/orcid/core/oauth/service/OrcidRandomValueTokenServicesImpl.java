@@ -1,6 +1,5 @@
 package org.orcid.core.oauth.service;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +48,6 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -104,15 +102,16 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         //Do we have an implicit request with update permissions?
         if (OrcidOauth2Constants.IMPLICIT_GRANT_TYPE.equals(authentication.getOAuth2Request().getGrantType())) {
             // authentication.getOAuth2Request().getResponseTypes().contains("token")) {
-            Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authentication.getOAuth2Request().getScope());
-            Set<String> readOnlyScopes = Sets.newHashSet();
+            Collection<String> combinedStrings = ScopePathType.getCombinedScopesFromStringsAsStrings(authentication.getOAuth2Request().getScope());
+            Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(combinedStrings);
+            Set<String> allowedScopes = Sets.newHashSet();
             for (ScopePathType s: requestedScopes) {
-                if (s.isReadOnlyScope()) {
-                    readOnlyScopes.add(s.value());
+                if (ScopePathType.AUTHENTICATE.equals(s) || ScopePathType.READ_PUBLIC.equals(s) || ScopePathType.OPENID.equals(s)) {
+                    allowedScopes.add(s.value());
                 }
             }
             //If so, create a long life update token in the background
-            if (requestedScopes.size() != readOnlyScopes.size()) {
+            if (requestedScopes.size() != allowedScopes.size()) {
                 //create token behind the scenes.
                 DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(UUID.randomUUID().toString());
                 accessToken.setExpiration(new Date(System.currentTimeMillis() + (readValiditySeconds * 1000L)));
@@ -122,7 +121,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                 orcidTokenStore.storeAccessToken(accessToken, authentication);
                 
                 //create a read only token request
-                OAuth2Request r = authentication.getOAuth2Request().narrowScope(readOnlyScopes);
+                OAuth2Request r = authentication.getOAuth2Request().narrowScope(allowedScopes);
                 authentication = new OAuth2Authentication(r, authentication.getUserAuthentication());
             }
         }
