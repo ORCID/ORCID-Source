@@ -107,9 +107,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody List<ImportWizzardClientForm> retrieveWorkImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport(localeManager.getLocale());        
     }
-
-    @ModelAttribute("fundingImportWizards")
-    public List<ImportWizzardClientForm> retrieveFundingImportWizards() {
+    
+    @RequestMapping(value = { "/workspace/retrieve-funding-import-wizards.json" }, method = RequestMethod.GET)
+    public @ResponseBody List<ImportWizzardClientForm> retrieveFundingImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeFundingImport(localeManager.getLocale());
     }
     
