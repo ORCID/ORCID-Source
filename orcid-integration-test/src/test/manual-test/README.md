@@ -141,7 +141,7 @@
 
 65. Use the switch user option to change to the record created during the OAuth process
 
-66. Using browserstack use IE 11 visit the follow pages and make sure everything loads
+66. Using browserstack select IE 11 browser on windows 10. Visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
