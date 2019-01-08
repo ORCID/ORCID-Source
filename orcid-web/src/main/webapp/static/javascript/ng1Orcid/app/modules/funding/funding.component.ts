@@ -52,7 +52,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     fundingImportWizardList: any;
     groups: any;
     moreInfo: any;
-    noLinkFlag: boolean;
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
@@ -77,7 +76,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.fundingImportWizard = false;
         this.groups = new Array();
         this.moreInfo = {};
-        this.noLinkFlag = true;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
@@ -258,9 +256,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 data => {
                     console.log (data)
                     this.fundingImportWizardList = data;
-                    if(data == null || data.length == 0) {
-                        this.noLinkFlag = false;
-                    }
                 },
                 error => {
                     console.log('getFundingImportWizardsError', error);

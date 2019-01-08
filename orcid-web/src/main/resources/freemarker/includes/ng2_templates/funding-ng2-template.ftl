@@ -1,10 +1,4 @@
 <script type="text/ng-template" id="funding-ng2-template">
-    <#list fundingImportWizards?sort_by("name") as thirdPartyDetails>
-        ${thirdPartyDetails.name}<br>
-        ${thirdPartyDetails.id}<br>
-        ${thirdPartyDetails.scopes}<br>
-        ${thirdPartyDetails.redirectUri}<br>
-    </#list>
     <div>
         <!-- Funding -->
         <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && groups.length < 1">
