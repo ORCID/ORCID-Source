@@ -69,7 +69,14 @@
                 <span *ngIf="orgDisambiguatedExternalIdentifier.all && (orgDisambiguatedExternalIdentifier.all.length > 1 || (orgDisambiguatedExternalIdentifier.preferred && (orgDisambiguatedExternalIdentifier.all[0] != orgDisambiguatedExternalIdentifier.preferred)))">,</span>   
                 <span *ngIf="orgDisambiguatedExternalIdentifier.all">
                     <span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all;let last = last">
-                        <span *ngIf="orgDisambiguatedExternalIdentifierAll != orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifierAll}}{{last ? '' : ', '}}</span>                                        
+                        <span *ngIf="orgDisambiguatedExternalIdentifierAll != orgDisambiguatedExternalIdentifier.preferred">
+                        <ng-container *ngIf="isUrl(orgDisambiguatedExternalIdentifierAll)">
+                            <a href="{{orgDisambiguatedExternalIdentifierAll}}">{{orgDisambiguatedExternalIdentifierAll}} </a>{{last ? '' : ', '}}
+                        </ng-container>
+                        <ng-container *ngIf="!isUrl(orgDisambiguatedExternalIdentifierAll)">
+                            {{orgDisambiguatedExternalIdentifierAll}}{{last ? '' : ', '}}
+                        </ng-container>
+                        </span>                                        
                     </span>
                 </span>
             </li>
