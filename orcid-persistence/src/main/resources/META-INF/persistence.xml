@@ -85,7 +85,8 @@
 		<class>org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity</class>
 		<class>org.orcid.persistence.jpa.entities.BackupCodeEntity</class>
 		<class>org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity</class>
-		<class>org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity</class>		
+		<class>org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity</class>
+		<class>org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity</class>		
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
