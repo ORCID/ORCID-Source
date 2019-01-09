@@ -270,4 +270,5 @@
 	<include file="/db/updates/add_obo_client_details_id_to_token.xml" />
 	<include file="/db/updates/add_assertion_origin_columns.xml" />
 	<include file="/db/updates/update_assertion_origin_constraints.xml" />
+	<include file="/db/updates/validated_public_profile_table.xml" />
 </databaseChangeLog>
