@@ -64,9 +64,9 @@ import org.orcid.jaxb.model.v3.rc2.record.Qualification;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.Service;
+import org.orcid.jaxb.model.v3.rc2.record.SubjectName;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
@@ -558,9 +558,9 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview1.setRole(Role.CHAIR);
         peerReview1.setSubjectContainerName(new Title("subject-container-name"));
         peerReview1.setSubjectExternalIdentifier(wei1);
-        WorkTitle workTitle1 = new WorkTitle();
-        workTitle1.setTitle(new Title("work-title"));
-        peerReview1.setSubjectName(workTitle1);
+        SubjectName subjectName1 = new SubjectName();
+        subjectName1.setTitle(new Title("subject-names"));
+        peerReview1.setSubjectName(subjectName1);
         peerReview1.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview1.setType(PeerReviewType.EVALUATION);
 
@@ -587,9 +587,9 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview2.setRole(Role.CHAIR);
         peerReview2.setSubjectContainerName(new Title("subject-container-name"));
         peerReview2.setSubjectExternalIdentifier(wei2);
-        WorkTitle workTitle2 = new WorkTitle();
-        workTitle2.setTitle(new Title("work-title"));
-        peerReview2.setSubjectName(workTitle2);
+        SubjectName subjectName2 = new SubjectName();
+        subjectName2.setTitle(new Title("subject-name"));
+        peerReview2.setSubjectName(subjectName2);
         peerReview2.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview2.setType(PeerReviewType.EVALUATION);
 

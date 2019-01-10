@@ -71,6 +71,7 @@ import org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
 import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.SubjectName;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
@@ -676,7 +677,7 @@ public class ActivityValidatorTest {
         peerReview.setRole(Role.CHAIR);
         peerReview.setSubjectContainerName(new Title("subject-container-name"));
         peerReview.setSubjectExternalIdentifier(getExternalID());
-        peerReview.setSubjectName(getWorkTitle());
+        peerReview.setSubjectName(getSubjectName());
         peerReview.setSubjectType(PeerReviewSubjectType.ARTISTIC_PERFORMANCE);
         peerReview.setSubjectUrl(new Url("http://test.orcid.org"));
         peerReview.setType(PeerReviewType.EVALUATION);
@@ -782,6 +783,14 @@ public class ActivityValidatorTest {
         id1.setValue("value1");
         id1.setUrl(new Url("http://value1.com"));
         return id1;
+    }
+    
+    public SubjectName getSubjectName() {
+        SubjectName name = new SubjectName();
+        name.setTitle(new Title("title"));
+        name.setSubtitle(new Subtitle("subtitle"));
+        name.setTranslatedTitle(new TranslatedTitle("translated title", "en"));
+        return name;
     }
     
     public WorkTitle getWorkTitle() {

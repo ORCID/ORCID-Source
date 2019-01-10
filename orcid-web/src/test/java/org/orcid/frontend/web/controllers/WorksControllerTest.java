@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
@@ -83,7 +84,7 @@ public class WorksControllerTest extends BaseControllerTest {
     }
     
     @Test
-    public void testGroupWorks() {
+    public void testGroupWorks() throws MissingGroupableExternalIDException {
         WorkManager oldWorkManager = (WorkManager) ReflectionTestUtils.getField(worksController, "workManager");
         WorkManager mockWorkManager = Mockito.mock(WorkManager.class);
         Mockito.doNothing().when(mockWorkManager).createNewWorkGroup(Mockito.anyList(), Mockito.anyString());

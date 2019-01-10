@@ -79,6 +79,12 @@ export class FundingService {
             getBaseUri() + '/fundings/fundingGroups.json?sort=' + sort + '&sortAsc=' + sortAsc
         )    
     }
+
+    getFundingImportWizardList(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/workspace/retrieve-funding-import-wizards.json'
+        )
+    }
     
     getFundingDetails(putCode): Observable<any> {
         this.loading = true;

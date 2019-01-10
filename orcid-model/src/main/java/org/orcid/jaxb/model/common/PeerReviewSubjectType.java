@@ -2,8 +2,6 @@ package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlEnumValue;
-
 public enum PeerReviewSubjectType implements Serializable {
     ARTISTIC_PERFORMANCE("artistic-performance"),
     BOOK_CHAPTER("book-chapter"),
@@ -15,7 +13,7 @@ public enum PeerReviewSubjectType implements Serializable {
     DATA_SET("data-set"),
     DICTIONARY_ENTRY("dictionary-entry"),
     DISCLOSURE("disclosure"),
-    DISSERTATION("dissertation"),
+    DISSERTATION_THESIS("dissertation-thesis"),
     EDITED_BOOK("edited-book"),
     ENCYCLOPEDIA_ENTRY("encyclopedia-entry"),
     INVENTION("invention"),

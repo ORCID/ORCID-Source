@@ -19,7 +19,7 @@
 		<common:host>orcid.org</common:host>
 	</common:orcid-identifier>
 	<preferences:preferences>
-		<preferences:locale>en</preferences:locale>
+		<preferences:locale>zh_CN</preferences:locale>
 	</preferences:preferences>
 	<history:history visibility="private">
 		<history:creation-method>API</history:creation-method>

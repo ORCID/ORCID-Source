@@ -26,12 +26,12 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.PeerReviewSubjectType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.rc2.common.Locale;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.Addresses;
@@ -530,7 +530,7 @@ public class ValidateV3_rc2SamplesTest {
                 "/record_3.0_rc2/preferences-3.0_rc2.xsd");
         assertNotNull(preferences);
         assertNotNull(preferences.getLocale());
-        assertEquals(Locale.EN, preferences.getLocale());
+        assertEquals(AvailableLocales.EN, preferences.getLocale());
     }
 
     @Test
@@ -970,8 +970,10 @@ public class ValidateV3_rc2SamplesTest {
     public void testUnmarshallRecord() throws SAXException, URISyntaxException {
         Record record = (Record) unmarshallFromPath("/record_3.0_rc2/samples/read_samples/record-3.0_rc2.xml", Record.class, "/record_3.0_rc2/record-3.0_rc2.xsd");
         assertNotNull(record);
+        assertNotNull(record.getPreferences());
+        assertEquals(AvailableLocales.ZH_CN, record.getPreferences().getLocale());
         // Check activities
-        assertNotNull(record.getActivitiesSummary());
+        assertNotNull(record.getActivitiesSummary());        
         ActivitiesSummary activities = record.getActivitiesSummary();
         assertNotNull(activities.getLastModifiedDate());
 

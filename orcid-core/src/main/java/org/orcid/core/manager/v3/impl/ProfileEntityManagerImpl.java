@@ -43,7 +43,8 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc2.record.Biography;
@@ -434,7 +435,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     @Transactional
-    public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
+    public boolean claimProfileAndUpdatePreferences(String orcid, String email, AvailableLocales locale, Claim claim) {
         // Verify the email
         boolean emailVerified = emailManager.verifySetCurrentAndPrimary(orcid, email);
         if (!emailVerified) {
@@ -518,7 +519,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void updateLocale(String orcid, Locale locale) {
+    public void updateLocale(String orcid, AvailableLocales locale) {
         profileDao.updateLocale(orcid, locale.name());
     }
 
@@ -608,8 +609,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public Locale retrieveLocale(String orcid) {
-        return Locale.valueOf(profileDao.retrieveLocale(orcid));
+    public AvailableLocales retrieveLocale(String orcid) {
+        return AvailableLocales.valueOf(profileDao.retrieveLocale(orcid));
     }
 
     /**

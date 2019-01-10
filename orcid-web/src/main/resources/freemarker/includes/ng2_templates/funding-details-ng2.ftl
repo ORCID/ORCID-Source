@@ -144,6 +144,12 @@
                     <div class="content" *ngIf="fundingService.details[funding.putCode.value] != undefined">  
                         <span class="dotted-bar"></span>    
                         <div class="row">        
+                            <div class="org-ids" *ngIf="funding?.disambiguatedFundingSourceId?.value">
+                                <div class="col-md-12">   
+                                    <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+                                    <org-identifier-popover-ng2 [value]="funding?.disambiguatedFundingSourceId?.value" [putCode]="funding?.putCode?.value" [type]="funding?.disambiguationSource?.value"></org-identifier-popover-ng2>
+                                </div>
+                            </div><!--org-ids-->
                             <!-- Funding subtype -->
                             <div class="col-md-6" *ngIf="fundingService.details[funding.putCode.value]?.organizationDefinedFundingSubType?.subtype?.value" >
                                 <div class="bottomBuffer">                    

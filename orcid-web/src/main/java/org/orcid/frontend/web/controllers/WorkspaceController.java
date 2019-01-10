@@ -1,14 +1,17 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -107,9 +110,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody List<ImportWizzardClientForm> retrieveWorkImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport(localeManager.getLocale());        
     }
-
-    @ModelAttribute("fundingImportWizards")
-    public List<ImportWizzardClientForm> retrieveFundingImportWizards() {
+    
+    @RequestMapping(value = { "/workspace/retrieve-funding-import-wizards.json" }, method = RequestMethod.GET)
+    public @ResponseBody List<ImportWizzardClientForm> retrieveFundingImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeFundingImport(localeManager.getLocale());
     }
     
@@ -509,6 +512,14 @@ public class WorkspaceController extends BaseWorkspaceController {
         }
         return tpr;
     }        
+    
+    @RequestMapping(value = "/countryNamesToCountryCodes.json", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> getCountryNamesToCountryCodesMap() {
+        Locale locale = localeManager.getLocale();
+        Map<String, String> countryMap = localeManager.getCountries(locale);
+        Map<String, String> mapInversed = countryMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        return mapInversed;
+    }
     
     /**
      * Reads the latest cache version from database, compare it against the
