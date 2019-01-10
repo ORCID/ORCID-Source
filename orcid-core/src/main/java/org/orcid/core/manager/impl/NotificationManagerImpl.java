@@ -204,55 +204,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     public void setMailGunManager(MailGunManager mailGunManager) {
         this.mailGunManager = mailGunManager;
-    }
-
-    @Override
-    public void sendWelcomeEmail(String userOrcid, String email) {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
-        Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        String subject = getSubject("email.subject.register.thanks", userLocale);
-        String emailName = deriveEmailFriendlyName(profileEntity);
-        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        String orcidId = userOrcid;
-        String baseUri = orcidUrlManager.getBaseUrl();
-        String baseUriHttp = orcidUrlManager.getBaseUriHttp();
-
-        templateParams.put("subject", subject);
-        templateParams.put("emailName", emailName);
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("orcidId", orcidId);
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("baseUriHttp", baseUriHttp);
-
-        SourceEntity source = sourceManager.retrieveSourceEntity();
-        if (source != null) {
-            String sourceId = SourceEntityUtils.getSourceId(source);
-            String sourceName = SourceEntityUtils.getSourceName(source);
-            // If the source is not the user itself
-            if (sourceId != null && !sourceId.equals(orcidId)) {
-                if (!PojoUtil.isEmpty(sourceName)) {
-                    String paramValue = " " + messages.getMessage("common.through", null, userLocale) + " " + sourceName + ".";
-                    templateParams.put("source_name_if_exists", paramValue);
-                } else {
-                    templateParams.put("source_name_if_exists", ".");
-                }
-            } else {
-                templateParams.put("source_name_if_exists", ".");
-            }
-        } else {
-            templateParams.put("source_name_if_exists", ".");
-        }
-
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("welcome_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("welcome_email_html.ftl", templateParams);
-
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
-    }
+    }    
 
     @Override
     public void sendOrcidDeactivateEmail(String userOrcid) {
@@ -310,23 +262,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String html = templateManager.processTemplate("locked_orcid_email_html.ftl", templateParams);
 
         mailGunManager.sendEmail(LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
-    }
-
-    // look like the following is our best best for i18n emails
-    // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
-    @Override
-    public void sendVerificationEmail(String userOrcid, String email) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(profile);
-        Locale locale = getUserLocaleFromProfileEntity(profile);
-        String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
-        // Generate body from template
-        String body = templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
-    }    
+    } 
 
     @Override
     public String createUpdateEmailFrequencyUrl(String email) {
