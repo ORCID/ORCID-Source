@@ -4,7 +4,12 @@
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
+            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+            </@orcid.checkFeatureStatus>
+            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
                 <div class="col-md-3 col-sm-3 col-xs-12">
+            </@orcid.checkFeatureStatus>
                     <div>
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
@@ -23,7 +28,12 @@
                         </#if>
                     </div>
                 </div>
-                <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
+                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
+                    <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
+                </@orcid.checkFeatureStatus> 
+                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
+                    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
+                </@orcid.checkFeatureStatus> 
                     <!--Sort menu-->
                     <div class="menu-container">                                     
                         <ul class="toggle-menu">
@@ -154,7 +164,7 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <p class="wizard-content">
-                            <@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
+                            <@orcid.msg 'workspace.LinkResearchActivities.description'/> <a target="workspace.LinkResearchActivities.description.more_info" href="https://support.orcid.org/hc/en-us/articles/360006973653-Add-works-by-direct-import-from-other-systems"> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/> </a>
                         </p>
                     </div>
                 </div>
@@ -392,28 +402,52 @@
         <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
             <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
                 <#if !(isPublicProfile??)>
-                    <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
                         <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
+                                <@orcid.checkFeatureStatus featureName='GROUPING_SUGGESTIONS'>
+                                    <div class="pull-right" *ngIf="groupingSuggestionPresent">
+                                        <div class="orcid-error font-size-small">
+                                            <span class="edit-option-toolbar glyphicon glyphicon-exclamation-sign"></span>
+                                            {{groupingSuggestion.putCodes.length}} <@orcid.msg 'groups.merge.suggestion.alert'/>
+                                            <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
+                                                <@orcid.msg 'groups.merge.suggestion.manage_duplicates'/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </@orcid.checkFeatureStatus>
                             <ul class="sources-actions">
                                 <li>
                                     <div class="left">
-                                        <input type="checkbox" [value]="allSelected" (click)="toggleSelectAll()" />
+                                        <input type="checkbox" [ngModel]="allSelected" (click)="toggleSelectAll()" />
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="left leftBuffer">
-                                        <a (click)="mergeConfirm()">
+                                    <div class="left leftBuffer bulk-edit-merge popover-help-container" (mouseenter)="showTooltip('worksBulkEditMerge')" 
+                                        (mouseleave)="hideTooltip('worksBulkEditMerge')">
+                                        <button class="btn btn-white-no-border" [disabled]="bulkSelectedCount < 2"  (click)="mergeConfirm()">
                                             <span class="edit-option-toolbar glyphicon glyphicon-resize-small"></span>
                                             <span><@orcid.msg 'workspace.bulkedit.merge'/></span>
-                                        </a>
+                                        </button>
+                                        <div class="popover top" [ngClass]="showElement['worksBulkEditMerge'] == true ? 'block' : ''">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <@orcid.msg 'groups.merge.helpPopoverMerge_1'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'common.learn_more'/></a>
+                                            </div>                
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
-                                    <div class="left leftBuffer">
-                                        <a (click)="deleteBulkConfirm()">
+                                    <div class="left leftBuffer bulk-edit-delete popover-help-container" (mouseenter)="showTooltip('worksBulkEditDelete')" (mouseleave)="hideTooltip('worksBulkEditDelete')">
+                                        <button class="btn btn-white-no-border" [disabled]="bulkSelectedCount < 1" (click)="deleteBulkConfirm()">
                                             <span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
                                             <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
-                                        </a>
+                                        </button>
+                                        <div class="popover top" [ngClass]="showElement['worksBulkEditDelete'] == true ? 'block' : ''">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <@orcid.msg 'groups.bulk_delete.helpPopover'/>
+                                            </div>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -426,21 +460,13 @@
                                         privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
                                     </div>
                                 </li>
-                                <li>
-                                    <div class="popover-help-container">
-                                        <i class="glyphicon glyphicon-question-sign"></i>
-                                        <div class="bulk-actions-popover popover bottom">
-                                            <div class="arrow"></div>
-                                            <div class="popover-content">
-                                                <p>
-                                                    <span class="helpPopoverMergeHeading"><@orcid.msg 'groups.merge.helpPopoverMergeHeading'/></span><@orcid.msg 'groups.merge.helpPopoverMerge'/><br />
-                                                    <span class="helpPopoverDeleteBulkEditHeading"><@orcid.msg 'groups.merge.helpPopoverDeleteBulkEditHeading'/></span><@orcid.msg 'groups.merge.helpPopoverDeleteBulkEdit'/>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div> 
-                                </li>
                             </ul>
+                            <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError">
+                                <@orcid.msg 'groups.merge.no_external_ids_1'/> <a target="groups.merge.no_external_ids_2" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
+                                <button class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
+                                     <@orcid.msg 'common.cookies.dismiss'/>
+                                </button>
+                            </div>
                         </div>
                     </div>  
                 </#if>            

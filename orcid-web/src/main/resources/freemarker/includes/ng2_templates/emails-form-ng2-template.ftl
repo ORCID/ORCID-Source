@@ -120,9 +120,9 @@
                                 </div>          
                                 <div *ngIf="!isPassConfReq">
                                     <div class="add-email">
-                                        <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-                                        (keyup.enter)="checkCredentials(popUp)" class="input-xlarge inline-input" [(ngModel)]="inputEmail.value"
-                                        required />
+                                        <label hidden for="addEmail">${springMacroRequestContext.getMessage("manage.add_another_email")}</label>
+                                        <input type="email" name="addEmail" id="addEmail" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
+                                        (keyup.enter)="checkCredentials(popUp)" class="input-xlarge inline-input" [(ngModel)]="inputEmail.value" required/>
                                         <span (click)="checkCredentials(popUp)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>       
                                         <span class="orcid-error"
                                             *ngIf="inputEmail?.errors?.length > 0"> <span

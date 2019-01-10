@@ -41,9 +41,10 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc2.common.Locale;
-import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
+import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc2.record.Biography;
@@ -377,7 +378,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
 
         // If it is a member, return the credit name
-        if (OrcidType.GROUP.equals(member.getOrcidType())) {
+        if (OrcidType.GROUP.name().equals(member.getOrcidType())) {
             return recordName.getCreditName();
         }
 
@@ -399,7 +400,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public String getHash(String string) {
+    public String getOrcidHash(String string) {
         if (PojoUtil.isEmpty(string)) {
             return null;
         }
@@ -407,8 +408,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             return encryptionManager.sha256Hash(string);
         } catch(NoSuchAlgorithmException nsae) {
             throw new RuntimeException(nsae);
-        }
-        
+        }        
     }
 
     @Override
@@ -435,7 +435,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     @Transactional
-    public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
+    public boolean claimProfileAndUpdatePreferences(String orcid, String email, AvailableLocales locale, Claim claim) {
         // Verify the email
         boolean emailVerified = emailManager.verifySetCurrentAndPrimary(orcid, email);
         if (!emailVerified) {
@@ -519,18 +519,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void updateLocale(String orcid, Locale locale) {
+    public void updateLocale(String orcid, AvailableLocales locale) {
         profileDao.updateLocale(orcid, locale.name());
     }
 
     @Override
     public boolean isProfileClaimedByEmail(String email) {
-        try {
-            String emailHash = encryptionManager.sha256Hash(email.trim().toLowerCase());
-            return profileDao.getClaimedStatusByEmailHash(emailHash);
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
+        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));        
     }
     
     @Override
@@ -540,10 +535,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
-                LOGGER.info("About to reactivate record, orcid={}", orcid);
-                String orcid = emailManager.findOrcidIdByEmail(primaryEmail);
+                LOGGER.info("About to reactivate record, orcid={}", orcid);                
                 // Populate primary email
-                emailManager.reactivatePrimaryEmail(orcid, primaryEmail, getHash(primaryEmail));
+                String primaryEmailTrim = primaryEmail.trim();                    
+                emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim);
                 if(reactivation == null) {
                     // Delete any non primary email
                     emailManager.clearEmailsAfterReactivation(orcid);                    
@@ -552,9 +547,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                     if(reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
                         for(Text additionalEmail : reactivation.getEmailsAdditional()) {
                             if(!PojoUtil.isEmpty(additionalEmail)) {
-                                String email = additionalEmail.getValue();
-                                String hash = getHash(email);
-                                boolean isNewEmailOrShouldNotify = emailManager.reactivateOrCreate(orcid, email, hash, reactivation.getActivitiesVisibilityDefault().getVisibility());                                      
+                                String email = additionalEmail.getValue().trim();                                
+                                boolean isNewEmailOrShouldNotify = emailManager.reactivateOrCreate(orcid, email, reactivation.getActivitiesVisibilityDefault().getVisibility());                                      
                                 if(isNewEmailOrShouldNotify) {
                                     emailsToNotify.add(email);
                                 }
@@ -615,8 +609,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public Locale retrieveLocale(String orcid) {
-        return Locale.valueOf(profileDao.retrieveLocale(orcid));
+    public AvailableLocales retrieveLocale(String orcid) {
+        return AvailableLocales.valueOf(profileDao.retrieveLocale(orcid));
     }
 
     /**

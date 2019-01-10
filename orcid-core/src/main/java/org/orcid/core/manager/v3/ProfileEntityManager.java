@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.Reactivation;
@@ -47,17 +47,17 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     void disableApplication(Long tokenId, String userOrcid);
     
-    String getHash(String orcid);
+    String getOrcidHash(String orcid);
     
     String retrivePublicDisplayName(String orcid);
     
-    boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim);
+    boolean claimProfileAndUpdatePreferences(String orcid, String email, AvailableLocales locale, Claim claim);
     
     boolean deactivateRecord(String orcid);
     
     void updateLastModifed(String orcid);
 
-    void updateLocale(String orcid, Locale locale);
+    void updateLocale(String orcid, AvailableLocales locale);
 
     void reactivate(String orcid, String primaryEmail, Reactivation reactivation);
 
@@ -67,7 +67,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     public void updateLastLoginDetails(String orcid, String ipAddress);
     
-    public Locale retrieveLocale(String orcid);      
+    public AvailableLocales retrieveLocale(String orcid);      
     
     boolean lockProfile(String orcid, String lockReason, String description);
 

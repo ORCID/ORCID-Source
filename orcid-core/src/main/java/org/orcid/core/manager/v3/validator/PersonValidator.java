@@ -9,12 +9,13 @@ import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.Keyword;
 import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -26,7 +27,7 @@ public class PersonValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonValidator.class);
     
-    public static void validateResearcherUrl(ResearcherUrl researcherUrl, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public static void validateResearcherUrl(ResearcherUrl researcherUrl, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if(researcherUrl == null)
             return;
         
@@ -55,11 +56,7 @@ public class PersonValidator {
         }
         if(createFlag) {
             if(researcherUrl.getPutCode() != null) {
-                Map<String, String> params = new HashMap<String, String>();
-                if (sourceEntity != null) {
-                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-                }
-                throw new InvalidPutCodeException(params);
+                throw InvalidPutCodeException.forSource(activeSource);
             }                        
         } else {
             if(researcherUrl.getPutCode() == null) {
@@ -72,14 +69,10 @@ public class PersonValidator {
         validateAndFixVisibility(researcherUrl, createFlag, isApiRequest, originalVisibility);
     }
     
-    public static void validateOtherName(OtherName otherName, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public static void validateOtherName(OtherName otherName, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if(createFlag) {
             if(otherName.getPutCode() != null) {
-                Map<String, String> params = new HashMap<String, String>();
-                if (sourceEntity != null) {
-                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-                }
-                throw new InvalidPutCodeException(params);
+                throw InvalidPutCodeException.forSource(activeSource);
             }                        
         } else {
             if(otherName.getPutCode() == null) {
@@ -92,7 +85,7 @@ public class PersonValidator {
         validateAndFixVisibility(otherName, createFlag, isApiRequest, originalVisibility);
     }
     
-    public static void validateExternalIdentifier(PersonExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility, boolean requireRelationshipOnExternalIdentifier) {
+    public static void validateExternalIdentifier(PersonExternalIdentifier externalIdentifier, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility, boolean requireRelationshipOnExternalIdentifier) {
         //Validate common name not empty
         if(PojoUtil.isEmpty(externalIdentifier.getType())) {
             String message = "Common name field must not be empty";
@@ -143,11 +136,7 @@ public class PersonValidator {
         
         if(createFlag) {
             if(externalIdentifier.getPutCode() != null) {
-                Map<String, String> params = new HashMap<String, String>();
-                if (sourceEntity != null) {
-                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-                }
-                throw new InvalidPutCodeException(params);
+                throw InvalidPutCodeException.forSource(activeSource);
             }                        
         } else {
             if(externalIdentifier.getPutCode() == null) {
@@ -160,14 +149,10 @@ public class PersonValidator {
         validateAndFixVisibility(externalIdentifier, createFlag, isApiRequest, originalVisibility);        
     }
     
-    public static void validateKeyword(Keyword keyword, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public static void validateKeyword(Keyword keyword, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if(createFlag) {
             if(keyword.getPutCode() != null) {
-                Map<String, String> params = new HashMap<String, String>();
-                if (sourceEntity != null) {
-                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-                }
-                throw new InvalidPutCodeException(params);
+                throw InvalidPutCodeException.forSource(activeSource);
             }                        
         } else {
             if(keyword.getPutCode() == null) {
@@ -186,14 +171,10 @@ public class PersonValidator {
         validateAndFixVisibility(keyword, createFlag, isApiRequest, originalVisibility);
     }
     
-    public static void validateAddress(Address address, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public static void validateAddress(Address address, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if(createFlag) {
             if(address.getPutCode() != null) {
-                Map<String, String> params = new HashMap<String, String>();
-                if (sourceEntity != null) {
-                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-                }
-                throw new InvalidPutCodeException(params);
+                throw InvalidPutCodeException.forSource(activeSource);
             }                        
         } else {
             if(address.getPutCode() == null) {

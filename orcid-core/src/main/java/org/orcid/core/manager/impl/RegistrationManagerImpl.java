@@ -20,6 +20,7 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.VerifyRegistrationToken;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -227,7 +228,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setUserLastIp(ip);
         newRecord.setLastLogin(now);
         newRecord.setCreationMethod(PojoUtil.isEmpty(registration.getCreationType()) ? CreationMethod.DIRECT.value() : registration.getCreationType().getValue());
-        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN.name() : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()).name());
+        newRecord.setLocale(locale == null ? AvailableLocales.EN.name() : AvailableLocales.fromValue(locale.toString()).name());
         // Visibility defaults
         newRecord.setActivitiesVisibilityDefault(registration.getActivitiesVisibilityDefault().getVisibility().name());
 
@@ -238,11 +239,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         EmailEntity emailEntity = new EmailEntity();
         String email = registration.getEmail().getValue().trim();
         emailEntity.setEmail(email);
-        try {
-            emailEntity.setId(encryptionManager.sha256Hash(email.toLowerCase()));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        emailEntity.setId(encryptionManager.getEmailHash(email));
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
@@ -259,11 +256,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                 EmailEntity emailAdditionalEntity = new EmailEntity();
                 String emailValue = emailAdditional.getValue().trim();
                 emailAdditionalEntity.setEmail(emailValue);
-                try {
-                    emailAdditionalEntity.setId(encryptionManager.sha256Hash(emailValue.toLowerCase()));
-                } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
-                }
+                emailAdditionalEntity.setId(encryptionManager.getEmailHash(emailValue));
                 emailAdditionalEntity.setProfile(newRecord);
                 emailAdditionalEntity.setPrimary(false);
                 emailAdditionalEntity.setCurrent(true);

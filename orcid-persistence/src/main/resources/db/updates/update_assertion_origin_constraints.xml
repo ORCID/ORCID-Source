@@ -1,0 +1,27 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+	<changeSet author="Tom Demeranville" id="UPDATE-ASSERTION-ORIGIN-CONSTRAINTS-HSQL" dbms="hsqldb">	
+	    <preConditions>
+			<dbms type="hsqldb"/>
+		</preConditions>
+		<dropUniqueConstraint tableName="researcher_url" constraintName="researcher_url_orcid_source_unique_key"/>
+    	<dropUniqueConstraint tableName="researcher_url" constraintName="researcher_url_orcid_client_source_unique_key"/>
+    	<addUniqueConstraint tableName="researcher_url" columnNames="url, orcid, source_id, client_source_id,assertion_origin_source_id,assertion_origin_client_source_id" constraintName="researcher_url_orcid_source_unique_key"/>
+        <dropUniqueConstraint tableName="external_identifier" constraintName="unique_external_identifiers_allowing_multiple_sources"/>
+  	    <addUniqueConstraint tableName="external_identifier" columnNames="orcid, external_id_reference, external_id_type, source_id, client_source_id,assertion_origin_source_id,assertion_origin_client_source_id" constraintName="unique_external_identifiers_allowing_multiple_sources"/>
+	</changeSet>
+
+     <changeSet author="Tom Demeranville" id="UPDATE-ASSERTION-ORIGIN-CONSTRAINTS" dbms="postgresql">
+		 <preConditions onFail="MARK_RAN">
+		    <sqlCheck expectedResult="0">select count (*) from pg_constraint where conname='researcher_url_orcid_source_unique_key'</sqlCheck>
+		 </preConditions>		
+	    	<dropUniqueConstraint tableName="researcher_url" constraintName="researcher_url_orcid_source_unique_key"/>
+	    	<dropUniqueConstraint tableName="researcher_url" constraintName="researcher_url_orcid_client_source_unique_key"/>
+	    	<addUniqueConstraint tableName="researcher_url" columnNames="url, orcid, source_id, client_source_id,assertion_origin_source_id,assertion_origin_client_source_id" constraintName="researcher_url_orcid_source_unique_key"/>
+  	        <dropUniqueConstraint tableName="external_identifier" constraintName="unique_external_identifiers_allowing_multiple_sources"/>
+  	        <addUniqueConstraint tableName="external_identifier" columnNames="orcid, external_id_reference, external_id_type, source_id, client_source_id,assertion_origin_source_id,assertion_origin_client_source_id" constraintName="unique_external_identifiers_allowing_multiple_sources"/>
+	</changeSet>
+    
+</databaseChangeLog>

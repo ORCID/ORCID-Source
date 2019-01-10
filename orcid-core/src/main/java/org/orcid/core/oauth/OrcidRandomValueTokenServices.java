@@ -26,4 +26,5 @@ public interface OrcidRandomValueTokenServices {
     void setCustomTokenEnhancer(TokenEnhancer customTokenEnhancer);
     
     boolean longLifeTokenExist(String clientId, String userId, Collection<String> scopes);
+
 }

@@ -18,6 +18,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.orcid.integration.blackbox.api.BlackBoxBaseV3;
 import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.Distinction;
@@ -32,7 +33,6 @@ import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc2.record.Qualification;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.Service;
 import org.orcid.jaxb.model.v3.rc2.record.Work;

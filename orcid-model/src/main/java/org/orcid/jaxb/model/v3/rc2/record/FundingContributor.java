@@ -7,18 +7,17 @@
 
 package org.orcid.jaxb.model.v3.rc2.record;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.CreditName;
-
-import java.io.Serializable;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -123,7 +122,7 @@ public class FundingContributor implements Serializable {
      * 
      * @return
      *     possible object is
-     *     {@link ContributorAttributes }
+     *     {@link FundingContributorAttributes }
      *     
      */
     public FundingContributorAttributes getContributorAttributes() {
@@ -135,7 +134,7 @@ public class FundingContributor implements Serializable {
      * 
      * @param value
      *     allowed object is
-     *     {@link ContributorAttributes }
+     *     {@link FundingContributorAttributes }
      *     
      */
     public void setContributorAttributes(FundingContributorAttributes value) {

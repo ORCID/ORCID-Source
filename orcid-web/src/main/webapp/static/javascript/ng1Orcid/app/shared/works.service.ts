@@ -516,18 +516,20 @@ export class WorksService {
         );
     }
     
-    markSuggestionAccepted(suggestionId): any {
+    markSuggestionAccepted(suggestion): any {
+        let encoded_data = JSON.stringify(suggestion);
         return this.http.post( 
-            getBaseUri() + '/works/acceptGroupingSuggestion/' + suggestionId, 
-            {}, 
+            getBaseUri() + '/works/acceptGroupingSuggestion.json', 
+            encoded_data, 
             { headers: this.headers }
         );
     }
     
-    markSuggestionRejected(suggestionId): any {
+    markSuggestionRejected(suggestion): any {
+        let encoded_data = JSON.stringify(suggestion);
         return this.http.post( 
-            getBaseUri() + '/works/rejectGroupingSuggestion/' + suggestionId, 
-            {}, 
+            getBaseUri() + '/works/rejectGroupingSuggestion.json', 
+            encoded_data,  
             { headers: this.headers }
         );
     }

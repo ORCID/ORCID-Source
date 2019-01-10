@@ -80,7 +80,7 @@ public class AddressTest extends BlackBoxBaseV3_0_rc2 {
         assertNotNull(accessToken);
 
         org.orcid.jaxb.model.v3.rc2.record.Address address = new org.orcid.jaxb.model.v3.rc2.record.Address();
-        address.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.CR));
+        address.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.common.Iso3166Country.CR));
 
         // Create
         ClientResponse response = memberV3Rc2ApiClient.createAddress(getUser1OrcidId(), address, accessToken);
@@ -104,10 +104,10 @@ public class AddressTest extends BlackBoxBaseV3_0_rc2 {
         boolean foundUS = false;
 
         for (org.orcid.jaxb.model.v3.rc2.record.Address add : addresses.getAddress()) {
-            if (add.getCountry().getValue().equals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.CR)) {
+            if (add.getCountry().getValue().equals(org.orcid.jaxb.model.common.Iso3166Country.CR)) {
                 assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED, add.getVisibility());
                 foundCR = true;
-            } else if (add.getCountry().getValue().equals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US)) {
+            } else if (add.getCountry().getValue().equals(org.orcid.jaxb.model.common.Iso3166Country.US)) {
                 assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC, add.getVisibility());
                 foundUS = true;
             }
@@ -125,7 +125,7 @@ public class AddressTest extends BlackBoxBaseV3_0_rc2 {
         assertEquals(getClient1ClientId(), address.getSource().retrieveSourcePath());
         assertNotNull(address.getCountry());
         assertNotNull(address.getCountry().getValue());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.CR, address.getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.CR, address.getCountry().getValue());
         assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED, address.getVisibility());
         assertNotNull(address.getDisplayIndex());
         Long originalDisplayIndex = address.getDisplayIndex();
@@ -146,7 +146,7 @@ public class AddressTest extends BlackBoxBaseV3_0_rc2 {
         address.setVisibility(originalVisibility);
 
         // Update
-        address.getCountry().setValue(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.PA);
+        address.getCountry().setValue(org.orcid.jaxb.model.common.Iso3166Country.PA);
         response = memberV3Rc2ApiClient.updateAddress(getUser1OrcidId(), address, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
@@ -155,7 +155,7 @@ public class AddressTest extends BlackBoxBaseV3_0_rc2 {
         org.orcid.jaxb.model.v3.rc2.record.Address updatedAddress = response.getEntity(org.orcid.jaxb.model.v3.rc2.record.Address.class);
         assertNotNull(updatedAddress);
         assertNotNull(updatedAddress.getCountry());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.PA, updatedAddress.getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.PA, updatedAddress.getCountry().getValue());
         assertEquals(address.getPutCode(), updatedAddress.getPutCode());
         assertEquals(originalDisplayIndex, updatedAddress.getDisplayIndex());
 
@@ -187,7 +187,7 @@ public class AddressTest extends BlackBoxBaseV3_0_rc2 {
         assertNotNull(addresses.getAddress());
         assertEquals(1, addresses.getAddress().size());
         assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED, addresses.getAddress().get(0).getVisibility());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());
         
         // SET THEM ALL TO PRIVATE
         showMyOrcidPage();
@@ -220,7 +220,7 @@ public class AddressTest extends BlackBoxBaseV3_0_rc2 {
 
         for (org.orcid.jaxb.model.v3.rc2.record.Address add : addresses.getAddress()) {
             assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC, add.getVisibility());
-            if (add.getCountry().getValue().equals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US)) {
+            if (add.getCountry().getValue().equals(org.orcid.jaxb.model.common.Iso3166Country.US)) {
                 found = true;                
             }
         }
@@ -239,7 +239,7 @@ public class AddressTest extends BlackBoxBaseV3_0_rc2 {
         assertNotNull(accessToken);
 
         org.orcid.jaxb.model.v3.rc2.record.Address address = new org.orcid.jaxb.model.v3.rc2.record.Address();
-        address.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.MX));
+        address.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.common.Iso3166Country.MX));
         address.setPutCode(1234567890L);
 
         ClientResponse response = memberV3Rc2ApiClient.updateAddress(getUser1OrcidId(), address, accessToken);

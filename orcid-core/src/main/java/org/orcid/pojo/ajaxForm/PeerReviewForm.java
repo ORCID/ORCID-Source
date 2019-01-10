@@ -357,7 +357,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
                     form.setCity(Text.valueOf(peerReview.getOrganization().getAddress().getCity()));
                 }
                 if (peerReview.getOrganization().getAddress().getCountry() != null) {
-                    form.setCountry(Text.valueOf(peerReview.getOrganization().getAddress().getCountry().value()));
+                    form.setCountry(Text.valueOf(peerReview.getOrganization().getAddress().getCountry().name()));
                 }
             }
 

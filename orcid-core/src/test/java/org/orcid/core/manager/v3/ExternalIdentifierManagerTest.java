@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,12 +22,17 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.v3.rc2.common.Country;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -37,11 +43,18 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-5555555555555555";
     private static final String CLIENT_2_ID = "APP-5555555555555556";
+    private static final String CLIENT_3_ID = "4444-4444-4444-4498";
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
 
     @Mock
+    private SourceManager mockSourceManager;
+
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
+    
+    @Resource(name = "orcidSecurityManagerV3")
+    OrcidSecurityManager orcidSecurityManager;
 
     @Resource(name = "externalIdentifierManagerV3")
     private ExternalIdentifierManager externalIdentifierManager;
@@ -53,9 +66,15 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(externalIdentifierManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(externalIdentifierManager, "sourceManager", mockSourceManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);        
     }
 
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(externalIdentifierManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
+    }
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
@@ -65,7 +84,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Test
     public void testAddExternalIdentifierToUnclaimedRecordPreserveExternalIdentifierVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PersonExternalIdentifier extId = getExternalIdentifier();
 
         extId = externalIdentifierManager.createExternalIdentifier(unclaimedOrcid, extId, true);
@@ -77,7 +96,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Test
     public void testAddExternalIdentifierToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PersonExternalIdentifier extId = getExternalIdentifier();
 
         extId = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
@@ -92,13 +111,13 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
         // Create from client # 1
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
         assertNotNull(extId1);
         assertNotNull(extId1.getPutCode());
         
         // Create from client # 2
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
         PersonExternalIdentifier extId2 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
         assertNotNull(extId2);
         assertNotNull(extId2.getPutCode());
@@ -112,7 +131,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
         // Create from client # 1
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
         assertNotNull(extId1);
         assertNotNull(extId1.getPutCode());
@@ -126,7 +145,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
         PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, false);
@@ -138,7 +157,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
         PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
@@ -186,6 +205,59 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         assertNotNull(elements.getExternalIdentifiers());
         assertEquals(1, elements.getExternalIdentifiers().size());
         assertEquals(Long.valueOf(13), elements.getExternalIdentifiers().get(0).getPutCode());
+    }
+    
+    @Test
+    public void testAssertionOriginUpdate() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        PersonExternalIdentifier extId = getExternalIdentifier();
+        extId.setType(extId.getType() + System.currentTimeMillis());
+        PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
+        assertNotNull(extId1);
+        assertNotNull(extId1.getPutCode());
+        
+        assertEquals(extId1.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(extId1.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
+        assertEquals(extId1.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
+        assertEquals(extId1.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
+        
+        //make a duplicate
+        PersonExternalIdentifier extId2 = getExternalIdentifier();
+        extId2.setType(extId.getType());
+        try {
+            extId2 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId2, true);
+            fail();
+        }catch(OrcidDuplicatedElementException e) {
+            
+        }
+        
+        //make a duplicate as a different assertion origin
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        extId2 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId2, true);
+        
+        //wrong sources:
+        extId1.setType(extId.getType()+"x");
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            externalIdentifierManager.updateExternalIdentifier(claimedOrcid, extId1, true);
+            fail();
+        }catch(WrongSourceException e) {
+        }
+        
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
+            externalIdentifierManager.updateExternalIdentifier(claimedOrcid, extId1, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));                
+            externalIdentifierManager.updateExternalIdentifier(claimedOrcid, extId1, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
     }
     
     private PersonExternalIdentifier getExternalIdentifier() {

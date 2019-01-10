@@ -141,6 +141,28 @@
 			</xs:choice>
 			<xs:element name="source-name" type="common:source-name"
 				minOccurs="0" />
+			
+			<xs:choice minOccurs="0">
+				<xs:element name="assertion-origin-orcid" type="common:orcid-id">
+					<xs:annotation>
+						<xs:documentation>The ORCID identifier for the individual user (or
+							legacy client application) made the assertion.
+							If missing, source is the same as assertion origin.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="assertion-origin-client-id" type="common:client-id">
+					<xs:annotation>
+						<xs:documentation>The client ID for the client application (Member
+							organization system) that made the assertion.  
+							If missing, source is the same as assertion origin.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="assertion-origin-name" type="common:source-name"
+				minOccurs="0" />
+				
 		</xs:sequence>
 	</xs:complexType>
 
@@ -221,22 +243,11 @@
 
 	<xs:simpleType name="locale">
 		<xs:annotation>
-			<xs:documentation>Supported locales for site
-				translations/localizations
-			</xs:documentation>
-		</xs:annotation>
+			<xs:documentation>For the up to date supported locale list see https://github.com/ORCID/ORCID-Source/SUPPORTED_LOCALES.md</xs:documentation>
+		</xs:annotation>				
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="en" />
-			<xs:enumeration value="es" />
-			<xs:enumeration value="fr" />
-			<xs:enumeration value="ko" />
-			<xs:enumeration value="pt" />
-			<xs:enumeration value="ru" />
-			<xs:enumeration value="zh_CN" />
-			<xs:enumeration value="zh_TW" />
-			<xs:enumeration value="it" />
-			<xs:enumeration value="ja" />
-		</xs:restriction>
+			<xs:pattern value="[a-zA-Z]{1,8}((-|_)[a-zA-Z0-9]{1,8})*" />
+		</xs:restriction>						
 	</xs:simpleType>
 
 	<xs:simpleType name="non-empty-string">
@@ -303,231 +314,14 @@
 
 	<xs:simpleType name="currency-code">
 		<xs:annotation>
-			<xs:documentation>The currency code used for funding amounts. From
-				the ISO 4217 list
+			<xs:documentation>
+				The currency code used for funding amounts. From the ISO 4217 list
 				(www.iso.org/iso/home/standards/currency_codes.htm).
+				ORCID will validate this value against the enumeration 
+				java.util.Currency and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="ADP" />
-			<xs:enumeration value="AED" />
-			<xs:enumeration value="AFA" />
-			<xs:enumeration value="AFN" />
-			<xs:enumeration value="ALL" />
-			<xs:enumeration value="AMD" />
-			<xs:enumeration value="ANG" />
-			<xs:enumeration value="AOA" />
-			<xs:enumeration value="ARS" />
-			<xs:enumeration value="ATS" />
-			<xs:enumeration value="AUD" />
-			<xs:enumeration value="AWG" />
-			<xs:enumeration value="AYM" />
-			<xs:enumeration value="AZM" />
-			<xs:enumeration value="AZN" />
-			<xs:enumeration value="BAM" />
-			<xs:enumeration value="BBD" />
-			<xs:enumeration value="BDT" />
-			<xs:enumeration value="BEF" />
-			<xs:enumeration value="BGL" />
-			<xs:enumeration value="BGN" />
-			<xs:enumeration value="BHD" />
-			<xs:enumeration value="BIF" />
-			<xs:enumeration value="BMD" />
-			<xs:enumeration value="BND" />
-			<xs:enumeration value="BOB" />
-			<xs:enumeration value="BOV" />
-			<xs:enumeration value="BRL" />
-			<xs:enumeration value="BSD" />
-			<xs:enumeration value="BTN" />
-			<xs:enumeration value="BWP" />
-			<xs:enumeration value="BYB" />
-			<xs:enumeration value="BYR" />
-			<xs:enumeration value="BZD" />
-			<xs:enumeration value="CAD" />
-			<xs:enumeration value="CDF" />
-			<xs:enumeration value="CHF" />
-			<xs:enumeration value="CLF" />
-			<xs:enumeration value="CLP" />
-			<xs:enumeration value="CNY" />
-			<xs:enumeration value="COP" />
-			<xs:enumeration value="CRC" />
-			<xs:enumeration value="CSD" />
-			<xs:enumeration value="CUC" />
-			<xs:enumeration value="CUP" />
-			<xs:enumeration value="CVE" />
-			<xs:enumeration value="CYP" />
-			<xs:enumeration value="CZK" />
-			<xs:enumeration value="DEM" />
-			<xs:enumeration value="DJF" />
-			<xs:enumeration value="DKK" />
-			<xs:enumeration value="DOP" />
-			<xs:enumeration value="DZD" />
-			<xs:enumeration value="EEK" />
-			<xs:enumeration value="EGP" />
-			<xs:enumeration value="ERN" />
-			<xs:enumeration value="ESP" />
-			<xs:enumeration value="ETB" />
-			<xs:enumeration value="EUR" />
-			<xs:enumeration value="FIM" />
-			<xs:enumeration value="FJD" />
-			<xs:enumeration value="FKP" />
-			<xs:enumeration value="FRF" />
-			<xs:enumeration value="GBP" />
-			<xs:enumeration value="GEL" />
-			<xs:enumeration value="GHC" />
-			<xs:enumeration value="GHS" />
-			<xs:enumeration value="GIP" />
-			<xs:enumeration value="GMD" />
-			<xs:enumeration value="GNF" />
-			<xs:enumeration value="GRD" />
-			<xs:enumeration value="GTQ" />
-			<xs:enumeration value="GWP" />
-			<xs:enumeration value="GYD" />
-			<xs:enumeration value="HKD" />
-			<xs:enumeration value="HNL" />
-			<xs:enumeration value="HRK" />
-			<xs:enumeration value="HTG" />
-			<xs:enumeration value="HUF" />
-			<xs:enumeration value="IDR" />
-			<xs:enumeration value="IEP" />
-			<xs:enumeration value="ILS" />
-			<xs:enumeration value="INR" />
-			<xs:enumeration value="IQD" />
-			<xs:enumeration value="IRR" />
-			<xs:enumeration value="ISK" />
-			<xs:enumeration value="ITL" />
-			<xs:enumeration value="JMD" />
-			<xs:enumeration value="JOD" />
-			<xs:enumeration value="JPY" />
-			<xs:enumeration value="KES" />
-			<xs:enumeration value="KGS" />
-			<xs:enumeration value="KHR" />
-			<xs:enumeration value="KMF" />
-			<xs:enumeration value="KPW" />
-			<xs:enumeration value="KRW" />
-			<xs:enumeration value="KWD" />
-			<xs:enumeration value="KYD" />
-			<xs:enumeration value="KZT" />
-			<xs:enumeration value="LAK" />
-			<xs:enumeration value="LBP" />
-			<xs:enumeration value="LKR" />
-			<xs:enumeration value="LRD" />
-			<xs:enumeration value="LSL" />
-			<xs:enumeration value="LTL" />
-			<xs:enumeration value="LUF" />
-			<xs:enumeration value="LVL" />
-			<xs:enumeration value="LYD" />
-			<xs:enumeration value="MAD" />
-			<xs:enumeration value="MDL" />
-			<xs:enumeration value="MGA" />
-			<xs:enumeration value="MGF" />
-			<xs:enumeration value="MKD" />
-			<xs:enumeration value="MMK" />
-			<xs:enumeration value="MNT" />
-			<xs:enumeration value="MOP" />
-			<xs:enumeration value="MRO" />
-			<xs:enumeration value="MTL" />
-			<xs:enumeration value="MUR" />
-			<xs:enumeration value="MVR" />
-			<xs:enumeration value="MWK" />
-			<xs:enumeration value="MXN" />
-			<xs:enumeration value="MXV" />
-			<xs:enumeration value="MYR" />
-			<xs:enumeration value="MZM" />
-			<xs:enumeration value="MZN" />
-			<xs:enumeration value="NAD" />
-			<xs:enumeration value="NGN" />
-			<xs:enumeration value="NIO" />
-			<xs:enumeration value="NLG" />
-			<xs:enumeration value="NOK" />
-			<xs:enumeration value="NPR" />
-			<xs:enumeration value="NZD" />
-			<xs:enumeration value="OMR" />
-			<xs:enumeration value="PAB" />
-			<xs:enumeration value="PEN" />
-			<xs:enumeration value="PGK" />
-			<xs:enumeration value="PHP" />
-			<xs:enumeration value="PKR" />
-			<xs:enumeration value="PLN" />
-			<xs:enumeration value="PTE" />
-			<xs:enumeration value="PYG" />
-			<xs:enumeration value="QAR" />
-			<xs:enumeration value="ROL" />
-			<xs:enumeration value="RON" />
-			<xs:enumeration value="RSD" />
-			<xs:enumeration value="RUB" />
-			<xs:enumeration value="RUR" />
-			<xs:enumeration value="RWF" />
-			<xs:enumeration value="SAR" />
-			<xs:enumeration value="SBD" />
-			<xs:enumeration value="SCR" />
-			<xs:enumeration value="SDD" />
-			<xs:enumeration value="SDG" />
-			<xs:enumeration value="SEK" />
-			<xs:enumeration value="SGD" />
-			<xs:enumeration value="SHP" />
-			<xs:enumeration value="SIT" />
-			<xs:enumeration value="SKK" />
-			<xs:enumeration value="SLL" />
-			<xs:enumeration value="SOS" />
-			<xs:enumeration value="SRD" />
-			<xs:enumeration value="SRG" />
-			<xs:enumeration value="STD" />
-			<xs:enumeration value="SVC" />
-			<xs:enumeration value="SYP" />
-			<xs:enumeration value="SZL" />
-			<xs:enumeration value="THB" />
-			<xs:enumeration value="TJS" />
-			<xs:enumeration value="TMM" />
-			<xs:enumeration value="TMT" />
-			<xs:enumeration value="TND" />
-			<xs:enumeration value="TOP" />
-			<xs:enumeration value="TPE" />
-			<xs:enumeration value="TRL" />
-			<xs:enumeration value="TRY" />
-			<xs:enumeration value="TTD" />
-			<xs:enumeration value="TWD" />
-			<xs:enumeration value="TZS" />
-			<xs:enumeration value="UAH" />
-			<xs:enumeration value="UGX" />
-			<xs:enumeration value="USD" />
-			<xs:enumeration value="USN" />
-			<xs:enumeration value="USS" />
-			<xs:enumeration value="UYU" />
-			<xs:enumeration value="UZS" />
-			<xs:enumeration value="VEB" />
-			<xs:enumeration value="VEF" />
-			<xs:enumeration value="VND" />
-			<xs:enumeration value="VUV" />
-			<xs:enumeration value="WST" />
-			<xs:enumeration value="XAF" />
-			<xs:enumeration value="XAG" />
-			<xs:enumeration value="XAU" />
-			<xs:enumeration value="XBA" />
-			<xs:enumeration value="XBB" />
-			<xs:enumeration value="XBC" />
-			<xs:enumeration value="XBD" />
-			<xs:enumeration value="XCD" />
-			<xs:enumeration value="XDR" />
-			<xs:enumeration value="XFO" />
-			<xs:enumeration value="XFU" />
-			<xs:enumeration value="XOF" />
-			<xs:enumeration value="XPD" />
-			<xs:enumeration value="XPF" />
-			<xs:enumeration value="XPT" />
-			<xs:enumeration value="XSU" />
-			<xs:enumeration value="XTS" />
-			<xs:enumeration value="XUA" />
-			<xs:enumeration value="XXX" />
-			<xs:enumeration value="YER" />
-			<xs:enumeration value="YUM" />
-			<xs:enumeration value="ZAR" />
-			<xs:enumeration value="ZMK" />
-			<xs:enumeration value="ZWD" />
-			<xs:enumeration value="ZWL" />
-			<xs:enumeration value="ZWN" />
-			<xs:enumeration value="ZWR" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
 	<xs:simpleType name="organization-defined-type">
@@ -550,195 +344,7 @@
 				(zh_TW) Chinese.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="en" />
-			<xs:enumeration value="ab" />
-			<xs:enumeration value="aa" />
-			<xs:enumeration value="af" />
-			<xs:enumeration value="ak" />
-			<xs:enumeration value="sq" />
-			<xs:enumeration value="am" />
-			<xs:enumeration value="ar" />
-			<xs:enumeration value="an" />
-			<xs:enumeration value="hy" />
-			<xs:enumeration value="as" />
-			<xs:enumeration value="av" />
-			<xs:enumeration value="ae" />
-			<xs:enumeration value="ay" />
-			<xs:enumeration value="az" />
-			<xs:enumeration value="bm" />
-			<xs:enumeration value="ba" />
-			<xs:enumeration value="eu" />
-			<xs:enumeration value="be" />
-			<xs:enumeration value="bn" />
-			<xs:enumeration value="bh" />
-			<xs:enumeration value="bi" />
-			<xs:enumeration value="bs" />
-			<xs:enumeration value="br" />
-			<xs:enumeration value="bg" />
-			<xs:enumeration value="my" />
-			<xs:enumeration value="ca" />
-			<xs:enumeration value="ch" />
-			<xs:enumeration value="ce" />
-			<xs:enumeration value="zh_CN" />
-			<xs:enumeration value="zh_TW" />
-			<xs:enumeration value="cu" />
-			<xs:enumeration value="cv" />
-			<xs:enumeration value="kw" />
-			<xs:enumeration value="co" />
-			<xs:enumeration value="cr" />
-			<xs:enumeration value="hr" />
-			<xs:enumeration value="cs" />
-			<xs:enumeration value="da" />
-			<xs:enumeration value="dv" />
-			<xs:enumeration value="nl" />
-			<xs:enumeration value="dz" />
-			<xs:enumeration value="en" />
-			<xs:enumeration value="eo" />
-			<xs:enumeration value="et" />
-			<xs:enumeration value="ee" />
-			<xs:enumeration value="fo" />
-			<xs:enumeration value="fj" />
-			<xs:enumeration value="fi" />
-			<xs:enumeration value="fr" />
-			<xs:enumeration value="fy" />
-			<xs:enumeration value="ff" />
-			<xs:enumeration value="gl" />
-			<xs:enumeration value="lg" />
-			<xs:enumeration value="ka" />
-			<xs:enumeration value="de" />
-			<xs:enumeration value="el" />
-			<xs:enumeration value="kl" />
-			<xs:enumeration value="gn" />
-			<xs:enumeration value="gu" />
-			<xs:enumeration value="ht" />
-			<xs:enumeration value="ha" />
-			<xs:enumeration value="iw" />
-			<xs:enumeration value="hz" />
-			<xs:enumeration value="hi" />
-			<xs:enumeration value="ho" />
-			<xs:enumeration value="hu" />
-			<xs:enumeration value="is" />
-			<xs:enumeration value="io" />
-			<xs:enumeration value="ig" />
-			<xs:enumeration value="in" />
-			<xs:enumeration value="ia" />
-			<xs:enumeration value="ie" />
-			<xs:enumeration value="iu" />
-			<xs:enumeration value="ik" />
-			<xs:enumeration value="ga" />
-			<xs:enumeration value="it" />
-			<xs:enumeration value="ja" />
-			<xs:enumeration value="jv" />
-			<xs:enumeration value="kn" />
-			<xs:enumeration value="kr" />
-			<xs:enumeration value="ks" />
-			<xs:enumeration value="kk" />
-			<xs:enumeration value="km" />
-			<xs:enumeration value="ki" />
-			<xs:enumeration value="rw" />
-			<xs:enumeration value="ky" />
-			<xs:enumeration value="kv" />
-			<xs:enumeration value="kg" />
-			<xs:enumeration value="ko" />
-			<xs:enumeration value="ku" />
-			<xs:enumeration value="kj" />
-			<xs:enumeration value="lo" />
-			<xs:enumeration value="la" />
-			<xs:enumeration value="lv" />
-			<xs:enumeration value="li" />
-			<xs:enumeration value="ln" />
-			<xs:enumeration value="lt" />
-			<xs:enumeration value="lu" />
-			<xs:enumeration value="lb" />
-			<xs:enumeration value="mk" />
-			<xs:enumeration value="mg" />
-			<xs:enumeration value="ms" />
-			<xs:enumeration value="ml" />
-			<xs:enumeration value="mt" />
-			<xs:enumeration value="gv" />
-			<xs:enumeration value="mi" />
-			<xs:enumeration value="mr" />
-			<xs:enumeration value="mh" />
-			<xs:enumeration value="mo" />
-			<xs:enumeration value="mn" />
-			<xs:enumeration value="na" />
-			<xs:enumeration value="nv" />
-			<xs:enumeration value="ng" />
-			<xs:enumeration value="ne" />
-			<xs:enumeration value="nd" />
-			<xs:enumeration value="se" />
-			<xs:enumeration value="no" />
-			<xs:enumeration value="nb" />
-			<xs:enumeration value="nn" />
-			<xs:enumeration value="ny" />
-			<xs:enumeration value="oc" />
-			<xs:enumeration value="oj" />
-			<xs:enumeration value="or" />
-			<xs:enumeration value="om" />
-			<xs:enumeration value="os" />
-			<xs:enumeration value="pi" />
-			<xs:enumeration value="pa" />
-			<xs:enumeration value="fa" />
-			<xs:enumeration value="pl" />
-			<xs:enumeration value="pt" />
-			<xs:enumeration value="ps" />
-			<xs:enumeration value="qu" />
-			<xs:enumeration value="rm" />
-			<xs:enumeration value="ro" />
-			<xs:enumeration value="rn" />
-			<xs:enumeration value="ru" />
-			<xs:enumeration value="sm" />
-			<xs:enumeration value="sg" />
-			<xs:enumeration value="sa" />
-			<xs:enumeration value="sc" />
-			<xs:enumeration value="gd" />
-			<xs:enumeration value="sr" />
-			<xs:enumeration value="sn" />
-			<xs:enumeration value="ii" />
-			<xs:enumeration value="sd" />
-			<xs:enumeration value="si" />
-			<xs:enumeration value="sk" />
-			<xs:enumeration value="sl" />
-			<xs:enumeration value="so" />
-			<xs:enumeration value="nr" />
-			<xs:enumeration value="st" />
-			<xs:enumeration value="es" />
-			<xs:enumeration value="su" />
-			<xs:enumeration value="sw" />
-			<xs:enumeration value="ss" />
-			<xs:enumeration value="sv" />
-			<xs:enumeration value="tl" />
-			<xs:enumeration value="ty" />
-			<xs:enumeration value="tg" />
-			<xs:enumeration value="ta" />
-			<xs:enumeration value="tt" />
-			<xs:enumeration value="te" />
-			<xs:enumeration value="th" />
-			<xs:enumeration value="bo" />
-			<xs:enumeration value="ti" />
-			<xs:enumeration value="to" />
-			<xs:enumeration value="ts" />
-			<xs:enumeration value="tn" />
-			<xs:enumeration value="tr" />
-			<xs:enumeration value="tk" />
-			<xs:enumeration value="tw" />
-			<xs:enumeration value="ug" />
-			<xs:enumeration value="uk" />
-			<xs:enumeration value="ur" />
-			<xs:enumeration value="uz" />
-			<xs:enumeration value="ve" />
-			<xs:enumeration value="vi" />
-			<xs:enumeration value="vo" />
-			<xs:enumeration value="wa" />
-			<xs:enumeration value="cy" />
-			<xs:enumeration value="wo" />
-			<xs:enumeration value="xh" />
-			<xs:enumeration value="ji" />
-			<xs:enumeration value="yo" />
-			<xs:enumeration value="za" />
-			<xs:enumeration value="zu" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
 	<xs:complexType name="url">
@@ -896,22 +502,7 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-
-	<xs:simpleType name="orcid-type">
-		<xs:annotation>
-			<xs:documentation>Indicates the ORCID record type for the ORCID iD
-				referenced. NOTE: orcid-types of API client are only used for legacy
-				API clients.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="admin" />
-			<xs:enumeration value="user" />
-			<xs:enumeration value="group" />
-			<xs:enumeration value="client" />
-		</xs:restriction>
-	</xs:simpleType>
-
+	
 	<xs:simpleType name="put-code">
 		<xs:annotation>
 			<xs:documentation>The put-code attribute is present only when reading
@@ -987,20 +578,7 @@
 			<xs:maxLength value="350" />
 			<xs:pattern value="[^@]+@[^\.]+\..+" />
 		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="media-type">
-		<xs:annotation>
-			<xs:documentation>Used with the publication date to indicate which
-				version of the publication the date refers to.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="print" />
-			<xs:enumeration value="online" />
-			<xs:enumeration value="other" />
-		</xs:restriction>
-	</xs:simpleType>
+	</xs:simpleType>	
 
 	<xs:simpleType name="year">
 		<xs:annotation>
@@ -1097,258 +675,7 @@
 				https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="AF" />
-			<xs:enumeration value="AX" />
-			<xs:enumeration value="AL" />
-			<xs:enumeration value="DZ" />
-			<xs:enumeration value="AS" />
-			<xs:enumeration value="AD" />
-			<xs:enumeration value="AO" />
-			<xs:enumeration value="AI" />
-			<xs:enumeration value="AQ" />
-			<xs:enumeration value="AG" />
-			<xs:enumeration value="AR" />
-			<xs:enumeration value="AM" />
-			<xs:enumeration value="AW" />
-			<xs:enumeration value="AU" />
-			<xs:enumeration value="AT" />
-			<xs:enumeration value="AZ" />
-			<xs:enumeration value="BS" />
-			<xs:enumeration value="BH" />
-			<xs:enumeration value="BD" />
-			<xs:enumeration value="BB" />
-			<xs:enumeration value="BY" />
-			<xs:enumeration value="BE" />
-			<xs:enumeration value="BZ" />
-			<xs:enumeration value="BJ" />
-			<xs:enumeration value="BM" />
-			<xs:enumeration value="BT" />
-			<xs:enumeration value="BO" />
-			<xs:enumeration value="BQ" />
-			<xs:enumeration value="BA" />
-			<xs:enumeration value="BW" />
-			<xs:enumeration value="BV" />
-			<xs:enumeration value="BR" />
-			<xs:enumeration value="IO" />
-			<xs:enumeration value="BN" />
-			<xs:enumeration value="BG" />
-			<xs:enumeration value="BF" />
-			<xs:enumeration value="BI" />
-			<xs:enumeration value="KH" />
-			<xs:enumeration value="CM" />
-			<xs:enumeration value="CA" />
-			<xs:enumeration value="CV" />
-			<xs:enumeration value="KY" />
-			<xs:enumeration value="CF" />
-			<xs:enumeration value="TD" />
-			<xs:enumeration value="CL" />
-			<xs:enumeration value="CN" />
-			<xs:enumeration value="CX" />
-			<xs:enumeration value="CC" />
-			<xs:enumeration value="CO" />
-			<xs:enumeration value="KM" />
-			<xs:enumeration value="CG" />
-			<xs:enumeration value="CD" />
-			<xs:enumeration value="CK" />
-			<xs:enumeration value="CR" />
-			<xs:enumeration value="CI" />
-			<xs:enumeration value="HR" />
-			<xs:enumeration value="CU" />
-			<xs:enumeration value="CW" />
-			<xs:enumeration value="CY" />
-			<xs:enumeration value="CZ" />
-			<xs:enumeration value="DK" />
-			<xs:enumeration value="DJ" />
-			<xs:enumeration value="DM" />
-			<xs:enumeration value="DO" />
-			<xs:enumeration value="EC" />
-			<xs:enumeration value="EG" />
-			<xs:enumeration value="SV" />
-			<xs:enumeration value="GQ" />
-			<xs:enumeration value="ER" />
-			<xs:enumeration value="EE" />
-			<xs:enumeration value="ET" />
-			<xs:enumeration value="FK" />
-			<xs:enumeration value="FO" />
-			<xs:enumeration value="FJ" />
-			<xs:enumeration value="FI" />
-			<xs:enumeration value="FR" />
-			<xs:enumeration value="GF" />
-			<xs:enumeration value="PF" />
-			<xs:enumeration value="TF" />
-			<xs:enumeration value="GA" />
-			<xs:enumeration value="GM" />
-			<xs:enumeration value="GE" />
-			<xs:enumeration value="DE" />
-			<xs:enumeration value="GH" />
-			<xs:enumeration value="GI" />
-			<xs:enumeration value="GR" />
-			<xs:enumeration value="GL" />
-			<xs:enumeration value="GD" />
-			<xs:enumeration value="GP" />
-			<xs:enumeration value="GU" />
-			<xs:enumeration value="GT" />
-			<xs:enumeration value="GG" />
-			<xs:enumeration value="GN" />
-			<xs:enumeration value="GW" />
-			<xs:enumeration value="GY" />
-			<xs:enumeration value="HT" />
-			<xs:enumeration value="HM" />
-			<xs:enumeration value="VA" />
-			<xs:enumeration value="HN" />
-			<xs:enumeration value="HK" />
-			<xs:enumeration value="HU" />
-			<xs:enumeration value="IS" />
-			<xs:enumeration value="IN" />
-			<xs:enumeration value="ID" />
-			<xs:enumeration value="IR" />
-			<xs:enumeration value="IQ" />
-			<xs:enumeration value="IE" />
-			<xs:enumeration value="IM" />
-			<xs:enumeration value="IL" />
-			<xs:enumeration value="IT" />
-			<xs:enumeration value="JM" />
-			<xs:enumeration value="JP" />
-			<xs:enumeration value="JE" />
-			<xs:enumeration value="JO" />
-			<xs:enumeration value="KZ" />
-			<xs:enumeration value="KE" />
-			<xs:enumeration value="KI" />
-			<xs:enumeration value="KP" />
-			<xs:enumeration value="KR" />
-			<xs:enumeration value="KW" />
-			<xs:enumeration value="KG" />
-			<xs:enumeration value="LA" />
-			<xs:enumeration value="LV" />
-			<xs:enumeration value="LB" />
-			<xs:enumeration value="LS" />
-			<xs:enumeration value="LR" />
-			<xs:enumeration value="LY" />
-			<xs:enumeration value="LI" />
-			<xs:enumeration value="LT" />
-			<xs:enumeration value="LU" />
-			<xs:enumeration value="MO" />
-			<xs:enumeration value="MK" />
-			<xs:enumeration value="MG" />
-			<xs:enumeration value="MW" />
-			<xs:enumeration value="MY" />
-			<xs:enumeration value="MV" />
-			<xs:enumeration value="ML" />
-			<xs:enumeration value="MT" />
-			<xs:enumeration value="MH" />
-			<xs:enumeration value="MQ" />
-			<xs:enumeration value="MR" />
-			<xs:enumeration value="MU" />
-			<xs:enumeration value="YT" />
-			<xs:enumeration value="MX" />
-			<xs:enumeration value="FM" />
-			<xs:enumeration value="MD" />
-			<xs:enumeration value="MC" />
-			<xs:enumeration value="MN" />
-			<xs:enumeration value="ME" />
-			<xs:enumeration value="MS" />
-			<xs:enumeration value="MA" />
-			<xs:enumeration value="MZ" />
-			<xs:enumeration value="MM" />
-			<xs:enumeration value="NA" />
-			<xs:enumeration value="NR" />
-			<xs:enumeration value="NP" />
-			<xs:enumeration value="NL" />
-			<xs:enumeration value="NC" />
-			<xs:enumeration value="NZ" />
-			<xs:enumeration value="NI" />
-			<xs:enumeration value="NE" />
-			<xs:enumeration value="NG" />
-			<xs:enumeration value="NU" />
-			<xs:enumeration value="NF" />
-			<xs:enumeration value="MP" />
-			<xs:enumeration value="NO" />
-			<xs:enumeration value="OM" />
-			<xs:enumeration value="PK" />
-			<xs:enumeration value="PW" />
-			<xs:enumeration value="PS" />
-			<xs:enumeration value="PA" />
-			<xs:enumeration value="PG" />
-			<xs:enumeration value="PY" />
-			<xs:enumeration value="PE" />
-			<xs:enumeration value="PH" />
-			<xs:enumeration value="PN" />
-			<xs:enumeration value="PL" />
-			<xs:enumeration value="PT" />
-			<xs:enumeration value="PR" />
-			<xs:enumeration value="QA" />
-			<xs:enumeration value="RE" />
-			<xs:enumeration value="RO" />
-			<xs:enumeration value="RU" />
-			<xs:enumeration value="RW" />
-			<xs:enumeration value="BL" />
-			<xs:enumeration value="SH" />
-			<xs:enumeration value="KN" />
-			<xs:enumeration value="LC" />
-			<xs:enumeration value="MF" />
-			<xs:enumeration value="PM" />
-			<xs:enumeration value="VC" />
-			<xs:enumeration value="WS" />
-			<xs:enumeration value="SM" />
-			<xs:enumeration value="ST" />
-			<xs:enumeration value="SA" />
-			<xs:enumeration value="SN" />
-			<xs:enumeration value="RS" />
-			<xs:enumeration value="SC" />
-			<xs:enumeration value="SL" />
-			<xs:enumeration value="SG" />
-			<xs:enumeration value="SX" />
-			<xs:enumeration value="SK" />
-			<xs:enumeration value="SI" />
-			<xs:enumeration value="SB" />
-			<xs:enumeration value="SO" />
-			<xs:enumeration value="ZA" />
-			<xs:enumeration value="GS" />
-			<xs:enumeration value="SS" />
-			<xs:enumeration value="ES" />
-			<xs:enumeration value="LK" />
-			<xs:enumeration value="SD" />
-			<xs:enumeration value="SR" />
-			<xs:enumeration value="SJ" />
-			<xs:enumeration value="SZ" />
-			<xs:enumeration value="SE" />
-			<xs:enumeration value="CH" />
-			<xs:enumeration value="SY" />
-			<xs:enumeration value="TJ" />
-			<xs:enumeration value="TZ" />
-			<xs:enumeration value="TH" />
-			<xs:enumeration value="TL" />
-			<xs:enumeration value="TG" />
-			<xs:enumeration value="TK" />
-			<xs:enumeration value="TO" />
-			<xs:enumeration value="TT" />
-			<xs:enumeration value="TN" />
-			<xs:enumeration value="TR" />
-			<xs:enumeration value="TM" />
-			<xs:enumeration value="TC" />
-			<xs:enumeration value="TV" />
-			<xs:enumeration value="UG" />
-			<xs:enumeration value="UA" />
-			<xs:enumeration value="AE" />
-			<xs:enumeration value="GB" />
-			<xs:enumeration value="US" />
-			<xs:enumeration value="UM" />
-			<xs:enumeration value="UY" />
-			<xs:enumeration value="UZ" />
-			<xs:enumeration value="VU" />
-			<xs:enumeration value="VE" />
-			<xs:enumeration value="VN" />
-			<xs:enumeration value="VG" />
-			<xs:enumeration value="VI" />
-			<xs:enumeration value="WF" />
-			<xs:enumeration value="EH" />
-			<xs:enumeration value="YE" />
-			<xs:enumeration value="ZM" />
-			<xs:enumeration value="ZW" />
-			<xs:enumeration value="TW" />
-			<xs:enumeration value="XK" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
 	<xs:simpleType name="iso-3166-country-or-empty">
@@ -1565,63 +892,24 @@
 	<xs:simpleType name="contributor-sequence">
 		<xs:annotation>
 			<xs:documentation>Indication of where in the contributor list the
-				collaborator or other contributor's name would appear
+				collaborator or other contributor's name would appear.
+				ORCID will validate this value against the enumeration 
+				org.orcid.jaxb.model.common.SequenceType and other rules when necessary.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="first" />
-			<xs:enumeration value="additional" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
 	<xs:simpleType name="contributor-role">
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
 				contributor.
+				ORCID will validate this value against the enumeration 
+				org.orcid.jaxb.model.common.ContributorRole and other rules when necessary.
 			</xs:documentation>
 		</xs:annotation>
 
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="author" />
-			<xs:enumeration value="assignee" />
-			<xs:enumeration value="editor" />
-			<xs:enumeration value="chair-or-translator" />
-			<xs:enumeration value="co-investigator" />
-			<xs:enumeration value="co-inventor" />
-			<xs:enumeration value="graduate-student" />
-			<xs:enumeration value="other-inventor" />
-			<xs:enumeration value="principal-investigator" />
-			<xs:enumeration value="postdoctoral-researcher" />
-			<xs:enumeration value="support-staff" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="group-type">
-		<xs:annotation>
-			<xs:documentation>Indicates the group type for the API client based
-				on the ORCID membership type.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="basic" />
-			<xs:enumeration value="premium" />
-			<xs:enumeration value="basic-institution" />
-			<xs:enumeration value="premium-institution" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="client-type">
-		<xs:annotation>
-			<xs:documentation>Indicates the client type for the API client based
-				on the ORCID membership type.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="creator" />
-			<xs:enumeration value="premium-creator" />
-			<xs:enumeration value="updater" />
-			<xs:enumeration value="premium-updater" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 
 	<xs:complexType name="element-summary">
@@ -1682,14 +970,13 @@
 	
 	<xs:simpleType name="relationship-type">
 		<xs:annotation>
-			<xs:documentation>Indicates the relationship type.
+			<xs:documentation>
+			Indicates the relationship type.
+			ORCID will validate this value against the enumeration 
+			org.orcid.jaxb.model.common.Relationship and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="self" />
-			<xs:enumeration value="part-of" />
-			<xs:enumeration value="version-of" />
-		</xs:restriction>
+		<xs:restriction base="xs:string" />
 	</xs:simpleType>
 	 
 	<xs:complexType name="external-id">

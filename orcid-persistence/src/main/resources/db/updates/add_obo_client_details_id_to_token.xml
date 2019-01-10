@@ -1,0 +1,27 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="ADD-OBO-CLIENT-DETAILS-ID-TO-TOKEN" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="oauth2_token_detail" columnName="obo_client_details_id"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="oauth2_token_detail">
+			<column name="obo_client_details_id" type="VARCHAR(20)" />
+		</addColumn>		
+		<addForeignKeyConstraint constraintName="obo_client_details_id_fk" baseTableName="oauth2_token_detail" baseColumnNames="obo_client_details_id" referencedTableName="client_details" referencedColumnNames="client_details_id" />							
+	</changeSet>
+	
+	    
+	<changeSet id="ADD-OBO-CLIENT-DETAILS-ID-INDEX-TO-TOKEN" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="oauth2_token_detail_obo_client_details_id_index" tableName="oauth2_token_detail" />
+			</not>
+		</preConditions>
+		<sql>create index oauth2_token_detail_obo_client_details_id_index on oauth2_token_detail(obo_client_details_id);</sql>
+	</changeSet>
+	
+</databaseChangeLog>		

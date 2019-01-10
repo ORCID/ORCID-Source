@@ -62,7 +62,7 @@ export class SearchService {
     }
 
     getNames(orcid): Observable<any> {
-        var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
+        var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/personal-details';
 
 
         return this.http.get(url, {headers: this.publicApiHeaders})

@@ -40,6 +40,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     editTranslatedTitle: any;
     lastIndexedTerm: any;
     togglzDialogPrivacyOption: boolean;
+    sortedCountryNames: any;
+    countryNamesToCountryCodes: any;
 
     constructor(
         private commonService: CommonService,
@@ -52,7 +54,27 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editFunding = this.getEmptyFunding();
         this.editTranslatedTitle = false;
         this.lastIndexedTerm = null;   
+        this.initCountries();
     }
+    
+    initCountries(): void {
+        this.commonService.getCountryNamesMappedToCountryCodes().pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.countryNamesToCountryCodes = data;
+                this.sortedCountryNames = [];
+                for (var key in this.countryNamesToCountryCodes) {
+                    this.sortedCountryNames.push(key);
+                }
+                this.sortedCountryNames.sort();
+            },
+            error => {
+                console.log('error fetching country names to country codes map', error);
+            } 
+        );
+    };
 
     addFundingExternalIdentifier(): void {
         console.log

@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.v3.JpaJaxbAddressAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.persistence.jpa.entities.AddressEntity;

@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkCategory;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 
@@ -137,7 +137,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
         // Set country
         if (work.getCountry() != null && work.getCountry().getValue() != null) {
-            w.setCountryCode(Text.valueOf(work.getCountry().getValue().value()));
+            w.setCountryCode(Text.valueOf(work.getCountry().getValue().name()));
         }
 
         // Set publication date
@@ -275,11 +275,11 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 org.orcid.jaxb.model.v3.rc2.common.Contributor workContributor = new org.orcid.jaxb.model.v3.rc2.common.Contributor();
                 org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes();
                 if(!PojoUtil.isEmpty(wfContributor.getContributorRole())) {
-                    contributorAttributes.setContributorRole(org.orcid.jaxb.model.v3.rc2.common.ContributorRole.fromValue(wfContributor.getContributorRole().getValue()));
+                    contributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.fromValue(wfContributor.getContributorRole().getValue()));
                 }
                 
                 if(!PojoUtil.isEmpty(wfContributor.getContributorSequence())) {
-                    contributorAttributes.setContributorSequence(org.orcid.jaxb.model.v3.rc2.record.SequenceType.fromValue(wfContributor.getContributorSequence().getValue()));
+                    contributorAttributes.setContributorSequence(org.orcid.jaxb.model.common.SequenceType.fromValue(wfContributor.getContributorSequence().getValue()));
                 }                
                 workContributor.setContributorAttributes(contributorAttributes);
                 
@@ -373,7 +373,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         
         // Set country
         if (!PojoUtil.isEmpty(this.getCountryCode())) {
-            work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
+            work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
         }
 
         // Set publication date        

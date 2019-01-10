@@ -88,6 +88,7 @@
 
     <#include "/macros/orcid_ga.ftl">
     
+    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
     <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css"/>
     <link rel="stylesheet" href="${staticLoc}/css/social.css"/>
     <link rel="stylesheet" href="${staticLoc}/css/filetypes.css"/>    
