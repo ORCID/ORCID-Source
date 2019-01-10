@@ -18,7 +18,7 @@ import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url",
-        "externalIdentifiers" })
+        "externalIdentifiers", "displayIndex" })
 public abstract class Affiliation implements OrganizationHolder, Filterable, Activity, SourceAware {
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "department-name")
     protected String departmentName;
@@ -36,7 +36,7 @@ public abstract class Affiliation implements OrganizationHolder, Filterable, Act
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "url")
     protected Url url;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs externalIdentifiers;
@@ -47,6 +47,8 @@ public abstract class Affiliation implements OrganizationHolder, Filterable, Act
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
 
     /**
      * Gets the value of the departmentName property.
@@ -297,6 +299,14 @@ public abstract class Affiliation implements OrganizationHolder, Filterable, Act
         this.externalIdentifiers = externalIDs;
     }
 
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+    
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+    
     /**
      * 
      * Note that put-code is not part of hashCode or equals! This is to allow

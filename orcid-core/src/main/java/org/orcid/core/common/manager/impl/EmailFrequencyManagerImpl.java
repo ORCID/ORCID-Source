@@ -37,17 +37,34 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     
     @Override
     public Map<String, String> getEmailFrequency(String orcid) {
-        Map<String, String> result = new HashMap<String, String>();
         try {
             EmailFrequencyEntity entity = emailFrequencyDaoReadOnly.findByOrcid(orcid);
-            result.put(ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendAdministrativeChangeNotifications()));
-            result.put(CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendChangeNotifications()));
-            result.put(MEMBER_UPDATE_REQUESTS, String.valueOf(entity.getSendMemberUpdateRequests()));
-            result.put(QUARTERLY_TIPS, String.valueOf(entity.getSendQuarterlyTips()));
-        } catch(Exception e) {
-            LOG.error("Couldn't find email_frequency for {}", orcid);
+            return generateFrequencyMap(entity);
+        } catch (Exception e) {
+            LOG.debug("Couldn't find email_frequency for {}", orcid);
+            return null;
+        }
+    }
+
+    @Override
+    public Map<String, String> getEmailFrequencyById(String id) {
+        try {
+            EmailFrequencyEntity entity = emailFrequencyDaoReadOnly.find(id);            
+            Map<String, String> map = generateFrequencyMap(entity);
+            map.put("orcid", entity.getOrcid());
+            return map;
+        } catch (Exception e) {
+            LOG.error("Couldn't find email_frequency for {}", id);
             throw e;
         }
+    }
+
+    private Map<String, String> generateFrequencyMap(EmailFrequencyEntity entity) {
+        Map<String, String> result = new HashMap<String, String>();
+        result.put(ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendAdministrativeChangeNotifications()));
+        result.put(CHANGE_NOTIFICATIONS, String.valueOf(entity.getSendChangeNotifications()));
+        result.put(MEMBER_UPDATE_REQUESTS, String.valueOf(entity.getSendMemberUpdateRequests()));
+        result.put(QUARTERLY_TIPS, String.valueOf(entity.getSendQuarterlyTips()));
         return result;
     }
     
@@ -56,6 +73,23 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
         return createEmailFrequency(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications,
                 sendMemberUpdateRequests, sendQuarterlyTips, true);
+    }
+    
+    @Override
+    public boolean createOnClaim(String orcid, Boolean sendQuarterlyTips) {
+        EmailFrequencyEntity entity = new EmailFrequencyEntity();
+        Date now = new Date();
+        entity.setId(UUID.randomUUID().toString());
+        entity.setDateCreated(now);
+        entity.setLastModified(now);
+        entity.setOrcid(orcid);
+        entity.setSendAdministrativeChangeNotifications(SendEmailFrequency.WEEKLY.floatValue());
+        entity.setSendChangeNotifications(SendEmailFrequency.WEEKLY.floatValue());
+        entity.setSendMemberUpdateRequests(SendEmailFrequency.WEEKLY.floatValue());
+        entity.setSendQuarterlyTips(sendQuarterlyTips == null ? false : sendQuarterlyTips);
+        emailFrequencyDao.persist(entity);        
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.EMAIL_FREQUENCY_CREATED_ON_CLAIM, orcid, "send_quarterly_tips " + (sendQuarterlyTips == null ? false : sendQuarterlyTips));        
+        return true;
     }
     
     private boolean createEmailFrequency(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
@@ -161,4 +195,23 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
         return true;
     }
     
+    @Override
+    @Transactional
+    public boolean updateById(String id, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
+            SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
+        EmailFrequencyEntity entity = emailFrequencyDao.find(id);
+        entity.setLastModified(new Date());
+        entity.setSendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications.floatValue());
+        entity.setSendChangeNotifications(sendChangeNotifications.floatValue());
+        entity.setSendMemberUpdateRequests(sendMemberUpdateRequests.floatValue());
+        entity.setSendQuarterlyTips(sendQuarterlyTips);
+        emailFrequencyDao.merge(entity);
+        return true;
+    }
+
+    @Override
+    public String findOrcidId(String id) {
+        EmailFrequencyEntity entity = emailFrequencyDao.find(id);
+        return entity.getOrcid();
+    }
 }

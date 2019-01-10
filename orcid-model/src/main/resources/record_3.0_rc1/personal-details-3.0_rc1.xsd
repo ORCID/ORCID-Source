@@ -11,7 +11,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -40,8 +40,7 @@
 
 	<xs:element name="personal-details">
 		<xs:annotation>
-			<xs:documentation>Container for the personal details of the
-				researcher or contributor.
+			<xs:documentation>Container for the biography and names of the researcher. These fields can only be edited by the researcher.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -60,8 +59,7 @@
 
 	<xs:element name="name">
 		<xs:annotation>
-			<xs:documentation>Container for the
-				researcher or contributor name.
+			<xs:documentation>Container for the researcher's first and last name.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -73,8 +71,7 @@
 
 	<xs:element name="credit-name">
 		<xs:annotation>
-			<xs:documentation>Container for the
-				researcher or contributor credit name.
+			<xs:documentation>Container for the researcher's credit name.
 			</xs:documentation>
 		</xs:annotation>		
 		<xs:complexType>
@@ -86,8 +83,7 @@
 
 	<xs:element name="biography">
 		<xs:annotation>
-			<xs:documentation>Container for the
-				researcher or contributor biography.
+			<xs:documentation>Container for the researcher's biography.
 			</xs:documentation>
 		</xs:annotation>		
 		<xs:complexType>
@@ -99,9 +95,7 @@
 
 	<xs:complexType name="name"> 
 		<xs:annotation>
-			<xs:documentation>Container for the names of the
-				researcher or
-				contributor.
+			<xs:documentation>Container for the researcher's first and last name.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
@@ -109,8 +103,7 @@
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="given-names" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>The given (first and middle) name(s) of the
-						researcher or contributor.
+					<xs:documentation>The given name(s) of the researcher or contributor.
 					</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
@@ -121,9 +114,7 @@
 			</xs:element>
 			<xs:element name="family-name" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>The family (last) name of the researcher or
-						contributor. This element is optional, because some cultures only
-						use given names.
+					<xs:documentation>The family (last) name of the researcher. This element is optional, because some cultures only use given names.
 					</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
@@ -134,13 +125,7 @@
 			</xs:element>
 			<xs:element name="credit-name" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>The full name of the researcher or contributor
-						as
-						it generally appears on their published works. (see element
-						for
-						more details.) The visibility attribute (private, limited or
-						public) can be set at record creation, and indicates who can see
-						this section of information.
+					<xs:documentation>The full name of the researcher as they prefer it to appear.
 					</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
@@ -156,20 +141,13 @@
 
 	<xs:complexType name="biography">
 		<xs:annotation>
-			<xs:documentation>Description of the researcher's professional
-				career. The visibility attribute (private, limited or public) can be
-				set at record creation, and indicates who can see this section of
-				information.
+			<xs:documentation>Description of the researcher's professional career.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="common:created-date" minOccurs="0" maxOccurs="1" />
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element minOccurs="1" name="content" type="common:non-empty-string">
-				<xs:annotation>
-					<xs:documentation>A short display name describing the URL.
-					</xs:documentation>
-				</xs:annotation>
 			</xs:element>				
 		</xs:sequence>
 		<xs:attribute name="visibility" type="common:visibility" use="optional"/>

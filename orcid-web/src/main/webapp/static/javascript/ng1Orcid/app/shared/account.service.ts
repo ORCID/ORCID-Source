@@ -15,7 +15,6 @@ import { catchError, map, tap }
 @Injectable()
 export class AccountService {
     private headers: HttpHeaders;
-    private publicApiHeaders: HttpHeaders;
     private notify = new Subject<any>();
     private url: string;
     
@@ -29,17 +28,10 @@ export class AccountService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
-        this.publicApiHeaders = new HttpHeaders(
-            {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
-            }
-        );
     }
 
-    notifyOther(): void {
-        this.notify.next();
+    notifyOther(data?): void {
+        this.notify.next(data);
     }
 
     addDelegate( obj ): Observable<any> {
@@ -71,6 +63,16 @@ export class AccountService {
         
     }
 
+    deprecateORCID( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+
+        return this.http.post(
+            getBaseUri() + '/account/validate-deprecate-profile.json',
+            encoded_data, 
+            { headers: this.headers }
+        )   
+    }
+
     getChangePassword(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/change-password.json'
@@ -85,24 +87,23 @@ export class AccountService {
         
     }
 
-    getDisplayName( orcid ): Observable<any> {
-        return this.http.get(
-            orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person',
-            {headers: this.publicApiHeaders}
-        )
-        
-    }
-
-    getResults( input ): Observable<any> {
-        return this.http.get(
-            orcidSearchUrlJs.buildUrl(input)+'&callback=?'
-        )
-        
-    }
-
     getSecurityQuestion(): Observable<any> {
         return this.http.get(
             getBaseUri() + '/account/security-question.json'
+        )
+        
+    }
+
+    getSocialAccounts(): Observable<any> {
+        return this.http.get(
+            getBaseUri()+'/account/socialAccounts.json'
+        )
+        
+    }
+
+    getTrustedOrgs(): Observable<any> {
+        return this.http.get(
+            getBaseUri()+'/account/get-trusted-orgs.json'
         )
         
     }
@@ -125,9 +126,15 @@ export class AccountService {
         
     }
 
+    searchDelegators( input ): Observable<any> {
+        return this.http.get(
+            getBaseUri()+'/delegators/search-for-data/' + input + '?limit=' + 10
+        )       
+    }
+
     sendDeactivateEmail(): Observable<any> {
         return this.http.get(
-            getBaseUri() + '/account/send-deactivate-account.json'
+            getBaseUri() + '/account/send-deactivate-account.json', {responseType: 'text'}
         )
         
     }
@@ -146,10 +153,28 @@ export class AccountService {
     
     revoke( obj ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
-        
         return this.http.post( 
             getBaseUri() + '/account/revokeDelegate.json', 
             encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+
+    revokeSocialAccount( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        return this.http.post( 
+            getBaseUri() + '/account/revokeSocialAccount.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
+
+    revokeTrustedOrg(applicationSummary): Observable<any> {
+        return this.http.post(
+            getBaseUri() + '/account/revoke-application.json?tokenId='+ applicationSummary.tokenId, 
+            null,
             { headers: this.headers }
         )
         

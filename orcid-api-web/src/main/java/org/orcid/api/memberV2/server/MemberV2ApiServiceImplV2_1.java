@@ -214,7 +214,7 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @ApiOperation( nickname="viewSpecifiedWorksV21", value = "Fetch specified works", response = WorkBulk.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @PathParam("putCodes") String putCodes) {
-        return serviceDelegator.viewBulkWorks(orcid, putCodes);
+        return serviceDelegator.viewBulkWorks(orcid, putCodes);        
     }
 
     @GET
@@ -577,7 +577,10 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @ApiOperation( nickname="viewGroupIdRecordsV21", value = "Fetch Groups", response = GroupIdRecords.class, authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
     public Response viewGroupIdRecords(@QueryParam("page-size") @DefaultValue("100") String pageSize, @QueryParam("page") @DefaultValue("1") String page,
-            @QueryParam("name") String name) {
+            @QueryParam("name") String name, @QueryParam("group-id") String groupId) {
+        if (groupId != null) {
+            return serviceDelegator.findGroupIdRecordByGroupId(groupId);
+        }
         if (name != null) {
             return serviceDelegator.findGroupIdRecordByName(name);
         }

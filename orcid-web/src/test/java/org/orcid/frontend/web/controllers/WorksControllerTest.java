@@ -25,17 +25,18 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
-import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -83,7 +84,7 @@ public class WorksControllerTest extends BaseControllerTest {
     }
     
     @Test
-    public void testGroupWorks() {
+    public void testGroupWorks() throws MissingGroupableExternalIDException {
         WorkManager oldWorkManager = (WorkManager) ReflectionTestUtils.getField(worksController, "workManager");
         WorkManager mockWorkManager = Mockito.mock(WorkManager.class);
         Mockito.doNothing().when(mockWorkManager).createNewWorkGroup(Mockito.anyList(), Mockito.anyString());
@@ -176,9 +177,9 @@ public class WorksControllerTest extends BaseControllerTest {
         assertEquals(0, workForm.getWorkType().getErrors().size());
 
         worksController.workWorkExternalIdentifiersValidate(workForm);
-        for (WorkExternalIdentifier wId : workForm.getWorkExternalIdentifiers()) {
-            assertEquals(0, wId.getWorkExternalIdentifierId().getErrors().size());
-            assertEquals(0, wId.getWorkExternalIdentifierType().getErrors().size());
+        for (ActivityExternalIdentifier wId : workForm.getWorkExternalIdentifiers()) {
+            assertEquals(0, wId.getExternalIdentifierId().getErrors().size());
+            assertEquals(0, wId.getExternalIdentifierType().getErrors().size());
         }
 
         worksController.workCitationValidate(workForm);
@@ -245,23 +246,26 @@ public class WorksControllerTest extends BaseControllerTest {
         // Set title
         work.setTitle(Text.valueOf("Test add work"));
         work.setWorkType(Text.valueOf("artistic-performance"));
-        WorkExternalIdentifier wei = work.getWorkExternalIdentifiers().get(0);
-        wei.setWorkExternalIdentifierId(Text.valueOf("1"));
-        wei.setWorkExternalIdentifierType(Text.valueOf("doi"));
+        ActivityExternalIdentifier wei = work.getWorkExternalIdentifiers().get(0);
+        wei.setExternalIdentifierId(Text.valueOf("1"));
+        wei.setExternalIdentifierType(Text.valueOf("doi"));
         if (!PojoUtil.isEmpty(work.getPutCode())) {
             work.setPutCode(Text.valueOf(""));
         }
 
         if (work.getCitation() != null && work.getCitation().getCitation() != null && PojoUtil.isEmpty(work.getCitation().getCitation())) {
-            work.getCitation().getCitation().setValue("test");
+            work.getCitation().setCitation(Text.valueOf("test"));
+        }
+        if (work.getCitation() != null && work.getCitation().getCitation() != null && PojoUtil.isEmpty(work.getCitation().getCitationType())) {
+            work.getCitation().setCitationType(Text.valueOf("formatted-unspecified"));
         }
 
         work = worksController.postWork(null, work);
         assertNotNull(work);
         assertFalse(PojoUtil.isEmpty(work.getPutCode()));
         assertEquals(1, work.getWorkExternalIdentifiers().size());
-        assertEquals("doi", work.getWorkExternalIdentifiers().get(0).getWorkExternalIdentifierType().getValue());
-        assertEquals("1", work.getWorkExternalIdentifiers().get(0).getWorkExternalIdentifierId().getValue());
+        assertEquals("doi", work.getWorkExternalIdentifiers().get(0).getExternalIdentifierType().getValue());
+        assertEquals("1", work.getWorkExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
 
     }
 
@@ -300,16 +304,16 @@ public class WorksControllerTest extends BaseControllerTest {
 
         work.setWorkType(Text.valueOf("artistic-performance"));
 
-        work.setWorkExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
+        work.setWorkExternalIdentifiers(new ArrayList<ActivityExternalIdentifier>());
 
-        WorkExternalIdentifier wei1 = new WorkExternalIdentifier();
-        wei1.setWorkExternalIdentifierId(Text.valueOf("1"));
-        wei1.setWorkExternalIdentifierType(Text.valueOf("doi"));
+        ActivityExternalIdentifier wei1 = new ActivityExternalIdentifier();
+        wei1.setExternalIdentifierId(Text.valueOf("1"));
+        wei1.setExternalIdentifierType(Text.valueOf("doi"));
         work.getWorkExternalIdentifiers().add(wei1);
 
-        WorkExternalIdentifier wei2 = new WorkExternalIdentifier();
-        wei2.setWorkExternalIdentifierId(Text.valueOf("2"));
-        wei2.setWorkExternalIdentifierType(Text.valueOf("arxiv"));
+        ActivityExternalIdentifier wei2 = new ActivityExternalIdentifier();
+        wei2.setExternalIdentifierId(Text.valueOf("2"));
+        wei2.setExternalIdentifierType(Text.valueOf("arxiv"));
         work.getWorkExternalIdentifiers().add(wei2);
 
         work.getPublicationDate().setDay("2");
@@ -333,17 +337,17 @@ public class WorksControllerTest extends BaseControllerTest {
         assertNotNull(updatedWork.getWorkExternalIdentifiers());
         assertEquals(2, updatedWork.getWorkExternalIdentifiers().size());
 
-        List<WorkExternalIdentifier> extIds = updatedWork.getWorkExternalIdentifiers();
-        for (WorkExternalIdentifier extId : extIds) {
-            if (extId.getWorkExternalIdentifierType().getValue().equals("doi") || extId.getWorkExternalIdentifierType().getValue().equals("arxiv")) {
-                if (extId.getWorkExternalIdentifierType().getValue().equals("doi")) {
-                    assertEquals("1", extId.getWorkExternalIdentifierId().getValue());
+        List<ActivityExternalIdentifier> extIds = updatedWork.getWorkExternalIdentifiers();
+        for (ActivityExternalIdentifier extId : extIds) {
+            if (extId.getExternalIdentifierType().getValue().equals("doi") || extId.getExternalIdentifierType().getValue().equals("arxiv")) {
+                if (extId.getExternalIdentifierType().getValue().equals("doi")) {
+                    assertEquals("1", extId.getExternalIdentifierId().getValue());
                 } else {
-                    assertEquals("2", extId.getWorkExternalIdentifierId().getValue());
+                    assertEquals("2", extId.getExternalIdentifierId().getValue());
                 }
 
             } else {
-                fail("Invalid external identifier found: " + extId.getWorkExternalIdentifierType().getValue() + " : " + extId.getWorkExternalIdentifierId().getValue());
+                fail("Invalid external identifier found: " + extId.getExternalIdentifierType().getValue() + " : " + extId.getExternalIdentifierId().getValue());
             }
 
         }

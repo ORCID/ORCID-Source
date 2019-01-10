@@ -22,7 +22,7 @@ public class EmailEventEntity extends BaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
     private Long id;
-    private String email;
+    private String email;    
     private EmailEventType type;
 
     public EmailEventEntity() {
@@ -52,7 +52,7 @@ public class EmailEventEntity extends BaseEntity<Long> {
     public void setEmail(String orcid) {
         this.email = orcid;
     }
-
+    
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "email_event_type")

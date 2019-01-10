@@ -14,10 +14,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Membership;
-import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Membership;
+import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -63,6 +63,7 @@ public class JpaJaxbMembershipAdapterTest extends MockSourceNameCache {
         assertNull(oar.getSourceId());        
         assertNull(oar.getClientSourceId());        
         assertNull(oar.getElementSourceId());
+        assertEquals("http://tempuri.org",oar.getUrl());
     }
     
     @Test
@@ -87,10 +88,11 @@ public class JpaJaxbMembershipAdapterTest extends MockSourceNameCache {
         assertNotNull(membership.getOrganization().getAddress());
         assertEquals("org:city", membership.getOrganization().getAddress().getCity());
         assertEquals("org:region", membership.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, membership.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, membership.getOrganization().getAddress().getCountry());
         assertNotNull(membership.getSource());        
         assertNotNull(membership.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", membership.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",membership.getUrl().getValue());
     }
     
     @Test
@@ -113,6 +115,7 @@ public class JpaJaxbMembershipAdapterTest extends MockSourceNameCache {
         assertNotNull(summary.getSource());
         assertNotNull(summary.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", summary.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",summary.getUrl().getValue());
     }
 
     private Membership getMembership() throws JAXBException {
@@ -143,7 +146,7 @@ public class JpaJaxbMembershipAdapterTest extends MockSourceNameCache {
         result.setTitle("membership:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
-        
+        result.setUrl("http://tempuri.org");
         return result;
     }
 }

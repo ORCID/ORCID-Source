@@ -1,8 +1,10 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -11,29 +13,33 @@ import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.manager.WorkEntityCacheManager;
+import org.orcid.core.manager.v3.GroupingSuggestionsCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
+import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.grouping.WorkGroupingSuggestion;
+import org.springframework.beans.factory.annotation.Value;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
 
     public static final String BULK_PUT_CODES_DELIMITER = ",";
-
-    public static final Integer MAX_BULK_PUT_CODES = 50;
 
     @Resource(name = "jpaJaxbWorkAdapterV3")
     protected JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
@@ -45,6 +51,15 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     protected WorkEntityCacheManager workEntityCacheManager;
 
+    private final Integer maxWorksToRead;
+    
+    @Resource
+    private GroupingSuggestionsCacheManager groupingSuggestionsCacheManager;
+    
+    public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
+        this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
+    }
+    
     public void setWorkDao(WorkDao workDao) {
         this.workDao = workDao;
     }
@@ -65,6 +80,23 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
+    /**
+     * Checks if there is any public work for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public work for a specific user
+     * */
+    @Override
+    public Boolean hasPublicWorks(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+            return false;
+        }
+        return workDao.hasPublicWorks(orcid);
+    }
+    
+    
+    
     /**
      * Find the public works for a specific user
      * 
@@ -124,7 +156,27 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, putCodes, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
+    
+    /**
+     * Generate a grouped list of works with the given list of works and generates grouping suggestions
+     * 
+     * @param works
+     *            The list of works to group
+     * @return Works element with the WorkSummary elements grouped
+     */
+    @Override
+    public Works groupWorksAndGenerateGroupingSuggestions(List<WorkSummary> summaries, String orcid) {
+        WorkGroupAndGroupingSuggestionGenerator groupGenerator = new WorkGroupAndGroupingSuggestionGenerator();
+        for (WorkSummary work : summaries) {
+            groupGenerator.group(work);
+        }
+        Works works = processGroupedWorks(groupGenerator.getGroups());
 
+        List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+        groupingSuggestionsCacheManager.putGroupingSuggestions(orcid, suggestions);
+        return works;
+    }
+    
     /**
      * Generate a grouped list of works with the given list of works
      * 
@@ -138,19 +190,77 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public Works groupWorks(List<WorkSummary> works, boolean justPublic) {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-        Works result = new Works();
-        // Group all works
         for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {
                 groupGenerator.group(work);
             }
         }
+        return processGroupedWorks(groupGenerator.getGroups());
+    }
 
-        List<ActivitiesGroup> groups = groupGenerator.getGroups();
+    @Override
+    public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
+        List<BulkElement> works = new ArrayList<>();        
+        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());        
+        List<WorkEntity> entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
+        
+        for(WorkEntity entity : entities) {
+            works.add(jpaJaxbWorkAdapter.toWork(entity));
+            putCodes.remove(entity.getId());
+        }
+        
+        // Put codes still in this list doesn't exists on the database
+        for(Long invalidPutCode : putCodes) {
+            works.add(orcidCoreExceptionMapper.getV3OrcidError(new PutCodeFormatException("'" + invalidPutCode + "' is not a valid put code")));
+        }
+        
+        WorkBulk bulk = new WorkBulk();
+        bulk.setBulk(works);
+        return bulk;
+    }
+    
+    @Override
+    public Works getWorksAsGroups(String orcid) {
+        return groupWorksAndGenerateGroupingSuggestions(getWorksSummaryList(orcid), orcid);
+    }
 
+    private String[] getPutCodeArray(String putCodesAsString) {
+        String[] putCodeArray = putCodesAsString.split(BULK_PUT_CODES_DELIMITER);
+        if (putCodeArray.length > maxWorksToRead) {
+            throw new ExceedMaxNumberOfPutCodesException(maxWorksToRead);
+        }
+        return putCodeArray;
+    }
+
+    @Override
+    public List<Work> findWorks(String orcid, List<WorkLastModifiedEntity> elements) {
+        List<Work> result = new ArrayList<Work>();
+        for(WorkLastModifiedEntity w : elements) {
+            WorkEntity entity = workEntityCacheManager.retrieveFullWork(orcid, w.getId(), w.getLastModified().getTime());
+            result.add(jpaJaxbWorkAdapter.toWork(entity));
+        }
+        return result;
+    }
+
+    @Override
+    public ExternalIDs getAllExternalIDs(String orcid) {
+        List<WorkSummary> summaries = getWorksSummaryList(orcid);
+        ExternalIDs ids = new ExternalIDs();
+        for (WorkSummary s:summaries){
+            for (ExternalID id: s.getExternalIdentifiers().getExternalIdentifier()){
+                if (!ids.getExternalIdentifier().contains(id)){
+                    ids.getExternalIdentifier().add(id);
+                }
+            }
+        }
+        return ids;
+    }
+    
+    private Works processGroupedWorks(List<ActivitiesGroup> groups) {
+        Works result = new Works();
         for (ActivitiesGroup group : groups) {
             Set<GroupAble> externalIdentifiers = group.getGroupKeys();
             Set<GroupableActivity> activities = group.getActivities();
@@ -180,46 +290,4 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         result.getWorkGroup().sort(WorkComparators.GROUP);
         return result;
     }
-
-    @Override
-    public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
-        List<BulkElement> works = new ArrayList<>();
-        String[] putCodes = getPutCodeArray(putCodesAsString);
-        for (String putCode : putCodes) {
-            try {
-                Long id = Long.valueOf(putCode);
-                WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, getLastModified(orcid));
-                works.add(jpaJaxbWorkAdapter.toWork(workEntity));
-            } catch (Exception e) {
-                works.add(orcidCoreExceptionMapper.getV3OrcidError(new PutCodeFormatException("'" + putCode + "' is not a valid put code")));
-            }
-        }
-        WorkBulk bulk = new WorkBulk();
-        bulk.setBulk(works);
-        return bulk;
-    }
-    
-    @Override
-    public Works getWorksAsGroups(String orcid) {
-        return groupWorks(getWorksSummaryList(orcid), false);
-    }
-
-    private String[] getPutCodeArray(String putCodesAsString) {
-        String[] putCodeArray = putCodesAsString.split(BULK_PUT_CODES_DELIMITER);
-        if (putCodeArray.length > MAX_BULK_PUT_CODES) {
-            throw new ExceedMaxNumberOfPutCodesException(MAX_BULK_PUT_CODES);
-        }
-        return putCodeArray;
-    }
-
-    @Override
-    public List<Work> findWorks(String orcid, List<WorkLastModifiedEntity> elements) {
-        List<Work> result = new ArrayList<Work>();
-        for(WorkLastModifiedEntity w : elements) {
-            WorkEntity entity = workEntityCacheManager.retrieveFullWork(orcid, w.getId(), w.getLastModified().getTime());
-            result.add(jpaJaxbWorkAdapter.toWork(entity));
-        }
-        return result;
-    }
-
 }

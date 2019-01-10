@@ -150,6 +150,14 @@
         <sec:custom-filter ref="revokeTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
+    
+    <!-- Userinfo does its own auth.  CSRF disabled to enable post -->
+    <sec:http pattern="/oauth/userinfo" use-expressions="false" authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager" 
+	    create-session="ifRequired" entry-point-ref="approveOauthAuthenticationEntryPoint">
+    	<sec:csrf disabled="true"/>
+        <sec:intercept-url pattern="/oauth/userinfo" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:anonymous enabled="true" />
+    </sec:http>
 
 	<sec:http use-expressions="false" pattern="/oauth/.*" 
 	    authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager" 
@@ -180,8 +188,6 @@
 		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/jwks"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/userinfo"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -254,6 +260,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/home(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/identifiers/norm/(.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics(/)?$"
@@ -262,15 +270,33 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*/email-frequencies.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/orgs/disambiguated/(.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/person.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliations.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationDetails.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />		
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundings.json(\?.*)?"
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationGroups.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundingDetails.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />				
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundingGroups.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/getWorkInfo.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	 	      	
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 
+ 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/researchResourcePage.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
+ 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/researchResource.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />  	      	 	      	
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 
+ 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-review.json(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	 	      	 	      	
  	    <sec:intercept-url pattern="/public/group/[0-9]+(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
@@ -304,6 +330,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/reset-password-form-validate.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />	
+		<sec:intercept-url pattern="/reactivateAdditionalEmailsValidate.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/claim(.*)Validate.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/registerConfirm.json(\?.*)?"
@@ -356,6 +384,10 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
 		<sec:intercept-url pattern="/about/trust/integrity/record-corrections"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/unsubscribe/(.+)"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/unsubscribe/preferences.json?encryptedId=(.+)"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/.*" 
 			access="ROLE_USER"/>
         <sec:intercept-url pattern="/reactivation/.*?"
@@ -394,6 +426,8 @@
 			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/profile-history/.*" 
             access="ROLE_ADMIN"/>
+        <sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
@@ -479,6 +513,8 @@
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>                    
     
-    <bean id="revokeTokenEndpointFilter" class="org.orcid.api.common.security.oauth.RevokeTokenEndpointFilter" />    
+    <bean id="revokeTokenEndpointFilter" class="org.orcid.api.common.security.oauth.RevokeTokenEndpointFilter" />
+    
+    <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
     
 </beans>

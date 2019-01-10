@@ -213,14 +213,6 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 	
-	<bean id="groupingSuggestionManager" class="org.orcid.core.manager.impl.GroupingSuggestionManagerImpl">
-	   <property name="groupingSuggestionDao" ref="groupingSuggestionDao" />
-	</bean>
-
-    <bean id="groupingSuggestionManagerReadOnly" class="org.orcid.core.manager.read_only.impl.GroupingSuggestionManagerReadOnlyImpl">
-       <property name="groupingSuggestionDao" ref="groupingSuggestionDaoReadOnly" />
-    </bean>
-
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl">
 		<property name="emailDao" ref="emailDao" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
@@ -329,8 +321,6 @@
 	<bean id="emailFrequencyManager" class="org.orcid.core.common.manager.impl.EmailFrequencyManagerImpl" />	
 	
 	<!-- Client Managers -->
-	<bean id="clientManager" class="org.orcid.core.manager.impl.ClientManagerImpl" />
-	
 	<bean id="clientManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ClientManagerReadOnlyImpl">
 		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
 	</bean>
@@ -401,12 +391,18 @@
 		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
+		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
+		<property name="contributorsNameCache" ref="contributorsNameCache" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
 	</bean>
 	
 	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
 		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
+		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
+		<property name="contributorsNameCache" ref="contributorsNameCache" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
 	</bean>
 	
 	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils">
@@ -421,12 +417,18 @@
         <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
+    	<property name="recordNameDao" ref="recordNameDaoReadOnly" />
+    	<property name="contributorsNameCache" ref="contributorsNameCache" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     
     <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
         <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
+        <property name="recordNameDao" ref="recordNameDaoReadOnly" />
+		<property name="contributorsNameCache" ref="contributorsNameCache" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
 	
 	   <bean id="sourceUtilsV3" class="org.orcid.core.utils.v3.SourceUtils">
@@ -438,12 +440,11 @@
     </bean>
     
     <bean id="groupingSuggestionManagerV3" class="org.orcid.core.manager.v3.impl.GroupingSuggestionManagerImpl">
-       <property name="groupingSuggestionDao" ref="groupingSuggestionDao" />
-       <property name="workDao" ref="workDaoReadOnly" />
+       <property name="rejectedGroupingSuggestionDao" ref="rejectedGroupingSuggestionDao" />
     </bean>
 
     <bean id="groupingSuggestionManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.GroupingSuggestionManagerReadOnlyImpl">
-       <property name="groupingSuggestionDao" ref="groupingSuggestionDaoReadOnly" />
+        <property name="rejectedGroupingSuggestionDao" ref="rejectedGroupingSuggestionDaoReadOnly" />
     </bean>
 	
 	<bean id="orcidIdentifierUtils" class="org.orcid.core.utils.v3.OrcidIdentifierUtils" />
@@ -940,15 +941,11 @@
 	
 	<bean id="sourceManager" class="org.orcid.core.manager.impl.SourceManagerImpl" />
 	
-	<bean id="customEmailManager" class="org.orcid.core.manager.impl.CustomEmailManagerImpl" />
-	
 	<bean id="orcidSocialManager" class="org.orcid.core.manager.impl.OrcidSocialManagerImpl" />
 	
 	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />	
 	
-	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />		
-
-	<bean id="membersManager" class="org.orcid.core.manager.impl.MembersManagerImpl" />
+	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />			
 
 	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />		
 	
@@ -1033,11 +1030,21 @@
 	    </property>
 	</bean>
 	
+	<bean id="v3VersionConverterChain" class="org.orcid.core.version.impl.V3VersionConverterChainImpl">
+        <property name="converters">
+            <list>
+                <ref bean="versionConverterV3_0_rc1ToV3_0_rc2" />
+            </list>
+        </property>
+    </bean>
+	
     <bean id="versionConverterV2_0_rc1ToV2_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0_rc2"/>
 	<bean id="versionConverterV2_0_rc2ToV2_0_rc3" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc2ToV2_0_rc3"/>
 	<bean id="versionConverterV2_0_rc3ToV2_0_rc4" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc3ToV2_0_rc4"/>
 	<bean id="versionConverterV2_0_rc4ToV2_0" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc4ToV2_0"/>
 	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
+
+    <bean id="versionConverterV3_0_rc1ToV3_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV3_0_rc1ToV3_0_rc2"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
@@ -1064,7 +1071,7 @@
 	<bean id="profileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="profile" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.profileCache.maxMegaBytesInMemory:512}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
 		<property name="maxMegaBytesOnDisk" value="0" />
 	</bean>
@@ -1096,9 +1103,9 @@
 	<bean id="profileEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="profile-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:5000}" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:2000}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:3600}" />
-		<property name="maxMegaBytesOnDisk" value="128" />
+		<property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
 	</bean>		
 	
@@ -1131,7 +1138,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="2000" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
     </bean>
     
@@ -1140,25 +1147,25 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="2000" />
         <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="false" />
     </bean>
 
     <bean id="minimizedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="minimized-work" />
         <property name="cacheManager" ref="coreCacheManager" />
-        <property name="maxElementsInMemory" value="30000" />
-        <property name="timeToIdleSeconds" value="7200" />
-        <property name="maxMegaBytesOnDisk" value="1024" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.minimizedWorkEntityCache.maxMegaBytesInMemory:512}" />
+        <property name="timeToIdleSeconds" value="600" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="true" />
     </bean>
     
     <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="full-work-entity" />
         <property name="cacheManager" ref="coreCacheManager" />
-        <property name="maxElementsInMemory" value="30000" />
-        <property name="timeToIdleSeconds" value="3600" />
-        <property name="maxMegaBytesOnDisk" value="16384" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.fullWorkEntityCache.maxMegaBytesInMemory:1024}" />
+        <property name="timeToIdleSeconds" value="600" />
+        <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="true" />
     </bean>
     
@@ -1273,7 +1280,33 @@
         <property name="maxMegaBytesOnDisk" value="256" />
     </bean>
     
-	<!-- HTTP client connection beans -->
+    <bean id="groupingSuggestionsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="grouping-suggestions" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="500" />
+        <property name="timeToIdleSeconds" value="3600" />
+        <property name="maxMegaBytesOnDisk" value="256" />
+    </bean>
+    
+    <bean id="affiliationGroupsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="affiliations-group" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="2000" />
+        <property name="timeToIdleSeconds" value="7200" />
+        <property name="maxMegaBytesOnDisk" value="256" />
+        <property name="copyValues" value="false" />
+    </bean>
+    
+    <bean id="contributorsNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="contributors-name" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="25000" />
+        <property name="timeToIdleSeconds" value="7200" />
+        <property name="maxMegaBytesOnDisk" value="128" />
+        <property name="copyValues" value="false" />
+    </bean>
+    
+    <!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"
 		factory-method="getSocketFactory" />
 
@@ -1536,6 +1569,8 @@
     </bean>
              
     <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
+    
+    <bean id="v3VersionObjectFactory" class="org.orcid.core.version.impl.V3VersionObjectFactoryImpl" />
             
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
@@ -1566,6 +1601,8 @@
 		
 	<bean id="worksCacheManager" class="org.orcid.core.manager.v3.impl.WorksCacheManagerImpl" />
 	
+	<bean id="groupingSuggestionsCacheManager" class="org.orcid.core.manager.v3.impl.GroupingSuggestionsCacheManagerImpl" />
+	
 	<bean id="groupedWorksGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="groupedWorksCache" />
         <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
@@ -1587,4 +1624,19 @@
 	   <constructor-arg value="${org.orcid.core.node:1}" />
 	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
 	</bean>
+	
+	<bean id="orgAffiliationRelationEntityCacheManager" class="org.orcid.core.manager.v3.impl.OrgAffiliationRelationEntityCacheManagerImpl" />
+	
+	<bean id="affiliationEntitiesGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+        <property name="cache" ref="affiliationGroupsCache" />
+        <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+        <property name="retriever" ref="orgAffiliationRelationEntityRetriver" />
+    </bean>
+    
+	<bean id="orgAffiliationRelationEntityRetriver" class="org.orcid.core.cache.impl.OrgAffiliationRelationEntityRetriver">
+        <property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
+    </bean>
+    
+    <bean id="findMyStuffManager" class="org.orcid.core.manager.v3.impl.FindMyStuffManagerImpl" />
+    
 </beans>

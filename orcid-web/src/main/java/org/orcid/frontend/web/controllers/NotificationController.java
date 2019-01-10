@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -20,20 +19,17 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.helper.UserSession;
-import org.orcid.jaxb.model.v3.rc1.common.Source;
-import org.orcid.jaxb.model.v3.rc1.notification.Notification;
-import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationAdministrative;
-import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationServiceAnnouncement;
-import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationTip;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
-import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
+import org.orcid.jaxb.model.v3.rc2.notification.Notification;
+import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.rc2.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
+import org.orcid.model.v3.rc2.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,6 +84,7 @@ public class NotificationController extends BaseController {
         notifications = archiveObsoleteNotifications(currentOrcid, notifications);
         addSubjectToNotifications(notifications);
         setOverwrittenSourceName(notifications);
+        addSourceDescription(notifications);
         return notifications;
     }
 
@@ -146,116 +143,6 @@ public class NotificationController extends BaseController {
         return notificationManager.getUnreadCount(currentOrcid);
     }
 
-    @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public ModelAndView getCustomNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) {
-        ModelAndView mav = new ModelAndView();
-        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        if (notification instanceof NotificationCustom) {
-            String html =  ((NotificationCustom) notification).getBodyHtml();
-            int start = html.indexOf("<body>")+"<body>".length();
-            int end = html.indexOf("</body>", start);
-            String body = html.substring(start, end);
-            mav.addObject("body", body);
-        }
-        mav.addObject("notification", notification);
-        mav.setViewName("notification/custom_notification");
-        mav.addObject("noIndex", true);
-        return mav;
-    }
-
-    @RequestMapping(value = "/PERMISSION/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public ModelAndView getPermissionNotificationHtml(@PathVariable("id") String id) {
-        ModelAndView mav = new ModelAndView();
-        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        addSourceDescription(notification);
-        mav.addObject("notification", notification);
-        mav.setViewName("notification/add_activities_notification");
-        mav.addObject("noIndex", true);
-        return mav;
-    }
-
-    @RequestMapping(value = "/AMENDED/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public ModelAndView getAmendedNotificationHtml(@PathVariable("id") String id) {
-        String orcid = getEffectiveUserOrcid();
-        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
-        ModelAndView mav = new ModelAndView();
-        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        addSourceDescription(notification);
-        mav.addObject("notification", notification);
-        mav.addObject("emailName", notificationManager.deriveEmailFriendlyName(record));
-        mav.setViewName("notification/amended_notification");
-        mav.addObject("noIndex", true);
-        return mav;
-    }
-
-    @RequestMapping(value = "/INSTITUTIONAL_CONNECTION/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public ModelAndView getInstitutionalConnectionNotificationHtml(@PathVariable("id") String id) throws UnsupportedEncodingException {
-        ModelAndView mav = new ModelAndView();        
-        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        String clientId = notification.getSource().retrieveSourcePath();
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        String authorizationUrl = notificationManager.buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
-        addSourceDescription(notification);
-        mav.addObject("notification", notification);               
-        mav.addObject("baseUri", getBaseUri());
-        mav.addObject("clientId", clientId);
-        mav.addObject("authorizationUrl", authorizationUrl);
-        mav.setViewName("notification/institutional_connection_notification");
-        mav.addObject("noIndex", true);
-        return mav;
-    }
-    
-    @RequestMapping(value = "/SERVICE_ANNOUNCEMENT/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public ModelAndView getServiceAnnouncementNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
-        ModelAndView mav = new ModelAndView();
-        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        if (notification instanceof NotificationServiceAnnouncement) {
-            String html =  ((NotificationServiceAnnouncement) notification).getBodyHtml();
-            int start = html.indexOf("<body>")+"<body>".length();
-            int end = html.indexOf("</body>", start);
-            String body = html.substring(start, end);
-            mav.addObject("body", body);
-        }
-        mav.addObject("notification", notification);
-        mav.setViewName("notification/custom_notification");
-        mav.addObject("noIndex", true);
-        return mav;
-    }
-    
-    @RequestMapping(value = "/TIP/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public ModelAndView getTipNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
-        ModelAndView mav = new ModelAndView();
-        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        if (notification instanceof NotificationTip) {
-            String html =  ((NotificationTip) notification).getBodyHtml();
-            int start = html.indexOf("<body>")+"<body>".length();
-            int end = html.indexOf("</body>", start);
-            String body = html.substring(start, end);
-            mav.addObject("body", body);
-        }
-        mav.addObject("notification", notification);
-        mav.setViewName("notification/custom_notification");
-        mav.addObject("noIndex", true);
-        return mav;
-    }
-    
-    @RequestMapping(value = "/ADMINISTRATIVE/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public ModelAndView getAdministrativeNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) throws UnsupportedEncodingException {
-        ModelAndView mav = new ModelAndView();
-        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
-        if (notification instanceof NotificationAdministrative) {
-            String html =  ((NotificationAdministrative) notification).getBodyHtml();
-            int start = html.indexOf("<body>")+"<body>".length();
-            int end = html.indexOf("</body>", start);
-            String body = html.substring(start, end);
-            mav.addObject("body", body);
-        }
-        mav.addObject("notification", notification);
-        mav.setViewName("notification/custom_notification");
-        mav.addObject("noIndex", true);
-        return mav;
-    }
-    
     @RequestMapping(value = "{id}/read.json")
     public @ResponseBody Notification flagAsRead(HttpServletResponse response, @PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
@@ -361,16 +248,23 @@ public class NotificationController extends BaseController {
         return ResponseEntity.ok("{\"status\":" + String.valueOf(enabled) + "}");
     }
     
-    private void addSourceDescription(Notification notification) {
-        Source source = notification.getSource();
-        if (source != null) {
-            String sourcePath = source.retrieveSourcePath();
-            if (sourcePath != null) {
-                ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
-                if (clientDetails != null) {
-                    notification.setSourceDescription(clientDetails.getClientDescription());
+    private void addSourceDescription(List<Notification> notifications) {
+        for (Notification notification : notifications) {
+            Source source = notification.getSource();
+            if (source != null) {
+                SourceClientId clientId = source.getSourceClientId();
+                if (clientId != null) {
+                    String sourcePath = source.retrieveSourcePath();
+                    if (sourcePath != null) {
+                        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
+                        if (clientDetails != null) {
+                            notification.setSourceDescription(clientDetails.getClientDescription());
+                        }
+
+                    }
                 }
-            }
+  
+            }        
         }
     }
 }

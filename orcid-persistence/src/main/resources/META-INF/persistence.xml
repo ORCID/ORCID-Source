@@ -27,6 +27,7 @@
         <class>org.orcid.persistence.jpa.entities.NotificationCustomEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationWorkEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity</class>
         <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity</class>        
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>
@@ -59,6 +60,7 @@
         <class>org.orcid.persistence.jpa.entities.EmailFrequencyEntity</class>     
         <class>org.orcid.persistence.jpa.entities.ResearchResourceEntity</class>
         <class>org.orcid.persistence.jpa.entities.ResearchResourceItemEntity</class>
+        <class>org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity</class>
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>
@@ -83,7 +85,7 @@
 		<class>org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity</class>
 		<class>org.orcid.persistence.jpa.entities.BackupCodeEntity</class>
 		<class>org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity</class>
-		<class>org.orcid.persistence.jpa.entities.GroupingSuggestionEntity</class>		
+		<class>org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity</class>		
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 

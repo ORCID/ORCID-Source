@@ -273,9 +273,9 @@
 		<property name="entityManager" ref="entityManagerReadOnly" />		
 	</bean>
 	
-	<bean id="groupingSuggestionDao" class="org.orcid.persistence.dao.impl.GroupingSuggestionDaoImpl" />
+	<bean id="rejectedGroupingSuggestionDao" class="org.orcid.persistence.dao.impl.RejectedGroupingSuggestionDaoImpl" />
     
-    <bean id="groupingSuggestionDaoReadOnly" class="org.orcid.persistence.dao.impl.GroupingSuggestionDaoImpl">
+    <bean id="rejectedGroupingSuggestionDaoReadOnly" class="org.orcid.persistence.dao.impl.RejectedGroupingSuggestionDaoImpl">
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     
@@ -519,4 +519,5 @@
 	
 	<util:properties id="notification_queries" location="classpath:queries/notifications.xml" />
 	<bean id="researchResourceDao" class="org.orcid.persistence.dao.impl.ResearchResourceDaoImpl"/>
+	<bean id="findMyStuffHistoryDao" class="org.orcid.persistence.dao.impl.FindMyStuffHistoryDaoImpl"/>
 </beans>

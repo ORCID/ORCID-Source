@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -74,6 +75,30 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileFundingId");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("profileFundingId", profileFundingId);
+        query.setParameter("visibility", visibility);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+    
+    /**
+     * Updates the visibility of multiple existing profile funding relationships
+     * 
+     * @param clientOrcid
+     *            The client orcid
+     * 
+     * @param profileFundingIds
+     *            The ids of the profile fundings that will be updated
+     * 
+     * @param visibility
+     *            The new visibility value for the profile profileFunding object
+     * 
+     * @return true if the relationships were updated
+     * */
+    @Override
+    @Transactional
+    public boolean updateProfileFundingVisibilities(String clientOrcid, ArrayList<Long> profileFundingIds, String visibility) {
+        Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id in (:profileFundingIds)");
+        query.setParameter("clientOrcid", clientOrcid);
+        query.setParameter("profileFundingIds", profileFundingIds);
         query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0 ? true : false;
     }
@@ -248,5 +273,13 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         Query query = entityManager.createQuery("delete from ProfileFundingEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
+    }
+    
+    @Override
+    public Boolean hasPublicFunding(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM profile_funding WHERE orcid=:orcid AND visibility='PUBLIC'");
+        query.setParameter("orcid", orcid);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return (result != null && result > 0);
     }
 }

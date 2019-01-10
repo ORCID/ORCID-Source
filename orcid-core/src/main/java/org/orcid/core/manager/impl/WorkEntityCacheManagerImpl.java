@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.ListUtils;
 import org.ehcache.Cache;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
@@ -23,6 +24,7 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 
@@ -30,8 +32,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorkEntityCacheManagerImpl.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkEntityCacheManagerImpl.class);   
+    
     @Resource(name = "workLastModifiedCache")
     private Cache<ProfileCacheKey, List<WorkLastModifiedEntity>> workLastModifiedCache;
 
@@ -44,6 +46,8 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Resource(name = "fullWorkEntityCache")
     private Cache<WorkCacheKey, WorkEntity> fullWorkEntityCache;
 
+    private final Integer batchSize;    
+    
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private WorkDao workDao;
@@ -51,6 +55,10 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Resource
     private SlackManager slackManager;
 
+    public WorkEntityCacheManagerImpl(@Value("${org.orcid.works.db.batch_size:10}") Integer batchSize, @Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
+        this.batchSize = (batchSize == null || batchSize < 1 || batchSize > bulkReadSize) ? (bulkReadSize == null || bulkReadSize > 100 ? 100 : bulkReadSize) : batchSize;
+    }
+    
     public void setWorkDao(WorkDao workDao) {
         this.workDao = workDao;
     }
@@ -224,7 +232,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
         // now fetch all the others that are *not* in the cache
         if (fetchList.size() > 0) {
-            List<WorkEntity> refreshedWorks = workDao.getWorkEntities(fetchList);
+            List<WorkEntity> refreshedWorks = workDao.getWorkEntities(orcid, fetchList);
             for (WorkEntity mWorkRefreshedFromDB : refreshedWorks) {
                 WorkCacheKey key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
                     WorkEntity cachedWork =fullWorkEntityCache.get(key);                        
@@ -238,5 +246,44 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             }
         }
         return (List<WorkEntity>) Arrays.asList(returnArray);
+    }
+
+    @Override
+    public List<WorkEntity> retrieveFullWorks(String orcid, List<Long> workIds) {
+        List<Long> worksToFetchFromDB = new ArrayList<Long>();
+        List<WorkEntity> works = new ArrayList<WorkEntity>();
+        
+        List<WorkLastModifiedEntity> lastModifiedList = workDao.getWorkLastModifiedList(orcid, workIds);
+        Map<Long, Long> lastModifiedMap = toIdsLastModifiedMap(lastModifiedList);
+        
+        for(Long workId : workIds) {
+            WorkCacheKey key = new WorkCacheKey(workId, releaseName);
+            WorkEntity workEntity = fullWorkEntityCache.get(key);
+            if (workEntity == null || !lastModifiedMap.containsKey(workEntity.getId()) || workEntity.getLastModified().getTime() < lastModifiedMap.get(workEntity.getId())) {
+                worksToFetchFromDB.add(workId);
+            } else {
+                works.add(workEntity);
+            }
+        }
+        
+        List<List<Long>> lists = ListUtils.partition(worksToFetchFromDB, batchSize);
+        for(List<Long> idsList : lists) {
+            List<WorkEntity> workList = workDao.getWorkEntities(orcid, idsList);
+            for(WorkEntity work : workList) {
+                WorkCacheKey key = new WorkCacheKey(work.getId(), releaseName);
+                fullWorkEntityCache.put(key, work);
+                works.add(work);
+            }
+        }
+        
+        return works;
+    }
+    
+    private Map<Long, Long> toIdsLastModifiedMap(List<WorkLastModifiedEntity> entities) {
+        Map<Long, Long> map = new HashMap<Long, Long>();
+        for(WorkLastModifiedEntity entity : entities) {
+            map.put(entity.getId(), entity.getLastModified().getTime());
+        }
+        return map;
     }
 }

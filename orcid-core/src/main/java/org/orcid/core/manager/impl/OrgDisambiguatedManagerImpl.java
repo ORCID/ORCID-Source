@@ -9,10 +9,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
@@ -38,7 +40,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private static final int INDEXING_CHUNK_SIZE = 1000;
     private static final int INCORRECT_POPULARITY_CHUNK_SIZE = 1000;
-    private static final String FUNDING_ORG_TYPE = "FUNDREF";
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgDisambiguatedManagerImpl.class);
 
     @Resource
@@ -110,7 +111,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         document.setOrgNames(new ArrayList<>(orgNames));
 
-        if (FUNDING_ORG_TYPE.equals(entity.getSourceType())) {
+        if (OrgDisambiguatedSourceType.FUNDREF.name().equals(entity.getSourceType())) {
             document.setFundingOrg(true);
         } else {
             document.setFundingOrg(false);
@@ -172,6 +173,20 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Transactional
     public OrgDisambiguated findInDB(Long id) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.find(id);
+        OrgDisambiguated org = convertEntity(orgDisambiguatedEntity);
+        return org;
+    }
+
+    @Override
+    @Transactional
+    public OrgDisambiguated findInDB(String idValue, String idType) {
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDaoReadOnly.findBySourceIdAndSourceType(idValue, idType);
+        if (orgDisambiguatedEntity != null)
+            return convertEntity(orgDisambiguatedEntity);
+        return null;
+    }
+
+    private OrgDisambiguated convertEntity(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         OrgDisambiguated org = new OrgDisambiguated();
         org.setValue(orgDisambiguatedEntity.getName());
         org.setCity(orgDisambiguatedEntity.getCity());
@@ -214,5 +229,4 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         return org;
     }
-
 }

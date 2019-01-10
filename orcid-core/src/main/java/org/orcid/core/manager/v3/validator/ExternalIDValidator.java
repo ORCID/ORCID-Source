@@ -7,10 +7,11 @@ import javax.annotation.Resource;
 import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Items;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Items;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -56,6 +57,8 @@ public class ExternalIDValidator {
         if (ids == null) // yeuch
             return;
         List<String> errors = Lists.newArrayList();
+        boolean hasVersionOfIdentifier = false;
+        boolean hasSelfIdentifier = false;
         for (ExternalID id : ids.getExternalIdentifier()) {
             if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
                 errors.add(id.getType());
@@ -70,7 +73,20 @@ public class ExternalIDValidator {
                     errors.add("relationship");
                 }
             }
+            
+            if(Relationship.VERSION_OF.equals(id.getRelationship())) {
+                hasVersionOfIdentifier = true;
+            }
+            
+            if(Relationship.SELF.equals(id.getRelationship())) {
+                hasSelfIdentifier = true;
+            }
         }
+        
+        if(hasVersionOfIdentifier && !hasSelfIdentifier) {
+            errors.add("version-of requires at least one self identifier");
+        } 
+        
         checkAndThrow(errors);
     }
 

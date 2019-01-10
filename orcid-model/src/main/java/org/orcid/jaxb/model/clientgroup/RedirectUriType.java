@@ -58,8 +58,11 @@ public enum RedirectUriType {
     SSO_AUTHENTICATION("sso-authentication"),
     
     @XmlEnumValue("institutional-sign-in")
-    INSTITUTIONAL_SIGN_IN("institutional-sign-in");
-        
+    INSTITUTIONAL_SIGN_IN("institutional-sign-in"),
+
+    @XmlEnumValue("find-my-stuff")
+    FIND_MY_STUFF("find-my-stuff");
+
     //@formatter:on
 
     private final String value;

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/person" xmlns:person="http://www.orcid.org/ns/person"
+	xmlns:other-name="http://www.orcid.org/ns/other-name" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
+	xmlns:email="http://www.orcid.org/ns/email" xmlns:personal-details="http://www.orcid.org/ns/personal-details"
+	xmlns:address="http://www.orcid.org/ns/address" xmlns:keyword="http://www.orcid.org/ns/keyword"
+	xmlns:external-identifier="http://www.orcid.org/ns/external-identifier">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2018 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="person" uri="http://www.orcid.org/ns/person" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_3.0_rc2/common-3.0_rc2.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/personal-details"
+		schemaLocation="../record_3.0_rc2/personal-details-3.0_rc2.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/other-name"
+		schemaLocation="../record_3.0_rc2/other-name-3.0_rc2.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/researcher-url"
+		schemaLocation="../record_3.0_rc2/researcher-url-3.0_rc2.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/email"
+		schemaLocation="../record_3.0_rc2/email-3.0_rc2.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/address"
+		schemaLocation="../record_3.0_rc2/address-3.0_rc2.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/keyword"
+		schemaLocation="../record_3.0_rc2/keyword-3.0_rc2.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/external-identifier"
+		schemaLocation="../record_3.0_rc2/person-external-identifier-3.0_rc2.xsd" />
+
+	<xs:element name="person">
+		<xs:annotation>
+			<xs:documentation>The biographical details of the researcher or
+				contributor.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+				<xs:element name="name" type="personal-details:name"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element ref="other-name:other-names" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element name="biography" type="personal-details:biography"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element ref="researcher-url:researcher-urls"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element ref="email:emails" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="address:addresses" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="keyword:keywords" minOccurs="0"
+					maxOccurs="1" />
+				<xs:element ref="external-identifier:external-identifiers"
+					minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+			<xs:attribute name="path" type="common:element-path" use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

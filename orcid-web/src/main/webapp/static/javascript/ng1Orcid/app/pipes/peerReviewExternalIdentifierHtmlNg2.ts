@@ -27,13 +27,13 @@ export class PeerReviewExternalIdentifierHtmlPipe implements PipeTransform {
             isPartOf = true;
         }
         
-        if (peerReviewExternalIdentifier.workExternalIdentifierId == null) {
+        if (peerReviewExternalIdentifier.externalIdentifierId == null) {
             return output;
         }
-        id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
+        id = peerReviewExternalIdentifier.externalIdentifierId.value;        
         
-        if (peerReviewExternalIdentifier.workExternalIdentifierType != null) {
-            type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
+        if (peerReviewExternalIdentifier.externalIdentifierType != null) {
+            type = peerReviewExternalIdentifier.externalIdentifierType.value;
             if (type != null) {
                 if(isPartOf) {
                     output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";

@@ -34,41 +34,43 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.common.Url;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Address;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Membership;
-import org.orcid.jaxb.model.v3.rc1.record.OtherName;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc1.record.Qualification;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc1.record.Role;
-import org.orcid.jaxb.model.v3.rc1.record.Service;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc2.common.Title;
+import org.orcid.jaxb.model.v3.rc2.common.Url;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Membership;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReviewSubjectType;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.Role;
+import org.orcid.jaxb.model.v3.rc2.record.Service;
+import org.orcid.jaxb.model.v3.rc2.record.SubjectName;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
@@ -86,8 +88,8 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
     // Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
 
-    @Resource(name = "memberV3ApiServiceDelegatorV3_0_rc1")
-    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword> serviceDelegator;
+    @Resource(name = "memberV3ApiServiceDelegator")
+    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
 
     @Resource
     protected EmailFrequencyManager emailFrequencyManager;
@@ -277,9 +279,9 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
             assertNotNull(group.getIdentifiers());
             assertNotNull(group.getIdentifiers().getExternalIdentifier());
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
-            assertNotNull(group.getPeerReviewSummary());
-            assertEquals(1, group.getPeerReviewSummary().size());
-            PeerReviewSummary summary = group.getPeerReviewSummary().get(0);
+            assertNotNull(group.getPeerReviewGroup().get(0).getPeerReviewSummary());
+            assertEquals(1, group.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+            PeerReviewSummary summary = group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
             Utils.verifyLastModified(summary.getLastModifiedDate());
             switch (group.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
             case "issn:0000009":
@@ -414,7 +416,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        disambiguatedOrg.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
         peerReview.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
         
         try {
@@ -474,9 +476,9 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
         assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0));
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary());
-        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
-        assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
+        assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
 
         PeerReview peerReview = Utils.getPeerReview();
 
@@ -504,11 +506,11 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 
         for (PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
             Utils.verifyLastModified(group.getLastModifiedDate());
-            Utils.verifyLastModified(group.getPeerReviewSummary().get(0).getLastModifiedDate());
-            if ("issn:0000001".equals(group.getPeerReviewSummary().get(0).getGroupId())) {
+            Utils.verifyLastModified(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
+            if ("issn:0000001".equals(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId())) {
                 haveOld = true;
             } else {
-                assertEquals("issn:0000003", group.getPeerReviewSummary().get(0).getGroupId());
+                assertEquals("issn:0000003", group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
                 haveNew = true;
             }
         }
@@ -532,7 +534,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         // disambiguated org is required in API v3
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("some-org");
-        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        disambiguatedOrg.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
         peerReview.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
         
         peerReview.setPutCode(null);
@@ -556,10 +558,10 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview1.setRole(Role.CHAIR);
         peerReview1.setSubjectContainerName(new Title("subject-container-name"));
         peerReview1.setSubjectExternalIdentifier(wei1);
-        WorkTitle workTitle1 = new WorkTitle();
-        workTitle1.setTitle(new Title("work-title"));
-        peerReview1.setSubjectName(workTitle1);
-        peerReview1.setSubjectType(WorkType.DATA_SET);
+        SubjectName subjectName1 = new SubjectName();
+        subjectName1.setTitle(new Title("subject-names"));
+        peerReview1.setSubjectName(subjectName1);
+        peerReview1.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview1.setType(PeerReviewType.EVALUATION);
 
         Response response1 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview1);
@@ -585,10 +587,10 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview2.setRole(Role.CHAIR);
         peerReview2.setSubjectContainerName(new Title("subject-container-name"));
         peerReview2.setSubjectExternalIdentifier(wei2);
-        WorkTitle workTitle2 = new WorkTitle();
-        workTitle2.setTitle(new Title("work-title"));
-        peerReview2.setSubjectName(workTitle2);
-        peerReview2.setSubjectType(WorkType.DATA_SET);
+        SubjectName subjectName2 = new SubjectName();
+        subjectName2.setTitle(new Title("subject-name"));
+        peerReview2.setSubjectName(subjectName2);
+        peerReview2.setSubjectType(PeerReviewSubjectType.DATA_SET);
         peerReview2.setType(PeerReviewType.EVALUATION);
 
         Response response2 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview2);

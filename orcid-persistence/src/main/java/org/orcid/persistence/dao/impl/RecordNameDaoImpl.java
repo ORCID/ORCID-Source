@@ -3,6 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -77,5 +78,12 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM RecordNameEntity WHERE profile.id = :orcid", Date.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
+    }
+
+    @Override
+    public List<RecordNameEntity> getRecordNames(List<String> orcids) {
+        TypedQuery<RecordNameEntity> query = entityManager.createQuery("FROM RecordNameEntity WHERE profile.id in :ids", RecordNameEntity.class);
+        query.setParameter("ids", orcids);
+        return query.getResultList();
     }
 }

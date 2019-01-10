@@ -5,6 +5,12 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
+	
+    @Label("Change view privacy from work/funding/affiliation form dialogs")
+    DIALOG_PRIVACY_OPTION,
+	
+    @Label("Shows an alert message when a user goes to /signin and is already signed in\n")
+    RE_LOGGIN_ALERT,
 
     @Label("Affiliation org ID in UI")
     AFFILIATION_ORG_ID,
@@ -12,8 +18,8 @@ public enum Features implements Feature {
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
 
-    @Label("Badges on member details")
-    BADGES,
+    @Label("New style badges on member details")
+    NEW_BADGES,
     
     @Label("Cookie policy banner")
     COOKIE_BANNER,
@@ -29,6 +35,12 @@ public enum Features implements Feature {
 
     @Label("New footer")
     NEW_FOOTER,
+    
+    @Label("Research resource actvities section in the UI")
+    RESEARCH_RESOURCE,
+    
+    @Label("Reset password send email in all cases")
+    RESET_PASSWORD_EMAIL,
 
     @Label("Revoke access token if authorization code is reused")
     REVOKE_TOKEN_ON_CODE_REUSE,
@@ -66,9 +78,6 @@ public enum Features implements Feature {
     @Label("Disable reCAPTCHA")
     DISABLE_RECAPTCHA,
 
-    @Label("Display the new affiliation types in the workspace")
-    DISPLAY_NEW_AFFILIATION_TYPES,
-
     @Label("Disable 1.2 API from the public API")
     DISABLE_1_2_ON_PUB_API,
 
@@ -82,7 +91,24 @@ public enum Features implements Feature {
     OPENID_SIMPLE_SUBJECT,
     
     @Label("Disable 1.1 version from any API")
-    DISABLE_1_1;
+    DISABLE_1_1,
+    
+    @Label("Enable group affiliations")
+    GROUP_AFFILIATIONS,
+    
+    @Label("Support migration UV to Zendesk")
+    SUPPORT_MIGRATION,
+    
+    @Label("Enable manual work grouping")
+    MANUAL_WORK_GROUPING,
+
+    @Label("Verbos work group logging")
+    WORK_GROUP_LOGGING,
+    
+    @Label("Grouping suggestions")
+    GROUPING_SUGGESTIONS;
+    
+
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

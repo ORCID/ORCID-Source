@@ -6,6 +6,8 @@ import java.util.Set;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
@@ -77,5 +79,7 @@ public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
     void addScopesToClient(Set<String> clientScopeStrings, ClientDetailsEntity clientDetails);
 
     void addAuthorizedGrantTypeToClient(Set<String> types, ClientDetailsEntity clientDetails);
+
+    void addClientRedirectUri(String clientId, String uri, RedirectUriType uriType, ScopePathType scope);
 
 }

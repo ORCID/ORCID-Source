@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -41,17 +42,17 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc1.common.Locale;
-import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.record.Biography;
-import org.orcid.jaxb.model.v3.rc1.record.CreditName;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
-import org.orcid.jaxb.model.v3.rc1.record.FamilyName;
-import org.orcid.jaxb.model.v3.rc1.record.GivenNames;
-import org.orcid.jaxb.model.v3.rc1.record.Name;
+import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.CreditName;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.FamilyName;
+import org.orcid.jaxb.model.v3.rc2.record.GivenNames;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -66,6 +67,8 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Reactivation;
+import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
@@ -152,6 +155,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
+    
+    @Resource
+    private EmailFrequencyManager emailFrequencyManager;
     
     @Override
     public boolean orcidExists(String orcid) {
@@ -393,11 +399,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {
-        if (PojoUtil.isEmpty(orcid)) {
+    public String getOrcidHash(String string) {
+        if (PojoUtil.isEmpty(string)) {
             return null;
         }
-        return encryptionManager.sha256Hash(orcid);
+        try {
+            return encryptionManager.sha256Hash(string);
+        } catch(NoSuchAlgorithmException nsae) {
+            throw new RuntimeException(nsae);
+        }        
     }
 
     @Override
@@ -490,19 +500,20 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profileDao.merge(profile);
         profileDao.flush();        
         
-        return true;
-    }
-
-    @Override
-    @Transactional
-    public boolean reactivateRecord(String orcid) {
-        ProfileEntity toReactivate = profileDao.find(orcid);
-        toReactivate.setLastModified(new Date());
-        toReactivate.setDeactivationDate(null);
-        profileDao.merge(toReactivate);
-        profileDao.flush();
-
-        notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
+        if(!emailFrequencyManager.emailFrequencyExists(orcid)) {
+            if(claim.getSendOrcidNews() == null) {
+                emailFrequencyManager.createOnClaim(orcid, false);
+            } else {
+                emailFrequencyManager.createOnClaim(orcid, claim.getSendOrcidNews().getValue());
+            }            
+        } else {
+            if(claim.getSendOrcidNews() == null) {
+                emailFrequencyManager.updateSendQuarterlyTips(orcid, false);
+            } else {
+                emailFrequencyManager.updateSendQuarterlyTips(orcid, claim.getSendOrcidNews().getValue());
+            }    
+        }
+        
         return true;
     }
 
@@ -513,27 +524,71 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public boolean isProfileClaimedByEmail(String email) {
-        return profileDao.getClaimedStatusByEmail(email);
+        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));        
     }
-
+    
     @Override
-    public void reactivate(String orcid, String givenNames, String familyName, String password, Visibility defaultVisibility) {
-        LOGGER.info("About to reactivate record, orcid={}", orcid);
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-        profileEntity.setDeactivationDate(null);
-        profileEntity.setClaimed(true);
-        profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
-        profileEntity.setActivitiesVisibilityDefault(defaultVisibility.name());
-        RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
-        recordNameEntity.setGivenNames(givenNames);
-        recordNameEntity.setFamilyName(familyName);
-        profileDao.merge(profileEntity);
+    public void reactivate(String orcid, String primaryEmail, Reactivation reactivation) {  
+        ArrayList<String> emailsToNotify = new ArrayList<String>();
+        // Null reactivation object means the reactivation request comes from an admin
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                LOGGER.info("About to reactivate record, orcid={}", orcid);                
+                // Populate primary email
+                String primaryEmailTrim = primaryEmail.trim();                    
+                emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim);
+                if(reactivation == null) {
+                    // Delete any non primary email
+                    emailManager.clearEmailsAfterReactivation(orcid);                    
+                } else {
+                    // Populate additional emails
+                    if(reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
+                        for(Text additionalEmail : reactivation.getEmailsAdditional()) {
+                            if(!PojoUtil.isEmpty(additionalEmail)) {
+                                String email = additionalEmail.getValue().trim();                                
+                                boolean isNewEmailOrShouldNotify = emailManager.reactivateOrCreate(orcid, email, reactivation.getActivitiesVisibilityDefault().getVisibility());                                      
+                                if(isNewEmailOrShouldNotify) {
+                                    emailsToNotify.add(email);
+                                }
+                            }                
+                        }
+                    }
+                    // Delete any non populated email
+                    emailManager.clearEmailsAfterReactivation(orcid);                    
+                }
+                
+                // Reactivate user
+                ProfileEntity profileEntity = profileDao.find(orcid);
+                profileEntity.setDeactivationDate(null);
+                profileEntity.setClaimed(true);
+                if(reactivation != null) {
+                    profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(reactivation.getPassword().getValue()));
+                    profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());
+                    RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
+                    recordNameEntity.setGivenNames(reactivation.getGivenNames().getValue());
+                    recordNameEntity.setFamilyName(reactivation.getFamilyNames().getValue());                    
+                }
+                profileDao.merge(profileEntity);               
+                LOGGER.info("Record orcid={} successfully reactivated", orcid);
+                return true;
+            }            
+        });
+        
+        // Notify any new email address
+        if(!emailsToNotify.isEmpty()) {
+            for(String emailToNotify: emailsToNotify) {
+                notificationManager.sendVerificationEmail(orcid, emailToNotify);
+            }
+        }
+        
     }
 
     @Override
     public void updatePassword(String orcid, String password) {
         String encryptedPassword = encryptionManager.hashForInternalUse(password);
         profileDao.updateEncryptedPassword(orcid, encryptedPassword);
+        profileHistoryEventManager.recordEvent(ProfileHistoryEventType.RESET_PASSWORD, orcid);
     }
 
     @Override
@@ -671,5 +726,5 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (updated) {
             profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, orcid, "deactivated/deprecated");
         }
-    }
+    }    
 }

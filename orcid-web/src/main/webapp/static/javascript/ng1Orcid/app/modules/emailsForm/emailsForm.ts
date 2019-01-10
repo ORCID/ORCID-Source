@@ -30,11 +30,14 @@ export const EmailsFormModule = angular.module(
         entryComponents: [ 
             EmailsFormComponent 
         ],
+        exports: [ 
+            EmailsFormComponent 
+        ],
         imports: [
             CommonNg2Module
         ],
         providers: [
-        ]
+        ],
     }
 )
 export class EmailsFormNg2Module {}

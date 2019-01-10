@@ -31,7 +31,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     authorizeURL: any;
     authorizeUrlBase: any;
     authorizeURLTemplate: any;
-    availableRedirectScopes: any;
     clients: any;
     clientDetails: any;
     clientToEdit: any;
@@ -39,6 +38,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     editing: any;
     expanded: any;
     googleExampleLink: any;
+    googleExampleLinkOpenID: string;
     googleUri: any;
     hideGoogleUri: any;
     hideSwaggerMemberUri: any;
@@ -46,13 +46,16 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     listing: any;
     newClient: any;
     playgroundExample: any;
-    resetThisClient: any;
     sampleAuthCurl: any;
     sampleAuthCurlTemplate: any;
+    sampleOpenId: string;
+    sampleOpenIdTemplate: string;
+    scopes: any;
     scopeSelectorOpen: any;
     selectedRedirectUri: any;
     selectedScope: any;
     selectedScopes: any;
+    showResetClientSecret: boolean;
     swaggerUri: any;
     swaggerMemberUri: any;
     tokenURL: any;
@@ -66,7 +69,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.authorizeURL = null;
         this.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
         this.authorizeURLTemplate = this.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scope=[SCOPES]';
-        this.availableRedirectScopes = [];
         this.clients = [];
         this.clientDetails = {};
         this.clientToEdit = null;
@@ -74,6 +76,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editing = false;
         this.expanded = false;
         this.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scope=[SCOPES]';
+        this.googleExampleLinkOpenID = 'https://developers.google.com/oauthplayground/#step1&scopes=openid&url=https%3A%2F%2F&content_type=application%2Fjson&http_method=GET&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&includeCredentials=unchecked&accessTokenType=query&response_type=token&oauthClientId=[CLIENT_ID]';
         this.googleUri = 'https://developers.google.com/oauthplayground';
         this.hideGoogleUri = true;
         this.hideSwaggerMemberUri = true;
@@ -81,13 +84,16 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.listing = true;
         this.newClient = null;
         this.playgroundExample = '';
-        this.resetThisClient = null;
         this.sampleAuthCurl = '';
         this.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [BASE_URI]/oauth/token";
+        this.sampleOpenId = '';
+        this.sampleOpenIdTemplate = this.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=token&scope=openid&redirect_uri=[REDIRECT_URI]';
+        this.scopes = [];
         this.scopeSelectorOpen = false;
         this.selectedRedirectUri = "";
         this.selectedScope = "";
         this.selectedScopes = [];
+        this.showResetClientSecret = false;
         this.swaggerUri = orcidVar.pubBaseUri+ '/v2.0/';
         this.swaggerMemberUri = this.swaggerUri.replace("pub","api");
         this.tokenURL = getBaseUri() + '/oauth/token';
@@ -116,7 +122,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 if(data.errors != null && data.errors.length > 0){
                     this.newClient = data;
                 } else {
-                    // If everything worked fine, reload the list of clients
                     this.getClients();
                 }
             },
@@ -140,7 +145,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         
         if(edit == 'true') {
-            if(this.clientToEdit.redirectUris.length == 1 && this.clientToEdit.this[0].value.value == null) {
+            if(this.clientToEdit.redirectUris.length == 1 && this.clientToEdit.redirectUris[0].value.value == null) {
                 this.clientToEdit.redirectUris[0].value.value = rUri;
             } else {
                  this.addUriToExistingClientTable(rUri);   
@@ -154,42 +159,20 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         }                    
     };
 
-    // Add a new uri input field to a existing client
     addUriToExistingClientTable(defaultValue): void {
         defaultValue = (typeof defaultValue != undefined && defaultValue != null) ? defaultValue : '';     
         this.clientToEdit.redirectUris.push({value: {value: defaultValue},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
     };
     
-    // Add a new uri input field to a new client
     addRedirectUriToNewClientTable(defaultValue): void {
         defaultValue = (typeof defaultValue != undefined && defaultValue != null) ? defaultValue : '';                
         this.newClient.redirectUris.push({value: {value: defaultValue},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
-    };
-
-    closeModal(): void{
-        //$.colorbox.close();
     };
 
     collapse(): void{
         this.expanded = false;
     };
 
-    confirmResetClientSecret(): void{
-        this.resetThisClient = this.clientToEdit;
-        /*
-        $.colorbox({
-            html : $compile($('#reset-client-secret-modal').html())($scope),
-            transition: 'fade',
-            onLoad: function() {
-                $('#cboxClose').remove();
-            },
-            scrolling: true
-        });
-        */
-        //$.colorbox.resize({width:"415px" , height:"250px"});
-    };
-
-    // Delete an uri input field
     deleteUriOnExistingClient(idx): void {
         this.clientToEdit.redirectUris.splice(idx, 1);
         this.hideGoogleUri = false;
@@ -208,7 +191,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    // Delete an uri input field
     deleteUriOnNewClient(idx): void{
         this.newClient.redirectUris.splice(idx, 1);
         this.hideGoogleUri = false;
@@ -227,7 +209,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    // Submits the updated client
     editClient(): void {
         // Check which redirect uris are empty strings and remove them from the
         // array
@@ -264,18 +245,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.expanded = true;
     };
 
-    getAvailableRedirectScopes(): any {
-        var toRemove = '/authenticate';
-        var result = [];
-
-        result = jQuery.grep(this.availableRedirectScopes, function(value) {
-          return value != toRemove;
-        });
-
-        return result;
-    };
-
-    // Get the list of clients associated with this user
     getClients(): void{
 
         this.clientService.getClients()
@@ -318,71 +287,15 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         $event.target.select();
     };
 
-    // Checks if an item is selected
-    isChecked(rUri): boolean {
-        /*
-        let scope = this.scope;
-        if (jQuery.inArray( scope, rUri.scopes ) != -1) {
-            return true;
-        }
-        */
-        return false;
-    };
-
-    // Checks if the scope checkbox should be disabled
-    isDisabled(rUri): boolean {
-        if(rUri.type.value == 'grant-read-wizard') {
-            return true;
-        }
-        return false;
-    };
-
-    // Load the list of scopes for client redirect uris
-    loadAvailableScopes(): void {
-        this.clientService.loadAvailableScopes()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.availableRedirectScopes = data;
-            },
-            error => {
-                //console.log('getregisterDataError', error);
-            } 
-        );
-    };
-
-    // Load the default scopes based n the redirect uri type selected
-    loadDefaultScopes(rUri): void {
-        // Empty the scopes to update the default ones
-        rUri.scopes = [];
-        // Fill the scopes with the default scopes
-        if(rUri.type.value == 'grant-read-wizard'){
-            rUri.scopes.push('/orcid-profile/read-limited');
-        } else if (rUri.type.value == 'import-works-wizard'){
-            rUri.scopes.push('/orcid-profile/read-limited');
-            rUri.scopes.push('/orcid-works/create');
-        } else if (rUri.type.value == 'import-funding-wizard'){
-            rUri.scopes.push('/orcid-profile/read-limited');
-            rUri.scopes.push('/funding/create');
-        }
-    };
-
     resetClientSecret(): void {
-        this.clientService.resetClientSecret( this.resetThisClient.clientId.value )
+        this.clientService.resetClientSecret( this.clientToEdit.clientId.value )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
                 if(data) {
-                    this.editing = false;
-                    this.creating = false;
-                    this.listing = true;
-                    this.viewing = false;
-
-                    this.closeModal();
+                    this.showResetClientSecret = false;
                     this.getClients();
                 } else {
                     //console.log('Unable to reset client secret');
@@ -394,21 +307,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    // Mark an item as selected
-    setSelectedItem(rUri): boolean {/*
-        var scope = this.scope;
-        if (jQuery.inArray( scope, rUri.scopes ) == -1) {
-            rUri.scopes.push(scope);
-        } else {
-            rUri.scopes = jQuery.grep(rUri.scopes, function(value) {
-                return value != scope;
-              });
-        }
-        */
-        return false;
-    };
-
-    // Get an empty modal to add
     showAddClient(): void {
         this.clientService.showAddClient()
         .pipe(    
@@ -431,9 +329,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    // Display the modal to edit a client
     showEditClient(client): void {
-        // Copy the client to edit to a scope variable
         this.clientToEdit = client;
         this.editing = true;
         this.creating = false;
@@ -463,43 +359,19 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.viewing = false;
     };
 
-    // Submits the client update request
-    submitEditClient(): void {
-        // Check which redirect uris are empty strings and remove them from the
-        // array
-        for(var j = this.clientToEdit.length - 1; j >= 0 ; j--)    {
-            if(!this.clientToEdit.redirectUris[j].value){
-                this.clientToEdit.redirectUris.splice(j, 1);
-            }
-        }
-
-        this.clientService.submitEditClient( this.clientToEdit )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                if(data.errors != null && data.errors.length > 0){
-                    this.clientToEdit = data;
-                } else {
-                    // If everything worked fine, reload the list of clients
-                    this.getClients();
-                    this.closeModal();
-                }
-            },
-            error => {
-                //console.log('setformDataError', error);
-            } 
-        );
-    };
-
     updateSelectedRedirectUri(): void {
         var clientId = '';
         var example = null;
+        var exampleOIDC = null;
         var sampleCurl = null;
-        var scope = this.selectedScope;
+        var sampleOIDC = null;
+        var scope = '';
         var selectedClientSecret = '';
         this.playgroundExample = '';
+        
+        for(let i = 0; i < this.selectedScope.length; i++) {
+            scope += (","+this.selectedScope[i].name);
+        }
 
         if (this.clientDetails != null){
             clientId = this.clientDetails.clientId.value;
@@ -508,7 +380,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
         if(this.selectedRedirectUri.length != 0) {
             this.selectedRedirectUriValue = this.selectedRedirectUri.value.value;
-
             if(this.googleUri == this.selectedRedirectUriValue) {
                 example = this.googleExampleLink;
                 example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
@@ -517,6 +388,12 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 if(scope != '')
                     example = example.replace('[SCOPES]', scope);
                 this.playgroundExample = example.replace(/,/g,'%20');
+                
+                exampleOIDC = this.googleExampleLinkOpenID;
+                exampleOIDC = exampleOIDC.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
+                exampleOIDC = exampleOIDC.replace('[CLIENT_ID]', clientId);
+                this.googleExampleLinkOpenID = exampleOIDC;        
+                
             }else if(this.swaggerUri == this.selectedRedirectUriValue) {
                 this.playgroundExample = this.swaggerUri;
             }else if(this.swaggerMemberUri == this.selectedRedirectUriValue) {
@@ -540,26 +417,26 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                 .replace('[CLIENT_SECRET]', selectedClientSecret)
                 .replace('[BASE_URI]', orcidVar.baseUri)
                 .replace('[REDIRECT_URI]', this.selectedRedirectUriValue);
+            
+            sampleOIDC = this.sampleOpenIdTemplate;
+            this.sampleOpenId = sampleOIDC
+              .replace('[CLIENT_ID]', clientId)
+              .replace('[REDIRECT_URI]', this.selectedRedirectUriValue);
         }
     };
 
-    // Display client details: Client ID and Client secret
     viewDetails(client): void {
-        // Set the client details
         this.clientDetails = client;
-        // Set the first redirect uri selected
         if(client.redirectUris != null && client.redirectUris.length > 0) {
             this.selectedRedirectUri = client.redirectUris[0];
         } else {
             this.selectedRedirectUri = null;
         }
-
         this.editing = false;
         this.creating = false;
         this.listing = false;
         this.viewing = true;
 
-        // Update the selected redirect uri
         if(this.clientDetails != null){
             this.updateSelectedRedirectUri();
         }
@@ -577,6 +454,12 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getClients();
-        this.loadAvailableScopes();
+        this.clientService.loadAvailableScopes().subscribe(response=> {
+            response.map( (scope) => {
+              this.scopes.push ({
+                name: scope
+              })
+            })
+        })
     }; 
 }

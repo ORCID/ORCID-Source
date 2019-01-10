@@ -19,7 +19,7 @@
                                     <p><@orcid.msg 'workspace.you_need_to_verify' /></p>
                                     <p><@orcid.msg 'workspace.ensure_future_access2' /><br />
                                     <p><strong>{{primaryEmail}}</strong></p>
-                                    <p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="articles.149457" href="${knowledgeBaseUri}/articles/149457"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="workspace.link.email.support" href="mailto:<@orcid.msg 'workspace.link.email.support' />"><@orcid.msg 'workspace.link.email.support' /></a>.</p>
+                                    <p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="articles.149457" href="<@orcid.msg 'common.kb_uri_default'/>360006973793"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="workspace.link.email.support" href="mailto:<@orcid.msg 'workspace.link.email.support' />"><@orcid.msg 'workspace.link.email.support' /></a>.</p>
                                     <div class="topBuffer">
                                         <a (click)="closeUnverifiedEmailSetPrimaryBox()"><@orcid.msg 'freemarker.btnclose' /></a>
                                     </div>
@@ -103,10 +103,10 @@
                                         </div>
                                     </div>
                                     <!-- Email confirmation -->
-                                    <div *ngIf="showEmailVerifBox" class="verify-email-box grey-box">                  
-                                        <div style="margin-bottom: 10px;">
-                                            <h4><@orcid.msg 'manage.email.verificationEmail'/> {{verifyEmailObject.value}}</h4>
-                                            <p><@orcid.msg 'workspace.check_your_email'/></p>
+                                    <div *ngIf="showEmailVerifBox" class="verify-email-box grey-box bottomBuffer">                  
+                                        <div>
+                                            <p><strong><@orcid.msg 'manage.email.verificationEmail'/> {{verifyEmailObject.value}}</strong><br>
+                                            <@orcid.msg 'workspace.check_your_email'/></p>
                                         </div>
                                         <div class="clearfix">
                                             <ul class="pull-right inline-list">
@@ -162,7 +162,7 @@
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.2' /></p>
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.header' /></p>                                            
                                         <div class="control-group">
-                                            <label for="amend-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></label>
+                                            <label for="amend-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></label><br>
                                             <select id="amend-frequency" name="amend-frequency" [(ngModel)]="sendChangeNotifications" (ngModelChange)="updateChangeNotificationsFrequency()">   
                                                 <#list sendEmailFrequencies?keys as key>
                                                     <option value="${key}">${sendEmailFrequencies[key]}</option>
@@ -170,7 +170,7 @@
                                             </select>
                                         </div>
                                         <div class="control-group">
-                                            <label for="administrative-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></label>
+                                            <label for="administrative-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></label><br>
                                             <select id="administrative-frequency" name="administrative-frequency" [(ngModel)]="sendAdministrativeChangeNotifications" (ngModelChange)="updateAdministrativeChangeNotificationsFrequency()">   
                                                 <#list sendEmailFrequencies?keys as key>
                                                     <option value="${key}">${sendEmailFrequencies[key]}</option>
@@ -178,7 +178,7 @@
                                             </select>
                                         </div>
                                         <div class="control-group">
-                                            <label for="permission-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></label>                  
+                                            <label for="permission-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></label><br>                  
                                             <select id="permission-frequency" name="permission-frequency" [(ngModel)]="sendMemberUpdateRequestsNotifications" (ngModelChange)="updateMemberUpdateRequestsFrequency()">   
                                                 <#list sendEmailFrequencies?keys as key>
                                                     <option value="${key}">${sendEmailFrequencies[key]}</option>
@@ -187,6 +187,21 @@
                                         </div>
                                     </div> 
                                     <h2><@orcid.msg 'manage.email.email_frequency.news.header' /></h2>
+                                    <div class="alert" *ngIf="!emailService?.primaryEmail?.verified && sendQuarterlyTips">
+                                        <p><strong><@orcid.msg 'manage.email.email_frequency.news.unverified_1' /></strong><br> <@orcid.msg 'manage.email.email_frequency.news.unverified_2' /> <a (click)="verifyEmail(emailService.primaryEmail, popUp, 'newsTips')"><@orcid.msg 'manage.email.email_frequency.news.unverified_3'/></a>
+
+                                    </div>
+                                    <div *ngIf="showEmailVerifBoxNewsTips" class="verify-email-box grey-box bottomBuffer">                  
+                                        <div>
+                                            <p><strong><@orcid.msg 'manage.email.verificationEmail'/> {{verifyEmailObject.value}}</strong><br>
+                                            <@orcid.msg 'workspace.check_your_email'/></p>
+                                        </div>
+                                        <div class="clearfix">
+                                            <ul class="pull-right inline-list">
+                                                <li><a (click)="closeVerificationBox('newsTips')"><@orcid.msg 'freemarker.btnclose'/></a></li>
+                                            </ul>
+                                        </div>
+                                    </div> 
                                     <div class="editTablePadCell35">
                                         <div class="control-group">
                                             <input id="send-orcid-news" type="checkbox" name="sendOrcidNews" [(ngModel)]="sendQuarterlyTips" (ngModelChange)="updateSendQuarterlyTips()"/>

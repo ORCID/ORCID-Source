@@ -24,7 +24,7 @@
                         <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
                         <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
                     </ul>
-                    <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+                    <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
                 </div>                
             </div>
         </div>                                  
@@ -50,7 +50,7 @@
                             <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
                             <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
                         </ul>
-                        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@ kind of variable. This temp value is only used in this macro lib -->
     </#compress>     
 </#macro>
 
-<#macro privacy thing selected="protected" btnContainerClass="btn-group privacy-group abs-left-top" helpLink="${knowledgeBaseUri}/articles/124518 ">
+<#macro privacy thing selected="protected" btnContainerClass="btn-group privacy-group abs-left-top" helpLink="<@orcid.msg 'common.kb_uri_default'/>360006897614">
     <div class="privacy-tool">
         
         <div class="${btnContainerClass}">
@@ -239,7 +239,7 @@ kind of variable. This temp value is only used in this macro lib -->
                        ${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace_2")}
                     </li>
                 </ul>                         
-                <p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/10_million_password_list_top_1000.txt" target="password_one_time_reset.commonpasswordslink">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>
+                <p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10-million-password-list-top-1000.txt" target="password_one_time_reset.commonpasswordslink">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>
                 <p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
             </div>                
         </div>
@@ -274,7 +274,42 @@ kind of variable. This temp value is only used in this macro lib -->
               </span>
         </div>
     </div>
-</#macro>  
+</#macro>
+
+<#macro editActivityIconNg2 activity click toolTipSuffix toolTipClass>
+    <!--For activities without backend grouping-->
+    <!--Edit activity pencil icon-->   
+    <a *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicon glyphicon-pencil"></span>
+    </a>
+    <!--Make a copy disabled--> 
+    <a *ngIf="!userIsSource(${activity}) && group.hasUserVersion()" (click)="showSources(group)" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create grey"></span>
+    </a>
+    <!--Make a copy enabled--> 
+    <a *ngIf="!userIsSource(${activity}) && !group.hasUserVersion() && group.hasKeys()" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create"></span>
+    </a>
+    <!--Make a copy disabled--> 
+    <a *ngIf="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicons git_create grey"></span>
+    </a>
+    <div class="${toolTipClass}" *ngIf="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" [ngClass]="{'two-lines' : (!userIsSource(${activity}) && group.hasUserVersion()) || (!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys())}">
+        <div class="arrow"></div>
+        <div class="popover-content">              
+              <span *ngIf="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
+              <span *ngIf="!userIsSource(${activity}) && group.hasUserVersion()">
+                <@orcid.msg 'groups.common.open_source_to_1' /><br />
+                <@orcid.msg 'groups.common.open_source_to_2' />
+              </span>
+              <span *ngIf="!userIsSource(${activity}) && !group.hasUserVersion() && group.hasKeys()"><@orcid.msg 'groups.common.make_a_copy' /></span>
+              <span *ngIf="!userIsSource(${activity}) && !group.hasUserVersion() && !group.hasKeys()">
+                <@orcid.msg 'groups.common.items_must_have_1' /><br />
+                <@orcid.msg 'groups.common.items_must_have_2' />
+              </span>
+        </div>
+    </div>
+</#macro>    
 
 <#macro editWorkIcon activity click toolTipSuffix toolTipClass>   
     <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
@@ -306,46 +341,30 @@ kind of variable. This temp value is only used in this macro lib -->
     </div>
 </#macro>
 
-<#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass> 
-    <!--  
-    <a 
-        *ngIf="userIsSource(${activity})" 
-        (click)="${click}" 
-        (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" 
-        (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
+<#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass>  
+    <a *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
-    <a 
-        *ngIf"!userIsSource(${activity}) && group.userVersionPresent" 
-        (click)="showSources(group)" 
-        (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" 
-        (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
+    <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group,$event)" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
         <span class="glyphicons git_create grey"></span>
     </a>
-    <a 
-        *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0" 
-        (click)="${click}" 
-        (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" 
-        (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicons git_create"></span>
     </a>
-    -->
-    <a 
-        *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0" 
-        (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" 
-        (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+
+    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicons git_create grey"></span>
     </a>
-    <div 
-        class="${toolTipClass}" 
-        *ngIf="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" 
-        [ngClass]="{'two-lines' : (!userIsSource(${activity}) && group.userVersionPresent) || (!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0)}">
+    <div class="${toolTipClass}" *ngIf="showElement[${activity}.putCode.value+'-${toolTipSuffix}'] == true" [ngClass]="{'two-lines' : (!userIsSource(${activity}) && group.userVersionPresent) || (!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0)}">
         <div class="arrow"></div>
         <div class="popover-content">              
             <span *ngIf="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>                            
-            <span *ngIf="!userIsSource(${activity}) && group.userVersionPresent"><@orcid.msg 'groups.common.open_source_to' /></span>
-            <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
-            <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.workExternalIdentifiers.length == 0">
+            <span *ngIf="!userIsSource(${activity}) && group.userVersionPresent">
+                <@orcid.msg 'groups.common.open_source_to_1' /><br />
+                <@orcid.msg 'groups.common.open_source_to_2' />
+            </span>
+            <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
+            <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0">
                 <@orcid.msg 'groups.common.items_must_have_1' />
                 <br />
                 <@orcid.msg 'groups.common.items_must_have_2' />
@@ -372,7 +391,7 @@ kind of variable. This temp value is only used in this macro lib -->
                     <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
                     <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
                 </ul>
-               <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+               <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
             </div>                
         </div>                              
     </div>
@@ -396,7 +415,7 @@ kind of variable. This temp value is only used in this macro lib -->
                 <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
                 <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
             </ul>
-           <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+           <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
         </div>                
     </div>                              
 </div>
@@ -420,7 +439,7 @@ kind of variable. This temp value is only used in this macro lib -->
                 <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
                 <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
             </ul>
-           <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+           <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
         </div>                
     </div>                              
 </div>
@@ -444,17 +463,41 @@ kind of variable. This temp value is only used in this macro lib -->
                     <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
                     <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
                 </ul>
-               <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+               <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
             </div>                
         </div>                              
     </div>
+</#macro>
+
+<#macro privacyToggleBulkWorksNg2 angularModel publicClick limitedClick privateClick elementId popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
+<div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
+    <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
+        <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a (click)="${publicClick}"></a></li>
+        <li class="limitedActive" [ngClass]="{limitedInActive: ${angularModel} != 'LIMITED'}"><a (click)="${limitedClick}"></a></li>
+        <li class="privateActive" [ngClass]="{privateInActive: ${angularModel} != 'PRIVATE'}"><a (click)="${privateClick}"></a></li>
+    </ul>
+</div>
+<div class="popover-help-container bulk-edit-privacy-help-container">
+   <div class="bulk-works-privacy-popover popover top privacy-bulk-works" [ngClass]="commonSrvc.shownElement[${elementId} +'-privacy'] == true ? 'block' : ''">
+        <div class="arrow"></div>
+        <div class="popover-content">
+            <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+            <ul class="privacyHelp">
+                <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+                <li class="limited" style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+                <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+            </ul>
+           <a href="<@orcid.msg 'common.kb_uri_default'/>360006897614" target="privacyToggle.help.more_information">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+        </div>                
+    </div>                              
+</div>
 </#macro>
 
 <#macro registrationEmailFrequencySelector angularElementName>
 <div>   
     <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
     <label class="control-label dark-label">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="<@orcid.msg 'common.kb_uri_default'/>360006972953" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
     </label>
     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
         class="input-xlarge"
@@ -470,7 +513,7 @@ kind of variable. This temp value is only used in this macro lib -->
 <div>   
     <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
     <label class="control-label dark-label">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="https://support.orcid.org/knowledgebase/articles/665437" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
+        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="<@orcid.msg 'common.kb_uri_default'/>360006972953" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
     </label>
     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
         class="input-xlarge"

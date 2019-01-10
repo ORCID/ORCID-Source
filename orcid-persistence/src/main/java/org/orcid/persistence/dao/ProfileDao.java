@@ -17,6 +17,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
+    List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not, boolean checkQuarterlyTipsEnabled);
+    
     /**
      * Get a list of the ORCID ids with the given indexing status
      * @param indexingStatuses
@@ -103,7 +105,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public boolean getClaimedStatus(String orcid);
     
-    public boolean getClaimedStatusByEmail(String email);
+    public boolean getClaimedStatusByEmailHash(String email);
 
     String getClientType(String orcid);
 

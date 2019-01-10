@@ -9,29 +9,32 @@
 		<div style="padding: 20px; padding-top: 0px;">
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.reactivation.thank_you" />
             </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.reactivation.to_reactivate" />
 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 			    <a href="${reactivationUrl}">${reactivationUrl}</a>
  		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">		  
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">		  
 				<@emailMacros.msg "email.reactivation.after" />
 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		  		<@emailMacros.msg "email.common.if_you_have_any1" /><a href="<@emailMacros.knowledgeBaseUri />"><@emailMacros.knowledgeBaseUri /></a><@emailMacros.msg "email.common.if_you_have_any2" />
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+		  		<@emailMacros.msg "email.common.if_you_have_any1" /> <a href="<@emailMacros.msg "email.common.need_help.description.2.href" />"><@emailMacros.msg "email.common.need_help.description.2.href" /></a><@emailMacros.msg "email.common.if_you_have_any2" />
 		    </p>		    
-		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
-<@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
+		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
+<@emailMacros.msg "email.common.warm_regards" />
+<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
 			</p>
-			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
+			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
+				<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
+			</p>
+			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
 			</p>
-			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
+			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 			   <#include "email_footer_html.ftl"/>
 			</p>
 		 </div>

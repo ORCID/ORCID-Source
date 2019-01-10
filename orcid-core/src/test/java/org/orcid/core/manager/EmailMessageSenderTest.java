@@ -2,7 +2,6 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.common_v2.Locale;
@@ -23,14 +23,6 @@ import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceName;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
-import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
@@ -59,6 +51,9 @@ public class EmailMessageSenderTest extends BaseTest {
     @Mock
     private ProfileEntityCacheManager profileEntityCacheManagerMock;
     
+    @Mock
+    private EncryptionManager encryptionManagerMock;
+    
     @Before
     public void beforeClass() {
         MockitoAnnotations.initMocks(this);
@@ -71,25 +66,13 @@ public class EmailMessageSenderTest extends BaseTest {
         entity.setRecordNameEntity(recordName);
         when(profileEntityCacheManagerMock.retrieve(anyString())).thenReturn(entity);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManagerMock);
+        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManagerMock);  
+        
+        when(encryptionManagerMock.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");
     }
     
     @Test
     public void testCreateDigest() throws IOException {
-
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("0000-0000-0000-0000"));
-        OrcidBio orcidBio = new OrcidBio();
-        orcidProfile.setOrcidBio(orcidBio);
-        PersonalDetails personalDetails = new PersonalDetails();
-        orcidBio.setPersonalDetails(personalDetails);
-        personalDetails.setGivenNames(new GivenNames("John"));
-        personalDetails.setFamilyName(new FamilyName("Watson"));
-        OrcidInternal orcidInternal = new OrcidInternal();
-        Preferences preferences = new Preferences();
-        orcidProfile.setOrcidInternal(orcidInternal);
-        orcidInternal.setPreferences(preferences);
-        preferences.setSendEmailFrequencyDays("7.0");
-
         List<Notification> notifications = new ArrayList<>();
 
         NotificationPermission notification1 = new NotificationPermission();
@@ -156,15 +139,13 @@ public class EmailMessageSenderTest extends BaseTest {
         EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", notifications);
 
         assertNotNull(emailMessage);
+        String html = emailMessage.getBodyHtml();
+        String text = emailMessage.getBodyText();
         String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
         String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.html"));
-        assertTrue(expectedBodyText.contains("Lovely Publisher 1 has updated recent funding on your ORCID record."));
-        assertTrue(expectedBodyHtml.contains("Lovely Publisher 1 has updated recent funding on your ORCID record."));
-        assertTrue(expectedBodyText.contains("Super Institution 1: Request to add items"));
-        assertTrue(expectedBodyHtml.contains("Super Institution 1: Request to add items"));
-        assertTrue(expectedBodyText.contains("/action"));
-        assertTrue(expectedBodyHtml.contains("/action"));
         assertEquals("[ORCID] John Watson you have 6 new notifications", emailMessage.getSubject());
+        assertEquals(expectedBodyHtml, html);
+        assertEquals(expectedBodyText, text);
     }
 
     private Item createActivity(ItemType actType, String actName, String doi) {

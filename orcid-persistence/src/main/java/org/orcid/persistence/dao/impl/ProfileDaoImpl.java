@@ -210,6 +210,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getResultList();
     }
 
+    public List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not) {
+        return findByMissingEventTypes(maxResults, pets, orcidsToExclude, not, false);
+    }
+    
     /**
      * Finds ORCID Ids by ProfileEventTypes
      * 
@@ -226,12 +230,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * 
      * @param orcidsToExclude
      *            ORCID Ids to be excluded from reuturned results
-     * 
+     * @param checkQuarterlyTipsEnabled
+     *            If true, results will include only orcid ids with send_quarterly_tips enabled                  
      * @return list of ORCID Ids as a list of strings
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not) {
+    public List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not, boolean checkQuarterlyTipsEnabled) {
         /*
          * builder produces a query that will look like the following
          * 
@@ -256,15 +261,24 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             builder.append(" ");
         }
         builder.append(")");
-        builder.append("where pe.orcid is ");
+        
+        if(checkQuarterlyTipsEnabled) {
+            builder.append(" left join email_frequency e on e.orcid = p.orcid");
+        }
+        
+        builder.append(" where pe.orcid is ");
         if (!not)
             builder.append("not ");
         builder.append("null ");
 
+        if(checkQuarterlyTipsEnabled) {
+            builder.append(" AND e.send_quarterly_tips is true");
+        }
+        
         if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
-        }
-
+        }        
+        
         Query query = entityManager.createNativeQuery(builder.toString());
 
         for (int i = 0; i < pets.size(); i++) {
@@ -737,9 +751,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    public boolean getClaimedStatusByEmail(String email) {
-        Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE trim(lower(email)) = trim(lower(:email)))");
-        query.setParameter("email", email);
+    public boolean getClaimedStatusByEmailHash(String emailHash) {
+        Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email_hash = :emailHash)");
+        query.setParameter("emailHash", emailHash);
         return (Boolean) query.getSingleResult();
     }
 

@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.GroupingSuggestionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -31,8 +30,6 @@ import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
-import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
@@ -77,11 +74,13 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource
     private LocaleManager localeManager;
     
-    @Resource
-    private GroupingSuggestionManager groupingSuggestionManager;
+    private Integer maxWorksToWrite;
     
-    @Value("${org.orcid.core.works.bulk.max:100}")
-    private Long maxBulkSize;
+    public WorkManagerImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize,
+            @Value("${org.orcid.core.works.bulk.write.max:100}") Integer bulkWriteSize) {
+        super(bulkReadSize);
+        this.maxWorksToWrite = (bulkWriteSize == null) ? 100 : bulkWriteSize;
+    }
     
     /**
      * Updates the visibility of an existing work
@@ -174,7 +173,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        generateGroupingSuggestions(orcid, updatedWork);
         return updatedWork;
     }
 
@@ -203,9 +201,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
             
             //Check bulk size
-            if(bulk.size() > maxBulkSize) {
+            if(bulk.size() > maxWorksToWrite) {
                 Locale locale = localeManager.getLocale();                
-                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxBulkSize}, locale));                
+                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxWorksToWrite}, locale));                
             }
                                     
             for(int i = 0; i < bulk.size(); i++) {
@@ -247,7 +245,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Update the element in the bulk
                         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-                        generateGroupingSuggestions(orcid, updatedWork);
                         bulk.set(i, updatedWork);
                         
                         //Add the work extIds to the list of existing external identifiers
@@ -343,14 +340,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        generateGroupingSuggestions(orcid, updatedWork);
         return updatedWork;
-    }
-
-    private void generateGroupingSuggestions(String orcid, Work updatedWork) {
-        List<WorkSummary> summaries = getWorksSummaryList(orcid);
-        Works groupedWorks = groupWorks(summaries, true);
-        groupingSuggestionManager.generateGroupingSuggestionsForProfile(orcid, updatedWork, groupedWorks);
     }
 
     @Override

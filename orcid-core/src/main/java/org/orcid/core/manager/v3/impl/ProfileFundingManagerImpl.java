@@ -18,11 +18,13 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -91,7 +93,25 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * */
     public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility) {
         return profileFundingDao.updateProfileFundingVisibility(clientOrcid, profileFundingId, visibility.name());
-    }    
+    }
+    
+    /**
+     * Updates visibility of multiple existing profile funding relationships
+     * 
+     * @param clientOrcid
+     *            The client orcid
+     * 
+     * @param profileFundingIds
+     *            The ids of the profile fundings that will be updated
+     * 
+     * @param visibility
+     *            The new visibility value for the profile profileFunding objects
+     *           
+     * @return true if the relationships were updated
+     */
+    public boolean updateProfileFundingVisibilities(String clientOrcid, ArrayList<Long> profileFundingIds, Visibility visibility) {
+        return profileFundingDao.updateProfileFundingVisibilities(clientOrcid, profileFundingIds, visibility.name());
+    }
     
     /**
      * Add a new funding subtype to the list of pending for indexing subtypes
@@ -154,8 +174,8 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     @Override
     @Transactional
     public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
-    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	activityValidator.validateFunding(funding, sourceEntity, true, isApiRequest, null);
+    	Source activeSource = sourceManager.retrieveActiveSource();
+    	activityValidator.validateFunding(funding, activeSource, true, isApiRequest, null);
 
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
@@ -163,7 +183,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         if(fundings != null && isApiRequest) {
             for(Funding exstingFunding : fundings) {
                 activityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
-            			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), sourceEntity);
+            			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), activeSource);
             }
         }
                 
@@ -174,16 +194,11 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         profileFundingEntity.setOrg(updatedOrganization);
         
         //Set the source
-        if(sourceEntity.getSourceProfile() != null) {
-            profileFundingEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-        if(sourceEntity.getSourceClient() != null) {
-            profileFundingEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        } 
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, profileFundingEntity);
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         profileFundingEntity.setProfile(profile);
-        setIncomingWorkPrivacy(profileFundingEntity, profile);        
+        setIncomingWorkPrivacy(profileFundingEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);        
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
@@ -192,16 +207,21 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }        
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
+    
+	private void setIncomingWorkPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile) {
+		setIncomingWorkPrivacy(workEntity, profile, true);
+	}
 
-    private void setIncomingWorkPrivacy(ProfileFundingEntity profileFundingEntity, ProfileEntity profile) {
-        String incomingWorkVisibility = profileFundingEntity.getVisibility();
-        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {            
-            profileFundingEntity.setVisibility(defaultWorkVisibility);            
-        } else if (incomingWorkVisibility == null) {
-            profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        }
-    }
+	private void setIncomingWorkPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
+		String incomingWorkVisibility = workEntity.getVisibility();
+		String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+
+		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
+			workEntity.setVisibility(defaultWorkVisibility);
+		} else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
+			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+		}
+	}
     
     
     /**
@@ -214,34 +234,34 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * */
     @Override    
     public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
-    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	Source activeSOurce = sourceManager.retrieveActiveSource();
     	ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
     	Visibility originalVisibility = Visibility.valueOf(pfe.getVisibility());
         
         //Save the original source
-        String existingSourceId = pfe.getSourceId();
-        String existingClientSourceId = pfe.getClientSourceId();
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(pfe);
         
-        activityValidator.validateFunding(funding, sourceEntity, false, isApiRequest, originalVisibility);
+        activityValidator.validateFunding(funding, activeSOurce, false, isApiRequest, originalVisibility);
     	if(!isApiRequest) {
     	    List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
             for(ProfileFundingEntity existingFunding : existingFundings) {
                 Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
                 if(!existing.getPutCode().equals(funding.getPutCode())) {
                     activityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
-                                     existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                                     existing.getExternalIdentifiers(), existing.getSource(), activeSOurce);
                 }
             }
-    	}    	
-    	        
-        orcidSecurityManager.checkSource(pfe);
-        
-        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
-        pfe.setVisibility(originalVisibility.name());        
+    	}
+    	
+        orcidSecurityManager.checkSourceAndThrow(pfe);
+        jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);   
+    	if (pfe.getVisibility() == null) {
+    		pfe.setVisibility(originalVisibility.name());  
+    	}
         
         //Be sure it doesn't overwrite the source
-        pfe.setSourceId(existingSourceId);
-        pfe.setClientSourceId(existingClientSourceId);
+        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, pfe);
+
         
         //Updates the give organization with the latest organization from database, or, create a new one
         OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
@@ -267,7 +287,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     @Transactional    
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
-        orcidSecurityManager.checkSource(pfe);        
+        orcidSecurityManager.checkSourceAndThrow(pfe);        
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
         notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe));
         return result;

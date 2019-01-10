@@ -13,7 +13,7 @@
 			ORCID (R) Open Source
 			http://orcid.org
 
-			Copyright (c) 2012-2014 ORCID,
+			Copyright (c) 2012-2018 ORCID,
 			Inc.
 			Licensed under an MIT-Style License (MIT)
 			http://orcid.org/open-source-license
@@ -48,8 +48,8 @@
 					<xs:sequence>
 						<xs:element name="reviewer-role" type="peer-review:role" minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The role played by a person in their
-									contribution to a review.
+								<xs:documentation>The role played by a person in their contribution to a review. 
+								Options for this field are: chair, editor, member, organizer, reviewer
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -57,6 +57,7 @@
 							minOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Unique identifier(s) of the review. <i>This identifier refers to the review itself, NOT to the item that was reviewed.</i> At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity.
+								Identifier types must be selected from the list at https://pub.orcid.org/v2.0/identifiers
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -69,8 +70,7 @@
 						<xs:element name="review-type" type="peer-review:type"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The kind of review applied to the subject type
-									reviewed
+								<xs:documentation>The kind of review. Options for this field are: evaluation, review
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -90,8 +90,8 @@
 						<xs:element name="subject-external-identifier" type="common:external-id"
 							minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>The unique identifier of the subject being
-								reviewed.
+								<xs:documentation>The unique identifier of the subject being reviewed. 
+								Identifier types must be selected from the list at https://pub.orcid.org/v2.0/identifiers
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>						
@@ -102,7 +102,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="subject-type" type="work:work-type" minOccurs="0" maxOccurs="1">
+						<xs:element name="subject-type" type="peer-review:subject-type" minOccurs="0" maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation>The type of object that the review subject is (for example, a journal article, grant, etc).
 								</xs:documentation>
@@ -111,13 +111,13 @@
 						<xs:element name="subject-name" type="work:work-title"
 							minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The name/title of the subject object that was reviewed.
+								<xs:documentation>The name/title of the object that was reviewed.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="subject-url" type="common:url" minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The URL of the subject object that was reviewed.
+								<xs:documentation>The URL of the object that was reviewed.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -125,7 +125,7 @@
 						<xs:element name="convening-organization" type="common:organization"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc). Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
+								<xs:documentation>Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc). A valid organizational identifier (Ringgold ID, GRID ID or FundRef ID is required).
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>																																	
@@ -141,13 +141,34 @@
 				<xs:extension base="common:element-summary">
 					<xs:sequence>						
 						<!-- orcid orgs doesn't match specification -->
+						<xs:element name="reviewer-role" type="peer-review:role" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>The role played by a person in their
+                                    contribution to a review.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
 						<xs:element ref="common:external-ids"
 							minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>The unique generated identifier of the review.
+								<xs:documentation>The unique identifier of the review.
 								</xs:documentation>
 							</xs:annotation>
-						</xs:element>						
+						</xs:element>
+						<xs:element name="review-url" type="common:url" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>A link to a representation of the review on the web. <i>This URL refers to the review itself, NOT to the item that was reviewed.</i>
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>	
+                        <xs:element name="review-type" type="peer-review:type"
+                            minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>The kind of review applied to the subject type
+                                    reviewed
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>   					
 						<xs:element name="completion-date" type="common:fuzzy-date"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
@@ -167,16 +188,81 @@
 								<xs:documentation>Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc). Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
 								</xs:documentation>
 							</xs:annotation>
-						</xs:element>	
+						</xs:element>
 					</xs:sequence>
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
+	
+	<xs:simpleType name="subject-type">
+        <xs:annotation>
+            <xs:documentation>The types of peer review subject accepted accepted by the ORCID Registry. In addition to work types (please refer to the CASRAI dictionary for definitions of
+                each work type: https://dictionary.casrai.org/Output_Types), the following options are available:
+			    * Software
+			    * Award: Peer-reviewed funding providing direct research costs through competitions
+			    * Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria
+			    * Grant: Peer-reviewed funding providing direct research costs through competitions
+			    * Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
+			    * Research resource proposal: A peer-reviewed proposal of use of a research resource
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <!-- work types -->
+            <xs:enumeration value="artistic-performance" />
+            <xs:enumeration value="book-chapter" />
+            <xs:enumeration value="book-review" />
+            <xs:enumeration value="book" />
+            <xs:enumeration value="conference-abstract" />
+            <xs:enumeration value="conference-paper" />
+            <xs:enumeration value="conference-poster" />
+            <xs:enumeration value="data-set" />
+            <xs:enumeration value="dictionary-entry" />
+            <xs:enumeration value="disclosure" />
+            <xs:enumeration value="dissertation" />
+            <xs:enumeration value="edited-book" />
+            <xs:enumeration value="encyclopedia-entry" />
+            <xs:enumeration value="invention" />
+            <xs:enumeration value="journal-article" />
+            <xs:enumeration value="journal-issue" />
+            <xs:enumeration value="lecture-speech" />
+            <xs:enumeration value="license" />
+            <xs:enumeration value="magazine-article" />
+            <xs:enumeration value="manual" />
+            <xs:enumeration value="newsletter-article" />
+            <xs:enumeration value="newspaper-article" />
+            <xs:enumeration value="online-resource" />
+            <xs:enumeration value="other" />
+            <xs:enumeration value="patent" />
+            <xs:enumeration value="registered-copyright" />
+            <xs:enumeration value="report" />
+            <xs:enumeration value="research-technique" />
+            <xs:enumeration value="research-tool" />
+            <xs:enumeration value="software" />
+            <xs:enumeration value="spin-off-company" />
+            <xs:enumeration value="standards-and-policy" />
+            <xs:enumeration value="supervised-student-publication" />
+            <xs:enumeration value="technical-standard" />
+            <xs:enumeration value="test" />
+            <xs:enumeration value="translation" />
+            <xs:enumeration value="trademark" />
+            <xs:enumeration value="website" />
+            <xs:enumeration value="working-paper" />
+            
+            <!-- funding types -->
+            <xs:enumeration value="grant" />
+            <xs:enumeration value="contract" />
+            <xs:enumeration value="award" />
+            <xs:enumeration value="salary-award" />
+            
+            <!-- research resource types -->
+            <xs:enumeration value="research-resource-proposal" />
+        </xs:restriction>
+    </xs:simpleType>
 
 	<xs:simpleType name="role">
 		<xs:annotation>
-			<xs:documentation>The role performed reviewer
+			<xs:documentation>The role performed by the reviewer
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
@@ -222,7 +308,7 @@
 
 	<xs:simpleType name="type">
 		<xs:annotation>
-			<xs:documentation>The role performed reviewer
+			<xs:documentation>The type of review this is
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">

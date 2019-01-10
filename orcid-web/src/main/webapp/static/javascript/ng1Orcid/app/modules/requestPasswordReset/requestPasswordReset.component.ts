@@ -20,8 +20,14 @@ import { takeUntil }
 import { CommonService } 
     from '../../shared/common.service.ts';
 
+import { FeaturesService }
+    from '../../shared/features.service.ts'
+
 import { GenericService } 
     from '../../shared/generic.service.ts';
+
+import { OauthService } 
+    from '../../shared/oauth.service.ts';
 
 
 @Component({
@@ -40,18 +46,23 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     resetPasswordToggleText: any;
     requestResetPassword: any;
     showSendResetLinkError: any;
+    successEmailSentTo: string;
     url_path: string;
+    resetPasswordEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('RESET_PASSWORD_EMAIL'); 
 
     constructor(
         private cdr:ChangeDetectorRef,
         private commonService: CommonService,
         private elementRef: ElementRef, 
+        private featuresService: FeaturesService,
+        private oauthService: OauthService,
         private requestPasswordResetService: GenericService,
     ) {
         this.authorizationForm = elementRef.nativeElement.getAttribute('authorizationForm');
         this.showDeactivatedError = elementRef.nativeElement.getAttribute('showDeactivatedError');
         this.showReactivationSent = elementRef.nativeElement.getAttribute('showReactivationSent');
         this.showSendResetLinkError = false;
+        this.successEmailSentTo = "";
         this.requestResetPassword = {};
         this.url_path = '/reset-password.json';
     }
@@ -83,8 +94,11 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         )
         .subscribe(
             data => {
-                this.requestResetPassword = data; 
-                this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);               
+                this.requestResetPassword = data;
+                this.successEmailSentTo = this.requestResetPassword.email;
+                if(!this.resetPasswordEmailFeatureEnabled){
+                    this.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', this.requestResetPassword.errors) != -1);
+                }               
                 this.cdr.detectChanges();
             },
             error => {
@@ -97,6 +111,27 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
 
     };
 
+    //Send reactivation email from /reset-password
+    sendReactivationResetPasswordPage(email): void {
+        this.oauthService.sendReactivationEmail(email)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.showDeactivatedError = false;
+                this.showReactivationSent = true;
+                this.cdr.detectChanges();
+            },
+            error => {
+                console.log("error sending reactivation email");
+            } 
+        );
+    };
+
+    //Emit event to trigger sending reactivation email from parent component
+    //Used on /signin and any other location where request-reset-password-ng2 
+    //is child of oauth-authorization-ng2
     sendReactivation(email?): void {
         let _email = email;
         this.sendReactivationEmail.emit(_email);
@@ -131,6 +166,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     };
 
     ngOnInit() {
+        console.log(this.resetPasswordEmailFeatureEnabled);
         this.getRequestResetPassword();
         // init reset password toggle text
         this.showSendResetLinkError = false;

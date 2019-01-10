@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<researcher-url:researcher-urls
+	xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/researcher-url ../researcher-url-3.0_rc2.xsd ">
+	<researcher-url:researcher-url put-code="1248"
+		visibility="public">
+		<common:created-date>2001-12-31T12:00:00</common:created-date>
+		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+		<common:source>
+			<common:source-orcid>
+				<common:uri>https://www.orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:source-orcid>
+			<common:source-name />
+		</common:source>
+		<researcher-url:url-name>Site # 1</researcher-url:url-name>
+		<researcher-url:url>http://site1.com/</researcher-url:url>		
+	</researcher-url:researcher-url>
+</researcher-url:researcher-urls>

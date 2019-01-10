@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.impl.BiographyManagerReadOnlyImpl;
-import org.orcid.jaxb.model.v3.rc1.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
@@ -37,5 +37,10 @@ public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implement
         }
         
         biographyDao.persistBiography(orcid, bio.getContent(), bio.getVisibility().name());
+    }
+    
+    @Override
+    public void deleteBiography(String orcid){
+        biographyDao.removeForId(orcid);
     }
 }

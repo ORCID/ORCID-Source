@@ -20,9 +20,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -60,7 +61,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Test
     public void testAddKeywordToUnclaimedRecordPreserveKeywordVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
 
         keyword = profileKeywordManager.createKeyword(unclaimedOrcid, keyword, true);
@@ -72,7 +73,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Test
     public void testAddKeywordToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
 
         keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, true);
@@ -84,7 +85,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
         keyword.setContent(keyword.getContent() + " fromUI1");
         
@@ -97,7 +98,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
         keyword.setContent(keyword.getContent() + " fromAPI1");        
         

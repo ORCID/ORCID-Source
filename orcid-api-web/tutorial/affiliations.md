@@ -2,9 +2,23 @@
 
 This tutorial goes over editing information in the affiliations section of an ORCID record. Versions of the ORCID API before 3.0 include the Education and Employment affiliation sections. Versions 3.0 and greater include the following sections: Education, Employment, Distinction, Invited position, Membership, Qualification and Service.
 
-**To Do: copy in description of each section from support documentation**
-
 These calls can be used with Member API credentials on sandbox or the production servers.
+
+## Affiliation sections
+
+**Distinction**: An honorary or other award, distinction, or prize in recognition of your achievements, e.g. trophy, medal, honorary degree.
+
+**Education**: Participation in an academic higher education program to receive an undergraduate, graduate, or other degree, may be in progress or unfinished.
+
+**Employment**: formal employment relationship with an organization, e.g. staff, intern, researcher, contractor. Employment can be paid or unpaid.
+
+**Invited position**: An invited non-employment affiliation, e.g. honorary fellow, guest researcher, emeritus professor.
+
+**Membership**: Membership in a society or association, not including honorary memberships and fellowships.
+
+**Qualification**: Participation in a professional or vocational accreditation, certification, or training program, may be in progress or unfinished.
+
+**Service**: A significant donation of time, money, or other resource, e.g. volunteer society officer, elected board position, extension work.
 
 ## Overview
 
@@ -28,8 +42,8 @@ These calls can be used with Member API credentials on sandbox or the production
   * [reading the employment section summary in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/employments-2.1.xml)
   * [reading an employment item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/employment-full-2.1.xml)
   * [writing an employment item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/employment-2.1.xml)
-  * [Examples for reading affiliations sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples)
-  * [Examples writing affiliation sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_samples)
+  * [Examples for reading affiliations sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples)
+  * [Examples writing affiliation sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples)
  
 ## Permission to edit the record
 Editing the affiliations sections of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
@@ -40,7 +54,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **role-title** _(optional)_ The title given for the position, or the degree earned
 
-- **start-date** _(optional, required in 3.0+)_ The date the affiliation began
+- **start-date** _(optional)_ The date the affiliation began
 
 - **end-date** _(optional)_ The date the affiliation ended or will end
 

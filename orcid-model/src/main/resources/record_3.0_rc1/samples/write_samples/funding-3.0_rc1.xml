@@ -4,14 +4,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/funding /funding-3.0_rc1.xsd ">    
 	<funding:type>grant</funding:type>
-	<common:organization-defined-type>Funding sub-type</common:organization-defined-type>
+	<funding:organization-defined-type>Funding sub-type</funding:organization-defined-type>
 	<funding:title>
 		<common:title>Grant title</common:title>
 		<common:translated-title language-code="en">Translated title</common:translated-title>
 	</funding:title>
 	<funding:short-description>Short description of the award</funding:short-description>
 	<funding:amount currency-code="ADP">1000</funding:amount>
-	<funding:url>https://alt-url.org</funding:url>
+	<common:url>https://alt-url.org</common:url>
 	<common:start-date>
 		<common:year>2000</common:year>
 		<common:month>02</common:month>

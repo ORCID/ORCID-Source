@@ -21,7 +21,7 @@
         </tbody>
     </table>
     <div id="show-more-button-container">
-        <button id="show-more-button" type="submit" class="btn btn-primary" (click)="getMoreResults()" *ngIf="areMoreResults">Show more</button>
+        <button id="show-more-button" type="submit" class="btn btn-primary" (click)="getMoreResults()" *ngIf="areMoreResults">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
         <span id="ajax-loader-show-more" class="orcid-hide"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
     </div>
     <div id="no-results-alert" class="orcid-hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>

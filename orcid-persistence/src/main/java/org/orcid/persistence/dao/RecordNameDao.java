@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
@@ -21,4 +22,6 @@ public interface RecordNameDao extends GenericDao<RecordNameEntity, Long> {
     void createRecordName(RecordNameEntity recordName);
     
     Date getLastModified(String orcid);
+
+    List<RecordNameEntity> getRecordNames(List<String> orcids);
 }

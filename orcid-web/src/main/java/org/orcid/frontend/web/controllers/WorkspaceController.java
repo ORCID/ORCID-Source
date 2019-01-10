@@ -26,25 +26,23 @@ import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.v3.rc1.record.CitationType;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
-import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.rc1.record.Role;
-import org.orcid.jaxb.model.v3.rc1.record.WorkCategory;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.record.CitationType;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc2.record.Role;
+import org.orcid.jaxb.model.v3.rc2.record.WorkCategory;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
-import org.orcid.pojo.WorkGroupingSuggestion;
 import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
 import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
@@ -119,16 +117,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody List<ImportWizzardClientForm> retrievePeerReviewImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopePeerReviewImport(localeManager.getLocale());
     }
-
-    @ModelAttribute("affiliationTypes")
-    public Map<String, String> retrieveAffiliationTypesAsMap() {
-        Map<String, String> affiliationTypes = new LinkedHashMap<String, String>();
-        for (AffiliationType affiliationType : AffiliationType.values()) {
-            affiliationTypes.put(affiliationType.value(), getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.AffiliationType.class, affiliationType.value())));
-        }
-        return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
-    }
-
+    
     @ModelAttribute("fundingTypes")
     public Map<String, String> retrieveFundingTypesAsMap() {
         Map<String, String> grantTypes = new LinkedHashMap<String, String>();
@@ -147,16 +136,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }
         return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
-    }
-
-    @ModelAttribute("affiliationLongDescriptionTypes")
-    public Map<String, String> retrieveAffiliationLongDescriptionTypesAsMap() {
-        Map<String, String> organizationTypes = new LinkedHashMap<String, String>();
-        for (AffiliationType organizationType : AffiliationType.values()) {
-            organizationTypes.put(organizationType.value(), getMessage(AffiliationType.class.getName() + '.' + "longDescription" + '.' + organizationType.value()));
-        }
-        return FunctionsOverCollections.sortMapsByValues(organizationTypes);
-    }
+    }    
 
     @ModelAttribute("workCategories")
     public Map<String, String> retrieveWorkCategoriesAsMap() {
@@ -293,17 +273,12 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = Visibility.valueOf(defaultVis);
             form.setVisibility(v);
         }
         
         return form;
-    }
-    
-    @RequestMapping(value = "/my-orcid/groupingSuggestions.json", method = RequestMethod.GET)
-    public @ResponseBody List<WorkGroupingSuggestion> getGroupingSuggestions(HttpServletRequest request) {     
-        return workManager.getGroupingSuggestions(getCurrentUserOrcid());
     }
     
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
@@ -347,7 +322,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = Visibility.valueOf(defaultVis);
             form.setVisibility(v);
         }
@@ -399,7 +374,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         //Set the default visibility
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
-            org.orcid.jaxb.model.v3.rc1.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = Visibility.valueOf(defaultVis);
             form.setVisibility(v);
         }
@@ -459,8 +434,17 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid());        
-        return ExternalIdentifiersForm.valueOf(extIds);
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid()); 
+        ExternalIdentifiersForm form = ExternalIdentifiersForm.valueOf(extIds);
+        //Set the default visibility
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);
+            form.setVisibility(v);
+        }
+        return form;
+        
     }
 
     /**

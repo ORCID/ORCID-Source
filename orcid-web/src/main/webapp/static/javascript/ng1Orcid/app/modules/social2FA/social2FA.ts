@@ -13,7 +13,7 @@ import { Social2FAComponent }
 
 import { CommonNg2Module }
     from './../common/common.ts';
-
+    
 // This is the Angular 1 part of the module
 export const Social2FAModule = angular.module(
     'Social2FAModule', 
@@ -33,7 +33,6 @@ export const Social2FAModule = angular.module(
             Social2FAComponent 
         ],
         providers: [
-            
         ]
     }
 )

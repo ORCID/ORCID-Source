@@ -16,10 +16,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -65,6 +65,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNull(oar.getSourceId());        
         assertNull(oar.getClientSourceId());        
         assertNull(oar.getElementSourceId());
+        assertEquals("http://tempuri.org",oar.getUrl());
     }
 
     @Test
@@ -93,6 +94,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(employment.getSource());        
         assertNotNull(employment.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", employment.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",employment.getUrl().getValue());
     }
     
     @Test
@@ -115,6 +117,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(employmentSummary.getSource());
         assertNotNull(employmentSummary.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", employmentSummary.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",employmentSummary.getUrl().getValue());
     }
     
     private Employment getEmployment(boolean full) throws JAXBException {
@@ -156,7 +159,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         result.setTitle("employment:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
-        
+        result.setUrl("http://tempuri.org");
         return result;
     }
 }

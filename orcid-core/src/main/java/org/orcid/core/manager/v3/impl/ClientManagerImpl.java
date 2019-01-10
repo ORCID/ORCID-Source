@@ -13,14 +13,16 @@ import javax.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
 import org.orcid.core.manager.AppIdGenerationManager;
-import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.v3.rc2.client.Client;
+import org.orcid.jaxb.model.v3.rc2.client.ClientRedirectUri;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
@@ -87,7 +89,7 @@ public class ClientManagerImpl implements ClientManager {
     }
     
     private Client create(Client newClient, boolean publicClient) {
-        String memberId = sourceManager.retrieveSourceOrcid();
+        String memberId = sourceManager.retrieveActiveSourceId();
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
 
         // Verify if the member type allow him to create another client
@@ -178,8 +180,17 @@ public class ClientManagerImpl implements ClientManager {
             throw new IllegalArgumentException("Invalid client id provided: " + existingClient.getId());
         }
         ClientDetailsEntity clientDetails = clientDetailsDao.find(existingClient.getId());
+        
+        if(ClientType.PUBLIC_CLIENT.name().equals(clientDetails.getClientType())) {
+            for(ClientRedirectUri rUri : existingClient.getClientRedirectUris()) {
+                rUri.setRedirectUriType(RedirectUriType.SSO_AUTHENTICATION.value());
+                rUri.setUriActType(null);
+                rUri.setUriGeoArea(null);
+            }
+        }
+        
         jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);
-        clientDetails.setLastModified(new Date());
+        clientDetails.setLastModified(new Date());        
         
         //Check if we should update client configuration values
         if(updateConfigValues) {
@@ -210,7 +221,7 @@ public class ClientManagerImpl implements ClientManager {
                     // client and for the member as well
                     if (result) {
                         clientDetailsDao.updateLastModified(clientId);
-                        profileDao.updateLastModifiedDateWithoutResult(sourceManager.retrieveSourceOrcid());
+                        profileDao.updateLastModifiedDateWithoutResult(sourceManager.retrieveActiveSourceId());
                     }
                     return result;
                 } catch (Exception e) {

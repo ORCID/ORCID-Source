@@ -321,6 +321,8 @@
 			end_day="01"
 			visibility="PUBLIC"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="1"
 			/>                                                    
 																					
 	<org_affiliation_relation
@@ -341,7 +343,6 @@
 			visibility="LIMITED"
 			client_source_id="APP-5555555555555555"
 			/>                                                                                
-	
 	<org_affiliation_relation
 			id="19"
 			org_id="1"
@@ -359,6 +360,8 @@
 			end_day="01"
 			visibility="PRIVATE"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;002&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="0"
 			/>    
 			
 	<org_affiliation_relation
@@ -378,6 +381,8 @@
 			end_day="01"
 			visibility="PUBLIC"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="1"
 			/>                                                    
 																					
 	<org_affiliation_relation
@@ -416,6 +421,8 @@
             end_day="01"
             visibility="PRIVATE"
             client_source_id="APP-5555555555555555"
+            external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;002&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="0"
             />
             
 	<org_affiliation_relation
@@ -435,6 +442,8 @@
             end_day="01"
             visibility="LIMITED"
             source_id="0000-0000-0000-0003"
+            external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="2"
             />                                                                                
 
 	<org_affiliation_relation
@@ -473,6 +482,8 @@
             end_day="01"
             visibility="LIMITED"
             source_id="0000-0000-0000-0003"
+            external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="2"
             />                                                                                
 
 	<org_affiliation_relation
@@ -511,6 +522,8 @@
 			end_day="01"
 			visibility="PUBLIC"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="1"
 			/>                                                    
 																					
 	<org_affiliation_relation
@@ -549,6 +562,8 @@
 			end_day="01"
 			visibility="PRIVATE"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;002&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="0"
 			/>    
 			
 	<org_affiliation_relation
@@ -568,6 +583,8 @@
             end_day="01"
             visibility="LIMITED"
             source_id="0000-0000-0000-0003"
+            external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="2"
             />                                                                                
 
 	<org_affiliation_relation
@@ -586,7 +603,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="0000-0000-0000-0003"
+            source_id="0000-0000-0000-0003"            
             />    
 			
 	<org_affiliation_relation
@@ -606,6 +623,8 @@
 			end_day="01"
 			visibility="PUBLIC"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="1"
 			/>                                                    
 																					
 	<org_affiliation_relation
@@ -644,6 +663,8 @@
 			end_day="01"
 			visibility="PRIVATE"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;002&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="0"
 			/>    
 			
 	<org_affiliation_relation
@@ -663,6 +684,8 @@
             end_day="01"
             visibility="LIMITED"
             source_id="0000-0000-0000-0003"
+            external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="2"
             />                                                                                
 
 	<org_affiliation_relation
@@ -681,7 +704,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="0000-0000-0000-0003"
+            source_id="0000-0000-0000-0003"            
             />    
 
 	<org_affiliation_relation
@@ -701,6 +724,8 @@
 			end_day="01"
 			visibility="PUBLIC"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="1"
 			/>                                                    
 																					
 	<org_affiliation_relation
@@ -739,6 +764,8 @@
 			end_day="01"
 			visibility="PRIVATE"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;002&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="0"
 			/>    
 			
 	<org_affiliation_relation
@@ -758,6 +785,8 @@
             end_day="01"
             visibility="LIMITED"
             source_id="0000-0000-0000-0003"
+            external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="2"
             />                                                                                
 
 	<org_affiliation_relation
@@ -776,8 +805,8 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="0000-0000-0000-0003"
-            />    
+            source_id="0000-0000-0000-0003"            
+			/>    
 
 	<org_affiliation_relation
 			id="42"
@@ -796,6 +825,8 @@
 			end_day="01"
 			visibility="PUBLIC"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="1"
 			/>                                                    
 																					
 	<org_affiliation_relation
@@ -834,6 +865,8 @@
 			end_day="01"
 			visibility="PRIVATE"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;002&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="0"
 			/>    
 			
 	<org_affiliation_relation
@@ -853,6 +886,8 @@
             end_day="01"
             visibility="LIMITED"
             source_id="0000-0000-0000-0003"
+            external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="2"
             />                                                                                
 
 	<org_affiliation_relation
@@ -871,7 +906,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="0000-0000-0000-0003"
+            source_id="0000-0000-0000-0003"            
             />    
 
 	<org_affiliation_relation
@@ -891,6 +926,8 @@
 			end_day="01"
 			visibility="PUBLIC"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="1"
 			/>                                                    
 																					
 	<org_affiliation_relation
@@ -929,6 +966,8 @@
 			end_day="01"
 			visibility="PRIVATE"
 			client_source_id="APP-5555555555555555"
+			external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;002&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="0"
 			/>    
 			
 	<org_affiliation_relation
@@ -948,6 +987,8 @@
             end_day="01"
             visibility="LIMITED"
             source_id="0000-0000-0000-0003"
+            external_ids_json="{&quot;externalIdentifier&quot;:[{&quot;type&quot;:&quot;DOI&quot;,&quot;value&quot;:&quot;001&quot;,&quot;url&quot;:null,&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			display_index="2"
             />                                                                                
 
 	<org_affiliation_relation
@@ -966,7 +1007,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="0000-0000-0000-0003"
+            source_id="0000-0000-0000-0003"            
             />
             
 	<org_affiliation_relation
@@ -985,7 +1026,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="APP-5555555555555555"
+            client_source_id="APP-5555555555555555"
             />
             
 	<org_affiliation_relation
@@ -1004,7 +1045,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="APP-5555555555555555"
+            client_source_id="APP-5555555555555555"
             />
             
 	<org_affiliation_relation
@@ -1023,7 +1064,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="APP-5555555555555555"
+            client_source_id="APP-5555555555555555"
             />
             
 	<org_affiliation_relation
@@ -1042,7 +1083,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="APP-5555555555555555"
+            client_source_id="APP-5555555555555555"
             />
             
 	<org_affiliation_relation
@@ -1061,7 +1102,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="APP-5555555555555555"
+            client_source_id="APP-5555555555555555"
             />
             
 	<org_affiliation_relation
@@ -1080,7 +1121,7 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="APP-5555555555555555"
+            client_source_id="APP-5555555555555555"
             />
             
 	<org_affiliation_relation
@@ -1099,6 +1140,6 @@
             end_month="01"
             end_day="01"
             visibility="PRIVATE"
-            source_id="APP-5555555555555555"
+            client_source_id="APP-5555555555555555"
             />
 </dataset>

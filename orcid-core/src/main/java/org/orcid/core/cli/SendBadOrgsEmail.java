@@ -309,7 +309,7 @@ public class SendBadOrgsEmail {
             profileDao.updateLastModifiedDateAndIndexingStatus(profile.getId(), IndexingStatus.REINDEX);
             profileDao.flush();
             // Send the email
-            boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
+            boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getEmail(), SUBJECT, body, html);
             if (!mailSent) {
                 throw new RuntimeException("Failed to send email, orcid=" + profile.getId());
             }

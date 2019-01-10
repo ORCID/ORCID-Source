@@ -10,19 +10,19 @@ import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc1.common.Locale;
-import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
-import org.orcid.jaxb.model.v3.rc1.common.Source;
-import org.orcid.jaxb.model.v3.rc1.record.CompletionDate;
-import org.orcid.jaxb.model.v3.rc1.record.DeactivationDate;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
-import org.orcid.jaxb.model.v3.rc1.record.History;
-import org.orcid.jaxb.model.v3.rc1.record.Preferences;
-import org.orcid.jaxb.model.v3.rc1.record.Record;
-import org.orcid.jaxb.model.v3.rc1.record.SubmissionDate;
+import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.record.CompletionDate;
+import org.orcid.jaxb.model.v3.rc2.record.DeactivationDate;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.History;
+import org.orcid.jaxb.model.v3.rc2.record.Preferences;
+import org.orcid.jaxb.model.v3.rc2.record.Record;
+import org.orcid.jaxb.model.v3.rc2.record.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -62,25 +62,25 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
     }
 
     @Override
-    public Record getPublicRecord(String orcid) {
+    public Record getPublicRecord(String orcid, boolean filterVersionOfIdentifiers) {
         Record record = new Record();
         record.setOrcidType(getOrcidType(orcid));
         record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
-        record.setActivitiesSummary(activitiesSummaryManager.getPublicActivitiesSummary(orcid));
+        record.setActivitiesSummary(activitiesSummaryManager.getPublicActivitiesSummary(orcid, filterVersionOfIdentifiers));
         record.setPerson(personDetailsManager.getPublicPersonDetails(orcid));        
         return record;
     }
 
     @Override
-    public Record getRecord(String orcid) {
+    public Record getRecord(String orcid, boolean filterVersionOfIdentifiers) {
         Record record = new Record();
         record.setOrcidType(getOrcidType(orcid));
         record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
-        record.setActivitiesSummary(activitiesSummaryManager.getActivitiesSummary(orcid));
+        record.setActivitiesSummary(activitiesSummaryManager.getActivitiesSummary(orcid, filterVersionOfIdentifiers));
         record.setPerson(personDetailsManager.getPersonDetails(orcid));        
         return record;
     }

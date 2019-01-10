@@ -41,6 +41,7 @@ import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
 import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.DigestEmail;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -224,11 +225,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
-                    digestMessage.setTo(primaryEmail.getId());
+                    digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
                     if (successfullySent) {
-                        flagAsSent(notifications);
+                        for (Notification notification : notifications) {
+                            notificationDao.flagAsSent(notification.getPutCode());
+                        }
                     }
                 } else {
                     LOGGER.info("There are no notifications to send for orcid: {}", orcid);
@@ -264,7 +267,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 callables.add(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        processServiceAnnouncementOrNotification(n);
+                        processServiceAnnouncementOrTipNotification(n);
                         return true;
                     }
 
@@ -283,7 +286,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     }
     
     @Override
-    public void sendTips(Integer customBatchSize) {
+    public void sendTips(Integer customBatchSize, String fromAddress) {
         LOGGER.info("About to send Tips messages");
         
         List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
@@ -295,7 +298,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 callables.add(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        processServiceAnnouncementOrNotification(n);
+                        processServiceAnnouncementOrTipNotification(n, fromAddress);
                         return true;
                     }
 
@@ -313,7 +316,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
     }
     
-    private void processServiceAnnouncementOrNotification(NotificationEntity n) {
+    private void processServiceAnnouncementOrTipNotification(NotificationEntity n) {
+        processServiceAnnouncementOrTipNotification(n, null);
+    }
+    
+    private void processServiceAnnouncementOrTipNotification(NotificationEntity n, String fromAddress) {
         String orcid = n.getProfile().getId();
         EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
         if (primaryEmail == null) {
@@ -321,19 +328,28 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             flagAsFailed(orcid, n);
             return;
         }
+        if(!primaryEmail.getVerified()) {
+            LOGGER.info("Primary email not verified for: " + orcid);
+            flagAsFailed(orcid, n);
+            return;
+        }
         try {
             boolean successfullySent = false;
+            String fromAddressParam = DIGEST_FROM_ADDRESS;
+            if(!PojoUtil.isEmpty(fromAddress)) {
+                fromAddressParam = fromAddress;
+            }
             if (n instanceof NotificationServiceAnnouncementEntity) {
                 NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getEmail(), nc.getSubject(), nc.getBodyText(),
                         nc.getBodyHtml());            
             } else if (n instanceof NotificationTipEntity) {
                 NotificationTipEntity nc = (NotificationTipEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendEmail(DIGEST_FROM_ADDRESS, primaryEmail.getId(), nc.getSubject(), nc.getBodyText(),
+                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getEmail(), nc.getSubject(), nc.getBodyText(),
                         nc.getBodyHtml());            
             }
             
@@ -360,7 +376,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                if(n.getRetryCount() == null || n.getRetryCount() >= MAX_RETRY_COUNT) {
+                if(n.getRetryCount() != null && n.getRetryCount() >= MAX_RETRY_COUNT) {
                     notificationDao.flagAsNonSendable(orcid, n.getId());
                 } else {
                     if(n.getRetryCount() == null) {

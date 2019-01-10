@@ -25,7 +25,8 @@ import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -42,13 +43,18 @@ public class GroupIdRecordManagerTest extends BaseTest  {
     @Resource(name = "groupIdRecordManagerV3")
     private GroupIdRecordManager groupIdRecordManager;        
     
+    @Resource(name = "orcidSecurityManagerV3")
+    private OrcidSecurityManager orcidSecurityManager;
+
     @Mock
     private SourceManager sourceManager;
     
     @Before
     public void before() {
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "sourceManager", sourceManager); 
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID)));
+        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_ID));                
+        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID)));
     }
     
     @BeforeClass
@@ -287,6 +293,8 @@ public class GroupIdRecordManagerTest extends BaseTest  {
             assertNotNull(g1);
             assertEquals("orcid-generated:other-valid-group-id", g1.getGroupId());
         } catch(Exception e) {
+            if (AssertionError.class.isAssignableFrom(e.getClass()))
+                throw e;
             fail();
         }
         

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator.OpenIDConnectScopesToIgnore;
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
@@ -122,24 +123,28 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     private String trimClientCredentialScopes(String scopes) throws InvalidScopeException {
         String result = scopes;
         for (String scope : OAuth2Utils.parseParameterList(scopes)) {
-        	if(StringUtils.isNotBlank(scope)) {
-        		ScopePathType scopeType = null;
-            	try {
-                	scopeType = ScopePathType.fromValue(scope);
-                } catch(Exception e) {
-                	throw new InvalidScopeException("Invalid scope: " + scope);
+            if (StringUtils.isNotBlank(scope)) {
+                if (OpenIDConnectScopesToIgnore.contains(scope)) {//remove openid connect scopes we do not support.
+                    result = result.replaceAll(scope, "");
+                    continue; 
+                }
+                ScopePathType scopeType = null;
+                try {
+                    scopeType = ScopePathType.fromValue(scope);
+                } catch (Exception e) {
+                    throw new InvalidScopeException("Invalid scope: " + scope);
                 }
                 if (scopeType.isClientCreditalScope()) {
-                    if(scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.getContent()))
-                        result = scopes.replaceAll(ScopePathType.ORCID_PROFILE_CREATE.getContent(), "");
-                    else if(scopes.contains(ScopePathType.READ_PUBLIC.getContent()))
-                        result = scopes.replaceAll(ScopePathType.READ_PUBLIC.getContent(), "");
-                    else if(scopes.contains(ScopePathType.WEBHOOK.getContent()))
-                        result = scopes.replaceAll(ScopePathType.WEBHOOK.getContent(), "");
-                }     
-        	}
+                    if (result.contains(ScopePathType.ORCID_PROFILE_CREATE.getContent()))
+                        result = result.replaceAll(ScopePathType.ORCID_PROFILE_CREATE.getContent(), "");
+                    else if (result.contains(ScopePathType.READ_PUBLIC.getContent()))
+                        result = result.replaceAll(ScopePathType.READ_PUBLIC.getContent(), "");
+                    else if (result.contains(ScopePathType.WEBHOOK.getContent()))
+                        result = result.replaceAll(ScopePathType.WEBHOOK.getContent(), "");
+                }
+            }
         }
-        
+
         return result;
     }
 

@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public enum WorkType implements Serializable {
     @XmlEnumValue("artistic-performance")
     ARTISTIC_PERFORMANCE("artistic-performance"),
@@ -57,6 +55,8 @@ public enum WorkType implements Serializable {
     OTHER("other"),
     @XmlEnumValue("patent")
     PATENT("patent"),
+    @XmlEnumValue("preprint")
+    PREPRINT("preprint"),
     @XmlEnumValue("registered-copyright")
     REGISTERED_COPYRIGHT("registered-copyright"),
     @XmlEnumValue("report")
@@ -65,6 +65,8 @@ public enum WorkType implements Serializable {
     RESEARCH_TECHNIQUE("research-technique"),
     @XmlEnumValue("research-tool")
     RESEARCH_TOOL("research-tool"),
+    @XmlEnumValue("software")
+    SOFTWARE("software"),
     @XmlEnumValue("spin-off-company")
     SPIN_OFF_COMPANY("spin-off-company"),
     @XmlEnumValue("standards-and-policy")
@@ -103,6 +105,19 @@ public enum WorkType implements Serializable {
                 return c;
             }
         }
+        
+        // Known maps
+        switch (v) {
+        case "article-journal":
+            return WorkType.JOURNAL_ARTICLE;
+        case "chapter":
+            return WorkType.BOOK_CHAPTER;
+        case "dataset":
+            return WorkType.DATA_SET;
+        case "standard":
+            return WorkType.STANDARDS_AND_POLICY;
+        }        
+        
         throw new IllegalArgumentException(v);
     }
 }

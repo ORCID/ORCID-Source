@@ -3,12 +3,25 @@ declare var colorbox: any;
 declare var isMobile: any;
 
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
+     from '@angular/common/http';
+
+import { Observable, Subject } 
+    from 'rxjs';
+
+import { OrgDisambiguated } 
+    from '../modules/orgIdentifierPopover/orgDisambiguated.ts';
 
 @Injectable()
 export class CommonService {
     private shownElement: any;
 
-    constructor() { 
+    public orgDisambiguatedDetails: any;
+
+    constructor(
+        private http: HttpClient
+    ) {
+        this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
     }
 
@@ -74,6 +87,12 @@ export class CommonService {
         return true;
     };
 
+    extractContentFromBody(html:string): string {
+        var start = html.indexOf("<body>")+"<body>".length;
+        var end = html.indexOf("</body>", start);
+        return html.substring(start, end);
+    }
+
     formatDate(oldDate): string {
         let date:any = new Date(oldDate);
         let day:any = date.getDate();
@@ -108,6 +127,19 @@ export class CommonService {
 
     formColorBoxWidth(): string {
         return isMobile()? '100%': '800px';
+    };
+
+    getDisambiguatedOrgDetails(type, value): Observable<OrgDisambiguated[]>{
+        console.log(value);
+        return this.http.get<OrgDisambiguated[]>( 
+            getBaseUri() + '/orgs/disambiguated/' + type + '?value=' + encodeURIComponent(value)
+        )
+    };
+
+    getNormalizedExtId(type, value): Observable<any>{
+        return this.http.get( 
+            getBaseUri() + '/identifiers/norm/' + type + '?value=' + encodeURIComponent(value)
+        )
     };
 
     getParameterByName( name ): any {
@@ -180,6 +212,10 @@ export class CommonService {
         $.colorbox.close();
     };
 
+    replaceSeparatorWithSpace(str): string {
+        return str.replace(/-|_|\./g, ' ');
+    }
+
     showPrivacyHelp(elem, event, offsetArrow): void{
         let top = $(event.target.parentNode).parent().prop('offsetTop');
         let left = $(event.target.parentNode).parent().prop('offsetLeft');
@@ -228,5 +264,18 @@ export class CommonService {
         if (pojoMember != null && pojoMember.value != null && (pojoMember.value.charAt(0) == ' ' || pojoMember.value.charAt(pojoMember.value.length - 1) == ' ')) {
             pojoMember.value = pojoMember.value.trim();
         }
-    };            
+    };   
+    
+    randomString(): Observable<any> {        
+       return this.http.get(
+                getBaseUri() + '/generate-random-string.json',
+                {responseType: 'text'}
+        );         
+    };
+    
+    getUserStatus(): Observable<any> {        
+       return this.http.get(
+           getBaseUri() + '/userStatus.json'
+       );         
+    }; 
 }

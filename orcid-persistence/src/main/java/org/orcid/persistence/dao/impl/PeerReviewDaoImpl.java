@@ -38,7 +38,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @Override
     @Cacheable(value = "peer-reviews", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<PeerReviewEntity> getByUser(String userOrcid, long lastModified) {
-        TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where profile.id=:userOrcid", PeerReviewEntity.class);
+        TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where profile.id=:userOrcid order by completionDate.year desc, completionDate.month desc, completionDate.day desc", PeerReviewEntity.class);
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();
     }
@@ -90,5 +90,13 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
         Query query = entityManager.createQuery("delete from PeerReviewEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
+    }
+
+    @Override
+    public Boolean hasPublicPeerReviews(String orcid) {
+        Query query = entityManager.createNativeQuery("select count(*) from peer_review where orcid=:orcid and visibility='PUBLIC'");
+        query.setParameter("orcid", orcid);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return (result != null && result > 0);
     }
 }

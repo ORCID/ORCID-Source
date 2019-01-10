@@ -12,28 +12,31 @@ import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.rc1.common.Filterable;
-import org.orcid.jaxb.model.v3.rc1.common.VisibilityType;
-import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
-import org.orcid.jaxb.model.v3.rc1.record.ActivitiesContainer;
-import org.orcid.jaxb.model.v3.rc1.record.Activity;
-import org.orcid.jaxb.model.v3.rc1.record.Addresses;
-import org.orcid.jaxb.model.v3.rc1.record.Biography;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
-import org.orcid.jaxb.model.v3.rc1.record.Group;
-import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
-import org.orcid.jaxb.model.v3.rc1.record.Name;
-import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc1.record.Person;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc1.record.Record;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Filterable;
+import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
+import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc2.record.ActivitiesContainer;
+import org.orcid.jaxb.model.v3.rc2.record.Activity;
+import org.orcid.jaxb.model.v3.rc2.record.Addresses;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.Group;
+import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc2.record.GroupsContainer;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
+import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc2.record.Person;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc2.record.Record;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewDuplicateGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV3 {
@@ -43,7 +46,7 @@ public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV
 
     @Override
     public void checkIsPublic(VisibilityType visibilityType) {
-        if (visibilityType != null && !org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
+        if (visibilityType != null && !org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }
@@ -58,7 +61,7 @@ public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV
             return;
         }
 
-        if (!org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if (!org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }
@@ -138,6 +141,35 @@ public class PublicAPISecurityManagerV3Impl implements PublicAPISecurityManagerV
                 }
                 if (g.getActivities().isEmpty()) {
                     groupIt.remove();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void filter(PeerReviews peerReviews) {
+        if (peerReviews == null || peerReviews.retrieveGroups() == null) {
+            return;
+        }
+
+        Iterator<PeerReviewGroup> groupIt = peerReviews.retrieveGroups().iterator();
+
+        while (groupIt.hasNext()) {
+            PeerReviewGroup g = groupIt.next();
+            for (PeerReviewDuplicateGroup duplicateGroup : g.getPeerReviewGroup()) {
+                if (duplicateGroup.getActivities() != null) {
+                    Iterator<? extends GroupableActivity> activityIt = duplicateGroup.getActivities().iterator();
+                    while (activityIt.hasNext()) {
+                        GroupableActivity activity = activityIt.next();
+                        try {
+                            checkIsPublic(activity);
+                        } catch (OrcidNonPublicElementException e) {
+                            activityIt.remove();
+                        }
+                    }
+                    if (duplicateGroup.getActivities().isEmpty()) {
+                        groupIt.remove();
+                    }
                 }
             }
         }

@@ -17,18 +17,22 @@ public class ActivitiesGroup {
     public ActivitiesGroup(GroupableActivity activity) {        
         groupKeys = new HashSet<GroupAble>();        
         activities = new HashSet<GroupableActivity>();
-        
-        if(activity != null)
+        if(activity != null) {
             if(PeerReviewSummary.class.isAssignableFrom(activity.getClass())) {
                 PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
                 PeerReviewGroupKey prgk = new PeerReviewGroupKey(); 
                 prgk.setGroupId(peerReviewSummary.getGroupId());                
                 groupKeys.add(prgk);                               
-            } else if (activity.getExternalIdentifiers() != null)
-                for (GroupAble extId : activity.getExternalIdentifiers().getExternalIdentifier())
+            } else if (activity.getExternalIdentifiers() != null) {
+                for (GroupAble extId : activity.getExternalIdentifiers().getExternalIdentifier()) {
                     // Dont add grouping keys that dont pass the validation
-                    if (extId.isGroupAble())
+                    if (extId.isGroupAble()) {
                         groupKeys.add(extId);
+                    }
+                }
+            }
+        }
+        
         activities.add(activity);
     }
             
@@ -60,8 +64,9 @@ public class ActivitiesGroup {
                         for (GroupAble groupKey : groupKeys)
                             if (groupKey.getGroupId() != null && groupKey.getGroupId().equals(extId.getGroupId()))
                                 hasId = true;
-                        if (!hasId)
+                        if (!hasId) {
                             groupKeys.add(extId);
+                        }
                     }
                 }
             }
@@ -146,8 +151,9 @@ public class ActivitiesGroup {
         //The incoming group should always contains at least one activity, we should not merge empty activities        
         //Merge group keys
         for(GroupAble otherKey: otherKeys) {
-            if(!groupKeys.contains(otherKey))
+            if(!groupKeys.contains(otherKey)) {
                 groupKeys.add(otherKey);
+            }
         }
         
         //Merge activities

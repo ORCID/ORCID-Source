@@ -16,16 +16,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
-import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
-import org.orcid.core.manager.GroupingSuggestionManager;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -46,6 +44,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.beans.factory.annotation.Value;
 
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -65,8 +64,8 @@ public class WorkManagerTest extends BaseTest {
     @Resource
     private WorkDao workDao;
     
-    @Mock
-    private GroupingSuggestionManager groupingSuggestionManager;
+    @Value("${org.orcid.core.works.bulk.read.max:100}")
+    private Long bulkReadSize;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -76,9 +75,8 @@ public class WorkManagerTest extends BaseTest {
     @Before
     public void before() {
         TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
-        TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManager", groupingSuggestionManager);
     }
-    
+        
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
@@ -115,7 +113,6 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWork() {
         String orcid = "0000-0000-0000-0003";
-        Mockito.doNothing().when(groupingSuggestionManager).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         
         Work work = new Work();
@@ -133,14 +130,12 @@ public class WorkManagerTest extends BaseTest {
         work.setWorkType(WorkType.BOOK);
         work = workManager.createWork(orcid, work, true);
         
-        Mockito.verify(groupingSuggestionManager, Mockito.times(1)).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
         workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
     }
     
     @Test
     public void testUpdateWork() {
         String orcid = "0000-0000-0000-0003";
-        Mockito.doNothing().when(groupingSuggestionManager).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         
         Work work = new Work();
@@ -163,7 +158,6 @@ public class WorkManagerTest extends BaseTest {
         assertEquals("updated title", work.getWorkTitle().getTitle().getContent());
         
         // check grouping suggestion manager called for both creation and updating of works
-        Mockito.verify(groupingSuggestionManager, Mockito.times(2)).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
         workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
     }
     
@@ -270,7 +264,6 @@ public class WorkManagerTest extends BaseTest {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-        Mockito.doNothing().when(groupingSuggestionManager).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
         
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -306,7 +299,6 @@ public class WorkManagerTest extends BaseTest {
         bulk.getBulk().add(work2);
                 
         WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
-        Mockito.verify(groupingSuggestionManager, Mockito.times(2)).generateGroupingSuggestionsForProfile(Mockito.eq(orcid), Mockito.any(Work.class), Mockito.any(Works.class));
         
         assertNotNull(updatedBulk);
         assertEquals(2, updatedBulk.getBulk().size());
@@ -881,7 +873,7 @@ public class WorkManagerTest extends BaseTest {
     
     @Test
     public void testFindWorkBulkInvalidPutCodes() {
-        String putCodes = "11,12,13,invalid";
+        String putCodes = "11,12,13,99999";
         WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes);
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
@@ -895,7 +887,7 @@ public class WorkManagerTest extends BaseTest {
     @Test(expected = ExceedMaxNumberOfPutCodesException.class)
     public void testFindWorkBulkTooManyPutCodes() {
         StringBuilder tooManyPutCodes = new StringBuilder("0");
-        for (int i = 1; i <= WorkManagerReadOnlyImpl.MAX_BULK_PUT_CODES; i++) {
+        for (int i = 1; i <= bulkReadSize; i++) {
             tooManyPutCodes.append(",").append(i);
         }
         

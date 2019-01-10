@@ -1,11 +1,7 @@
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import org.orcid.core.togglz.Features;
-import org.orcid.integration.blackbox.api.BlackBoxBase;
-import static org.orcid.integration.blackbox.api.BBBUtil.executeJavaScript;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementByXpath;
 import static org.orcid.integration.blackbox.api.BBBUtil.getUrl;
@@ -13,11 +9,12 @@ import static org.orcid.integration.blackbox.api.BBBUtil.getUrlAndWait;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForElementPresence;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForElementVisibility;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.codehaus.jettison.json.JSONException;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -40,6 +37,15 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
     @Before    
     public void before() {
         authorizeScreen = this.getWebBaseUrl() + "/oauth/authorize?client_id=" + this.getClient1ClientId() + "&response_type=code&redirect_uri=" + this.getClient1RedirectUri() + "&scope=/activities/read-limited";
+        
+        // timeout for waiting for angular needs extending for these tests
+        getWebDriver().manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+    }
+    
+    @After
+    public void after() {
+        // reset timeout change
+        getWebDriver().manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
     }
     
     @Test
@@ -54,6 +60,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals(""));
         assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals(""));
         // verify we don't populate signin
+        switchToLoginForm();
         assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
         getUrlAndWait(authorizeScreen);
         switchToRegisterForm();
@@ -72,6 +79,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
         assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals("test_given_name"));
         // verify we don't populate signin
+        switchToLoginForm();
         assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
     }
         
@@ -88,6 +96,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         assertTrue(findElementByXpath("//input[@name='familyNames']").getAttribute("value").equals("test_family_names"));
         assertTrue(findElementByXpath("//input[@name='givenNames']").getAttribute("value").equals("test_given_name"));
         // verify we don't populate signin
+        switchToLoginForm();
         assertTrue(findElementByXpath("//input[@name='userId']").getAttribute("value").equals(""));
     }       
 
@@ -139,6 +148,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         assertTrue(findElement(element).getAttribute("value").equals("test_given_name"));
         
         // verify we don't populate signin
+        switchToLoginForm();
         element = By.xpath("//input[@name='userId']");
         waitForElementPresence(element);              
         assertTrue(findElement(element).getAttribute("value").equals(""));
@@ -146,21 +156,21 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         // test populating form with family name
         url = authorizeScreen + "&family_names=test_family_names";
         getUrlAndWait(url);
-        element = By.xpath("//input[@ng-model='registrationForm.familyNames.value']");
+        switchToRegisterForm();
+        element = By.xpath("//input[@name='familyNames']");
         waitForElementPresence(element);                    
         assertTrue(findElement(element).getAttribute("value").equals("test_family_names"));
         WebElement we = findElement(element);
-        // angular doesn't always populate the element value attribute on init. Instead we check to make sure the model is populated
-        assertEquals("test_family_names", executeJavaScript("return angular.element(arguments[0]).scope().registrationForm.familyNames.value", we).toString());
 
         // test populating form with given name
         url = authorizeScreen + "&given_names=testGivenNames";
         getUrlAndWait(url);
-        element = By.xpath("//input[@ng-model='registrationForm.givenNames.value']");
+        switchToRegisterForm();
+        element = By.xpath("//input[@name='givenNames']");
         waitForElementPresence(element);
         we = findElement(element);
         // angular doesn't always populate the element value attribute on init. Instead we check to make sure the model is populated
-        assertEquals("testGivenNames", executeJavaScript("return angular.element(arguments[0]).scope().registrationForm.givenNames.value", we).toString());
+        assertEquals("testGivenNames", we.getAttribute("value"));
    }
 
 }

@@ -776,7 +776,7 @@
 	</xs:element>
 	<xs:element name="work-type">
 		<xs:annotation>
-			<xs:documentation>The types of works accepted accepted by the ORCID Registry. Please refer to the CASRAI dictionary for definitions of each work type. http://dictionary.casrai.org/research-personnel-profile/contributions/outputs
+			<xs:documentation>The types of works accepted accepted by the ORCID Registry. Please refer to the CASRAI dictionary for definitions of each work type. https://dictionary.casrai.org/Output_Types
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
@@ -2166,7 +2166,7 @@
 	</xs:complexType>
 	<xs:simpleType name="scope-path-type">
 		<xs:annotation>
-			<xs:documentation>See the ORCID Knowledgebase for a complete description of ORCID Scopes and related documentation: https://support.orcid.org/knowledgebase/articles/120162-orcid-scopes
+			<xs:documentation>See the ORCID Knowledgebase for a complete description of ORCID Scopes and related documentation: https://members.orcid.org/api/oauth/orcid-scopes
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">

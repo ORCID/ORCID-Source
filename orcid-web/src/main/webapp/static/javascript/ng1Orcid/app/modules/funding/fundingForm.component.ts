@@ -1,8 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
-declare var groupedActivitiesUtil: any;
-declare var sortState: any;
 declare var typeahead: any;
 
 //Import all the angular components
@@ -17,8 +13,8 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
-import { EmailService } 
-    from '../../shared/email.service.ts';
+import { CommonService } 
+    from '../../shared/common.service.ts';
 
 import { FundingService } 
     from '../../shared/funding.service.ts';
@@ -26,8 +22,8 @@ import { FundingService }
 import { ModalService } 
     from '../../shared/modal.service.ts'; 
 
-import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
+import { FeaturesService } 
+    from '../../shared/features.service.ts';
 
 @Component({
     selector: 'funding-form-ng2',
@@ -35,103 +31,37 @@ import { WorkspaceService }
 })
 export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
+    private viewSubscription: Subscription;
 
-    /*
-    emailSrvc: any;
-    workspaceSrvc: any;
-    */
     addingFunding: boolean;
-    deleFunding: any;
-    deleteGroup: any;
-    deletePutCode: any;
     disambiguatedFunding: any;
-    displayFundingxtIdPopOver: any;
-    displayURLPopOver: any;
     editFunding: any;
-    educations: any;
-    emails: any;
-    employments: any;
-    fixedTitle: string;
-    fundings: any;
-    groups: any;
-    moreInfo: any;
-    moreInfoCurKey: any;
-    privacyHelp: any;
-    privacyHelpCurKey: any;
-    selectOrgDefinedFundingSubType: any;
-    showElement: any;
-    sortHideOption: boolean;
-    sortState: any;
+    editTranslatedTitle: any;
+    lastIndexedTerm: any;
+    togglzDialogPrivacyOption: boolean;
 
     constructor(
+        private commonService: CommonService,
         private fundingService: FundingService,
-        private emailService: EmailService,
         private modalService: ModalService,
-        private workspaceSrvc: WorkspaceService
+        private featuresService: FeaturesService
     ) {
-        /*
-        this.emailSrvc = emailSrvc;
-        this.workspaceSrvc = workspaceSrvc;
-        */
         this.addingFunding = false;
-        this.deleFunding = null;
-        this.deleteGroup = null;
-        this.deletePutCode = null;
-        this.displayURLPopOver = {};
-        this.editFunding = {};
-        this.emails = {};
-        this.fixedTitle = '';
-        this.fundings = new Array();
-        this.groups = null;
-        this.moreInfo = {};
-        this.moreInfoCurKey = null;
-        this.privacyHelp = {};
-        this.privacyHelpCurKey = null;
-        this.selectOrgDefinedFundingSubType = {};
-        this.showElement = {};
-        this.sortHideOption = false;
-        this.sortState = new ActSortState(GroupedActivities.FUNDING);
+        this.disambiguatedFunding = {};
+        this.editFunding = this.getEmptyFunding();
+        this.editTranslatedTitle = false;
+        this.lastIndexedTerm = null;   
     }
 
-    addFunding(): void {
-        if (this.addingFunding == true) {
-            return; // don't process if adding affiliation
-        }
-
-        this.addingFunding = true;
-        this.editFunding.errors.length = 0;
-        
-        /*
-        this.fundingService.setData( this.editFunding )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.editFunding = data;
-                //console.log('this.editFunding response', this.editFunding);
-                this.addingFunding = false;
-                this.close();
-
-                if (data.errors.length > 0){
-
-                }
-            },
-            error => {
-                //console.log('setBiographyFormError', error);
-            } 
-        );
-        */
-        
-    };
-
     addFundingExternalIdentifier(): void {
+        console.log
         this.editFunding.externalIdentifiers.push(
             {
-                type: {
+                externalIdentifierType: {
                     value: ""
                 }, 
-                value: {
+                externalIdentifierId: {
                     value: ""
                 }, 
                 url: {
@@ -144,12 +74,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    addFundingModal(type, affiliation): void {
-
-    };
-
     bindTypeaheadForOrgs(): void {
-        var numOfResults = 100;
+        let numOfResults = 100;
         (<any>$("#fundingName")).typeahead({
             name: 'fundingName',
             limit: numOfResults,
@@ -182,10 +108,14 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 return forDisplay;
             }
         });
-        $("#fundingName").bind("typeahead:selected", function(obj, datum) {
-            this.selectFunding(datum);
-            
-        });
+        $("#fundingName").bind(
+            "typeahead:selected", 
+            (
+                function(obj, datum) {
+                    this.selectFunding(datum);
+                }
+            ).bind(this)
+        );
     };
 
     bindTypeaheadForSubTypes(): void {
@@ -209,168 +139,149 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 return forDisplay;
             }
         });
-        $("#organizationDefinedType").bind("typeahead:selected", function(obj, datum){
-            this.selectOrgDefinedFundingSubType(datum);
-            
-        });
+        $("#organizationDefinedType").bind(
+            "typeahead:selected", 
+            (
+                function(obj, datum){
+                    this.selectOrgDefinedFundingSubType(datum);
+                }
+            ).bind(this)
+        );
     };
 
-    close(): void {
-        //$.colorbox.close();
-    };
 
     closeModal(): void {
-        //$.colorbox.close();
-    };
-
-    closeMoreInfo(key): void {
-        this.moreInfo[key]=false;
-    };
-
-    deleteFunding(delFunding): void {
-        //this.fundingService.deleteData(delFunding);
-        this.closeModal();
-    };
-
-    deleteFundingByPut(putCode, deleteGroup): void {
-        if (deleteGroup){
-            //this.fundingSrvc.deleteGroupFunding(putCode);
-        }
-        else {
-            //this.fundingSrvc.deleteFunding(putCode);
-        }
-        //$.colorbox.close();
-    };
-
-    deleteFundingConfirm(putCode, deleteGroup): void {
-        //var funding = fundingSrvc.getFunding(putCode);
-        var funding = {
-            fundingTitle: {
-                title: {
-                    value: null
-                }
+        this.unbindTypeaheadForOrgs();
+        this.unbindTypeaheadForSubTypes();
+        this.modalService.notifyOther(
+            {
+                action:'close', 
+                moduleId: 'modalFundingForm'
             }
-        };
-
-        var maxSize = 100;
-        
-        this.deletePutCode = putCode;
-        this.deleteGroup = deleteGroup;
-        
-        if (funding.fundingTitle && funding.fundingTitle.title){
-            this.fixedTitle = funding.fundingTitle.title.value;
-        }
-        else{
-            this.fixedTitle = '';
-        } 
-
-        if(this.fixedTitle.length > maxSize){
-            this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
-        }
-
-        /*
-        $.colorbox({
-            html : $compile($('#delete-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-        */
-    };
-
-    getEmptyExtId(): any {
-        return {
-            "errors": [],
-            "type": {
-                "errors": [],
-                "value": "award",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "value": {
-                "errors": [],
-                "value": "",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "url": {
-                "errors": [],
-                "value": "",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "putCode": null,
-            "relationship": {
-                "errors": [],
-                "value": "self",
-                "required": true,
-                "getRequiredMessage": null
-            }
-        };
-    }
-
-    getFundingsById( ids ): any {
-        this.fundingService.getFundingsById( ids ).pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-
-                //console.log('this.getFundingsById', data);
-                for (let i in data) {
-                    this.fundings.push(data[i]);
-                };
-
-            },
-            error => {
-                //console.log('getBiographyFormError', error);
-            } 
         );
+    };
+
+    createNew(work): void {
+        var cloneF = JSON.parse(JSON.stringify(work));
+        cloneF.source = null;
+        cloneF.putCode = null;
+        for (var idx in cloneF.externalIdentifiers){
+            cloneF.externalIdentifiers[idx].putCode = null;
+        }
+        return cloneF;
     }
 
-    getFundingsIds(): any {
-        this.fundingService.getFundingsId()
+    deleteFundingExternalIdentifier(obj): void {
+        var index = this.editFunding.externalIdentifiers.indexOf(obj);
+        this.editFunding.externalIdentifiers.splice(index,1);
+    };
+
+    getDisambiguatedFunding = function(id) {
+        this.fundingService.getDisambiguatedFunding(id)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                //console.log('getFundingsIds', data);
-                let funding = null;
-                for (let i in data) {
-                    funding = data[i];
-                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
-                };
-                
-                /*
-                if (fundingSrvc.fundingToAddIds.length == 0) {
-                    $timeout(function() {
-                      fundingSrvc.loading = false;
-                    });
-                } else {
-                    $timeout(function () {
-                        fundingSrvc.addFundingToScope(path);
-                    },50);
+                if (data != null) {
+                    this.disambiguatedFunding = data;
+                    this.editFunding.disambiguatedFundingSourceId = data.sourceId;
+                    this.editFunding.disambiguationSource = data.sourceType;
                 }
-                
-                let ids = data.splice(0,20).join();
-                this.getFundingsById( ids );
-                */
             },
             error => {
-                //console.log('getBiographyFormError', error);
+                //console.log("getDisambiguatedFunding", id, error);
             } 
         );
     };
 
-
-    hideTooltip(element): void{        
-        this.showElement[element] = false;
-    };
-
-    hideURLPopOver(id): void{
-        this.displayURLPopOver[id] = false;
-    };
-
-
+    getEmptyFunding(): any {
+        return {
+            amount: {
+                errors: [],
+                value: null
+            },
+            city: {
+                errors: [],
+                value: null
+            },
+            country: {
+                errors: [],
+                value: null
+            },
+            currencyCode: {
+                errors: []
+            },
+            description: {
+                errors: [],
+                value: null
+            },
+            endDate: {
+                day: "",
+                month: "",
+                year: "",
+                errors: [],
+            },
+            errors: [],
+            fundingName: {
+                errors: [],
+                value: null
+            },
+            fundingTitle: {
+                title: {
+                    errors: [],
+                    value: null
+                },
+                translatedTitle: {
+                    content: null,
+                    errors: []
+                }
+            },
+            fundingType: {
+                errors: [],
+                value: null
+            },
+            organizationDefinedFundingSubType: {
+                subtype: {
+                    errors: [],
+                    value: null
+                }
+            },
+            putCode: {
+                value: null
+            },
+            region: {
+                errors: [],
+                value: null
+            },
+            startDate: {
+                day: "",
+                month: "",
+                year: "",
+                errors: [],
+            },
+            url: {
+                errors: [],
+                value: null
+            },
+            externalIdentifiers: [
+                {
+                    externalIdentifierType: {
+                        value: ""
+                    }, 
+                    externalIdentifierId: {
+                        value: ""
+                    }, 
+                    url: {
+                        value: ""
+                    }, 
+                    relationship: {
+                        value: "self"
+                    } 
+                } 
+            ]
+        };
+    }
 
     isValidClass(cur): any {
         let valid = true;
@@ -401,90 +312,119 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         return '';
     };
 
-    moreInfoMouseEnter(key, $event): void {
-        $event.stopPropagation();
-        if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
-            if (this.moreInfoCurKey != null
-                && this.moreInfoCurKey != key) {
-                this.privacyHelp[this.moreInfoCurKey]=false;
-            }
-            this.moreInfoCurKey = key;
-            this.moreInfo[key]=true;
-        }
-    };
-
-
-    setPrivacy(aff, priv, $event): void {
-        $event.preventDefault();
-        aff.visibility.visibility = priv;
-        //this.affiliationService.updateProfileAffiliation(aff);
-    };
-
-    showAddModal(): void{
-        let numOfResults = 25;
-
-    };
-
-    showDetailsMouseClick = function(group, $event) {
-        $event.stopPropagation();
-        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
-    };
-
-    showTooltip(element): void{        
-        this.showElement[element] = true;
-    };
-
-    sort(key): void {       
-        this.sortState.sortBy(key);
-    };
-
-    showURLPopOver(id): void {
-        this.displayURLPopOver[id] = true;
-    };
-
-    // remove once grouping is live
-    toggleClickMoreInfo(key): void {
-        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
-            if (this.moreInfoCurKey != null
-                    && this.moreInfoCurKey != key) {
-                this.moreInfo[this.moreInfoCurKey]=false;
-            }
-            this.moreInfoCurKey = key;
-            this.moreInfo[key]=!this.moreInfo[key];
-        }
-    };
-
-    toggleClickPrivacyHelp(key): void {
-        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
-            if (
-                this.privacyHelpCurKey != null
-                && this.privacyHelpCurKey != key) {
-                this.privacyHelp[this.privacyHelpCurKey]=false;
-            }
-            this.privacyHelpCurKey = key;
-            this.privacyHelp[key]=!this.privacyHelp[key];
-        }
-
-    };
-
-    toggleEdit(): void {
-        this.emailService.getEmails()
+    putFunding(): void {
+        console.log("put funding:");
+        console.log(this.editFunding);
+        if (this.addingFunding){    
+            return; // don't process if adding funding
+        } 
+        this.addingFunding = true;
+        this.editFunding.errors.length = 0;
+        this.fundingService.putFunding( this.editFunding )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    //this.showEdit = !this.showEdit;
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                this.editFunding = data;
+                this.addingFunding = false;
+                if (data.errors.length > 0){
+                    this.editFunding = data;
+                    this.commonService.copyErrorsLeft(this.editFunding, data);
+                    if(this.editFunding.externalIdentifiers.length == 0) {
+                        this.addFundingExternalIdentifier();
+                    }  
+                } else {
+                    this.modalService.notifyOther({action:'close', moduleId: 'modalFundingForm'});
+                    //this.removeDisambiguatedFunding();
+                    this.fundingService.notifyOther({action:'add', successful:true});
                 }
             },
             error => {
-                //console.log('getEmails', error);
+                //console.log('setFundingFormError', error);
             } 
         );
+    };
+
+    removeDisambiguatedFunding(): void {
+        this.bindTypeaheadForOrgs();
+        if (this.disambiguatedFunding != undefined) {
+            delete this.disambiguatedFunding;
+        }
+        if (this.editFunding != undefined && this.editFunding.disambiguatedFundingSourceId != undefined) {
+            delete this.editFunding.disambiguatedFundingSourceId;
+        }
+    };
+
+    selectFunding(datum): void {
+        if (datum != undefined && datum != null) {
+            this.editFunding.fundingName.value = datum.value;
+            if(datum.value){
+                this.editFunding.fundingName.errors = [];
+            }
+            this.editFunding.city.value = datum.city;
+            if(datum.city){
+                this.editFunding.city.errors = [];
+            }
+
+            this.editFunding.region.value = datum.region;
+
+            if(datum.country != undefined && datum.country != null) {
+                this.editFunding.country.value = datum.country;
+                this.editFunding.country.errors = [];
+            }
+
+            if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+                this.getDisambiguatedFunding(datum.disambiguatedAffiliationIdentifier);
+                this.unbindTypeaheadForOrgs();
+            }
+        }
+    };
+
+    selectOrgDefinedFundingSubType(subtype): void {
+        if (subtype != undefined && subtype != null) {
+            this.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
+            this.editFunding.organizationDefinedFundingSubType.alreadyIndexed = true;
+            this.lastIndexedTerm = subtype.value;
+        }
+    };
+
+    serverValidate(relativePath): void {
+        if( relativePath == 'fundings/funding/datesValidate.json' ){
+            if( this.editFunding.startDate.month == "" 
+                || this.editFunding.startDate.day == ""
+                || this.editFunding.startDate.year == ""
+                || this.editFunding.endDate.month == "" 
+                || this.editFunding.endDate.day == ""
+                || this.editFunding.endDate.year == ""
+                || this.editFunding.startDate.month == null 
+                || this.editFunding.startDate.day == null
+                || this.editFunding.startDate.year == null
+                || this.editFunding.endDate.month == null 
+                || this.editFunding.endDate.day == null
+                || this.editFunding.endDate.year == null  ){
+                return;
+            }
+        }
+        this.fundingService.serverValidate(this.editFunding, relativePath)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if (data != null) {
+                    this.commonService.copyErrorsLeft(this.editFunding, data);
+                }
+            },
+            error => {
+            } 
+        );
+    }
+
+    setSubTypeAsNotIndexed(): void {
+        if(this.lastIndexedTerm != $.trim($('#organizationDefinedType').val())) {
+            this.editFunding.organizationDefinedFundingSubType.alreadyIndexed = false;
+        }
     };
 
     typeChanged(): void {
@@ -528,24 +468,127 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    toggleTranslatedTitle(): void{
+        this.editTranslatedTitle = !this.editTranslatedTitle;
+    };
 
+    unbindTypeaheadForOrgs(): void {
+        $('#fundingName').typeahead('destroy');
+    };
+
+    unbindTypeaheadForSubTypes(): void {
+        $('#organizationDefinedType').typeahead('destroy');
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        this.subscription = this.fundingService.notifyObservable$.subscribe(
+            (res) => {
+                this.bindTypeaheadForOrgs();
+                this.bindTypeaheadForSubTypes();
+                if( res.funding != undefined ) {
+                    this.editFunding = res.funding;
+                    if(this.editFunding.orgDisambiguatedId != null){
+                        this.getDisambiguatedFunding(this.editFunding.orgDisambiguatedId.value);
+                    }
+                } else {
+                    this.fundingService.getFundingEmpty()
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            this.editFunding = data
+                            
+                        },
+                        error => {
+                            console.log('Error getting blankFunding', error);
+                        } 
+                    );
+                }
+
+                if (this.editFunding.putCode == null) {
+                    this.editFunding.putCode = {
+                        'value': null
+                    };
+                }
+
+                if (this.editFunding.fundingTitle == null) {
+                    this.editFunding.fundingTitle = {
+                        'translatedTitle': {
+                            'content': null,
+                            'languageCode': null
+                        }
+                    };
+                }
+
+                if (this.editFunding.organizationDefinedFundingSubType == null) {
+                    this.editFunding.organizationDefinedFundingSubType = {
+                        'subtype': {
+                            'value': null
+                        }
+                    };
+                }
+
+                if (this.editFunding.fundingTitle.translatedTitle == null) {
+                    this.editFunding.fundingTitle.translatedTitle = {
+
+                        'content': null,
+                        'languageCode': null
+                    };
+                }
+
+                if (this.editFunding.startDate == null) {
+                    this.editFunding.startDate = {
+                        'month': "",
+                        'year': ""
+                    };
+                }
+
+                if (this.editFunding.endDate == null) {
+                    this.editFunding.endDate = {
+                        'month': "",
+                        'year': ""
+                    };
+                }
+
+                if(this.editFunding.externalIdentifiers.length == 0) {
+                    this.addFundingExternalIdentifier();
+                } else {
+                    for (var i in this.editFunding.externalIdentifiers){
+                        if(!this.editFunding.externalIdentifiers[i].url){
+                            this.editFunding.externalIdentifiers[i].url = {
+                                'value': "",
+                            }; 
+                        }
+                    }
+                }
+                console.log(this.editFunding);
+            }
+        );
+        
+        this.viewSubscription = this.modalService.notifyObservable$.subscribe(
+            (res) => {
+                if(res.moduleId == "modalFundingForm") {
+                    if(res.action == "open" && res.edit == false) {
+                        this.editFunding = this.getEmptyFunding();
+                    }
+                }
+            }
+        );
     };
 
     ngOnDestroy() {
-        (<any>$('#fundingName')).typeahead('destroy');
-        (<any>$('#organizationDefinedType')).typeahead('destroy');
+        this.unbindTypeaheadForOrgs();
+        this.unbindTypeaheadForSubTypes();
   
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     };
 
     ngOnInit() {
-        //console.log('initi funding component');
-        this.getFundingsIds();
+        this.togglzDialogPrivacyOption = this.featuresService.isFeatureEnabled('DIALOG_PRIVACY_OPTION')
     }; 
 }
 

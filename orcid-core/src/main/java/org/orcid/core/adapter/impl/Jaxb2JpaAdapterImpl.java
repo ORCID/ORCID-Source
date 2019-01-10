@@ -24,6 +24,7 @@ import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdenti
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV1;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -31,6 +32,7 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.UpdateOptions;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.FuzzyDateUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -82,6 +84,7 @@ import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -149,6 +152,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     @Resource
     protected WorkDao workDao;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
     
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -298,7 +304,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }            
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
             if(orcidWork.getWorkType() != null) {
-                workEntity.setWorkType(orcidWork.getWorkType().name());   
+                if(WorkType.DISSERTATION.equals(orcidWork.getWorkType())) {
+                    workEntity.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());   
+                } else {
+                    workEntity.setWorkType(orcidWork.getWorkType().name());   
+                }                
             }                        
             
             if(orcidWork.getVisibility() != null) {
@@ -911,7 +921,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             EmailEntity existingEmailEntity = existingEmailEntitiesMap.get(emailId);
             if (existingEmailEntity == null) {
                 emailEntity = new EmailEntity();
-                emailEntity.setId(emailId);
+                emailEntity.setEmail(emailId);
+                try {
+                    emailEntity.setId(encryptionManager.getEmailHash(emailId));
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
                 emailEntity.setProfile(profileEntity);
                 
                 emailEntity.setSourceId(email.getSource());
@@ -937,7 +952,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (existingEmailsEntities == null) {
             return new HashMap<>();
         }
-        return EmailEntity.mapById(existingEmailsEntities);
+        Map<String, EmailEntity> map = new HashMap<String, EmailEntity>(existingEmailsEntities.size());
+        for (EmailEntity entity : existingEmailsEntities) {
+            map.put(entity.getEmail(), entity);
+        }
+        return map;        
     }
 
     private void setHistoryDetails(ProfileEntity profileEntity, OrcidHistory orcidHistory) {
@@ -1012,6 +1031,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         // Add new
         for (OrgAffiliationRelationEntity updatedEntity : updatedOrgAffiliationEntities) {
             if (updatedEntity.getId() == null) {
+                if(updatedEntity.getDisplayIndex() == null) {
+                    updatedEntity.setDisplayIndex(0L); 
+                }
                 existingOrgAffiliationEntities.add(updatedEntity);
             }
         }
@@ -1181,6 +1203,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (affiliation.getLastModifiedDate() != null && affiliation.getLastModifiedDate().getValue() != null)
                 orgRelationEntity.setLastModified(affiliation.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
 
+            DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(orgRelationEntity, true);
+            
             return orgRelationEntity;
         }
         return null;

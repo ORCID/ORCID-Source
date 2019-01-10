@@ -14,37 +14,37 @@ import org.junit.Test;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Address;
-import org.orcid.jaxb.model.v3.rc1.record.Addresses;
-import org.orcid.jaxb.model.v3.rc1.record.Biography;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
-import org.orcid.jaxb.model.v3.rc1.record.Name;
-import org.orcid.jaxb.model.v3.rc1.record.OtherName;
-import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc1.record.Person;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc1.record.Record;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Affiliations;
-import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.Addresses;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc2.record.Person;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc2.record.Record;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Affiliations;
+import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 
 /**
  * 
@@ -255,10 +255,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works
@@ -467,10 +467,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(2, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(2, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works
@@ -679,10 +679,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(2, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(2, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works
@@ -1040,10 +1040,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works
@@ -1252,10 +1252,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works
@@ -1464,10 +1464,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works
@@ -1676,10 +1676,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().size());
+        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works
@@ -2037,10 +2037,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works
@@ -2249,10 +2249,10 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
         // Check peer reviews
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-        assertEquals(2, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
-        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
-        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+        assertEquals(2, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p1));
+        assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p2));
+        assertFalse(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().contains(p3));
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
         // Check works

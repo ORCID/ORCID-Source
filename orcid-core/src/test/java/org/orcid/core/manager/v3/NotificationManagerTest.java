@@ -12,7 +12,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,6 +36,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.junit.After;
@@ -61,17 +61,16 @@ import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.v3.rc1.common.Locale;
-import org.orcid.jaxb.model.v3.rc1.common.Source;
-import org.orcid.jaxb.model.v3.rc1.notification.Notification;
-import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.notification.Notification;
+import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.model.v3.rc2.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -291,14 +290,24 @@ public class NotificationManagerTest extends DBUnitTest {
             notificationManager.sendPasswordResetEmail(primaryEmail, userOrcid);
         }
     }
+    
+    @Test
+    public void testResetNotFoundEmail() throws Exception {
+        resetMocks();
+        String submittedEmail = "email_not_in_orcid@test.orcid.org";
+        for (Locale locale : Locale.values()) {
+            Locale curLocale = org.orcid.jaxb.model.v3.rc2.common.Locale.valueOf(locale.name());
+            notificationManager.sendPasswordResetNotFoundEmail(submittedEmail, LocaleUtils.toLocale(curLocale.value()));
+        }
+    }
 
     @Test
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
         resetMocks();
         
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
+        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
         String testOrcid = "0000-0000-0000-0003";
 
         for (Locale locale : Locale.values()) {
@@ -328,7 +337,7 @@ public class NotificationManagerTest extends DBUnitTest {
         recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
         EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setId("test@email.com");
+        emailEntity.setEmail("test@email.com");
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
         Set<EmailEntity> emails = new HashSet<EmailEntity>();
@@ -336,8 +345,8 @@ public class NotificationManagerTest extends DBUnitTest {
         profile.setEmails(emails);
         
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
+        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
         when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(new NotificationCustomEntity());
         
         Email email = new Email();
@@ -429,9 +438,16 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
         resetMocks();
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         String userOrcid = "0000-0000-0000-0003";
-        for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
+        RecordNameEntity name = new RecordNameEntity();
+        name.setCreditName("Credit Name");
+        name.setGivenNames("Given Name");
+        ProfileEntity profile = new ProfileEntity(userOrcid);
+        profile.setRecordNameEntity(name);
+        for(Locale locale : Locale.values()) {
+            profile.setLocale(locale.name());
+            when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
             notificationManager.sendClaimReminderEmail(userOrcid, 2);
         }
     }
@@ -478,8 +494,8 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
         resetMocks();
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
+        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
 
         notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");        
     }    
@@ -653,5 +669,7 @@ public class NotificationManagerTest extends DBUnitTest {
         verify(mockNotificationDao, times(1)).persist(Matchers.any());
         
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
-    }    
+    }  
+    
+    
 }

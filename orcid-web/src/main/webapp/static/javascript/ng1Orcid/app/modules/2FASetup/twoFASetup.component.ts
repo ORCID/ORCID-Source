@@ -21,22 +21,27 @@ import { TwoFAStateService }
     selector: 'two-fa-setup-ng2',
     template:  scriptTmpl("two-fa-setup-ng2-template")
 })
-export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
+export class TwoFaSetupComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
     recoveryCodes: string;
+    qrCodeUrl: string;
+    textCodeFor2FA: string;
     show2FARecoveryCodes: boolean;
     showInvalidCodeError: boolean;
     showQRCode: boolean;
     showSetup2FA: boolean;
     showTextCode: boolean;
     twoFactorAuthRegistration: any;
+    sendVerificationCodeDisabled: boolean;
 
     constructor( 
         private twoFAStateService: TwoFAStateService,
     ) {
         this.recoveryCodes = '';
+        this.qrCodeUrl = '#';
+        this.textCodeFor2FA = '';
         this.show2FARecoveryCodes = false;
         this.showInvalidCodeError = false;
         this.showQRCode = false;
@@ -100,23 +105,20 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     getTextCodeClick(): void{
-        /*
-        $('#getTextCode').click(function() {
-            $.ajax({
-                url: getBaseUri() + '/2FA/secret.json',
-                dataType: 'json',
-                success: function(data) {
-                    $scope.textCodeFor2FA = data.secret;
-                    $scope.showTextCode = true;
-                    $scope.showQRCode = false;
-                    $scope.$apply();
-                }
-            }).fail(function(err) {
-                //console.log("An error occurred getting 2FA secret");
-            });
-        });
-        */
-
+        this.twoFAStateService.getTextCode()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.textCodeFor2FA = data.secret;
+                this.showTextCode = true;
+                this.showQRCode = false;
+            },
+            error => {
+                console.log('Error getting 2FA code', error);
+            } 
+        );
     }
     
     showQRCodeAgain(): void {
@@ -149,8 +151,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     sendVerificationCode(): void {
-        $('#sendVerificationCode').prop('disabled', true);
-
+        this.sendVerificationCodeDisabled = true;
         this.twoFAStateService.sendVerificationCode( this.twoFactorAuthRegistration )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -162,9 +163,10 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.showSetup2FA = false;
                     this.show2FARecoveryCodes = true;
                     this.recoveryCodes = data.backupCodes;
+                    console.log(data.backupCodes);
                     this.showInvalidCodeError=false;
                 } else {
-                    $('#sendVerificationCode').prop('disabled', false);
+                    this.sendVerificationCodeDisabled = false;
                     this.showInvalidCodeError=true;
                 }
             },
@@ -182,7 +184,7 @@ export class TwoFASetupComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 //console.log('this.getForm', data);
-                $("#2FA-QR-code").attr("src", data.url);
+                this.qrCodeUrl = data.url;
                 this.showSetup2FA = true;
                 this.showQRCode = true;
                 this.showTextCode = false;

@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bulk:bulk xmlns:common="http://www.orcid.org/ns/common"
-	xmlns:error="http://www.orcid.org/ns/error" 
+	xmlns:error="http://www.orcid.org/ns/error"
 	xmlns:work="http://www.orcid.org/ns/work"
-	xmlns:bulk="http://www.orcid.org/ns/bulk" 
+	xmlns:bulk="http://www.orcid.org/ns/bulk"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-3.0_rc1.xsd">	
-	<error:error>
-		<error:response-code>1</error:response-code>
-		<error:developer-message>developer-message</error:developer-message>
-		<error:user-message>user-message</error:user-message>
-		<error:error-code>1</error:error-code>
-		<error:more-info>http://orcid.org</error:more-info>
-	</error:error>	
+	xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-3.0_rc1.xsd">
 	<work:work>
 		<work:title>
 			<common:title>Current treatment of left main coronary artery disease # 1</common:title>
@@ -26,19 +19,12 @@
 		<common:external-ids>
 			<common:external-id>
 				<common:external-id-type>doi</common:external-id-type>
-				<common:external-id-value>10.1016/j.crvasa.2015.05.007</common:external-id-value>			
+				<common:external-id-value>10.1016/j.crvasa.2015.05.007</common:external-id-value>
 				<common:external-id-url>http://extId/1</common:external-id-url>
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
-		</common:external-ids>		
+		</common:external-ids>
 	</work:work>
-	<error:error>
-		<error:response-code>1</error:response-code>
-		<error:developer-message>developer-message</error:developer-message>
-		<error:user-message>user-message</error:user-message>
-		<error:error-code>1</error:error-code>
-		<error:more-info>http://orcid.org</error:more-info>
-	</error:error>	
 	<work:work>
 		<work:title>
 			<common:title>Current treatment of left main coronary artery disease # 2</common:title>
@@ -53,17 +39,10 @@
 		<common:external-ids>
 			<common:external-id>
 				<common:external-id-type>doi</common:external-id-type>
-				<common:external-id-value>10.1016/j.crvasa.2015.05.008</common:external-id-value>			
+				<common:external-id-value>10.1016/j.crvasa.2015.05.008</common:external-id-value>
 				<common:external-id-url>http://extId/2</common:external-id-url>
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
 		</common:external-ids>
 	</work:work>
-	<error:error>
-		<error:response-code>1</error:response-code>
-		<error:developer-message>developer-message</error:developer-message>
-		<error:user-message>user-message</error:user-message>
-		<error:error-code>1</error:error-code>
-		<error:more-info>http://orcid.org</error:more-info>
-	</error:error>		
 </bulk:bulk>

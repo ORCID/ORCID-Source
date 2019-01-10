@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<research-resource:research-resource
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:research-resource="http://www.orcid.org/ns/research-resource"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/research-resource ../research-resource-3.0_rc2.xsd ">
+	<!-- proposal title and host(s) -->
+	<research-resource:proposal> <!-- proposal/award/credential section -->
+		<research-resource:title>
+			<common:title>Giant Laser Award</common:title>
+		</research-resource:title>
+		<research-resource:hosts>
+			<common:organization>
+				<common:name>XSEDE</common:name>
+				<common:address>
+					<common:city>city</common:city>
+					<common:region>region</common:region>
+					<common:country>US</common:country>
+				</common:address>
+				<common:disambiguated-organization>
+					<common:disambiguated-organization-identifier>grid.400000.c</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>GRID</common:disambiguation-source>
+				</common:disambiguated-organization>
+			</common:organization>
+		</research-resource:hosts>
+		<common:external-ids>
+			<common:external-id>
+				<common:external-id-type>source-work-id</common:external-id-type>
+				<common:external-id-value>123456</common:external-id-value>
+				<common:external-id-relationship>self</common:external-id-relationship>
+			</common:external-id>
+			<common:external-id>
+				<common:external-id-type>handle</common:external-id-type>
+				<common:external-id-value>https://grants.net/123456</common:external-id-value>
+				<common:external-id-relationship>self</common:external-id-relationship>
+			</common:external-id>
+		</common:external-ids>
+			<!--optional items -->
+			<common:start-date>
+				<common:year>1999</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:start-date>
+			<common:end-date>
+				<common:year>2012</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:end-date>
+			<common:url>http://xsede.org/GiantLaserAward</common:url>
+		</research-resource:proposal>	
+    	<!-- resource(s) -->
+			<research-resource:resource-items>
+				<!-- resource 1 -->
+				<research-resource:resource-item>
+					<research-resource:resource-name>Giant Laser 1</research-resource:resource-name>
+					<research-resource:resource-type>infrastructures</research-resource:resource-type>
+					<research-resource:hosts>
+						<common:organization>
+							<common:name>Lasers-R-US</common:name>
+							<common:address>
+								<common:city>city</common:city>
+								<common:region>region</common:region>
+								<common:country>US</common:country>
+							</common:address>
+							<common:disambiguated-organization>
+								<common:disambiguated-organization-identifier>1000</common:disambiguated-organization-identifier>
+								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+							</common:disambiguated-organization>
+						</common:organization>
+					</research-resource:hosts>
+					<common:external-ids>
+						<common:external-id>
+							<common:external-id-type>rrid</common:external-id-type>
+							<common:external-id-value>rrid:giantLASER</common:external-id-value>
+							<common:external-id-relationship>self</common:external-id-relationship>
+						</common:external-id>
+						<common:external-id>
+							<common:external-id-type>doi</common:external-id-type>
+							<common:external-id-value>https://doi.org/10.123/giantlaser</common:external-id-value>
+							<common:external-id-relationship>self</common:external-id-relationship>
+						</common:external-id>
+					</common:external-ids>
+				</research-resource:resource-item>
+				<!-- resource 2 -->
+				<research-resource:resource-item>
+					<research-resource:resource-name>Moon Targets</research-resource:resource-name>
+					<research-resource:resource-type>infrastructures</research-resource:resource-type>
+					<research-resource:hosts>
+						<common:organization>
+							<common:name>Moon Holdings Ltd</common:name>
+							<common:address>
+								<common:city>city</common:city>
+								<common:region>region</common:region>
+								<common:country>US</common:country>
+							</common:address>
+							<common:disambiguated-organization>
+								<common:disambiguated-organization-identifier>1001</common:disambiguated-organization-identifier>
+								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+							</common:disambiguated-organization>
+						</common:organization>
+					</research-resource:hosts>
+					<common:external-ids>
+						<common:external-id>
+							<common:external-id-type>uri</common:external-id-type>
+							<common:external-id-value>https://moon.org/targetOnTheMoon</common:external-id-value>
+							<common:external-id-relationship>part-of</common:external-id-relationship>
+						</common:external-id>
+					</common:external-ids>
+				</research-resource:resource-item>
+			</research-resource:resource-items>
+</research-resource:research-resource>

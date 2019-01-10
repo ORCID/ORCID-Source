@@ -13,24 +13,26 @@
     * Default privacy for new activities: Everyone
     * Subscribe to quarterly emails about new features
     * Accept terms and conditions
-3. Attempt to edit the biography of the record- check you get a warning message to verify your email address
-4. Visit https://qa.orcid.org/signout
-5. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
-6. Open message from support@verify.orcid.org with subject [ORCID] Welcome to ORCID
-7. Click (or copy/paste) email verification link
-8. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
-9. Replace [orcid id] in this document with the 16 digit iD from the record
-10. Visit https://qa.orcid.org/signout
+3. Click the link to resend the verify email message
+4. Attempt to edit the biography of the record- click the link to resend the verify email in the warning that comes up
+5. Visit https://qa.orcid.org/signout
+6. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
+7. Verify there are three messages, Thanks for registering and two reminders to verify your email address
+8. Open message from support@verify.orcid.org with subject [ORCID] Welcome to ORCID and click the email verification link
+9. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
+10. Replace [orcid id] in this document with the 16 digit iD from the record
+11. Visit https://qa.orcid.org/signout
 
 ## Reset password
 
-11. Click the Forgotten Your Password link
-12. Enter ma_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
-13. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
-14. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request
-15. Click (or copy/paste) password reset link
+12. Click the Forgotten Your Password link
+13. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
+14. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
+15. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request and click the password reset link
 16. Reset password with [DD][month][YYYY] (No need to fill challenge question)
-17. You will be forward to the sign in page, sign in using the new password
+17. You will be forward to the sign in page, sign in with:
+	Email: MA_TEST_[DD][month][YYYY]@mailinator.com
+	Password: [DD][month][YYYY]
 18. Visit https://qa.orcid.org/signout
 
 ## Sign In
@@ -100,12 +102,32 @@
 
 56. On https://qa.orcid.org/account add [orcid id] as a trusted individual
 
+## Test Self Service
+
+57. Set up a new Self Service Org account using [this document](https://docs.google.com/document/d/1FlpmgtubCEnD21EpJLWu4AXh4DH0moC9pe6R_5clA78/edit) or alternatively use 0000-0003-0641-4661.
+
+58. Sign in to 0000-0003-0641-4661 and visit https://qa.orcid.org/self-service
+
+ ** Note Salesforce to Registry changes may take an hour to appear due to caching.**
+
+59. Update org info- make sure it feeds into Salesforce.
+
+60. Add new consortium org contact- make sure info feeds to SF.
+
+61. Add new member org- make sure request feeds to SF.
+
+62. Set new org as a member in SF- see that the status updates.
+
+63. Delete existing org make sure it does delete.
+
+
+
 
 ## Run the automated Independent Tests
 
-57. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
+64. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
 
-58. Build the ORCID Independent Tests 2 with the following parameters
+65. Build the ORCID Independent Tests 2 with the following parameters
 	* user_login: ma_test_[DD][month][YYYY]
  	* user_pass: [DD][month][YYYY]
  	* orcid_id: [orcid id]
@@ -113,47 +135,47 @@
 
 ## Post ORCID Independent Tests
 
-59. Visit https://qa.orcid.org/signin
+66. Visit https://qa.orcid.org/signin
 
-60. Sign into the account created earlier
-	* Email: ma_test_[DD][month][YYYY]@mailinator.com
+67. Sign into the account created earlier
+	* ORCID: [orcid id]
 	* Password: [DD][month][YYYY]
 
-61. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
+68. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
 	* 3 other names
-	* 3 counties
+	* 3 countries
 	* 4 keywords
 	* 4 websites
 	* 3 external id
-	* 4 education items
+	* 4 education items - open one to view details
 	* 4 funding items
-	* 3 works (one being a group of 2)
-	* 1 peer-review item (with two reviews)
+	* 3 works (one being a group of 2) - open one to view details
+	* 1 peer-review item (with two reviews) - open one to view details
 
-62. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
+69. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
 	* Check that the group of works with doi:0000 only displays the public version
 
-63. Go to http://qa.orcid.org/inbox check for:
+70. Go to http://qa.orcid.org/inbox check for:
 	* the request for access notification
 	* notifications of updates to the record
 
-64. Archive the first notification in the list
+71. Archive the first notification in the list
 
-65. Use the switch user option to change to the record created during the OAuth process
+72. Use the switch user option to change to the record created during the OAuth process
 
-66. Using browserstack select IE 11 browser on windows 10. Visit the follow pages and make sure everything loads
+73. Sign in to Browsersrtack.com and using IE 11 visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
 	* sign into [orcid id] account and check that it also looks as expected
-	
-67. Using browserstack check the following pages on one Android and one Apple device to check load times
+
+74. Using browserstack check the following pages on one Android and one Apple device to check load times
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
-	
-68. Run the Self-service tests here https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/manual-test/Self-service-manual-test.md
+
+75. Run the Self-service tests here https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/manual-test/Self-service-manual-test.md
 
 * Finally help out by improving these instructions!      

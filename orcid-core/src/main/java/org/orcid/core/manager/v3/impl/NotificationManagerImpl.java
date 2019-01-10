@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,12 +28,12 @@ import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -41,18 +42,19 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
-import org.orcid.jaxb.model.v3.rc1.notification.Notification;
-import org.orcid.jaxb.model.v3.rc1.notification.NotificationType;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.v3.rc1.notification.custom.NotificationAdministrative;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Items;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
-import org.orcid.model.v3.rc1.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
+import org.orcid.jaxb.model.v3.rc2.notification.Notification;
+import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.rc2.notification.custom.NotificationAdministrative;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Items;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermissions;
+import org.orcid.model.v3.rc2.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.model.v3.rc2.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -60,11 +62,11 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
-import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -76,6 +78,7 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -152,9 +155,6 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private ProfileDao profileDaoReadOnly;
 
-    @Resource
-    private CustomEmailManager customEmailManager;
-
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
 
@@ -191,6 +191,18 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
     
+    @Value("${org.orcid.notifications.archive.offset:100}")
+    private Integer notificationArchiveOffset;
+    
+    @Value("${org.orcid.notifications.delete.offset:10000}")
+    private Integer notificationDeleteOffset;
+    
+    @Value("${org.orcid.notifications.delete.offset.records:10}")
+    private Integer recordsPerBatch;
+    
+    @Resource
+    FindMyStuffManager findMyStuffManager;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -259,7 +271,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", baseUri);
         templateParams.put("baseUriHttp", baseUriHttp);
 
-        SourceEntity source = sourceManager.retrieveSourceEntity();
+        SourceEntity source = sourceManager.retrieveActiveSourceEntity();
         if (source != null) {
             String sourceId = SourceEntityUtils.getSourceId(source);
             String sourceName = SourceEntityUtils.getSourceName(source);
@@ -292,7 +304,7 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendOrcidDeactivateEmail(String userOrcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        org.orcid.jaxb.model.v3.rc1.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
+        org.orcid.jaxb.model.v3.rc2.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String subject = getSubject("email.subject.deactivate", userLocale);
@@ -462,6 +474,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("submittedEmail", submittedEmail);
         templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -477,6 +490,22 @@ public class NotificationManagerImpl implements NotificationManager {
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", locale), body, htmlBody);
     }
+    
+    @Override
+    public void sendPasswordResetNotFoundEmail(String submittedEmail, Locale locale) {     
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", submittedEmail);
+        templateParams.put("subject", getSubject("email.subject.reset_not_found", locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        addMessageParams(templateParams, locale);
+        // Generate body from template
+        String body = templateManager.processTemplate("reset_password_not_found_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("reset_password_not_found_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset_not_found", locale), body, htmlBody);
+    }
+
 
     @Override
     public void sendReactivationEmail(String submittedEmail, String userOrcid) {
@@ -504,7 +533,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> items) {
-        String amenderOrcid = sourceManager.retrieveSourceOrcid();
+        String amenderOrcid = sourceManager.retrieveActiveSourceId();
         
         if (amenderOrcid == null) {
             LOGGER.info("Not sending amend email to {} because amender is null", userOrcid);
@@ -558,7 +587,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
         
-        org.orcid.jaxb.model.v3.rc1.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
+        org.orcid.jaxb.model.v3.rc2.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
         String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
         String assetsUrl = getAssetsUrl();
@@ -624,10 +653,6 @@ public class NotificationManagerImpl implements NotificationManager {
         String sourceId = record.getSource() == null ? null : SourceEntityUtils.getSourceId(record.getSource());
         String creatorName = record.getSource() == null ? null : SourceEntityUtils.getSourceName(record.getSource());
         Locale userLocale = getUserLocaleFromProfileEntity(record);
-        CustomEmailEntity customEmail = null;
-        if (!PojoUtil.isEmpty(sourceId)) {
-            customEmail = getCustomizedEmail(sourceId, EmailType.CLAIM);
-        }
         String email = emailManager.findPrimaryEmail(orcid).getEmail();
         String emailName = deriveEmailFriendlyName(record);
         String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());        
@@ -636,78 +661,29 @@ public class NotificationManagerImpl implements NotificationManager {
         String body = null;
         String htmlBody = null;
         String sender = null;
+        
+        subject = getSubject("email.subject.api_record_creation", userLocale);
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", emailName);
+        templateParams.put("orcid", orcid);
+        templateParams.put("subject", subject);
+        templateParams.put("creatorName", creatorName);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("verificationUrl", verificationUrl);
 
-        if (customEmail != null) {
-            // Get the customized sender if available
-            sender = PojoUtil.isEmpty(customEmail.getSender()) ? CLAIM_NOTIFY_ORCID_ORG : customEmail.getSender();
-            // Get the customized subject is available
-            subject = PojoUtil.isEmpty(customEmail.getSubject()) ? getSubject("email.subject.api_record_creation", userLocale) : customEmail.getSubject();
-            // Replace the wildcards
-            subject = subject.replace(WILDCARD_USER_NAME, emailName);
-            subject = subject.replace(WILDCARD_MEMBER_NAME, creatorName);
-            if (customEmail.isHtml()) {
-                htmlBody = customEmail.getContent();
-                htmlBody = htmlBody.replace(WILDCARD_USER_NAME, emailName);
-                htmlBody = htmlBody.replace(WILDCARD_MEMBER_NAME, creatorName);
-                htmlBody = htmlBody.replace(EmailConstants.WILDCARD_VERIFICATION_URL, verificationUrl);
-                if (htmlBody.contains(WILDCARD_WEBSITE) || htmlBody.contains(WILDCARD_DESCRIPTION)) {
-                    ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
-                    htmlBody = htmlBody.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());
-                    htmlBody = htmlBody.replace(WILDCARD_DESCRIPTION, clientDetails.getClientDescription());
-                }
-            } else {
-                body = customEmail.getContent();
-                body = body.replace(WILDCARD_USER_NAME, emailName);
-                body = body.replace(WILDCARD_MEMBER_NAME, creatorName);
-                body = body.replace(EmailConstants.WILDCARD_VERIFICATION_URL, verificationUrl);
-                if (body.contains(WILDCARD_WEBSITE) || body.contains(WILDCARD_DESCRIPTION)) {
-                    ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
-                    body = body.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());
-                    body = body.replace(WILDCARD_DESCRIPTION, clientDetails.getClientDescription());
-                }
-            }
-        } else {
-            subject = getSubject("email.subject.api_record_creation", userLocale);
-            // Create map of template params
-            Map<String, Object> templateParams = new HashMap<String, Object>();
-            templateParams.put("emailName", emailName);
-            templateParams.put("orcid", orcid);
-            templateParams.put("subject", subject);
-            templateParams.put("creatorName", creatorName);
-            templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-            templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-            templateParams.put("verificationUrl", verificationUrl);
-
-            addMessageParams(templateParams, userLocale);
-            // Generate body from template
-            body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
-            htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
-        }
+        addMessageParams(templateParams, userLocale);
+        // Generate body from template
+        body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
+        htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            boolean isCustomEmail = customEmail != null ? true : false;
-            // TODO: How to handle sender? we might have to register them on
-            // mailgun
-            if (isCustomEmail) {
-                mailGunManager.sendEmail(sender, email, subject, body, htmlBody, isCustomEmail);
-            } else {
                 mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
-            }
         } else {
             LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", body);
         }
-    }
-
-    /**
-     * Returns a customized email for the given client and type
-     * 
-     * @param source
-     * @param emailType
-     * @return a CustomEmailEntity if exists, null otherwise
-     */
-    private CustomEmailEntity getCustomizedEmail(String source, EmailType emailType) {
-        return customEmailManager.getCustomEmail(source, emailType);
     }
 
     @Override
@@ -844,7 +820,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = LocaleUtils.toLocale("en");
         
         if(locale != null) {
-            org.orcid.jaxb.model.v3.rc1.common.Locale loc = org.orcid.jaxb.model.v3.rc1.common.Locale.valueOf(managedEntity.getLocale());
+            org.orcid.jaxb.model.v3.rc2.common.Locale loc = org.orcid.jaxb.model.v3.rc2.common.Locale.valueOf(managedEntity.getLocale());
             userLocale = LocaleUtils.toLocale(loc.value());
         }        
 
@@ -897,7 +873,7 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         notificationEntity.setProfile(profile);
 
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
 
         if (sourceEntity != null) {
             // Set source id
@@ -986,7 +962,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (notificationEntity == null) {
             return null;
         }
-        String sourceId = sourceManager.retrieveSourceOrcid();
+        String sourceId = sourceManager.retrieveActiveSourceId();
         if (validateForApi) {
             if (sourceId != null && !sourceId.equals(notificationEntity.getElementSourceId())) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -1023,10 +999,38 @@ public class NotificationManagerImpl implements NotificationManager {
             notificationEntity.setReadDate(now);
             notificationDao.merge(notificationEntity);
         }
+        
+        if (NotificationType.FIND_MY_STUFF.value().equals(notificationEntity.getNotificationType())){
+            findMyStuffManager.markAsActioned(orcid, notificationEntity.getClientSourceId());
+        }
 
         return notificationAdapter.toNotification(notificationEntity);
     }
 
+    /** Create a basic notification.  No details, basically says this service has found some stuff.  Includes actionable url.
+     * 
+     * @param userOrcid
+     * @param clientId
+     * @param authorizationUrl
+     */
+    @Override
+    public NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl){
+        NotificationFindMyStuff notification = new NotificationFindMyStuff();
+        notification.setNotificationType(NotificationType.FIND_MY_STUFF);
+        notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
+        NotificationFindMyStuffEntity notificationEntity = (NotificationFindMyStuffEntity) notificationAdapter
+                .toNotificationEntity(notification);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        if (profile == null) {
+            throw OrcidNotFoundException.newInstance(userOrcid);
+        }
+        notificationEntity.setProfile(profile);
+        //notificationEntity.setProfile(new ProfileEntity(userOrcid));
+        notificationEntity.setClientSourceId(clientId);
+        notificationDao.persist(notificationEntity);   
+        return notificationEntity;
+    }
+    
     @Override
     public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
         Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userOrcid);
@@ -1206,5 +1210,33 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         
         return baseUrl + "static/" + ReleaseNameUtils.getReleaseName();
+    }
+
+    @Override
+    public Integer archiveOffsetNotifications() {
+        return notificationDao.archiveOffsetNotifications(notificationArchiveOffset == null ? 100 : notificationArchiveOffset);
+    }
+
+    @Override    
+    public Integer deleteOffsetNotifications() {
+        List<Object[]> toDelete = new ArrayList<Object[]>();
+        Integer deleted = 0;
+        do {
+            toDelete = notificationDao.findNotificationsToDeleteByOffset((notificationDeleteOffset == null ? 10000 : notificationDeleteOffset), recordsPerBatch);
+            LOGGER.info("Got batch of {} notifications to delete", toDelete.size());
+            for(Object[] o : toDelete) {
+                BigInteger big = (BigInteger) o[0];
+                Long id = big.longValue();
+                String orcid = (String) o[1];            
+                LOGGER.info("About to delete old notification: id={}, orcid={}",
+                            new Object[] { id, orcid });
+                    notificationDao.deleteNotificationItemByNotificationId(id);
+                    notificationDao.deleteNotificationWorkByNotificationId(id);
+                    notificationDao.deleteNotificationById(id);            
+            }         
+            deleted += toDelete.size();
+        } while(!toDelete.isEmpty());
+        
+        return deleted;
     }    
 }

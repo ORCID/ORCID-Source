@@ -40,12 +40,18 @@ export class ReactivationService {
 
     serverValidate( obj, field ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
-        
-        return this.http.post( 
-            getBaseUri() + '/register' + field + 'Validate.json', 
-            encoded_data, 
-            { headers: this.headers }
-        )
-        
+        if(field == 'EmailsAdditional') {
+            return this.http.post( 
+                    getBaseUri() + '/reactivateAdditionalEmailsValidate.json', 
+                    encoded_data, 
+                    { headers: this.headers }
+                )
+        } else {
+            return this.http.post( 
+                    getBaseUri() + '/register' + field + 'Validate.json', 
+                    encoded_data, 
+                    { headers: this.headers }
+                )
+        }                
     }
 }

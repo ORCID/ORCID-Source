@@ -22,7 +22,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SubMember;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -83,7 +83,7 @@ public class SelfServiceController extends BaseController {
         }
         return map;
     }
-
+    
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
         return new ModelAndView("redirect:/self-service/" + salesForceManager.retrievePrimaryAccountIdByOrcid(getCurrentUserOrcid()));
@@ -221,10 +221,10 @@ public class SelfServiceController extends BaseController {
     @RequestMapping(value = "/add-contact-by-email.json")
     public @ResponseBody Contact addContactByEmail(@RequestBody Contact contact) {
         checkFullAccess(contact.getAccountId());
-        EmailEntity emailEntity = emailManager.findCaseInsensitive(contact.getEmail());
+        EmailEntity emailEntity = emailManager.find(contact.getEmail());
         contact.setOrcid(emailEntity.getProfile().getId());
         RecordNameEntity recordNameEntity = emailEntity.getProfile().getRecordNameEntity();
-        if (Visibility.PUBLIC.equals(recordNameEntity.getVisibility())) {
+        if (Visibility.PUBLIC.name().equals(recordNameEntity.getVisibility())) {
             contact.setFirstName(recordNameEntity.getGivenNames());
             contact.setLastName(recordNameEntity.getFamilyName());
         } else {
@@ -462,12 +462,12 @@ public class SelfServiceController extends BaseController {
     }
 
     private boolean isAllowedFullAccess(String memberId) {
-        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveSourceOrcid());
+        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveActiveSourceId());
         return usersAuthorizedAccountIds.contains(memberId);
     }
 
     private void checkAccess(String memberId) {
-        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveSourceOrcid());
+        List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveActiveSourceId());
         MemberDetails memberDetails = salesForceManager.retrieveDetails(memberId);
         if (!(usersAuthorizedAccountIds.contains(memberId) || usersAuthorizedAccountIds.contains(memberDetails.getMember().getConsortiumLeadId()))) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);

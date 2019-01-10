@@ -1,0 +1,53 @@
+{
+	"bulk": [
+	{
+		"work": {
+			"title": {
+				"title": {
+					"value": "Work # 1"
+				},
+				"subtitle": null,
+				"translated-title": null
+			},
+			"journal-title": {
+				"value": "journal # 1"
+			},
+			"short-description": null,
+			"type": "journal-article",
+			"external-ids": {
+				"external-id": [{
+					"external-id-type": "doi",
+					"external-id-value": "ext-id-1",
+					"external-id-url": {
+						"value": "http://dx.doi.org/ext-id-1"
+					},
+					"external-id-relationship": "self"
+				}]
+			}
+		}
+	}, 
+	{
+		"work": {
+			"title": {
+				"title": {
+					"value": "Work # 2"
+				},
+				"subtitle": null,
+				"translated-title": null
+			},
+			"journal-title": {
+				"value": "book title"
+			},
+			"short-description": null,
+			"type": "book-chapter",
+			"external-ids": {
+				"external-id": [{
+					"external-id-type": "isbn",
+					"external-id-value": "ext-id-2",
+					"external-id-relationship": "part-of"
+				}]
+			}
+		}
+	}
+	]
+}

@@ -14,10 +14,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -63,6 +63,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         assertNull(oar.getSourceId());        
         assertNull(oar.getClientSourceId());        
         assertNull(oar.getElementSourceId());
+        assertEquals("http://tempuri.org",oar.getUrl());
     }
     
     @Test
@@ -87,10 +88,11 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         assertNotNull(distinction.getOrganization().getAddress());
         assertEquals("org:city", distinction.getOrganization().getAddress().getCity());
         assertEquals("org:region", distinction.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, distinction.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, distinction.getOrganization().getAddress().getCountry());
         assertNotNull(distinction.getSource());        
         assertNotNull(distinction.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", distinction.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",distinction.getUrl().getValue());
     }
     
     @Test
@@ -109,10 +111,11 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         assertEquals("01", summary.getStartDate().getDay().getValue());
         assertEquals("2020", summary.getEndDate().getYear().getValue());
         assertEquals("02", summary.getEndDate().getMonth().getValue());
-        assertEquals("02", summary.getEndDate().getDay().getValue());        
+        assertEquals("02", summary.getEndDate().getDay().getValue());    
         assertNotNull(summary.getSource());
         assertNotNull(summary.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", summary.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",summary.getUrl().getValue());
     }
 
     private Distinction getDistinction() throws JAXBException {
@@ -143,6 +146,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         result.setTitle("distinction:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId("APP-000000001");
+        result.setUrl("http://tempuri.org");
         
         return result;
     }

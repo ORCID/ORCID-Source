@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -84,6 +85,14 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("id", id);
         List<NotificationEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
+    }
+    
+    @Override
+    @Transactional
+    public void flagAsSent(Long id) {
+        Query query = entityManager.createQuery("update NotificationEntity set sentDate = now() where id in :id");
+        query.setParameter("id", id);
+        query.executeUpdate();
     }
 
     @Override
@@ -218,7 +227,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @SuppressWarnings("unchecked")
     @Override
     public List<NotificationEntity> findUnsentTips(int batchSize) {
-        Query query = entityManager.createNativeQuery("select n.* from notification n, email_frequency ef where n.sent_date is NULL AND n.sendable != false AND n.orcid = ef.orcid AND n.notification_type = 'TIP' AND ef.send_quarterly_tips IS true", NotificationEntity.class);
+        Query query = entityManager.createNativeQuery("select n.* from notification n join email_frequency ef on n.orcid = ef.orcid AND ef.send_quarterly_tips IS true where n.notification_type = 'TIP' AND n.sent_date is NULL AND n.sendable != false", NotificationEntity.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
     }
@@ -248,6 +257,52 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public Integer archiveOffsetNotifications(Integer offset) {
+        Query selectQuery = entityManager.createNativeQuery("SELECT orcid FROM notification WHERE archived_date IS NULL group by orcid having count(*) > :offset");
+        selectQuery.setParameter("offset", offset);
+        @SuppressWarnings("unchecked")
+        List<String> ids = selectQuery.getResultList();
+        if (ids.isEmpty()) {
+            return 0;
+        }
+        
+        int result = 0;
+        
+        for(String orcid : ids) {
+            Query archiveQuery = entityManager.createNativeQuery("UPDATE notification SET archived_date=now() WHERE id in (SELECT id FROM notification WHERE orcid=:orcid AND archived_date IS NULL order by date_created desc OFFSET :offset)");
+            archiveQuery.setParameter("orcid", orcid);
+            archiveQuery.setParameter("offset", offset);
+            result += archiveQuery.executeUpdate();
+        }
+        
+        return result;
+    }
+
+    @Override
+    public List<Object[]> findNotificationsToDeleteByOffset(Integer offset, Integer recordsPerBatch) {
+        Query selectQuery = entityManager.createNativeQuery("SELECT orcid FROM notification group by orcid having count(*) > :offset order by count(*) desc limit :limit");
+        selectQuery.setParameter("offset", offset);
+        selectQuery.setParameter("limit", recordsPerBatch);
+        @SuppressWarnings("unchecked")
+        List<String> ids = selectQuery.getResultList();
+        if (ids.isEmpty()) {
+            return new ArrayList<Object[]>();
+        }
+        
+        List<Object[]> results = new ArrayList<Object[]>();
+        
+        for(String orcid : ids) {
+            Query archiveQuery = entityManager.createNativeQuery("SELECT id, orcid FROM notification WHERE orcid=:orcid order by date_created desc OFFSET :offset");
+            archiveQuery.setParameter("orcid", orcid);
+            archiveQuery.setParameter("offset", offset);
+            results.addAll(archiveQuery.getResultList());
+        }
+        
+        return results;
     }
 
 }

@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidGenerationManager;
@@ -27,7 +26,7 @@ import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.rc1.client.Client;
+import org.orcid.jaxb.model.v3.rc2.client.Client;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientScopeDao;
@@ -128,7 +127,9 @@ public class MembersManagerImpl implements MembersManager {
         
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setId(member.getEmail().getValue());
+        String email = member.getEmail().getValue().trim();
+        emailEntity.setEmail(email);
+        emailEntity.setId(encryptionManager.getEmailHash(email));
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
@@ -136,7 +137,7 @@ public class MembersManagerImpl implements MembersManager {
         // Email is private by default
         emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile().getId();
         emailEntity.setSourceId(sourceId);
         Set<EmailEntity> emails = new HashSet<>();
@@ -174,7 +175,7 @@ public class MembersManagerImpl implements MembersManager {
     public Member updateMemeber(Member member) throws IllegalArgumentException {
         String memberId = member.getGroupOrcid().getValue();
         String name = member.getGroupName().getValue();
-        String email = member.getEmail().getValue();
+        String email = member.getEmail().getValue().trim();
         String salesForceId = member.getSalesforceId() == null ? null : member.getSalesforceId().getValue();
         MemberType memberType = MemberType.fromValue(member.getType().getValue());
 
@@ -193,16 +194,16 @@ public class MembersManagerImpl implements MembersManager {
                 }
 
                 EmailEntity primaryEmail = memberEntity.getPrimaryEmail();
-                if (!email.equals(primaryEmail.getId())) {
+                if (!email.equals(primaryEmail.getEmail())) {
                     if (emailManager.emailExists(email)) {
                         throw new IllegalArgumentException("Email already exists");
                     }
                     Date now = new Date();
                     EmailEntity newPrimaryEmail = new EmailEntity();
-                    newPrimaryEmail.setLastModified(now);
-                    newPrimaryEmail.setDateCreated(now);
+                    newPrimaryEmail.setLastModified(now);                    
                     newPrimaryEmail.setCurrent(true);
-                    newPrimaryEmail.setId(email);
+                    newPrimaryEmail.setEmail(email);
+                    newPrimaryEmail.setId(encryptionManager.getEmailHash(email));
                     newPrimaryEmail.setPrimary(true);
                     newPrimaryEmail.setVerified(true);
                     newPrimaryEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());

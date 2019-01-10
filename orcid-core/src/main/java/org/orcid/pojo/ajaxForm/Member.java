@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupType;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class Member implements ErrorsInterface, Serializable {
@@ -33,7 +33,7 @@ public class Member implements ErrorsInterface, Serializable {
 
     public static Member fromProfileEntity(ProfileEntity profile){
     	Member group = new Member();
-    	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getId()));
+    	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getEmail()));
     	
     	if(profile.getRecordNameEntity() != null) {
     	    group.setGroupName(Text.valueOf(profile.getRecordNameEntity().getCreditName()));

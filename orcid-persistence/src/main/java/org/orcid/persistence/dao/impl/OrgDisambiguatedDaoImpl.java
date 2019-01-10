@@ -28,6 +28,8 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
+    @Transactional
+    //todo: do we need to cache?
     public OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where sourceId = :sourceId and sourceType = :sourceType",
                 OrgDisambiguatedEntity.class);

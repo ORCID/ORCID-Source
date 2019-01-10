@@ -4,15 +4,17 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.v3.rc1.notification.Notification;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.rc2.notification.Notification;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermissions;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
@@ -27,6 +29,8 @@ public interface NotificationManager {
     
     void sendPasswordResetEmail(String toEmail, String userOrcid);
     
+    void sendPasswordResetNotFoundEmail(String toEmail, Locale locale);
+
     void sendReactivationEmail(String submittedEmail, String userOrcid);
 
     public String createVerificationUrl(String email, String baseUri);
@@ -99,4 +103,9 @@ public interface NotificationManager {
     
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
 
+    Integer archiveOffsetNotifications();
+    
+    Integer deleteOffsetNotifications();
+
+    NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);
 }

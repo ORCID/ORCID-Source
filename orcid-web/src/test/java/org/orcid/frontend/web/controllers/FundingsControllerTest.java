@@ -3,8 +3,6 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,6 +12,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -25,27 +24,30 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.pojo.ajaxForm.Contributor;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
+import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,6 +107,43 @@ public class FundingsControllerTest extends BaseControllerTest {
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES));
+    }
+    
+    @Test
+    public void testSearchDisambiguated() {
+        OrgDisambiguatedManager mockOrgDisambiguatedManager = Mockito.mock(OrgDisambiguatedManager.class);
+        OrgDisambiguatedManager oldOrgDisambiguatedManager = (OrgDisambiguatedManager) ReflectionTestUtils.getField(fundingController, "orgDisambiguatedManager");
+        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", mockOrgDisambiguatedManager);
+        
+        Mockito.when(mockOrgDisambiguatedManager.searchOrgsFromSolr(Mockito.eq("search"), Mockito.eq(0), Mockito.eq(0), Mockito.eq(true))).thenReturn(getListOfMixedOrgsDiambiguated());
+        
+        List<Map<String, String>> results = fundingController.searchDisambiguated("search", 0, true);
+        assertEquals(3, results.size());
+        assertEquals("first", results.get(0).get("value"));
+        assertEquals("second", results.get(1).get("value"));
+        assertEquals("third", results.get(2).get("value"));
+        
+        ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", oldOrgDisambiguatedManager);
+    }
+
+    private List<OrgDisambiguated> getListOfMixedOrgsDiambiguated() {
+        OrgDisambiguated first = new OrgDisambiguated();
+        first.setValue("first");
+        first.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
+        
+        OrgDisambiguated second = new OrgDisambiguated();
+        second.setValue("second");
+        second.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
+        
+        OrgDisambiguated third = new OrgDisambiguated();
+        third.setValue("third");
+        third.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+        
+        OrgDisambiguated fourth = new OrgDisambiguated();
+        fourth.setValue("fourth");
+        fourth.setSourceType(OrgDisambiguatedSourceType.LEI.name());
+        
+        return Arrays.asList(first, second, third, fourth);
     }
 
     @Test
@@ -350,49 +389,23 @@ public class FundingsControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testGetFundings() {
+    public void testGetFundingsJson() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
 
-        List<String> fundingIds = fundingController.getFundingsIds(servletRequest);
-        assertNotNull(fundingIds);
-
-        assertTrue(fundingIds.contains("1"));
-        assertTrue(fundingIds.contains("2"));
-        assertTrue(fundingIds.contains("3"));
-    }
-
-    @Test
-    public void testGetFundingsJson() {
-        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        request.setSession(session);
-        request.addPreferredLocale(new Locale("us", "EN"));
-        List<FundingForm> fundings = fundingController.getFundingsJson(request, "1");
+        List<FundingGroup> fundings = fundingController.getFundingsJson("title", true);
         assertNotNull(fundings);
-        assertEquals(1, fundings.size());
-
-        FundingForm funding = fundings.get(0);
-        List<Contributor> contributors = funding.getContributors();
-
-        Contributor contributor = contributors.get(0);
-        assertNull(contributor.getEmail());
-        assertEquals("Jaylen Kessler", contributor.getCreditName().getValue());
-
-        contributor = contributors.get(1);
-        assertNull(contributor.getEmail());
-        assertEquals("John Smith", contributor.getCreditName().getValue());
-
-        contributor = contributors.get(2);
-        assertNull(contributor.getEmail());
-        assertEquals("Credit Name", contributor.getCreditName().getValue());
-
-        // contributor is an ORCID user with private name
-        contributor = contributors.get(3);
-        assertNull(contributor.getEmail());
-        assertNull(contributor.getCreditName().getValue());
+        assertEquals(3, fundings.size());
+        assertEquals(1l, fundings.get(0).getGroupId());
+        assertEquals(1, fundings.get(0).getFundings().size());
+        assertEquals(Text.valueOf(1l), fundings.get(0).getFundings().get(0).getPutCode());
+        assertEquals(2l, fundings.get(1).getGroupId());
+        assertEquals(1, fundings.get(1).getFundings().size());
+        assertEquals(Text.valueOf(2l), fundings.get(1).getFundings().get(0).getPutCode());
+        assertEquals(3l, fundings.get(2).getGroupId());
+        assertEquals(1, fundings.get(2).getFundings().size());
+        assertEquals(Text.valueOf(3l), fundings.get(2).getFundings().get(0).getPutCode());
     }
 
     @Test

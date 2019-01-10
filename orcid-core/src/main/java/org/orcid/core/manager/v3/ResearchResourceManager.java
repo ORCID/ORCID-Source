@@ -1,10 +1,11 @@
 package org.orcid.core.manager.v3;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 
 public interface ResearchResourceManager extends ResearchResourceManagerReadOnly{
 
@@ -25,7 +26,7 @@ public interface ResearchResourceManager extends ResearchResourceManagerReadOnly
     boolean checkSourceAndRemoveResearchResource(String orcid, Long researchResourceId);
 
     /**
-     * Updates the display index of a given peer review
+     * Updates the display index of a given research resource
      * 
      * @param orcid
      *            The researchResource owner
@@ -36,22 +37,30 @@ public interface ResearchResourceManager extends ResearchResourceManagerReadOnly
     boolean updateToMaxDisplay(String orcid, Long researchResourceId);
 
     /**
-     * Updates the visibility of a list of existing peer review
+     * Updates the visibility of a list of existing research resource
      * 
      * @param researchResourceIds
      *            The ids of the researchResource that will be updated
      * @param visibility
-     *            The new visibility value for the peer review
+     *            The new visibility value for the research resource
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, Visibility visibility);
     
     /**
-     * Removes all peer reviews that belongs to a given record. Careful!
+     * Removes all research resources that belongs to a given record. Careful!
      * 
      * @param orcid
-     *            The ORCID iD of the record from which all peer reviews will be
+     *            The ORCID iD of the record from which all research resources will be
      *            removed.
      */
     void removeAllResearchResources(String orcid);
+    
+    /** Remove a selection of rrs.
+     * 
+     * @param effectiveUserOrcid
+     * @param rrIds
+     */
+    void removeResearchResources(String effectiveUserOrcid, ArrayList<Long> rrIds);
+    
 }

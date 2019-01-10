@@ -149,8 +149,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     private SignedJWT checkJWT(String id) throws ParseException, JOSEException, InvalidHashException {
         SignedJWT signedJWT = SignedJWT.parse(id);  
         Assert.assertEquals(baseUri,signedJWT.getJWTClaimsSet().getIssuer());
-        Assert.assertEquals("https://orcid.org/9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getSubject());
-        Assert.assertEquals("9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getClaim("id_path"));
+        Assert.assertEquals("9999-0000-0000-0004",signedJWT.getJWTClaimsSet().getSubject());
         Assert.assertEquals("APP-9999999999999901",signedJWT.getJWTClaimsSet().getAudience().get(0));
         Assert.assertEquals("yesMate",signedJWT.getJWTClaimsSet().getClaim("nonce"));   
         Assert.assertEquals("User One Credit name",signedJWT.getJWTClaimsSet().getClaim("name"));
@@ -197,8 +196,12 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         assertFalse(jsonObject.has("id_token"));
     }
     
+    /** Note implicit requires fragment param error
+     * 
+     * @throws InterruptedException
+     */
     @Test
-    public void testPromptNone() throws InterruptedException{
+    public void testPromptNoneImplicit() throws InterruptedException{
         //test prompt none for logged in user
         /*The Authorization Server MUST NOT display any authentication or consent user interface pages. 
          * An error is returned if an End-User is not already authenticated or the Client does not have 
@@ -210,6 +213,30 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         try{
             params.put("prompt", "none");
             String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, getClient1ClientId(), "token", "openid", getClient1RedirectUri());
+            ClientConfig config = new OrcidJerseyT2ClientOAuthConfig();
+            config.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
+            Client client = Client.create(config);
+            WebResource webResource1 = client.resource(formattedAuthorizationScreen+"&prompt=none");
+            ClientResponse noneResponse1 = webResource1.get(ClientResponse.class);
+            WebResource webResource2 = client.resource(noneResponse1.getLocation());
+            ClientResponse noneResponse2 = webResource2.get(ClientResponse.class);
+            assertTrue(noneResponse2.getLocation().toString().contains("oauth/playground#error=login_required"));
+        }catch(Exception e){
+            throw e;
+        }
+    }
+    
+    /** Note code requires query param error
+     * 
+     * @throws InterruptedException
+     */
+    @Test
+    public void testPromptNoneCode() throws InterruptedException{
+        HashMap<String,String> params = new HashMap<String,String>();
+        params.put("nonce", "yesMate");
+        try{
+            params.put("prompt", "none");
+            String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrlWithCode, baseUri, getClient1ClientId(), "code", "openid", getClient1RedirectUri());
             ClientConfig config = new OrcidJerseyT2ClientOAuthConfig();
             config.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
             Client client = Client.create(config);

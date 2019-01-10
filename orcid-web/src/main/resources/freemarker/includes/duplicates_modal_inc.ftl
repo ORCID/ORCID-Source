@@ -34,7 +34,7 @@
             </div>  
             <div class="row margin-top-box">
                 <div class="col-md-12 col-sm-12 col-xs-12 left">
-                    <span><@orcid.msg 'duplicate_researcher.notsure' /></span>
+                    <span><@orcid.msg 'duplicate_researcher.notsure' /> <a href="https://orcid.org/help/contact-us" target="public-layout.contact_us"><@orcid.msg 'public-layout.contact_us' /></a></span>
                 </div>
             </div>
             <div class="row margin-top-box">

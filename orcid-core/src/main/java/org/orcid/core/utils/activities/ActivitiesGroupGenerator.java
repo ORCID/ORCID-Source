@@ -14,7 +14,6 @@ public class ActivitiesGroupGenerator {
     
     private Map<GroupAble, ActivitiesGroup> lookup = new HashMap<GroupAble, ActivitiesGroup>();
     
-    
     public void group(GroupableActivity activity) {
         if(groups.isEmpty()) {
             //If it is the first activity, create a new group for it
@@ -28,8 +27,9 @@ public class ActivitiesGroupGenerator {
             List<ActivitiesGroup> belongsTo = new ArrayList<ActivitiesGroup>();
             ActivitiesGroup thisGroup = new ActivitiesGroup(activity);
             for (GroupAble g :thisGroup.getGroupKeys()){
-                if (lookup.containsKey(g))
-                    belongsTo.add(lookup.get(g));
+                if (lookup.containsKey(g)) {
+                    belongsTo.add(lookup.get(g)); 
+                }
             }
             
             //If it doesnt belong to any group, create a new group for it
@@ -51,21 +51,19 @@ public class ActivitiesGroupGenerator {
                         if (firstGroup != belongsTo.get(i)){
                             firstGroup.merge(belongsTo.get(i));
                             //Remove it from the list of groups
-                            groups.remove(belongsTo.get(i));                            
+                            groups.remove(belongsTo.get(i));             
                         }
                     }                        
                 }
-                for (GroupAble g :thisGroup.getGroupKeys()){
+                for (GroupAble g :firstGroup.getGroupKeys()){ 
                     lookup.put(g, firstGroup);
                 }
             }
         }
-        
-        //TODO: make sure this orders correctly
-        //TODO: look at v1.2 post/put work....
     }
     
     public List<ActivitiesGroup> getGroups() {
         return groups;
     }
+
 }

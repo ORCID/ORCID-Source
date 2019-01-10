@@ -10,7 +10,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
     from '@angular/core';
 
 import { ReCaptchaComponent } 
@@ -38,6 +38,9 @@ import { OauthService }
 
 import { SearchService } 
     from '../../shared/search.service.ts';
+    
+import { GenericService }
+    from '../../shared/generic.service.ts';
 
 @Component({
     selector: 'oauth-authorization-ng2',
@@ -48,6 +51,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+
+    public newInput = new EventEmitter<boolean>();
 
     res: any;
 
@@ -85,11 +90,18 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     showRegisterForm: any;
     showRegisterProcessing: any;
     showUpdateIcon: any;
+    showNotYouDescription: any;
     socialSignInForm: any;
     loadTime: any;
     generalRegistrationError: any;
     //registration form togglz features    
-    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');    
+    disableRecaptchaFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('DISABLE_RECAPTCHA');
+    togglzReLoginAlert: boolean = this.featuresService.isFeatureEnabled('RE_LOGGIN_ALERT');    
+    initReactivationRequest: any;
+    nameFormUrl: string;
+    realLoggedInUserName: string;
+    effectiveLoggedInUserName: string;
+    isLoggedIn: boolean;    
     
     constructor(
         private zone:NgZone,
@@ -98,7 +110,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         private featuresService: FeaturesService,
         private modalService: ModalService,
         private oauthService: OauthService,
-        private searchSrvc: SearchService
+        private searchSrvc: SearchService,
+        private nameService: GenericService
     ) {
         window['angularComponentReference'] = {
             zone: this.zone,
@@ -129,6 +142,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.requestInfoForm = null;    
         this.registrationForm = {};
         this.scriptsInjected = false;
+        this.showNotYouDescription = false;
         this.showBulletIcon = false;
         this.showClientDescription = false;
         this.showDeactivatedError = false;
@@ -147,13 +161,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.socialSignInForm = {};
         this.loadTime = 0;
         this.generalRegistrationError = null;
+        this.initReactivationRequest = { "email": null, "error": null, "success": false };
+        this.nameFormUrl = '/account/names/public';
+        this.isLoggedIn = false
     }
 
     addScript(url, onLoadFunction): void {      
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
         script.src = getStaticCdnPath() + url;
-        script.onload =  onLoadFunction;
+        script.onload = onLoadFunction;
         head.appendChild(script); // Inject the script
     }; 
 
@@ -185,7 +202,12 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     showDeactivationError(): void {
         this.showDeactivatedError = true;
-        this.showReactivationSent = false;
+        this.showReactivationSent = false;        
+        if(this.authorizationForm.userName.value != null && this.authorizationForm.userName.value.includes('@')) {
+            this.initReactivationRequest.email = this.authorizationForm.userName.value;            
+        } else {
+            this.initReactivationRequest.email = '';
+        }
     };
 
     showInstitutionLogin(): void  {
@@ -209,6 +231,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     switchForm(): void {
+        this.showDeactivatedError = false;
+        this.showReactivationSent = false; 
         var re = new RegExp("(/register)(.*)?$");
         if (this.registrationForm.linkType=="social") {
             window.location.href = getBaseUri() + "/social/access";
@@ -225,6 +249,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.cdr.detectChanges();
     };
 
+    toggleNotYouDescription(): void {
+        this.showNotYouDescription = !this.showNotYouDescription;
+    };
+
     toggleClientDescription(): void {
         this.showClientDescription = !this.showClientDescription;
     };
@@ -239,7 +267,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     addEmailField(): void {
         this.registrationForm.emailsAdditional.push({value: ''});
-        this.focusIndex = this.registrationForm.emailsAdditional.length-1;
+        this.cdr.detectChanges();       
+        this.newInput.emit(true); 
     };  
 
     removeEmailField(index): void {
@@ -283,7 +312,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
 
     loadAndInitAuthorizationForm(): void{
-
         this.oauthService.loadAndInitAuthorizationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -291,7 +319,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 this.authorizationForm = data;
-
             },
             error => {
                 console.log("An error occured initializing the authorization form.");
@@ -308,7 +335,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 if(data){
-                    this.requestInfoForm = JSON.parse(data._body); 
+                    this.requestInfoForm = data;
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
@@ -331,7 +358,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     oauth2ScreensLoadRegistrationForm(givenName, familyName, email, linkFlag): void{
-
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -340,10 +366,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             data => {
                 this.registrationForm = data;
 
-                if(givenName || familyName || email || linkFlag){
+                if(!this.registrationForm.givenNames.value){
                     this.registrationForm.givenNames.value=givenName;
+                }
+                if(!this.registrationForm.familyNames.value){
                     this.registrationForm.familyNames.value=familyName;
+                }
+                if(!this.registrationForm.email.value){
                     this.registrationForm.email.value=email;
+                }
+                if(!this.registrationForm.email.value){
                     this.registrationForm.linkType=linkFlag; 
                 }
 
@@ -351,8 +383,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
                 
                 this.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.email.errors) != -1);
-                this.showReactivationSent = false;
-
+                this.showReactivationSent = false;                
+                
                 for (var index in this.registrationForm.emailsAdditional) {
                     this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
                     this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
@@ -439,8 +471,14 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         )
         .subscribe(
             data => {
-                this.showDeactivatedError = false;
-                this.showReactivationSent = true;
+                this.initReactivationRequest = data;
+                if(this.initReactivationRequest.error == null || this.initReactivationRequest.error == '') {
+                    this.showDeactivatedError = false;
+                    this.showReactivationSent = true;                    
+                } else {
+                    this.showDeactivatedError = true;
+                    this.showReactivationSent = false;                    
+                }
                 this.cdr.detectChanges();
             },
             error => {
@@ -467,10 +505,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     oauth2ScreensPostRegisterConfirm(): void {
-        var baseUri = getBaseUri();  
-        if(this.registrationForm.linkType === 'shibboleth'){
-            baseUri += '/shibboleth';
-        }
         this.registrationForm.valNumClient = this.registrationForm.valNumServer / 2;
         this.oauthService.oauth2ScreensPostRegisterConfirm(this.registrationForm)
         .pipe(    
@@ -596,7 +630,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 }
                 if(field == 'EmailsAdditional') {
                     for (var index in this.registrationForm.emailsAdditional) {
-                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
+                        if (this.registrationForm.emailsAdditional[index].errors && this.registrationForm.emailsAdditional[index].errors.length > 0) {      
                             this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
                             //deactivated error
                             this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
@@ -640,12 +674,24 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
-
         this.authorizationForm = {
-            userName:  {value: ""},
+            userName:  {value: orcidVar.loginId},
             givenNames:  {value: ""},
             familyNames:  {value: ""},
             email:  {value: ""},
+            linkType:  {value: null},
+        }
+
+        this.registrationForm = {
+            userName:  {value: null},
+            givenNames:  {value: null},
+            familyNames:  {value: null},
+            email:  {value: null},
+            password: {value: null},
+            passwordConfirm: {value: null},
+            activitiesVisibilityDefault: {visibility: null},
+            sendOrcidNews: {value: null},
+            termsOfUse: {value: null},
             linkType:  {value: null},
         }
 
@@ -695,6 +741,42 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     this.oauth2ScreensPostRegisterConfirm();
                 }
             }
+        );
+
+        this.commonSrvc.getUserStatus().subscribe( 
+            data => {
+                if(data.loggedIn == true) {
+                    if (this.togglzReLoginAlert && !orcidVar.oauth2Screens && !orcidVar.originalOauth2Process) {
+                        this.nameService.getData(this.nameFormUrl).subscribe(response => {
+                            if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
+                                var giveNamesDefined = (response.real.givenNames && response.real.givenNames.value);
+                                var familyNameDefined = (response.real.familyName && response.real.familyName.value);
+                                this.realLoggedInUserName = "";
+                                this.realLoggedInUserName += giveNamesDefined ? response.real.givenNames.value : "";
+                                this.realLoggedInUserName += giveNamesDefined && familyNameDefined ? " " : "";
+                                this.realLoggedInUserName += familyNameDefined ? response.real.familyName.value : "";
+                            } 
+                            if (response.effective && (response.effective.givenNames.value || response.effective.familyName.value)) {
+                                var giveNamesDefined = (response.effective.givenNames && response.effective.givenNames.value);
+                                var familyNameDefined = (response.effective.familyName && response.effective.familyName.value);
+                                this.effectiveLoggedInUserName = "";
+                                this.effectiveLoggedInUserName += giveNamesDefined ? response.effective.givenNames.value : "";
+                                this.effectiveLoggedInUserName += giveNamesDefined && familyNameDefined ? " " : "";
+                                this.effectiveLoggedInUserName += familyNameDefined ? response.effective.familyName.value : ""; 
+                            }  
+                            this.isLoggedIn = true;   
+                        }, (error) => {
+                            console.log('Error getting public name')
+                            this.isLoggedIn = false;
+                        })
+                    }
+                } else {
+                    this.isLoggedIn = false;
+                }
+            },
+            error => {
+                console.log('oauthAuthorization: ngOnInit error', error);
+            } 
         );
     };
 }

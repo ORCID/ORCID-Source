@@ -39,4 +39,5 @@ public interface WorkEntityCacheManager {
     @Deprecated
     List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified);
     
+    List<WorkEntity> retrieveFullWorks(String orcid, List<Long> workIds);
 }

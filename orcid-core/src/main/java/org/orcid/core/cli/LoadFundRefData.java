@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -39,6 +40,7 @@ import org.xml.sax.SAXException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
@@ -54,7 +56,6 @@ public class LoadFundRefData {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadFundRefData.class);
-    private static final String FUNDREF_SOURCE_TYPE = "FUNDREF";
     private static final String STATE_NAME = "STATE";
     private static final String STATE_ABBREVIATION = "abbr";
     private static final String DEPRECATED_INDICATOR = "http://data.crossref.org/fundingdata/vocabulary/Deprecated";
@@ -140,13 +141,13 @@ public class LoadFundRefData {
                     if(entityChanged(rdfOrganization, existingEntity)) {
                         existingEntity.setCity(rdfOrganization.city);
                         Iso3166Country country = StringUtils.isNotBlank(rdfOrganization.country) ? Iso3166Country.fromValue(rdfOrganization.country) : null;
-                        existingEntity.setCountry(country.name());
+                        existingEntity.setCountry(country == null ? null : country.name());
                         existingEntity.setName(rdfOrganization.name);                        
-                        String orgType = rdfOrganization.type + (StringUtils.isNotBlank(rdfOrganization.subtype) ? ('/' + rdfOrganization.subtype) : "");
+                        String orgType = getOrgType(rdfOrganization);
                         existingEntity.setOrgType(orgType);                        
                         existingEntity.setRegion(rdfOrganization.stateCode);
                         existingEntity.setSourceId(rdfOrganization.doi);
-                        existingEntity.setSourceType(FUNDREF_SOURCE_TYPE);
+                        existingEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
                         existingEntity.setSourceUrl(rdfOrganization.doi);
                         existingEntity.setLastModified(new Date());
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -319,11 +320,32 @@ public class LoadFundRefData {
             return cache.get("geoname_json_" + geoNameId);
         } else {
             Client c = Client.create();
-            WebResource r = c.resource(geonamesApiUrl);
             MultivaluedMap<String, String> params = new MultivaluedMapImpl();
             params.add("geonameId", geoNameId);
             params.add("username", apiUser);
-            result = r.queryParams(params).get(String.class);
+            WebResource r = c.resource(geonamesApiUrl).queryParams(params);
+            ClientResponse response = r.get(ClientResponse.class);
+            int status = response.getStatus();
+            if (status == 200) {
+                result = response.getEntity(String.class);
+            } else {
+                LOGGER.warn("Got error status from geonames: {}", status);
+                try {
+                    LOGGER.info("Waiting before retrying geonames...");
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                ClientResponse retryResponse = r.get(ClientResponse.class);
+                int retryStatus = retryResponse.getStatus();
+                if (retryStatus == 200) {
+                    result = retryResponse.getEntity(String.class);
+                } else {
+                    String message = "Geonames failed after retry with status: " + retryStatus;
+                    LOGGER.error(message);
+                    throw new RuntimeException(message);
+                }
+            }
             cache.put("geoname_json_" + geoNameId, result);
         }
         return result;
@@ -375,7 +397,7 @@ public class LoadFundRefData {
      * DATABASE FUNCTIONS
      * */
     private OrgDisambiguatedEntity findById(RDFOrganization org) {         
-        return  orgDisambiguatedDao.findBySourceIdAndSourceType(org.doi, FUNDREF_SOURCE_TYPE);              
+        return  orgDisambiguatedDao.findBySourceIdAndSourceType(org.doi, OrgDisambiguatedSourceType.FUNDREF.name());              
     }
 
     /**
@@ -421,7 +443,20 @@ public class LoadFundRefData {
             return true;
         }
         
+        // Check org type
+        String orgType = getOrgType(org);
+        
+        if(StringUtils.isNotBlank(org.type)) {
+            if(entity.getOrgType() == null || !entity.getOrgType().equals(orgType)) {
+                return true;
+            }
+        } 
+        
         return false;
+    }
+    
+    private String getOrgType(RDFOrganization org) {        
+        return org.type + (StringUtils.isEmpty(org.subtype) ? "" : '/' + org.subtype);
     }
     
     /**
@@ -451,11 +486,11 @@ public class LoadFundRefData {
      * */
     private OrgDisambiguatedEntity createDisambiguatedOrg(RDFOrganization organization) {
         LOGGER.info("Creating disambiguated org {}", organization.name);
-        String orgType = organization.type + (StringUtils.isEmpty(organization.subtype) ? "" : "/" + organization.subtype);
+        String orgType = getOrgType(organization);
         Iso3166Country country = StringUtils.isNotBlank(organization.country) ? Iso3166Country.fromValue(organization.country) : null;
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
         orgDisambiguatedEntity.setName(organization.name);
-        orgDisambiguatedEntity.setCountry(country.name());       
+        orgDisambiguatedEntity.setCountry(country == null ? null : country.name());       
         orgDisambiguatedEntity.setCity(organization.city);
         orgDisambiguatedEntity.setRegion(organization.stateCode);        
         orgDisambiguatedEntity.setOrgType(orgType);
@@ -470,7 +505,7 @@ public class LoadFundRefData {
             orgDisambiguatedEntity.setSourceParentId(organization.isReplacedBy);
             orgDisambiguatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
         }
-        orgDisambiguatedEntity.setSourceType(FUNDREF_SOURCE_TYPE);       
+        orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());       
         
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;

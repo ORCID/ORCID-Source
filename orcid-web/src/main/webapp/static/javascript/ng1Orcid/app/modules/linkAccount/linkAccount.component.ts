@@ -7,7 +7,7 @@ declare var orcidVar: any
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, NgZone } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -41,18 +41,30 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     loadedFeed: boolean;
     idpName: string;
     requestInfoForm: any;
+    showDeactivatedError: any;
+    showReactivationSent: any;
+    initReactivationRequest: any;
    
     constructor(
+        private zone:NgZone,
         private discoService: DiscoService,
         private oauthService: OauthService,
         private widgetService: WidgetService
     ) {
+        window['angularComponentReference'] = {
+                zone: this.zone,
+                showDeactivationError: () => this.showDeactivationError(),
+                component: this,
+            };
         this.authorizationForm = {};
         this.entityId = orcidVar.providerId;
         this.gaString = "";
         this.loadedFeed = false;
         this.idpName = "";
         this.requestInfoForm = {};
+        this.showDeactivatedError = false;
+        this.showReactivationSent = false;
+        this.initReactivationRequest = { "email":null, "error":null, "success":false };
     }
 
     loadDiscoFeed = function() {
@@ -97,6 +109,38 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    showDeactivationError(): void {
+        this.showDeactivatedError = true;
+        this.showReactivationSent = false;        
+        if(this.authorizationForm.userName.value != null && this.authorizationForm.userName.value.includes('@')) {
+            this.initReactivationRequest.email = this.authorizationForm.userName.value;            
+        } else {
+            this.initReactivationRequest.email = '';
+        }
+    };
+    
+    sendReactivationEmail(): void {
+        this.oauthService.sendReactivationEmail(this.initReactivationRequest.email)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.initReactivationRequest = data;
+                if(this.initReactivationRequest.error == null || this.initReactivationRequest.error == '') {
+                    this.showDeactivatedError = false;
+                    this.showReactivationSent = true;                    
+                } else {
+                    this.showDeactivatedError = true;
+                    this.showReactivationSent = false;                    
+                }
+            },
+            error => {
+                console.log("error sending reactivation email");
+            } 
+        );
+    };
+    
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
@@ -113,7 +157,12 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
             userName:  {value: ""}
         } 
         this.setEntityId(this.entityId);
-        this.loadDiscoFeed();
-        
+
+        if(this.entityId === "facebook" || this.entityId === "google"){
+            this.idpName = this.entityId.charAt(0).toUpperCase() + this.entityId.slice(1);
+            this.loadedFeed = true;
+        } else {
+            this.loadDiscoFeed();
+        }       
     }; 
 }

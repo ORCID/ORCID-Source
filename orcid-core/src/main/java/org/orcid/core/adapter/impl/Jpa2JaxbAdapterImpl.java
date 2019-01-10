@@ -129,7 +129,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
 
         if (loadOptions.isLoadActivities()) {
-            profile.setOrcidActivities(getOrcidActivities(profileEntity));
+            if(loadOptions.isLoadNewAffiliationTypes()) {
+                profile.setOrcidActivities(getOrcidActivities(profileEntity, true));
+            } else {
+                profile.setOrcidActivities(getOrcidActivities(profileEntity, false));
+            }            
         }
         if (loadOptions.isLoadBio()) {
             profile.setOrcidBio(getOrcidBio(profileEntity));
@@ -195,7 +199,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         group.setType(MemberType.valueOf(profileEntity.getGroupType()));
         Set<EmailEntity> emailEntities = profileEntity.getEmails();
         for (EmailEntity emailEntity : emailEntities) {
-            group.setEmail(emailEntity.getId());
+            group.setEmail(emailEntity.getEmail());
         }
         for (ClientDetailsEntity clientDetailsEntity : profileEntity.getClients()) {
             OrcidClient client = toOrcidClient(clientDetailsEntity);
@@ -279,8 +283,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return orcidId;
     }
 
-    private OrcidActivities getOrcidActivities(ProfileEntity profileEntity) {
-        Affiliations affiliations = getAffiliations(profileEntity);
+    private OrcidActivities getOrcidActivities(ProfileEntity profileEntity, boolean loadNewAffiliationTypes) {
+        Affiliations affiliations = getAffiliations(profileEntity, loadNewAffiliationTypes);
         FundingList fundings = getFundingList(profileEntity);
         OrcidWorks orcidWorks = getOrcidWorks(profileEntity);
         if (NullUtils.allNull(fundings, orcidWorks, affiliations)) {
@@ -393,11 +397,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return personalDetails;
     }
 
-    private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
-        if (!org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EDUCATION.name().equals(orgAffiliationRelationEntity.getAffiliationType())
-                && !org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EMPLOYMENT.name().equals(orgAffiliationRelationEntity.getAffiliationType())) {
-            throw new IllegalArgumentException(
-                    "Invalid affiliation type for API 1.2: " + orgAffiliationRelationEntity.getAffiliationType() + " with id: " + orgAffiliationRelationEntity.getId());
+    private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity, boolean includeNewTypes) {
+        if(!includeNewTypes) {
+            if (!org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EDUCATION.name().equals(orgAffiliationRelationEntity.getAffiliationType())
+                    && !org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EMPLOYMENT.name().equals(orgAffiliationRelationEntity.getAffiliationType())) {
+                throw new IllegalArgumentException(
+                        "Invalid affiliation type for API 1.2: " + orgAffiliationRelationEntity.getAffiliationType() + " with id: " + orgAffiliationRelationEntity.getId());
+            }            
         }
         
         Affiliation affiliation = new Affiliation();
@@ -551,16 +557,21 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return disambiguatedOrganization;
     }
 
-    private Affiliations getAffiliations(ProfileEntity profileEntity) {
+    private Affiliations getAffiliations(ProfileEntity profileEntity, boolean includeNewTypes) {
         LOGGER.debug("About to convert affiliations from entity: " + profileEntity.getId());
         Set<OrgAffiliationRelationEntity> orgRelationEntities = profileEntity.getOrgAffiliationRelations();
         if (orgRelationEntities != null && !orgRelationEntities.isEmpty()) {
             Affiliations affiliations = new Affiliations();
             List<Affiliation> affiliationList = affiliations.getAffiliation();
             for (OrgAffiliationRelationEntity orgRelationEntity : orgRelationEntities) {
-                if (org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EDUCATION.name().equals(orgRelationEntity.getAffiliationType())
-                        || org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EMPLOYMENT.name().equals(orgRelationEntity.getAffiliationType()))
-                    affiliationList.add(getAffiliation(orgRelationEntity));
+                if(includeNewTypes) {
+                    affiliationList.add(getAffiliation(orgRelationEntity, includeNewTypes));
+                } else {
+                    if (org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EDUCATION.name().equals(orgRelationEntity.getAffiliationType()) 
+                        || org.orcid.jaxb.model.v3.rc1.record.AffiliationType.EMPLOYMENT.name().equals(orgRelationEntity.getAffiliationType())) {
+                        affiliationList.add(getAffiliation(orgRelationEntity, false));
+                    }
+                }
             }
             return affiliations;
         }
@@ -742,7 +753,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         List<Email> emailList = contactDetails.getEmail();
         if (emailEntities != null) {
             for (EmailEntity emailEntity : emailEntities) {
-                Email email = new Email(emailEntity.getId());
+                Email email = new Email(emailEntity.getEmail());
                 email.setPrimary(emailEntity.getPrimary());
                 email.setCurrent(emailEntity.getCurrent());
                 email.setVerified(emailEntity.getVerified());
@@ -822,7 +833,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             orcidWork.setCountry(country);
         }
         if(work.getWorkType() != null) {
-            orcidWork.setWorkType(WorkType.valueOf(work.getWorkType()));
+            if(org.orcid.jaxb.model.v3.rc1.record.WorkType.SOFTWARE.name().equals(work.getWorkType())) {
+                orcidWork.setWorkType(WorkType.OTHER);
+            } else if(org.orcid.jaxb.model.v3.rc1.record.WorkType.PREPRINT.name().equals(work.getWorkType())) {
+                orcidWork.setWorkType(WorkType.OTHER);
+            } else if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name().equals(work.getWorkType())) {
+                orcidWork.setWorkType(WorkType.DISSERTATION);
+            } else {
+                orcidWork.setWorkType(WorkType.valueOf(work.getWorkType()));
+            }            
         }
         orcidWork.setVisibility(Visibility.valueOf(work.getVisibility()));
 
@@ -1005,21 +1024,22 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         securityDetails.setEncryptedVerificationCode(profileEntity.getEncryptedVerificationCode() != null ? new EncryptedVerificationCode(profileEntity
                 .getEncryptedVerificationCode()) : null);
 
-        Map<String, String> emailFrequencies = emailFrequencyManager.getEmailFrequency(profileEntity.getId());
-        
-        SendEmailFrequency admin = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS));
-        SendEmailFrequency change = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.CHANGE_NOTIFICATIONS));
-        SendEmailFrequency member = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS));
-        Boolean tips = Boolean.valueOf(emailFrequencies.get(EmailFrequencyManager.QUARTERLY_TIPS));
-        
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);
-        preferences.setSendEmailFrequencyDays(String.valueOf(0));
-        preferences.setSendChangeNotifications(new SendChangeNotifications(SendEmailFrequency.NEVER.equals(change)));
-        preferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(SendEmailFrequency.NEVER.equals(admin)));
-        preferences.setSendOrcidNews(new SendOrcidNews(tips));
-        preferences.setSendMemberUpdateRequests(SendEmailFrequency.NEVER.equals(member));
-        preferences.setNotificationsEnabled(true);
+        
+        Map<String, String> emailFrequencies = emailFrequencyManager.getEmailFrequency(profileEntity.getId());
+        if (emailFrequencies != null) {
+            SendEmailFrequency admin = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS));
+            SendEmailFrequency change = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.CHANGE_NOTIFICATIONS));
+            SendEmailFrequency member = SendEmailFrequency.fromValue(emailFrequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS));
+            Boolean tips = Boolean.valueOf(emailFrequencies.get(EmailFrequencyManager.QUARTERLY_TIPS));
+            preferences.setSendEmailFrequencyDays(String.valueOf(0));
+            preferences.setSendChangeNotifications(new SendChangeNotifications(SendEmailFrequency.NEVER.equals(change)));
+            preferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(SendEmailFrequency.NEVER.equals(admin)));
+            preferences.setSendOrcidNews(new SendOrcidNews(tips));
+            preferences.setSendMemberUpdateRequests(SendEmailFrequency.NEVER.equals(member));
+            preferences.setNotificationsEnabled(true);
+        }
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.valueOf(profileEntity.getActivitiesVisibilityDefault())));

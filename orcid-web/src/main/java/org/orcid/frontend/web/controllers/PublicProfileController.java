@@ -1,82 +1,97 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.v3.ActivitiesSummaryManager;
-import org.orcid.core.manager.v3.ActivityManager;
-import org.orcid.core.manager.v3.AddressManager;
-import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.v3.ExternalIdentifierManager;
-import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
-import org.orcid.core.manager.v3.OtherNameManager;
-import org.orcid.core.manager.v3.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.ProfileKeywordManager;
-import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.ActivityManager;
+import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.v3.SourceUtils;
-import org.orcid.frontend.web.pagination.WorksPage;
+import org.orcid.core.utils.v3.activities.FundingComparators;
+import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
+import org.orcid.frontend.web.pagination.Page;
+import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc1.record.Address;
-import org.orcid.jaxb.model.v3.rc1.record.Addresses;
-import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc1.record.Biography;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.Keyword;
-import org.orcid.jaxb.model.v3.rc1.record.Keywords;
-import org.orcid.jaxb.model.v3.rc1.record.Name;
-import org.orcid.jaxb.model.v3.rc1.record.OtherName;
-import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.Addresses;
+import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.PublicRecordPersonDetails;
+import org.orcid.pojo.ResearchResource;
+import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
+import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
+import org.orcid.pojo.grouping.FundingGroup;
+import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
+import org.orcid.pojo.grouping.PeerReviewGroup;
+import org.orcid.pojo.grouping.WorkGroup;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,24 +102,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
 
-    @Resource
-    private LocaleManager localeManager;
+    @Resource(name = "workManagerReadOnlyV3")
+    private WorkManagerReadOnly workManagerReadOnly;
 
-    @Resource(name = "workManagerV3")
-    private WorkManager workManager;
+    @Resource(name = "peerReviewManagerReadOnlyV3")
+    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
     
+    @Resource(name = "profileFundingManagerReadOnlyV3")
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
+
     @Resource
     private WorksPaginator worksPaginator;
-
-    @Resource
-    private EncryptionManager encryptionManager;
 
     @Resource(name = "activityManagerV3")
     private ActivityManager activityManager;
@@ -113,53 +124,53 @@ public class PublicProfileController extends BaseWorkspaceController {
     private LanguagesMap lm;
 
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;    
 
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntManager;
-    
-    @Resource(name = "groupIdRecordManagerV3")
-    private GroupIdRecordManager groupIdRecordManager;
+    @Resource(name = "groupIdRecordManagerReadOnlyV3")
+    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
 
-    @Resource(name = "addressManagerV3")
-    private AddressManager addressManager;
+    @Resource(name = "addressManagerReadOnlyV3")
+    private AddressManagerReadOnly addressManagerReadOnly;
 
-    @Resource(name = "personalDetailsManagerV3")
-    private PersonalDetailsManager personalDetailsManager;
-    
+    @Resource(name = "personalDetailsManagerReadOnlyV3")
+    private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
+
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
-    @Resource(name = "otherNameManagerV3")
-    private OtherNameManager otherNameManager;
+    @Resource(name = "profileKeywordManagerReadOnlyV3")
+    private ProfileKeywordManagerReadOnly keywordManagerReadOnly;
 
-    @Resource(name = "profileKeywordManagerV3")
-    private ProfileKeywordManager keywordManager;
+    @Resource(name = "researcherUrlManagerReadOnlyV3")
+    private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;
 
-    @Resource(name = "researcherUrlManagerV3")
-    private ResearcherUrlManager researcherUrlManager;
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
 
-    @Resource(name = "emailManagerV3")
-    private EmailManager emailManager;
-
-    @Resource(name = "externalIdentifierManagerV3")
-    private ExternalIdentifierManager externalIdentifierManager;
+    @Resource(name = "externalIdentifierManagerReadOnlyV3")
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
 
     @Resource(name = "sourceUtilsV3")
     private SourceUtils sourceUtils;
 
-    @Resource(name = "activitiesSummaryManagerV3")
-    private ActivitiesSummaryManager activitiesSummaryManager;
+    @Resource(name = "affiliationsManagerReadOnlyV3")
+    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
+
+    @Resource
+    private ResearchResourcePaginator researchResourcePaginator;
+
+    @Resource(name = "researchResourceManagerReadOnlyV3")
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
 
     public static int ORCID_HASH_LENGTH = 8;
 
     private Long getLastModifiedTime(String orcid) {
-        return profileEntManager.getLastModified(orcid);
+        return profileEntityManager.getLastModified(orcid);
     }
-    
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -169,21 +180,20 @@ public class PublicProfileController extends BaseWorkspaceController {
         return new ModelAndView(rv);
     }
 
-
-    @RequestMapping(value = {"/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print"})
+    @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
     public ModelAndView publicPreview(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
             @PathVariable("orcid") String orcid) {
-               
-        ProfileEntity profile = null; 
-        
+
+        ProfileEntity profile = null;
+
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
-        } catch(Exception e) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());   
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
             return new ModelAndView("error-404");
-        }    
-        
+        }
+
         try {
             // Check if the profile is deprecated, non claimed or locked
             orcidSecurityManager.checkProfile(orcid);
@@ -191,9 +201,8 @@ public class PublicProfileController extends BaseWorkspaceController {
             ModelAndView mav = new ModelAndView("public_profile_unavailable");
             mav.addObject("effectiveUserOrcid", orcid);
             String displayName = "";
-
             if (e instanceof OrcidDeprecatedException) {
-                PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
+                PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
                 if (publicPersonalDetails.getName() != null) {
                     Name name = publicPersonalDetails.getName();
                     if (name.getVisibility().equals(Visibility.PUBLIC)) {
@@ -218,8 +227,9 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("isPublicProfile", true);
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
+                mav.addObject("noIndex", true);
             } else {
-                mav.addObject("deactivated", true);                
+                mav.addObject("deactivated", true);
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
             }
@@ -231,175 +241,43 @@ public class PublicProfileController extends BaseWorkspaceController {
             return mav;
         }
 
-        long lastModifiedTime = getLastModifiedTime(orcid);
+        Long lastModifiedTime = getLastModifiedTime(orcid);
         
         ModelAndView mav = null;
         if (request.getRequestURI().contains("/print")) {
             mav = new ModelAndView("print_public_record");
-            mav.addObject("hideUserVoiceScript", true);
+            mav.addObject("hideSupportWidget", true);
         } else {
             mav = new ModelAndView("public_profile_v3");
         }
         mav.addObject("isPublicProfile", true);
         mav.addObject("effectiveUserOrcid", orcid);
-        mav.addObject("lastModifiedTime", lastModifiedTime);
+        mav.addObject("lastModifiedTime",  new java.util.Date(lastModifiedTime));
 
-        boolean isProfileEmtpy = true;
-
-        PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
-
-        // Fill personal details
-        if (publicPersonalDetails != null) {
-            // Get display name
-            String displayName = "";
-
-            if (publicPersonalDetails.getName() != null) {
-                Name name = publicPersonalDetails.getName();
-                if (name.getVisibility().equals(Visibility.PUBLIC)) {
-                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
-                        displayName = name.getCreditName().getContent();
-                    } else {
-                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
-                            displayName = name.getGivenNames().getContent() + " ";
-                        }
-                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
-                            displayName += name.getFamilyName().getContent();
-                        }
-                    }
-                }
-            }
-
-            if (!PojoUtil.isEmpty(displayName)) {
-                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
-                // and Researchers
-                mav.addObject("title", getMessage("layout.public-layout.title", displayName.trim(), orcid));
-                mav.addObject("displayName", displayName);
-            }
-
-            // Get biography
-            if (publicPersonalDetails.getBiography() != null) {
-                Biography bio = publicPersonalDetails.getBiography();
-                if (Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
-                    isProfileEmtpy = false;
-                    mav.addObject("biography", bio);
-                }
-            }
-
-            // Fill other names
-            OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
-            if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
-                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
-                while (it.hasNext()) {
-                    OtherName otherName = it.next();
-                    if (!Visibility.PUBLIC.equals(otherName.getVisibility())) {
-                        it.remove();
-                    }
-                }
-            }
-            Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
-            mav.addObject("publicGroupedOtherNames", groupedOtherNames);
+        if (!workManagerReadOnly.hasPublicWorks(orcid)) {
+            mav.addObject("worksEmpty", true);
+        }
+        if (!researchResourceManagerReadOnly.hasPublicResearchResources(orcid)) {
+            mav.addObject("researchResourcesEmpty", true);
         }
 
-        // Fill biography elements
-
-        // Fill country
-        Addresses publicAddresses = addressManager.getPublicAddresses(orcid);
-        Map<String, String> countryNames = new HashMap<String, String>();
-        if (publicAddresses != null && publicAddresses.getAddress() != null) {
-            Address publicAddress = null;
-            // The primary address will be the one with the lowest display index
-            for (Address address : publicAddresses.getAddress()) {
-                countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));
-                if (publicAddress == null) {
-                    publicAddress = address;
-                }
-            }
-            if (publicAddress != null) {
-                mav.addObject("publicAddress", publicAddress);
-                mav.addObject("countryNames", countryNames);
-                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
-                mav.addObject("publicGroupedAddresses", groupedAddresses);
-            }
-        }
-
-        // Fill keywords
-        Keywords publicKeywords = keywordManager.getPublicKeywords(orcid);
-        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
-        mav.addObject("publicGroupedKeywords", groupedKeywords);
-
-        // Fill researcher urls
-        ResearcherUrls publicResearcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid);
-        Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
-        mav.addObject("publicGroupedResearcherUrls", groupedResearcherUrls);
-
-        // Fill emails
-        Emails publicEmails = emailManager.getPublicEmails(orcid);
-        Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
-        mav.addObject("publicGroupedEmails", groupedEmails);
-
-        // Fill external identifiers
-        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid);
-        Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
-        mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
-
-        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
-        LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-        LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
-        
-        if (worksPaginator.getPublicWorksCount(orcid) > 0) {
-            isProfileEmtpy = false;
-        }
-
-        affiliationMap = activityManager.affiliationMap(orcid);
-        if (affiliationMap.size() > 0) {
-            isProfileEmtpy = false;
-        } else {
+        if (!affiliationsManagerReadOnly.hasPublicAffiliations(orcid)) {
             mav.addObject("affiliationsEmpty", true);
         }
 
-        fundingMap = activityManager.fundingMap(orcid);
-        if (fundingMap.size() > 0)
-            isProfileEmtpy = false;
-        else {
+        if (!profileFundingManagerReadOnly.hasPublicFunding(orcid)) {
             mav.addObject("fundingEmpty", true);
         }
-
-        peerReviewMap = activityManager.pubPeerReviewsMap(orcid);
-        if (peerReviewMap.size() > 0) {
-            isProfileEmtpy = false;
-        } else {
-            mav.addObject("peerReviewsEmpty", true);
+        
+        if(!peerReviewManagerReadOnly.hasPublicPeerReviews(orcid)) {
+            mav.addObject("peerReviewEmpty", true);
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            String affiliationIdsJson = mapper.writeValueAsString(affiliationMap.keySet());
-            String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
-            String peerReviewIdsJson = mapper.writeValueAsString(peerReviewMap.keySet());
-            mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
-            mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
-            mav.addObject("peerReviewIdsJson", StringEscapeUtils.escapeEcmaScript(peerReviewIdsJson));
-            mav.addObject("isProfileEmpty", isProfileEmtpy);
-        } catch (JsonGenerationException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        
         if (!profile.isReviewed()) {
-            if (isProfileValidForIndex(profile)) {
-                if (!profile.isAccountNonLocked() || !orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)
-                        || (!CreationMethod.WEBSITE.value().equals(profile.getCreationMethod()) && !CreationMethod.DIRECT.value().equals(profile.getCreationMethod()))) {
-                    mav.addObject("noIndex", true);
-                }
-            } else {
+            if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {
                 mav.addObject("noIndex", true);
             }
-        }
-
+        } 
         return mav;
     }
 
@@ -514,25 +392,127 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         return groups;
     }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/person.json", method = RequestMethod.GET)
+    public @ResponseBody PublicRecordPersonDetails getPersonDetails(@PathVariable("orcid") String orcid) {
+        PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
+        Boolean isDeprecated = false;
+        
+        try {
+	            // Check if the profile is deprecated or locked
+	        orcidSecurityManager.checkProfile(orcid);
+        } catch (LockedException | DeactivatedException e) {
+        	publicRecordPersonDetails.setDisplayName(
+        			localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name")
+        			);
+        	return publicRecordPersonDetails;
+        } catch (OrcidNotClaimedException e) {
+        	publicRecordPersonDetails.setDisplayName( localeManager.resolveMessage("orcid.reserved_for_claim"));
+        	return publicRecordPersonDetails;
+        } catch (OrcidDeprecatedException e ) {
+        	isDeprecated = true;
+        	
+        }
+	
+        PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
+        // Fill personal details
+        if (publicPersonalDetails != null) {
+            // Get display name
+            String displayName = "";
 
-    private boolean isProfileValidForIndex(ProfileEntity profile) {
-        String orcid = profile.getId();
-        if (orcid != null) {
-            int validAge = 3 + (Character.getNumericValue(orcid.charAt(orcid.length() - 2))) / 2;
-            if (profile.getSubmissionDate() != null) {
-                Date profileCreationDate = profile.getSubmissionDate();
-                Date currentDate = new Date();
-
-                Calendar temp = Calendar.getInstance();
-                temp.setTime(profileCreationDate);
-                temp.add(Calendar.DATE, validAge);
-                profileCreationDate = temp.getTime();
-                if (profileCreationDate.before(currentDate)) {
-                    return true;
+            if (publicPersonalDetails.getName() != null) {
+                Name name = publicPersonalDetails.getName();
+                if (name.getVisibility().equals(Visibility.PUBLIC)) {
+                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+                        displayName = name.getCreditName().getContent();
+                    } else {
+                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                            displayName = name.getGivenNames().getContent() + " ";
+                        }
+                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                            displayName += name.getFamilyName().getContent();
+                        }
+                    }
                 }
             }
+
+            if (!PojoUtil.isEmpty(displayName)) {
+                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
+                // and Researchers
+                publicRecordPersonDetails.setTitle(getMessage("layout.public-layout.title", displayName.trim(), orcid));
+                publicRecordPersonDetails.setDisplayName(displayName);
+            }
+            
+            if (isDeprecated) {
+            	return publicRecordPersonDetails;
+            }
+
+            // Get biography
+            if (publicPersonalDetails.getBiography() != null) {
+                Biography bio = publicPersonalDetails.getBiography();
+                if (Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
+                    publicRecordPersonDetails.setBiography(bio);
+                }
+            }
+
+            // Fill other names
+            OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
+            if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
+                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
+                while (it.hasNext()) {
+                    OtherName otherName = it.next();
+                    if (!Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                        it.remove();
+                    }
+                }
+            }
+            Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
+            publicRecordPersonDetails.setPublicGroupedOtherNames(groupedOtherNames);
         }
-        return false;
+
+        // Fill biography elements
+
+        // Fill country
+        Addresses publicAddresses = addressManagerReadOnly.getPublicAddresses(orcid);
+        Map<String, String> countryNames = new HashMap<String, String>();
+        if (publicAddresses != null && publicAddresses.getAddress() != null) {
+            Address publicAddress = null;
+            // The primary address will be the one with the lowest display index
+            for (Address address : publicAddresses.getAddress()) {
+                countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));
+                if (publicAddress == null) {
+                    publicAddress = address;
+                }
+            }
+            if (publicAddress != null) {
+                publicRecordPersonDetails.setPublicAddress(publicAddress);
+                publicRecordPersonDetails.setCountryNames(countryNames);
+                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
+                publicRecordPersonDetails.setPublicGroupedAddresses(groupedAddresses);
+            }
+        }
+
+        // Fill keywords
+        Keywords publicKeywords = keywordManagerReadOnly.getPublicKeywords(orcid);
+        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
+        publicRecordPersonDetails.setPublicGroupedKeywords(groupedKeywords);
+
+        // Fill researcher urls
+        ResearcherUrls publicResearcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
+        Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
+        publicRecordPersonDetails.setPublicGroupedResearcherUrls(groupedResearcherUrls);
+
+        // Fill emails
+        Emails publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
+        Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
+        publicRecordPersonDetails.setPublicGroupedEmails(groupedEmails);
+
+        // Fill external identifiers
+        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
+        Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
+        publicRecordPersonDetails.setPublicGroupedPersonExternalIdentifiers(groupedExternalIdentifiers);
+        
+        return publicRecordPersonDetails;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
@@ -546,36 +526,34 @@ public class PublicProfileController extends BaseWorkspaceController {
             validateVisibility(aff.getVisibility());
             AffiliationForm form = AffiliationForm.valueOf(aff);
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
-            if(form.getOrgDisambiguatedId() != null){
+            if (form.getOrgDisambiguatedId() != null) {
                 OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
                 form.setOrgDisambiguatedName(orgDisambiguated.getValue());
                 form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
                 form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
                 form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
                 form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
-                if(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
                     form.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
-                }   
+                }
             }
-            affs.add(form);            
+            affs.add(form);
         }
 
         return affs;
     }
-
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundings.json")
-    public @ResponseBody List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
-            @RequestParam(value = "fundingIds") String fundingIdsStr) {
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundingDetails.json", method = RequestMethod.GET)
+    public @ResponseBody FundingForm getFundingDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id) {        
+        if (id == null)
+            return null;        
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        List<FundingForm> fundings = new ArrayList<FundingForm>();
-        Map<Long, Funding> fundingMap = activityManager.fundingMap(orcid);
-        String[] fundingIds = fundingIdsStr.split(",");
-        for (String id : fundingIds) {
-            Funding funding = fundingMap.get(Long.valueOf(id));
+        Funding funding = profileFundingManagerReadOnly.getFunding(orcid, id);
+        if (funding != null) {
             validateVisibility(funding.getVisibility());
             sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
-            // Set type name
+                   
             if (funding.getType() != null) {
                 form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, funding.getType().value())));
             }
@@ -584,23 +562,70 @@ public class PublicProfileController extends BaseWorkspaceController {
                 String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
                 form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
             }
-            // Set formatted amount
+    
+            // Set the formatted amount
             if (funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
                 BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
                 String formattedAmount = formatAmountString(bigDecimal);
                 form.setAmount(Text.valueOf(formattedAmount));
             }
-
-            // Set country name
+    
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
-            fundings.add(form);
+            return form;
         }
-        return fundings;
+        return null;
+    }
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundingGroups.json")
+    public @ResponseBody List<FundingGroup> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
+            @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+        List<FundingGroup> fundingGroups = new ArrayList<>();
+        List<FundingSummary> summaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
+        Fundings fundings = profileFundingManagerReadOnly.groupFundings(summaries, true);
+        for (org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup group : fundings.getFundingGroup()) {
+            FundingGroup fundingGroup = FundingGroup.valueOf(group);
+            for(org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary summary : summaries) {
+                if(summary.getSource().retrieveSourcePath().equals(orcid)) {
+                    fundingGroup.setUserVersionPresent(true);
+                    break;
+                }
+            }
+            for(FundingForm summaryForm : fundingGroup.getFundings()) {
+                if(summaryForm.getFundingType().getValue() != null) {
+                    summaryForm.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, summaryForm.getFundingType().getValue())));
+                }         
+            }
+            fundingGroups.add(fundingGroup);
+        }
+
+        fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
+        return fundingGroups;
     }
     
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/allWorks.json", method = RequestMethod.GET)
+    public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("sort") String sort,
+            @RequestParam("sortAsc") boolean sortAsc) {
+        return worksPaginator.getAllWorks(orcid, true, sort, sortAsc);
+    }
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody WorksPage getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
+            @RequestParam("sortAsc") boolean sortAsc) {
         return worksPaginator.getWorksPage(orcid, offset, true, sort, sortAsc);
+    }
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
+    public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset,
+            @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+        return researchResourcePaginator.getPage(orcid, offset, true, sort, sortAsc);
+    }
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResource.json", method = RequestMethod.GET)
+    public @ResponseBody ResearchResource getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
+        org.orcid.jaxb.model.v3.rc2.record.ResearchResource r = researchResourceManagerReadOnly.getResearchResource(orcid, Long.valueOf(id));
+        validateVisibility(r.getVisibility());
+        sourceUtils.setSourceName(r);
+        return ResearchResource.fromValue(r);
     }
 
     /**
@@ -616,9 +641,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId);       
-        if (workObj != null) {            
-            validateVisibility(workObj.getVisibility());            
+        Work workObj = workManagerReadOnly.getWork(orcid, workId);
+        if (workObj != null) {
+            validateVisibility(workObj.getVisibility());
             sourceUtils.setSourceName(workObj);
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
@@ -641,7 +666,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 for (Contributor contributor : work.getContributors()) {
                     if (!PojoUtil.isEmpty(contributor.getOrcid())) {
                         String contributorOrcid = contributor.getOrcid().getValue();
-                        if (profileEntManager.orcidExists(contributorOrcid)) {
+                        if (profileEntityManager.orcidExists(contributorOrcid)) {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = activityManager.getPublicCreditName(profileEntity);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));
@@ -654,40 +679,34 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         return null;
     }
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-review.json", method = RequestMethod.GET)
+    public @ResponseBody PeerReviewForm getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") Long putCode) {
+        PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
+        validateVisibility(peerReview.getVisibility());
+        sourceUtils.setSourceName(peerReview);
+        return PeerReviewForm.valueOf(peerReview);
+    }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
-    public @ResponseBody List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
-            @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
-        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        List<PeerReviewForm> peerReviews = new ArrayList<PeerReviewForm>();
-        Map<Long, PeerReview> peerReviewMap = activityManager.pubPeerReviewsMap(orcid);
-        String[] peerReviewIds = peerReviewIdsStr.split(",");
-        for (String id : peerReviewIds) {
-            PeerReview peerReview = peerReviewMap.get(Long.valueOf(id));            
-            validateVisibility(peerReview.getVisibility());            
-            sourceUtils.setSourceName(peerReview);
-            PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
-            // Set language name
-            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
-
-            if (!PojoUtil.isEmpty(form.getTranslatedSubjectName())) {
-                // Set translated title language name
-                if (!StringUtils.isEmpty(form.getTranslatedSubjectName().getLanguageCode())) {
-                    String languageName = languages.get(form.getTranslatedSubjectName().getLanguageCode());
-                    form.getTranslatedSubjectName().setLanguageName(languageName);
+    public @ResponseBody List<PeerReviewGroup> getPeerReviewsJson(@PathVariable("orcid") String orcid, @RequestParam("sortAsc") boolean sortAsc) {
+        List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
+        List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
+        PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, true);
+        for (org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManagerReadOnly.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
+            for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
+                for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
+                    if (peerReviewForm.getCountry() != null) {
+                        peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
+                    }
                 }
             }
-
-            // Set the numeric id (the table id in the group_id_record table) of
-            // the group id
-            if (form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
-                GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue()).get();
-                form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
-            }
-
-            peerReviews.add(form);
+            peerReviewGroups.add(peerReviewGroup);
         }
-        return peerReviews;
+        peerReviewGroups.sort(new PeerReviewGroupComparator(!sortAsc));
+        return peerReviewGroups;
     }
 
     /**
@@ -697,7 +716,7 @@ public class PublicProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/public/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") Long groupId) {
-        return groupIdRecordManager.getGroupIdRecord(groupId);
+        return groupIdRecordManagerReadOnly.getGroupIdRecord(groupId);
     }
 
     /**
@@ -711,40 +730,54 @@ public class PublicProfileController extends BaseWorkspaceController {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
     }
-    
+
     private void validateVisibility(Visibility v) {
-        if(!Visibility.PUBLIC.equals(v)) {
+        if (!Visibility.PUBLIC.equals(v)) {
             throw new IllegalArgumentException("Invalid request");
         }
     }
-}
-
-class OrcidInfo {
-    public String orcid = "";
-    public String name = "";
-    public HashMap<String, String> values = new HashMap<String, String>();
-
-    public String getOrcid() {
-        return orcid;
+    
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationDetails.json", method = RequestMethod.GET)
+    public @ResponseBody AffiliationForm getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id, @RequestParam("type") String type) {        
+        Affiliation aff; 
+        if (type.equals("distinction")) {
+            aff = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, id);
+        } else if (type.equals("education")) {
+            aff = affiliationsManagerReadOnly.getEducationAffiliation(orcid, id);
+        } else if (type.equals("employment")) {
+            aff = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, id);
+        } else if (type.equals("invited-position")) {
+            aff = affiliationsManagerReadOnly.getInvitedPositionAffiliation(orcid, id);
+        } else if (type.equals("membership")) {
+            aff = affiliationsManagerReadOnly.getMembershipAffiliation(orcid, id);
+        } else if (type.equals("qualification")) {
+            aff = affiliationsManagerReadOnly.getQualificationAffiliation(orcid, id);
+        } else if (type.equals("service")) {
+            aff = affiliationsManagerReadOnly.getServiceAffiliation(orcid, id);
+        } else {
+            throw new IllegalArgumentException("Invalid affiliation type: " + type);
+        }
+        
+        validateVisibility(aff.getVisibility());
+        sourceUtils.setSourceName(aff);
+        return AffiliationForm.valueOf(aff);
     }
 
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setValue(String name, String value) {
-        values.put(name, value);
-    }
-
-    public String getValue(String name) {
-        return values.get(name);
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)
+    public @ResponseBody AffiliationGroupContainer getGroupedAffiliations(@PathVariable("orcid") String orcid) {        
+        AffiliationGroupContainer result = new AffiliationGroupContainer();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
+        for (AffiliationType type : AffiliationType.values()) {
+            if (affiliationsMap.containsKey(type)) {
+                List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
+                List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
+                IntStream.range(0, elementsList.size()).forEach(idx -> {
+                    AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), type.name() + '_' + idx, orcid);
+                    elementsFormList.add(groupForm);
+                });
+                result.getAffiliationGroups().put(type, elementsFormList);
+            }
+        }
+        return result;
     }
 }

@@ -1,11 +1,13 @@
 package org.orcid.core.utils.v3.identifiers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.springframework.stereotype.Component;
 
 import com.google.common.cache.CacheBuilder;
@@ -75,7 +77,7 @@ public class PIDResolverCache {
                         con.addRequestProperty("Accept", "application/vnd.citationstyles.csl+json");
                         con.setRequestMethod("HEAD");
                         con.setInstanceFollowRedirects(false);
-                        return (con.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER);
+                        return (con.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP);
                     } catch (IOException e) {
                         //nope.
                     }  
@@ -105,5 +107,19 @@ public class PIDResolverCache {
         } catch (ExecutionException e) {
             return false;
         }
+    }
+    
+    public InputStream get(String url, String accept) throws IOException {
+        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");
+        con.addRequestProperty("Accept", accept);
+        con.setRequestMethod("GET");
+        con.setInstanceFollowRedirects(true);
+        int responseCode = con.getResponseCode();
+        if(responseCode == HttpURLConnection.HTTP_OK) {
+            return con.getInputStream();
+        }
+        
+        throw new UnexpectedResponseCodeException(responseCode);
     }
 }

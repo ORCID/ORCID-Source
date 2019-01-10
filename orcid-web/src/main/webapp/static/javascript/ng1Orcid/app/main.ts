@@ -15,10 +15,14 @@ import { platformBrowserDynamic }
 import { UpgradeModule } 
 	from '@angular/upgrade/static';
 
-import { orcidApp } from './modules/ng1_app.ts';
-import { Ng2AppModule } from './modules/ng2_app.ts';
+import { orcidApp } 
+    from './modules/ng1_app.ts';
 
-import { enableProdMode } from '@angular/core';
+import { Ng2AppModule } 
+    from './modules/ng2_app.ts';
+
+import { enableProdMode } 
+    from '@angular/core';
 
 console.log(NODE_ENV);
 

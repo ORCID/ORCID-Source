@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
@@ -14,4 +15,9 @@ public interface ResearchResourceDao extends GenericDao<ResearchResourceEntity, 
 
     void removeResearchResources(String orcid);
 
+    boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, String visibility);
+
+    boolean updateToMaxDisplay(String orcid, Long researchResourceId);
+
+    Boolean hasPublicResearchResources(String orcid);
 }

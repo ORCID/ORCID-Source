@@ -13,10 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.rc1.common.Contributor;
-import org.orcid.jaxb.model.v3.rc1.record.CitationType;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
+import org.orcid.jaxb.model.v3.rc2.common.Contributor;
+import org.orcid.jaxb.model.v3.rc2.record.CitationType;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;
@@ -220,7 +220,7 @@ public class V3WorkToCiteprocTranslator {
         case DICTIONARY_ENTRY:
             builder.type(CSLType.ENTRY_DICTIONARY);
             break;
-        case DISSERTATION:
+        case DISSERTATION_THESIS:
             builder.type(CSLType.THESIS);
             break;
         case ENCYCLOPEDIA_ENTRY:

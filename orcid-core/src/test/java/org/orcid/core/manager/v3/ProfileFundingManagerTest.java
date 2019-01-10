@@ -23,22 +23,29 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.common.Url;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
-import org.orcid.jaxb.model.v3.rc1.record.FundingType;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.exception.WrongSourceException;
+import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.Organization;
+import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Title;
+import org.orcid.jaxb.model.v3.rc2.common.Url;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
+import org.orcid.jaxb.model.v3.rc2.record.FundingType;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -50,6 +57,9 @@ public class ProfileFundingManagerTest extends BaseTest {
             "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml");
     
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
+    private static final String CLIENT_2_ID = "APP-5555555555555556";//obo
+    private static final String CLIENT_3_ID = "4444-4444-4444-4498";//obo
+
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
     
@@ -58,6 +68,9 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
+    
+    @Resource(name = "orcidSecurityManagerV3")
+    OrcidSecurityManager orcidSecurityManager;
     
     @Resource(name = "profileFundingManagerV3")
     private ProfileFundingManager profileFundingManager;
@@ -72,11 +85,13 @@ public class ProfileFundingManagerTest extends BaseTest {
 
     @Before
     public void before() {
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", mockSourceManager);
     }
     
     @After
     public void after() {
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", sourceManager);
     }
     
@@ -89,7 +104,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void testAddFundingToUnclaimedRecordPreserveFundingVisibility() {
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Funding funding = getFunding(null);
         
         funding = profileFundingManager.createFunding(unclaimedOrcid, funding, true);
@@ -102,7 +117,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void testAddFundingToClaimedRecordPreserveUserDefaultVisibility() {
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         Funding funding = getFunding(null);
         
         funding = profileFundingManager.createFunding(claimedOrcid, funding, true);
@@ -115,7 +130,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void testAddMultipleModifiesIndexingStatus() {
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         Funding f1 = getFunding("F1");
         f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
         
@@ -142,7 +157,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         Funding f1 = getFunding("fromUI-1");
         f1 = profileFundingManager.createFunding(claimedOrcid, f1, false);
@@ -154,7 +169,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         Funding f1 = getFunding("fromAPI-1");
         f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
@@ -379,6 +394,14 @@ public class ProfileFundingManagerTest extends BaseTest {
     }
     
     @Test
+    public void testGetSummaryUrl(){
+        Funding f1 = profileFundingManager.getFunding("0000-0000-0000-0003",10l);
+        FundingSummary f2 = profileFundingManager.getSummary("0000-0000-0000-0003",10l);
+        assertEquals("http://testuri.org",f1.getUrl().getValue());
+        assertEquals(f1.getUrl(),f2.getUrl());
+    }
+    
+    @Test
     public void nonGroupableIdsGenerateEmptyIdsListTest() {
         FundingSummary s1 = getFundingSummary("Element 1", "ext-id-1", Visibility.PUBLIC);
         FundingSummary s2 = getFundingSummary("Element 2", "ext-id-2", Visibility.LIMITED);
@@ -428,6 +451,58 @@ public class ProfileFundingManagerTest extends BaseTest {
         assertTrue(foundEmptyGroup);
         assertTrue(found2);
         assertTrue(found3);
+    }
+    
+    @Test
+    public void testAssertionOriginUpdate() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        Funding f1 = getFunding("A1");
+        f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
+        f1 = profileFundingManager.getFunding(claimedOrcid, f1.getPutCode());
+        assertNotNull(f1);
+        
+        assertEquals(f1.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
+        assertEquals(f1.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        //assertEquals(f1.getSource().getSourceName().getContent(),"U. Test");
+        assertEquals(f1.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
+        assertEquals(f1.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
+        assertEquals(f1.getSource().getAssertionOriginName().getContent(),"Source Client 2");
+        
+        //make a duplicate
+        Funding f2 = getFunding("A1");
+        try {
+            f2 = profileFundingManager.createFunding(claimedOrcid, f2, true);
+            fail();
+        }catch(OrcidDuplicatedActivityException e) {
+            
+        }
+        
+        //make a duplicate as a different assertion origin
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        f2 = profileFundingManager.createFunding(claimedOrcid, f2, true);
+        
+        //wrong sources:
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            profileFundingManager.updateFunding(claimedOrcid, f1, true);
+            fail();
+        }catch(WrongSourceException e) {
+        }
+        
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
+            profileFundingManager.updateFunding(claimedOrcid, f1, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));  
+            profileFundingManager.updateFunding(claimedOrcid, f1, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
     }
     
     private FundingSummary getFundingSummary(String titleValue, String extIdValue, Visibility visibility) {

@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -443,6 +445,37 @@ public class NotificationDaoTest extends DBUnitTest {
 
         results = notificationDao.findNotificationsToSend(date2, orcid, recordOldEnough);
         assertEquals(0, results.size());
+        
+        // Test #7: Include them all now
+        emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.IMMEDIATELY);
+        emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.IMMEDIATELY);
+        emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.IMMEDIATELY);        
+ 
+        results = notificationDao.findNotificationsToSend(date1, orcid, recordOldEnough);
+        assertEquals(5, results.size());
+        assertEquals(Long.valueOf(1003), results.get(0).getId());
+        assertEquals("INSTITUTIONAL_CONNECTION", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1005), results.get(1).getId());
+        assertEquals("PERMISSION", results.get(1).getNotificationType());
+        assertEquals(Long.valueOf(1007), results.get(2).getId());
+        assertEquals("AMENDED", results.get(2).getNotificationType());
+        assertEquals(Long.valueOf(1009), results.get(3).getId());
+        assertEquals("CUSTOM", results.get(3).getNotificationType());
+        assertEquals(Long.valueOf(1011), results.get(4).getId());
+        assertEquals("ADMINISTRATIVE", results.get(4).getNotificationType());
+
+        results = notificationDao.findNotificationsToSend(date2, orcid, recordOldEnough);
+        assertEquals(5, results.size());
+        assertEquals(Long.valueOf(1003), results.get(0).getId());
+        assertEquals("INSTITUTIONAL_CONNECTION", results.get(0).getNotificationType());
+        assertEquals(Long.valueOf(1005), results.get(1).getId());
+        assertEquals("PERMISSION", results.get(1).getNotificationType());
+        assertEquals(Long.valueOf(1007), results.get(2).getId());
+        assertEquals("AMENDED", results.get(2).getNotificationType());
+        assertEquals(Long.valueOf(1009), results.get(3).getId());
+        assertEquals("CUSTOM", results.get(3).getNotificationType());
+        assertEquals(Long.valueOf(1011), results.get(4).getId());
+        assertEquals("ADMINISTRATIVE", results.get(4).getNotificationType());        
     }
 
     @Test
@@ -489,5 +522,58 @@ public class NotificationDaoTest extends DBUnitTest {
         emailFrequencyDao.updateSendQuarterlyTips(orcid, false);
         results = notificationDao.findUnsentTips(100);
         assertEquals(0, results.size());
+    }
+    
+    @Test
+    public void archiveOffsetNotificationsTest() throws Exception {
+        String orcid = "0000-0000-0000-0003";
+        Integer unread = notificationDao.getUnreadCount(orcid);
+        assertEquals(Integer.valueOf(14), unread);
+        Integer archived = notificationDao.archiveOffsetNotifications(3);
+        // It will archive 15 notifications:
+        // 11 from 0000-0000-0000-0003
+        // 3 from 4444-4444-4444-4441
+        // 1 from 
+        assertEquals(Integer.valueOf(15), archived);
+        List<NotificationEntity> notifications = notificationDao.findByOrcid(orcid, false, 0, 100);
+        assertEquals(3, notifications.size());
+        assertEquals(Long.valueOf(1013), notifications.get(0).getId());
+        assertEquals(Long.valueOf(1011), notifications.get(1).getId());
+        assertEquals(Long.valueOf(1009), notifications.get(2).getId());
+    }  
+    
+    @Test
+    public void findNotificationsToDeleteByOffsetTest() {
+        List<Object[]> toDelete = notificationDao.findNotificationsToDeleteByOffset(3, 10);
+        assertEquals(15, toDelete.size());
+        boolean found1 = false, found2 = false, found3 = false;
+        int count1 = 0;
+        int count2 = 0;
+        int count3 = 0;
+        
+        for(Object [] o : toDelete) {
+            BigInteger id = (BigInteger) o[0];
+            String orcid = (String) o[1];
+            
+            if("0000-0000-0000-0003".equals(orcid)) {
+                found1 = true;
+                count1++;
+            } else if("4444-4444-4444-4441".equals(orcid)) {
+                found2 = true;
+                count2++;
+            } else if("4444-4444-4444-4442".equals(orcid)) {
+                found3 = true;
+                count3++;
+            } else {
+                fail("Invalid orcid found: " + orcid + " " + id.toString());
+            }
+        }
+        
+        assertTrue(found1);
+        assertEquals(11, count1);
+        assertTrue(found2);
+        assertEquals(3, count2);
+        assertTrue(found3);
+        assertEquals(1, count3);        
     }
 }

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 
 import org.junit.Test;
-import org.orcid.utils.DateUtils;
+import org.orcid.model.utils.DateUtils;
 
 public class LastModifiedDateTest {
 

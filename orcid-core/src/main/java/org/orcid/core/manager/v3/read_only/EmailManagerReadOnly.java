@@ -3,8 +3,8 @@ package org.orcid.core.manager.v3.read_only;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 /**
@@ -32,11 +32,9 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     
     boolean isPrimaryEmail(String orcid, String email);
     
-    EmailEntity findCaseInsensitive(String email);
-    
     EmailEntity find(String email);
     
     Email findPrimaryEmail(String orcid);
 
-    boolean isPrimaryEmail(String email);
+    boolean isPrimaryEmail(String email); 
 }

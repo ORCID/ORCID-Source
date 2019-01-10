@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -32,8 +33,24 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, String visibility);
+    boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationIds, String visibility);
 
+    /**
+     * Updates the visibility of multiple existing profile affiliation relationships
+     * 
+     * @param clientOrcid
+     *            The client orcid
+     * 
+     * @param orgAffiliationRelationIds
+     *            List of ids of orgAffiliationRelations that will be updated
+     * 
+     * @param visibility
+     *            The new visibility value for the profile affiliation relationships
+     * 
+     * @return true if each relationship was updated
+     * */
+    boolean updateVisibilitiesOnOrgAffiliationRelation(String userOrcid, ArrayList<Long> orgAffiliationRelationIds, String visibility);
+    
     /**
      * Get the affiliation associated with the client orcid and the orgAffiliationRelationId
      * 
@@ -114,4 +131,24 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
     List<OrgAffiliationRelationEntity> getQualificationSummaries(String orcid, long lastModified);
     
     List<OrgAffiliationRelationEntity> getServiceSummaries(String orcid, long lastModified);
+    
+    /**
+     * Updates the display index of a given affiliation
+     * 
+     * @param orcid
+     *            The affiliation owner
+     * @param putCode
+     *            The affiliation id
+     * @return true if it was able to update the display index
+     * */
+    Boolean updateToMaxDisplay(String orcid, Long putCode);
+    
+    /**
+     * Checks if there is any public affiliation for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public affiliation for a specific user
+     * */
+    Boolean hasPublicAffiliations(String orcid);
 }

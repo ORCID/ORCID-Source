@@ -18,9 +18,11 @@ import org.orcid.core.manager.v3.read_only.impl.AddressManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Address;
-import org.orcid.jaxb.model.v3.rc1.record.Addresses;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.Addresses;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -40,27 +42,26 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     @Override
     @Transactional
     public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility());
         
         //Save the original source
-        String existingSourceId = updatedEntity.getSourceId();
-        String existingClientSourceId = updatedEntity.getClientSourceId();
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity);
         
         //If it is an update from the API, check the source and preserve the original visibility
         if(isApiRequest) {
-            orcidSecurityManager.checkSource(updatedEntity);            
+            orcidSecurityManager.checkSourceAndThrow(updatedEntity);            
         }
         
         // Validate the address
-        PersonValidator.validateAddress(address, sourceEntity, false, isApiRequest, originalVisibility);
+        PersonValidator.validateAddress(address, activeSource, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
         List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         for (AddressEntity existing : existingAddresses) {
             //If it is not the same element
             if(!existing.getId().equals(address.getPutCode())) {
-                if (isDuplicated(existing, address, sourceEntity)) {
+                if (isDuplicated(existing, address, activeSource)) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("type", "address");
                     params.put("value", address.getCountry().getValue().value());
@@ -73,8 +74,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         updatedEntity.setLastModified(new Date());        
 
         //Be sure it doesn't overwrite the source
-        updatedEntity.setSourceId(existingSourceId);
-        updatedEntity.setClientSourceId(existingClientSourceId);                
+        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
         
         addressDao.merge(updatedEntity);
         return adapter.toAddress(updatedEntity);
@@ -82,13 +82,13 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     
     @Override    
     public Address createAddress(String orcid, Address address, boolean isApiRequest) { 
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the address
-        PersonValidator.validateAddress(address, sourceEntity, true, isApiRequest, null);
+        PersonValidator.validateAddress(address, activeSource, true, isApiRequest, null);
         // Validate it is not duplicated
         List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         for (AddressEntity existing : existingAddresses) {
-            if (isDuplicated(existing, address, sourceEntity)) {
+            if (isDuplicated(existing, address, activeSource)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "address");
                 params.put("value", address.getCountry().getValue().value());
@@ -101,13 +101,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
         
-        //Set the source
-        if(sourceEntity.getSourceProfile() != null) {
-            newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-        if(sourceEntity.getSourceClient() != null) {
-            newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        }        
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
         
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         setIncomingPrivacy(newEntity, profile);
@@ -119,7 +113,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     @Transactional
     public boolean deleteAddress(String orcid, Long putCode) {
         AddressEntity entity = addressDao.getAddress(orcid, putCode);
-        orcidSecurityManager.checkSource(entity);
+        orcidSecurityManager.checkSourceAndThrow(entity);
 
         try {
             addressDao.remove(entity);
@@ -129,11 +123,12 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         return true;
     }
 
-    private boolean isDuplicated(AddressEntity existing, Address address, SourceEntity source) {
+    private boolean isDuplicated(AddressEntity existing, Address address, Source activeSource) {
         if (!existing.getId().equals(address.getPutCode())) {
             //If they have the same source 
             String existingSourceId = existing.getElementSourceId(); 
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
+                //TODO: Not sure this works!  String vs Iso3166Country enum 
                 if(existing.getIso2Country().equals(address.getCountry().getValue())) {
                     return true;
                 }
@@ -191,18 +186,12 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                 } else {
                     //Add the new ones
                     AddressEntity newAddress = adapter.toAddressEntity(updatedOrNew);
-                    SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                    Source activeSource = sourceManager.retrieveActiveSource();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newAddress.setUser(profile);
                     newAddress.setDateCreated(new Date());
                     
-                    //Set the source id
-                    if(sourceEntity.getSourceProfile() != null) {
-                        newAddress.setSourceId(sourceEntity.getSourceProfile().getId());
-                    }
-                    if(sourceEntity.getSourceClient() != null) {
-                        newAddress.setClientSourceId(sourceEntity.getSourceClient().getId());
-                    }
+                    SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newAddress);
                                                             
                     newAddress.setVisibility(updatedOrNew.getVisibility().name());
                     newAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());

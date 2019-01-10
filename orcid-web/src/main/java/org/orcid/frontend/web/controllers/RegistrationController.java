@@ -18,13 +18,14 @@ import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
@@ -36,7 +37,7 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
@@ -117,14 +118,17 @@ public class RegistrationController extends BaseController {
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;   
-    
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -306,7 +310,7 @@ public class RegistrationController extends BaseController {
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
         
-        regEmailsAdditionalValidate(request, reg, false, false);
+        additionalEmailsValidateOnRegister(request, reg);
         for(Text emailAdditional : reg.getEmailsAdditional()) {
             if(!PojoUtil.isEmpty(emailAdditional)){
                 copyErrors(emailAdditional, reg);
@@ -351,7 +355,8 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerEmailsAdditionalValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailAdditionalValidate(HttpServletRequest request, @RequestBody Registration reg) {
-        return regEmailsAdditionalValidate(request, reg, false, false);
+        additionalEmailsValidateOnRegister(request, reg);
+        return reg;
     }
     
     public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
@@ -403,64 +408,6 @@ public class RegistrationController extends BaseController {
         return reg;
     }
     
-    public Registration regEmailsAdditionalValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {    
-        if (reg.getEmailsAdditional().size() == 1 && PojoUtil.isEmpty(reg.getEmailsAdditional().get(0)))  {
-            reg.getEmailsAdditional().get(0).setErrors(new ArrayList<String>()); 
-            return reg;     
-        } else {
-            List<Text> emailsAdditionalList = new ArrayList<Text>();
-            for(Text emailAdditional : reg.getEmailsAdditional()) {
-                emailAdditional.setErrors(new ArrayList<String>()); 
-                if(!PojoUtil.isEmpty(emailAdditional)){
-                                              
-                    String emailAddressAdditional = emailAdditional.getValue();
-            
-                    // Validate the email address is ok        
-                    if(!validateEmailAddress(emailAddressAdditional)) {
-                        emailAdditional.getErrors().add(getMessage("Email.personalInfoForm.email", emailAddressAdditional));
-                    } else if(emailAddressAdditional.equalsIgnoreCase(reg.getEmail().getValue())){
-                        emailAdditional.getErrors().add(getMessage("Email.personalInfoForm.additionalEmailCannotMatchPrimary"));
-                    } else if (duplicateAdditionalEmails(reg, emailAddressAdditional)){
-                        emailAdditional.getErrors().add(getMessage("Email.personalInfoForm.additionalEmailCannotMatchAdditional"));
-                    } else if(emailManager.emailExists(emailAddressAdditional)) {
-                        String orcid = emailManager.findOrcidIdByEmail(emailAddressAdditional);
-                        
-                        //If it is claimed, should return a duplicated exception
-                        if(profileEntityManager.isDeactivated(orcid)) {
-                            emailAdditional.getErrors().add("orcid.frontend.verify.deactivated_email");
-                        } else if(profileEntityManager.isProfileClaimedByEmail(emailAddressAdditional)) {                                                                        
-                            emailAdditional.getErrors().add("orcid.frontend.verify.duplicate_email");
-                        } else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddressAdditional)) {
-                            //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
-                            String resendUrl = createResendClaimUrl(emailAddressAdditional, request);
-                            String message = getVerifyUnclaimedMessage(emailAddressAdditional, resendUrl);
-                            emailAdditional.getErrors().add(message);                                    
-                        } else {
-                            LOGGER.info("Email " + emailAddressAdditional + " belongs to a unclaimed record and can be auto deprecated");
-                        }
-                    }               
-                    emailsAdditionalList.add(emailAdditional);
-                }           
-            }
-            reg.setEmailsAdditional(emailsAdditionalList);
-            return reg;
-        }
-    }
-    
-    public boolean duplicateAdditionalEmails(Registration reg, String emailAddressAdditional) {
-        int count = 0;
-        for(Text emailCheckAdditional : reg.getEmailsAdditional()){
-            if(emailAddressAdditional.equalsIgnoreCase(emailCheckAdditional.getValue())){
-                count++;
-            }
-        }
-        if(count > 1){
-            return true;
-        } else {
-            return false;
-        }
-    }
-        
     @RequestMapping(value = "/registerEmailConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailConfirmValidate(@RequestBody Registration reg) {
         reg.getEmailConfirm().setErrors(new ArrayList<String>());
@@ -517,34 +464,49 @@ public class RegistrationController extends BaseController {
     }            
 
     @RequestMapping(value = "/verify-email/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView verifyEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
-            throws UnsupportedEncodingException {
-        try {
-            String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));            
+    public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
+            throws UnsupportedEncodingException {                
+        if(PojoUtil.isEmpty(encryptedEmail) || !Base64.isBase64(encryptedEmail)) {
+            LOGGER.error("Error decypting verify email from the verify email link: {} ", encryptedEmail);
+            redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
+            return new ModelAndView("redirect:/signin");
+        }
+        String redirect = "redirect:/signin";
+        try {            
+            String toDecrypt = new String(Base64.decodeBase64(encryptedEmail), "UTF-8");
+            String decryptedEmail = encryptionManager.decryptForExternalUse(toDecrypt);            
             if(emailManagerReadOnly.emailExists(decryptedEmail)) {
                 String orcid = emailManagerReadOnly.findOrcidIdByEmail(decryptedEmail);
-                if(!getCurrentUserOrcid().equals(orcid)) {
+                String currentUser = getCurrentUserOrcid();
+                if(currentUser != null && !currentUser.equals(orcid)) {
                     return new ModelAndView("wrong_user");
                 }
                 
                 boolean verified = emailManager.verifyEmail(decryptedEmail, orcid);
-                if(verified) {
-                    profileEntityManager.updateLocale(decryptedEmail, org.orcid.jaxb.model.v3.rc1.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+                if(verified) {                    
+                    profileEntityManager.updateLocale(decryptedEmail, org.orcid.jaxb.model.v3.rc2.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
+                    redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
+                    
                     if(!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
                             redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
                         }
-                    }
+                    }                   
                 } else {
-                    redirectAttributes.addFlashAttribute("emailVerified", false);                    
+                    redirectAttributes.addFlashAttribute("emailVerified", false);
+                }
+                
+                if(currentUser != null && currentUser.equals(orcid)) {
+                    redirect = "redirect:/my-orcid";
                 }
             }            
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
+            SecurityContextHolder.clearContext();
         }
-        return new ModelAndView("redirect:/my-orcid");
+        return new ModelAndView(redirect);
     }
 
     private List<OrcidProfile> findPotentialDuplicatesByFirstNameLastName(String firstName, String lastName) {

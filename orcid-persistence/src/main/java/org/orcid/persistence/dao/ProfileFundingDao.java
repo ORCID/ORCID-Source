@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -45,6 +46,22 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * @return true if the relationship was updated
      * */
     boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, String visibility);
+    
+    /**
+     * Updates the visibility of multiple existing profile funding relationships
+     * 
+     * @param clientOrcid
+     *            The client orcid
+     * 
+     * @param profileFundingIds
+     *            The ids of the profile fundings that will be updated
+     * 
+     * @param visibility
+     *            The new visibility value for the profile profileFunding object
+     * 
+     * @return true if the relationships were updated
+     * */
+    boolean updateProfileFundingVisibilities(String clientOrcid, ArrayList<Long> profileFundingIds, String visibility);
 
     /**
      * Creates a new profile funding relationship between an organization and a
@@ -123,4 +140,13 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *            removed.
      */
     void removeAllFunding(String orcid);
+
+    /**
+     * Checks if there is any public funding for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public funding for a specific user
+     * */
+    Boolean hasPublicFunding(String orcid);
 }

@@ -1,15 +1,17 @@
 package org.orcid.integration.blackbox.web;
 
 import static org.junit.Assert.assertEquals;
-import static org.orcid.integration.blackbox.api.BBBUtil.executeJavaScript;
+import static org.junit.Assert.assertFalse;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
+import static org.orcid.integration.blackbox.api.BBBUtil.findElementsByXpath;
+
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.orcid.core.togglz.Features;
 import org.orcid.integration.blackbox.api.BBBUtil;
@@ -40,18 +42,17 @@ public class RegisterTest extends BlackBoxBase {
     public void testActivitiesVisibilityOnSigninPage() {
         webDriver.get(baseUri + "/signin");
         webDriver.findElement(By.id("switch-to-register-form")).click();
-        
-        By element = By.xpath("//div[@class='visibilityDefault']");
-        WebElement we = findElement(element);
-        assertEquals(null, executeJavaScript("return angular.element(arguments[0]).scope().registrationForm.activitiesVisibilityDefault.visibility", we));
+        List<WebElement> defaultVisibility = findElementsByXpath("//input[@name='defaultVisibility']");
+        assertEquals(3, defaultVisibility.size());
+        defaultVisibility.forEach(e -> assertFalse(e.isSelected()));
     }
 
     @Test
     public void testActivitiesVisibilityOnRegisterPage() {
         webDriver.get(baseUri + "/register");
-        By element = By.xpath("//div[@class='visibilityDefault']");
-        WebElement we = findElement(element);
-        assertEquals(null, executeJavaScript("return angular.element(arguments[0]).scope().registrationForm.activitiesVisibilityDefault.visibility", we));
+        List<WebElement> defaultVisibility = findElementsByXpath("//input[@name='defaultVisibility']");
+        assertEquals(3, defaultVisibility.size());
+        defaultVisibility.forEach(e -> assertFalse(e.isSelected()));
     }
 
     @Test
@@ -64,8 +65,9 @@ public class RegisterTest extends BlackBoxBase {
         findElement(By.id("register-form-password")).sendKeys("password123");
         findElement(By.id("register-form-confirm-password")).sendKeys("password123");
 
-        ((JavascriptExecutor) webDriver).executeScript("angular.element('[ng-controller=OauthAuthorizationController]').scope().registrationForm.activitiesVisibilityDefault.visibility=null;");
-        assertEquals(null, ((JavascriptExecutor) webDriver).executeScript("return angular.element('[ng-controller=OauthAuthorizationController]').scope().registrationForm.activitiesVisibilityDefault.visibility"));
+        List<WebElement> defaultVisibility = findElementsByXpath("//input[@name='defaultVisibility']");
+        assertEquals(3, defaultVisibility.size());
+        defaultVisibility.forEach(e -> assertFalse(e.isSelected()));
         
         findElement(By.id("register-form-term-box")).click();
         findElement(By.id("register-authorize-button")).click();
@@ -85,8 +87,8 @@ public class RegisterTest extends BlackBoxBase {
         findElement(By.id("register-form-password")).sendKeys("password123");
         findElement(By.id("register-form-confirm-password")).sendKeys("password123");
 
-        ((JavascriptExecutor) webDriver).executeScript("angular.element('[ng-controller=OauthAuthorizationController]').scope().registrationForm.activitiesVisibilityDefault.visibility=null;");
-        assertEquals(null, ((JavascriptExecutor) webDriver).executeScript("return angular.element('[ng-controller=OauthAuthorizationController]').scope().registrationForm.activitiesVisibilityDefault.visibility"));
+        List<WebElement> defaultVisibility = findElementsByXpath("//input[@name='defaultVisibility']");
+        defaultVisibility.forEach(e -> assertFalse(e.isSelected()));
         
         findElement(By.id("register-form-term-box")).click();
         findElement(By.id("register-authorize-button")).click();

@@ -10,9 +10,10 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.record.Email;
-import org.orcid.jaxb.model.v3.rc1.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -26,6 +27,9 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     @Resource(name = "jpaJaxbEmailAdapterV3")
     protected JpaJaxbEmailAdapter jpaJaxbEmailAdapter;
     
+    @Resource
+    private EncryptionManager encryptionManager;
+    
     protected EmailDao emailDao;
     
     public void setEmailDao(EmailDao emailDao) {
@@ -34,12 +38,12 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public boolean emailExists(String email) {
-        return emailDao.emailExists(email);
+        return emailDao.emailExists(encryptionManager.getEmailHash(email));        
     }
 
     @Override
     public String findOrcidIdByEmail(String email) {
-        return emailDao.findOrcidIdByCaseInsenitiveEmail(email);
+        return emailDao.findOrcidIdByEmailHash(encryptionManager.getEmailHash(email));        
     }
     
     @Override
@@ -105,7 +109,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     private Emails toEmails(List<EmailEntity> entities) {
-        List<org.orcid.jaxb.model.v3.rc1.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+        List<org.orcid.jaxb.model.v3.rc2.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
         Emails emails = new Emails();
         emails.setEmails(emailList);        
         return emails;
@@ -122,16 +126,11 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             }
         }
         return false;
-    }     
-    
-    @Override
-    public EmailEntity findCaseInsensitive(String email) {
-        return emailDao.findCaseInsensitive(email);
     }
 
     @Override
     public EmailEntity find(String email) {
-        return emailDao.find(email);
+        return emailDao.find(encryptionManager.getEmailHash(email));
     }
 
     @Override
@@ -140,5 +139,5 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             return null;
         }
         return jpaJaxbEmailAdapter.toEmail(emailDao.findPrimaryEmail(orcid));
-    }
+    }      
 }

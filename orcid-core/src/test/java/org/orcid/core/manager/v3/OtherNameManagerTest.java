@@ -13,16 +13,21 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.OtherName;
-import org.orcid.jaxb.model.v3.rc1.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -32,12 +37,21 @@ public class OtherNameManagerTest extends BaseTest {
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
     
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
+    private static final String CLIENT_2_ID = "APP-5555555555555556";//obo
+    private static final String CLIENT_3_ID = "4444-4444-4444-4498";//obo
+
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
     
     @Mock
+    private SourceManager mockSourceManager;
+    
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
     
+    @Resource(name = "orcidSecurityManagerV3")
+    OrcidSecurityManager orcidSecurityManager;
+
     @Resource(name = "otherNameManagerV3")
     private OtherNameManager otherNameManager;
     
@@ -48,7 +62,14 @@ public class OtherNameManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(otherNameManager, "sourceManager", sourceManager); 
+        TargetProxyHelper.injectIntoProxy(otherNameManager, "sourceManager", mockSourceManager); 
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);        
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(otherNameManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
     }
     
     @AfterClass
@@ -60,7 +81,7 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void testAddOtherNameToUnclaimedRecordPreserveOtherNameVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         OtherName otherName = getOtherName();
         
         otherName = otherNameManager.createOtherName(unclaimedOrcid, otherName, true);
@@ -72,7 +93,7 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void testAddOtherNameToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         OtherName otherName = getOtherName();
         
         otherName = otherNameManager.createOtherName(claimedOrcid, otherName, true);
@@ -84,7 +105,7 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromUI");
         
@@ -97,7 +118,7 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromAPI");
         
@@ -146,6 +167,58 @@ public class OtherNameManagerTest extends BaseTest {
         assertNotNull(elements.getOtherNames());
         assertEquals(1, elements.getOtherNames().size());
         assertEquals(Long.valueOf(13), elements.getOtherNames().get(0).getPutCode());
+    }
+    
+    @Test
+    public void testAssertionOriginUpdate() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        OtherName otherName = getOtherName();        
+        otherName = otherNameManager.createOtherName(unclaimedOrcid, otherName, true);
+        otherName = otherNameManager.getOtherName(unclaimedOrcid, otherName.getPutCode());
+        assertNotNull(otherName);
+        assertEquals(Visibility.PUBLIC, otherName.getVisibility());        
+        
+        assertEquals(otherName.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
+        assertEquals(otherName.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(otherName.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
+        assertEquals(otherName.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
+        
+        //make a duplicate
+        OtherName otherName2 = getOtherName();
+        try {
+            otherName2 = otherNameManager.createOtherName(unclaimedOrcid, otherName2, true);
+            fail();
+        }catch(OrcidDuplicatedElementException e) {
+            
+        }
+        
+        //make a duplicate as a different assertion origin
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        otherName2 = otherNameManager.createOtherName(unclaimedOrcid, otherName2, true);
+        
+        //wrong sources:
+        otherName.setContent("x");
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            otherName = otherNameManager.updateOtherName(unclaimedOrcid, otherName.getPutCode(), otherName, true);
+            fail();
+        }catch(WrongSourceException e) {
+        }
+        
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));  
+            otherName = otherNameManager.updateOtherName(unclaimedOrcid, otherName.getPutCode(), otherName, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));  
+            otherName = otherNameManager.updateOtherName(unclaimedOrcid, otherName.getPutCode(), otherName, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
     }
     
     private OtherName getOtherName() {

@@ -10,43 +10,50 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.v3.rc1.common.Day;
-import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.Month;
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.common.Year;
-import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc1.record.Membership;
-import org.orcid.jaxb.model.v3.rc1.record.Qualification;
-import org.orcid.jaxb.model.v3.rc1.record.Service;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
+import org.orcid.core.exception.WrongSourceException;
+import org.orcid.jaxb.model.v3.rc2.common.Country;
+import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.Month;
+import org.orcid.jaxb.model.v3.rc2.common.Organization;
+import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Year;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc2.record.Membership;
+import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.Service;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -56,12 +63,20 @@ public class AffiliationsManagerTest extends BaseTest {
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/RecordNameEntityData.xml");
     
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
+    private static final String CLIENT_2_ID = "APP-5555555555555555";//for obo
+    private static final String CLIENT_3_ID = "APP-5555555555555556";//for obo
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
     
     @Mock
+    private SourceManager mockSourceManager;
+        
+    @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
-    
+
+    @Resource(name = "orcidSecurityManagerV3")
+    OrcidSecurityManager orcidSecurityManager;
+
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
     
@@ -72,8 +87,16 @@ public class AffiliationsManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", mockSourceManager);  
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);        
     }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
+    }
+  
     
     @AfterClass
     public static void removeDBUnitData() throws Exception {
@@ -84,7 +107,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddDistinctionToUnclaimedRecordPreserveDistinctionVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Distinction element = getDistinction();
         element = affiliationsManager.createDistinctionAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getDistinctionAffiliation(unclaimedOrcid, element.getPutCode());
@@ -95,7 +118,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEducationToUnclaimedRecordPreserveEducationVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Education element = getEducation();
         element = affiliationsManager.createEducationAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getEducationAffiliation(unclaimedOrcid, element.getPutCode());
@@ -106,7 +129,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEmploymentToUnclaimedRecordPreserveEmploymentVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         
         Employment element = getEmployment();
         element = affiliationsManager.createEmploymentAffiliation(unclaimedOrcid, element, true);
@@ -118,7 +141,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddInvitedPositionToUnclaimedRecordPreserveInvitedPositionVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         InvitedPosition element = getInvitedPosition();
         element = affiliationsManager.createInvitedPositionAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getInvitedPositionAffiliation(unclaimedOrcid, element.getPutCode());
@@ -129,7 +152,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddMembershipToUnclaimedRecordPreserveMembershipVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Membership element = getMembership();
         element = affiliationsManager.createMembershipAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getMembershipAffiliation(unclaimedOrcid, element.getPutCode());
@@ -140,7 +163,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddQualificationToUnclaimedRecordPreserveQualificationVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Qualification element = getQualification();
         element = affiliationsManager.createQualificationAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getQualificationAffiliation(unclaimedOrcid, element.getPutCode());
@@ -151,7 +174,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddServiceToUnclaimedRecordPreserveServiceVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));   
         Service element = getService();
         element = affiliationsManager.createServiceAffiliation(unclaimedOrcid, element, true);
         element = affiliationsManager.getServiceAffiliation(unclaimedOrcid, element.getPutCode());
@@ -162,7 +185,8 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddDistinctionToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID)); 
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Distinction element = getDistinction();
         element = affiliationsManager.createDistinctionAffiliation(claimedOrcid, element, true);
         element = affiliationsManager.getDistinctionAffiliation(claimedOrcid, element.getPutCode());
@@ -173,7 +197,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEducationToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
         Education element = getEducation();
         element = affiliationsManager.createEducationAffiliation(claimedOrcid, element, true);
         element = affiliationsManager.getEducationAffiliation(claimedOrcid, element.getPutCode());
@@ -184,7 +208,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddEmploymentToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Employment element = getEmployment();
         element = affiliationsManager.createEmploymentAffiliation(claimedOrcid, element, true);
@@ -196,7 +220,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddInvitedPositionToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         InvitedPosition element = getInvitedPosition();
         element = affiliationsManager.createInvitedPositionAffiliation(claimedOrcid, element, true);
@@ -208,7 +232,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddMembershipToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Membership element = getMembership();
         element = affiliationsManager.createMembershipAffiliation(claimedOrcid, element, true);
@@ -220,7 +244,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddQualificationToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Qualification element = getQualification();
         element = affiliationsManager.createQualificationAffiliation(claimedOrcid, element, true);
@@ -232,7 +256,7 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Test
     public void testAddServiceToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));        
 
         Service element = getService();
         element = affiliationsManager.createServiceAffiliation(claimedOrcid, element, true);
@@ -605,6 +629,297 @@ public class AffiliationsManagerTest extends BaseTest {
         
         assertEquals(5, group1.getActivities().size());
         assertEquals(5, group2.getActivities().size());
+    }
+    
+    @Test
+    public void testGetGroupedAffiliations() {
+        String orcid = "0000-0000-0000-0003";
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> map = affiliationsManager.getGroupedAffiliations(orcid, false);
+        assertNotNull(map);
+        
+        // Check distinctions
+        assertTrue(map.containsKey(AffiliationType.DISTINCTION));
+        List<AffiliationGroup<AffiliationSummary>> groups = map.get(AffiliationType.DISTINCTION);
+        assertNotNull(groups);
+        assertEquals(map.toString(), 4, groups.size());
+        
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(30L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(27), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(28L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(29L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(31L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+            
+        // Check educations
+        assertTrue(map.containsKey(AffiliationType.EDUCATION));
+        groups = map.get(AffiliationType.EDUCATION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(25L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(20), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(21L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(22L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(26L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
+        // Check employments
+        assertTrue(map.containsKey(AffiliationType.EMPLOYMENT));
+        groups = map.get(AffiliationType.EMPLOYMENT);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(23L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(17), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(18L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(19L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(24L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
+        // Check invited positions
+        assertTrue(map.containsKey(AffiliationType.INVITED_POSITION));
+        groups = map.get(AffiliationType.INVITED_POSITION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(35L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(32), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(33L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(34L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(36L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
+        // Check memberships
+        assertTrue(map.containsKey(AffiliationType.MEMBERSHIP));
+        groups = map.get(AffiliationType.MEMBERSHIP);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(40L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(37), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(38L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(39L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(41L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;        
+        
+        // Check qualifications
+        assertTrue(map.containsKey(AffiliationType.QUALIFICATION));
+        groups = map.get(AffiliationType.QUALIFICATION);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(45L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(42), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(43L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(44L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(46L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+        
+        // Check services
+        assertTrue(map.containsKey(AffiliationType.SERVICE));
+        groups = map.get(AffiliationType.SERVICE);
+        assertNotNull(groups);
+        assertEquals(4, groups.size());
+        
+        for(AffiliationGroup<AffiliationSummary> g : groups) {
+            AffiliationSummary element0 = g.getActivities().get(0);
+            Long putCode = element0.getPutCode();
+            if(putCode.equals(50L)) {
+                assertEquals(2, g.getActivities().size());
+                assertEquals(Long.valueOf(47), g.getActivities().get(1).getPutCode());
+                found1 = true;
+            } else if(putCode.equals(48L)) {
+                assertEquals(1, g.getActivities().size());
+                found2 = true;
+            } else if(putCode.equals(49L)) {
+                assertEquals(1, g.getActivities().size());
+                found3 = true;
+            } else if(putCode.equals(51L)) {
+                assertEquals(1, g.getActivities().size());
+                found4 = true;
+            } else {
+                fail("Invalid put code found:  " + putCode);
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        
+        found1 = found2 = found3 = found4 = false;
+    }
+    
+    /** Test create, update with valid source
+     * Test update with invlaid sources
+     * 
+     */
+    @Test
+    public void testAssertionOriginUpdate() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        
+        Service element = getService();
+        element = affiliationsManager.createServiceAffiliation(claimedOrcid, element, true);
+        element = affiliationsManager.getServiceAffiliation(claimedOrcid, element.getPutCode());
+        element.setDepartmentName("xxx");
+        element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
+        
+        assertNotNull(element);
+        assertEquals(Visibility.LIMITED, element.getVisibility());
+        Source s = element.getSource();
+        assertEquals(s.getSourceOrcid().getPath(),CLIENT_1_ID);
+        assertEquals(s.getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(s.getAssertionOriginClientId().getPath(),CLIENT_2_ID);
+        assertEquals(s.getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
+
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
+            fail();
+        }catch(WrongSourceException e) {
+        }
+        
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
+            element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));                
+            element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
+            fail();
+        }catch(WrongSourceException e) {
+            
+        }
     }
     
     private ExternalID getExternalID(String type, String value) {

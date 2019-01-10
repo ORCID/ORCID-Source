@@ -53,11 +53,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     showEdit: any;
     showElement: any;
     showEditEmail: boolean;
+    emailCurrentLabel: string;
+    emailPastLabel: string;
     emailsEditText: string;
     showUnverifiedEmailSetPrimaryBox: boolean;
     primaryEmail: string;
     verifyEmailObject: any;
     showEmailVerifBox: boolean;
+    showEmailVerifBoxNewsTips: boolean;
     isPassConfReq: any;
     baseUri: any;
     curPrivToggle: any; 
@@ -81,8 +84,11 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         private prefsSrvc: PreferencesService,
         private emailFrequencyService: EmailFrequencyService
     ) {
+        this.emailCurrentLabel = om.get("manage.email.current");
+        this.emailPastLabel = om.get("manage.email.past");
         this.verifyEmailObject = {};
         this.showEmailVerifBox = false;
+        this.showEmailVerifBoxNewsTips = false;
         this.baseUri = orcidVar.baseUri;
         this.curPrivToggle = null;
         this.isPassConfReq = orcidVar.isPasswordConfirmationRequired;
@@ -115,16 +121,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement = {};
         this.showEditEmail = (window.location.hash === "#editEmail")
         this.emailsEditText = om.get("manage.edit.emails");
-        //this.popUp = true;
         this.showUnverifiedEmailSetPrimaryBox = false;
         this.primaryEmail = '';
         this.emailStatusOptions = [
             {
-                label:'Current',
+                label: this.emailCurrentLabel,
                 val:true
             },
             {
-                label:'Past',
+                label: this.emailPastLabel,
                 val:false
             }
         ];
@@ -435,11 +440,18 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.formData.visibility = null;
     }
 
-    closeVerificationBox(): void {
-        this.showEmailVerifBox = false;
+    closeVerificationBox(location?): void {
+        if(location){
+            if(location == "newsTips"){
+                this.showEmailVerifBoxNewsTips = false;
+
+            }
+        } else {
+            this.showEmailVerifBox = false;
+        }
     };
 
-    verifyEmail(email, popup): void {
+    verifyEmail(email, popup, location?): void {
 
         this.verifyEmailObject = email;
         
@@ -454,7 +466,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 ////console.log('setEmailsKnownAs', error);
             } 
         );
-        this.showEmailVerifBox = true;
+        if(location){
+            if(location == "newsTips"){
+                this.showEmailVerifBoxNewsTips = true;
+
+            }
+        } else {
+            this.showEmailVerifBox = true;
+        }
 
         if( !popup ){
             this.modalService.notifyOther(
@@ -491,7 +510,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getPrivacyPreferences();
         this.getformData();          
-        this.getEmailFrequencies();        
+        this.getEmailFrequencies(); 
+
+        //Subscribe to emailChange event and 
+        //update data when emails changed by another component
+        this.emailService.emailsChange.subscribe(emailListUpdated => {
+            if (emailListUpdated == true){
+                this.getformData(); 
+            }
+        });       
     };
 
 }

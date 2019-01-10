@@ -221,7 +221,7 @@
      <notification
          id="1001"
          orcid="0000-0000-0000-0003"
-         date_created="2018-02-01 00:00:00.00"
+         date_created="2018-02-01 00:00:01.00"
          notification_type="SERVICE_ANNOUNCEMENT"
          subject="1001 subject"
          body_text="1001 text"
@@ -248,7 +248,7 @@
      <notification
          id="1003"
          orcid="0000-0000-0000-0003"
-         date_created="2018-02-01 00:00:00.00"
+         date_created="2018-02-01 00:00:02.00"
          notification_type="INSTITUTIONAL_CONNECTION"
          subject="1003 subject"
          body_text="1003 text"
@@ -275,7 +275,7 @@
      <notification
          id="1005"
          orcid="0000-0000-0000-0003"
-         date_created="2018-02-01 00:00:00.00"
+         date_created="2018-02-01 00:00:03.00"
          notification_type="PERMISSION"
          subject="1005 subject"
          body_text="1005 text"
@@ -302,7 +302,7 @@
      <notification
          id="1007"
          orcid="0000-0000-0000-0003"
-         date_created="2018-02-01 00:00:00.00"
+         date_created="2018-02-01 00:00:04.00"
          notification_type="AMENDED"
          subject="1007 subject"
          body_text="1007 text"
@@ -329,7 +329,7 @@
      <notification
          id="1009"
          orcid="0000-0000-0000-0003"
-         date_created="2018-02-01 00:00:00.00"
+         date_created="2018-02-01 00:00:05.00"
          notification_type="CUSTOM"
          subject="1009 subject"
          body_text="1009 text"
@@ -356,7 +356,7 @@
      <notification
          id="1011"
          orcid="0000-0000-0000-0003"
-         date_created="2018-02-01 00:00:00.00"
+         date_created="2018-02-01 00:00:06.00"
          notification_type="ADMINISTRATIVE"
          subject="1011 subject"
          body_text="1011 text"
@@ -383,7 +383,7 @@
      <notification
          id="1013"
          orcid="0000-0000-0000-0003"
-         date_created="2018-02-01 00:00:00.00"
+         date_created="2018-02-01 00:00:07.00"
          notification_type="TIP"
          subject="1013 subject"
          body_text="1013 text"

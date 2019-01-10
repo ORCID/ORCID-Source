@@ -26,8 +26,8 @@ the software.
     <description>The parent ORCID pom that all sub-projects reside under</description>
 
     <properties>
-        <spring.version>4.3.5.RELEASE</spring.version>
-        <security.version>4.2.2.RELEASE</security.version>
+        <spring.version>4.3.18.RELEASE</spring.version>
+        <security.version>4.2.4.RELEASE</security.version>
         <jersey.version>1.19.1</jersey.version>
         <swagger.version>1.5.16</swagger.version>
         <solr.version>4.10.4</solr.version>
@@ -39,27 +39,26 @@ the software.
         <ajp.port>9438</ajp.port>
         <aws.version>1.11.32</aws.version>
         <main.basedir>${project.basedir}</main.basedir>
+        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
 
     <modules>
+        <module>orcid-test</module>
+        <module>orcid-model</module>
         <module>orcid-utils</module>
         <module>orcid-core</module>
         <module>orcid-web</module>
         <module>orcid-persistence</module>
-        <module>orcid-model</module>
         <module>orcid-api-common</module>
         <module>orcid-pub-web</module>
         <module>orcid-api-web</module>
         <module>orcid-scheduler-web</module>
-        <module>orcid-test</module>
         <module>orcid-solr-web</module>
         <module>orcid-integration-test</module>
-		<module>orcid-internal-api</module>
-		<module>orcid-activemq</module>
-		<module>orcid-message-listener</module>
-		<module>orcid-activities-indexer</module>
+        <module>orcid-internal-api</module>
+        <module>orcid-activemq</module>
+        <module>orcid-message-listener</module>
     </modules>
-
 
     <!-- Start -->
 
@@ -69,9 +68,9 @@ the software.
     </organization>
 
     <url>http://orcid.org</url>
-   
+
     <scm>
-        <connection>scm:git:ssh://git@github.com/ORCID/ORCID-Work-in-Progress.git</connection>        
+        <connection>scm:git:ssh://git@github.com/ORCID/ORCID-Work-in-Progress.git</connection>
         <developerConnection>scm:git:git://github.com/ORCID/ORCID-Work-in-Progress.git</developerConnection>
         <url>https://github.com/ORCID/ORCID-Work-in-Progress</url>
     </scm>
@@ -100,14 +99,14 @@ the software.
 
     <build>
         <plugins>
-	     <plugin>
-  		<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
-  		<artifactId>maven-java-formatter-plugin</artifactId>
-  		<version>0.3.1</version>
-  		<configuration>
-    		    <configFile>${main.basedir}/eclipse_formatter.xml</configFile>
-  		</configuration>
-	    </plugin>
+            <plugin>
+                <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+                <artifactId>maven-java-formatter-plugin</artifactId>
+                <version>0.3.1</version>
+                <configuration>
+                    <configFile>${main.basedir}/eclipse_formatter.xml</configFile>
+                </configuration>
+            </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-war-plugin</artifactId>
@@ -199,104 +198,10 @@ the software.
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>2.8</version>
                 </plugin>
-                <!-- plugin>
-                    <inherited>true</inherited>
-                    <groupId>com.mycila.maven-license-plugin</groupId>
-                    <artifactId>maven-license-plugin</artifactId>
-                    <version>1.9.0</version>
-                    <configuration>
-                        <header>${main.basedir}/SHORT_LICENSE.txt</header>
-                        <failIfMissing>true</failIfMissing>
-                        <aggregate>false</aggregate>
-                        <strictCheck>true</strictCheck>
-                        <mapping>
-                            <xjb>XML_STYLE</xjb>
-                        </mapping>
-                        <excludes>
-                        	<exclude>**/src/main/webapp/static/swagger/**</exclude>
-                        	<exclude>**/src/main/resources/data/AuditEventData.xml</exclude>
-                        	<exclude>**/src/main/resources/orcid-client-group-for-db-unit-data.xml</exclude>
-                        	<exclude>**/src/main/webapp/static/ORCID-Fonts-Dot-Com/**</exclude>
-                        	<exclude>**/src/main/webapp/static/font-awesome/**</exclude>
-                            <exclude>**/src/main/webapp/static/javascript/ng1Orcid/**</exclude>
-                            <exclude>**/src/main/webapp/static/javascript/angular_orcid_generated.js</exclude>
-                            <exclude>**/src/main/webapp/static/javascript/angular-recaptcha.min.js</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/plugins.js</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/modernizr.js</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/jquery/**</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/jqueryui/**</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/jquery-migrate/**</exclude>                        	
-                        	<exclude>**/src/main/webapp/static/javascript/angularjs/**</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/json3/**</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/typeahead/**</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/respond.*.js</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/shibboleth-embedded-ds/**</exclude>
-                        	<exclude>**/src/main/webapp/static/javascript/angular-ui/**</exclude>
-                        	<exclude>**/src/main/webapp/static/fonts/glyphicons*</exclude>
-                        	<exclude>**/.externalToolBuilders/**</exclude>
-                        	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
-                        	<exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
-                            <exclude>**/src/main/webapp/static/css/noto-sans-googlefonts.css</exclude>
-                        	<exclude>**/src/main/webapp/static/twitter-bootstrap/**</exclude>
-                        	<exclude>**/src/main/webapp/static/html/respond-proxy.html</exclude>
-                            <exclude>**/src/main/java/org/orcid/core/cli/TransformFundRefDataIntoCSV.java</exclude>
-                            <exclude>**/src/main/webapp/solr/**/*.txt</exclude>
-                            <exclude>**/src/main/webapp/solr/**/*.xml</exclude>
-                            <exclude>**/src/main/resources/cdn_url.txt</exclude>
-                            <exclude>**/src/main/resources/record**/samples/**</exclude>
-                            <exclude>**/src/main/resources/common**/samples/**</exclude>
-                            <exclude>**/src/main/resources/ehcache_*.xml</exclude>
-                            <exclude>**/src/main/resources/ehcache.xsd</exclude>
-                            <exclude>**/src/main/resources/release_name.txt</exclude>
-                            <exclude>**/src/test/resources/solr/**</exclude>
-                            <exclude>**/src/test/resources/org/orcid/core/manager/example**</exclude>
-                            <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
-                            <exclude>**/src/main/webapp/static/css/glyphicons.css</exclude>
-                            <exclude>**/src/main/webapp/static/css/idpselect.css</exclude>
-                            <exclude>**/src/main/webapp/static/css/idpselect.old.css</exclude>
-                            <exclude>**/src/test/javascript/node_modules/**</exclude>
-                            <exclude>**/src/test/manual-test/**</exclude>
-                            <exclude>**/src/main/webapp/static/javascript/iframeResizer**</exclude>
-                            <exclude>**/*.xsd</exclude>
-                            <exclude>**.md</exclude>
-                            <exclude>docs/**</exclude>
-                        	<exclude>**/src/main/resources/**/*countries.txt</exclude>
-                        	<exclude>**/src/main/resources/**/*words_to_filter.txt</exclude>
-                        	<exclude>**/src/main/resources/**/*common_passwords.txt</exclude>
-                        	<exclude>**/.gitignore</exclude>
-                        	<exclude>**/.gitattributes</exclude>
-                        	<exclude>**/rebel.xml</exclude>
-                            <exclude>**/src/main/webapp/**/**.xml</exclude>
-                            <exclude>.idea</exclude>
-                            <exclude>.idea/**</exclude>
-                            <exclude>**.xjb</exclude>
-                            <exclude>**.lock</exclude>
-                            <exclude>atlassian-ide-plugin.xml</exclude>
-                            <exclude>**/src/main/webapp/static/identifierTypes.xsl</exclude>
-                            <exclude>**/src/main/resources/**/*escape_bibtex.txt</exclude>
-                            <exclude>**/src/main/resources/org/orcid/api/identifiers/xsl/identifierTypes.xsl</exclude>
-                        </excludes>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>test</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>check-headers</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin -->
                 <plugin>
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>3.5.1</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
@@ -368,30 +273,30 @@ the software.
                     <version>2.5</version>
                 </plugin>
                 <plugin>
-					<groupId>org.zeroturnaround</groupId>
-					<artifactId>jrebel-maven-plugin</artifactId>
-					<version>1.1.5</version>
-					<executions>
-						<execution>
-							<id>generate-rebel-xml</id>
-							<phase>process-resources</phase>
-							<goals>
-								<goal>generate</goal>
-							</goals>
-						</execution>
-					</executions>
-			    </plugin>
-			    <plugin>
-					<groupId>org.apache.jena</groupId>
-					<artifactId>jena-maven-tools</artifactId>
-					<version>${jena.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.10</version>		
-	            </plugin>
-	        </plugins>
+                    <groupId>org.zeroturnaround</groupId>
+                    <artifactId>jrebel-maven-plugin</artifactId>
+                    <version>1.1.5</version>
+                    <executions>
+                        <execution>
+                            <id>generate-rebel-xml</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.jena</groupId>
+                    <artifactId>jena-maven-tools</artifactId>
+                    <version>${jena.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.10</version>
+                </plugin>
+            </plugins>
         </pluginManagement>
     </build>
 
@@ -481,7 +386,7 @@ the software.
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
 
     <dependencyManagement>
@@ -734,31 +639,31 @@ the software.
                 <version>3.1.0</version>
                 <scope>provided</scope>
             </dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-core</artifactId>
-				<version>2.9.3</version>
-			</dependency>
             <dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>2.9.3</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-annotations</artifactId>
-				<version>2.9.3</version>
-			</dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.9.5</version>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>2.9.3</version>
+                <version>2.9.5</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>2.9.3</version>
+                <version>2.9.5</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -780,17 +685,17 @@ the software.
                 <scope>compile</scope>
             </dependency>
             <dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>
-				<version>4.5.2</version>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.2</version>
                 <scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpcore</artifactId>
-				<version>4.4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4.4</version>
                 <scope>compile</scope>
-			</dependency>
+            </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
@@ -847,9 +752,9 @@ the software.
                 <version>3.5.2</version>
             </dependency>
             <dependency>
-      	        <groupId>javax.cache</groupId>
-      	        <artifactId>cache-api</artifactId>
-	            <version>1.0.0</version>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                    <version>1.0.0</version>
             </dependency>
 
             <!-- SOLR -->
@@ -890,9 +795,9 @@ the software.
                 <scope>compile</scope>
             </dependency>
             <dependency>
-	            <groupId>log4j</groupId>
-	            <artifactId>apache-log4j-extras</artifactId>
-	            <version>1.1</version>
+                    <groupId>log4j</groupId>
+                    <artifactId>apache-log4j-extras</artifactId>
+                    <version>1.1</version>
             </dependency>
 
             <!-- AOP -->
@@ -986,23 +891,23 @@ the software.
                 <artifactId>bcprov-jdk15on</artifactId>
                 <version>1.53</version>
             </dependency>
-            
+
             <!-- Test -->
             <dependency>
                 <groupId>org.jmock</groupId>
                 <artifactId>jmock-junit3</artifactId>
                 <version>2.5.1</version>
                 <scope>test</scope>
-				<exclusions>
-					<exclusion>
-						<groupId>org.hamcrest</groupId>
-						<artifactId>hamcrest-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.hamcrest</groupId>
-						<artifactId>hamcrest-library</artifactId>
-					</exclusion>
-				</exclusions>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-library</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -1016,24 +921,23 @@ the software.
                 <version>4.12</version>
                 <scope>test</scope>
             </dependency>
-			<dependency>
-			    <groupId>org.hamcrest</groupId>
-			    <artifactId>hamcrest-all</artifactId>
-			    <version>1.3</version>
-			    <scope>test</scope>
-			</dependency>
-
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>1.3</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>2.7.5</version>
                 <scope>test</scope>
                 <exclusions> 
-					<exclusion>
-						<groupId>org.hamcrest</groupId>
-						<artifactId>hamcrest-core</artifactId>
-					</exclusion>
-				</exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -1056,13 +960,13 @@ the software.
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
-                <version>3.8.1</version>
+                <version>3.14.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.paulhammant</groupId>
                 <artifactId>ngwebdriver</artifactId>
-                <version>0.9.6</version>
+                <version>1.1.4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1082,17 +986,24 @@ the software.
                <artifactId>swagger-jaxrs</artifactId>
                <version>${swagger.version}</version>
             </dependency>
-            
+            <dependency>
+               <groupId>org.orcid</groupId>
+               <artifactId>orcid-model</artifactId>
+               <version>${project.version}</version>
+            </dependency>
+            <dependency>
+               <groupId>org.orcid</groupId>
+               <artifactId>orcid-test</artifactId>
+               <version>${project.version}</version>
+            </dependency>
             <!-- AWS -->
             <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-bom -->
-			<dependency>
-			    <groupId>com.amazonaws</groupId>
-			    <artifactId>aws-java-sdk-s3</artifactId>
-			    <version>${aws.version}</version>			    
-			</dependency>
-
-             
-        </dependencies>               
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-s3</artifactId>
+                <version>${aws.version}</version>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
 
     <repositories>
@@ -1108,7 +1019,7 @@ the software.
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-		<repository>
+        <repository>
             <id>spring-social-facebook-orcid-snapshot</id>
             <name>copy of spring-social-facebook to work with Graph API 2.10</name>
             <url>https://raw.github.com/ORCID/spring-social-facebook/mvn-repo/</url>
@@ -1119,7 +1030,7 @@ the software.
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-		<repository>
+        <repository>
             <id>spring-s3</id>
             <name>Spring S3</name>
             <url>http://maven.springframework.org/milestone</url>
@@ -1139,9 +1050,8 @@ the software.
             <id>swagger2markup</id>
             <name>Swagger2markup</name>
             <url>https://jcenter.bintray.com</url>
-        </repository>        
+        </repository>
     </repositories>
-    
     <pluginRepositories>
         <pluginRepository>
             <id>m2.java.net</id>
@@ -1161,7 +1071,7 @@ the software.
             </releases>
         </pluginRepository>
     </pluginRepositories>
-    
+
     <profiles>
         <!--  Localhost deployments -->
         <profile>
@@ -1179,7 +1089,7 @@ the software.
                 <tomcat.server.id>TomcatServer</tomcat.server.id>
             </properties>
         </profile>
-        
+
         <!-- QA fullstack deployments -->
         <profile>
             <id>qa-fullstack</id>

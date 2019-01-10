@@ -2,9 +2,9 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResources;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
 
 public interface ResearchResourceManagerReadOnly {
 
@@ -60,5 +60,14 @@ public interface ResearchResourceManagerReadOnly {
      * @return researchResources element with the researchResourceSummary elements grouped                  
      * */
     ResearchResources groupResearchResources(List<ResearchResourceSummary> researchResources, boolean justPublic);
+    
+    /**
+     * Checks if there is any public research resource for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public research resource for a specific user
+     * */
+    Boolean hasPublicResearchResources(String orcid);
 
 }

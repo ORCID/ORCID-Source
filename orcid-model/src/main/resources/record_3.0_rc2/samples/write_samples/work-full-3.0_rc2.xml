@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<work:work
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/work /work-3.0_rc2.xsd ">	
+	<work:title>
+		<common:title>Work Title</common:title>
+		<common:subtitle>Sub title</common:subtitle>
+		<common:translated-title language-code="en">Translated-title</common:translated-title>
+	</work:title>
+	<work:journal-title>Jounral Title</work:journal-title>
+	<work:short-description>Short description</work:short-description>
+	<work:citation>
+		<work:citation-type>bibtex</work:citation-type>
+		<work:citation-value>
+			@article {ORCID2012,
+			title = "ORCID: a system to uniquely identify researchers",
+			journal = "Leanred Publishing",
+			year = "2012",
+			doi = "doi:10.1087/20120404"
+			}</work:citation-value>
+	</work:citation>
+	<work:type>journal-article</work:type>
+	<common:publication-date>
+		<common:year>2012</common:year>
+		<common:month>10</common:month>
+		<common:day>01</common:day>
+	</common:publication-date>
+	<common:external-ids>
+		<common:external-id>
+			<common:external-id-type>doi</common:external-id-type>
+			<common:external-id-value>10.1087/20120404</common:external-id-value>			
+			<common:external-id-url>https://doi.org/10.1087/20120404</common:external-id-url>
+			<common:external-id-relationship>version-of</common:external-id-relationship>
+		</common:external-id>
+		<common:external-id>
+			<common:external-id-type>doi</common:external-id-type>
+			<common:external-id-value>work:doi</common:external-id-value>			
+			<common:external-id-url>http://orcid.org</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</common:external-ids>
+	<common:url>http://alt-uri.org</common:url>
+	<work:contributors>
+		<work:contributor>
+			<common:contributor-orcid>
+				<common:uri>https://orcid.org/0000-0001-5109-3700</common:uri>
+				<common:path>0000-0001-5109-3700</common:path>
+				<common:host>orcid.org</common:host>
+			</common:contributor-orcid>
+			<work:credit-name>Laure L. Haak</work:credit-name>
+			<work:contributor-attributes>
+				<work:contributor-sequence>first</work:contributor-sequence>
+				<work:contributor-role>author</work:contributor-role>
+			</work:contributor-attributes>
+		</work:contributor>
+	</work:contributors>
+	<common:language-code>en</common:language-code>
+	<common:country>US</common:country>	
+</work:work>

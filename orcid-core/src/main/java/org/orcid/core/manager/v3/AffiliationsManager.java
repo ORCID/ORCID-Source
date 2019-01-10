@@ -1,14 +1,16 @@
 package org.orcid.core.manager.v3;
 
+import java.util.ArrayList;
+
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc1.record.Membership;
-import org.orcid.jaxb.model.v3.rc1.record.Qualification;
-import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc2.record.Membership;
+import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.Service;
 
 public interface AffiliationsManager extends AffiliationsManagerReadOnly {
     /**
@@ -176,8 +178,30 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * @return true if the affiliation was deleted, false otherwise
      */
     boolean checkSourceAndDelete(String orcid, Long affiliationId);
-
+    
+    /**
+     * Updates visibility of a single affiliation, if and only if, the client that requested
+     * the delete is the source of the affiliation
+     * 
+     * @param orcid
+     *            the affiliation owner
+     * @param affiliationId
+     *            The affiliation id
+     * @return true if the affiliation visibility was updated, false otherwise
+     */
     boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);
+    
+    /**
+     * Updates visibility of multiple affiliations, if and only if, the client that requested
+     * the delete is the source of the affiliation
+     * 
+     * @param orcid
+     *            the affiliation owner
+     * @param affiliationIds
+     *            List of affiliation ids to update
+     * @return true if the visibility of each affiliation in the list was updated, false otherwise
+     */
+    boolean updateVisibilities(String orcid, ArrayList<Long> affiliationIds, Visibility visibility);
 
     /**
      * Deletes an affiliation.
@@ -202,4 +226,15 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      *            removed.
      */
     void removeAllAffiliations(String orcid);
+    
+    /**
+     * Updates the display index of a given affiliation
+     * 
+     * @param orcid
+     *            The affiliation owner
+     * @param putCode
+     *            The affiliation id
+     * @return true if it was able to update the display index
+     * */
+    Boolean updateToMaxDisplay(String orcid, Long putCode);
 }

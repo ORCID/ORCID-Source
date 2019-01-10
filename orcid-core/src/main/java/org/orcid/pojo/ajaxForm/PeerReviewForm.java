@@ -4,21 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc1.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.common.Url;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.Role;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
 
 public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -28,7 +19,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
 
     private Text putCode;
 
-    private List<WorkExternalIdentifier> externalIdentifiers;
+    private List<ActivityExternalIdentifier> externalIdentifiers;
 
     private Text url;
 
@@ -39,20 +30,14 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
     private Text orgName;
     
     private Text city;
-
-    private Text region;
-
+    
     private Text country;
 
     private String countryForDisplay;
 
-    private Text disambiguatedOrganizationSourceId;
-
-    private Text disambiguationSource;
-
     private Date completionDate;    
     
-    private WorkExternalIdentifier subjectExternalIdentifier;
+    private ActivityExternalIdentifier subjectExternalIdentifier;
     
     private Text groupId;
     
@@ -92,11 +77,11 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         this.putCode = putCode;
     }
 
-    public List<WorkExternalIdentifier> getExternalIdentifiers() {
+    public List<ActivityExternalIdentifier> getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(List<WorkExternalIdentifier> externalIdentifiers) {
+    public void setExternalIdentifiers(List<ActivityExternalIdentifier> externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 
@@ -132,14 +117,6 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         this.city = city;
     }
 
-    public Text getRegion() {
-        return region;
-    }
-
-    public void setRegion(Text region) {
-        this.region = region;
-    }
-
     public Text getCountry() {
         return country;
     }
@@ -154,22 +131,6 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
 
     public void setCountryForDisplay(String countryForDisplay) {
         this.countryForDisplay = countryForDisplay;
-    }
-
-    public Text getDisambiguatedOrganizationSourceId() {
-        return disambiguatedOrganizationSourceId;
-    }
-
-    public void setDisambiguatedOrganizationSourceId(Text disambiguatedOrganizationSourceId) {
-        this.disambiguatedOrganizationSourceId = disambiguatedOrganizationSourceId;
-    }
-
-    public Text getDisambiguationSource() {
-        return disambiguationSource;
-    }
-
-    public void setDisambiguationSource(Text disambiguationSource) {
-        this.disambiguationSource = disambiguationSource;
     }
 
     public Date getCompletionDate() {
@@ -228,11 +189,11 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         this.groupId = groupId;
     }
 
-    public WorkExternalIdentifier getSubjectExternalIdentifier() {
+    public ActivityExternalIdentifier getSubjectExternalIdentifier() {
         return subjectExternalIdentifier;
     }
 
-    public void setSubjectExternalIdentifier(WorkExternalIdentifier subjectExternalIdentifier) {
+    public void setSubjectExternalIdentifier(ActivityExternalIdentifier subjectExternalIdentifier) {
         this.subjectExternalIdentifier = subjectExternalIdentifier;
     }
 
@@ -283,134 +244,74 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
     public void setGroupIdPutCode(Text groupIdPutCode) {
         this.groupIdPutCode = groupIdPutCode;
     }
+    
+    public static PeerReviewForm valueOf(PeerReviewSummary peerReviewSummary) {
+        PeerReviewForm peerReviewForm = new PeerReviewForm();
+        peerReviewForm.setPutCode(Text.valueOf(peerReviewSummary.getPutCode()));
 
-    public PeerReview toPeerReview() {
-        PeerReview peerReview = new PeerReview();
-        // Put Code
-        if (!PojoUtil.isEmpty(putCode)) {            
-            peerReview.setPutCode(Long.valueOf(putCode.getValue()));
+        peerReviewForm.setOrgName(Text.valueOf(peerReviewSummary.getOrganization().getName()));
+        
+        if (peerReviewSummary.getOrganization().getAddress().getCity() != null) {
+            peerReviewForm.setCity(Text.valueOf(peerReviewSummary.getOrganization().getAddress().getCity()));
         }
-        // Visibility
-        if (visibility != null && visibility.getVisibility() != null) {
-            peerReview.setVisibility(org.orcid.jaxb.model.v3.rc1.common.Visibility.fromValue(visibility.getVisibility().value()));
+        
+        if (peerReviewSummary.getOrganization().getAddress().getCountry() != null) {
+            peerReviewForm.setCountry(Text.valueOf(peerReviewSummary.getOrganization().getAddress().getCountry().name()));
         }
+        
+        peerReviewForm.setCompletionDate(getCompletionDate(peerReviewSummary.getCompletionDate()));
+        peerReviewForm.setCreatedDate(getCreatedDate(peerReviewSummary.getCreatedDate().getValue()));
 
-        // Completion date
+        peerReviewForm.setSource(peerReviewSummary.getSource().getSourceName().getContent());
+        
+        peerReviewForm.setSource(peerReviewSummary.getSource().retrieveSourcePath());
+        peerReviewForm.setSourceName(peerReviewSummary.getSource().getSourceName().getContent());
+
+        peerReviewForm.setRole(Text.valueOf(peerReviewSummary.getRole().value()));
+        peerReviewForm.setType(Text.valueOf(peerReviewSummary.getType().value()));
+
+        peerReviewForm.setVisibility(Visibility.valueOf(peerReviewSummary.getVisibility()));
+
+        if (peerReviewSummary.getUrl() != null) {
+            peerReviewForm.setUrl(Text.valueOf(peerReviewSummary.getUrl().getValue()));
+        }
+        
+        if (peerReviewSummary.getExternalIdentifiers().getExternalIdentifier() != null) {
+            peerReviewForm.setExternalIdentifiers(new ArrayList<ActivityExternalIdentifier>());
+            for(ExternalID extId : peerReviewSummary.getExternalIdentifiers().getExternalIdentifier()) {                
+                peerReviewForm.getExternalIdentifiers().add(ActivityExternalIdentifier.valueOf(extId));
+            } 
+        }
+        return peerReviewForm;
+    }
+
+    private static Date getCompletionDate(FuzzyDate completionDate) {
         if (completionDate != null) {
-            peerReview.setCompletionDate(new FuzzyDate(completionDate.toFuzzyDate()));
-        }
-
-        // External identifiers
-        if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-            peerReview.setExternalIdentifiers(new ExternalIDs());
-            for (WorkExternalIdentifier extId : externalIdentifiers) {
-                peerReview.getExternalIdentifiers().getExternalIdentifier().add(extId.toRecordWorkExternalIdentifier());
+            Integer year = PojoUtil.isEmpty(completionDate.getYear()) ? null : Integer.valueOf(completionDate.getYear().getValue());
+            Integer month = PojoUtil.isEmpty(completionDate.getMonth()) ? null : Integer.valueOf(completionDate.getMonth().getValue());
+            Integer day = PojoUtil.isEmpty(completionDate.getDay()) ? null : Integer.valueOf(completionDate.getDay().getValue());
+            if (year != null && year == 0) {
+                year = null;
             }
-        }
-
-        // Set Organization
-        Organization organization = new Organization();
-        OrganizationAddress organizationAddress = new OrganizationAddress();
-        organization.setAddress(organizationAddress);
-        if(!PojoUtil.isEmpty(orgName)) {
-            organization.setName(orgName.getValue());
-        }
-        if (!PojoUtil.isEmpty(city)) {
-            organizationAddress.setCity(city.getValue());
-        }
-        if (!PojoUtil.isEmpty(region)) {
-            organizationAddress.setRegion(region.getValue());
-        }
-        if (!PojoUtil.isEmpty(country)) {
-            organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));
-        }
-        if (!PojoUtil.isEmpty(disambiguatedOrganizationSourceId)) {
-            organization.setDisambiguatedOrganization(new DisambiguatedOrganization());
-            organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedOrganizationSourceId.getValue());
-            organization.getDisambiguatedOrganization().setDisambiguationSource(disambiguationSource.getValue());
-        }
-        peerReview.setOrganization(organization);
-
-        // Role
-        if (!PojoUtil.isEmpty(role)) {
-            peerReview.setRole(Role.fromValue(role.getValue()));
-        }
-
-        // Type
-        if (!PojoUtil.isEmpty(type)) {
-            peerReview.setType(PeerReviewType.fromValue(type.getValue()));
-        }
-
-        // Url
-        if (!PojoUtil.isEmpty(url)) {
-            peerReview.setUrl(new Url(url.getValue()));
-        }
-
-        // Group id
-        if(!PojoUtil.isEmpty(groupId)) {
-            peerReview.setGroupId(groupId.getValue());
-        }
-        
-        // Subject external id
-        if(!PojoUtil.isEmpty(subjectExternalIdentifier)) {
-            ExternalID subjectExtId = new ExternalID();
-            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getRelationship())) {
-                subjectExtId.setRelationship(Relationship.fromValue(subjectExternalIdentifier.getRelationship().getValue()));
+            if (month != null && month == 0) {
+                month = null;
             }
-            
-            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getUrl())) {
-                subjectExtId.setUrl(new Url(subjectExternalIdentifier.getUrl().getValue()));
+            if (day != null && day == 0) {
+                day = null;
             }
-            
-            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getWorkExternalIdentifierId())) {
-                subjectExtId.setValue(subjectExternalIdentifier.getWorkExternalIdentifierId().getValue());
-            }
-            
-            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getWorkExternalIdentifierType())) {
-                subjectExtId.setType(subjectExternalIdentifier.getWorkExternalIdentifierType().getValue());
-            }
-            
-            peerReview.setSubjectExternalIdentifier(subjectExtId);
+            return Date.valueOf(FuzzyDate.valueOf(year, month, day));
         }
-        
-        // Subject container name
-        if(!PojoUtil.isEmpty(subjectContainerName)) {
-            Title containerName = new Title(subjectContainerName.getValue());            
-            peerReview.setSubjectContainerName(containerName);
+        return null;
+    }
+
+    private static Date getCreatedDate(XMLGregorianCalendar calendar) {
+        if (calendar != null) {
+            int year = calendar.getYear();
+            int month = calendar.getMonth();
+            int day = calendar.getDay();
+            return Date.valueOf(FuzzyDate.valueOf(year, month, day));
         }
-        
-        // Subject type
-        if(!PojoUtil.isEmpty(subjectType)) {
-            peerReview.setSubjectType(WorkType.fromValue(subjectType.getValue()));
-        }
-        
-        // Subject name and subject translated name
-        if(!PojoUtil.isEmpty(subjectName) || !PojoUtil.isEmpty(translatedSubjectName)) {
-            WorkTitle workTitle = new WorkTitle();
-            if(!PojoUtil.isEmpty(subjectName)){
-                workTitle.setTitle(new Title(subjectName.getValue()));
-            }
-            
-            if(translatedSubjectName != null) {
-                org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle tTitle = new org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle();
-                if(!PojoUtil.isEmpty(translatedSubjectName.getContent())) {
-                    tTitle.setContent(translatedSubjectName.getContent());
-                }
-                if(!PojoUtil.isEmpty(translatedSubjectName.getLanguageCode())) {
-                    tTitle.setLanguageCode(translatedSubjectName.getLanguageCode());
-                }
-                workTitle.setTranslatedTitle(tTitle);
-            }            
-            
-            peerReview.setSubjectName(workTitle);
-        }
-        
-        //Subject url
-        if(!PojoUtil.isEmpty(subjectUrl)) {
-            peerReview.setSubjectUrl(new Url(subjectUrl.getValue()));
-        }
-        
-        return peerReview;
+        return null;
     }
 
     public static PeerReviewForm valueOf(PeerReview peerReview) {
@@ -458,28 +359,16 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
                 if (peerReview.getOrganization().getAddress().getCountry() != null) {
                     form.setCountry(Text.valueOf(peerReview.getOrganization().getAddress().getCountry().value()));
                 }
-                if (!PojoUtil.isEmpty(peerReview.getOrganization().getAddress().getRegion())) {
-                    form.setRegion(Text.valueOf(peerReview.getOrganization().getAddress().getRegion()));
-                }
             }
 
-            if (peerReview.getOrganization().getDisambiguatedOrganization() != null) {
-                if (!PojoUtil.isEmpty(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier())) {
-                    form.setDisambiguatedOrganizationSourceId(Text
-                            .valueOf(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
-                }
-                if (!PojoUtil.isEmpty(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguationSource())) {
-                    form.setDisambiguationSource(Text.valueOf(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguationSource()));
-                }
-            }
         }
 
         // External ids
         if(peerReview.getExternalIdentifiers() != null) {
             List<ExternalID> externalIdentifiers = peerReview.getExternalIdentifiers().getExternalIdentifier();
-            form.setExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
+            form.setExternalIdentifiers(new ArrayList<ActivityExternalIdentifier>());
             for(ExternalID extId : externalIdentifiers) {                
-                form.getExternalIdentifiers().add(WorkExternalIdentifier.valueOf(extId));
+                form.getExternalIdentifiers().add(ActivityExternalIdentifier.valueOf(extId));
             }                                    
         }        
 
@@ -490,7 +379,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         
         // Subject ext Id
         if(peerReview.getSubjectExternalIdentifier() != null) {
-            WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+            ActivityExternalIdentifier wExtId = new ActivityExternalIdentifier();
             if(peerReview.getSubjectExternalIdentifier().getRelationship() != null) {
                 wExtId.setRelationship(Text.valueOf(peerReview.getSubjectExternalIdentifier().getRelationship().value()));
             }
@@ -500,11 +389,11 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
             }
             
             if(peerReview.getSubjectExternalIdentifier().getValue() != null) {
-                wExtId.setWorkExternalIdentifierId(Text.valueOf(peerReview.getSubjectExternalIdentifier().getValue()));
+                wExtId.setExternalIdentifierId(Text.valueOf(peerReview.getSubjectExternalIdentifier().getValue()));
             }
             
             if(peerReview.getSubjectExternalIdentifier().getType() != null) {
-                wExtId.setWorkExternalIdentifierType(Text.valueOf(peerReview.getSubjectExternalIdentifier().getType()));
+                wExtId.setExternalIdentifierType(Text.valueOf(peerReview.getSubjectExternalIdentifier().getType()));
             }            
             
             form.setSubjectExternalIdentifier(wExtId);

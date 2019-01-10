@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.naming.OperationNotSupportedException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
@@ -23,42 +22,43 @@ import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
+import org.orcid.core.exception.MissingStartDateException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
-import org.orcid.jaxb.model.v3.rc1.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc1.common.Amount;
-import org.orcid.jaxb.model.v3.rc1.common.Contributor;
-import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.rc1.common.Day;
-import org.orcid.jaxb.model.v3.rc1.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc1.common.Month;
-import org.orcid.jaxb.model.v3.rc1.common.MultipleOrganizationHolder;
-import org.orcid.jaxb.model.v3.rc1.common.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.OrganizationHolder;
-import org.orcid.jaxb.model.v3.rc1.common.PublicationDate;
-import org.orcid.jaxb.model.v3.rc1.common.Source;
-import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.common.Year;
-import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc1.record.CitationType;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.FundingTitle;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc1.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceItem;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.WorkType;
+import org.orcid.jaxb.model.v3.rc2.common.Amount;
+import org.orcid.jaxb.model.v3.rc2.common.Contributor;
+import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.rc2.common.Day;
+import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.rc2.common.Month;
+import org.orcid.jaxb.model.v3.rc2.common.MultipleOrganizationHolder;
+import org.orcid.jaxb.model.v3.rc2.common.Organization;
+import org.orcid.jaxb.model.v3.rc2.common.OrganizationHolder;
+import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Year;
+import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc2.record.CitationType;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
+import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
+import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -72,7 +72,7 @@ public class ActivityValidator {
     @Resource
     private PIDNormalizationService norm;
 
-    public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateWork(Work work, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
         if (title == null || title.getTitle() == null || PojoUtil.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -247,11 +247,7 @@ public class ActivityValidator {
         }
 
         if (work.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            if (sourceEntity != null) {
-                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            }
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         // Check that we are not changing the visibility
@@ -263,7 +259,7 @@ public class ActivityValidator {
         externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
     }
 
-    public void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateFunding(Funding funding, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -299,17 +295,16 @@ public class ActivityValidator {
         }
 
         if (funding.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            if (sourceEntity != null) {
-                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            }
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         if (isApiRequest) {
             validateDisambiguatedOrg(funding);
             if (funding.getEndDate() != null) {
                 validateFuzzyDate(funding.getEndDate());
+                if (funding.getStartDate() == null) {
+                    throw new MissingStartDateException();
+                }
             }
             if (funding.getStartDate() != null) {
                 validateFuzzyDate(funding.getStartDate());
@@ -358,29 +353,24 @@ public class ActivityValidator {
         }
     }
 
-    public void validateAffiliation(Affiliation affiliation, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateAffiliation(Affiliation affiliation, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (affiliation.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            if (sourceEntity != null) {
-                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            }
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = affiliation.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }
-
-        if (affiliation.getStartDate() == null) {
-            throw new OrcidValidationException("Education start date is required");
-        }
+        } 
 
         if (isApiRequest) {
             validateDisambiguatedOrg(affiliation);
             if (affiliation.getEndDate() != null) {
                 validateFuzzyDate(affiliation.getEndDate());
+                if (affiliation.getStartDate() == null) {
+                    throw new MissingStartDateException();
+                }
             }
             if (affiliation.getStartDate() != null) {
                 validateFuzzyDate(affiliation.getStartDate());
@@ -388,15 +378,13 @@ public class ActivityValidator {
         }
     }
 
-    public void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validatePeerReview(PeerReview peerReview, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
 
         if (peerReview.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         if (peerReview.getType() == null) {
@@ -445,7 +433,7 @@ public class ActivityValidator {
         }
     }
 
-    public void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, SourceEntity sourceEntity) {
+    public void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, Source activeSource) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
@@ -454,9 +442,9 @@ public class ActivityValidator {
                     if (existingId.getNormalized() == null)
                         existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
+                            && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existingSource)) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+                        params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
@@ -472,14 +460,14 @@ public class ActivityValidator {
         return false;
     }
 
-    public void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, SourceEntity sourceEntity) {
+    public void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, Source activeSource) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
                     if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
+                            && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existingSource)) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+                        params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
@@ -506,13 +494,18 @@ public class ActivityValidator {
         }
     }
 
-    public void validateResearchResource(ResearchResource rr, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateResearchResource(ResearchResource rr, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (rr.getProposal().getExternalIdentifiers() == null || rr.getProposal().getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Proposal");
         }
         externalIDValidator.validateWorkOrPeerReview(rr.getProposal().getExternalIdentifiers());
-        if (isApiRequest)
+        if (isApiRequest) {
             validateDisambiguatedOrg(rr.getProposal().getHosts());
+            if (rr.getProposal().getEndDate() != null && rr.getProposal().getStartDate() == null) {
+                throw new MissingStartDateException();
+            }
+        }
+        
         for (ResearchResourceItem i:rr.getResourceItems()){
             if (i.getExternalIdentifiers() == null || i.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Item");
@@ -523,9 +516,7 @@ public class ActivityValidator {
         }
         
         if (rr.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         // Check that we are not changing the visibility

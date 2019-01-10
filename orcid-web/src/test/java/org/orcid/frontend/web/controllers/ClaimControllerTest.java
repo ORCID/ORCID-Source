@@ -23,13 +23,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.jaxb.model.v3.rc1.common.Locale;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -44,7 +44,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -138,8 +137,6 @@ public class ClaimControllerTest {
             assertNotNull(claim);
             assertTrue(claim.getErrors().isEmpty());
             assertTrue("Value was: " + claim.getUrl(), claim.getUrl().endsWith("/my-orcid?recordClaimed"));
-        } catch (NoSuchRequestHandlingMethodException e) {
-            fail();
         } catch (UnsupportedEncodingException e) {
             fail();
         }
@@ -151,7 +148,7 @@ public class ClaimControllerTest {
         entity.setClaimed(claimed);
         Set<EmailEntity> emails = new HashSet<EmailEntity>();
         EmailEntity email = new EmailEntity();
-        email.setId("billie@holiday.com");
+        email.setEmail("billie@holiday.com");
         email.setPrimary(true);
         entity.setEmails(emails);
         return entity;
@@ -163,7 +160,7 @@ public class ClaimControllerTest {
         entity.setClaimed(claimed);
         Set<EmailEntity> emails = new HashSet<EmailEntity>();
         EmailEntity email = new EmailEntity();
-        email.setId("public_0000-0000-0000-0001@test.orcid.org");
+        email.setEmail("public_0000-0000-0000-0001@test.orcid.org");
         email.setPrimary(true);
         entity.setEmails(emails);
         return entity;

@@ -6,45 +6,46 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.rc1.common.Contributor;
-import org.orcid.jaxb.model.v3.rc1.common.CreditName;
-import org.orcid.jaxb.model.v3.rc1.common.Subtitle;
-import org.orcid.jaxb.model.v3.rc1.common.Title;
-import org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle;
-import org.orcid.jaxb.model.v3.rc1.record.Citation;
-import org.orcid.jaxb.model.v3.rc1.record.CitationType;
-import org.orcid.jaxb.model.v3.rc1.record.Funding;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributor;
-import org.orcid.jaxb.model.v3.rc1.record.FundingContributors;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.WorkContributors;
-import org.orcid.jaxb.model.v3.rc1.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Distinctions;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Educations;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Employments;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositions;
-import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Memberships;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Qualifications;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Services;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.common.Contributor;
+import org.orcid.jaxb.model.v3.rc2.common.CreditName;
+import org.orcid.jaxb.model.v3.rc2.common.Subtitle;
+import org.orcid.jaxb.model.v3.rc2.common.Title;
+import org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle;
+import org.orcid.jaxb.model.v3.rc2.record.Citation;
+import org.orcid.jaxb.model.v3.rc2.record.CitationType;
+import org.orcid.jaxb.model.v3.rc2.record.Funding;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
+import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
+import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Distinctions;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Educations;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Employments;
+import org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewDuplicateGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Services;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
 
 public class ActivityUtilsTest {
 
@@ -126,7 +127,7 @@ public class ActivityUtilsTest {
     public void setPathToPeerReviewsTest() {
         PeerReviews x = getPeerReviews();
         ActivityUtils.setPathToPeerReviews(x, ORCID);
-        assertEquals("/" + ORCID + "/peer-review/123", x.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
+        assertEquals("/" + ORCID + "/peer-review/123", x.getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
     }
 
     @Test
@@ -153,7 +154,7 @@ public class ActivityUtilsTest {
         assertEquals("/" + ORCID + "/qualification/123", x.getQualifications().retrieveGroups().iterator().next().getActivities().get(0).getPath());
         assertEquals("/" + ORCID + "/service/123", x.getServices().retrieveGroups().iterator().next().getActivities().get(0).getPath());
         assertEquals("/" + ORCID + "/work/123", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath());
-        assertEquals("/" + ORCID + "/peer-review/123", x.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
+        assertEquals("/" + ORCID + "/peer-review/123", x.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPath());
     }
 
     @Test
@@ -387,9 +388,11 @@ public class ActivityUtilsTest {
     private PeerReviews getPeerReviews() {
         PeerReviews x = new PeerReviews();
         PeerReviewGroup g = new PeerReviewGroup();
+        PeerReviewDuplicateGroup duplicateGroup = new PeerReviewDuplicateGroup();
         PeerReviewSummary e = new PeerReviewSummary();
         e.setPutCode(123L);
-        g.getPeerReviewSummary().add(e);
+        duplicateGroup.getPeerReviewSummary().add(e);
+        g.getPeerReviewGroup().add(duplicateGroup);
         x.getPeerReviewGroup().add(g);
         return x;
     }

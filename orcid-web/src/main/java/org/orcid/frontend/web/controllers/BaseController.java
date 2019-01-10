@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -29,13 +31,13 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
@@ -54,6 +56,7 @@ import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
@@ -73,6 +76,9 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -93,9 +99,7 @@ public class BaseController {
 
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
-    private String aboutUri;
-
-    private String knowledgeBaseUri;
+    private String aboutUri;    
 
     private boolean reducedFunctionalityMode;
 
@@ -156,6 +160,9 @@ public class BaseController {
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean shibbolethEnabled;
 
+    @Resource(name = "profileEntityManagerV3")
+    protected ProfileEntityManager profileEntityManager;
+    
     @ModelAttribute("recaptchaWebKey")
     public String getRecaptchaWebKey() {
         return recaptchaWebKey;
@@ -187,16 +194,6 @@ public class BaseController {
     @ModelAttribute("aboutUri")
     public String getAboutUri() {
         return aboutUri;
-    }
-
-    @ModelAttribute("knowledgeBaseUri")
-    public String getKnowledgeBaseUri() {
-        return knowledgeBaseUri;
-    }
-
-    @Value("${org.orcid.core.knowledgeBaseUri:https://support.orcid.org/knowledgebase}")
-    public void setKnowledgeBaseUri(String knowledgeBaseUri) {
-        this.knowledgeBaseUri = knowledgeBaseUri;
     }
 
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
@@ -243,11 +240,7 @@ public class BaseController {
     public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (SendEmailFrequency freq : SendEmailFrequency.values()) {
-            if(freq.equals(SendEmailFrequency.NEVER)) {
-                map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
-            } else {
-                map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
-            }            
+            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
         }
         return map;
     }
@@ -380,18 +373,6 @@ public class BaseController {
     public boolean isPasswordConfirmationRequired() {
         return orcidSecurityManager.isPasswordConfirmationRequired();
     } 
-    
-    @Value("${org.orcid.emailVerificationManualEdit.enabled:false}")
-    private boolean emailVerificationManualEditEnabled;
-    
-    @ModelAttribute("emailVerificationManualEditEnabled")
-    public boolean isEmailVerificationManualEditEnabled() {
-        return emailVerificationManualEditEnabled;
-    }
-
-    public void setEmailVerificationManualEditEnabled(boolean emailVerificationManualEditEnabled) {
-        this.emailVerificationManualEditEnabled = emailVerificationManualEditEnabled;
-    }
 
     @ModelAttribute("request")
     public HttpServletRequest getRequest(HttpServletRequest request) {
@@ -450,12 +431,11 @@ public class BaseController {
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));
             }
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email, LoadOptions.BIO_ONLY);
-                if (orcidProfile.getOrcidHistory().isClaimed()) {
+                if (profileEntityManager.isProfileClaimedByEmail(email)) {
                     String[] codes = null;
                     String[] args = { email };
                     if (isRegisterRequest) {
-                        if (orcidProfile.getOrcidHistory().getDeactivationDate() != null) {
+                        if (profileEntityManager.isDeactivated(emailManager.findOrcidIdByEmail(email))) {
                             codes = new String[] { "orcid.frontend.verify.deactivated_email" };
                         } else {
                             codes = new String[] { "orcid.frontend.verify.duplicate_email" };
@@ -907,4 +887,81 @@ public class BaseController {
         }
     }
     
+    public void additionalEmailsValidateOnRegister(HttpServletRequest request, Registration reg) {
+        if(reg.getEmailsAdditional() != null && !reg.getEmailsAdditional().isEmpty()) {
+            Iterator<Text> it = reg.getEmailsAdditional().iterator();
+            while(it.hasNext()) {
+                Text additionalEmail = it.next();
+                if(PojoUtil.isEmpty(additionalEmail)) {
+                    it.remove();                    
+                } else {
+                    additionalEmailValidateOnRegister(request, reg, additionalEmail); 
+                }
+            }            
+        }
+    }
+    
+    private void additionalEmailValidateOnRegister(HttpServletRequest request, Registration reg, Text email) {
+        email.setErrors(new ArrayList<String>());
+        additionalEmailValidate(reg, email);
+        if(email.getErrors().isEmpty()) {
+            String emailValue = email.getValue();
+            if(emailManager.emailExists(email.getValue())) {
+                String orcid = emailManager.findOrcidIdByEmail(emailValue);
+                //If it is claimed, should return a duplicated exception
+                if(profileEntityManager.isDeactivated(orcid)) {
+                    email.getErrors().add("orcid.frontend.verify.deactivated_email");
+                } else if(profileEntityManager.isProfileClaimedByEmail(emailValue)) {                                                                        
+                    email.getErrors().add("orcid.frontend.verify.duplicate_email");
+                } else if(!emailManager.isAutoDeprecateEnableForEmail(emailValue)) {
+                    //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
+                    String resendUrl = createResendClaimUrl(emailValue, request);
+                    String message = getVerifyUnclaimedMessage(emailValue, resendUrl);
+                    email.getErrors().add(message);                                    
+                } else {
+                    LOGGER.info("Email " + emailValue + " belongs to a unclaimed record and can be auto deprecated");
+                }
+            }
+        }
+    }
+    
+    public void additionalEmailValidateOnReactivate(HttpServletRequest request, Registration reg, Text email, String userOrcid) {
+        email.setErrors(new ArrayList<String>());
+        additionalEmailValidate(reg, email);
+        if(email.getErrors().isEmpty()) {
+            String emailValue = email.getValue();
+            if(emailManager.emailExists(email.getValue())) {
+                String orcid = emailManager.findOrcidIdByEmail(emailValue);
+                if(!userOrcid.contentEquals(orcid)) {
+                    email.getErrors().add("unavailable");
+                }
+            }
+        }
+    }
+    
+    private void additionalEmailValidate(Registration reg, Text email) {
+        String emailAddressAdditional = email.getValue();
+        // Validate the email address is ok        
+        if(!validateEmailAddress(emailAddressAdditional)) {
+            email.getErrors().add(getMessage("Email.personalInfoForm.email", emailAddressAdditional));
+        } else if(emailAddressAdditional.equalsIgnoreCase(reg.getEmail().getValue())){
+            email.getErrors().add(getMessage("Email.personalInfoForm.additionalEmailCannotMatchPrimary"));
+        } else if (duplicateAdditionalEmails(reg, emailAddressAdditional)){
+            email.getErrors().add(getMessage("Email.personalInfoForm.additionalEmailCannotMatchAdditional"));
+        }
+    }
+        
+    public boolean duplicateAdditionalEmails(Registration reg, String emailAddressAdditional) {
+        int count = 0;
+        for(Text emailCheckAdditional : reg.getEmailsAdditional()){
+            if(emailAddressAdditional.equalsIgnoreCase(emailCheckAdditional.getValue())){
+                count++;
+            }
+        }
+        if(count > 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

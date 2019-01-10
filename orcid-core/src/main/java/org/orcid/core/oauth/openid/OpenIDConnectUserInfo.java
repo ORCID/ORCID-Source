@@ -1,22 +1,19 @@
 package org.orcid.core.oauth.openid;
 
-import org.orcid.jaxb.model.v3.rc1.record.Person;
-import org.orcid.jaxb.model.v3.rc1.record.PersonalDetails;
-import org.springframework.beans.factory.annotation.Value;
+import org.orcid.jaxb.model.v3.rc2.record.Person;
+import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 
 public class OpenIDConnectUserInfo {
     
     private String id;
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
-        this.id = id;
-    }
     private String sub;
     private String name;
     private String family_name;
     private String given_name;
+    
+    public OpenIDConnectUserInfo(){
+        
+    }
     
     public OpenIDConnectUserInfo(String orcid, Person person, String path) {
         this.id = path+"/"+orcid;
@@ -48,7 +45,12 @@ public class OpenIDConnectUserInfo {
             }            
         }
     }
-    
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getName() {
         return name;
     }

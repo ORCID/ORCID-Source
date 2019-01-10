@@ -9,10 +9,20 @@ import org.orcid.persistence.jpa.entities.DisplayIndexInterface;
  */
 public class DisplayIndexCalculatorHelper {
     public static void setDisplayIndexOnNewEntity(DisplayIndexInterface newEntity, boolean isApiRequest) {
+        setDisplayIndex(newEntity, isApiRequest);
+    }
+    
+    public static void setDisplayIndexOnExistingEntity(DisplayIndexInterface entity, boolean isApiRequest) {
+        if(entity.getDisplayIndex() == null) {
+            setDisplayIndex(entity, isApiRequest);
+        }
+    }
+    
+    private static void setDisplayIndex(DisplayIndexInterface e, boolean isApiRequest) {
         if(isApiRequest) {
-            newEntity.setDisplayIndex(0L);
+            e.setDisplayIndex(0L);
         } else {
-            newEntity.setDisplayIndex(1L);
+            e.setDisplayIndex(1L);
         }
     }
 }

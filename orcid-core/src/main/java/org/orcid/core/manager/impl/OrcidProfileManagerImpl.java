@@ -581,7 +581,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     @Transactional
     public OrcidProfile retrieveOrcidProfileByEmail(String email, LoadOptions loadOptions) {
-        EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+        EmailEntity emailEntity = emailDao.findByEmail(email);
         if (emailEntity != null) {
             ProfileEntity profileEntity = emailEntity.getProfile();
             OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, loadOptions);
@@ -603,7 +603,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     public OrcidProfile updateOrcidWorks(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
         if (existingProfile == null) {
             return null;
         }
@@ -672,7 +672,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override    
     public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
 
         if (existingProfile != null && existingProfile.getOrcidBio() != null) {
             OrcidBio orcidBio = existingProfile.getOrcidBio();
@@ -710,7 +710,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override    
     public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {
         addSourceToBioElements(updatedOrcidProfile);
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
         if (existingProfile == null) {
             return null;
         }
@@ -724,7 +724,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     @Deprecated
     public OrcidProfile updateAffiliations(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
         if (existingProfile == null) {
             return null;
         }
@@ -756,7 +756,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override    
     @Deprecated
     public OrcidProfile updateFundings(OrcidProfile updatedOrcidProfile) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath(), LoadOptions.ALL_WITH_NEW_AFFILIATION_TYPES);
         if (existingProfile == null) {
             return null;
         }
@@ -1206,7 +1206,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     // associated with that email
                     String email = contributor.getContributorEmail().getValue();
 
-                    EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+                    EmailEntity emailEntity = emailDao.findByEmail(email);
                     if (emailEntity != null) {
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
@@ -1285,17 +1285,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (PojoUtil.isEmpty(orcid))
             return false;
         return profileDao.isLocked(orcid);
-    }
-
-    /**
-     * Checks that the email is not already being used
-     * 
-     * @param email
-     *            the value to be used to check for an existing record
-     */
-    @Override
-    public boolean emailExists(String email) {
-        return emailDao.emailExists(email);
     }
 
     /**

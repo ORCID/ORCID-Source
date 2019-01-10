@@ -24,6 +24,7 @@ export class AffiliationService {
     private urlAffiliationDisambiguated: string;
     private urlAffiliations: string;
 
+    public details: any;
     public loading: boolean;
     public affiliationsToAddIds: any;
     public affiliation: any;
@@ -33,7 +34,8 @@ export class AffiliationService {
 	
     constructor( private http: HttpClient ){
         this.affiliation = null;
-        this.affiliationsToAddIds = null,
+        this.affiliationsToAddIds = null;
+        this.details = new Array();
         this.headers = new HttpHeaders(
             {
                 'Access-Control-Allow-Origin':'*',
@@ -57,19 +59,39 @@ export class AffiliationService {
         }
     }
 
+    consistentVis(group): boolean {
+        for(let i = 0; i < group.affiliations.length; i++) {
+            if (group.affiliations[i].visibility.visibility != group.activeVisibility) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    createNew(affiliation): any {
+        var clone = JSON.parse(JSON.stringify(affiliation));
+        clone.source = null;
+        clone.putCode = null;
+        return clone;
+    }
+
     deleteAffiliation( data ): Observable<any> {     
         return this.http.delete( 
             this.urlAffiliation + '?id=' + encodeURIComponent(data.putCode.value),             
             { headers: this.headers }
         )
-        .pipe(
-            tap(
-                (data) => {
-                    this.getData();                       
-                }
-            )
-        )  
-        ;
+    }
+
+    getAffiliationGroups(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/affiliations/affiliationGroups.json'
+        );
+    }
+
+    getPublicAffiliationGroups(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/' + orcidVar.orcidId + '/affiliationGroups.json'
+        );
     }
     
     getAffiliationsId(): Observable<any> {
@@ -78,6 +100,18 @@ export class AffiliationService {
         return this.http.get(
             this.urlAffiliationId
         );       
+    }
+
+    getAffiliationDetails( putCode, type ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/affiliations/affiliationDetails.json?id=' + putCode + '&type=' + type
+        );
+    }
+
+    getPublicAffiliationDetails( putCode, type ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/' + orcidVar.orcidId + '/affiliationDetails.json?id=' + putCode + '&type=' + type
+        );
     }
 
     getAffiliationsById( idList ): Observable<any> {
@@ -92,7 +126,7 @@ export class AffiliationService {
         );
     }
     
-    getData(): Observable<any> {
+    getBlankAffiliation(): Observable<any> {
         return this.http.get(
             this.urlAffiliation
         );
@@ -123,13 +157,17 @@ export class AffiliationService {
         );
     }
 
-    updateVisibility( obj ): Observable<any> {
-        let encoded_data = JSON.stringify( obj );         
-        
-        return this.http.put(
-            this.urlAffiliation,
-            encoded_data,
-            { headers: this.headers }
-        );
+    updateVisibility(putCodes, priv): Observable<any> {
+        let url = getBaseUri() + '/affiliations/' + putCodes.splice(0,150).join() + '/visibility/'+priv;
+
+        return this.http.get(
+            url
+        )
     }
+    
+    updateToMaxDisplay(putCode): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/affiliations/updateToMaxDisplay.json?putCode=' + putCode
+        )
+    }        
 }

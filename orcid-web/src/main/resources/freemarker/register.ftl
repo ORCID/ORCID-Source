@@ -3,33 +3,8 @@
     <div class="row">        
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
             <#if (RequestParameters['linkRequest'])??>
-                <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-                    <link-account-ng2></link-account-ng2>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                    <div ng-controller="LinkAccountController" ng-init="setEntityId('${RequestParameters.providerId!}')">
-                        <div ng-hide="loadedFeed" class="text-center">
-                            <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
-                            <!--[if lt IE 8]>
-                                <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
-                            <![endif]-->
-                        </div>
-                        <div ng-show="loadedFeed">
-                            <h2>${springMacroRequestContext.getMessage("social.link.title.1")} <span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.title.2")}</h2>
-                            <h4>${springMacroRequestContext.getMessage("social.link.you_are")} <span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.as")} ${RequestParameters.accountId!}</h4>
-                            <p> 
-                                ${springMacroRequestContext.getMessage("social.link.to_finish.register.1")}<span ng-bind="idpName"></span>${springMacroRequestContext.getMessage("social.link.to_finish.register.2")}
-                            </p>
-                            <p>
-                                <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}<span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="${knowledgeBaseUri}/articles/892920" target="social.link.visit_knowledgebase_link" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
-                            </p>
-                        </div>
-                        <div>                                                   
-                            <#if "shibboleth" == (RequestParameters['linkRequest']!)><a class="reg" href="<@orcid.rootPath '/shibboleth/signin'/>"><#else><a class="reg" href="<@orcid.rootPath '/social/access'/>"></#if>${springMacroRequestContext.getMessage("social.link.link_this_account")}</a> &nbsp;&#124;&nbsp; ${springMacroRequestContext.getMessage("login.registerOrcidId")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
-                            <hr />
-                        </div> 
-                    </div>  
-                </@orcid.checkFeatureStatus>   
+                <#include "/includes/ng2_templates/link-account-ng2-template.ftl">
+                <link-account-ng2></link-account-ng2> 
             <#else>
                 <h2>${springMacroRequestContext.getMessage("register.labelRegisterforanORCIDiD")}</h2>
                 <p>${springMacroRequestContext.getMessage("register.labelORCIDprovides")}</p>
@@ -42,18 +17,13 @@
                 ${springMacroRequestContext.getMessage("register.labelClause_3")}
                 <br /><br />
             </p>
-            <@orcid.checkFeatureStatus 'ANGULAR2_QA'>
-                <oauth-authorization-ng2></oauth-authorization-ng2>
-            </@orcid.checkFeatureStatus>
-            <@orcid.checkFeatureStatus featureName='ANGULAR1_LEGACY' enabled=false>
-                <#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
-                    <div ng-controller="OauthAuthorizationController" id="RegistrationForm" ng-init="oauth2ScreensLoadRegistrationForm('${RequestParameters.firstName?js_string}', '${RequestParameters.lastName?js_string}', '${RequestParameters.emailId?js_string}', '${RequestParameters.linkRequest?js_string}')">
-                <#else>
-                    <div ng-controller="OauthAuthorizationController" id="RegistrationCtr" ng-init="oauth2ScreensLoadRegistrationForm()">
-                </#if>
-        		  <#include "/includes/register_inc.ftl" />
-                </div>
-            </@orcid.checkFeatureStatus>
+            <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
+            <oauth-authorization-ng2></oauth-authorization-ng2>
+            <!--Register duplicates modal-->
+            <#include "/includes/ng2_templates/register-duplicates-ng2-template.ftl">
+            <modalngcomponent elementHeight="400" elementId="modalRegisterDuplicates" elementWidth="780">
+                <register-duplicates-ng2></register-duplicates-ng2>
+            </modalngcomponent>
         </div>
     </div>
 </div>

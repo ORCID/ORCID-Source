@@ -1,24 +1,18 @@
 package org.orcid.frontend.spring;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.BackupCodeManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
-import org.orcid.persistence.dao.EmailDao;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -27,23 +21,15 @@ import org.springframework.security.core.AuthenticationException;
 
 public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthenticationProvider.class);
-    
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
-    private EmailDao emailDaoReadOnly;
-
-    @Resource
-    private EncryptionManager encryptionManager;
+    @Resource(name = "emailManagerReadOnlyV3")
+    protected EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource
     private BackupCodeManager backupCodeManager;
     
-    @Resource
-    private SlackManager slackManager;
-
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
     
@@ -90,9 +76,9 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
             if (OrcidStringUtils.isValidOrcid(username)) {
                 profile = profileEntityCacheManager.retrieve(username);
             } else {
-                EmailEntity emailEntity = emailDaoReadOnly.findCaseInsensitive(username);
-                if (emailEntity != null) {
-                    profile = emailEntity.getProfile();
+                String orcid = emailManagerReadOnly.findOrcidIdByEmail(username);
+                if (orcid != null) {
+                    profile = profileEntityCacheManager.retrieve(orcid);
                 }
             }
         }

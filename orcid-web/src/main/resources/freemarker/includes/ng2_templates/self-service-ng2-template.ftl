@@ -70,12 +70,18 @@
                         </span>
                     </div>
                 </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                    <label><@orcid.msg 'manage_consortium.logo'/></label>
+                    <p><@orcid.msg 'manage_consortium.please_send'/></p>
+                    </div>
+                </div>
                 <!-- Buttons -->
                 <div class="row">
                     <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
                         <span id="ajax-loader" *ngIf="updateMemberDetailsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
                         <button id="bottom-confirm-update-consortium" class="btn btn-primary" (click)="validateMemberDetails()" [disabled]="updateMemberDetailsDisabled"><@orcid.msg 'manage_consortium.save_public_info'/></button>
-                        <a href="" class="cancel-right" (click)="getMemberDetails()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
+                        <button class="btn btn-white-no-border cancel-right" (click)="getMemberDetails()"><@orcid.msg 'manage_consortium.clear_changes' /></button>
                     </div>
                 </div>
             </div>
@@ -172,7 +178,7 @@
                                             <div class="arrow"></div>
                                             <div class="popover-content">
                                                 <p><@spring.message "manage_consortium.this_contact_does_not_1"/></p>
-                                                <p><@spring.message "manage_consortium.this_contact_does_not_2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="https://support.orcid.org/knowledgebase/articles/148603" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
+                                                <p><@spring.message "manage_consortium.this_contact_does_not_2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897554" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
                                             </div>
                                         </div>
                                     </div>
@@ -216,7 +222,7 @@
                     <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
                             <span id="ajax-loader" *ngIf="updateContactsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
                         <button id="bottom-confirm-update-contacts" class="btn btn-primary" (click)="updateContacts()" [disabled]="updateContactsDisabled"><@orcid.msg 'manage_consortium.save_contacts'/></button>
-                        <a href="" class="cancel-right" (click)="getContacts()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
+                        <button class="btn btn-white-no-border cancel-right" (click)="getContacts()"><@orcid.msg 'manage_consortium.clear_changes' /></button>
                     </div>
                 </div>
                 <div class="bottomBuffer" *ngIf="memberDetails.allowedFullAccess">
@@ -339,7 +345,7 @@
                         <div class="controls col-md-12 col-sm-12 col-xs-12">
                             <span id="ajax-loader" *ngIf="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
                             <button class="btn btn-primary" id="bottom-confirm-update-consortium" (click)="validateSubMember()" [disabled]="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
-                            <a href="" class="cancel-right" (click)="addSubMemberClear()"><@orcid.msg 'manual_work_form_contents.btnclear' /></a>
+                            <button class="btn btn-white-no-border cancel-right" (click)="addSubMemberClear()"><@orcid.msg 'manual_work_form_contents.btnclear' /></button>
                             <span class="orcid-error" *ngIf="errorSubMemberExists">
                                 <div><@orcid.msg 'manage_consortium.add_submember_member_exists'/></div>
                             </span>

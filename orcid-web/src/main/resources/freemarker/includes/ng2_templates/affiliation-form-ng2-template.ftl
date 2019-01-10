@@ -14,7 +14,7 @@
                     </h1>
                     <h1 *ngIf="addAffType == 'education'" class="lightbox-title pull-left">
                         <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_education'/></span>
-                        <span *ngIf="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_education'/></span>
+                        <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.edit_education'/></span>
                     </h1>
                     <h1 *ngIf="addAffType == 'employment'" class="lightbox-title pull-left">
                         <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.add_employment'/></span>
@@ -90,7 +90,7 @@
                         <span class="required" [ngClass]="isValidClass(editAffiliation.city)">*</span>
                         <div *ngIf="editAffiliation?.city">
                                             
-                            <input id="city" name="city" class="form-control" type="text" [(ngModel)]="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" (ngModelChange)="serverValidate('affiliations/affiliation/cityValidate.json')" />
+                            <input id="city" name="city" class="form-control" type="text" [(ngModel)]="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" (ngModelChange)="serverValidate('affiliations/affiliation/cityValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                             <span class="orcid-error" *ngIf="editAffiliation?.city?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.city.errors' [innerHtml]="error"></div>
                             </span>
@@ -105,7 +105,7 @@
                         
                         <div *ngIf="editAffiliation?.region">
                             
-                            <input name="region" type="text" class="form-control"  [(ngModel)]="editAffiliation.region.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_region'/>" (ngModelChange)="serverValidate('affiliations/affiliation/regionValidate.json')" />
+                            <input name="region" type="text" class="form-control"  [(ngModel)]="editAffiliation.region.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_region'/>" (ngModelChange)="serverValidate('affiliations/affiliation/regionValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                             <span class="orcid-error" *ngIf="editAffiliation?.region?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.region.errors' [innerHtml]="error"></div>
                             </span>
@@ -121,7 +121,7 @@
                         <span class="required" [ngClass]="isValidClass(editAffiliation.country)">*</span>
                         <div *ngIf="editAffiliation?.country">
                             
-                            <select id="country" name="country" [(ngModel)]="editAffiliation.country.value" (ngModelChange)="serverValidate('affiliations/affiliation/countryValidate.json')" class="form-control">
+                            <select id="country" name="country" [(ngModel)]="editAffiliation.country.value" (ngModelChange)="serverValidate('affiliations/affiliation/countryValidate.json')" class="form-control" [ngModelOptions]="{ updateOn: 'blur' }">
                                 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
                                 <#list isoCountries?keys as key>
                                         <option value="${key}">${isoCountries[key]}</option>
@@ -143,7 +143,7 @@
                         <label><@orcid.msg 'manual_affiliation_form_contents.labeldepartment'/></label>
                         <div *ngIf="editAffiliation?.departmentName">
                             
-                            <input id="departmentName" class="form-control" name="departmentName" type="text" [(ngModel)]="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" (ngModelChange)="serverValidate('affiliations/affiliation/departmentValidate.json')" />
+                            <input id="departmentName" class="form-control" name="departmentName" type="text" [(ngModel)]="editAffiliation.departmentName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_department'/>" (ngModelChange)="serverValidate('affiliations/affiliation/departmentValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                             <span class="orcid-error" *ngIf="editAffiliation?.departmentName?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.departmentName.errors' [innerHtml]="error"></div>
                             </span>
@@ -156,7 +156,7 @@
                         <label *ngIf="addAffType == 'education'"><@orcid.msg 'manual_affiliation_form_contents.labeldegreetitle'/></label>
                         <div *ngIf="editAffiliation?.roleTitle">
                             
-                            <input name="roletitle" type="text" class="form-control"  [(ngModel)]="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" (ngModelChange)="serverValidate('affiliations/affiliation/roleTitleValidate.json')" />
+                            <input name="roletitle" type="text" class="form-control"  [(ngModel)]="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" (ngModelChange)="serverValidate('affiliations/affiliation/roleTitleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                             <span class="orcid-error" *ngIf="editAffiliation?.roleTitle?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.roleTitle.errors' [innerHtml]="error"></div>
                             </span>
@@ -168,7 +168,7 @@
                         <label><@orcid.msg 'manual_affiliation_form_contents.url'/></label>
                         <div>
                             
-                            <input name="url" type="text" class="form-control"  [(ngModel)]="editAffiliation.url.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_url'/>" (ngModelChange)="serverValidate('affiliations/affiliation/urlValidate.json')" />
+                            <input name="url" type="text" class="form-control"  [(ngModel)]="editAffiliation.url.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_url'/>" (ngModelChange)="serverValidate('affiliations/affiliation/urlValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                             <span class="orcid-error" *ngIf="editAffiliation?.url?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.url.errors' [innerHtml]="error"></div>
                             </span>
@@ -178,19 +178,18 @@
                     <!--  -->
                     <div class="form-group">
                         <label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
-                        <span class="required" [ngClass]="isValidStartDate(editAffiliation.startDate)">*</span>
                         <div>
-                            <select id="startYear" name="startYear" [(ngModel)]="editAffiliation.startDate.year" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
+                            <select id="startYear" name="startYear" [(ngModel)]="editAffiliation.startDate.year">
                                 <#list years?keys as key>
                                     <option value="${key}">${years[key]}</option>
                                 </#list>
                             </select>                          
-                            <select id="startMonth" name="startMonth" [(ngModel)]="editAffiliation.startDate.month" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
+                            <select id="startMonth" name="startMonth" [(ngModel)]="editAffiliation.startDate.month">
                                 <#list months?keys as key>
                                     <option value="${key}">${months[key]}</option>
                                 </#list>
                             </select>                   
-                            <select id="startDay" name="startDay" [(ngModel)]="editAffiliation.startDate.day" (ngModelChange)="serverValidate('affiliations/affiliation/datesValidate.json')">
+                            <select id="startDay" name="startDay" [(ngModel)]="editAffiliation.startDate.day">
                                 <#list days?keys as key>
                                     <option value="${key}">${days[key]}</option>
                                 </#list>
@@ -203,7 +202,7 @@
                                 
                     </div>
 
-                    <div class="control-group">
+                    <div class="form-group">
                         <label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDateLeave'/></label>
                         <div class="relative">
                             
@@ -218,11 +217,9 @@
                                 </#list>
                             </select>
                             <select id="endDay" name="endDay" [(ngModel)]="editAffiliation.endDate.day">
-                                
                                 <#list days?keys as key>
                                     <option value="${key}">${days[key]}</option>
                                 </#list>
-                                
                             </select>
                         </div>
                         
@@ -230,18 +227,32 @@
                             <div *ngFor='let error of editAffiliation.endDate.errors' [innerHtml]="error"></div>
                         </span>
                         
-                    </div>                
+                    </div>     
+                    <!-- visibility controlls -->
+                    <div *ngIf="togglzDialogPrivacyOption" class="control-group visibility-container">
+                            <label>
+                                Set visibility:
+                            </label>
+                            <div class="controls">
+                                <privacy-toggle-ng2 
+                                [dataPrivacyObj]="editAffiliation" 
+                                elementId="affiliation-privacy-toggle" 
+                                privacyNodeName="visibility" 
+                                ></privacy-toggle-ng2> 
+                            </div>
+                    </div>
+                    <!-- END visibility controlls -->
                     <div class="control-group">
                         <ul class="inline-list margin-separator pull-left">
                             <li>
                                 <button id="save-affiliation" class="btn btn-primary" (click)="addAffiliation()" [disabled]="addingAffiliation" [ngClass]="{disabled:addingAffiliation}">
                                     
-                                    <span *ngIf="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
-                                    <span *ngIf="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
+                                    <span *ngIf="editAffiliation?.putCode?.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
+                                    <span *ngIf="editAffiliation?.putCode?.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
                                 </button>
                             </li>                       
                             <li>                      
-                                <a class="cancel-option" (click)="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>                  
+                                <a class="cancel-option" (click)="cancelEdit()"><@orcid.msg 'freemarker.btncancel' /></a>                  
                             </li>
                             <li>
                                 <span *ngIf="addingAffiliation">

@@ -9,12 +9,12 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.rc1.common.TransientError;
-import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc1.common.Url;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.common.TransientError;
+import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc2.common.Url;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -74,6 +74,11 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                 id.setNormalized(new TransientNonEmptyString(norm.normalise(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
                 if (StringUtils.isEmpty(id.getNormalized().getValue())){
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
+                }
+                
+                id.setNormalizedUrl(new TransientNonEmptyString(norm.generateNormalisedURL(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
+                if (StringUtils.isEmpty(id.getNormalizedUrl().getValue())){
+                    id.setNormalizedUrlError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
             }
             if (workExternalIdentifier.getUrl() != null) {

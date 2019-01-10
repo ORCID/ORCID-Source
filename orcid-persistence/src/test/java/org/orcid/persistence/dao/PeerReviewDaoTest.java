@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -19,8 +20,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class PeerReviewDaoTest extends DBUnitTest {
 
-    private static String USER_ORCID = "0000-0000-0000-0003";
-    private static String OTHER_USER_ORCID = "4444-4444-4444-4446";
+    private static String USER_ORCID = "4444-4444-4444-4446";
+    private static String OTHER_USER_ORCID = "0000-0000-0000-0003";
     
     @Resource(name = "peerReviewDao")
     private PeerReviewDao dao;
@@ -41,9 +42,9 @@ public class PeerReviewDaoTest extends DBUnitTest {
         long initialNumber = dao.countAll();
         long elementThatBelogsToUser = dao.getByUser(USER_ORCID, 0L).size();
         long otherUserElements = dao.getByUser(OTHER_USER_ORCID, 0L).size();
-        assertEquals(5, elementThatBelogsToUser);
+        assertEquals(4, elementThatBelogsToUser);
         assertTrue(elementThatBelogsToUser < initialNumber);
-        assertEquals(4, otherUserElements);
+        assertEquals(5, otherUserElements);
         //Remove all elements that belongs to USER_ORCID
         dao.removeAllPeerReviews(USER_ORCID);
         
@@ -53,5 +54,11 @@ public class PeerReviewDaoTest extends DBUnitTest {
         assertEquals(0, finalNumberOfElementsThatBelogsToUser);
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
+    }
+    
+    @Test
+    public void hasPublicPeerReviewsTest() {
+        assertTrue(dao.hasPublicPeerReviews("0000-0000-0000-0003"));
+        assertFalse(dao.hasPublicPeerReviews("0000-0000-0000-0002"));
     }
 }

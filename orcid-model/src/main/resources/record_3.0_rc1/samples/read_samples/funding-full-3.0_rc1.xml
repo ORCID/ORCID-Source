@@ -14,14 +14,14 @@
 		<common:source-name />
 	</common:source>	 
 	<funding:type>grant</funding:type>
-	<common:organization-defined-type>common:organization-defined-type</common:organization-defined-type>
+	<funding:organization-defined-type>common:organization-defined-type</funding:organization-defined-type>
 	<funding:title>
 		<common:title>common:title</common:title>
 		<common:translated-title language-code="en">common:translated-title</common:translated-title>
 	</funding:title>
 	<funding:short-description>funding:short-description</funding:short-description>
 	<funding:amount currency-code="ADP">1234</funding:amount>
-	<funding:url>http://tempuri.org</funding:url>
+	<common:url>http://tempuri.org</common:url>
 	<common:start-date>
 		<common:year>1948</common:year>
 		<common:month>02</common:month>

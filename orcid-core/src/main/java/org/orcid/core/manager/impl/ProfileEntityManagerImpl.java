@@ -492,40 +492,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }    
 
     @Override
-    @Transactional
-    public boolean reactivateRecord(String orcid) {
-        ProfileEntity toReactivate = profileDao.find(orcid);
-        toReactivate.setLastModified(new Date());
-        toReactivate.setDeactivationDate(null);
-        profileDao.merge(toReactivate);
-        profileDao.flush();
-
-        notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
-        return true;
-    }
-
-    @Override
     public void updateLocale(String orcid, Locale locale) {
         profileDao.updateLocale(orcid, locale.name());
     }
 
     @Override
     public boolean isProfileClaimedByEmail(String email) {
-        return profileDao.getClaimedStatusByEmail(email);
-    }
-
-    @Override
-    public void reactivate(String orcid, String givenNames, String familyName, String password, Visibility defaultVisibility) {
-        LOGGER.info("About to reactivate record, orcid={}", orcid);
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-        profileEntity.setDeactivationDate(null);
-        profileEntity.setClaimed(true);
-        profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
-        profileEntity.setActivitiesVisibilityDefault(defaultVisibility.name());
-        RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
-        recordNameEntity.setGivenNames(givenNames);
-        recordNameEntity.setFamilyName(familyName);
-        profileDao.merge(profileEntity);
+        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));        
     }
 
     @Override

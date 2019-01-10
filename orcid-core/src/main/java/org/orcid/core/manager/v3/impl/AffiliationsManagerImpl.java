@@ -1,31 +1,36 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.OrgManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc1.record.Membership;
-import org.orcid.jaxb.model.v3.rc1.record.Qualification;
-import org.orcid.jaxb.model.v3.rc1.record.Service;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc2.record.Membership;
+import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.Service;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -248,11 +253,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     }
     
     private Affiliation createAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        activityValidator.validateAffiliation(affiliation, sourceEntity, true, isApiRequest, null);
+        Source activeSource = sourceManager.retrieveActiveSource();
+        activityValidator.validateAffiliation(affiliation, activeSource, true, isApiRequest, null);
 
         if (isApiRequest) {
-                checkAffiliationExternalIDsForDuplicates(orcid, affiliation, sourceEntity);
+                checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
         }
 
         OrgAffiliationRelationEntity entity = null;
@@ -286,19 +291,13 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
         entity.setOrg(updatedOrganization);
 
-        // Set source id
-        if (sourceEntity.getSourceProfile() != null) {
-            entity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-
-        if (sourceEntity.getSourceClient() != null) {
-            entity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        }
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         entity.setProfile(profile);
-        setIncomingWorkPrivacy(entity, profile);
+        setIncomingWorkPrivacy(entity, profile, isApiRequest);
         entity.setAffiliationType(type.name());
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
         
         orgAffiliationRelationDao.persist(entity);
         orgAffiliationRelationDao.flush();
@@ -340,20 +339,19 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     public Affiliation updateAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliation.getPutCode());
 
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
 
         // Save the original source
-        String existingSourceId = entity.getSourceId();
-        String existingClientSourceId = entity.getClientSourceId();
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(entity);
 
         String originalVisibility = entity.getVisibility();
-        orcidSecurityManager.checkSource(entity);
+        orcidSecurityManager.checkSourceAndThrow(entity);
 
-        activityValidator.validateAffiliation(affiliation, sourceEntity, false, isApiRequest,
-                org.orcid.jaxb.model.v3.rc1.common.Visibility.valueOf(originalVisibility));
+        activityValidator.validateAffiliation(affiliation, activeSource, false, isApiRequest,
+                org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(originalVisibility));
 
         if (isApiRequest) {
-            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, sourceEntity);
+            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
         }
 
         switch(type) {
@@ -384,10 +382,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             entity.setVisibility(originalVisibility);
         }
         
-
-        // Be sure it doesn't overwrite the source
-        entity.setSourceId(existingSourceId);
-        entity.setClientSourceId(existingClientSourceId);
+        // Populate display index in case it is missing
+        DisplayIndexCalculatorHelper.setDisplayIndexOnExistingEntity(entity, isApiRequest);
+        
+        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, entity);
 
         // Updates the give organization with the latest organization from
         // database, or, create a new one
@@ -445,7 +443,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Override
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);
-        orcidSecurityManager.checkSource(affiliationEntity);
+        orcidSecurityManager.checkSourceAndThrow(affiliationEntity);
         boolean result = orgAffiliationRelationDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if (result) {
             if (AffiliationType.DISTINCTION.name().equals(affiliationEntity.getAffiliationType())) {
@@ -467,15 +465,20 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         return result;
     }
 
-    private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile) {
+
+    private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile, boolean isApiRequest) {
         String incomingElementVisibility = orgAffiliationRelationEntity.getVisibility();
         String defaultElementVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);
-        } else if (incomingElementVisibility == null) {
-            orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        }
+		if ((isApiRequest && profile.getClaimed()) || (incomingElementVisibility == null && !isApiRequest)) {
+			orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);
+		} else if (isApiRequest && !profile.getClaimed() && incomingElementVisibility == null) {
+			orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+		}
     }
+    
+	private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity workEntity, ProfileEntity profile) {
+		setIncomingWorkPrivacy( workEntity,  profile, true);
+	}
 
     private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity) {
         Item item = new Item();
@@ -500,12 +503,18 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
         return Arrays.asList(item);
     }
-
+    
     @Override
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
         return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility.name());
     }
 
+    @Override
+    @Transactional
+    public boolean updateVisibilities(String orcid, ArrayList<Long> affiliationIds, Visibility visibility) {
+        return orgAffiliationRelationDao.updateVisibilitiesOnOrgAffiliationRelation(orcid, affiliationIds, visibility.name());
+    }
+    
     /**
      * Deletes an affiliation.
      * 
@@ -529,7 +538,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orgAffiliationRelationDao.removeAllAffiliations(orcid);
     }
     
-    private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, SourceEntity sourceEntity) {
+    private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, Source activeSource) {
         List<Affiliation> affiliations = getAffiliations(orcid);
         if (affiliations != null) {
             for (Affiliation affiliation : affiliations) {
@@ -539,10 +548,15 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
                 }
                 
                 if (incoming.getClass().isAssignableFrom(affiliation.getClass())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(incoming.getExternalIDs(), affiliation.getExternalIDs(), affiliation.getSource(),
-                            sourceEntity);
+                    activityValidator.checkFundingExternalIdentifiersForDuplicates(incoming.getExternalIDs(), affiliation.getExternalIDs(), affiliation.getSource(),
+                            activeSource);
                 }
             }
         }
+    }
+
+    @Override
+    public Boolean updateToMaxDisplay(String orcid, Long putCode) {
+        return orgAffiliationRelationDao.updateToMaxDisplay(orcid, putCode);
     }
 }

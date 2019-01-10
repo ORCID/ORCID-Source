@@ -1,7 +1,7 @@
 declare var $: any;
 declare var ActSortState: any;
 declare var GroupedActivities: any;
-declare var groupedActivitiesUtil: any;
+declare var openImportWizardUrl: any;
 declare var sortState: any;
 declare var typeahead: any;
 
@@ -9,7 +9,7 @@ declare var typeahead: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -18,10 +18,8 @@ import { Observable, Subject, Subscription }
 import { takeUntil } 
     from 'rxjs/operators';
 
-
-
-//import { FundingService } 
-//    from '../../shared/funding.service.ts';
+import { CommonService } 
+    from '../../shared/common.service.ts';
 
 import { EmailService } 
     from '../../shared/email.service.ts';
@@ -37,149 +35,179 @@ import { WorkspaceService }
 
 @Component({
     selector: 'funding-ng2',
-    template:  scriptTmpl("funding-ng2-template")
+    template:  scriptTmpl("funding-ng2-template"),
+    providers: [CommonService]
 })
 export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    @Input() publicView: any;
 
-    /*
-    emailSrvc: any;
-    workspaceSrvc: any;
-    */
-    addingFunding: boolean;
-    deleFunding: any;
-    disambiguatedFunding: any;
-    displayFundingxtIdPopOver: any;
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
+    private viewSubscription: Subscription;
+    
     displayURLPopOver: any;
-    editFunding: any;
-    educations: any;
+    editSources: any;
     emails: any;
-    employments: any;
-    fixedTitle: string;
-    fundings: any;
+    fundingImportWizard: boolean;
     groups: any;
     moreInfo: any;
-    moreInfoCurKey: any;
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
     sortHideOption: boolean;
     sortState: any;
+    fundingMoreInfo: any;
+    wizardDescExpanded: any;
 
     constructor(
+        private elementRef: ElementRef,
+        private cdr: ChangeDetectorRef,
+        private commonSrvc: CommonService,
         private fundingService: FundingService,
         private emailService: EmailService,
         private modalService: ModalService,
         private workspaceSrvc: WorkspaceService
     ) {
-        /*
-        this.emailSrvc = emailSrvc;
-        this.workspaceSrvc = workspaceSrvc;
-        */
-        this.addingFunding = false;
-        this.deleFunding = null;
+
         this.displayURLPopOver = {};
-        this.editFunding = {};
+        this.editSources = {};
         this.emails = {};
-        this.fixedTitle = '';
-        this.fundings = new Array();
-        this.groups = null;
+        this.fundingImportWizard = false;
+        this.groups = new Array();
         this.moreInfo = {};
-        this.moreInfoCurKey = null;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
+        this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
-        this.sortHideOption = false;
         this.sortState = new ActSortState(GroupedActivities.FUNDING);
+        this.fundingMoreInfo = {};
+        this.wizardDescExpanded = {};
     }
 
-    addFunding(): void {
-        if (this.addingFunding == true) {
-            return; // don't process if adding affiliation
-        }
-
-        this.addingFunding = true;
-        this.editFunding.errors.length = 0;
-    };
-
-    addFundingModal(type, affiliation): void {
-
-    };
-
-    bindTypeahead(): void {
-
-    };
-
-    close(): void {
-        //$.colorbox.close();
-    };
-
-    closeModal(): void {
-        //$.colorbox.close();
+    addFundingModal(funding?): void {
+        this.emailService.getEmails()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.fundingService.notifyOther({ funding:funding });
+                    if(funding == undefined) {
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: false});
+                    } else {
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: true});
+                    } 
+                } else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                //console.log('getEmails', error);
+            } 
+        );
     };
 
     closeMoreInfo(key): void {
         this.moreInfo[key]=false;
     };
 
-    deleteFunding(delFunding): void {
-        //this.fundingService.deleteData(delFunding);
-        this.closeModal();
-    };
-
-    getFundingsById( ids ): any {
-        this.fundingService.getFundingsById( ids ).pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-
-                //console.log('this.getFundingsById', data);
-                for (let i in data) {
-                    this.fundings.push(data[i]);
-                };
-
-            },
-            error => {
-                //console.log('getBiographyFormError', error);
-            } 
-        );
-    }
-
-    getFundingsIds(): any {
-        this.fundingService.getFundingsId()
+    deleteFunding(funding): void {
+        this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                //console.log('getFundingsIds', data);
-                let funding = null;
-                for (let i in data) {
-                    funding = data[i];
-                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,this.groups);
-                };
-                /*
-                if (fundingSrvc.fundingToAddIds.length == 0) {
-                    $timeout(function() {
-                      fundingSrvc.loading = false;
-                    });
-                } else {
-                    $timeout(function () {
-                        fundingSrvc.addFundingToScope(path);
-                    },50);
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                    this.fundingService.notifyOther({funding:funding});
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalFundingDelete'});
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }
-                
-                let ids = data.splice(0,20).join();
-                this.getFundingsById( ids );
-                */
             },
             error => {
-                //console.log('getBiographyFormError', error);
+                //console.log('getEmails', error);
             } 
         );
     };
 
+    getFundingGroups(): any {
+        this.groups = new Array();
+        if(this.publicView === "true") {
+            this.fundingService.getPublicFundingGroups(this.sortState.predicateKey, !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.fundingService.loading = false;
+                    this.groups = data;
+                },
+                error => {
+                    this.fundingService.loading = false;
+                    console.log('getFundingGroups', error);
+                } 
+            );
+        } else {
+            this.fundingService.getFundingGroups(this.sortState.predicateKey, !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.fundingService.loading = false;
+                    this.groups = data;
+                },
+                error => {
+                    this.fundingService.loading = false;
+                    console.log('getFundingGroups', error);
+                } 
+            );
+        }
+    }
+    
+    getFundingDetails(putCode): any {
+        if(this.publicView === "true") {
+            this.fundingService.getPublicFundingDetails(putCode).pipe(    
+            takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.fundingService.loading = false;
+                    this.fundingService.details[putCode] = data; 
+                },
+                error => {
+                    this.fundingService.loading = false;
+                    console.log('getFundingsByIdError', error);
+                } 
+            );
+        } else {
+            this.fundingService.getFundingDetails(putCode).pipe(    
+            takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.fundingService.loading = false;
+                    this.fundingService.details[putCode] = data; 
+                },
+                error => {
+                    this.fundingService.loading = false;
+                    console.log('getFundingsByIdError', error);
+                } 
+            );
+        }
+    }
+
+    hideAllTooltip(): void {
+        for (var idx in this.showElement){
+            this.showElement[idx]=false;
+        }
+    };
+
+    hideSources(group): void {
+        this.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
+    };
 
     hideTooltip(element): void{        
         this.showElement[element] = false;
@@ -188,8 +216,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     hideURLPopOver(id): void{
         this.displayURLPopOver[id] = false;
     };
-
-
 
     isValidClass(cur): any {
         let valid = true;
@@ -220,33 +246,122 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         return '';
     };
 
-    moreInfoMouseEnter(key, $event): void {
-        $event.stopPropagation();
-        if ( document.documentElement.className.indexOf('no-touch') > -1 ) {
-            if (this.moreInfoCurKey != null
-                && this.moreInfoCurKey != key) {
-                this.privacyHelp[this.moreInfoCurKey]=false;
+    makeDefault(group, putCode): any {
+        this.fundingService.updateToMaxDisplay(group, putCode)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                group.activePutCode = putCode;   
+                group.defaultPutCode = putCode;
+            },
+            error => {
+                console.log('makeDefault', error);
+            } 
+        );
+    }
+
+    openEditFunding(funding, group): void {
+        var bestMatchPutCode = null;
+        //check for user source version
+        if(funding.source == orcidVar.orcidId){
+            bestMatchPutCode = funding.putCode.value;
+        } else {
+            for (var idx in group.fundings) {    
+                if (group.fundings[idx].source == orcidVar.orcidId) {
+                    bestMatchPutCode = group.fundings[idx].putCode.value;
+                    break;
+                }
             }
-            this.moreInfoCurKey = key;
-            this.moreInfo[key]=true;
+        }
+        if(bestMatchPutCode != null){
+            if(this.fundingService.details[bestMatchPutCode] == undefined){
+                this.fundingService.getFundingDetails(bestMatchPutCode)
+                .pipe(    
+                    takeUntil(this.ngUnsubscribe)
+                )
+                .subscribe(
+                    data => {
+                            this.addFundingModal(data);
+                    },
+                    error => {
+                        console.log('openEditFundingError', error);
+                    } 
+                );
+            } else {
+                this.addFundingModal(this.fundingService.details[bestMatchPutCode]);
+            }
+        } else {
+            //otherwise make a copy 
+            if(this.fundingService.details[funding.putCode.value] == undefined){
+                this.fundingService.getFundingDetails(funding.putCode.value)
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                                this.addFundingModal(this.fundingService.createNew(data));
+                        },
+                        error => {
+                            console.log('openEditFundingError', error);
+                        } 
+                );
+            } else {
+                this.addFundingModal(this.fundingService.createNew(this.fundingService.details[funding.putCode.value]));
+            }
+        }
+    }
+
+    openImportWizardUrl(url): void {
+        openImportWizardUrl(url);
+    };
+
+    setGroupPrivacy(group, priv, $event): void {
+        $event.preventDefault();
+        var putCodes = new Array();
+        for (var idx in group.fundings) {
+            putCodes.push(group.fundings[idx].putCode.value);
+            group.fundings[idx].visibility.visibility = priv;
+        }
+        group.activeVisibility = priv;
+        this.fundingService.updateVisibility(putCodes, priv)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if (putCodes.length > 0) {
+                    this.fundingService.updateVisibility(putCodes, priv);   
+                }
+                
+            },
+            error => {
+                console.log('Error updating group visibility', error);
+            } 
+        );
+    }
+
+    showDetailsMouseClick(group, $event): void {
+        $event.stopPropagation();
+        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        if(this.moreInfo[group.groupId] == true){
+            for (var idx in group.fundings){
+                if(this.fundingService.details[group.fundings[idx].putCode.value] == undefined){
+                    this.getFundingDetails(group.fundings[idx].putCode.value);
+                }
+            }
         }
     };
 
-
-    setPrivacy(aff, priv, $event): void {
-        $event.preventDefault();
-        aff.visibility.visibility = priv;
-        //this.affiliationService.updateProfileAffiliation(aff);
+    showFundingImportWizard(): void {
+        this.fundingImportWizard = !this.fundingImportWizard;               
     };
 
-    showAddModal(): void{
-        let numOfResults = 25;
-
-    };
-
-    showDetailsMouseClick = function(group, $event) {
+    showSources(group,$event): void {
         $event.stopPropagation();
-        this.moreInfo[group.groupId] = !this.moreInfo[group.groupId];
+        this.editSources[group.groupId] = true;
+        this.hideAllTooltip();
     };
 
     showTooltip(element): void{        
@@ -255,22 +370,16 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     sort(key): void {       
         this.sortState.sortBy(key);
+        this.getFundingGroups();
     };
 
     showURLPopOver(id): void {
         this.displayURLPopOver[id] = true;
     };
 
-    // remove once grouping is live
-    toggleClickMoreInfo(key): void {
-        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
-            if (this.moreInfoCurKey != null
-                    && this.moreInfoCurKey != key) {
-                this.moreInfo[this.moreInfoCurKey]=false;
-            }
-            this.moreInfoCurKey = key;
-            this.moreInfo[key]=!this.moreInfo[key];
-        }
+    swapSources(group, putCode): void{
+        group.activePutCode = putCode;
+        this.editSources[group.activePutCode] = true;
     };
 
     toggleClickPrivacyHelp(key): void {
@@ -286,32 +395,37 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     };
 
-    toggleEdit(): void {
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
-                    //this.showEdit = !this.showEdit;
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
+    toggleWizardDesc(id): void{
+        this.wizardDescExpanded[id] = !this.wizardDescExpanded[id];
     };
 
+    toggleSectionDisplay($event): void {
+        $event.stopPropagation();
+        this.workspaceSrvc.displayFunding = !this.workspaceSrvc.displayFunding;
+        if(this.workspaceSrvc.displayFunding==false){
+            this.fundingImportWizard=false;
+        }
+    }
 
-
+    userIsSource(funding): boolean {
+        if (funding.source == orcidVar.orcidId){
+            return true;
+        }
+        return false;
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+        this.subscription = this.fundingService.notifyObservable$.subscribe(
+            (res) => {                
+                if(res.action == 'add' || res.action == 'cancel' || res.action == 'delete') {
+                    if(res.successful == true) {
+                        this.getFundingGroups();
+                    }
+                }                
+            }
+        );
     };
 
     ngOnDestroy() {
@@ -320,7 +434,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        //console.log('initi funding component');
-        this.getFundingsIds();
+        this.getFundingGroups();
     }; 
 }

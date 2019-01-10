@@ -4,9 +4,9 @@ import java.io.Writer;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Organization;
-import org.orcid.jaxb.model.v3.rc1.common.MultipleOrganizationHolder;
-import org.orcid.jaxb.model.v3.rc1.common.OrganizationHolder;
-import org.orcid.jaxb.model.v3.rc1.record.ResearchResourceHosts;
+import org.orcid.jaxb.model.v3.rc2.common.MultipleOrganizationHolder;
+import org.orcid.jaxb.model.v3.rc2.common.OrganizationHolder;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResourceHosts;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 

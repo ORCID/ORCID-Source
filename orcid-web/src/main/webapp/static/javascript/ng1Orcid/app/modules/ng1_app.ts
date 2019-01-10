@@ -13,8 +13,11 @@ import 'angular-route'
 
 //User generated imports
 
-import { AffiliationExtIdPopoverModule } 
-    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
+import { AccountSettingsModule } 
+    from './accountSettings/accountSettings.ts';
+
+import { AdminActionsModule } 
+    from './adminActions/adminActions.ts';  
 
 import { AffiliationModule } 
     from './affiliation/affiliation.ts';
@@ -34,20 +37,17 @@ import { AllConsortiumContactsModule }
 import { BiographyModule } 
     from './biography/biography.ts';
 
-import { ClaimThanksModule } 
-    from './claimThanks/claimThanks.ts';
+import {ClaimModule}
+    from './claim/claim.ts';
 
 import { ClientEditModule } 
     from './clientEdit/clientEdit.ts';
 
-import { DeactivateAccountModule }
-    from './deactivateAccount/deactivateAccount.ts';
+import { DelegatorsModule } 
+    from './delegators/delegators.ts';
 
-import { DeactivateAccountMessageModule }
-    from './deactivateAccount/deactivateAccountMessage.ts';
-
-import { DeprecateAccountModule }
-    from './deprecateAccount/deprecateAccount.ts';
+import { DeveloperToolsModule } 
+    from './developerTools/developerTools.ts';  
 
 import { EmailsModule } 
     from './emails/emails.ts';
@@ -61,8 +61,11 @@ import { EmailUnverifiedWarningModule }
 import { EmailVerificationSentMesssageModule } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 
-import { ExternalIdentifiersModule }
-    from './externalIdentifiers/externalIdentifiers.ts';
+import { ExtIdPopoverModule } 
+    from './extIdPopover/extIdPopover.ts';
+
+import { FundingDeleteModule } 
+    from './funding/fundingDelete.ts';
 
 import { FundingModule } 
     from './funding/funding.ts';
@@ -82,14 +85,20 @@ import { LanguageModule }
 import { LinkAccountModule } 
     from './linkAccount/linkAccount.ts';
 
+import { MembersListModule } 
+    from './membersList/membersList.ts';
+
 import { ModalModule } 
     from './modalNg2/modal-ng.ts';
 
-import { NameModule } 
-    from './name/name.ts';
+import { MyOrcidAlertsModule } 
+    from './myOrcidAlerts/myOrcidAlerts.ts';
 
 import { NotificationsModule }
     from './notifications/notifications.ts';
+
+import { NotificationAlertsModule }
+    from './notificationAlerts/notificationAlerts.ts';
 
 import { OauthAuthorizationModule } 
     from './oauthAuthorization/oauthAuthorization.ts';
@@ -97,20 +106,29 @@ import { OauthAuthorizationModule }
 import { OrgIdentifierPopoverModule } 
     from './orgIdentifierPopover/orgIdentifierPopover.ts';
 
-import { PasswordEditModule } 
-    from './passwordEdit/passwordEdit.ts';
+import { PeerReviewModule } 
+    from './peerReview/peerReview.ts';
+
+import { PeerReviewDeleteModule } 
+    from './peerReview/peerReviewDelete.ts';
 
 import { PersonModule } 
     from './person/person.ts';
 
-import { PersonalInfoModule } 
-    from './personalInfo/personalInfo.ts';
+import { PrintRecordModule } 
+    from './printRecord/printRecord.ts';
 
 import { PublicEduAffiliationModule }
     from './publicEduAffiliation/publicEduAffiliation.ts';
 
+import { PublicRecordModule } 
+    from './publicRecord/publicRecord.ts';
+
 import { ReactivationModule } 
     from './reactivation/reactivation.ts';
+    
+import { RecordCorrectionsModule }
+    from './recordCorrections/recordCorrections.ts'
 
 import { RegisterDuplicatesModule } 
     from './registerDuplicates/registerDuplicates.ts';
@@ -121,11 +139,17 @@ import { RequestPasswordResetModule }
 import { ResetPasswordModule }
     from './resetPassword/resetPassword.ts';
 
+import { ResearchResourceModule } 
+    from './researchResource/researchResource.ts';
+
+import { ResearchResourceDeleteModule } 
+    from './researchResource/researchResourceDelete.ts';
+
+import { ResendClaimModule } 
+    from './resendClaim/resendClaim.ts';
+
 import { SearchModule } 
     from './search/search.ts';
-
-import { SecurityQuestionEditModule } 
-    from './securityQuestionEdit/securityQuestionEdit.ts';
 
 import { SelfServiceModule } 
     from './selfService/selfService.ts';
@@ -145,43 +169,48 @@ import { SelfServiceRemoveSubMemberModule }
 import { Social2FAModule }
     from './social2FA/social2FA.ts';
 
-import { SocialNetworksModule }
-    from './socialNetworks/socialNetworks.ts';
-
-import { SwitchUserModule }
-    from './switchUser/switchUser.ts';
-
-import { ThanksForRegisteringModule } 
-    from './thanksForRegistering/thanksForRegistering.ts';
-
-import { ThanksForVerifyingModule } 
-    from './thanksForVerifying/thanksForVerifying.ts';
-
-import { TwoFASetupModule } 
+import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
 
-import { TwoFAStateModule }
-    from './2FAState/twoFAState.ts';
-
-import { VerifyEmailModule }
-    from './verifyEmail/verifyEmail.ts';
+import { UnsubscribeModule }
+    from './unsubscribe/unsubscribe.ts';
 
 import { WidgetModule } 
     from './widget/widget.ts';
+
+import { WorksBulkDeleteModule } 
+    from './works/worksBulkDelete.ts';
+
+import { WorksDeleteModule } 
+    from './works/worksDelete.ts';
 
 import { WorksFormModule } 
     from './works/worksForm.ts';
 
 import { WorksModule } 
     from './works/works.ts';
+    
+import { WorksMergeSuggestionsModule } 
+    from './works/worksMergeSuggestions.ts';
 
-import { WorkSpaceSummaryModule } 
-    from './workspaceSummary/workspaceSummary.ts';
+import { ManageMembersModule } 
+    from './manageMembers/manageMembers.ts';      
+    
+import { idBannerModule } 
+    from './idBanner/idBanner.ts'
 
-import { WorksPrivacyPreferencesModule } 
-    from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
+import { qrcodeModule } 
+    from './qrcode/qrcode.ts';
 
+import { lastModifiedModule }
+    from './lastModified/lastModified.ts'
 
+import { bioModule } 
+    from './bio/bio.ts';
+
+import { printIdBannerModule } 
+    from './printIdBanner/printIdBanner.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -189,62 +218,72 @@ export const orcidApp = angular.module(
         ngSanitize, 
         vcRecaptcha,
         uibootstraptypeahead,
-        AffiliationExtIdPopoverModule.name,
+        AccountSettingsModule.name,
+        AdminActionsModule.name,
         AffiliationModule.name,
         AffiliationDeleteModule.name,
         AffiliationFormModule.name,
         AlertBannerModule.name,
         AllConsortiumContactsModule.name,
         BiographyModule.name,
-        ClaimThanksModule.name,
+        ClaimModule.name, 
         ClientEditModule.name,
-        DeactivateAccountModule.name,
-        DeactivateAccountMessageModule.name,
-        DeprecateAccountModule.name,
+        DelegatorsModule.name,
+        DeveloperToolsModule.name,
         EmailsFormModule.name,
         EmailsModule.name,
         EmailUnverifiedWarningModule.name,
         EmailVerificationSentMesssageModule.name,
-        ExternalIdentifiersModule.name,
-        FundingModule.name,
+        ExtIdPopoverModule.name,
+        FundingDeleteModule.name,
         FundingFormModule.name,
+        FundingModule.name,
         HomeModule.name,
         HeaderModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
+        MembersListModule.name,
         ModalModule.name,
-        NameModule.name,
+        MyOrcidAlertsModule.name,
+        NotificationsModule.name,
+        NotificationAlertsModule.name,
         OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
-        PasswordEditModule.name,
+        PeerReviewModule.name,
+        PeerReviewDeleteModule.name,
         PersonModule.name,
-        PersonalInfoModule.name,
+        PrintRecordModule.name,
         PublicEduAffiliationModule.name,
-        NotificationsModule.name,
+        PublicRecordModule.name,
         ReactivationModule.name,
+        RecordCorrectionsModule.name,
         RegisterDuplicatesModule.name,
         RequestPasswordResetModule.name,
         ResetPasswordModule.name,
+        ResearchResourceModule.name,
+        ResearchResourceDeleteModule.name,
+        ResendClaimModule.name,
         SearchModule.name,
-        SecurityQuestionEditModule.name,
         SelfServiceModule.name,
         SelfServiceAddContactModule.name,
         SelfServiceExistingSubMemberModule.name,
         SelfServiceRemoveContactModule.name,
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
-        SocialNetworksModule.name,
-        SwitchUserModule.name,
-        ThanksForRegisteringModule.name,
-        ThanksForVerifyingModule.name,
-        TwoFASetupModule.name,
-        TwoFAStateModule.name,
-        VerifyEmailModule.name,
+        TwoFaSetupModule.name,
+        UnsubscribeModule.name,
         WidgetModule.name,
+        WorksBulkDeleteModule.name,
+        WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
-        WorkSpaceSummaryModule.name,
-        WorksPrivacyPreferencesModule.name
+        WorksMergeSuggestionsModule.name,
+        ManageMembersModule.name,
+        idBannerModule.name,
+        qrcodeModule.name,
+        lastModifiedModule.name,
+        bioModule.name,
+        printIdBannerModule.name
     ]
 );
 

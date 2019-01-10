@@ -1,4 +1,4 @@
-import { Injectable } 
+import { EventEmitter, Injectable, Output } 
     from '@angular/core';
 
 import { HttpClient, HttpClientModule, HttpHeaders } 
@@ -16,9 +16,14 @@ import { catchError, map, tap }
 
 @Injectable()
 export class EmailService {
+
+    //Broadcast events from other components that cause email list to change
+    @Output() emailsChange: EventEmitter<boolean> = new EventEmitter();
+    
     public delEmail: any;
     private deleteEmailHeaders: HttpHeaders;
     private emails: any;
+    public emailListUpdated: boolean
     private headers: HttpHeaders;          
     public inputEmail: any;
     private notify = new Subject<any>();
@@ -31,6 +36,7 @@ export class EmailService {
     constructor( private http: HttpClient ){
         this.delEmail = null;
         this.emails = null;
+        this.emailListUpdated = false;
         this.headers = new HttpHeaders(
             {
                 'Access-Control-Allow-Origin':'*',
@@ -53,10 +59,10 @@ export class EmailService {
     addEmail( email? ): Observable<any> {
         let encoded_data;
         if( email ){
-            console.log('if', email);
+            //console.log('if', email);
             encoded_data = JSON.stringify( email );
         }else{
-            console.log('else', this.inputEmail);
+            //console.log('else', this.inputEmail);
             encoded_data = JSON.stringify( this.inputEmail );
             
         }
@@ -78,6 +84,12 @@ export class EmailService {
             )
         )
         ;
+    }
+
+    //Send change event to subscribed components
+    emailsUpdated(status) {
+        this.emailListUpdated = status
+        this.emailsChange.emit(this.emailListUpdated);
     }
 
     deleteEmail() {        
@@ -108,7 +120,7 @@ export class EmailService {
                         if (data['emails'][i].primary == true){
                             this.primaryEmail = data['emails'][i];
                         }
-                    }                                                
+                    }                                              
                 }
             )
         )
@@ -128,7 +140,6 @@ export class EmailService {
                 (data) => {
                     this.emails = data;
                     for (let i in data['emails']){
-                        //console.log('data.emails[i]', data.emails[i]);
                         if (data['emails'][i].primary == true){
                             this.primaryEmail = data['emails'][i];
                         }
@@ -253,40 +264,25 @@ export class EmailService {
             )
         )
         ;
-
-        /*
-        Old code, behaviour changed with new email functionality
-
-        for (let i in this.emails.emails) {
-            if (this.emails.emails[i] == email) {
-                this.emails.emails[i].primary = true;
-                this.primaryEmail = email;
-                if (this.emails.emails[i].verified == false) {
-                    this.unverifiedSetPrimary = true;
-                } else {
-                    this.unverifiedSetPrimary = false;
-                }
-
-            } else {
-                this.emails.emails[i].primary = false;
-            }
-        }
-        this.saveEmail();
-        */
     }
 
     verifyEmail(email?): Observable<any>  {
-
         let _email = null; 
-        if(email){
-            _email = email;
+        if(email) {
+            if(typeof email === 'string') {
+                _email = email;
+            } else {
+                _email = email.value;
+            }            
         } else {
-            _email = this.getEmailPrimary();
+            let primary = this.getEmailPrimary();
+            if(primary) {
+                _email = primary.value
+            }
         }
         
-
         return this.http.get(
-            getBaseUri() + '/account/verifyEmail.json?email=' + encodeURIComponent(_email.value)
+            getBaseUri() + '/account/verifyEmail.json?email=' + encodeURIComponent(_email)
         )
         ;
     }

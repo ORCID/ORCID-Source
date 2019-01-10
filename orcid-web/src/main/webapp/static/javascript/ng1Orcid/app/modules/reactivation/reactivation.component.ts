@@ -6,7 +6,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, EventEmitter, Output } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -30,11 +30,18 @@ import { ReactivationService }
     selector: 'reactivation-ng2',
     template:  scriptTmpl("reactivation-ng2-template")
 })
-export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
+export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {    
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     privacyHelp: any;
     registrationForm: any;
+    showReactivationSent: boolean = false;
+    showDeactivatedError: boolean = false;
+    showDuplicateEmailError: boolean = false;
+    errorEmailsAdditional: any;
+    showEmailsAdditionalDeactivatedError: any;
+    showEmailsAdditionalReactivationSent: any;
+    showEmailsAdditionalDuplicateEmailError: any;
     
     constructor(
         private oauthService: OauthService,
@@ -44,10 +51,54 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         private cdr:ChangeDetectorRef
     ) {
         this.privacyHelp = {};
-        this.registrationForm = {}; 
+        this.errorEmailsAdditional = [false];        
+        this.showEmailsAdditionalDuplicateEmailError = [false];
+        this.showEmailsAdditionalReactivationSent = [false]
+        this.showEmailsAdditionalDeactivatedError = [false];
+        this.registrationForm = {
+                "activitiesVisibilityDefault": {
+                    "value": null,
+                    "errors": []
+                },
+                "errors": [],
+                "familyNames": {
+                    "value": "",
+                    "errors": []
+                },
+                "givenNames": {
+                    "value": "",
+                    "errors": []
+                },
+                "email": {
+                    "value": "",
+                    "errors": []
+                },
+                "emailsAdditional": [{
+                    "errors": [],
+                    "value": null,
+                    "required": false,
+                    "getRequiredMessage": null
+                }],
+                "password": {
+                    "value": "",
+                    "errors": []
+                },
+                "passwordConfirm": {
+                    "value": "",
+                    "errors": []
+                },
+                "termsOfUse": {
+                    "value": false, 
+                    "errors": []
+                }                                                
+            }; 
     }
 
-    getReactivation(resetParams, linkFlag): void{
+    isValidClass(cur) : string {
+        return this.commonSrvc.isValidClass(cur);
+    };
+    
+    getReactivation(resetParams, linkFlag): void {
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -57,6 +108,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.registrationForm = data;
                 this.registrationForm.resetParams = resetParams;
                 this.registrationForm.activitiesVisibilityDefault.visibility = null;
+                this.registrationForm.email.value = orcidVar.emailToReactivate;
                 this.cdr.detectChanges();              
             },
             error => {
@@ -64,10 +116,6 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log("error fetching register.json");
             } 
         );
-    };
-
-    isValidClass(cur) : string{
-        return this.commonSrvc.isValidClass(cur);
     };
 
     postReactivationConfirm(): void {
@@ -87,6 +135,19 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 else{
                     this.registrationForm = data;
+                    for (var index in this.registrationForm.emailsAdditional) {
+                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
+                            this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
+                            //deactivated error
+                            this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
+                            this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
+                            //duplicate email error
+                            this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));                            
+                        } else {
+                            this.showEmailsAdditionalDeactivatedError[index] = false;
+                            this.showEmailsAdditionalDuplicateEmailError[index] = false;
+                        } 
+                    }
                     this.cdr.detectChanges();
                 } 
             },
@@ -122,6 +183,32 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
 
     updateActivitiesVisibilityDefault(priv, $event): void {
         this.registrationForm.activitiesVisibilityDefault.visibility = priv;
+    };
+    
+    sendReactivationEmail(email): void {        
+        this.oauthService.sendReactivationEmail(email)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.showReactivationSent = true;
+                this.cdr.detectChanges();
+            },
+            error => {
+                console.log("error sending reactivation email");
+            } 
+        );
+    };
+    
+    addEmailField(): void {
+        this.registrationForm.emailsAdditional.push({value: ''});
+        this.cdr.detectChanges();       
+    }; 
+    
+    removeEmailField(index): void {
+        this.registrationForm.emailsAdditional.splice(index, 1);
+        this.cdr.detectChanges();
     };
     
     //Default init functions provided by Angular Core

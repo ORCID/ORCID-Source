@@ -28,7 +28,6 @@ import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -59,7 +58,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
-import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
@@ -137,9 +135,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private ProfileDao profileDao;
-
-    @Resource
-    private CustomEmailManager customEmailManager;
 
     @Resource
     private JpaJaxbNotificationAdapter notificationAdapter;
@@ -408,6 +403,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("submittedEmail", submittedEmail);
         templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -521,10 +517,6 @@ public class NotificationManagerImpl implements NotificationManager {
         String sourceId = record.getSource() == null ? null : SourceEntityUtils.getSourceId(record.getSource());
         String creatorName = record.getSource() == null ? null : SourceEntityUtils.getSourceName(record.getSource());
         Locale userLocale = getUserLocaleFromProfileEntity(record);
-        CustomEmailEntity customEmail = null;
-        if (!PojoUtil.isEmpty(sourceId)) {
-            customEmail = getCustomizedEmail(sourceId, EmailType.CLAIM);
-        }
         String email = emailManager.findPrimaryEmail(orcid).getEmail();
         String emailName = deriveEmailFriendlyName(record);
         String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());        
@@ -533,78 +525,28 @@ public class NotificationManagerImpl implements NotificationManager {
         String body = null;
         String htmlBody = null;
         String sender = null;
+        subject = getSubject("email.subject.api_record_creation", userLocale);
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", emailName);
+        templateParams.put("orcid", orcid);
+        templateParams.put("subject", subject);
+        templateParams.put("creatorName", creatorName);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("verificationUrl", verificationUrl);
 
-        if (customEmail != null) {
-            // Get the customized sender if available
-            sender = PojoUtil.isEmpty(customEmail.getSender()) ? CLAIM_NOTIFY_ORCID_ORG : customEmail.getSender();
-            // Get the customized subject is available
-            subject = PojoUtil.isEmpty(customEmail.getSubject()) ? getSubject("email.subject.api_record_creation", userLocale) : customEmail.getSubject();
-            // Replace the wildcards
-            subject = subject.replace(WILDCARD_USER_NAME, emailName);
-            subject = subject.replace(WILDCARD_MEMBER_NAME, creatorName);
-            if (customEmail.isHtml()) {
-                htmlBody = customEmail.getContent();
-                htmlBody = htmlBody.replace(WILDCARD_USER_NAME, emailName);
-                htmlBody = htmlBody.replace(WILDCARD_MEMBER_NAME, creatorName);
-                htmlBody = htmlBody.replace(EmailConstants.WILDCARD_VERIFICATION_URL, verificationUrl);
-                if (htmlBody.contains(WILDCARD_WEBSITE) || htmlBody.contains(WILDCARD_DESCRIPTION)) {
-                    ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
-                    htmlBody = htmlBody.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());
-                    htmlBody = htmlBody.replace(WILDCARD_DESCRIPTION, clientDetails.getClientDescription());
-                }
-            } else {
-                body = customEmail.getContent();
-                body = body.replace(WILDCARD_USER_NAME, emailName);
-                body = body.replace(WILDCARD_MEMBER_NAME, creatorName);
-                body = body.replace(EmailConstants.WILDCARD_VERIFICATION_URL, verificationUrl);
-                if (body.contains(WILDCARD_WEBSITE) || body.contains(WILDCARD_DESCRIPTION)) {
-                    ClientDetailsEntity clientDetails = customEmail.getClientDetailsEntity();
-                    body = body.replace(WILDCARD_WEBSITE, clientDetails.getClientWebsite());
-                    body = body.replace(WILDCARD_DESCRIPTION, clientDetails.getClientDescription());
-                }
-            }
-        } else {
-            subject = getSubject("email.subject.api_record_creation", userLocale);
-            // Create map of template params
-            Map<String, Object> templateParams = new HashMap<String, Object>();
-            templateParams.put("emailName", emailName);
-            templateParams.put("orcid", orcid);
-            templateParams.put("subject", subject);
-            templateParams.put("creatorName", creatorName);
-            templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-            templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-            templateParams.put("verificationUrl", verificationUrl);
-
-            addMessageParams(templateParams, userLocale);
-            // Generate body from template
-            body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
-            htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
-        }
+        addMessageParams(templateParams, userLocale);
+        // Generate body from template
+        body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
+        htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            boolean isCustomEmail = customEmail != null ? true : false;
-            // TODO: How to handle sender? we might have to register them on
-            // mailgun
-            if (isCustomEmail) {
-                mailGunManager.sendEmail(sender, email, subject, body, htmlBody, isCustomEmail);
-            } else {
-                mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
-            }
+            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
         } else {
             LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", body);
         }
-    }
-
-    /**
-     * Returns a customized email for the given client and type
-     * 
-     * @param source
-     * @param emailType
-     * @return a CustomEmailEntity if exists, null otherwise
-     */
-    private CustomEmailEntity getCustomizedEmail(String source, EmailType emailType) {
-        return customEmailManager.getCustomEmail(source, emailType);
     }
 
     @Override
@@ -1044,7 +986,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
         List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
-        notifications = notificationDaoReadOnly.findNotificationsToSend(new Date(), orcid, recordActiveDate);          
+        notifications = notificationDao.findNotificationsToSend(new Date(), orcid, recordActiveDate);          
         return notificationAdapter.toNotification(notifications);
     }
 

@@ -31,6 +31,7 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     private subscription: Subscription;
     private urlPath = {
         addresses: '/account/countryForm.json',
+        externalIdentifiers: '/my-orcid/externalIdentifiers.json',
         keywords: '/my-orcid/keywordsForms.json',
         otherNames: '/my-orcid/otherNamesForms.json',
         websites: '/my-orcid/websitesForms.json'
@@ -61,18 +62,21 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
         this.elementWidth = "645";
         this.formData = {
             addresses: {},
+            externalIdentifiers: {},
             keywords: {},
             otherNames: {},
             websites: {}
         }
         this.formDataBeforeChange = {
             addresses: {},
+            externalIdentifiers: {},
             keywords: {},
             otherNames: {},
             websites: {}
         }
         this.newElementDefaultVisibility = {
             addresses: null,
+            externalIdentifiers: null,
             keywords: null,
             otherNames: null,
             websites: null
@@ -159,7 +163,10 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData[sectionName][sectionName].splice(len,1);
                 this.cdr.detectChanges();
             }
-        }        
+        } 
+        if(this.formData[sectionName][sectionName].length==0 && sectionName != 'externalIdentifiers' ){
+            this.addSectionItem(sectionName);    
+        }       
     };
 
     getFormData(sectionName): void {
@@ -173,12 +180,14 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData[sectionName] = data;
                 this.newElementDefaultVisibility[sectionName] = data.visibility.visibility;
 
-                if ( data[sectionName].length == 0){
-                    this.addSectionItem(sectionName);
-                } else {
-                    if(data[sectionName][0].putCode == null  ){
+                if(sectionName!="externalIdentifiers"){
+                    if ( data[sectionName].length == 0){
                         this.addSectionItem(sectionName);
-                    }  
+                    } else {
+                        if(data[sectionName][0].putCode == null  ){
+                            this.addSectionItem(sectionName);
+                        }  
+                    }
                 } 
 
             },
@@ -189,7 +198,30 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setFormData( closeAfterAction, sectionName, modalId ): void {
-        //let sectionToUpdate = this.getSectionData(sectionName);
+        for(var i in this.formData[sectionName][sectionName]){
+            switch(sectionName){
+                case 'otherNames':
+                case 'keywords': { 
+                    if(this.formData[sectionName][sectionName][i].content==""){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                    break;
+                } 
+                case 'addresses': {
+                    if(this.formData[sectionName][sectionName][i].iso2Country.value==""){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                    break;
+                }
+                case 'websites': {
+                    if(!this.formData[sectionName][sectionName][i].url.value){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                }  
+            } 
+
+        }
+        
         this.genericService.setData( this.formData[sectionName], this.urlPath[sectionName] )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -235,9 +267,8 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     cancelEditModal(sectionName, id): void{
-        this.formData[sectionName] = JSON.parse(JSON.stringify(this.formDataBeforeChange[sectionName]));
-        this.cdr.detectChanges();
         this.genericService.close(id);
+        this.getFormData(sectionName);
     };
 
     openModal(id: string){
@@ -253,11 +284,11 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setBulkGroupPrivacy(priv, sectionName): void{
-        for (var idx in this.formData[sectionName]){
-            this.formData[sectionName][idx].visibility.visibility = priv;        
+        console.log(this.formData[sectionName][sectionName]);
+        for (var idx in this.formData[sectionName][sectionName]){
+            this.formData[sectionName][sectionName][idx].visibility.visibility = priv;        
         }
     };
-
 
     swapDown(index, sectionName): void{
         let temp;
@@ -273,6 +304,7 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     swapUp(index, sectionName): void{
+        console.log(index, sectionName);
         let temp;
         let tempDisplayIndex;
         if (index > 0) {
@@ -308,7 +340,7 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getFormData('addresses');
         this.getFormData('keywords');
         this.getFormData('websites');
-
+        this.getFormData('externalIdentifiers');
     };
 
 }

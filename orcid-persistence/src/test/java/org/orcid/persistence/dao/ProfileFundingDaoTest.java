@@ -1,7 +1,9 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
@@ -19,8 +21,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class ProfileFundingDaoTest extends DBUnitTest {
 
-    private static String USER_ORCID = "0000-0000-0000-0003";
-    private static String OTHER_USER_ORCID = "4444-4444-4444-4443";
+    private static String USER_ORCID = "4444-4444-4444-4443";
+    private static String OTHER_USER_ORCID = "0000-0000-0000-0003";
     
     @Resource(name = "profileFundingDao")
     private ProfileFundingDao dao;
@@ -41,9 +43,9 @@ public class ProfileFundingDaoTest extends DBUnitTest {
         long initialNumber = dao.countAll();
         long elementThatBelogsToUser = dao.getByUser(USER_ORCID, 0L).size();
         long otherUserElements = dao.getByUser(OTHER_USER_ORCID, 0L).size();
-        assertEquals(5, elementThatBelogsToUser);
+        assertEquals(3, elementThatBelogsToUser);
         assertTrue(elementThatBelogsToUser < initialNumber);
-        assertEquals(3, otherUserElements);
+        assertEquals(5, otherUserElements);
         //Remove all elements that belongs to USER_ORCID
         dao.removeAllFunding(USER_ORCID);
         
@@ -53,5 +55,11 @@ public class ProfileFundingDaoTest extends DBUnitTest {
         assertEquals(0, finalNumberOfElementsThatBelogsToUser);
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
+    }
+    
+    @Test
+    public void hasPublicFundingTest() {
+        assertTrue(dao.hasPublicFunding("0000-0000-0000-0003"));
+        assertFalse(dao.hasPublicFunding("0000-0000-0000-0002"));
     }
 }

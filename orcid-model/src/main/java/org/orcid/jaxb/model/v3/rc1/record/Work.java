@@ -60,7 +60,7 @@ public class Work implements Filterable, Activity, Serializable, SourceAware, Bu
     protected PublicationDate publicationDate;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs externalIdentifiers;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkContributors contributors;

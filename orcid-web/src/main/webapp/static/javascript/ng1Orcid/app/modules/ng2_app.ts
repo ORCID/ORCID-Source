@@ -10,7 +10,7 @@ import { HttpClientModule }
 import { Component, NgModule } 
     from '@angular/core';
 
-import { FormsModule } 
+import { FormsModule, ReactiveFormsModule } 
     from '@angular/forms';
 
 import { HttpModule, JsonpModule, Request, XSRFStrategy } 
@@ -28,9 +28,15 @@ import { RouterModule, UrlHandlingStrategy }
 import { UpgradeModule } 
     from '@angular/upgrade/static';
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+
 //User generated modules imports
-import { AffiliationExtIdPopoverNg2Module } 
-    from './affiliationExtIdPopover/affiliationExtIdPopover.ts';
+
+import { AccountSettingsNg2Module } 
+    from './accountSettings/accountSettings.ts';
+
+import { AdminActionsNg2Module } 
+    from './adminActions/adminActions.ts';    
 
 import { AffiliationNg2Module } 
     from './affiliation/affiliation.ts';
@@ -50,20 +56,14 @@ import { AllConsortiumContactsNg2Module }
 import { BiographyNg2Module } 
     from './biography/biography.ts';
 
-import { ClaimThanksNg2Module } 
-    from './claimThanks/claimThanks.ts';
+import { ClaimNg2Module }
+    from './claim/claim.ts';
 
 import { ClientEditNg2Module } 
-    from './clientEdit/clientEdit.ts';
+    from './clientEdit/clientEdit.ts'; 
 
-import { DeactivateAccountNg2Module }
-    from './deactivateAccount/deactivateAccount.ts';
-
-import { DeactivateAccountMessageNg2Module }
-    from './deactivateAccount/deactivateAccountMessage.ts';
-
-import { DeprecateAccountNg2Module }
-    from './deprecateAccount/deprecateAccount.ts';
+import { DelegatorsNg2Module } 
+    from './delegators/delegators.ts';  
 
 import { EmailsNg2Module } 
     from './emails/emails.ts';
@@ -77,8 +77,11 @@ import { EmailUnverifiedWarningNg2Module }
 import { EmailVerificationSentMesssageNg2Module } 
     from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 
-import { ExternalIdentifiersNg2Module }
-    from './externalIdentifiers/externalIdentifiers.ts';
+import { ExtIdPopoverNg2Module } 
+    from './extIdPopover/extIdPopover.ts';
+
+import { FundingDeleteNg2Module } 
+    from './funding/fundingDelete.ts';
 
 import { FundingNg2Module } 
     from './funding/funding.ts';
@@ -98,26 +101,38 @@ import { LanguageNg2Module }
 import { LinkAccountNg2Module } 
     from './linkAccount/linkAccount.ts';
 
+import { MembersListNg2Module } 
+    from './membersList/membersList.ts';
+
 import { ModalNg2Module }
     from './modalNg2/modal-ng.ts';
 
-import { NameNg2Module } 
-    from './name/name.ts';
+import { MyOrcidAlertsNg2Module } 
+    from './myOrcidAlerts/myOrcidAlerts.ts';
 
 import { NotificationsNg2Module }
     from './notifications/notifications.ts';
 
-import { PasswordEditNg2Module } 
-    from './passwordEdit/passwordEdit.ts';
+import { NotificationAlertsNg2Module }
+    from './notificationAlerts/notificationAlerts.ts';
+
+import { PeerReviewNg2Module } 
+    from './peerReview/peerReview.ts';
+
+import { PeerReviewDeleteNg2Module } 
+    from './peerReview/peerReviewDelete.ts';
 
 import { PersonNg2Module } 
     from './person/person.ts';
 
-import { PersonalInfoNg2Module } 
-    from './personalInfo/personalInfo.ts';
+import { PrintRecordNg2Module } 
+    from './printRecord/printRecord.ts';
 
 import { PublicEduAffiliationNg2Module }
     from './publicEduAffiliation/publicEduAffiliation.ts';
+
+import { PublicRecordNg2Module } 
+    from './publicRecord/publicRecord.ts';
 
 import { OauthAuthorizationNg2Module } 
     from './oauthAuthorization/oauthAuthorization.ts';
@@ -134,14 +149,20 @@ import { RegisterDuplicatesNg2Module }
 import { RequestPasswordResetNg2Module } 
     from './requestPasswordReset/requestPasswordReset.ts';
 
+import { ResearchResourceNg2Module } 
+    from './researchResource/researchResource.ts';
+
+import { ResearchResourceDeleteNg2Module } 
+    from './researchResource/researchResourceDelete.ts';
+
+import { ResendClaimNg2Module }
+    from './resendClaim/resendClaim.ts';    
+
 import { ResetPasswordNg2Module }
     from './resetPassword/resetPassword.ts';
 
 import { SearchNg2Module } 
     from './search/search.ts';
-
-import { SecurityQuestionEditNg2Module } 
-    from './securityQuestionEdit/securityQuestionEdit.ts';
 
 import { SelfServiceNg2Module } 
     from './selfService/selfService.ts';
@@ -161,49 +182,54 @@ import { SelfServiceRemoveSubMemberNg2Module }
 import { Social2FANg2Module }
     from './social2FA/social2FA.ts';
 
-import { SocialNetworksNg2Module }
-    from './socialNetworks/socialNetworks.ts';
-
-import { SwitchUserNg2Module }
-    from './switchUser/switchUser.ts';
-
-import { ThanksForRegisteringNg2Module } 
-    from './thanksForRegistering/thanksForRegistering.ts';
-
-import { ThanksForVerifyingNg2Module } 
-    from './thanksForVerifying/thanksForVerifying.ts';
-
-import { TwoFASetupNg2Module }
+import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
 
-import { TwoFAStateNg2Module }
-    from './2FAState/twoFAState.ts';
-
-import { VerifyEmailNg2Module }
-    from './verifyEmail/verifyEmail.ts';
+import { UnsubscribeNg2Module }
+    from './unsubscribe/unsubscribe.ts';  
 
 import { WidgetNg2Module } 
     from './widget/widget.ts';
+
+import { WorksBulkDeleteNg2Module } 
+    from './works/worksBulkDelete.ts';
+
+import { WorksDeleteNg2Module } 
+    from './works/worksDelete.ts';
 
 import { WorksFormNg2Module } 
     from './works/worksForm.ts';
 
 import { WorksNg2Module } 
     from './works/works.ts';
+    
+import { WorksMergeSuggestionsNg2Module } 
+    from './works/worksMergeSuggestions.ts';
 
-import { SearchService } 
-    from '../shared/search.service.ts'; 
+import { ManageMembersNg2Module } 
+    from './manageMembers/manageMembers.ts';
+    
+import { RecordCorrectionsNg2Module }
+    from './recordCorrections/recordCorrections.ts'
+    
+import { DeveloperToolsNg2Module } 
+    from './developerTools/developerTools.ts';    
 
-import { WorkspaceService } 
-    from '../shared/workspace.service.ts'; 
+import { idBannerNg2Module }  
+    from './idBanner/idBanner.ts'
 
-import { WorkSpaceSummaryNg2Module } 
-    from './workspaceSummary/workspaceSummary.ts';
+import { qrcodeNg2Module } 
+    from './qrcode/qrcode.ts'
 
-import { WorksPrivacyPreferencesNg2Module } 
-    from './worksPrivacyPreferences/worksPrivacyPreferences.ts';
+import { lastModifiedNg2Module } 
+    from './lastModified/lastModified.ts';
 
+import { bioNg2Module }
+    from './bio/bio.ts';
 
+import { printIdBannerNg2Module } 
+    from './printIdBanner/printIdBanner.ts';
+    
 export class MetaXSRFStrategy implements XSRFStrategy {
     constructor() {
     }
@@ -228,6 +254,7 @@ import { Observable }
 
 import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
 
+
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   constructor() {}
@@ -243,16 +270,16 @@ export class TokenInterceptor implements HttpInterceptor {
     return next.handle(request);*/
     let _request = request.clone();
     //_request.headers.append(header, token);
-    console.log('headers', header, 'token', token);
+    //console.log('headers', header, 'token', token);
     _request.headers.set(header, token);
 
 
     let headers2 = new HttpHeaders();
-    console.log('headers2a', headers2);
+    //console.log('headers2a', headers2);
     headers2 = headers2.append(header, token);
-    console.log('headers2b', headers2);
+    //console.log('headers2b', headers2);
 
-    console.log('interceptor', _request, _request.headers, _request.headers.get(header));
+    //console.log('interceptor', _request, _request.headers, _request.headers.get(header));
     return next.handle(_request);
   }
 }
@@ -286,47 +313,55 @@ export class RootCmp {
         BrowserModule,
         CommonModule, 
         FormsModule,
+        ReactiveFormsModule,
         HttpClientModule, //angular5
         HttpModule, //Angular2
         JsonpModule,
+        NgbModule.forRoot(),
         UpgradeModule,
         /* User Generated Modules */
-        AffiliationExtIdPopoverNg2Module,
+        AccountSettingsNg2Module,
+        AdminActionsNg2Module,
         AffiliationNg2Module,//Aproved
         AffiliationDeleteNg2Module,//Aproved
         AffiliationFormNg2Module,//Aproved
         AlertBannerNg2Module,
         AllConsortiumContactsNg2Module,
         BiographyNg2Module, //Approved
-        ClaimThanksNg2Module,
+        ClaimNg2Module,
         ClientEditNg2Module,
-        DeactivateAccountNg2Module,
-        DeactivateAccountMessageNg2Module,
-        DeprecateAccountNg2Module,
+        DelegatorsNg2Module,
         EmailsFormNg2Module,//Aproved
         EmailsNg2Module,//Aproved
         EmailUnverifiedWarningNg2Module,//Aproved
         EmailVerificationSentMesssageNg2Module,//Aproved
-        ExternalIdentifiersNg2Module,
+        ExtIdPopoverNg2Module,
         HeaderNg2Module,
+        FundingDeleteNg2Module,
         FundingFormNg2Module,
         FundingNg2Module,
         HomeNg2Module,
         LanguageNg2Module,
         LinkAccountNg2Module,
+        MembersListNg2Module, //Approved
         ModalNg2Module, //Approved
-        NameNg2Module, //Approved
+        MyOrcidAlertsNg2Module,
         NotificationsNg2Module,
-        PasswordEditNg2Module,
+        NotificationAlertsNg2Module,
+        PeerReviewNg2Module,
+        PeerReviewDeleteNg2Module,
         PersonNg2Module,
-        PersonalInfoNg2Module,
+        PrintRecordNg2Module,
         PublicEduAffiliationNg2Module,
-        SecurityQuestionEditNg2Module,
+        PublicRecordNg2Module,
         OauthAuthorizationNg2Module,
         OrgIdentifierPopoverNg2Module,
         ReactivationNg2Module,
         RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,
+        ResearchResourceNg2Module,
+        ResearchResourceDeleteNg2Module,
+        ResendClaimNg2Module,
         ResetPasswordNg2Module,
         SearchNg2Module, //Approved
         SelfServiceNg2Module, //Approved
@@ -335,18 +370,24 @@ export class RootCmp {
         SelfServiceRemoveContactNg2Module, //Approved
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
-        SocialNetworksNg2Module,
-        SwitchUserNg2Module,
-        ThanksForRegisteringNg2Module,
-        ThanksForVerifyingNg2Module,
-        TwoFAStateNg2Module,
-        TwoFASetupNg2Module,
-        VerifyEmailNg2Module,
+        TwoFaSetupNg2Module,
+        UnsubscribeNg2Module,
         WidgetNg2Module, //Approved
+        WorksBulkDeleteNg2Module,
+        WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
-        WorkSpaceSummaryNg2Module,
-        WorksPrivacyPreferencesNg2Module
+        WorksMergeSuggestionsNg2Module,
+        ManageMembersNg2Module,
+        DeveloperToolsNg2Module,
+        RecordCorrectionsNg2Module,
+        AdminActionsNg2Module,
+        RecordCorrectionsNg2Module,
+        idBannerNg2Module,
+        qrcodeNg2Module,
+        lastModifiedNg2Module, 
+        bioNg2Module,
+        printIdBannerNg2Module
     ],
     providers: [
         { 
@@ -364,7 +405,7 @@ export class RootCmp {
 
 export class Ng2AppModule {
     constructor( public upgrade: UpgradeModule ){
-        console.log('v0.9.21');
+        console.log('v0.9.23');
     }
 }
 

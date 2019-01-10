@@ -4,13 +4,8 @@ import { Injectable }
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-
-
-
-
 import { Observable, Subject } 
     from 'rxjs';
-
 
 import { catchError, map, tap } 
     from 'rxjs/operators';
@@ -31,30 +26,26 @@ export class SwitchUserService {
                 'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
             }
         );
-    }
+    }    
 
     getDelegates(): Observable<any> {
         return this.http.get(
             getBaseUri()+'/delegators/delegators-and-me.json'
-        )
-        
-    }
-
+        );
+    };
+    
     searchDelegates(searchTerm): Observable<any> {
         return this.http.get(
             getBaseUri()+'/delegators/search/'+encodeURIComponent(searchTerm) + '?limit=10'
-        )
-        
-    }
-
-    switchUser(targetOrcid): Observable<any> {
-        return this.http.post( 
-            getBaseUri() + '/switch-user?username=' + targetOrcid, 
-            { headers: this.headers }
-        )
-        ;
-    }
-
+        );
+    };
+    
+    switchUser(id): Observable<any> {          
+        return this.http.get(
+                getBaseUri() + '/switch-user?username=' + id
+        );        
+    };
+    
     notifyOther(): void {
         this.notify.next();
         console.log('notify');

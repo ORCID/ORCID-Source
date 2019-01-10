@@ -45,6 +45,7 @@
 					<common:external-id-relationship>part-of</common:external-id-relationship>
 				</common:external-id>
 			</common:external-ids>
+			<common:url>http://tempuri.org</common:url>
 			<work:type>conference-paper</work:type>
 			<common:publication-date>
 				<common:year>2017</common:year>

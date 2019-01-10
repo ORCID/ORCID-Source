@@ -1,7 +1,9 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -14,31 +16,32 @@ import org.orcid.core.adapter.v3.JpaJaxbMembershipAdapter;
 import org.orcid.core.adapter.v3.JpaJaxbQualificationAdapter;
 import org.orcid.core.adapter.v3.JpaJaxbServiceAdapter;
 import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.OrgAffiliationRelationEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.GroupableActivityComparator;
-import org.orcid.jaxb.model.v3.rc1.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc1.record.Distinction;
-import org.orcid.jaxb.model.v3.rc1.record.Education;
-import org.orcid.jaxb.model.v3.rc1.record.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc1.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc1.record.Membership;
-import org.orcid.jaxb.model.v3.rc1.record.Qualification;
-import org.orcid.jaxb.model.v3.rc1.record.Service;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc1.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
+import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
+import org.orcid.jaxb.model.v3.rc2.record.Distinction;
+import org.orcid.jaxb.model.v3.rc2.record.Education;
+import org.orcid.jaxb.model.v3.rc2.record.Employment;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.rc2.record.Membership;
+import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.Service;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -65,6 +68,9 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     
     @Resource(name = "jpaJaxbServiceAdapterV3")
     protected JpaJaxbServiceAdapter jpaJaxbServiceAdapter;
+    
+    @Resource(name = "orgAffiliationRelationEntityCacheManager")
+    protected OrgAffiliationRelationEntityCacheManager orgAffiliationRelationEntityCacheManager;
     
     protected OrgAffiliationRelationDao orgAffiliationRelationDao;    
         
@@ -185,34 +191,6 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         return elements;
     }    
     
-    @Override
-    public List<Affiliation> getAffiliations(String orcid) {
-        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);        
-        List<Affiliation> result = new ArrayList<Affiliation>();
-        
-        if(affiliations != null) {
-            for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                if (AffiliationType.DISTINCTION.name().equals(affiliation.getAffiliationType())) {
-                    result.add(jpaJaxbDistinctionAdapter.toDistinction(affiliation));
-                } else if (AffiliationType.EDUCATION.name().equals(affiliation.getAffiliationType())) {
-                    result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
-                } else if (AffiliationType.EMPLOYMENT.name().equals(affiliation.getAffiliationType())) {
-                    result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));
-                } else if (AffiliationType.INVITED_POSITION.name().equals(affiliation.getAffiliationType())) {
-                    result.add(jpaJaxbInvitedPositionAdapter.toInvitedPosition(affiliation));                    
-                } else if (AffiliationType.MEMBERSHIP.name().equals(affiliation.getAffiliationType())) {
-                    result.add(jpaJaxbMembershipAdapter.toMembership(affiliation));
-                } else if (AffiliationType.QUALIFICATION.name().equals(affiliation.getAffiliationType())) {
-                    result.add(jpaJaxbQualificationAdapter.toQualification(affiliation));
-                } else if (AffiliationType.SERVICE.name().equals(affiliation.getAffiliationType())) {
-                    result.add(jpaJaxbServiceAdapter.toService(affiliation));
-                }
-            }
-        }
-        
-        return result;
-    }
-
     @Override
     public Distinction getDistinctionAffiliation(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
@@ -348,22 +326,93 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         return elements;
     }
     
-    private void checkType(OrgAffiliationRelationEntity entity, AffiliationType type) {
-        if(!entity.getAffiliationType().equals(type.name())) {
-            throw new IllegalArgumentException("Given affiliation " + entity.getId() + " doesn't match the desired type " + type.value());
+    @Override
+    public List<Affiliation> getAffiliations(String orcid) {
+        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationEntityCacheManager.getAffiliationEntities(orcid);        
+        List<Affiliation> result = new ArrayList<Affiliation>();
+        
+        if(affiliations != null) {
+            for (OrgAffiliationRelationEntity affiliation : affiliations) {
+                if (AffiliationType.DISTINCTION.name().equals(affiliation.getAffiliationType())) {
+                    result.add(jpaJaxbDistinctionAdapter.toDistinction(affiliation));
+                } else if (AffiliationType.EDUCATION.name().equals(affiliation.getAffiliationType())) {
+                    result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
+                } else if (AffiliationType.EMPLOYMENT.name().equals(affiliation.getAffiliationType())) {
+                    result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));
+                } else if (AffiliationType.INVITED_POSITION.name().equals(affiliation.getAffiliationType())) {
+                    result.add(jpaJaxbInvitedPositionAdapter.toInvitedPosition(affiliation));                    
+                } else if (AffiliationType.MEMBERSHIP.name().equals(affiliation.getAffiliationType())) {
+                    result.add(jpaJaxbMembershipAdapter.toMembership(affiliation));
+                } else if (AffiliationType.QUALIFICATION.name().equals(affiliation.getAffiliationType())) {
+                    result.add(jpaJaxbQualificationAdapter.toQualification(affiliation));
+                } else if (AffiliationType.SERVICE.name().equals(affiliation.getAffiliationType())) {
+                    result.add(jpaJaxbServiceAdapter.toService(affiliation));
+                }
+            }
         }
+        
+        return result;
     }
-
-    @SuppressWarnings("unchecked")
+    
+    @Override
+    public <T extends AffiliationSummary> Map<AffiliationType, List<AffiliationGroup<T>>> getGroupedAffiliations(String orcid, boolean justPublic) {
+        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationEntityCacheManager.getAffiliationEntities(orcid);
+        ActivitiesGroupGenerator distinctionsGroupGenerator = new ActivitiesGroupGenerator();
+        ActivitiesGroupGenerator educationsGroupGenerator = new ActivitiesGroupGenerator();
+        ActivitiesGroupGenerator employmentsGroupGenerator = new ActivitiesGroupGenerator();
+        ActivitiesGroupGenerator invitedPositionsGroupGenerator = new ActivitiesGroupGenerator();
+        ActivitiesGroupGenerator membershipsGroupGenerator = new ActivitiesGroupGenerator();
+        ActivitiesGroupGenerator qualificationsGroupGenerator = new ActivitiesGroupGenerator();
+        ActivitiesGroupGenerator servicesGroupGenerator = new ActivitiesGroupGenerator();
+        
+        if(affiliations != null) {
+            for (OrgAffiliationRelationEntity affiliation : affiliations) {
+                if(!justPublic || org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.name().equals(affiliation.getVisibility())) {
+                    if (AffiliationType.DISTINCTION.name().equals(affiliation.getAffiliationType())) {
+                        distinctionsGroupGenerator.group(jpaJaxbDistinctionAdapter.toDistinctionSummary(affiliation));
+                    } else if (AffiliationType.EDUCATION.name().equals(affiliation.getAffiliationType())) {
+                        educationsGroupGenerator.group(jpaJaxbEducationAdapter.toEducationSummary(affiliation));
+                    } else if (AffiliationType.EMPLOYMENT.name().equals(affiliation.getAffiliationType())) {
+                        employmentsGroupGenerator.group(jpaJaxbEmploymentAdapter.toEmploymentSummary(affiliation));
+                    } else if (AffiliationType.INVITED_POSITION.name().equals(affiliation.getAffiliationType())) {
+                        invitedPositionsGroupGenerator.group(jpaJaxbInvitedPositionAdapter.toInvitedPositionSummary(affiliation));                    
+                    } else if (AffiliationType.MEMBERSHIP.name().equals(affiliation.getAffiliationType())) {
+                        membershipsGroupGenerator.group(jpaJaxbMembershipAdapter.toMembershipSummary(affiliation));
+                    } else if (AffiliationType.QUALIFICATION.name().equals(affiliation.getAffiliationType())) {
+                        qualificationsGroupGenerator.group(jpaJaxbQualificationAdapter.toQualificationSummary(affiliation));
+                    } else if (AffiliationType.SERVICE.name().equals(affiliation.getAffiliationType())) {
+                        servicesGroupGenerator.group(jpaJaxbServiceAdapter.toServiceSummary(affiliation));
+                    }
+                }
+            }
+        }
+        
+        Map<AffiliationType, List<AffiliationGroup<T>>> map = new HashMap<AffiliationType, List<AffiliationGroup<T>>>();
+        map.put(AffiliationType.DISTINCTION, group(distinctionsGroupGenerator));
+        map.put(AffiliationType.EDUCATION, group(educationsGroupGenerator));
+        map.put(AffiliationType.EMPLOYMENT, group(employmentsGroupGenerator));
+        map.put(AffiliationType.INVITED_POSITION, group(invitedPositionsGroupGenerator));
+        map.put(AffiliationType.MEMBERSHIP, group(membershipsGroupGenerator));
+        map.put(AffiliationType.QUALIFICATION, group(qualificationsGroupGenerator));
+        map.put(AffiliationType.SERVICE, group(servicesGroupGenerator));
+        
+        return map;
+    }
+        
     @Override
     public <T extends AffiliationSummary> List<AffiliationGroup<T>> groupAffiliations(List<T> summaries, boolean justPublic) {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         for (AffiliationSummary summary : summaries) {
-            if (!justPublic || summary.getVisibility().equals(org.orcid.jaxb.model.v3.rc1.common.Visibility.PUBLIC)) {
+            if (!justPublic || summary.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
                 groupGenerator.group(summary);
             }
         }
 
+        return group(groupGenerator);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private <T extends AffiliationSummary> List<AffiliationGroup<T>> group(ActivitiesGroupGenerator groupGenerator) {
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
         List<AffiliationGroup<T>> affiliationGroups = new ArrayList<>();
 
@@ -394,5 +443,26 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
             affiliationGroups.add(affiliationGroup);
         }
         return affiliationGroups;
+    }
+    
+    private void checkType(OrgAffiliationRelationEntity entity, AffiliationType type) {
+        if(!entity.getAffiliationType().equals(type.name())) {
+            throw new IllegalArgumentException("Given affiliation " + entity.getId() + " doesn't match the desired type " + type.value());
+        }
+    }
+
+    /**
+     * Checks if there is any public affiliation for a specific user
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return true if there is at least one public affiliation for a specific user
+     * */
+    @Override
+    public Boolean hasPublicAffiliations(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+            return false;
+        }
+        return orgAffiliationRelationDao.hasPublicAffiliations(orcid);
     }
 }

@@ -37,6 +37,7 @@
 	<email
         orcid="5555-5555-5555-0000"
         email="premium_institution@group.com"
+        email_hash="e289affc1fc798360025abc97a98dc09d39567341c5c54fda398a1d44fc76f3a"
         is_primary="true"
         is_current="true"
         is_verified="true"

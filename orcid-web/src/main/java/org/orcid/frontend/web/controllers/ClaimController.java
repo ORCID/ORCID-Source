@@ -13,12 +13,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.togglz.Features;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -33,7 +31,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -65,24 +61,12 @@ public class ClaimController extends BaseController {
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
-    @Resource
-    private OrcidProfileCacheManager orcidProfileCacheManager;
-
-    @Resource
-    private TransactionTemplate transactionTemplate;
-    
     @Value("${org.orcid.core.claimWaitPeriodDays:10}")
     private int claimWaitPeriodDays;
     
     @Value("${org.orcid.core.claimReminderAfterDays:8}")
     private int claimReminderAfterDays;
     
-    @RequestMapping(value = "/claimActivitiesVisibilityDefaultValidate.json", method = RequestMethod.POST)
-    public @ResponseBody Claim claimActivitiesVisibilityDefaultValidate(@RequestBody Claim claim) {
-        activitiesVisibilityDefaultValidate(claim.getActivitiesVisibilityDefault());
-        return claim;
-    }
-
     @RequestMapping(value = "/claimPasswordConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody Claim claimPasswordConfirmValidate(@RequestBody Claim claim) {
         passwordConfirmValidate(claim.getPasswordConfirm(), claim.getPassword());
@@ -103,7 +87,7 @@ public class ClaimController extends BaseController {
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.GET)
     public @ResponseBody Claim verifyClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
-            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         Claim c = new Claim();
         c.getSendChangeNotifications().setValue(true);
         c.getSendOrcidNews().setValue(false);
@@ -114,7 +98,7 @@ public class ClaimController extends BaseController {
 
     @RequestMapping(value = "/claim/{encryptedEmail}", method = RequestMethod.GET)
     public ModelAndView verifyClaim(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
-            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         try {
             String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
             if (!isEmailOkForCurrentUser(decryptedEmail)) {
@@ -136,7 +120,7 @@ public class ClaimController extends BaseController {
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.POST)
     public @ResponseBody Claim submitClaimJson(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
-            @RequestBody Claim claim) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+            @RequestBody Claim claim) throws UnsupportedEncodingException {
         claim.setErrors(new ArrayList<String>());
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8")).trim();
         if (!isEmailOkForCurrentUser(decryptedEmail)) {
@@ -161,18 +145,20 @@ public class ClaimController extends BaseController {
         claimPasswordValidate(claim);
         claimPasswordConfirmValidate(claim);
         claimTermsOfUseValidate(claim);
+        activitiesVisibilityDefaultValidate(claim.getActivitiesVisibilityDefault());
 
         copyErrors(claim.getPassword(), claim);
         copyErrors(claim.getPasswordConfirm(), claim);
         copyErrors(claim.getTermsOfUse(), claim);
+        copyErrors(claim.getActivitiesVisibilityDefault(), claim);
 
         if (claim.getErrors().size() > 0) {
             return claim;
         }
 
         Locale requestLocale = RequestContextUtils.getLocale(request);
-        org.orcid.jaxb.model.v3.rc1.common.Locale userLocale = (requestLocale == null) ? null
-                : org.orcid.jaxb.model.v3.rc1.common.Locale.fromValue(requestLocale.toString());
+        org.orcid.jaxb.model.v3.rc2.common.Locale userLocale = (requestLocale == null) ? null
+                : org.orcid.jaxb.model.v3.rc2.common.Locale.fromValue(requestLocale.toString());
         
         boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
         if (!claimed) {
@@ -199,27 +185,13 @@ public class ClaimController extends BaseController {
 
     @RequestMapping(value = "/resend-claim", method = RequestMethod.GET)
     public ModelAndView viewResendClaimEmail(@RequestParam(value = "email", required = false) String email) {
-        ModelAndView mav = new ModelAndView("resend_claim");
-        return mav;
-    }
-
-    @RequestMapping(value = "/resend-claim.json", method = RequestMethod.GET)
-    public @ResponseBody EmailRequest getResendClaimRequest() {
-        return new EmailRequest();
-    }
-
-    @RequestMapping(value = "/validate-resend-claim.json", method = RequestMethod.POST)
-    public @ResponseBody EmailRequest validateResendClaimRequest(@RequestBody EmailRequest resendClaimRequest) {
-        List<String> errors = new ArrayList<>();
-        resendClaimRequest.setErrors(errors);
-        if (!validateEmailAddress(resendClaimRequest.getEmail())) {
-            errors.add(getMessage("Email.resendClaim.invalidEmail"));
-        }
-        return resendClaimRequest;
+        return new ModelAndView("resend_claim");        
     }
 
     @RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
     public @ResponseBody EmailRequest resendClaimEmail(@RequestBody EmailRequest resendClaimRequest) {
+        resendClaimRequest.setErrors(new ArrayList<String>());
+        resendClaimRequest.setSuccessMessage(null);
         String email = resendClaimRequest.getEmail();
         List<String> errors = new ArrayList<>();
         resendClaimRequest.setErrors(errors);

@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
+import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -29,24 +31,21 @@ import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc1.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc1.record.Relationship;
-import org.orcid.jaxb.model.v3.rc1.record.Work;
-import org.orcid.jaxb.model.v3.rc1.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc1.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.rc1.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
+import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
+import org.orcid.jaxb.model.v3.rc2.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,8 +92,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource
     private PIDNormalizationService norm;
     
-    @Value("${org.orcid.core.works.bulk.max:100}")
-    private Long maxBulkSize;
+    private Integer maxWorksToWrite;
+    
+    public WorkManagerImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize, @Value("${org.orcid.core.works.bulk.write.max:100}") Integer bulkWriteSize) {
+        super(bulkReadSize);
+        this.maxWorksToWrite = (bulkWriteSize == null) ? 100 : bulkWriteSize;
+    }
     
     /**
      * Updates the visibility of an existing work
@@ -144,13 +147,13 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Override
     @Transactional
     public Work createWork(String orcid, Work work, boolean isApiRequest) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         
         if (isApiRequest) {
-            activityValidator.validateWork(work, sourceEntity, true, isApiRequest, null);
+            activityValidator.validateWork(work, activeSource, true, isApiRequest, null);
             // If it is the user adding the peer review, allow him to add
             // duplicates
-            if (!SourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
+            if (!(activeSource.getSourceOrcid() != null && activeSource.getSourceOrcid().getPath().equals(orcid))) {
                 List<Work> existingWorks = this.findWorks(orcid);       
                 if((existingWorks.size() + 1) > this.maxNumOfActivities) {
                     throw new ExceedMaxNumberOfElementsException();
@@ -158,7 +161,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if (existingWorks != null) {
                     for (Work existing : existingWorks) {
                         activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
-                                sourceEntity);
+                                activeSource);
                     }
                 }
             }
@@ -172,23 +175,15 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
         
-        // Set source id 
-        if(sourceEntity.getSourceProfile() != null) {
-            workEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
+        //Set the source
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
         
-        if(sourceEntity.getSourceClient() != null) {
-            workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        } 
-        
-        setIncomingWorkPrivacy(workEntity, profile);        
+        setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
-        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        generateGroupingSuggestions(orcid, updatedWork);
-        return updatedWork;
+        return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
     
@@ -206,26 +201,26 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Override
     @Transactional
     public WorkBulk createWorks(String orcid, WorkBulk workBulk) {        
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         List<Work> existingWorks = this.findWorks(orcid);
         
         if(workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
-            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, SourceEntityUtils.getSourceId(sourceEntity));
+            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, activeSource);
             if((existingWorks.size() + bulk.size()) > this.maxNumOfActivities) {
                 throw new ExceedMaxNumberOfElementsException();
             }
             //Check bulk size
-            if(bulk.size() > maxBulkSize) {
+            if(bulk.size() > maxWorksToWrite) {
                 Locale locale = localeManager.getLocale();                
-                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxBulkSize}, locale));                
+                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxWorksToWrite}, locale));                
             }
                                     
             for(int i = 0; i < bulk.size(); i++) {
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
                     Work work = (Work) bulk.get(i);
                     try {
-                        activityValidator.validateWork(work, sourceEntity, true, true, null);
+                        activityValidator.validateWork(work, activeSource, true, true, null);
 
                         //Validate it is not duplicated
                         if(work.getExternalIdentifiers() != null) {
@@ -235,7 +230,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 // If the external id exists and is a SELF identifier, then mark it as duplicated                                
                                 if(existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();
-                                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+                                    params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
                                     throw new OrcidDuplicatedActivityException(params);
                                 }
                             }
@@ -247,14 +242,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
                         
-                        // Set source id 
-                        if(sourceEntity.getSourceProfile() != null) {
-                            workEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-                        }
-                        
-                        if(sourceEntity.getSourceClient() != null) {
-                            workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-                        } 
+                        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
                         
                         setIncomingWorkPrivacy(workEntity, profile);        
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);        
@@ -262,7 +250,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Update the element in the bulk
                         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-                        generateGroupingSuggestions(orcid, updatedWork);
                         bulk.set(i, updatedWork);
                         
                         //Add the work extIds to the list of existing external identifiers
@@ -286,15 +273,15 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      * 
      * @param existingWorks
      *          The list of existing works for the current user
-     * @param sourceId
+     * @param activeSource
      *          The client id we are evaluating
      * @return A set of all the existing external identifiers that belongs to the given user and to the given source id                  
      * */
-    private Set<ExternalID> buildExistingExternalIdsSet(List<Work> existingWorks, String sourceId) {
+    private Set<ExternalID> buildExistingExternalIdsSet(List<Work> existingWorks, Source activeSource) {
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();        
         for(Work work : existingWorks) {
             //If it is the same source
-            if(work.retrieveSourcePath().equals(sourceId)) {
+            if(SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, work.getSource())) {
                 if(work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
                     for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
                         //Don't include PART_OF external ids
@@ -325,20 +312,20 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         
         //Save the original source
         String existingSourceId = workEntity.getSourceId();
         String existingClientSourceId = workEntity.getClientSourceId();
         
         if (isApiRequest) {
-            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, originalVisibility);                        
+            activityValidator.validateWork(work, activeSource, false, isApiRequest, originalVisibility);                        
             List<Work> existingWorks = this.findWorks(orcid);       
             
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                    activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), activeSource);
                 }
             }
         }else{
@@ -346,9 +333,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());            
         }
                         
-        orcidSecurityManager.checkSource(workEntity);
+        orcidSecurityManager.checkSourceAndThrow(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
-        workEntity.setVisibility(originalVisibility.name());
+    	if (workEntity.getVisibility() == null) {
+    		workEntity.setVisibility(originalVisibility.name());  
+    	}
         
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
@@ -357,16 +346,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
-        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        generateGroupingSuggestions(orcid, updatedWork);
-        return updatedWork;
+        return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
     @Override
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
-        orcidSecurityManager.checkSource(workEntity);
+        orcidSecurityManager.checkSourceAndThrow(workEntity);
         try {
             workDao.removeWork(orcid, workId);
             workDao.flush();
@@ -378,36 +365,20 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return result;
     }
     
-    @Override
-    public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid) {
-        List<WorkGroupingSuggestion> suggestions = groupingSuggestionManagerReadOnly.getGroupingSuggestions(orcid);
-        Map<Long, Object> distinctPutCodes = new HashMap<>();
-        for (WorkGroupingSuggestion workGroupingSuggestion : suggestions) {
-            for (Long putCode : workGroupingSuggestion.getPutCodes().getWorkPutCodes()) {
-                distinctPutCodes.put(putCode, null);
-            }
-        }
-        List<WorkSummary> summaries = getWorksSummaryList(orcid, Arrays.asList(distinctPutCodes.keySet().toArray(new Long[0])));
-        Works groupedWorks = groupWorks(summaries, false);
-        suggestions = groupingSuggestionManager.filterSuggestionsNoLongerApplicable(suggestions, groupedWorks);
-        return suggestions;
-    }
+	private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
+		setIncomingWorkPrivacy(workEntity, profile, true);
+	}
 
-    @Override
-    public void acceptGroupingSuggestion(WorkGroupingSuggestion groupingSuggestion) {
-        createNewWorkGroup(Arrays.asList(groupingSuggestion.getPutCodes().getWorkPutCodes()), groupingSuggestion.getOrcid());
-        groupingSuggestionManager.markGroupingSuggestionAsAccepted(groupingSuggestion.getId());
-    }
+	private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
+		String incomingWorkVisibility = workEntity.getVisibility();
+		String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
 
-    private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-        String incomingWorkVisibility = workEntity.getVisibility();
-        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            workEntity.setVisibility(defaultWorkVisibility);            
-        } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        }
-    }
+		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
+			workEntity.setVisibility(defaultWorkVisibility);
+		} else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
+			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+		}
+	}
 
     private List<Item> createItemList(WorkEntity workEntity) {
         Item item = new Item();
@@ -416,18 +387,19 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         item.setPutCode(String.valueOf(workEntity.getId()));
         return Arrays.asList(item);
     }
-
+    
     @Override
-    public void createNewWorkGroup(List<Long> workIds, String orcid) {
+    public void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
         JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);
         ExternalIDs allExternalIDs = new ExternalIDs();
-        MinimizedWorkEntity userVersion = null;
+        List<MinimizedWorkEntity> userVersions = new ArrayList<>();
         MinimizedWorkEntity userPreferred = null;
         
+        boolean groupableExternalIdFound = false;
         for (MinimizedWorkEntity work : works) {
             if (orcid.equals(work.getSourceId())) {
-                userVersion = work;
+                userVersions.add(work);
             }
             if (userPreferred == null || userPreferred.getDisplayIndex() < work.getDisplayIndex()) {
                 userPreferred = work;
@@ -438,12 +410,24 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if (!allExternalIDs.getExternalIdentifier().contains(externalID)) {
                     allExternalIDs.getExternalIdentifier().add(externalID);
                 }
+                
+                if (externalID.isGroupAble()) {
+                    groupableExternalIdFound = true;
+                }
             }
         }
         
+        if (!groupableExternalIdFound) {
+            throw new MissingGroupableExternalIDException();
+        }
+        
         String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);
-        if (userVersion != null) {
-            userVersion.setExternalIdentifiersJson(externalIDsJson);
+        if (!userVersions.isEmpty()) {
+            for (MinimizedWorkEntity userVersion : userVersions) {
+                WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
+                userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);
+                workDao.merge(userVersionFullEntity);
+            }
         } else {
             WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
             allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);
@@ -479,10 +463,4 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return workEntity;
     }
     
-    private void generateGroupingSuggestions(String orcid, Work updatedWork) {
-        List<WorkSummary> summaries = getWorksSummaryList(orcid);
-        Works groupedWorks = groupWorks(summaries, true);
-        groupingSuggestionManager.generateGroupingSuggestionsForProfile(orcid, updatedWork, groupedWorks);
-    }
-
 }

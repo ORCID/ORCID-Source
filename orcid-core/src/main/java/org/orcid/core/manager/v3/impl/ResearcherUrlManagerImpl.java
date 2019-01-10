@@ -17,9 +17,10 @@ import org.orcid.core.manager.v3.read_only.impl.ResearcherUrlManagerReadOnlyImpl
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.v3.rc1.common.Visibility;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -46,7 +47,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
         boolean result = true;        
         ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(orcid, id);          
         if(checkSource) {            
-            orcidSecurityManager.checkSource(toDelete);
+            orcidSecurityManager.checkSourceAndThrow(toDelete);
         }
         
         try {            
@@ -107,18 +108,13 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                 } else {
                     //Add the new ones
                     ResearcherUrlEntity newResearcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(updatedOrNew);
-                    SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                    Source activeSource = sourceManager.retrieveActiveSource();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newResearcherUrl.setUser(profile);
                     newResearcherUrl.setDateCreated(new Date());
                     newResearcherUrl.setLastModified(new Date());
                     
-                    if(sourceEntity.getSourceProfile() != null) {
-                        newResearcherUrl.setSourceId(sourceEntity.getSourceProfile().getId());
-                    }
-                    if(sourceEntity.getSourceClient() != null) {
-                        newResearcherUrl.setClientSourceId(sourceEntity.getSourceClient().getId());
-                    }
+                    SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newResearcherUrl);
                     
                     newResearcherUrl.setVisibility(updatedOrNew.getVisibility().name());
                     newResearcherUrl.setDisplayIndex(updatedOrNew.getDisplayIndex());
@@ -135,20 +131,18 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     public ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) {
         ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
         Visibility originalVisibility = Visibility.valueOf(updatedResearcherUrlEntity.getVisibility());
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();                
+        Source activeSource = sourceManager.retrieveActiveSource();                
         
         //Save the original source
-        String existingSourceId = updatedResearcherUrlEntity.getSourceId();
-        String existingClientSourceId = updatedResearcherUrlEntity.getClientSourceId();
-        
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedResearcherUrlEntity);
         
         // Validate the researcher url
-        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false, isApiRequest, originalVisibility);        
+        PersonValidator.validateResearcherUrl(researcherUrl, activeSource, false, isApiRequest, originalVisibility);        
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
-            if (isDuplicated(existing, researcherUrl, sourceEntity)) {
+            if (isDuplicated(existing, researcherUrl, activeSource)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "researcher-url");
                 params.put("value", researcherUrl.getUrlName());
@@ -156,27 +150,26 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
             }
         }
         
-        orcidSecurityManager.checkSource(updatedResearcherUrlEntity);
+        orcidSecurityManager.checkSourceAndThrow(updatedResearcherUrlEntity);
         jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);        
         updatedResearcherUrlEntity.setLastModified(new Date());
                         
         //Be sure it doesn't overwrite the source
-        updatedResearcherUrlEntity.setSourceId(existingSourceId);
-        updatedResearcherUrlEntity.setClientSourceId(existingClientSourceId);
-        
+        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedResearcherUrlEntity);
+
         researcherUrlDao.merge(updatedResearcherUrlEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(updatedResearcherUrlEntity);
     }
 
     @Override
     public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) { 
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the researcher url
-        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true, isApiRequest, null);
+        PersonValidator.validateResearcherUrl(researcherUrl, activeSource, true, isApiRequest, null);
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
-            if (isDuplicated(existing, researcherUrl, sourceEntity)) {
+            if (isDuplicated(existing, researcherUrl, activeSource)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "researcher-url");
                 params.put("value", researcherUrl.getUrlName());
@@ -189,13 +182,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
         
-        //Set the source
-        if(sourceEntity.getSourceProfile() != null) {
-                newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-        if(sourceEntity.getSourceClient() != null) {
-                newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        } 
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
         
         setIncomingPrivacy(newEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
@@ -203,12 +190,12 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
     }
 
-    private boolean isDuplicated(ResearcherUrlEntity existing, ResearcherUrl newResearcherUrl, SourceEntity source) {
+    private boolean isDuplicated(ResearcherUrlEntity existing, ResearcherUrl newResearcherUrl, Source activeSource) {
         if (!existing.getId().equals(newResearcherUrl.getPutCode())) {
             //If they have the same source 
             String existingSourceId = existing.getElementSourceId(); 
             // If they have the same source
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
                 // If the url is the same
                 if (existing.getUrl() != null && existing.getUrl().equals(newResearcherUrl.getUrl().getValue())) {
                     return true;

@@ -16,7 +16,7 @@
             <div class="form-group">
                 <label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
                 <input type="text" id="managed" (keyup.enter)="confirmDelegatesProcess()" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" [(ngModel)]="request.managed.value" (ngModelChange)="checkClaimedStatus('managed')">             
-                <a href class="glyphicon glyphicon-ok green" *ngIf="managed_verified"></a>                    
+                <span class="glyphicon glyphicon-ok green" *ngIf="managed_verified"></span>                    
                 <div id="invalid-managed" *ngIf="request?.managed?.errors?.length > 0" >
                     <span class="orcid-error" *ngFor='let error of request.managed.errors' [innerHTML]="error"></span><br />
                 </div>                          
@@ -25,7 +25,7 @@
             <div class="form-group">
                 <label for="trusted"><@orcid.msg 'admin.delegate.trusted.label' /></label>
                 <input type="text" id="trusted" (keyup.enter)="confirmDelegatesProcess()" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge" [(ngModel)]="request.trusted.value" (ngModelChange)="checkClaimedStatus('trusted')">             
-                <a href class="glyphicon glyphicon-ok green" *ngIf="trusted_verified"></a>                    
+                <span class="glyphicon glyphicon-ok green" *ngIf="trusted_verified"></span>                    
                 <div id="invalid-trusted" *ngIf="request?.trusted?.errors?.length > 0" >
                     <span class="orcid-error" *ngFor='let error of request.trusted.errors' [innerHTML]="error"></span><br />
                 </div>                          
