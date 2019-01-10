@@ -114,41 +114,44 @@
                     </div>
                 </div>
             </div>
-            
-            <div *ngIf="fundingImportWizard" class="funding-import-wizard" >
-                <#if ((fundingImportWizards)??)>
-                    <div class="ie7fix-inner">
-                        <div class="row">   
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_funding'/></h1>
-                                <span (click)="showFundingImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_fundings'/></span>
+
+            <!-- Funding Import Wizard -->
+            <div *ngIf="fundingImportWizard && workspaceSrvc.displayFunding" class="work-import-wizard">
+                <div class="ie7fix-inner">
+                    <div class="row"> 
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_funding'/></h1>
+                            <span (click)="showFundingImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_fundings'/></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <p class="wizard-content">
+                                <@orcid.msg 'workspace.LinkResearchActivities.description'/><
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row wizards">               
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div *ngFor="let wtw of fundingImportWizardList">
+                                <strong><a (click)="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong>
+
+                                <br />                                                                                    
+                                <div class="justify">                       
+                                    <p class="wizard-description" [ngClass]="{'ellipsis-on' : wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null}">
+                                        {{wtw.description}}
+                                        <a (click)="toggleWizardDesc(wtw.id)" *ngIf="wizardDescExpanded[wtw.id]"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+                                    </p>                        
+                                    <a (click)="toggleWizardDesc(wtw.id)" *ngIf="wizardDescExpanded[wtw.id] == false || wizardDescExpanded[wtw.id] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+                                </div>
+                                <hr/>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="justify">
-                                    <p><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
-                                </div>                                  
-                                <#list fundingImportWizards?sort_by("name") as thirdPartyDetails>
-                                    <#assign redirect = (thirdPartyDetails.redirectUri) >
-                                    <#assign predefScopes = (thirdPartyDetails.scopes) >
-                                    <strong><a (click)="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.id}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.name}</a></strong><br />
-                                    <div class="justify">
-                                        <p class="wizard-description" [ngClass]="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.id}] == false || wizardDescExpanded[${thirdPartyDetails.id}] == null}">
-                                            ${(thirdPartyDetails.description)!}
-                                        <a (click)="toggleWizardDesc(${thirdPartyDetails.id})" *ngIf="wizardDescExpanded[${thirdPartyDetails.id}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
-                                                    </p>                                                
-                                                    <a (click)="toggleWizardDesc(${thirdPartyDetails.id})" *ngIf="wizardDescExpanded[${thirdPartyDetails.id}] == false || wizardDescExpanded[${thirdPartyDetails.id}] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
-                                    </div>
-                                    <#if (thirdPartyDetails_has_next)>
-                                        <hr/>
-                                    </#if>
-                                    </#list>
-                            </div>
-                        </div>  
                     </div>
-                </#if>
+                </div>            
             </div>
+                   
+
             <div *ngIf="workspaceSrvc.displayFunding" class="workspace-accordion-content">
                 <ul *ngIf="groups.length > 0" class="workspace-fundings workspace-body-list bottom-margin-medium" >
                     <li class="bottom-margin-small workspace-border-box card ng-scope" *ngFor="let group of groups">
