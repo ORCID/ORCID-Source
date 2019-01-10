@@ -180,7 +180,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     @Test
     public void dissertationThesisToDissertationTest() {
         WorkEntity work = getWorkEntity();
-        work.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+        work.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
         
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
@@ -191,7 +191,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(WorkType.DISSERTATION, w.getWorkType());        
     
         MinimizedWorkEntity mWork = new MinimizedWorkEntity();
-        mWork.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+        mWork.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
         List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
         assertEquals(WorkType.DISSERTATION, summaries.get(0).getType());
     }
@@ -203,7 +203,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         WorkEntity we = jpaJaxbWorkAdapter.toWorkEntity(w);
         assertNotNull(we);
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name(), we.getWorkType());
+        assertEquals(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name(), we.getWorkType());
     }
     
     @Test

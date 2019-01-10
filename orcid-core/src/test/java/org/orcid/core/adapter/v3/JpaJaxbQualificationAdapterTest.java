@@ -88,7 +88,7 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
         assertNotNull(qualification.getOrganization().getAddress());
         assertEquals("org:city", qualification.getOrganization().getAddress().getCity());
         assertEquals("org:region", qualification.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, qualification.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, qualification.getOrganization().getAddress().getCountry());
         assertNotNull(qualification.getSource());        
         assertNotNull(qualification.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", qualification.getSource().retrieveSourcePath());

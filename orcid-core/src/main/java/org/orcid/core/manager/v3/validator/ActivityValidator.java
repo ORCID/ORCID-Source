@@ -28,12 +28,17 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.LanguageCode;
+import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.MultipleOrganizationHolder;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
@@ -45,21 +50,16 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
-import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
@@ -81,7 +81,7 @@ public class ActivityValidator {
         if (work.getCountry() != null) {
             if (work.getCountry().getValue() == null) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(Iso3166Country.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+                String values = Arrays.stream(Iso3166Country.values()).map(element -> element.name()).collect(Collectors.joining(", "));
                 params.put("type", "country");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -99,9 +99,9 @@ public class ActivityValidator {
 
             // If translated title language code is null or invalid
             if (!PojoUtil.isEmpty(translatedTitle) && (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
-                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
+                    || !Arrays.stream(LanguageCode.getValues()).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "translated title -> language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -117,9 +117,9 @@ public class ActivityValidator {
         }
 
         if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-            if (!Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(work.getLanguageCode()::equals)) {
+            if (!Arrays.stream(LanguageCode.getValues()).anyMatch(work.getLanguageCode()::equals)) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -269,9 +269,9 @@ public class ActivityValidator {
         if (title != null && title.getTranslatedTitle() != null && !PojoUtil.isEmpty(title.getTranslatedTitle().getContent())) {
             // If translated title language code is null or invalid
             if (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
-                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
+                    || !Arrays.stream(LanguageCode.getValues()).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "translated title -> language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -287,9 +287,9 @@ public class ActivityValidator {
 
         if (funding.getAmount() != null) {
             Amount amount = funding.getAmount();
-            if (PojoUtil.isEmpty(amount.getCurrencyCode()) && !PojoUtil.isEmpty(amount.getContent())) {
+            if (amount.getCurrencyCode() == null && !PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify a currency code");
-            } else if (!PojoUtil.isEmpty(amount.getCurrencyCode()) && PojoUtil.isEmpty(amount.getContent())) {
+            } else if (amount.getCurrencyCode() != null && PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify an amount or remove the amount tag");
             }
         }

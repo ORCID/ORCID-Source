@@ -201,129 +201,48 @@
 			    * Grant: Peer-reviewed funding providing direct research costs through competitions
 			    * Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
 			    * Research resource proposal: A peer-reviewed proposal of use of a research resource
+			    ORCID will validate this value against the enumeration 
+				org.orcid.jaxb.model.common.PeerReviewSubjectType and other rules when necessary
             </xs:documentation>
         </xs:annotation>
-        <xs:restriction base="xs:string">
-            <!-- work types -->
-            <xs:enumeration value="artistic-performance" />
-            <xs:enumeration value="book-chapter" />
-            <xs:enumeration value="book-review" />
-            <xs:enumeration value="book" />
-            <xs:enumeration value="conference-abstract" />
-            <xs:enumeration value="conference-paper" />
-            <xs:enumeration value="conference-poster" />
-            <xs:enumeration value="data-set" />
-            <xs:enumeration value="dictionary-entry" />
-            <xs:enumeration value="disclosure" />
-            <xs:enumeration value="dissertation-thesis" />
-            <xs:enumeration value="edited-book" />
-            <xs:enumeration value="encyclopedia-entry" />
-            <xs:enumeration value="invention" />
-            <xs:enumeration value="journal-article" />
-            <xs:enumeration value="journal-issue" />
-            <xs:enumeration value="lecture-speech" />
-            <xs:enumeration value="license" />
-            <xs:enumeration value="magazine-article" />
-            <xs:enumeration value="manual" />
-            <xs:enumeration value="newsletter-article" />
-            <xs:enumeration value="newspaper-article" />
-            <xs:enumeration value="online-resource" />
-            <xs:enumeration value="other" />
-            <xs:enumeration value="patent" />
-            <xs:enumeration value="registered-copyright" />
-            <xs:enumeration value="report" />
-            <xs:enumeration value="research-technique" />
-            <xs:enumeration value="research-tool" />
-            <xs:enumeration value="software" />
-            <xs:enumeration value="spin-off-company" />
-            <xs:enumeration value="standards-and-policy" />
-            <xs:enumeration value="supervised-student-publication" />
-            <xs:enumeration value="technical-standard" />
-            <xs:enumeration value="test" />
-            <xs:enumeration value="translation" />
-            <xs:enumeration value="trademark" />
-            <xs:enumeration value="website" />
-            <xs:enumeration value="working-paper" />
-            
-            <!-- funding types -->
-            <xs:enumeration value="grant" />
-            <xs:enumeration value="contract" />
-            <xs:enumeration value="award" />
-            <xs:enumeration value="salary-award" />
-            
-            <!-- research resource types -->
-            <xs:enumeration value="research-resource-proposal" />
-        </xs:restriction>
-    </xs:simpleType>
+        <xs:restriction base="xs:string" />    
+	</xs:simpleType>
 
 	<xs:simpleType name="role">
 		<xs:annotation>
-			<xs:documentation>The role performed by the reviewer
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="reviewer">
-				<xs:annotation>
-					<xs:documentation>
-						A person who formally assess or examines an
+			<xs:documentation>
+			The role performed by the reviewer.
+			* reviewer: A person who formally assess or examines an
 						output with a view to
 						commenting and evaluating it.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="editor">
-				<xs:annotation>
-					<xs:documentation>A person who coordinates reviews and/or is
+			* editor: A person who coordinates reviews and/or is
 						responsible for decision making on the content of a publication.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="member">
-				<xs:annotation>
-					<xs:documentation>A person participating in a process, committee or
+			* member: A person participating in a process, committee or
 						activity.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="chair">
-				<xs:annotation>
-					<xs:documentation>A person who coordinates reviews and/or is
+			* chair: A person who coordinates reviews and/or is
 						responsible for decision making on the content of a conference.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="organizer">
-				<xs:annotation>
-					<xs:documentation>A person who makes arrangements or preparations
+			* organizer: A person who makes arrangements or preparations
 						for an event or activity.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-		</xs:restriction>
+			ORCID will validate this value against the enumeration 
+			org.orcid.jaxb.model.common.Role and other rules when necessary
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string" />			
 	</xs:simpleType>
 
 	<xs:simpleType name="type">
 		<xs:annotation>
-			<xs:documentation>The type of review this is
+			<xs:documentation>
+			The type of review this is:
+			* review: An expert assessment of a scholarly output that
+						contributes to a decision regarding on the object of the review.
+			* evaluation: A post­peer review, expert evaluation of a
+						scholarly output.
+			ORCID will validate this value against the enumeration 
+			org.orcid.jaxb.model.common.PeerReviewType and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="review">
-				<xs:annotation>
-					<xs:documentation>An expert assessment of a scholarly output that
-						contributes to a decision regarding on the object of the review.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="evaluation">
-				<xs:annotation>
-					<xs:documentation>
-						A post­peer review, expert evaluation of a
-						scholarly output.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-		</xs:restriction>
+		<xs:restriction base="xs:string" />			
 	</xs:simpleType>	
 	
 	<xs:complexType name="subject-name">

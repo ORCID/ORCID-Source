@@ -4,11 +4,11 @@ import org.orcid.core.adapter.jsonidentifier.JSONExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONFundingExternalIdentifiers;
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;

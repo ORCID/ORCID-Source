@@ -5,48 +5,15 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-package org.orcid.jaxb.model.v3.rc2.common;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlType;
-
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/**
- * <p>
- * Java class for orcid-type.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
- * <p>
- * 
- * <pre>
- * &lt;simpleType name="orcid-type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="admin"/>
- *     &lt;enumeration value="user"/>
- *     &lt;enumeration value="group"/>
- *     &lt;enumeration value="client"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
- * 
- */
-@XmlType(name = "orcid-type")
-@XmlEnum
 public enum OrcidType implements Serializable {
-    @XmlEnumValue("admin")
     ADMIN("admin"), 
-    @XmlEnumValue("user")
     USER("user"),   
-    @XmlEnumValue("client")
     @Deprecated
     CLIENT("client"),
-    @XmlEnumValue("group")
     GROUP("group");
     private final String value;
 

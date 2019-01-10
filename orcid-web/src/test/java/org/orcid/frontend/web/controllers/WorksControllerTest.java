@@ -298,7 +298,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
         TranslatedTitleForm tTitle = new TranslatedTitleForm();
         tTitle.setContent("Test translated title");
-        tTitle.setLanguageCode("EN");
+        tTitle.setLanguageCode("en");
 
         work.setTranslatedTitle(tTitle);
 
@@ -333,7 +333,7 @@ public class WorksControllerTest extends BaseControllerTest {
         assertEquals("Test update work", updatedWork.getTitle().getValue());
         assertEquals("Test update subtitle", updatedWork.getSubtitle().getValue());
         assertEquals("Test translated title", updatedWork.getTranslatedTitle().getContent());
-        assertEquals("EN", updatedWork.getTranslatedTitle().getLanguageCode());
+        assertEquals("en", updatedWork.getTranslatedTitle().getLanguageCode());
         assertNotNull(updatedWork.getWorkExternalIdentifiers());
         assertEquals(2, updatedWork.getWorkExternalIdentifiers().size());
 

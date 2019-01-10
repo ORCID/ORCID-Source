@@ -22,18 +22,27 @@ import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.ContributorRole;
+import org.orcid.jaxb.model.common.FundingContributorRole;
+import org.orcid.jaxb.model.common.FundingType;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.PeerReviewSubjectType;
+import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.Role;
+import org.orcid.jaxb.model.common.SequenceType;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.rc2.common.ContributorRole;
 import org.orcid.jaxb.model.v3.rc2.common.Country;
 import org.orcid.jaxb.model.v3.rc2.common.CreditName;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
 import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
@@ -52,7 +61,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc2.record.Citation;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.Education;
 import org.orcid.jaxb.model.v3.rc2.record.Employment;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
@@ -60,21 +68,13 @@ import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes;
-import org.orcid.jaxb.model.v3.rc2.record.FundingContributorRole;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
 import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
-import org.orcid.jaxb.model.v3.rc2.record.FundingType;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReviewSubjectType;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
-import org.orcid.jaxb.model.v3.rc2.record.Role;
-import org.orcid.jaxb.model.v3.rc2.record.SequenceType;
 import org.orcid.jaxb.model.v3.rc2.record.SubjectName;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -117,13 +117,6 @@ public class ActivityValidatorTest {
     }
     
     @Test(expected = ActivityTypeValidationException.class)
-    public void validateWork_translatedTitleWithInvalidLanguageCodeTest() {
-        Work work = getWork();
-        work.getWorkTitle().getTranslatedTitle().setLanguageCode("xx");
-        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
-    }
-    
-    @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_translatedTitleWithNoLanguageCodeTest() {
         Work work = getWork();
         work.getWorkTitle().getTranslatedTitle().setLanguageCode(null);
@@ -135,14 +128,7 @@ public class ActivityValidatorTest {
         Work work = getWork();
         work.setWorkType(null);
         activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
-    }
-    
-    @Test(expected = ActivityTypeValidationException.class)
-    public void validateWork_invalidLanguageCodeTest() {
-        Work work = getWork();
-        work.setLanguageCode("xx");
-        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
-    }
+    }       
     
     @Test
     public void validateWork_invalidPublicationDateTest() {
@@ -367,14 +353,7 @@ public class ActivityValidatorTest {
         Funding funding = getFunding();
         funding.getTitle().getTitle().setContent(null);
         activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
-    }
-    
-    @Test(expected = ActivityTypeValidationException.class)
-    public void validateFunding_invalidTranslatedTitleLanguageCodeTest() {
-        Funding funding = getFunding();
-        funding.getTitle().getTranslatedTitle().setLanguageCode("xx");
-        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
-    }
+    }        
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validateFunding_emptyExternalIdentifiersTest() {
@@ -390,7 +369,7 @@ public class ActivityValidatorTest {
             funding.getAmount().setCurrencyCode(null);
             activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
             fail();
-        } catch(OrcidValidationException e) {
+        } catch(Exception e) {
             
         }
         
@@ -450,7 +429,7 @@ public class ActivityValidatorTest {
         Funding funding = new Funding();
         Amount amount = new Amount();
         amount.setContent("1000");
-        amount.setCurrencyCode("$");        
+        amount.setCurrencyCode("USD");        
         funding.setAmount(amount);
         FundingContributor contributor = new FundingContributor();
 

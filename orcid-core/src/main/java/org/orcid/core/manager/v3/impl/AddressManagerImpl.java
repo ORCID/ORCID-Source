@@ -18,7 +18,7 @@ import org.orcid.core.manager.v3.read_only.impl.AddressManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
@@ -64,7 +64,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                 if (isDuplicated(existing, address, activeSource)) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("type", "address");
-                    params.put("value", address.getCountry().getValue().value());
+                    params.put("value", address.getCountry().getValue().name());
                     throw new OrcidDuplicatedElementException(params);
                 }
             }
@@ -91,7 +91,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
             if (isDuplicated(existing, address, activeSource)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "address");
-                params.put("value", address.getCountry().getValue().value());
+                params.put("value", address.getCountry().getValue().name());
                 throw new OrcidDuplicatedElementException(params);
             }            
         }

@@ -5,15 +5,9 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-package org.orcid.jaxb.model.v3.rc2.record;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
-
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlType;
-
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * <p>
@@ -24,16 +18,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * this class.
  * <p>
  */
-@XmlType(name = "grantType")
-@XmlEnum
 public enum FundingType implements Serializable {
-    @XmlEnumValue("grant")
     GRANT("grant"), 
-    @XmlEnumValue("contract")
     CONTRACT("contract"), 
-    @XmlEnumValue("award")
     AWARD("award"),
-    @XmlEnumValue("salary-award")
     SALARY_AWARD("salary-award");
     private final String value;
 

@@ -1,25 +1,12 @@
-package org.orcid.jaxb.model.v3.rc2.record;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlType;
-
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@XmlType(name = "role")
-@XmlEnum
 public enum Role implements Serializable {
-    @XmlEnumValue("reviewer")
     REVIEWER("reviewer"),
-    @XmlEnumValue("editor")
     EDITOR("editor"),
-    @XmlEnumValue("member")
     MEMBER("member"),
-    @XmlEnumValue("chair")
     CHAIR("chair"),
-    @XmlEnumValue("organizer")
     ORGANIZER("organizer");
         
     private final String value;
