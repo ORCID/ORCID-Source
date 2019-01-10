@@ -3,6 +3,8 @@ package org.orcid.frontend.spring.web.social.config;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.orcid.frontend.spring.web.social.GoogleSignIn;
+import org.orcid.frontend.spring.web.social.GoogleSignInImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +24,6 @@ import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.google.api.Google;
-import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.connect.GoogleConnectionFactory;
 
 /**
@@ -88,9 +89,9 @@ public class SocialConfig implements InitializingBean {
 	
 	@Bean
 	@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
-	public Google google() {
+	public GoogleSignIn google() {
 		String accessToken = connectionRepository().getPrimaryConnection(Google.class).createData().getAccessToken();
-		return new GoogleTemplate(accessToken);
+		return new GoogleSignInImpl(accessToken);
 	}
 	
 	@Bean

@@ -15,6 +15,7 @@ import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.frontend.spring.web.social.GoogleSignIn;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -29,7 +30,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
-import org.springframework.social.google.api.Google;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -188,13 +188,18 @@ public class SocialController extends BaseController {
             userMap.put("firstName", user.getFirstName());
             userMap.put("lastName", user.getLastName());
         } else if (SocialType.GOOGLE.equals(connectionType)) {
-            Google google = socialContext.getGoogle();
+            GoogleSignIn google = socialContext.getGoogle();
+            System.out.println("socialContext.getUserId(): " + socialContext.getUserId());
             Person person = google.plusOperations().getGoogleProfile();
             userMap.put("providerUserId", person.getId());
+            System.out.println("person.getId(): " + person.getId());
             userMap.put("userName", person.getDisplayName());
             userMap.put("email", person.getAccountEmail());
             userMap.put("firstName", person.getGivenName());
             userMap.put("lastName", person.getFamilyName());
+            
+            
+            google.getJWTInfo();
         }
 
         return userMap;

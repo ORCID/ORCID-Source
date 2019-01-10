@@ -6,6 +6,8 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.frontend.spring.web.social.GoogleSignIn;
+import org.orcid.frontend.spring.web.social.GoogleSignInImpl;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.ConnectionSignUp;
@@ -30,10 +32,10 @@ public class SocialContext implements ConnectionSignUp, SignInAdapter {
 
 	private final Facebook facebook;
 
-	private final Google google;
+	private final GoogleSignIn google;
 	
 	public SocialContext(UsersConnectionRepository connectionRepository, UserCookieGenerator userCookieGenerator,
-			Facebook facebook, Google google) {
+			Facebook facebook, GoogleSignIn google) {
 		this.connectionRepository = connectionRepository;
 		this.userCookieGenerator = userCookieGenerator;
 		this.facebook = facebook;
@@ -103,7 +105,7 @@ public class SocialContext implements ConnectionSignUp, SignInAdapter {
 		return facebook;
 	}
 	
-	public Google getGoogle() {
+	public GoogleSignIn getGoogle() {
 		return google;
 	}
 }
