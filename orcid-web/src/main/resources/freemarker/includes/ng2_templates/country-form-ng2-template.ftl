@@ -121,15 +121,7 @@
                                                             >
 
                                                                 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-
-                                                                <#list isoCountries?keys as key>
-                                                                <option 
-                                                                    value="${key}"
-                                                                    [selected]="country.iso2Country.value == '${key}'"
-                                                                >
-                                                                    ${isoCountries[key]}
-                                                                </option>
-                                                                </#list>
+                                                                <option *ngFor="let country of sortedCountryNames" [ngValue]="countryNamesToCountryCodes[country]" >{{country}}</option>
                                                             </select>       
 
                                                         </div>         

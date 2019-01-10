@@ -7,8 +7,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.orcid.jaxb.model.v3.rc1.common.Locale;
+import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.common.adapters.AvailableLocalesAdapter;
 
 /**
  * 
@@ -20,14 +22,15 @@ import org.orcid.jaxb.model.v3.rc1.common.Locale;
 @XmlRootElement(name = "preferences", namespace = "http://www.orcid.org/ns/preferences")
 public class Preferences implements Serializable {    
     private static final long serialVersionUID = -2143886440930470817L;
+    @XmlJavaTypeAdapter(AvailableLocalesAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/preferences")
-    Locale locale;
+    AvailableLocales locale;
 
-    public Locale getLocale() {
+    public AvailableLocales getLocale() {
         return locale;
     }
 
-    public void setLocale(Locale locale) {
+    public void setLocale(AvailableLocales locale) {
         this.locale = locale;
     }
 

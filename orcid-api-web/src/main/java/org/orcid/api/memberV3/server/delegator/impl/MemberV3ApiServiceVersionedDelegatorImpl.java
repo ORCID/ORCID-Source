@@ -81,7 +81,7 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, false);
         schemaValidator.validate(work);
         work = processObject(work);
-        return memberV3ApiServiceDelegator.createWork(orcid, work);
+        return processReponse(memberV3ApiServiceDelegator.createWork(orcid, work));
     }
 
     @Override
@@ -116,7 +116,7 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
         }
 
         works = processObject(works);
-        return memberV3ApiServiceDelegator.createWorks(orcid, works);
+        return processReponse(memberV3ApiServiceDelegator.createWorks(orcid, works));
     }
 
     @Override

@@ -930,7 +930,7 @@ bibToWorkTypeMap['manual'] = [ 'publication', 'manual' ];
 bibToWorkTypeMap['mastersthesis'] = [ 'publication',
         'supervised-student-publication' ];
 bibToWorkTypeMap['misc'] = [ 'other_output', 'other' ];
-bibToWorkTypeMap['phdthesis'] = [ 'publication', 'dissertation' ];
+bibToWorkTypeMap['phdthesis'] = [ 'publication', 'dissertation-thesis'  ];
 bibToWorkTypeMap['proceedings'] = [ 'conference', 'conference-paper' ];
 bibToWorkTypeMap['techreport'] = [ 'publication', 'report' ];
 bibToWorkTypeMap['unpublished'] = [ 'other_output', 'other' ];

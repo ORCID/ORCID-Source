@@ -49,7 +49,7 @@ public class JSONWorkExternalIdentifiersConverterV2 extends BidirectionalConvert
         JSONWorkExternalIdentifiers workExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, JSONWorkExternalIdentifiers.class);
         ExternalIDs externalIDs = new ExternalIDs();
         for (JSONWorkExternalIdentifier workExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier()) {            
-            if(workExternalIdentifier.getRelationship() == null || !org.orcid.jaxb.model.v3.rc2.record.Relationship.VERSION_OF.name().equals(workExternalIdentifier.getRelationship())) {
+            if(workExternalIdentifier.getRelationship() == null || !org.orcid.jaxb.model.common.Relationship.VERSION_OF.name().equals(workExternalIdentifier.getRelationship())) {
                 ExternalID id = new ExternalID();
                 if (workExternalIdentifier.getWorkExternalIdentifierType() == null) {
                     id.setType(WorkExternalIdentifierType.OTHER_ID.value());

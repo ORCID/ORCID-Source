@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
@@ -66,6 +67,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidJSONException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9047));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidFuzzyDateException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9049));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(MissingStartDateException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9050));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(IllegalEnumValueException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9051));
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
@@ -254,6 +256,8 @@ public class OrcidCoreExceptionMapper {
         Map<String, String> params = null;
         if (t instanceof ApplicationException) {
             params = ((ApplicationException) t).getParams();
+        } else if (t instanceof IllegalEnumValueException) {
+            params = ((IllegalEnumValueException) t).getParams();
         }
         orcidError.setDeveloperMessage(getDeveloperMessage(errorCode, t, params));
         orcidError.setUserMessage(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params));
@@ -286,22 +290,27 @@ public class OrcidCoreExceptionMapper {
 
         Throwable cause = t.getCause();
         if (cause != null) {
-            String causeMessage = cause.getLocalizedMessage();
-            if (causeMessage != null) {
-                devMessage += " (" + causeMessage + ")";
+            if(IllegalEnumValueException.class.isAssignableFrom(cause.getClass())) {
+                IllegalEnumValueException e = (IllegalEnumValueException) cause;
+                devMessage += " (" + e.getInvalidValue() + " is invalid for " + e.getEnumClass().getName() + ")";
             } else {
-                Throwable secondCause = cause.getCause();
-                String secondCauseMessage = secondCause.getLocalizedMessage();
-                if (secondCauseMessage != null) {
-                    devMessage += " (" + secondCauseMessage + ")";
+                String causeMessage = cause.getLocalizedMessage();
+                if (causeMessage != null) {
+                    devMessage += " (" + causeMessage + ")";
                 } else {
-                    Throwable thirdCause = secondCause.getCause();
-                    String thirdCauseMessage = thirdCause.getLocalizedMessage();
-                    if (thirdCauseMessage != null) {
-                        devMessage += " (" + thirdCauseMessage + ")";
+                    Throwable secondCause = cause.getCause();
+                    String secondCauseMessage = secondCause.getLocalizedMessage();
+                    if (secondCauseMessage != null) {
+                        devMessage += " (" + secondCauseMessage + ")";
+                    } else {
+                        Throwable thirdCause = secondCause.getCause();
+                        String thirdCauseMessage = thirdCause.getLocalizedMessage();
+                        if (thirdCauseMessage != null) {
+                            devMessage += " (" + thirdCauseMessage + ")";
+                        }
                     }
                 }
-            }
+            }            
         }
         
         return resolveMessage(devMessage, params);

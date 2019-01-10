@@ -52,11 +52,14 @@ Click add
 12. Visit https://qa.orcid.org/signout
 13. Visit https://qa.orcid.org/signin
 14. Sign back in to the Consortium lead account with
-	0000-0003-0641-4661
-	test1234
 
-15. Scroll to 'Contacts for all consortium members'
-16. click on 'Click here to view all consortium member contacts'
+		0000-0003-0641-4661
+		test1234
+
+15. Click on 'Member Tools'
+
+16. Scroll to 'Contacts for all consortium members'
+	 click on 'Click here to view all consortium member contacts'
 
 17. When the page loads check that the  contact from today has been added to New Org 1 in the list of member contacts.
 

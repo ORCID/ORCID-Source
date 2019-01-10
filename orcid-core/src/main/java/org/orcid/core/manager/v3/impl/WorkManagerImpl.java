@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
+import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -29,6 +30,7 @@ import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
@@ -39,12 +41,10 @@ import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
 import org.orcid.jaxb.model.v3.rc2.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -389,13 +389,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
     
     @Override
-    public void createNewWorkGroup(List<Long> workIds, String orcid) {
+    public void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
         JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);
         ExternalIDs allExternalIDs = new ExternalIDs();
         List<MinimizedWorkEntity> userVersions = new ArrayList<>();
         MinimizedWorkEntity userPreferred = null;
         
+        boolean groupableExternalIdFound = false;
         for (MinimizedWorkEntity work : works) {
             if (orcid.equals(work.getSourceId())) {
                 userVersions.add(work);
@@ -409,7 +410,15 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if (!allExternalIDs.getExternalIdentifier().contains(externalID)) {
                     allExternalIDs.getExternalIdentifier().add(externalID);
                 }
+                
+                if (externalID.isGroupAble()) {
+                    groupableExternalIdFound = true;
+                }
             }
+        }
+        
+        if (!groupableExternalIdFound) {
+            throw new MissingGroupableExternalIDException();
         }
         
         String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);

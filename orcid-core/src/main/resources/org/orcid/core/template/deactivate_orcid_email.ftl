@@ -10,17 +10,13 @@ ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 
 <@emailMacros.msg "email.deactivate.gdpr_if_you_do_not" />
 
-<@emailMacros.msg "email.deactivate.gdpr_please_note" />
+<@emailMacros.msg "email.deactivate.please_note.1" /> <@emailMacros.msg "email.deactivate.please_note.2" /> (https://en.wikipedia.org/wiki/Cryptographic_hash_function) <@emailMacros.msg "email.deactivate.please_note.3" />
 
-<@emailMacros.msg "email.deactivate.gdpr_once_you_have" />
 
-<@emailMacros.msg "email.deactivate.gdpr_if_you_would" /> <@emailMacros.msg "email.deactivate.gdpr_orcid_support" />
+<@emailMacros.msg "email.deactivate.more_info" />    
+https://support.orcid.org/hc/articles/360006973813
 
-${baseUri}/help/contact-us
-
-<@emailMacros.msg "email.deactivate.gdpr_to_request_removal" />
-
-${baseUri}/${orcid} <@emailMacros.msg "email.deactivate.gdpr_at_any_point" />
+<@emailMacros.msg "email.deactivate.if_you_did" /> https://orcid.org/help/contact-us <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
 
 <@emailMacros.msg "email.common.warm_regards" />
 <@emailMacros.msg "email.common.need_help.description.2.href" />
@@ -28,5 +24,4 @@ ${baseUri}/${orcid} <@emailMacros.msg "email.deactivate.gdpr_at_any_point" />
 
 ${baseUri}/home?lang=${locale}
 
-<@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>
