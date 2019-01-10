@@ -201,33 +201,14 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void dissertationToDisertationThesisTest() throws JAXBException {
+    public void dissertationThesisModelToEntityTest() throws JAXBException {
         Work w = getWork(true);
         w.setWorkType(WorkType.DISSERTATION_THESIS);
         
         WorkEntity we = jpaJaxbWorkAdapter.toWorkEntity(w);
         assertNotNull(we);
         assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name(), we.getWorkType());
-    }
-    
-    @Test
-    public void dissertationToDissertationThesisTest() {
-        WorkEntity work = getWorkEntity();
-        work.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name());
-        
-        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
-        assertNotNull(ws);
-        assertEquals(WorkType.DISSERTATION_THESIS, ws.getType());
-        
-        Work w = jpaJaxbWorkAdapter.toWork(work);
-        assertNotNull(w);
-        assertEquals(WorkType.DISSERTATION_THESIS, w.getWorkType());        
-    
-        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
-        mWork.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name());
-        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
-        assertEquals(WorkType.DISSERTATION_THESIS, summaries.get(0).getType());
-    }
+    }        
     
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
