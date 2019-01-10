@@ -28,7 +28,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -121,7 +121,7 @@ public class ClaimControllerTest {
         when(request.getLocale()).thenReturn(java.util.Locale.US);
         String orcid = "0000-0000-0000-0001";
         when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
-        when(profileEntityManager.claimProfileAndUpdatePreferences(any(String.class), any(String.class), any(Locale.class), any(Claim.class))).thenReturn(true);
+        when(profileEntityManager.claimProfileAndUpdatePreferences(any(String.class), any(String.class), any(AvailableLocales.class), any(Claim.class))).thenReturn(true);
 
         Claim claim = new Claim();
         claim.setActivitiesVisibilityDefault(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PRIVATE));

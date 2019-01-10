@@ -14,6 +14,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -74,7 +75,7 @@ public class HomeController extends BaseController {
         if (lang != null) {
             String orcid = getRealUserOrcid();
             if (orcid != null) {
-                profileEntityManager.updateLocale(orcid, org.orcid.jaxb.model.v3.rc2.common.Locale.fromValue(lang));
+                profileEntityManager.updateLocale(orcid, AvailableLocales.fromValue(lang));
             }
         }
 

@@ -216,9 +216,7 @@
                     <span class="required" [ngClass]="isValidClass(editFunding.country)">*</span>                    
                     <select id="country" class="form-control" name="country" [(ngModel)]="editFunding.country.value" (ngModelChange)="serverValidate('fundings/funding/countryValidate.json')">
                         <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-                        <#list isoCountries?keys as key>
-                            <option value="${key}">${isoCountries[key]}</option>
-                        </#list>
+                        <option *ngFor="let country of sortedCountryNames" [ngValue]="countryNamesToCountryCodes[country]" >{{country}}</option>
                     </select>                        
                     <span class="orcid-error" *ngIf="editFunding?.country?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.country.errors' [innerHtml]="error"></div>

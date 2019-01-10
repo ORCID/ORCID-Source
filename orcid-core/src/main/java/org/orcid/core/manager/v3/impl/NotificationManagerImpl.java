@@ -23,7 +23,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
@@ -42,6 +41,7 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
 import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
@@ -64,7 +64,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
-import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
@@ -78,7 +77,6 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -249,14 +247,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
         Map<String, Object> templateParams = new HashMap<String, Object>();
         
-        boolean useV2Template = false;
-        String subject;
-        try {
-            subject = messageSourceNoFallback.getMessage("email.subject.register.welcome", null, userLocale);
-            useV2Template = true;
-        } catch(NoSuchMessageException e) {
-            subject = messages.getMessage("email.subject.register.thanks", null, userLocale);
-        }
+        String subject = messages.getMessage("email.subject.register.welcome", null, userLocale);
         
         String emailName = deriveEmailFriendlyName(profileEntity);
         String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
@@ -293,9 +284,9 @@ public class NotificationManagerImpl implements NotificationManager {
         addMessageParams(templateParams, userLocale);
 
         // Generate body from template
-        String body = (useV2Template) ? templateManager.processTemplate("welcome_email_v2.ftl", templateParams) : templateManager.processTemplate("welcome_email.ftl", templateParams);
+        String body = templateManager.processTemplate("welcome_email_v2.ftl", templateParams);
         // Generate html from template
-        String html = (useV2Template) ? templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams): templateManager.processTemplate("welcome_email_html.ftl", templateParams);
+        String html = templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams);
 
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
     }
@@ -381,22 +372,14 @@ public class NotificationManagerImpl implements NotificationManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale locale = getUserLocaleFromProfileEntity(profile);
         
-        boolean useV2Template = false;
-        try {
-            messageSourceNoFallback.getMessage("email.verify.primary_reminder_v2", null, locale);
-            useV2Template = true;
-        } catch(NoSuchMessageException e) {
-            
-        }
-        
         String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
         String emailFriendlyName = deriveEmailFriendlyName(profile);
         String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
         Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
         templateParams.put("isReminder", isVerificationReminder);
         // Generate body from template
-        String body = (useV2Template) ? templateManager.processTemplate("verification_email_v2.ftl", templateParams) : templateManager.processTemplate("verification_email.ftl", templateParams);
-        String htmlBody = (useV2Template) ? templateManager.processTemplate("verification_email_html_v2.ftl", templateParams) : templateManager.processTemplate("verification_email_html.ftl", templateParams);
+        String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);    
     }
 
@@ -820,7 +803,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = LocaleUtils.toLocale("en");
         
         if(locale != null) {
-            org.orcid.jaxb.model.v3.rc2.common.Locale loc = org.orcid.jaxb.model.v3.rc2.common.Locale.valueOf(managedEntity.getLocale());
+            AvailableLocales loc = AvailableLocales.valueOf(managedEntity.getLocale());
             userLocale = LocaleUtils.toLocale(loc.value());
         }        
 
@@ -1140,7 +1123,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Locale locale = org.orcid.jaxb.model.common_v2.Locale.valueOf(profile.getLocale());
+        AvailableLocales locale = AvailableLocales.valueOf(profile.getLocale());
         if (locale != null) {
             return LocaleUtils.toLocale(locale.value());
         }

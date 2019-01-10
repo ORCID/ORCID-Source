@@ -27,8 +27,8 @@ import { ModalService } from "../../shared/modal.service.ts";
 })
 export class ManageMembersFindMemberConfirmComponent
   implements AfterViewInit, OnDestroy, OnInit {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
   object;
+  modalSubscription : Subscription
 
   constructor(private modalService: ModalService) {}
 
@@ -38,12 +38,11 @@ export class ManageMembersFindMemberConfirmComponent
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this.modalSubscription.unsubscribe()
   }
 
   ngOnInit() {
-    this.modalService.notifyObservable$.subscribe(data => {
+    this.modalSubscription = this.modalService.notifyObservable$.subscribe(data => {
       if (data && data.moduleId === "modalFindMemberConfirm") {
         this.object = data.object;
       }
@@ -55,7 +54,7 @@ export class ManageMembersFindMemberConfirmComponent
       action: "close",
       moduleId: "modalFindMemberConfirm",
       input: "update",
-      object: this.object
+      object: this.object,
     });
     this.object = null;
   }

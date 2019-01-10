@@ -243,22 +243,11 @@
 
 	<xs:simpleType name="locale">
 		<xs:annotation>
-			<xs:documentation>Supported locales for site
-				translations/localizations
-			</xs:documentation>
-		</xs:annotation>
+			<xs:documentation>For the up to date supported locale list see https://github.com/ORCID/ORCID-Source/SUPPORTED_LOCALES.md</xs:documentation>
+		</xs:annotation>				
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="en" />
-			<xs:enumeration value="es" />
-			<xs:enumeration value="fr" />
-			<xs:enumeration value="ko" />
-			<xs:enumeration value="pt" />
-			<xs:enumeration value="ru" />
-			<xs:enumeration value="zh_CN" />
-			<xs:enumeration value="zh_TW" />
-			<xs:enumeration value="it" />
-			<xs:enumeration value="ja" />
-		</xs:restriction>
+			<xs:pattern value="[a-zA-Z]{1,8}((-|_)[a-zA-Z0-9]{1,8})*" />
+		</xs:restriction>						
 	</xs:simpleType>
 
 	<xs:simpleType name="non-empty-string">
@@ -1009,20 +998,7 @@
 			<xs:maxLength value="350" />
 			<xs:pattern value="[^@]+@[^\.]+\..+" />
 		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="media-type">
-		<xs:annotation>
-			<xs:documentation>Used with the publication date to indicate which
-				version of the publication the date refers to.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="print" />
-			<xs:enumeration value="online" />
-			<xs:enumeration value="other" />
-		</xs:restriction>
-	</xs:simpleType>
+	</xs:simpleType>	
 
 	<xs:simpleType name="year">
 		<xs:annotation>
