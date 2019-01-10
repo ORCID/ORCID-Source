@@ -130,10 +130,10 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
                 }
                 redirectUri.setRedirectUri(rUri.getValue().getValue());
                 redirectUri.setRedirectUriType(rUri.getType().getValue());
-                if(rUri.getActType() != null) {
+                if(!PojoUtil.isEmpty(rUri.getActType())) {
                     redirectUri.setUriActType(rUri.getActType().getValue());
                 }
-                if(rUri.getGeoArea() != null) {
+                if(!PojoUtil.isEmpty(rUri.getGeoArea())) {
                     redirectUri.setUriGeoArea(rUri.getGeoArea().getValue());
                 }                
                 redirectUriSet.add(redirectUri);

@@ -1,6 +1,8 @@
 package org.orcid.core.manager.v3;
 
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
@@ -10,9 +12,9 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
  */
 public interface SourceManager {
 
-    String retrieveSourceOrcid();
+    String retrieveActiveSourceId();
     
-    SourceEntity retrieveSourceEntity();
+    SourceEntity retrieveActiveSourceEntity();
 
     boolean isInDelegationMode();
     
@@ -21,5 +23,7 @@ public interface SourceManager {
     ProfileEntity retrieveSourceProfileEntity();
 
     String retrieveRealUserOrcid();
+
+    Source retrieveActiveSource();
 
 }

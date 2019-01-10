@@ -190,11 +190,11 @@ import { WorksFormModule }
 import { WorksModule } 
     from './works/works.ts';
     
-import { WorksMergeChoosePreferredVersionModule } 
-    from './works/worksMergeChoosePreferredVersion.ts';
-    
 import { WorksMergeSuggestionsModule } 
-    from './works/worksMergeSuggestions.ts';    
+    from './works/worksMergeSuggestions.ts';
+
+import { ManageMembersModule } 
+    from './manageMembers/manageMembers.ts';      
     
 import { idBannerModule } 
     from './idBanner/idBanner.ts'
@@ -277,8 +277,8 @@ export const orcidApp = angular.module(
         WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
-        WorksMergeChoosePreferredVersionModule.name,
         WorksMergeSuggestionsModule.name,
+        ManageMembersModule.name,
         idBannerModule.name,
         qrcodeModule.name,
         lastModifiedModule.name,

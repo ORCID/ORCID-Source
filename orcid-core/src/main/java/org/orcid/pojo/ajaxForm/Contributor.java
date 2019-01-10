@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.jaxb.model.common.FundingContributorRole;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.CreditName;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes;
-import org.orcid.jaxb.model.v3.rc2.record.FundingContributorRole;
 
 public class Contributor implements ErrorsInterface, Serializable {
 

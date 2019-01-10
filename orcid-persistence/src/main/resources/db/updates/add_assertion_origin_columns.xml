@@ -1,0 +1,65 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Tom Demeranville" id="ADD-ASSERTION-ORIGIN-TO-TABLES">
+	<!-- All the SourceAwareEntities -->
+		<preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="address" columnName="assertion_origin_client_source_id"/>
+            </not>
+		</preConditions>
+	    <addColumn tableName="address">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="email">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="external_identifier">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="group_id_record">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+		<addColumn tableName="notification">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="org_affiliation_relation">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="other_name">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="peer_review">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="profile_funding">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="profile_keyword">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="research_resource">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="researcher_url">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+	    <addColumn tableName="work">
+				<column name="assertion_origin_source_id" type="VARCHAR(19)" />
+				<column name="assertion_origin_client_source_id" type="VARCHAR(20)" />
+		</addColumn>		
+    </changeSet>
+</databaseChangeLog>

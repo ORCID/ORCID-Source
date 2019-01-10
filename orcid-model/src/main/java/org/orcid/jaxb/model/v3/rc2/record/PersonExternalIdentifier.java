@@ -8,7 +8,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.adapters.RelationshipAdapter;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Filterable;
 import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
@@ -31,6 +34,7 @@ public class PersonExternalIdentifier implements Serializable, Filterable, Sourc
     protected String type;
     @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/common", required = true)
     protected String value;
+    @XmlJavaTypeAdapter(RelationshipAdapter.class)
     @XmlElement(name="external-id-relationship", namespace = "http://www.orcid.org/ns/common")
     protected Relationship relationship;
     @XmlElement(name="external-id-url", namespace = "http://www.orcid.org/ns/common")

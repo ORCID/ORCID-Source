@@ -19,10 +19,10 @@ import org.orcid.integration.api.pub.PublicV3ApiClientImpl;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v3.rc2.BlackBoxBaseV3_0_rc2;
 import org.orcid.integration.blackbox.api.v3.rc2.MemberV3Rc2ApiClientImpl;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -61,7 +61,7 @@ public class PersonTest extends BlackBoxBaseV3_0_rc2 {
 
         openEditAddressModal();
         deleteAddresses();
-        createAddress(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US.name());
+        createAddress(org.orcid.jaxb.model.common.Iso3166Country.US.name());
         saveEditAddressModal();
 
         openEditOtherNamesModal();
@@ -194,7 +194,7 @@ public class PersonTest extends BlackBoxBaseV3_0_rc2 {
         assertNotNull(person.getAddresses().getAddress());
         assertEquals(1, person.getAddresses().getAddress().size());
         assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
         assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
@@ -266,7 +266,7 @@ public class PersonTest extends BlackBoxBaseV3_0_rc2 {
         assertNotNull(person.getAddresses().getAddress());
         assertEquals(1, person.getAddresses().getAddress().size());
         assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
         assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());

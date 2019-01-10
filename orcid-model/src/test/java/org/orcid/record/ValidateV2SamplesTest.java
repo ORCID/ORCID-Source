@@ -750,6 +750,9 @@ public class ValidateV2SamplesTest {
     public void testUnmarshallRecord() throws SAXException, URISyntaxException {
         Record record = (Record) unmarshallFromPath("/record_2.0/samples/read_samples/record-2.0.xml", Record.class, "/record_2.0/record-2.0.xsd");
         assertNotNull(record);
+        Preferences preferences = record.getPreferences();
+        assertNotNull(preferences);
+        assertEquals(Locale.ZH_CN, preferences.getLocale());
         //Check activities
         assertNotNull(record.getActivitiesSummary());
         ActivitiesSummary activities = record.getActivitiesSummary();

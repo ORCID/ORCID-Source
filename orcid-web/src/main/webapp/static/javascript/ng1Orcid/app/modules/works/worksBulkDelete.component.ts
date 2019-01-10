@@ -79,19 +79,27 @@ export class WorksBulkDeleteComponent implements AfterViewInit, OnDestroy, OnIni
         while (rmGroups.length > 0) {
             this.worksService.groups.splice(rmGroups.pop(),1);
         }
-        this.worksService.removeWorks(rmWorks)
+        this.callServerBulkDelete(rmWorks)
+
+        }
+    
+
+    callServerBulkDelete(rmWorks) {
+        this.worksService.removeWorks(rmWorks.splice(0,50))
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
                 if (rmWorks.length > 0) {
-                    this.worksService.removeWorks(rmWorks);
+                    this.callServerBulkDelete(rmWorks);
                 }
+                else {
                 this.delCountVerify = 0;
                 this.bulkDeleteSubmit = false;
                 this.modalService.notifyOther({action:'close', moduleId: 'modalWorksBulkDelete'});
                 this.worksService.notifyOther({action:'deleteBulk', successful:true});
+                }
             },
             error => {
                 console.log('Error deleting work', error);

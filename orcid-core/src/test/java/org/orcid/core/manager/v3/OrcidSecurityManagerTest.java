@@ -65,7 +65,7 @@ public class OrcidSecurityManagerTest {
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManagerMock);
         SourceEntity source = new SourceEntity();
         source.setSourceClient(new ClientDetailsEntity(CLIENT_ID));
-        when(sourceManagerMock.retrieveSourceEntity()).thenReturn(source);        
+        when(sourceManagerMock.retrieveActiveSourceEntity()).thenReturn(source);        
     }
    
     @After

@@ -28,12 +28,17 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.LanguageCode;
+import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 import org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.MultipleOrganizationHolder;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
@@ -45,21 +50,16 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
-import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
@@ -72,7 +72,7 @@ public class ActivityValidator {
     @Resource
     private PIDNormalizationService norm;
 
-    public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateWork(Work work, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
         if (title == null || title.getTitle() == null || PojoUtil.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -81,7 +81,7 @@ public class ActivityValidator {
         if (work.getCountry() != null) {
             if (work.getCountry().getValue() == null) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(Iso3166Country.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+                String values = Arrays.stream(Iso3166Country.values()).map(element -> element.name()).collect(Collectors.joining(", "));
                 params.put("type", "country");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -99,9 +99,9 @@ public class ActivityValidator {
 
             // If translated title language code is null or invalid
             if (!PojoUtil.isEmpty(translatedTitle) && (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
-                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
+                    || !Arrays.stream(LanguageCode.getValues()).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "translated title -> language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -117,9 +117,9 @@ public class ActivityValidator {
         }
 
         if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-            if (!Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(work.getLanguageCode()::equals)) {
+            if (!Arrays.stream(LanguageCode.getValues()).anyMatch(work.getLanguageCode()::equals)) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -247,11 +247,7 @@ public class ActivityValidator {
         }
 
         if (work.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            if (sourceEntity != null) {
-                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            }
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         // Check that we are not changing the visibility
@@ -263,7 +259,7 @@ public class ActivityValidator {
         externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
     }
 
-    public void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateFunding(Funding funding, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -273,9 +269,9 @@ public class ActivityValidator {
         if (title != null && title.getTranslatedTitle() != null && !PojoUtil.isEmpty(title.getTranslatedTitle().getContent())) {
             // If translated title language code is null or invalid
             if (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
-                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
+                    || !Arrays.stream(LanguageCode.getValues()).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "translated title -> language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -291,19 +287,15 @@ public class ActivityValidator {
 
         if (funding.getAmount() != null) {
             Amount amount = funding.getAmount();
-            if (PojoUtil.isEmpty(amount.getCurrencyCode()) && !PojoUtil.isEmpty(amount.getContent())) {
+            if (amount.getCurrencyCode() == null && !PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify a currency code");
-            } else if (!PojoUtil.isEmpty(amount.getCurrencyCode()) && PojoUtil.isEmpty(amount.getContent())) {
+            } else if (amount.getCurrencyCode() != null && PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify an amount or remove the amount tag");
             }
         }
 
         if (funding.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            if (sourceEntity != null) {
-                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            }
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         if (isApiRequest) {
@@ -361,13 +353,9 @@ public class ActivityValidator {
         }
     }
 
-    public void validateAffiliation(Affiliation affiliation, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateAffiliation(Affiliation affiliation, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (affiliation.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            if (sourceEntity != null) {
-                params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            }
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         // Check that we are not changing the visibility
@@ -390,15 +378,13 @@ public class ActivityValidator {
         }
     }
 
-    public void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validatePeerReview(PeerReview peerReview, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
 
         if (peerReview.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         if (peerReview.getType() == null) {
@@ -447,7 +433,7 @@ public class ActivityValidator {
         }
     }
 
-    public void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, SourceEntity sourceEntity) {
+    public void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, Source activeSource) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
@@ -455,10 +441,10 @@ public class ActivityValidator {
                     newId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
                     if (existingId.getNormalized() == null)
                         existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));
-                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
+                    if (areRelationshipsSameAndSelf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
+                            && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existingSource)) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+                        params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
@@ -466,36 +452,28 @@ public class ActivityValidator {
         }
     }
 
-    private static boolean areRelationshipsSameButNotBothPartOf(Relationship r1, Relationship r2) {
+    private static boolean areRelationshipsSameAndSelf(Relationship r1, Relationship r2) {
         if (r1 == null && r2 == null)
             return true;
-        if (r1 != null && r1.equals(r2) && !r1.equals(Relationship.PART_OF))
+        if (r1 != null && r1.equals(r2) && r1.equals(Relationship.SELF))
             return true;
         return false;
     }
 
-    public void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, SourceEntity sourceEntity) {
+    public void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, Source activeSource) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
+                    if (areRelationshipsSameAndSelf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
+                            && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existingSource)) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+                        params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
             }
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static String getExistingSource(Source source) {
-        if (source != null) {
-            return (source.getSourceClientId() != null) ? source.getSourceClientId().getPath() : source.getSourceOrcid().getPath();
-        }
-        return null;
-    }
+    }   
 
     private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
         if (updatedVisibility != null) {
@@ -508,7 +486,7 @@ public class ActivityValidator {
         }
     }
 
-    public void validateResearchResource(ResearchResource rr, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateResearchResource(ResearchResource rr, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (rr.getProposal().getExternalIdentifiers() == null || rr.getProposal().getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Proposal");
         }
@@ -530,9 +508,7 @@ public class ActivityValidator {
         }
         
         if (rr.getPutCode() != null && createFlag) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-            throw new InvalidPutCodeException(params);
+            throw InvalidPutCodeException.forSource(activeSource);
         }
 
         // Check that we are not changing the visibility
