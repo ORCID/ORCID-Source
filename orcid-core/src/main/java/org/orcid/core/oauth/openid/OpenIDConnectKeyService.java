@@ -10,7 +10,9 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -107,6 +109,20 @@ public class OpenIDConnectKeyService {
      */
     public JWKSet getPublicJWK(){
         return new JWKSet(publicJWK);
+    }
+    
+    /** verify an id_token was signed by us
+     * 
+     * @param signed
+     * @return
+     */
+    public boolean verify(SignedJWT signed) {
+        try {
+            JWSVerifier verifier = new RSASSAVerifier(publicJWK);
+            return signed.verify(verifier);
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
     }
     
 }

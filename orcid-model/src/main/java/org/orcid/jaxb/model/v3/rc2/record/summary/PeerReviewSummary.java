@@ -8,7 +8,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Role;
+import org.orcid.jaxb.model.common.adapters.PeerReviewRoleAdapter;
+import org.orcid.jaxb.model.common.adapters.PeerReviewTypeAdapter;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Filterable;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
@@ -20,8 +25,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Activity;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc2.record.Role;
 import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,9 +54,11 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     @XmlAttribute(name = "display-index")
     protected String displayIndex;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
-    protected String groupId;    
+    protected String groupId; 
+    @XmlJavaTypeAdapter(PeerReviewRoleAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")
     protected Role role;
+    @XmlJavaTypeAdapter(PeerReviewTypeAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-type")
     protected PeerReviewType type;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-url")

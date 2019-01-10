@@ -2,13 +2,15 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.common.FundingType;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Amount;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
 import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.rc2.common.OrganizationDefinedFundingSubType;
@@ -19,7 +21,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
 import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
-import org.orcid.jaxb.model.v3.rc2.record.FundingType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
 
 public class FundingForm extends VisibilityForm implements ErrorsInterface, Serializable {
@@ -425,7 +426,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
             else
                 result.setRegion(new Text());
             if (organizationAddress.getCountry() != null)
-                result.setCountry(Text.valueOf(organizationAddress.getCountry().value()));
+                result.setCountry(Text.valueOf(organizationAddress.getCountry().name()));
             else
                 result.setCountry(new Text());
 
@@ -603,7 +604,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
                 funding.setRegion(new Text());
             }
             if (organizationAddress.getCountry() != null) {
-                funding.setCountry(Text.valueOf(organizationAddress.getCountry().value()));
+                funding.setCountry(Text.valueOf(organizationAddress.getCountry().name()));
             } else {
                 funding.setCountry(new Text());
             }

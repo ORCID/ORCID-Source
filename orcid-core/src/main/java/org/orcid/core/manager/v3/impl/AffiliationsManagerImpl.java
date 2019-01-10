@@ -16,6 +16,8 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
@@ -251,11 +253,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     }
     
     private Affiliation createAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        activityValidator.validateAffiliation(affiliation, sourceEntity, true, isApiRequest, null);
+        Source activeSource = sourceManager.retrieveActiveSource();
+        activityValidator.validateAffiliation(affiliation, activeSource, true, isApiRequest, null);
 
         if (isApiRequest) {
-                checkAffiliationExternalIDsForDuplicates(orcid, affiliation, sourceEntity);
+                checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
         }
 
         OrgAffiliationRelationEntity entity = null;
@@ -289,14 +291,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
         entity.setOrg(updatedOrganization);
 
-        // Set source id
-        if (sourceEntity.getSourceProfile() != null) {
-            entity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-
-        if (sourceEntity.getSourceClient() != null) {
-            entity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        }
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         entity.setProfile(profile);
@@ -344,20 +339,19 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     public Affiliation updateAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliation.getPutCode());
 
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
 
         // Save the original source
-        String existingSourceId = entity.getSourceId();
-        String existingClientSourceId = entity.getClientSourceId();
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(entity);
 
         String originalVisibility = entity.getVisibility();
-        orcidSecurityManager.checkSource(entity);
+        orcidSecurityManager.checkSourceAndThrow(entity);
 
-        activityValidator.validateAffiliation(affiliation, sourceEntity, false, isApiRequest,
+        activityValidator.validateAffiliation(affiliation, activeSource, false, isApiRequest,
                 org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(originalVisibility));
 
         if (isApiRequest) {
-            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, sourceEntity);
+            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
         }
 
         switch(type) {
@@ -391,9 +385,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         // Populate display index in case it is missing
         DisplayIndexCalculatorHelper.setDisplayIndexOnExistingEntity(entity, isApiRequest);
         
-        // Be sure it doesn't overwrite the source
-        entity.setSourceId(existingSourceId);
-        entity.setClientSourceId(existingClientSourceId);
+        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, entity);
 
         // Updates the give organization with the latest organization from
         // database, or, create a new one
@@ -451,7 +443,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Override
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);
-        orcidSecurityManager.checkSource(affiliationEntity);
+        orcidSecurityManager.checkSourceAndThrow(affiliationEntity);
         boolean result = orgAffiliationRelationDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if (result) {
             if (AffiliationType.DISTINCTION.name().equals(affiliationEntity.getAffiliationType())) {
@@ -546,7 +538,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orgAffiliationRelationDao.removeAllAffiliations(orcid);
     }
     
-    private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, SourceEntity sourceEntity) {
+    private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, Source activeSource) {
         List<Affiliation> affiliations = getAffiliations(orcid);
         if (affiliations != null) {
             for (Affiliation affiliation : affiliations) {
@@ -556,8 +548,8 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
                 }
                 
                 if (incoming.getClass().isAssignableFrom(affiliation.getClass())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(incoming.getExternalIDs(), affiliation.getExternalIDs(), affiliation.getSource(),
-                            sourceEntity);
+                    activityValidator.checkFundingExternalIdentifiersForDuplicates(incoming.getExternalIDs(), affiliation.getExternalIDs(), affiliation.getSource(),
+                            activeSource);
                 }
             }
         }

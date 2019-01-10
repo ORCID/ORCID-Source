@@ -60,15 +60,6 @@ public enum Features implements Feature {
     @Label("Self service org ids")
     SELF_SERVICE_ORG_IDS,
 
-    @Label("Turn on angular2 features that are on development")
-    ANGULAR2_DEV,
-
-    @Label("Turn on angular2 features that are ready for QA")
-    ANGULAR2_QA,
-
-    @Label("Turn off angular1 features that are legacy")
-    ANGULAR1_LEGACY,
-
     @Label("Set the 2.0 API as the default one in the public API")
     PUB_API_2_0_BY_DEFAULT,
 

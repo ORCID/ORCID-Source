@@ -305,7 +305,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
             if(orcidWork.getWorkType() != null) {
                 if(WorkType.DISSERTATION.equals(orcidWork.getWorkType())) {
-                    workEntity.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());   
+                    workEntity.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());   
                 } else {
                     workEntity.setWorkType(orcidWork.getWorkType().name());   
                 }                
@@ -923,7 +923,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 emailEntity = new EmailEntity();
                 emailEntity.setEmail(emailId);
                 try {
-                    emailEntity.setId(encryptionManager.sha256Hash(emailId.toLowerCase()));
+                    emailEntity.setId(encryptionManager.getEmailHash(emailId));
                 } catch(Exception e) {
                     throw new RuntimeException(e);
                 }

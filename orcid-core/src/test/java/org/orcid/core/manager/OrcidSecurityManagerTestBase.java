@@ -65,7 +65,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class OrcidSecurityManagerTestBase {
+public abstract class OrcidSecurityManagerTestBase {
 
     @Resource
     protected OrcidSecurityManager orcidSecurityManager;

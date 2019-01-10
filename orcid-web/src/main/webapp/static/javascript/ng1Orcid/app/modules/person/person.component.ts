@@ -48,6 +48,8 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyHelp: any;
     scrollTop: any;
     setFocus: boolean;
+    sortedCountryNames: any;
+    countryNamesToCountryCodes: any;
     
     constructor( 
         private cdr:ChangeDetectorRef,
@@ -85,8 +87,28 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelp = false;
         this.scrollTop = 0;
         this.setFocus = true;
+        this.initCountries();
     }
-
+    
+    initCountries(): void {
+        this.commonSrvc.getCountryNamesMappedToCountryCodes().pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.countryNamesToCountryCodes = data;
+                this.sortedCountryNames = [];
+                for (var key in this.countryNamesToCountryCodes) {
+                    this.sortedCountryNames.push(key);
+                }
+                this.sortedCountryNames.sort();
+            },
+            error => {
+                console.log('error fetching country names to country codes map', error);
+            } 
+        );
+    };
+    
     addSectionItem(sectionName): void {
         let tmpObj;
         switch(sectionName){
@@ -163,7 +185,10 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.formData[sectionName][sectionName].splice(len,1);
                 this.cdr.detectChanges();
             }
-        }        
+        } 
+        if(this.formData[sectionName][sectionName].length==0 && sectionName != 'externalIdentifiers' ){
+            this.addSectionItem(sectionName);    
+        }       
     };
 
     getFormData(sectionName): void {
@@ -195,7 +220,30 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setFormData( closeAfterAction, sectionName, modalId ): void {
-        //let sectionToUpdate = this.getSectionData(sectionName);
+        for(var i in this.formData[sectionName][sectionName]){
+            switch(sectionName){
+                case 'otherNames':
+                case 'keywords': { 
+                    if(this.formData[sectionName][sectionName][i].content==""){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                    break;
+                } 
+                case 'addresses': {
+                    if(this.formData[sectionName][sectionName][i].iso2Country.value==""){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                    break;
+                }
+                case 'websites': {
+                    if(!this.formData[sectionName][sectionName][i].url.value){
+                        this.formData[sectionName][sectionName].splice(i,1);
+                    }
+                }  
+            } 
+
+        }
+        
         this.genericService.setData( this.formData[sectionName], this.urlPath[sectionName] )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -241,9 +289,8 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     cancelEditModal(sectionName, id): void{
-        this.formData[sectionName] = JSON.parse(JSON.stringify(this.formDataBeforeChange[sectionName]));
-        this.cdr.detectChanges();
         this.genericService.close(id);
+        this.getFormData(sectionName);
     };
 
     openModal(id: string){

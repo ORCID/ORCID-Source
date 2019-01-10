@@ -31,6 +31,7 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
@@ -484,7 +485,7 @@ public class RegistrationController extends BaseController {
                 
                 boolean verified = emailManager.verifyEmail(decryptedEmail, orcid);
                 if(verified) {                    
-                    profileEntityManager.updateLocale(decryptedEmail, org.orcid.jaxb.model.v3.rc2.common.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+                    profileEntityManager.updateLocale(decryptedEmail, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
                     redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
                     

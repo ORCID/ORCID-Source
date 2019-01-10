@@ -157,14 +157,20 @@
                                 </div>
                             </div>          
                         </div><!--row--> 
-                        <!--Created date--.                 
+                        <!--Created date-->                
                         <div class="row bottomBuffer">
                             <div class="col-md-6">
                                 <div class="bottomBuffer">
-                                    <strong><@orcid.msg 'groups.common.created'/></strong><br> 
+                                    <strong><@orcid.msg 'groups.common.added'/></strong><br> 
                                     <span>{{affiliation?.createdDate | ajaxFormDateToISO8601}}</span>
                                 </div>    
-                            </div>    
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bottomBuffer">
+                                    <strong><@orcid.msg 'groups.common.last_modified'/></strong><br> 
+                                    <span>{{affiliation?.lastModified | ajaxFormDateToISO8601}}</span>
+                                </div>    
+                            </div>      
                         </div><!--Created date--> 
                     </div> <!--content-->
                 </div><!--More info-->

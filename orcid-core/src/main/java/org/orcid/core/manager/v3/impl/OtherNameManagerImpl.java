@@ -16,7 +16,8 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.OtherNameManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
@@ -43,7 +44,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
         OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);        
         
         if(checkSource) {            
-            orcidSecurityManager.checkSource(otherNameEntity);
+            orcidSecurityManager.checkSourceAndThrow(otherNameEntity);
         }        
 
         try {
@@ -57,13 +58,13 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     @Override    
     @Transactional
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) { 
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the otherName
-        PersonValidator.validateOtherName(otherName, sourceEntity, true, isApiRequest, null);
+        PersonValidator.validateOtherName(otherName, activeSource, true, isApiRequest, null);
         // Validate it is not duplicated
         List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         for (OtherNameEntity existing : existingOtherNames) {
-            if (isDuplicated(existing, otherName, sourceEntity)) {
+            if (isDuplicated(existing, otherName, activeSource)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "other-name");
                 params.put("value", otherName.getContent());
@@ -76,12 +77,8 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
         newEntity.setProfile(profile);
         newEntity.setDateCreated(new Date());
         //Set the source
-        if(sourceEntity.getSourceProfile() != null) {
-                newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-        if(sourceEntity.getSourceClient() != null) {
-                newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        } 
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
+         
         setIncomingPrivacy(newEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         otherNameDao.persist(newEntity);
@@ -91,19 +88,18 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     @Override
     @Transactional
     public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Source activeSource = sourceManager.retrieveActiveSource();
         OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility());        
         //Save the original source
-        String existingSourceId = updatedOtherNameEntity.getSourceId();
-        String existingClientSourceId = updatedOtherNameEntity.getClientSourceId();
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedOtherNameEntity);
         // Validate the other name
-        PersonValidator.validateOtherName(otherName, sourceEntity, false, isApiRequest, originalVisibility);
+        PersonValidator.validateOtherName(otherName, activeSource, false, isApiRequest, originalVisibility);
 
         // Validate it is not duplicated
         List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         for (OtherNameEntity existing : existingOtherNames) {
-            if (isDuplicated(existing, otherName, sourceEntity)) {
+            if (isDuplicated(existing, otherName, activeSource)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "otherName");
                 params.put("value", otherName.getContent());
@@ -111,12 +107,11 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
             }
         }
                
-        orcidSecurityManager.checkSource(updatedOtherNameEntity);
+        orcidSecurityManager.checkSourceAndThrow(updatedOtherNameEntity);
         jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName, updatedOtherNameEntity);
         updatedOtherNameEntity.setLastModified(new Date());        
         //Be sure it doesn't overwrite the source
-        updatedOtherNameEntity.setSourceId(existingSourceId);
-        updatedOtherNameEntity.setClientSourceId(existingClientSourceId);
+        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedOtherNameEntity);
         
         otherNameDao.merge(updatedOtherNameEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(updatedOtherNameEntity);
@@ -163,31 +158,25 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                 } else {
                     //Add the new ones
                     OtherNameEntity newOtherName = jpaJaxbOtherNameAdapter.toOtherNameEntity(updatedOrNew);
-                    SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                    Source activeSource = sourceManager.retrieveActiveSource();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newOtherName.setProfile(profile);
                     newOtherName.setDateCreated(new Date());
                     //Set the source
-                    if(sourceEntity.getSourceProfile() != null) {
-                        newOtherName.setSourceId(sourceEntity.getSourceProfile().getId());
-                    }
-                    if(sourceEntity.getSourceClient() != null) {
-                        newOtherName.setClientSourceId(sourceEntity.getSourceClient().getId());
-                    } 
+                    SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newOtherName);
                     newOtherName.setVisibility(updatedOrNew.getVisibility().name());
                     newOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     otherNameDao.persist(newOtherName);
-                    
                 }
             }
         }        
         return otherNames;
     }
 
-    private boolean isDuplicated(OtherNameEntity existing, OtherName otherName, SourceEntity source) {
+    private boolean isDuplicated(OtherNameEntity existing, OtherName otherName, Source activeSource) {
         if (!existing.getId().equals(otherName.getPutCode())) {
             String existingSourceId = existing.getElementSourceId(); 
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
                 if (existing.getDisplayName() != null && existing.getDisplayName().equals(otherName.getContent())) {
                     return true;
                 }

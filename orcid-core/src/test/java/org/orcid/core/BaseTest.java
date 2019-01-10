@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class BaseTest extends DBUnitTest {
+public abstract class BaseTest extends DBUnitTest {
 
     @Before
     public void beforeClass() {

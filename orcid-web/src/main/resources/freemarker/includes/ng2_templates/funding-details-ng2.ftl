@@ -144,6 +144,12 @@
                     <div class="content" *ngIf="fundingService.details[funding.putCode.value] != undefined">  
                         <span class="dotted-bar"></span>    
                         <div class="row">        
+                            <div class="org-ids" *ngIf="funding?.disambiguatedFundingSourceId?.value">
+                                <div class="col-md-12">   
+                                    <strong><@orcid.msg 'workspace_affiliations.organization_id'/></strong><br>
+                                    <org-identifier-popover-ng2 [value]="funding?.disambiguatedFundingSourceId?.value" [putCode]="funding?.putCode?.value" [type]="funding?.disambiguationSource?.value"></org-identifier-popover-ng2>
+                                </div>
+                            </div><!--org-ids-->
                             <!-- Funding subtype -->
                             <div class="col-md-6" *ngIf="fundingService.details[funding.putCode.value]?.organizationDefinedFundingSubType?.subtype?.value" >
                                 <div class="bottomBuffer">                    
@@ -184,12 +190,22 @@
                                     <div>{{fundingService.details[funding.putCode.value]?.description?.value}}</div>                
                                 </div>
                             </div>
-                            <!-- Created Date -->
-                            <div class="col-md-6">
-                                <strong><@orcid.msg 'groups.common.created'/></strong>
-                                <div>{{fundingService.details[funding.putCode.value].createdDate | ajaxFormDateToISO8601}}</div>
-                            </div>
                         </div>
+                        <!--Added/last modified dates-->                
+                        <div class="row bottomBuffer">
+                            <div class="col-md-6">
+                                <div class="bottomBuffer">
+                                    <strong><@orcid.msg 'groups.common.added'/></strong><br> 
+                                    <span>{{fundingService.details[funding.putCode.value].createdDate | ajaxFormDateToISO8601}}</span>
+                                </div>    
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bottomBuffer">
+                                    <strong><@orcid.msg 'groups.common.last_modified'/></strong><br> 
+                                    <span>{{fundingService.details[funding.putCode.value].lastModified | ajaxFormDateToISO8601}}</span>
+                                </div>    
+                            </div>      
+                        </div><!--Added/last modified dates--> 
                     </div>
                 </div>
                 <!-- active row source display -->

@@ -7,8 +7,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.adapters.RelationshipAdapter;
 import org.orcid.jaxb.model.v3.rc2.common.TransientError;
 import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
@@ -36,6 +39,7 @@ public class ExternalID implements GroupAble, Cloneable, Serializable {
     protected TransientError normalizedError;    
     @XmlElement(name = "external-id-url", namespace = "http://www.orcid.org/ns/common")
     protected Url url;
+    @XmlJavaTypeAdapter(RelationshipAdapter.class)
     @XmlElement(name = "external-id-relationship", namespace = "http://www.orcid.org/ns/common")
     protected Relationship relationship;
     

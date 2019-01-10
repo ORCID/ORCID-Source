@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="peer-review-ng2-template">
     <div>
         <!-- PEER REVIEW -->
-        <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && peerReviewService.groups.length < 1">
+        <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && peerReviewService.groups.length < 1" *ngIf="noLinkFlag || peerReviewService?.groups?.length > 0">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-xs-12">
@@ -64,7 +64,7 @@
                         </div>
                         <!--End sort menu-->
 
-                        
+                        <#if !(isPublicProfile??)> 
                         <ul class="workspace-bar-menu" *ngIf="noLinkFlag">
                         <!--Add works-->    
                             <li class="hidden-xs">
@@ -86,7 +86,8 @@
                                     </ul>
                                 </div>  
                             </li>  
-                        </ul>    
+                        </ul> 
+                        </#if>        
                             
                         </#escape>                                
                     </div>
@@ -129,23 +130,25 @@
                 </div>            
             </div>
                                 
-            <div *ngIf="workspaceSrvc.displayPeerReview" class="workspace-accordion-content">
-                <ul *ngIf="peerReviewService?.groups?.legth > 0" class="workspace-peer-review workspace-body-list bottom-margin-medium" id="peer-review-header">
-                    <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of peerReviewService.groups">
-                        <#include "peer-review-details-ng2.ftl"/> 
-                    </li>
-                </ul>
-                <div *ngIf="peerReviewService.loading == false && peerReviewService.groups.length == 0 && !peerReviewImportWizard">
-                    <strong>
-                    <#if (publicProfile)?? && publicProfile == true>
-                        ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}
-                    <#else>
-                        ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} 
-                        <a *ngIf="noLinkFlag" (click)="showPeerReviewImportWizard()" class="no-wrap">
-                        ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}
-                        </a>
-                    </#if></strong> 
-                </div>
+            <div class="workspace-accordion-content">
+                <ng-container  *ngIf="workspaceSrvc.displayPeerReview">
+                    <ul *ngIf="peerReviewService?.groups?.length > 0" class="workspace-peer-review workspace-body-list bottom-margin-medium" id="peer-review-header">
+                        <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of peerReviewService.groups">
+                            <#include "peer-review-details-ng2.ftl"/> 
+                        </li>
+                    </ul>
+                    <div *ngIf="peerReviewService.loading == false && peerReviewService.groups.length == 0 && !peerReviewImportWizard">
+                        <strong>
+                        <#if (publicProfile)?? && publicProfile == true>
+                            ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}
+                        <#else>
+                            ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} 
+                            <a *ngIf="noLinkFlag" (click)="showPeerReviewImportWizard()" class="no-wrap">
+                            ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}
+                            </a>
+                        </#if></strong> 
+                    </div>
+                </ng-container>
             </div>                                                   
         </div>      
     </div>

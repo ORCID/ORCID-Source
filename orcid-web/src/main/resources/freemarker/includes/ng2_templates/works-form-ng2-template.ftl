@@ -331,9 +331,7 @@
                             <div class="relative">
                                 <select id="isoCountryCode" class="form-control" name="isoCountryCode" [(ngModel)]="editWork.countryCode.value">
                                     <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-                                    <#list isoCountries?keys as key>
-                                        <option value="${key}">${isoCountries[key]}</option>                                
-                                    </#list>
+                                    <option *ngFor="let country of sortedCountryNames" [ngValue]="countryNamesToCountryCodes[country]" >{{country}}</option>
                                 </select>
                             </div>
                         </div>
