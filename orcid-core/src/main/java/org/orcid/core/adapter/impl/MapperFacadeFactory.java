@@ -549,7 +549,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapAtoB(Work a, WorkEntity b, MappingContext context) {
                 // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
                 if(WorkType.DISSERTATION.equals(a.getWorkType())) {
-                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
                 } else {
                     b.setWorkType(a.getWorkType().name());
                 }                
@@ -596,7 +596,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapAtoB(WorkSummary a, WorkEntity b, MappingContext context) {
                 //Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
                 if(WorkType.DISSERTATION.equals(a.getType())) {
-                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
                 } else {
                     b.setWorkType(a.getType().name());
                 }
@@ -636,7 +636,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapAtoB(WorkSummary a, MinimizedWorkEntity b, MappingContext context) {
                 //Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
                 if(WorkType.DISSERTATION.equals(a.getType())) {
-                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
                 } else {
                     b.setWorkType(a.getType().name());
                 }
@@ -671,7 +671,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapAtoB(Work a, MinimizedWorkEntity b, MappingContext context) {
                 //Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
                 if(WorkType.DISSERTATION.equals(a.getWorkType())) {
-                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
                 } else {
                     b.setWorkType(a.getWorkType().name());
                 }                
@@ -1151,12 +1151,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private WorkType getWorkType(String name) {
-        if(org.orcid.jaxb.model.v3.rc2.record.WorkType.SOFTWARE.name().equals(name) || org.orcid.jaxb.model.v3.rc2.record.WorkType.PREPRINT.name().equals(name)) {
+        if(org.orcid.jaxb.model.common.WorkType.SOFTWARE.name().equals(name) || org.orcid.jaxb.model.common.WorkType.PREPRINT.name().equals(name)) {
             return WorkType.OTHER;
         }
         
         // dissertation-thesis is a new work type supported from 3.0_rc2, for previous versions, it should be downgraded to dissertation
-        if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name().equals(name)) {
+        if(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name().equals(name)) {
             return WorkType.DISSERTATION;
         }
         

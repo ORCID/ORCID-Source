@@ -123,9 +123,7 @@
                             
                             <select id="country" name="country" [(ngModel)]="editAffiliation.country.value" (ngModelChange)="serverValidate('affiliations/affiliation/countryValidate.json')" class="form-control" [ngModelOptions]="{ updateOn: 'blur' }">
                                 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-                                <#list isoCountries?keys as key>
-                                        <option value="${key}">${isoCountries[key]}</option>
-                                </#list>
+                                <option *ngFor="let country of sortedCountryNames" [ngValue]="countryNamesToCountryCodes[country]" >{{country}}</option>
                             </select>
                             <span class="orcid-error" *ngIf="editAffiliation?.country?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.country.errors' [innerHtml]="error"></div>

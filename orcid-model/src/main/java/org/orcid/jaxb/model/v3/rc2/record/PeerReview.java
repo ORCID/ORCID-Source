@@ -8,7 +8,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.orcid.jaxb.model.common.PeerReviewSubjectType;
+import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Role;
+import org.orcid.jaxb.model.common.adapters.PeerReviewRoleAdapter;
+import org.orcid.jaxb.model.common.adapters.PeerReviewSubjectTypeAdapter;
+import org.orcid.jaxb.model.common.adapters.PeerReviewTypeAdapter;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Filterable;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
@@ -26,12 +33,14 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements Filterable, Activity, Serializable, OrganizationHolder, SourceAware {
     private static final long serialVersionUID = -1112309604310926743L;
+    @XmlJavaTypeAdapter(PeerReviewRoleAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")
     protected Role role;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-identifiers")
     protected ExternalIDs externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-url")
     protected Url url;
+    @XmlJavaTypeAdapter(PeerReviewTypeAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-type")
     protected PeerReviewType type;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-completion-date")
@@ -42,10 +51,11 @@ public class PeerReview implements Filterable, Activity, Serializable, Organizat
     protected ExternalID subjectExternalIdentifier;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-container-name")
     protected Title subjectContainerName;
+    @XmlJavaTypeAdapter(PeerReviewSubjectTypeAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-type")
     protected PeerReviewSubjectType subjectType;
     @XmlElement( namespace = "http://www.orcid.org/ns/peer-review", name = "subject-name")
-    protected WorkTitle subjectName;
+    protected SubjectName subjectName;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-url")
     protected Url subjectUrl;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review", name = "convening-organization")
@@ -191,11 +201,11 @@ public class PeerReview implements Filterable, Activity, Serializable, Organizat
         this.subjectType = subjectType;
     }
 
-    public WorkTitle getSubjectName() {
+    public SubjectName getSubjectName() {
         return subjectName;
     }
 
-    public void setSubjectName(WorkTitle subjectName) {
+    public void setSubjectName(SubjectName subjectName) {
         this.subjectName = subjectName;
     }
 

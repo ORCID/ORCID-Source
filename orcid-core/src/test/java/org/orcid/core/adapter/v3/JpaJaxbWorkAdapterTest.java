@@ -21,13 +21,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
@@ -112,7 +112,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getCreatedDate().getValue()));
         assertNotNull(w.getLastModifiedDate());
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getLastModifiedDate().getValue()));
-        assertEquals(Iso3166Country.CR.value(), w.getCountry().getValue().value());
+        assertEquals(Iso3166Country.CR.name(), w.getCountry().getValue().name());
         assertEquals("work:citation", w.getWorkCitation().getCitation());
         assertEquals("work:description", w.getShortDescription());
         assertEquals("work:journalTitle", w.getJournalTitle().getContent());
@@ -122,7 +122,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("work:title", w.getWorkTitle().getTitle().getContent());
         assertEquals("work:subtitle", w.getWorkTitle().getSubtitle().getContent());
         assertEquals("work:translatedTitle", w.getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("ES", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("es", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(WorkType.ARTISTIC_PERFORMANCE.value(), w.getWorkType().value());
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
@@ -195,39 +195,21 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(WorkType.DISSERTATION_THESIS, w.getWorkType());        
     
         MinimizedWorkEntity mWork = new MinimizedWorkEntity();
-        mWork.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name());
+        mWork.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
         List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
         assertEquals(WorkType.DISSERTATION_THESIS, summaries.get(0).getType());
     }
     
     @Test
-    public void dissertationToDisertationThesisTest() throws JAXBException {
+    public void dissertationThesisModelToEntityTest() throws JAXBException {
         Work w = getWork(true);
         w.setWorkType(WorkType.DISSERTATION_THESIS);
         
         WorkEntity we = jpaJaxbWorkAdapter.toWorkEntity(w);
         assertNotNull(we);
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.name(), we.getWorkType());
-    }
-    
-    @Test
-    public void dissertationToDissertationThesisTest() {
-        WorkEntity work = getWorkEntity();
-        work.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name());
-        
-        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
-        assertNotNull(ws);
-        assertEquals(WorkType.DISSERTATION_THESIS, ws.getType());
-        
-        Work w = jpaJaxbWorkAdapter.toWork(work);
-        assertNotNull(w);
-        assertEquals(WorkType.DISSERTATION_THESIS, w.getWorkType());        
-    
-        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
-        mWork.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name());
-        List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
-        assertEquals(WorkType.DISSERTATION_THESIS, summaries.get(0).getType());
-    }
+
+        assertEquals(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name(), we.getWorkType());
+    }        
     
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
@@ -256,13 +238,13 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setId(12345L);
         work.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
-        work.setLanguageCode("EN");
+        work.setLanguageCode("en");
         work.setLastModified(date);
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");
         work.setTranslatedTitle("work:translatedTitle");
-        work.setTranslatedTitleLanguageCode("ES");
+        work.setTranslatedTitleLanguageCode("es");
         work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");

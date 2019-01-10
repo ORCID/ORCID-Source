@@ -99,7 +99,7 @@ public class ResearchResourceItem {
         }
         
         if(item.getResourceType() != null) {
-            researchResourceItem.setResourceType(item.getResourceType());
+            researchResourceItem.setResourceType(item.getResourceType().name());
         }
         
         if(item.getUrl() != null) {

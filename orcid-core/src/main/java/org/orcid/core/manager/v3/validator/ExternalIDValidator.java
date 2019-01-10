@@ -7,11 +7,11 @@ import javax.annotation.Resource;
 import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
 import org.orcid.jaxb.model.v3.rc2.notification.permission.Items;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 

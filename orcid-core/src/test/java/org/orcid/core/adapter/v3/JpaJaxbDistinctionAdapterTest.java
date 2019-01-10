@@ -88,7 +88,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
         assertNotNull(distinction.getOrganization().getAddress());
         assertEquals("org:city", distinction.getOrganization().getAddress().getCity());
         assertEquals("org:region", distinction.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, distinction.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, distinction.getOrganization().getAddress().getCountry());
         assertNotNull(distinction.getSource());        
         assertNotNull(distinction.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", distinction.getSource().retrieveSourcePath());

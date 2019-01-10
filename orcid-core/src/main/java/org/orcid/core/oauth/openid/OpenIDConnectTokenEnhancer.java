@@ -49,6 +49,9 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
 
     @Resource
     private OpenIDConnectKeyService keyManager;
+    
+    @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
+    private int readValiditySeconds;
 
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
@@ -92,7 +95,7 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         claims.issuer(path);
         claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
         Date now = new Date();
-        claims.expirationTime(new Date(now.getTime() + 600000));
+        claims.expirationTime(new Date(now.getTime() + (1000l * Integer.toUnsignedLong(readValiditySeconds) )));
         claims.issueTime(now);
         claims.jwtID(UUID.randomUUID().toString());
         if (nonce != null)

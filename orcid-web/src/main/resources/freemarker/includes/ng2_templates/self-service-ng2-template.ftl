@@ -70,6 +70,12 @@
                         </span>
                     </div>
                 </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                    <label><@orcid.msg 'manage_consortium.logo'/></label>
+                    <p><@orcid.msg 'manage_consortium.please_send'/></p>
+                    </div>
+                </div>
                 <!-- Buttons -->
                 <div class="row">
                     <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">

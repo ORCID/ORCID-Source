@@ -8,8 +8,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.common.LanguageCode;
+import org.orcid.jaxb.model.common.adapters.LanguageCodeAdapter;
 
 /**
  * <p>
@@ -31,8 +34,9 @@ public class TranslatedTitle implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
+    @XmlJavaTypeAdapter(LanguageCodeAdapter.class)
     @XmlAttribute(name="language-code", required = true)
-    protected String languageCode;
+    protected LanguageCode languageCode;
 
     public TranslatedTitle() {
 
@@ -44,7 +48,7 @@ public class TranslatedTitle implements Serializable {
 
     public TranslatedTitle(String content, String languageCode) {
         this.content = content;
-        this.languageCode = languageCode;
+        this.languageCode = (languageCode == null) ? null : LanguageCode.valueOf(languageCode);
     }
 
     public String getContent() {
@@ -56,11 +60,11 @@ public class TranslatedTitle implements Serializable {
     }
 
     public String getLanguageCode() {
-        return languageCode;
+        return (languageCode == null) ? null : languageCode.name();
     }
 
     public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
+        this.languageCode = (languageCode == null) ? null : LanguageCode.valueOf(languageCode);               
     }
 
     @Override
@@ -68,7 +72,7 @@ public class TranslatedTitle implements Serializable {
         final int prime = 37;
         int result = 1;
         result = prime * result + (StringUtils.isEmpty(this.content) ? 0 : this.content.hashCode());
-        result = prime * result + (StringUtils.isEmpty(this.languageCode) ? 0 : this.languageCode.hashCode());
+        result = prime * result + (this.languageCode == null ? 0 : this.languageCode.hashCode());
         return result;
     }
 

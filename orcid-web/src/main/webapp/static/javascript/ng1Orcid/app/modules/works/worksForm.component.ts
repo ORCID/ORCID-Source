@@ -51,6 +51,8 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     externalIDTypeCache: any;
     types: any;
     togglzDialogPrivacyOption: boolean;
+    sortedCountryNames: any;
+    countryNamesToCountryCodes: any;
 
     constructor( 
         private cdr: ChangeDetectorRef,
@@ -72,7 +74,27 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.externalIDNamesToDescriptions = [];//caches name->description lookup so we can display the description not the name after selection
         this.externalIDTypeCache = [];//cache responses
         this.types = null;
+        this.initCountries();
     }
+    
+    initCountries(): void {
+        this.commonService.getCountryNamesMappedToCountryCodes().pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.countryNamesToCountryCodes = data;
+                this.sortedCountryNames = [];
+                for (var key in this.countryNamesToCountryCodes) {
+                    this.sortedCountryNames.push(key);
+                }
+                this.sortedCountryNames.sort();
+            },
+            error => {
+                console.log('error fetching country names to country codes map', error);
+            } 
+        );
+    };
 
     search = (text$: Observable<string>) =>
     text$.pipe(

@@ -15,7 +15,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.common.adapters.WorkTypeAdapter;
 import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
@@ -29,7 +32,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 
 /**
  * <p>
@@ -50,6 +52,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;
+    @XmlJavaTypeAdapter(WorkTypeAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkType type;
     @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")

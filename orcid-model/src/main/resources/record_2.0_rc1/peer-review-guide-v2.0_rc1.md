@@ -1,8 +1,11 @@
 
 #ORCID API v2.0_rc1 Peer Review Guide
-Starting in v2.0_rc1, the ORCID API now supports a new activity type: ```peer-review```. 
 
-The ```peer-review``` activity type is intended to allow for recognition of and exchange of data about peer review service contributed by researchers. 
+### This guide is deprecated please refer to latest guide at [Here](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md).
+
+Starting in v2.0_rc1, the ORCID API now supports a new activity type: ```peer-review```.
+
+The ```peer-review``` activity type is intended to allow for recognition of and exchange of data about peer review service contributed by researchers.
 
 The ```peer-review``` activity type follows the [CASRAI Peer Review Services data profile](http://dictionary.casrai.org/Peer_Review_Services), which was developed by the [Peer Review Services Working Group (PRS-WG)](http://casrai.org/standards/subject-groups/peer-review-services), led by [ORCID](http://orcid.org) and [F1000](http://f1000.com/). More details about ORCID's implementation of this recommendation, and the Early Adopter program for Peer Review can be found on the [Peer Review Early Adopter page](http://orcid.org/content/peer-review-early-adopter-program).
 
@@ -24,9 +27,9 @@ XML for the ```peer-review``` activity follows the [peer-review-2.0_rc1.xsd](htt
 - **review-type** _(required)_ The kind of review applied to the subject type reviewed. This field is selected from a list containing the following values: _evaluation, review_
 
 
-- **review-completion-date** _(required)_ The date on which the review was completed (formatted to ISO 8601). Allowable values: yyyy; yyyy-mm; yyyy-mm-dd, formatted using the ORCID fuzzy date format. 
+- **review-completion-date** _(required)_ The date on which the review was completed (formatted to ISO 8601). Allowable values: yyyy; yyyy-mm; yyyy-mm-dd, formatted using the ORCID fuzzy date format.
 
-- **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID must be pre-registered before use. (see [Group ID Registration]() below for more information.) 
+- **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID must be pre-registered before use. (see [Group ID Registration]() below for more information.)
 
 **DESCRIBING THE SUBJECT OF THE REVIEW**
 
@@ -57,7 +60,7 @@ For an example XML file, see [peer-review-2.0_rc1.xml](https://github.com/ORCID/
 
 
 ##Peer Review API Reference
-```peer-review``` is available only in ORCID API v2.0_rcX, which uses a slightly different data structure from previous API versions. 
+```peer-review``` is available only in ORCID API v2.0_rcX, which uses a slightly different data structure from previous API versions.
 
 In v2.0_rcX, activities are read, added, and modified on an individual basis (rather than as a list), using a ```put-code```, which is a system-generated identifier used within the ORCID database.
 
@@ -127,5 +130,3 @@ curl -i -H 'Content-type: application/orcid+xml’ \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
 	-X DELETE 'http://api.sandbox.orcid.org/v2.0_rc1/[ORCID]/peer-review/[PUT-CODE]'
 ```
-
-

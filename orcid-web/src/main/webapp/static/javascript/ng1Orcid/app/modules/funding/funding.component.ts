@@ -49,6 +49,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     editSources: any;
     emails: any;
     fundingImportWizard: boolean;
+    fundingImportWizardList: any;
     groups: any;
     moreInfo: any;
     privacyHelp: any;
@@ -246,6 +247,23 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         return '';
     };
 
+    loadFundingImportWizards(): void {
+        this.fundingService.getFundingImportWizardList()
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    console.log (data)
+                    this.fundingImportWizardList = data;
+                },
+                error => {
+                    console.log('getFundingImportWizardsError', error);
+                } 
+            );
+    }
+
+
     makeDefault(group, putCode): any {
         this.fundingService.updateToMaxDisplay(group, putCode)
         .pipe(    
@@ -314,6 +332,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     openImportWizardUrl(url): void {
+        openImportWizardUrl(url);
+    };
+
+    openImportWizardUrlFilter(url, client): void {
+        url = url + '?client_id=' + client.id + '&response_type=code&scope=' + client.scopes + '&redirect_uri=' + client.redirectUri;
         openImportWizardUrl(url);
     };
 
@@ -435,5 +458,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getFundingGroups();
+        this.loadFundingImportWizards();
     }; 
 }
