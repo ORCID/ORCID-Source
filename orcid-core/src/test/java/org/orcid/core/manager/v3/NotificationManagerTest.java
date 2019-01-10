@@ -32,9 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -60,8 +58,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.v3.rc2.common.Locale;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
@@ -104,9 +101,7 @@ public class NotificationManagerTest extends DBUnitTest {
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
             "/data/BiographyEntityData.xml");
 
-    private Unmarshaller unmarshaller;
-
-    @Mock
+        @Mock
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Mock
@@ -196,12 +191,6 @@ public class NotificationManagerTest extends DBUnitTest {
     }
 
     @Before
-    public void initJaxb() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
-        unmarshaller = context.createUnmarshaller();
-    }
-
-    @Before
     public void initMocks() throws Exception {
         MockitoAnnotations.initMocks(this);        
         TargetProxyHelper.injectIntoProxy(notificationManager, "encryptionManager", encryptionManager);
@@ -281,7 +270,7 @@ public class NotificationManagerTest extends DBUnitTest {
         resetMocks();
         String userOrcid = "0000-0000-0000-0003";
         String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
-        for (Locale locale : Locale.values()) {
+        for (AvailableLocales locale : AvailableLocales.values()) {
             profileEntityManager.updateLocale(userOrcid, locale);
             EncryptionManager mockEncypter = mock(EncryptionManager.class);
             getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
@@ -295,8 +284,7 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testResetNotFoundEmail() throws Exception {
         resetMocks();
         String submittedEmail = "email_not_in_orcid@test.orcid.org";
-        for (Locale locale : Locale.values()) {
-            Locale curLocale = org.orcid.jaxb.model.v3.rc2.common.Locale.valueOf(locale.name());
+        for (AvailableLocales curLocale : AvailableLocales.values()) {            
             notificationManager.sendPasswordResetNotFoundEmail(submittedEmail, LocaleUtils.toLocale(curLocale.value()));
         }
     }
@@ -310,7 +298,7 @@ public class NotificationManagerTest extends DBUnitTest {
         when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
         String testOrcid = "0000-0000-0000-0003";
 
-        for (Locale locale : Locale.values()) {
+        for (AvailableLocales locale : AvailableLocales.values()) {
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
             long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;
             profileEntityManager.updateLocale(testOrcid, locale);
@@ -411,7 +399,7 @@ public class NotificationManagerTest extends DBUnitTest {
         resetMocks();
         String userOrcid = "0000-0000-0000-0003";
         String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
-        for (Locale locale : Locale.values()) {
+        for (AvailableLocales locale : AvailableLocales.values()) {
             profileEntityManager.updateLocale(userOrcid, locale);
             notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
         }
@@ -429,7 +417,7 @@ public class NotificationManagerTest extends DBUnitTest {
         profile.setRecordNameEntity(recordName);
         when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
         String primaryEmail = "limited_0000-0000-0000-0003@test.orcid.org";
-        for (Locale locale : Locale.values()) {
+        for (AvailableLocales locale : AvailableLocales.values()) {
             profile.setLocale(locale.name());
             notificationManager.sendVerificationReminderEmail(userOrcid, primaryEmail);
         }
@@ -445,7 +433,7 @@ public class NotificationManagerTest extends DBUnitTest {
         name.setGivenNames("Given Name");
         ProfileEntity profile = new ProfileEntity(userOrcid);
         profile.setRecordNameEntity(name);
-        for(Locale locale : Locale.values()) {
+        for(AvailableLocales locale : AvailableLocales.values()) {
             profile.setLocale(locale.name());
             when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
             notificationManager.sendClaimReminderEmail(userOrcid, 2);
@@ -484,7 +472,7 @@ public class NotificationManagerTest extends DBUnitTest {
         
         String userOrcid = "0000-0000-0000-0003";
         String email = "original@email.com";
-        for (Locale locale : Locale.values()) {
+        for (AvailableLocales locale : AvailableLocales.values()) {
             profileEntityManager.updateLocale(userOrcid, locale);
             notificationManager.sendReactivationEmail(email, userOrcid);
         }

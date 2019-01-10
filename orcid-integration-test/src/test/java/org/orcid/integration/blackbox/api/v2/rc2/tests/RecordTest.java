@@ -15,6 +15,7 @@ import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Educations;
@@ -72,6 +73,8 @@ public class RecordTest extends BlackBoxBaseRC2 {
         Record record = response.getEntity(Record.class);
         assertNotNull(record);
         assertNotNull(record.getOrcidIdentifier());
+        assertNotNull(record.getPreferences());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
         assertEquals(getUser1OrcidId(), record.getOrcidIdentifier().getPath());               
         //Check the visibility of every activity that exists
         if(record.getActivitiesSummary() != null) {
@@ -281,7 +284,9 @@ public class RecordTest extends BlackBoxBaseRC2 {
         Record record = response.getEntity(Record.class);
         assertNotNull(record);
         assertNotNull(record.getOrcidIdentifier());
-        assertEquals(getUser1OrcidId(), record.getOrcidIdentifier().getPath());               
+        assertEquals(getUser1OrcidId(), record.getOrcidIdentifier().getPath());  
+        assertNotNull(record.getPreferences());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
         //Check the visibility of every activity that exists
         if(record.getActivitiesSummary() != null) {
             if(record.getActivitiesSummary() != null) {

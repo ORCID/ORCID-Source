@@ -41,6 +41,7 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
 import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
@@ -802,7 +803,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = LocaleUtils.toLocale("en");
         
         if(locale != null) {
-            org.orcid.jaxb.model.v3.rc2.common.Locale loc = org.orcid.jaxb.model.v3.rc2.common.Locale.valueOf(managedEntity.getLocale());
+            AvailableLocales loc = AvailableLocales.valueOf(managedEntity.getLocale());
             userLocale = LocaleUtils.toLocale(loc.value());
         }        
 
@@ -1122,7 +1123,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
-        org.orcid.jaxb.model.common_v2.Locale locale = org.orcid.jaxb.model.common_v2.Locale.valueOf(profile.getLocale());
+        AvailableLocales locale = AvailableLocales.valueOf(profile.getLocale());
         if (locale != null) {
             return LocaleUtils.toLocale(locale.value());
         }
