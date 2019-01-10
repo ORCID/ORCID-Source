@@ -57,6 +57,7 @@ public class RecordStatusManagerTest {
 		assertNotNull(entity);
 		assertEquals(orcid, entity.getId());
 		assertEquals(Integer.valueOf(3), entity.getDumpStatus20Api());
+		recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
 	}
 	
 	@Test

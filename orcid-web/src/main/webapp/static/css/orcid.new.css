@@ -6375,6 +6375,8 @@ a#reset-password-toggle-text:hover:active {
     float: left;
     width: 100%;
     word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
 }
 
 .public-profile .workspace-section .workspace-section-header .inline-list .right .popover {
@@ -6857,6 +6859,10 @@ ul.comma li:last-child:after {
 
 .font-size-small {
     font-size: 12px
+}
+
+.line-height-normal {
+    line-height: normal
 }
 
 .no-padding {
@@ -8700,3 +8706,7 @@ span.notYouUrl > a {
     height: 20px;
     margin-top: -2px;
 }
+
+_::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
+    z-index: unset;
+ }

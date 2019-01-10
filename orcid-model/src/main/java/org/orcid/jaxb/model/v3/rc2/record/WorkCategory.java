@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import org.orcid.jaxb.model.common.WorkType;
+
 public enum WorkCategory {
     @XmlEnumValue("publication")
     PUBLICATION("publication", WorkType.BOOK_CHAPTER, WorkType.BOOK_REVIEW, WorkType.BOOK, WorkType.DICTIONARY_ENTRY, WorkType.DISSERTATION_THESIS, WorkType.EDITED_BOOK,

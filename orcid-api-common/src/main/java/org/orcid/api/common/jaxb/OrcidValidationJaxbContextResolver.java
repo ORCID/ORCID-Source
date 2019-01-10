@@ -17,6 +17,7 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.MarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
@@ -32,11 +33,16 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.web.filters.ApiVersionFilter;
+import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import com.sun.istack.SAXException2;
+import com.sun.xml.bind.api.AccessorException;
 
 /**
  * orcid-api - Nov 10, 2011 - OrcidValidationJaxbContextResolver
@@ -347,8 +353,32 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             Validator validator = schema.newValidator();
             validator.validate(source);
         } catch (SAXException | JAXBException | IOException e) {
+            // Check if it is an IllegalEnumValueException
+            if(SAXParseException.class.isAssignableFrom(e.getClass())) {
+                Throwable t = e.getCause();
+                if(t != null && MarshalException.class.isAssignableFrom(t.getClass())) {
+                    MarshalException me = (MarshalException) t;
+                    Throwable linkedException = me.getLinkedException();
+                    if(linkedException != null && SAXException2.class.isAssignableFrom(linkedException.getClass())) {
+                        SAXException2 sa2 = (SAXException2) linkedException;
+                        Exception sa2e = sa2.getException();
+                        if(sa2e != null && AccessorException.class.isAssignableFrom(sa2e.getClass())) {
+                            Throwable cause = sa2e.getCause();
+                            if (cause != null && IllegalEnumValueException.class.isAssignableFrom(cause.getClass())) {
+                                // Validation exceptions should return
+                                // BAD_REQUEST status
+                                // Lets throw the IllegalEnumValueException so
+                                // the end user gets a detailed error message
+                                // and not the default one from spring
+                                throw new WebApplicationException(cause, Status.BAD_REQUEST.getStatusCode());
+                            }
+                        }
+                    }
+                }
+            } 
+            
             //Validation exceptions should return BAD_REQUEST status
-            throw new WebApplicationException(e, Status.BAD_REQUEST.getStatusCode());
+            throw new WebApplicationException(e, Status.BAD_REQUEST.getStatusCode());                       
         }       
     }
     
@@ -470,8 +500,10 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
 
     public class OrcidValidationHandler implements ValidationEventHandler {
         @Override
-        public boolean handleEvent(ValidationEvent event) {            
-            if (event.getSeverity() == ValidationEvent.FATAL_ERROR || event.getSeverity() == ValidationEvent.ERROR) {
+        public boolean handleEvent(ValidationEvent event) {
+            if(event.getLinkedException() != null && AccessorException.class.isAssignableFrom(event.getLinkedException().getClass()) && event.getLinkedException().getCause() != null && IllegalEnumValueException.class.isAssignableFrom(event.getLinkedException().getCause().getClass()))  {
+                throw (IllegalEnumValueException) event.getLinkedException().getCause();
+            } else if (event.getSeverity() == ValidationEvent.FATAL_ERROR || event.getSeverity() == ValidationEvent.ERROR) {
                 logger.error(event.getMessage());
                 throw new OrcidBadRequestException(event.getMessage());
             } else if (event.getSeverity() == ValidationEvent.WARNING) {

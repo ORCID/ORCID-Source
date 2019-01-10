@@ -32,6 +32,7 @@ export class ManageMembersConsortiumComponent
   consortium;
   findConsortiumError;
   successEditMemberMessage;
+  modalSubscription: Subscription;
 
   constructor(
     private manageMembersService: ManageMembersService,
@@ -44,8 +45,8 @@ export class ManageMembersConsortiumComponent
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    if (this.modalSubscription)
+      this.modalSubscription.unsubscribe()
   }
 
   findConsortium() {
@@ -77,7 +78,6 @@ export class ManageMembersConsortiumComponent
     this.manageMembersService
       .updateConsortium(this.consortium)
       .subscribe((response: any) => {
-        console.log("UPDATE ", response);
         if (response.errors.length == 0) {
           this.successEditMemberMessage = om.get(
             "manage_member.edit_member.success"
@@ -88,8 +88,7 @@ export class ManageMembersConsortiumComponent
   }
 
   ngOnInit() {
-    this.modalService.notifyObservable$.subscribe((data: any) => {
-      console.log("RESPONSE ", data);
+    this.modalSubscription = this.modalService.notifyObservable$.subscribe((data: any) => {
       if (
         data &&
         data.moduleId === "modalFindMemberConfirm" &&

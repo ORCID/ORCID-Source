@@ -307,12 +307,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         LinkedHashMap<String, List<Address>> groups = new LinkedHashMap<String, List<Address>>();
         for (Address k : addresses.getAddress()) {
-            if (groups.containsKey(k.getCountry().getValue().value())) {
-                groups.get(k.getCountry().getValue().value()).add(k);
+            if (groups.containsKey(k.getCountry().getValue().name())) {
+                groups.get(k.getCountry().getValue().name()).add(k);
             } else {
                 List<Address> list = new ArrayList<Address>();
                 list.add(k);
-                groups.put(k.getCountry().getValue().value(), list);
+                groups.put(k.getCountry().getValue().name(), list);
             }
         }
 
@@ -396,9 +396,25 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/person.json", method = RequestMethod.GET)
     public @ResponseBody PublicRecordPersonDetails getPersonDetails(@PathVariable("orcid") String orcid) {
         PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
+        Boolean isDeprecated = false;
         
+        try {
+	            // Check if the profile is deprecated or locked
+	        orcidSecurityManager.checkProfile(orcid);
+        } catch (LockedException | DeactivatedException e) {
+        	publicRecordPersonDetails.setDisplayName(
+        			localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name")
+        			);
+        	return publicRecordPersonDetails;
+        } catch (OrcidNotClaimedException e) {
+        	publicRecordPersonDetails.setDisplayName( localeManager.resolveMessage("orcid.reserved_for_claim"));
+        	return publicRecordPersonDetails;
+        } catch (OrcidDeprecatedException e ) {
+        	isDeprecated = true;
+        	
+        }
+	
         PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
-
         // Fill personal details
         if (publicPersonalDetails != null) {
             // Get display name
@@ -425,6 +441,10 @@ public class PublicProfileController extends BaseWorkspaceController {
                 // and Researchers
                 publicRecordPersonDetails.setTitle(getMessage("layout.public-layout.title", displayName.trim(), orcid));
                 publicRecordPersonDetails.setDisplayName(displayName);
+            }
+            
+            if (isDeprecated) {
+            	return publicRecordPersonDetails;
             }
 
             // Get biography
@@ -459,7 +479,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             Address publicAddress = null;
             // The primary address will be the one with the lowest display index
             for (Address address : publicAddresses.getAddress()) {
-                countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));
+                countryNames.put(address.getCountry().getValue().name(), getcountryName(address.getCountry().getValue().name()));
                 if (publicAddress == null) {
                     publicAddress = address;
                 }

@@ -144,9 +144,9 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             public void mapAtoB(Work a, org.orcid.jaxb.model.v3.rc2.record.Work b, MappingContext context) {
                 // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
                 if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getWorkType())) {
-                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
                 } else {
-                    b.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.fromValue(a.getWorkType().value()));
+                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.fromValue(a.getWorkType().value()));
                 }                
             }
             
@@ -155,7 +155,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
              */
             @Override
             public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Work b, Work a, MappingContext context) {
-                if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.equals(b.getWorkType())) {
+                if(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.equals(b.getWorkType())) {
                     a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
                 } else {
                     a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getWorkType().value()));
@@ -171,9 +171,9 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
             public void mapAtoB(WorkSummary a, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, MappingContext context) {
                 // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
                 if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getType())) {
-                    b.setType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+                    b.setType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
                 } else {
-                    b.setType(org.orcid.jaxb.model.v3.rc2.record.WorkType.fromValue(a.getType().value()));
+                    b.setType(org.orcid.jaxb.model.common.WorkType.fromValue(a.getType().value()));
                 }                
             }
             
@@ -182,7 +182,7 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
              */
             @Override
             public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, WorkSummary a, MappingContext context) {
-                if(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS.equals(b.getType())) {
+                if(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.equals(b.getType())) {
                     a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
                 } else {
                     a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getType().value()));

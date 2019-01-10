@@ -18,6 +18,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.api.v3.rc2.BlackBoxBaseV3_0_rc2;
 import org.orcid.integration.blackbox.api.v3.rc2.MemberV3Rc2ApiClientImpl;
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
@@ -26,14 +29,11 @@ import org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
-import org.orcid.jaxb.model.v3.rc2.record.CitationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
@@ -436,7 +436,7 @@ public class WorksTest extends BlackBoxBaseV3_0_rc2 {
                     break;
                 case 7:
                     assertEquals(Integer.valueOf(9001), error.getErrorCode());
-                    assertTrue(error.getDeveloperMessage().endsWith("Attribute 'language-code' must appear on element 'common:translated-title'.)"));
+                    assertTrue(error.getDeveloperMessage().endsWith("org.orcid.jaxb.model.common.adapters.IllegalEnumValueException (null is invalid for org.orcid.jaxb.model.common.LanguageCode)"));
                     break;
                 }
             } else {

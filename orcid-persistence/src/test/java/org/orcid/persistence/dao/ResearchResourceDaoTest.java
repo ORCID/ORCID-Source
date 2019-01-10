@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -61,7 +60,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(1l,e1.get(0).getDisplayIndex().longValue());
         assertEquals("the title",e1.get(0).getTitle());
         assertEquals("the translated title",e1.get(0).getTranslatedTitle());
-        assertEquals("EN",e1.get(0).getTranslatedTitleLanguageCode());
+        assertEquals("en",e1.get(0).getTranslatedTitleLanguageCode());
         assertEquals("the proposal type",e1.get(0).getProposalType());
         assertEquals("the url",e1.get(0).getUrl());
         assertEquals("PUBLIC",e1.get(0).getVisibility());
@@ -80,7 +79,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(2,e1.get(0).getResourceItems().size());
         ResearchResourceItemEntity i1 = e1.get(0).getResourceItems().iterator().next();
         assertEquals("the resource name1",i1.getResourceName());
-        assertEquals("the resource type1",i1.getResourceType());
+        assertEquals("infrastructures",i1.getResourceType());
         assertEquals("the url1",i1.getUrl());
         assertEquals(2,i1.getHosts().size());
         assertEquals(e1.get(0).getTitle(), i1.getResearchResourceEntity().getTitle());

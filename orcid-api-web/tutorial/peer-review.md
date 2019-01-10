@@ -120,7 +120,7 @@ Example response:
 See sample [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
 
 - **group-id:name** _(required)_ The name of the group. This will display on the user's ORCID record.
-- **group-id:group-id** _(required)_ An identifier for the group formated as identifier type:identifier. Identifier type options are fundref, issn, orcid-generated, publons, ringgold.  
+- **group-id:group-id** _(required)_ An identifier for the group formated as identifier type:identifier. Identifier type options are fundref, issn, orcid-generated, publons, ringgold.
 - **group-id:description** _(required)_ A brief description of the group. This will display on the user's ORCID record.
 - **group-id:type** _(required)_ The type of object or organization of the group. This will display on the user's ORCID record.
 

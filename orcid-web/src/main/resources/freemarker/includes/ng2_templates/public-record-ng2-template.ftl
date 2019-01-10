@@ -211,10 +211,6 @@
                                         target="externalIdentifier.value">
                                         {{externalIdentifier.type}}: {{externalIdentifier.value}}
                                     </a>
-                                    
-                                    <ng-container *ngIf="lastExternal">
-                                        <br/><span *ngIf="showSources['external-identifiers'] == false || showSources['external-identifiers'] == null"></span>
-                                    </ng-container>
 
                                 </ng-container>
 

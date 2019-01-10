@@ -88,7 +88,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertNotNull(invitedPosition.getOrganization().getAddress());
         assertEquals("org:city", invitedPosition.getOrganization().getAddress().getCity());
         assertEquals("org:region", invitedPosition.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, invitedPosition.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, invitedPosition.getOrganization().getAddress().getCountry());
         assertNotNull(invitedPosition.getSource());        
         assertNotNull(invitedPosition.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", invitedPosition.getSource().retrieveSourcePath());
