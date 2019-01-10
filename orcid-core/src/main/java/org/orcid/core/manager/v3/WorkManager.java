@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3;
 
 import java.util.List;
 
+import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
@@ -93,6 +94,6 @@ public interface WorkManager extends WorkManagerReadOnly {
      * 
      * @param workIds
      */
-    void createNewWorkGroup(List<Long> workIds, String orcid);    
+    void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException;    
     
 }

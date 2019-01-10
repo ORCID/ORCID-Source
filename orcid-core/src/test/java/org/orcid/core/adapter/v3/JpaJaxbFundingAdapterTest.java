@@ -15,9 +15,9 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.v3.JpaJaxbFundingAdapter;
+import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
-import org.orcid.jaxb.model.v3.rc2.record.FundingType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -115,7 +115,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("2020", funding.getEndDate().getYear().getValue());
         assertEquals("funding:title", funding.getTitle().getTitle().getContent());
         assertEquals("funding:translatedTitle", funding.getTitle().getTranslatedTitle().getContent());
-        assertEquals("ES", funding.getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("es", funding.getTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(FundingType.SALARY_AWARD, funding.getType());
         assertEquals(Visibility.PRIVATE, funding.getVisibility());
     }
@@ -164,7 +164,7 @@ public class JpaJaxbFundingAdapterTest {
         result.setCurrencyCode("CRC");
         result.setTitle("funding:title");
         result.setTranslatedTitle("funding:translatedTitle");
-        result.setTranslatedTitleLanguageCode("ES");
+        result.setTranslatedTitleLanguageCode("es");
         result.setType(org.orcid.jaxb.model.record_v2.FundingType.SALARY_AWARD.name());
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         return result;

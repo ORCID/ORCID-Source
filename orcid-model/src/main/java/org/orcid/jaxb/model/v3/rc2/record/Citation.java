@@ -13,6 +13,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.adapters.CitationTypeAdapter;
 
 /**
  * Element to contain a citation of a given type
@@ -29,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "citation", propOrder = { "citationType", "citation" })
 public class Citation implements Serializable {
     private static final long serialVersionUID = 1L;
+    @XmlJavaTypeAdapter(CitationTypeAdapter.class)
     @XmlElement(name = "citation-type", required = true, defaultValue = "formatted-unspecified", namespace = "http://www.orcid.org/ns/work")
     protected CitationType citationType;
     @XmlElement(name = "citation-value", required = true, namespace = "http://www.orcid.org/ns/work")

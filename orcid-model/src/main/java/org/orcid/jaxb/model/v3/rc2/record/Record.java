@@ -10,8 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.rc2.common.OrcidType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -24,6 +24,7 @@ import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.jaxb.model.common.LanguageCode;
 import org.orcid.jaxb.model.common_v2.Amount;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.ContributorOrcid;
@@ -87,9 +88,9 @@ public class ActivityValidator {
 
             // If translated title language code is null or invalid
             if (!PojoUtil.isEmpty(translatedTitle) && (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
-                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
+                    || !Arrays.stream(LanguageCode.getValues()).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals))) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "translated title -> language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -105,9 +106,9 @@ public class ActivityValidator {
         }
 
         if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-            if (!Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(work.getLanguageCode()::equals)) {
+            if (!Arrays.stream(LanguageCode.getValues()).anyMatch(work.getLanguageCode()::equals)) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);
@@ -263,9 +264,9 @@ public class ActivityValidator {
         if (title != null && title.getTranslatedTitle() != null && !PojoUtil.isEmpty(title.getTranslatedTitle().getContent())) {
             // If translated title language code is null or invalid
             if (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
-                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
+                    || !Arrays.stream(LanguageCode.getValues()).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
                 Map<String, String> params = new HashMap<String, String>();
-                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                String values = Arrays.stream(LanguageCode.getValues()).collect(Collectors.joining(", "));
                 params.put("type", "translated title -> language code");
                 params.put("values", values);
                 throw new ActivityTypeValidationException(params);

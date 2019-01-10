@@ -60,7 +60,7 @@
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
                             <#if !(isPublicProfile??)>
-                                <div class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid"></div> 
+                                <div class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
                             </#if>
                         </@orcid.checkFeatureStatus>
                         <h3 class="workspace-title leftBuffer">
@@ -267,14 +267,23 @@
                                         {{contributor.creditName?.value}} <span>{{contributor | contributorFilter}}</span>
                                     </div>
                                 </div>                                      
+                            </div> 
+                        </div>
+                        <!--Added/last modified dates-->                
+                        <div class="row bottomBuffer">
+                            <div class="col-md-6">
+                                <div class="bottomBuffer">
+                                    <strong><@orcid.msg 'groups.common.added'/></strong><br> 
+                                    <span>{{worksService.details[work.putCode.value].createdDate | ajaxFormDateToISO8601}}</span>
+                                </div>    
                             </div>
                             <div class="col-md-6">
                                 <div class="bottomBuffer">
-                                    <strong><@orcid.msg 'groups.common.created'/></strong><br />
-                                    <div>{{worksService.details[work.putCode.value].createdDate | ajaxFormDateToISO8601}}</div>
-                                </div>      
-                            </div>    
-                        </div>
+                                    <strong><@orcid.msg 'groups.common.last_modified'/></strong><br> 
+                                    <span>{{worksService.details[work.putCode.value].lastModified | ajaxFormDateToISO8601}}</span>
+                                </div>    
+                            </div>      
+                        </div><!--Added/last modified dates--> 
                         
                     </div>  
                 </div>

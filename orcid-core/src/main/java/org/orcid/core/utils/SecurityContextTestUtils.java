@@ -9,9 +9,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +24,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
 public class SecurityContextTestUtils {
 
@@ -59,6 +63,10 @@ public class SecurityContextTestUtils {
                 Collections.<String, Serializable> emptyMap());
         when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
         when(mockedAuthentication.isAuthenticated()).thenReturn(true);
+        //for obo
+        OAuth2AuthenticationDetails authDetails = mock(OAuth2AuthenticationDetails.class);
+        //to use, set token in detail to be a token with OBO. -> when(authDetails.getTokenValue()).thenReturn("xxx");
+        when(mockedAuthentication.getDetails()).thenReturn(authDetails);
     }
 
     static public void setUpSecurityContextForClientOnly() {
@@ -98,6 +106,8 @@ public class SecurityContextTestUtils {
         when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
         when(mockedAuthentication.isAuthenticated()).thenReturn(true);
         when(mockedAuthentication.getName()).thenReturn(clientId);
+        OAuth2AuthenticationDetails authDetails = mock(OAuth2AuthenticationDetails.class);
+        when(mockedAuthentication.getDetails()).thenReturn(authDetails);
     }
 
     static public void setUpSecurityContextForAnonymous() {

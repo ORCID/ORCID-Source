@@ -278,4 +278,10 @@ export class CommonService {
            getBaseUri() + '/userStatus.json'
        );         
     }; 
+    
+    getCountryNamesMappedToCountryCodes(): Observable<any> {
+        return this.http.get(
+                getBaseUri() + '/countryNamesToCountryCodes.json', {}
+        );
+    };
 }

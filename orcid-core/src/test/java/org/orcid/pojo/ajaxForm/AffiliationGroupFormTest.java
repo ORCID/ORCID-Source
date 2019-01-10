@@ -8,11 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;

@@ -86,6 +86,14 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         List<NotificationEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
+    
+    @Override
+    @Transactional
+    public void flagAsSent(Long id) {
+        Query query = entityManager.createQuery("update NotificationEntity set sentDate = now() where id in :id");
+        query.setParameter("id", id);
+        query.executeUpdate();
+    }
 
     @Override
     @Transactional
