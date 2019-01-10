@@ -1009,20 +1009,7 @@
 			<xs:maxLength value="350" />
 			<xs:pattern value="[^@]+@[^\.]+\..+" />
 		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="media-type">
-		<xs:annotation>
-			<xs:documentation>Used with the publication date to indicate which
-				version of the publication the date refers to.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="print" />
-			<xs:enumeration value="online" />
-			<xs:enumeration value="other" />
-		</xs:restriction>
-	</xs:simpleType>
+	</xs:simpleType>	
 
 	<xs:simpleType name="year">
 		<xs:annotation>
