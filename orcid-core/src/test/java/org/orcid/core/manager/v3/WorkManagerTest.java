@@ -3,6 +3,7 @@ package org.orcid.core.manager.v3;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -35,6 +36,7 @@ import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc2.common.Title;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
@@ -249,7 +251,168 @@ public class WorkManagerTest extends BaseTest {
         // updating of works
         workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
     }
-
+           
+    @Test
+    public void testCreateDupWorkTest() {
+        String orcid = "0000-0000-0000-0003";
+        Long time = System.currentTimeMillis();
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(source);
+        
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID extId1 = new ExternalID();
+        extId1.setRelationship(Relationship.SELF);
+        extId1.setType("isbn");
+        extId1.setUrl(new Url("http://isbn/1/" + time));
+        extId1.setValue("isbn-1");
+        extIds1.getExternalIdentifier().add(extId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);     
+        
+        // Create the original work
+        work1 = workManager.createWork(orcid, work1, true);
+        assertNotNull(work1);
+        assertNotNull(work1.getPutCode());
+        Long putCode1 = work1.getPutCode();
+        
+        // Create the work again but with a PART_OF identifier
+        work1.setPutCode(null);
+        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.PART_OF);
+        
+        work1 = workManager.createWork(orcid, work1, true);
+        assertNotNull(work1);
+        assertNotNull(work1.getPutCode());
+        assertNotEquals(putCode1, work1.getPutCode());
+        
+        Long putCode2 = work1.getPutCode();
+        
+        // Create the work again but with a VERSION_OF identifier
+        work1.setPutCode(null);
+        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.VERSION_OF);
+        // For VERSION_OF we should add one SELF identifier
+        ExternalID extId2 = new ExternalID();
+        extId2.setRelationship(Relationship.SELF);
+        extId2.setType("arxiv");
+        extId2.setUrl(new Url("http://arxiv/1/" + time));
+        extId2.setValue("arxiv-1");
+        work1.getExternalIdentifiers().getExternalIdentifier().add(extId2);
+        
+        work1 = workManager.createWork(orcid, work1, true);
+        assertNotNull(work1);
+        assertNotNull(work1.getPutCode());
+        assertNotEquals(putCode1, work1.getPutCode());
+        assertNotEquals(putCode2, work1.getPutCode());
+        
+        Long putCode3 = work1.getPutCode();
+        
+        // Remove the extra identifier
+        work1.getExternalIdentifiers().getExternalIdentifier().remove(1);
+        
+        // Now try to create it with the same SELF identifier, should fail
+        work1.setPutCode(null);
+        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.SELF);
+        
+        try {
+            work1 = workManager.createWork(orcid, work1, true);
+            fail();
+        } catch(OrcidDuplicatedActivityException e) {
+            
+        } catch(Exception e) {
+            fail(e.getMessage());
+        }
+        
+        // Now create another with a SELF identifier but not the same one, should work
+        work1.setPutCode(null);
+        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.SELF);
+        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("isbn-2");
+        
+        work1 = workManager.createWork(orcid, work1, true);
+        assertNotNull(work1);
+        assertNotNull(work1.getPutCode());
+        assertNotEquals(putCode1, work1.getPutCode());
+        assertNotEquals(putCode2, work1.getPutCode());
+        assertNotEquals(putCode3, work1.getPutCode());
+        
+        Long putCode4 = work1.getPutCode();
+        
+        workManager.removeWorks(orcid, Arrays.asList(putCode1, putCode2, putCode3, putCode4));
+    }
+    
+    @Test
+    public void testCreateWorksWithBulk_OneSelfOneVersionOf_NoDupError() {
+        String orcid = "0000-0000-0000-0003";
+        Long time = System.currentTimeMillis();
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(source);
+        
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID extId1 = new ExternalID();
+        extId1.setRelationship(Relationship.SELF);
+        extId1.setType("isbn");
+        extId1.setUrl(new Url("http://isbn/1/" + time));
+        extId1.setValue("isbn-1");
+        extIds1.getExternalIdentifier().add(extId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work1);
+        
+        // Work # 2
+        Work work2 = new Work();
+        WorkTitle title2 = new WorkTitle();
+        title2.setTitle(new Title("Work # 2"));
+        work2.setWorkTitle(title2);
+        ExternalIDs extIds2 = new ExternalIDs();
+        ExternalID extId2 = new ExternalID();
+        extId2.setRelationship(Relationship.VERSION_OF);
+        extId2.setType("isbn");
+        extId2.setUrl(new Url("http://isbn/1/" + time));
+        extId2.setValue("isbn-1");
+        ExternalID extId3 = new ExternalID();
+        extId3.setRelationship(Relationship.SELF);
+        extId3.setType("doi");
+        extId3.setUrl(new Url("http://doi/1/" + time));
+        extId3.setValue("doi-1");
+        
+        extIds2.getExternalIdentifier().add(extId2);
+        extIds2.getExternalIdentifier().add(extId3);
+        
+        work2.setWorkExternalIdentifiers(extIds2);
+        work2.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work2);
+                
+        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
+        
+        assertNotNull(updatedBulk);
+        assertEquals(2, updatedBulk.getBulk().size());
+        assertTrue(updatedBulk.getBulk().get(0) instanceof Work);
+        assertNotNull(((Work)updatedBulk.getBulk().get(0)).getPutCode());
+        assertEquals(Relationship.SELF, ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("isbn-1", ((Work)updatedBulk.getBulk().get(0)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        assertTrue(updatedBulk.getBulk().get(1) instanceof Work);
+        assertNotNull(((Work)updatedBulk.getBulk().get(1)).getPutCode());
+        assertEquals(Relationship.VERSION_OF, ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("isbn-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());      
+        assertEquals(Relationship.SELF, ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals("doi-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(1).getValue());      
+        
+    
+        workManager.removeWorks(orcid, Arrays.asList(((Work)updatedBulk.getBulk().get(0)).getPutCode(), ((Work)updatedBulk.getBulk().get(1)).getPutCode()));
+    }
+    
     @Test
     public void testCreateWorksWithBulk_OneSelfOnePartOf_NoDupError() {
         String orcid = "0000-0000-0000-0003";
@@ -917,6 +1080,7 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(found3);
         assertTrue(found4);
         assertTrue(found5);
+        assertTrue(found6);
     }
 
     @Test
@@ -947,6 +1111,7 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(found3);
         assertTrue(found4);
         assertTrue(found5);
+        assertTrue(found6);
     }
 
     @Test
