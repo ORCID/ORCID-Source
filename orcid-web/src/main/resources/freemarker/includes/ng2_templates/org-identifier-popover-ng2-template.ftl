@@ -64,7 +64,9 @@
         <strong><@orcid.msg 'workspace_affiliations.external_ids'/> {{displayType}}</strong><br>
         <ul class="reset">
             <li *ngFor="let orgDisambiguatedExternalIdentifier of commonSrvc.orgDisambiguatedDetails[type+value]?.orgDisambiguatedExternalIdentifiers">
-                {{orgDisambiguatedExternalIdentifier.identifierType}}: <span *ngIf="orgDisambiguatedExternalIdentifier.preferred">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span> 
+                {{orgDisambiguatedExternalIdentifier.identifierType}}:
+                <span *ngIf="orgDisambiguatedExternalIdentifier.preferred && !isUrl(orgDisambiguatedExternalIdentifier.preferred)">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span>
+                <span *ngIf="orgDisambiguatedExternalIdentifier.preferred && isUrl(orgDisambiguatedExternalIdentifier.preferred)"> <a  href="{{orgDisambiguatedExternalIdentifier.preferred}}">{{orgDisambiguatedExternalIdentifier.preferred}} </a>  <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span>
                 <!-- Put the ',' only if there is more than one ext id or if the only one is not the same as the preferred one -->
                 <span *ngIf="orgDisambiguatedExternalIdentifier.all && (orgDisambiguatedExternalIdentifier.all.length > 1 || (orgDisambiguatedExternalIdentifier.preferred && (orgDisambiguatedExternalIdentifier.all[0] != orgDisambiguatedExternalIdentifier.preferred)))">,</span>   
                 <span *ngIf="orgDisambiguatedExternalIdentifier.all">
