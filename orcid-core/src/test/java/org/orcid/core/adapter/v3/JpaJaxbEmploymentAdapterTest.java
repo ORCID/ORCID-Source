@@ -16,7 +16,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc2.record.Employment;
 import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;

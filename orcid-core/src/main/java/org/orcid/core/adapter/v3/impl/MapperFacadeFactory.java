@@ -29,6 +29,7 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.client.Client;
 import org.orcid.jaxb.model.v3.rc2.client.ClientRedirectUri;
@@ -75,7 +76,6 @@ import org.orcid.jaxb.model.v3.rc2.record.Service;
 import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
@@ -486,12 +486,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              * From database to model object
              */
             @Override
-            public void mapBtoA(WorkEntity b, Work a, MappingContext context) {
-                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name().equals(b.getWorkType())) {
-                    a.setWorkType(WorkType.DISSERTATION_THESIS);
-                } else {
-                    a.setWorkType(WorkType.valueOf(b.getWorkType()));
-                }               
+            public void mapBtoA(WorkEntity b, Work a, MappingContext context) {                
+                a.setWorkType(WorkType.valueOf(b.getWorkType()));                
             }
             
         });
@@ -526,11 +522,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              */
             @Override
             public void mapBtoA(WorkEntity b, WorkSummary a, MappingContext context) {
-                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name().equals(b.getWorkType())) {
-                    a.setType(WorkType.DISSERTATION_THESIS);
-                } else {
-                    a.setType(WorkType.valueOf(b.getWorkType()));
-                }               
+                a.setType(WorkType.valueOf(b.getWorkType()));               
             }
             
         });
@@ -561,11 +553,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              */
             @Override
             public void mapBtoA(MinimizedWorkEntity b, WorkSummary a, MappingContext context) {
-                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name().equals(b.getWorkType())) {
-                    a.setType(WorkType.DISSERTATION_THESIS);
-                } else {
-                    a.setType(WorkType.valueOf(b.getWorkType()));
-                }               
+                a.setType(WorkType.valueOf(b.getWorkType()));
             }
             
         });;
@@ -601,11 +589,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              */
             @Override
             public void mapBtoA(MinimizedWorkEntity b, Work a, MappingContext context) {
-                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.name().equals(b.getWorkType())) {
-                    a.setWorkType(WorkType.DISSERTATION_THESIS);
-                } else {
-                    a.setWorkType(WorkType.valueOf(b.getWorkType()));
-                }               
+                a.setWorkType(WorkType.valueOf(b.getWorkType()));               
             }
             
         });

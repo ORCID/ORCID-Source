@@ -32,7 +32,7 @@ public class V3VersionConverterChainTest {
         rc1Work.setCreatedDate(new org.orcid.jaxb.model.v3.rc1.common.CreatedDate(gc1));        
 
         rc1Work.setJournalTitle(new org.orcid.jaxb.model.v3.rc1.common.Title("Journal title"));
-        rc1Work.setLanguageCode("EN");
+        rc1Work.setLanguageCode("en");
         rc1Work.setLastModifiedDate(new org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate(gc2));
         rc1Work.setPath("/0000-0000-0000-0000/rcX/work/123");
 
@@ -69,7 +69,7 @@ public class V3VersionConverterChainTest {
         org.orcid.jaxb.model.v3.rc1.record.WorkTitle title = new org.orcid.jaxb.model.v3.rc1.record.WorkTitle();
         title.setSubtitle(new org.orcid.jaxb.model.v3.rc1.common.Subtitle("The subtitle"));
         title.setTitle(new org.orcid.jaxb.model.v3.rc1.common.Title("The title"));
-        title.setTranslatedTitle(new org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle("Translated", "EN"));
+        title.setTranslatedTitle(new org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle("Translated", "en"));
         rc1Work.setWorkTitle(title);
         rc1Work.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
 
@@ -78,10 +78,10 @@ public class V3VersionConverterChainTest {
                 .upgrade(new V3Convertible(rc1Work, "3.0_rc1"), "3.0_rc2")).getObjectToConvert();
 
         assertNotNull(rc2Work);
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US, rc2Work.getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, rc2Work.getCountry().getValue());
         assertEquals(new org.orcid.jaxb.model.v3.rc2.common.CreatedDate(gc1), rc2Work.getCreatedDate());
         assertEquals("Journal title", rc2Work.getJournalTitle().getContent());
-        assertEquals("EN", rc2Work.getLanguageCode());
+        assertEquals("en", rc2Work.getLanguageCode());
         assertEquals(new org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate(gc2), rc2Work.getLastModifiedDate());
         assertEquals("/0000-0000-0000-0000/rcX/work/123", rc2Work.getPath());
         assertEquals("2018", rc2Work.getPublicationDate().getYear().getValue());
@@ -93,26 +93,26 @@ public class V3VersionConverterChainTest {
         assertEquals("http://www.orcid.org", rc2Work.getUrl().getValue());
         assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED, rc2Work.getVisibility());
         assertEquals("This is the citation", rc2Work.getWorkCitation().getCitation());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.CitationType.FORMATTED_UNSPECIFIED, rc2Work.getWorkCitation().getWorkCitationType());
+        assertEquals(org.orcid.jaxb.model.common.CitationType.FORMATTED_UNSPECIFIED, rc2Work.getWorkCitation().getWorkCitationType());
         assertEquals(1, rc2Work.getWorkContributors().getContributor().size());
 
-        assertEquals(org.orcid.jaxb.model.v3.rc2.common.ContributorRole.ASSIGNEE,
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE,
                 rc2Work.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorRole());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.SequenceType.ADDITIONAL,
+        assertEquals(org.orcid.jaxb.model.common.SequenceType.ADDITIONAL,
                 rc2Work.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorSequence());
         assertEquals("contributor@orcid.org", rc2Work.getWorkContributors().getContributor().get(0).getContributorEmail().getValue());
         assertEquals("0000-0000-0000-0000", rc2Work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
         assertEquals("Credit Name", rc2Work.getWorkContributors().getContributor().get(0).getCreditName().getContent());
         assertEquals(1, rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF, rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals(org.orcid.jaxb.model.common.Relationship.SELF, rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("type", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("http://www.orcid.org", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("extId1", rc2Work.getWorkExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("The subtitle", rc2Work.getWorkTitle().getSubtitle().getContent());
         assertEquals("The title", rc2Work.getWorkTitle().getTitle().getContent());
         assertEquals("Translated", rc2Work.getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("EN", rc2Work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS, rc2Work.getWorkType());
+        assertEquals("en", rc2Work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS, rc2Work.getWorkType());
         
         rc2Work = null;
         
@@ -140,7 +140,7 @@ public class V3VersionConverterChainTest {
         assertEquals(new org.orcid.jaxb.model.v3.rc2.common.CreatedDate(gc1), rc2WorkSummary.getCreatedDate());
         assertEquals("1", rc2WorkSummary.getDisplayIndex());
         assertEquals(1, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals(org.orcid.jaxb.model.common.Relationship.SELF, rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("type", rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("http://www.orcid.org", rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("extId1", rc2WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
@@ -155,8 +155,8 @@ public class V3VersionConverterChainTest {
         assertEquals("The subtitle", rc2WorkSummary.getTitle().getSubtitle().getContent());
         assertEquals("The title", rc2WorkSummary.getTitle().getTitle().getContent());
         assertEquals("Translated", rc2WorkSummary.getTitle().getTranslatedTitle().getContent());
-        assertEquals("EN", rc2WorkSummary.getTitle().getTranslatedTitle().getLanguageCode());
-        assertEquals(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS, rc2WorkSummary.getType());
+        assertEquals("en", rc2WorkSummary.getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS, rc2WorkSummary.getType());
         assertEquals("http://www.orcid.org", rc2WorkSummary.getUrl().getValue());
         assertEquals(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED, rc2WorkSummary.getVisibility());
     }
@@ -168,10 +168,10 @@ public class V3VersionConverterChainTest {
 
         // Work test
         org.orcid.jaxb.model.v3.rc2.record.Work rc2Work = new org.orcid.jaxb.model.v3.rc2.record.Work();
-        rc2Work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.v3.rc2.common.Iso3166Country.US));
+        rc2Work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.common.Iso3166Country.US));
         rc2Work.setCreatedDate(new org.orcid.jaxb.model.v3.rc2.common.CreatedDate(gc1));
         rc2Work.setJournalTitle(new org.orcid.jaxb.model.v3.rc2.common.Title("Journal title"));
-        rc2Work.setLanguageCode("EN");
+        rc2Work.setLanguageCode("en");
         rc2Work.setLastModifiedDate(new org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate(gc2));
         rc2Work.setPath("/0000-0000-0000-0000/rcX/work/123");
         rc2Work.setPublicationDate(new org.orcid.jaxb.model.v3.rc2.common.PublicationDate(new org.orcid.jaxb.model.v3.rc2.common.Year(2018),
@@ -182,11 +182,11 @@ public class V3VersionConverterChainTest {
         rc2Work.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         rc2Work.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED);
         rc2Work.setWorkCitation(
-                new org.orcid.jaxb.model.v3.rc2.record.Citation("This is the citation", org.orcid.jaxb.model.v3.rc2.record.CitationType.FORMATTED_UNSPECIFIED));
+                new org.orcid.jaxb.model.v3.rc2.record.Citation("This is the citation", org.orcid.jaxb.model.common.CitationType.FORMATTED_UNSPECIFIED));
         org.orcid.jaxb.model.v3.rc2.common.Contributor c = new org.orcid.jaxb.model.v3.rc2.common.Contributor();
         org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes ca = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes();
-        ca.setContributorRole(org.orcid.jaxb.model.v3.rc2.common.ContributorRole.ASSIGNEE);
-        ca.setContributorSequence(org.orcid.jaxb.model.v3.rc2.record.SequenceType.ADDITIONAL);
+        ca.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE);
+        ca.setContributorSequence(org.orcid.jaxb.model.common.SequenceType.ADDITIONAL);
         c.setContributorAttributes(ca);
         c.setContributorEmail(new org.orcid.jaxb.model.v3.rc2.common.ContributorEmail("contributor@orcid.org"));
         c.setContributorOrcid(new org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid("0000-0000-0000-0000"));
@@ -196,13 +196,13 @@ public class V3VersionConverterChainTest {
         rc2Work.setWorkContributors(wc);
         org.orcid.jaxb.model.v3.rc2.record.ExternalIDs extIds = new org.orcid.jaxb.model.v3.rc2.record.ExternalIDs();
         org.orcid.jaxb.model.v3.rc2.record.ExternalID extId1 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
-        extId1.setRelationship(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF);
+        extId1.setRelationship(org.orcid.jaxb.model.common.Relationship.SELF);
         extId1.setType("type");
         extId1.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         extId1.setValue("extId1");
         extIds.getExternalIdentifier().add(extId1);
         org.orcid.jaxb.model.v3.rc2.record.ExternalID extId2 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
-        extId2.setRelationship(org.orcid.jaxb.model.v3.rc2.record.Relationship.PART_OF);
+        extId2.setRelationship(org.orcid.jaxb.model.common.Relationship.PART_OF);
         extId2.setType("type");
         extId2.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         extId2.setValue("extId2");
@@ -211,9 +211,9 @@ public class V3VersionConverterChainTest {
         org.orcid.jaxb.model.v3.rc2.record.WorkTitle title = new org.orcid.jaxb.model.v3.rc2.record.WorkTitle();
         title.setSubtitle(new org.orcid.jaxb.model.v3.rc2.common.Subtitle("The subtitle"));
         title.setTitle(new org.orcid.jaxb.model.v3.rc2.common.Title("The title"));
-        title.setTranslatedTitle(new org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle("Translated", "EN"));
+        title.setTranslatedTitle(new org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle("Translated", "en"));
         rc2Work.setWorkTitle(title);
-        rc2Work.setWorkType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+        rc2Work.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
         
         // Map and test
         org.orcid.jaxb.model.v3.rc1.record.Work rc1Work = (org.orcid.jaxb.model.v3.rc1.record.Work) (v3VersionConverterChain
@@ -223,7 +223,7 @@ public class V3VersionConverterChainTest {
         assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, rc1Work.getCountry().getValue());
         assertEquals(new org.orcid.jaxb.model.v3.rc1.common.CreatedDate(gc1), rc1Work.getCreatedDate());
         assertEquals("Journal title", rc1Work.getJournalTitle().getContent());
-        assertEquals("EN", rc1Work.getLanguageCode());
+        assertEquals("en", rc1Work.getLanguageCode());
         assertEquals(new org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate(gc2), rc1Work.getLastModifiedDate());
         assertEquals("/0000-0000-0000-0000/rcX/work/123", rc1Work.getPath());
         assertEquals("2018", rc1Work.getPublicationDate().getYear().getValue());
@@ -260,7 +260,7 @@ public class V3VersionConverterChainTest {
         assertEquals("The subtitle", rc1Work.getWorkTitle().getSubtitle().getContent());
         assertEquals("The title", rc1Work.getWorkTitle().getTitle().getContent());
         assertEquals("Translated", rc1Work.getWorkTitle().getTranslatedTitle().getContent());
-        assertEquals("EN", rc1Work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", rc1Work.getWorkTitle().getTranslatedTitle().getLanguageCode());
 
         assertEquals(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION, rc1Work.getWorkType());
 
@@ -277,7 +277,7 @@ public class V3VersionConverterChainTest {
         rc2WorkSummary.setPutCode(123L);
         rc2WorkSummary.setSource(new org.orcid.jaxb.model.v3.rc2.common.Source("0000-0000-0000-0000"));
         rc2WorkSummary.setTitle(title);
-        rc2WorkSummary.setType(org.orcid.jaxb.model.v3.rc2.record.WorkType.DISSERTATION_THESIS);
+        rc2WorkSummary.setType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
         rc2WorkSummary.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
         rc2WorkSummary.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED);
 
@@ -308,7 +308,7 @@ public class V3VersionConverterChainTest {
         assertEquals("The subtitle", rc1WorkSummary.getTitle().getSubtitle().getContent());
         assertEquals("The title", rc1WorkSummary.getTitle().getTitle().getContent());
         assertEquals("Translated", rc1WorkSummary.getTitle().getTranslatedTitle().getContent());
-        assertEquals("EN", rc1WorkSummary.getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en", rc1WorkSummary.getTitle().getTranslatedTitle().getLanguageCode());
         assertEquals(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION, rc1WorkSummary.getType());
         assertEquals("http://www.orcid.org", rc1WorkSummary.getUrl().getValue());
         assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED, rc1WorkSummary.getVisibility());

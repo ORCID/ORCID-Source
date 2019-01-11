@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.common_v2.Locale;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -30,7 +30,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
     @Resource
     protected LocaleContextResolver localeContextResolver;
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
     protected String getTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -56,7 +56,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
 
     // new method - persist which ever local they logged in with
     private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
-        Locale lastKnownLocale = profileEntityManager.retrieveLocale(orcidId);
+        AvailableLocales lastKnownLocale = profileEntityManager.retrieveLocale(orcidId);
         if (lastKnownLocale != null) {
             localeContextResolver.setLocale(request, response, LocaleUtils.toLocale(lastKnownLocale.value()));
         } else {
@@ -66,7 +66,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
             // must match <property name="cookieName" value="locale_v3"
             // />
             clr.setCookieName("locale_v3");
-            Locale cookieLocale = org.orcid.jaxb.model.common_v2.Locale.fromValue(clr.resolveLocale(request).toString());
+            AvailableLocales cookieLocale = AvailableLocales.fromValue(clr.resolveLocale(request).toString());
 
             // update the users preferences, so that
             // send out emails in their last chosen language

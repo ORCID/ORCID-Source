@@ -72,6 +72,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     fixedTitle: any;
     formData: any;
     geoArea: any;
+    groupingSuggestionExtIdsPresent: boolean;
+    groupingSuggestionPresent: boolean;
+    groupingSuggestion: any;
+    groupingSuggestionWorksToMerge: any;
     loadingScripts: any;
     moreInfo: any;
     moreInfoOpen: boolean;
@@ -129,6 +133,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             works: null
         };
         this.geoArea = ['All'];
+        this.groupingSuggestionExtIdsPresent = false;
+        this.groupingSuggestionPresent = false;
         this.loadingScripts = false;
         this.moreInfo = {};
         this.moreInfoOpen = false;
@@ -260,6 +266,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.bulkSelectedCount++;
             }
         }
+        console.log(this.bulkEditMap);
     }
 
     canBeCombined(work): any {
@@ -341,6 +348,25 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         }
+    };
+
+    mergeSuggestionConfirm(): void {
+        this.groupingSuggestionWorksToMerge = new Array();
+        for (var i in this.groupingSuggestion.putCodes) {
+            var putCode = this.groupingSuggestion.putCodes[i];
+            this.groupingSuggestionWorksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
+        }
+        forkJoin(this.groupingSuggestionWorksToMerge).subscribe(
+            dataGroup => {
+                this.worksService.notifyOther({worksToMerge:dataGroup});
+                this.worksService.notifyOther({groupingSuggestion:this.groupingSuggestion});    
+                this.worksService.notifyOther({mergeCount:this.groupingSuggestion.putCodes.length});
+                this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+            },
+            error => {
+                console.log('mergeSuggestionConfirm', error);
+            } 
+        );
     };
     
     deleteWorkConfirm(putCode, deleteGroup): void {
@@ -670,6 +696,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     loadGroupingSuggestions(): void {
+        this.groupingSuggestionPresent = false;
         if(this.publicView != "true") {
             this.worksService.getWorksGroupingSuggestions(
             )
@@ -679,26 +706,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             .subscribe(
                 data => {
                     if (data) {
-                        var worksToMerge = new Array();
-                        var externalIdsPresent = false;
-                        for (var i in data.putCodes.workPutCodes) {
-                            var workPutCode = data.putCodes.workPutCodes[i];
-                            var work = this.worksService.getWork(workPutCode);
-                            worksToMerge.push({ work: work, preferred: false});
-                            if (work.workExternalIdentifiers.length > 0) {
-                                externalIdsPresent = true;
-                            }
-                        }
-                        this.worksService.notifyOther({suggestionId:data.id});
-                        this.worksService.notifyOther({worksToMerge:worksToMerge});
-                        this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
-                        this.worksService.notifyOther({mergeCount:worksToMerge.length});
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeSuggestions'});
+                        this.groupingSuggestionPresent = true;
+                        this.groupingSuggestion = data;
                     }
                 },
                 error => {
-                    this.worksService.loading = false;
-                    console.log('worksLoadMore', error);
+                    console.log('loadGroupingSuggestions', error);
                 } 
             );
         }
@@ -1172,6 +1185,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                        this.loadMore();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                         this.bulkEditSelect();

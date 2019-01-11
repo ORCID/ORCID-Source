@@ -46,6 +46,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     editAffiliation: any;
     addAffType: any;
     togglzDialogPrivacyOption: boolean;
+    sortedCountryNames: any;
+    countryNamesToCountryCodes: any;
     
 
     constructor(
@@ -59,7 +61,27 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         this.disambiguatedAffiliation = null;
         this.editAffiliation = this.getEmptyAffiliation();
         this.addAffType = null;
+        this.initCountries();
     }
+    
+    initCountries(): void {
+        this.commonSrvc.getCountryNamesMappedToCountryCodes().pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.countryNamesToCountryCodes = data;
+                this.sortedCountryNames = [];
+                for (var key in this.countryNamesToCountryCodes) {
+                    this.sortedCountryNames.push(key);
+                }
+                this.sortedCountryNames.sort();
+            },
+            error => {
+                console.log('error fetching country names to country codes map', error);
+            } 
+        );
+    };
 
     getEmptyAffiliation(): any {
         return {
