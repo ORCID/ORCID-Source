@@ -1,7 +1,7 @@
 # ORCID API v3.0_rc2 Guide
 
-## Current State (Release Candidate Stable)
-v3.0_rc2 is the current development release of the ORCID API.
+## Current State (Release Candidate Unstable)
+v3.0_rc2 is the currently under development and it is not recommended for use.
 
 ## Endpoints
 
@@ -85,6 +85,11 @@ v3.0_rc2 is the current development release of the ORCID API.
 
 ## Changes from Version 3.0 RC1:
 
+### Identifiers
+- Addition of new identifier relationship *version-of*, which is intended to map works to identifiers of different versions and instances of the same work. Works with the same *version-of* identifier are grouped together.
+
+### Works
+- work type *dissertation* has been migrated to *dissertation-thesis*
 
 
 ## Sample files:
