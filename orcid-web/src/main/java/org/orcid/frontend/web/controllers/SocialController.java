@@ -196,10 +196,7 @@ public class SocialController extends BaseController {
             userMap.put("userName", person.getDisplayName());
             userMap.put("email", person.getAccountEmail());
             userMap.put("firstName", person.getGivenName());
-            userMap.put("lastName", person.getFamilyName());
-            
-            
-            google.getJWTInfo();
+            userMap.put("lastName", person.getFamilyName());                        
         }
 
         return userMap;

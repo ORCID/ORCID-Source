@@ -11,6 +11,7 @@ import org.orcid.frontend.spring.web.social.GoogleSignInImpl;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.ConnectionSignUp;
+import org.springframework.social.connect.UserProfile;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.social.facebook.api.Facebook;
@@ -47,6 +48,11 @@ public class SocialContext implements ConnectionSignUp, SignInAdapter {
 	@Override
 	public String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
 		userCookieGenerator.addCookie(userId, request.getNativeResponse(HttpServletResponse.class));
+		UserProfile p = connection.fetchUserProfile();//NOT WORKING! google+
+		System.out.println(connection.getDisplayName());
+		System.out.println(connection.getApi());
+		System.out.println(connection.getKey().getProviderId());
+		System.out.println(connection.getKey().getProviderUserId());
 		return null;
 	}
 
