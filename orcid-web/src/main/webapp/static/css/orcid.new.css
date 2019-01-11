@@ -6375,6 +6375,10 @@ a#reset-password-toggle-text:hover:active {
     float: left;
     width: 100%;
     word-wrap: break-word;
+
+}
+
+.public-content.column{
     display: flex;
     flex-direction: column;
 }
