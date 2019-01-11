@@ -15,7 +15,7 @@ public class GoogleSignInImpl extends GoogleTemplate implements GoogleSignIn {
     
     public void getJWTInfo() {
         RestTemplate restTemplate = getRestTemplate();
-        Object o = restTemplate.getForObject("https://www.googleapis.com/oauth2/v4/token", Object.class);
+        Object o = restTemplate.getForObject("https://www.googleapis.com/oauth2/v2/userinfo", Object.class);
         System.out.println(o);
     }
 

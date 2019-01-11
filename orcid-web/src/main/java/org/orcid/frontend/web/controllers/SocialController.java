@@ -189,6 +189,7 @@ public class SocialController extends BaseController {
             userMap.put("lastName", user.getLastName());
         } else if (SocialType.GOOGLE.equals(connectionType)) {
             GoogleSignIn google = socialContext.getGoogle();
+            google.getJWTInfo();
             System.out.println("socialContext.getUserId(): " + socialContext.getUserId());
             Person person = google.plusOperations().getGoogleProfile();
             userMap.put("providerUserId", person.getId());
