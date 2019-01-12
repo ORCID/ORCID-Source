@@ -279,7 +279,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV3_0_rc2 {
         externalIdentifier.setValue(value);
         externalIdentifier.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://ext-id/" + value));        
         externalIdentifier.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC);
-        externalIdentifier.setRelationship(org.orcid.jaxb.model.v3.rc2.record.Relationship.SELF);
+        externalIdentifier.setRelationship(org.orcid.jaxb.model.common.Relationship.SELF);
         externalIdentifier.setSource(null);        
         externalIdentifier.setPath(null);
         externalIdentifier.setLastModifiedDate(null);

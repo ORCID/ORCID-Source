@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
 import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
@@ -141,7 +141,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         }
 
         if (address.getCountry() != null) {
-            form.setCountry(Text.valueOf(address.getCountry().value()));
+            form.setCountry(Text.valueOf(address.getCountry().name()));
         } else {
             form.setCountry(new Text());
         }
@@ -227,7 +227,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         }
 
         if (address.getCountry() != null) {
-            form.setCountry(Text.valueOf(address.getCountry().value()));
+            form.setCountry(Text.valueOf(address.getCountry().name()));
         } else {
             form.setCountry(new Text());
         }

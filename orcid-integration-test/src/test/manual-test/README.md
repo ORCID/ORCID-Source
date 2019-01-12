@@ -163,11 +163,19 @@
 
 72. Use the switch user option to change to the record created during the OAuth process
 
-73. Using IE 11 visit the follow pages and make sure everything loads
+73. Sign in to Browsersrtack.com and using IE 11 visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
 	* sign into [orcid id] account and check that it also looks as expected
+
+74. Using browserstack check the following pages on one Android and one Apple device to check load times
+	* https://qa.orcid.org (check that blog feed loads as well as page contents)
+	* https://qa.orcid.org/[orcid id]
+	* https://qa.orcid.org/register
+	* https://qa.orcid.org/sign-in
+
+75. Run the Self-service tests here https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/manual-test/Self-service-manual-test.md
 
 * Finally help out by improving these instructions!      

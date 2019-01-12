@@ -94,7 +94,7 @@ v3.0_rc1 is the current development release of the ORCID API.
 ### Affiliations
 - Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections. For more information see [Affiliations tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/affiliations.md)
 - Summary information now available for each section including affiliation source, role-title, department-name, dates, organization and external-ids
-- *common:start-date* of the year as a minimum is required when writing items
+- *common:start-date* is required if *common:end-date* is provided
 - Addition of optional element *common:url* for recording links about the affiliation
 - Addition of optional element *common:external-ids* for recording identifiers for the affiliation
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
@@ -113,6 +113,7 @@ v3.0_rc1 is the current development release of the ORCID API.
 - Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
 - Use of common namespace for *common:organization*, replacing *funding:organization*
 - Use of common namespace for *common:url* replacing *funding:url* and this field is now returned in the funding summary
+- *common:start-date* is required if *common:end-date* is provided
 
 ### Peer-review
 - *reviewer-role* and *review-type* are returned with the peer-review summary

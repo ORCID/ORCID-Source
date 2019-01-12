@@ -4,11 +4,11 @@ import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class JSONWorkExternalIdentifiersConverterV1 {

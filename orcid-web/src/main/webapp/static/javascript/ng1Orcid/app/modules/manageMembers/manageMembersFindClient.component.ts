@@ -33,6 +33,7 @@ export class ManageMembersFindClientComponent
   _client;
   scopes = [];
   selectedScopes = [];
+  modalSubscription : Subscription
   actTypeList = ["Articles", "Books", "Data", "Student Publications"].map(
     geo => {
       return { name: geo };
@@ -115,8 +116,7 @@ export class ManageMembersFindClientComponent
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this.modalSubscription.unsubscribe()
   }
 
   ngOnInit() {
@@ -128,13 +128,25 @@ export class ManageMembersFindClientComponent
       });
     });
 
-    this.modalService.notifyObservable$.subscribe(data => {
+    this.modalSubscription = this.modalService.notifyObservable$.subscribe(data => {
       if (
         data &&
         data.moduleId === "modalFindMemberConfirm" &&
         data.action === "close" &&
         data.input === "update"
       ) {
+        
+        if (data.object.redirectUris) {
+          data.object.redirectUris.forEach(element => {
+            if (element.actType && !element.actType.value) {
+              element.actType.value = "\"\""
+            }
+            if (element.geoArea && !element.geoArea.value) {
+              element.geoArea.value = "\"\""
+            }
+          });
+        }
+
         this.manageMembers.updateClient(data.object).subscribe(
           (response: any) => {
             if (response.errors.length === 0) {

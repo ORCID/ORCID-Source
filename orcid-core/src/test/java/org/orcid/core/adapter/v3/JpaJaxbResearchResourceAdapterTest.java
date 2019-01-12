@@ -2,47 +2,31 @@ package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc2.record.ResearchResourceHosts;
-import org.orcid.jaxb.model.v3.rc2.record.Role;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
-import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
-import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
-
-import de.undercouch.citeproc.bibtex.DateParser;
 
 /**
  * 
@@ -66,7 +50,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertNotNull(m.getLastModifiedDate().getValue());
         assertEquals("title",m.getProposal().getTitle().getTitle().getContent());
         assertEquals("translatedTitle",m.getProposal().getTitle().getTranslatedTitle().getContent());
-        assertEquals("EN",m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en",m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("2020",m.getProposal().getEndDate().getYear().getValue());
         assertEquals("2019",m.getProposal().getStartDate().getYear().getValue());
         assertEquals("http://blah.com",m.getProposal().getUrl().getValue());
@@ -81,7 +65,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         
         assertEquals(1,m.getResourceItems().size());
         assertEquals("resourceName",m.getResourceItems().get(0).getResourceName());
-        assertEquals("resourceType",m.getResourceItems().get(0).getResourceType());
+        assertEquals("equipment",m.getResourceItems().get(0).getResourceType().name());
         assertEquals("http://blah.com",m.getResourceItems().get(0).getUrl().getValue());
         assertEquals("source-work-id",m.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("id",m.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
@@ -167,7 +151,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertNotNull(m.getLastModifiedDate().getValue());
         assertEquals("title",m.getProposal().getTitle().getTitle().getContent());
         assertEquals("translatedTitle",m.getProposal().getTitle().getTranslatedTitle().getContent());
-        assertEquals("EN",m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("en",m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("2020",m.getProposal().getEndDate().getYear().getValue());
         assertEquals("2019",m.getProposal().getStartDate().getYear().getValue());
         assertEquals("http://blah.com",m.getProposal().getUrl().getValue());
@@ -195,7 +179,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         rre.setStartDate(new StartDateEntity(2019, 1, 1));
         rre.setTitle("title");
         rre.setTranslatedTitle("translatedTitle");
-        rre.setTranslatedTitleLanguageCode("EN");
+        rre.setTranslatedTitleLanguageCode("en");
         rre.setProfile(new ProfileEntity("0000-0001-0002-0003"));
         rre.setDateCreated(createdDate);
         rre.setLastModified(createdDate);
@@ -218,7 +202,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         rre.setResourceItems(new ArrayList<ResearchResourceItemEntity>());
         ResearchResourceItemEntity ie = new ResearchResourceItemEntity();
         ie.setResourceName("resourceName");
-        ie.setResourceType("resourceType");
+        ie.setResourceType("equipment");
         ie.setUrl("http://blah.com");
         //ie.setId(id);
         ie.setHosts(new ArrayList<OrgEntity>());

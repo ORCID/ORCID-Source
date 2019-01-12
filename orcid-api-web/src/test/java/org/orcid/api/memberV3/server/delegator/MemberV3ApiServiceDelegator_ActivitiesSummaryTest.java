@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.Service;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
@@ -60,7 +61,6 @@ import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
-import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
@@ -378,9 +378,9 @@ public class MemberV3ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
             WorkSummary summary = new WorkSummary();
             summary.setLastModifiedDate(lmd);
             WorkTitle title = new WorkTitle();
-            title.setTitle(new Title("Work " + i));
-            title.setTranslatedTitle(new TranslatedTitle("", ""));
+            title.setTitle(new Title("Work " + i));            
             summary.setTitle(title);
+            title.setTranslatedTitle(new TranslatedTitle(""));
             group.getWorkSummary().add(summary);
         }
         works.getWorkGroup().add(group);

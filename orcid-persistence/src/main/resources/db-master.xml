@@ -266,9 +266,10 @@
 	<include file="/db/updates/fix-public-client-redirect-uri-type.xml" />
 	<include file="/db/updates/find-my-stuff-history.xml" />
 	<include file="/db/updates/grant_select_grouping_suggestion.xml" />
-	<include file="/db/updates/recreate_grouping_suggestion_table.xml" />
+	<include file="/db/updates/recreate_grouping_suggestion_table.xml" />	
 	<include file="/db/updates/add_obo_client_details_id_to_token.xml" />
 	<include file="/db/updates/add_assertion_origin_columns.xml" />
 	<include file="/db/updates/update_assertion_origin_constraints.xml" />
 	<include file="/db/updates/validated_public_profile_table.xml" />
+	<include file="/db/updates/dissertation_to_dissertation-thesis.xml" />
 </databaseChangeLog>
