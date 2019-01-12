@@ -273,6 +273,8 @@
 		<property name="entityManager" ref="entityManagerReadOnly" />		
 	</bean>
 	
+	<bean id="validatedPublicProfileDao" class="org.orcid.persistence.dao.impl.ValidatedPublicProfileDaoImpl" />
+	
 	<bean id="rejectedGroupingSuggestionDao" class="org.orcid.persistence.dao.impl.RejectedGroupingSuggestionDaoImpl" />
     
     <bean id="rejectedGroupingSuggestionDaoReadOnly" class="org.orcid.persistence.dao.impl.RejectedGroupingSuggestionDaoImpl">
