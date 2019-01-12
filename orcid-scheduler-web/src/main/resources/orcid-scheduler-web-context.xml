@@ -29,6 +29,7 @@
      	<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
 
+        <task:scheduled ref="publicProfileValidator" method="validatePublicRecords" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
     </task:scheduled-tasks>
 
     <task:scheduler id="scheduler" pool-size="10"/>
