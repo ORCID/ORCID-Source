@@ -94,7 +94,7 @@ public class PublicProfileValidator {
                 validation.setValid(true);
             } catch (SAXException e) {
                 validation.setValid(false);
-                validation.setError(e.getMessage());
+                validation.setError(e.getCause().getCause().getMessage());
             }
         } else {
             LOGGER.warn("Unexpected response code {} from public API, aborting validation for public record {}", response.getStatus(), orcid);
