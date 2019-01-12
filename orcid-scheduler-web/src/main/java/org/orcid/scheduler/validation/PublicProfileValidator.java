@@ -49,7 +49,7 @@ public class PublicProfileValidator {
 
     private boolean developmentMode;
     
-    @Value("org.orcid.scheduler.api.profile.validation.batchSize:100")
+    @Value("${org.orcid.scheduler.api.profile.validation.batchSize:100}")
     private int batchSize;
 
     public PublicProfileValidator(String baseUri, boolean developmentMode) throws URISyntaxException {
