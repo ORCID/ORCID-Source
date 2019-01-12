@@ -23,6 +23,7 @@ import org.orcid.persistence.dao.ValidatedPublicProfileDao;
 import org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.xml.sax.SAXException;
@@ -47,6 +48,9 @@ public class PublicProfileValidator {
     private Schema schema;
 
     private boolean developmentMode;
+    
+    @Value("org.orcid.scheduler.api.profile.validation.batchSize:100")
+    private int batchSize;
 
     public PublicProfileValidator(String baseUri, boolean developmentMode) throws URISyntaxException {
         this.baseUri = new URI(baseUri);
@@ -64,19 +68,15 @@ public class PublicProfileValidator {
 
     public void validatePublicRecords() {
         jerseyClient = PublicProfileValidationClient.create(developmentMode);
-        List<String> orcidIds = validatedPublicProfileDao.getNextRecordsToValidate();
+        List<String> orcidIds = validatedPublicProfileDao.getNextRecordsToValidate(batchSize);
         for (String orcid : orcidIds) {
             try {
                 ValidatedPublicProfileEntity validation = validatePublicProfile(orcid);
                 if (validation != null) {
                     validatedPublicProfileDao.merge(validation);
                 }
-            } catch (JAXBException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (Exception e) {
+                LOGGER.error("Error validating public records", e);
             }
         }
     }

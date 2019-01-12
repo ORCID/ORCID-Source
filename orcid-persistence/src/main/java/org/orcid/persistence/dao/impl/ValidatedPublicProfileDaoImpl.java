@@ -14,10 +14,10 @@ public class ValidatedPublicProfileDaoImpl extends GenericDaoImpl<ValidatedPubli
     }
 
     @SuppressWarnings("unchecked")
-    public List<String> getNextRecordsToValidate() {
+    public List<String> getNextRecordsToValidate(int batchSize) {
         Query query = entityManager
                 .createNativeQuery("SELECT p.orcid FROM profile p LEFT JOIN validated_public_profile v ON  p.orcid = v.orcid WHERE v IS NULL");
-        query.setMaxResults(BATCH_SIZE);
+        query.setMaxResults(batchSize);
         return query.getResultList();
     }
 }
