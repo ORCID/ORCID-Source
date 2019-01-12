@@ -21,6 +21,7 @@ public class ValidatedPublicProfileEntity extends BaseEntity<String> implements 
     
     @Override
     @Id
+    @Column(name = "orcid", length = 19)
     public String getId() {
         return orcid;
     }
@@ -45,15 +46,6 @@ public class ValidatedPublicProfileEntity extends BaseEntity<String> implements 
 
     public void setError(String error) {
         this.error = error;
-    }
-
-    @Column
-    public String getOrcid() {
-        return orcid;
-    }
-
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
     }
 
 }
