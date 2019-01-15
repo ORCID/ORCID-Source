@@ -279,6 +279,7 @@ function enableSignin() {
 // function for javascript cookies
 var OrcidCookie = new function() {
     this.getCookie = function(c_name) {
+        console.log(document.cookie)
         var i, x, y, ARRcookies = document.cookie.split(";");
         for (i = 0; i < ARRcookies.length; i++) {
             x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
@@ -355,12 +356,16 @@ function myTest() {
 }
 
 function checkOrcidLoggedIn() {	
+    console.log('CSRF cookie: ' + OrcidCookie.getCookie('XSRF-TOKEN'));
     if (OrcidCookie.checkIfCookiesEnabled()) {    
-        if ($("meta[name='_csrf']").attr("content") != ''){
+        if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {
             $.ajax({
                 url : orcidVar.baseUri + '/userStatus.json?callback=?',
                 type : 'POST',
                 dataType : 'json',
+                headers: {
+                    'x-xsrf-token': OrcidCookie.getCookie('XSRF-TOKEN')
+                },
                 success : function(data) {
                     if (data.loggedIn == false
                             && (basePath.startsWith(baseUrl

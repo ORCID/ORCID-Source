@@ -3,8 +3,6 @@
     <title>${title!"ORCID"}</title>
     <meta name="description" content="">
     <meta name="author" content="ORCID">
-    <meta name="_csrf" content="${(_csrf.token)!}"/>
-    <meta name="_csrf_header" content="${(_csrf.headerName)!}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     
