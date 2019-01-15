@@ -13,7 +13,7 @@ import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.manager.WorkEntityCacheManager;
-import org.orcid.core.manager.v3.GroupingSuggestionsCacheManager;
+import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
@@ -54,7 +54,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     private final Integer maxWorksToRead;
     
     @Resource
-    private GroupingSuggestionsCacheManager groupingSuggestionsCacheManager;
+    private GroupingSuggestionManager groupingSuggestionsManager;
     
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
@@ -173,7 +173,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         Works works = processGroupedWorks(groupGenerator.getGroups());
 
         List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-        groupingSuggestionsCacheManager.putGroupingSuggestions(orcid, suggestions);
+        groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
         return works;
     }
     
