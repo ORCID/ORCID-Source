@@ -8707,6 +8707,14 @@ span.notYouUrl > a {
     margin-top: -2px;
 }
 
+.externalIdWorkForm .buttons-container {
+    margin-top: 15px;
+}
+
+.externalIdWorkForm input#work-title {
+    margin-top: 10px;
+}
+
 _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     z-index: unset;
- }
+}

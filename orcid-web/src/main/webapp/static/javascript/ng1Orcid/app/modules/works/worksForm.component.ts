@@ -464,20 +464,10 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
                 this.bibtexWork = res.bibtexWork;
-                if(res.moduleId == "modalWorksForm'") {
-                    if(res.action == "open" && res.edit == false) {
-                        this.worksService.getBlankWork()
-                        .pipe(    
-                            takeUntil(this.ngUnsubscribe)
-                        )
-                        .subscribe(
-                            data => {
-                                this.editWork = data
-                            },
-                            error => {
-                                console.log('Error getting blankwork', error);
-                            } 
-                        );
+                if (res.moduleId == "modalWorksForm") {
+                    if (res.externalWork) {
+                        this.editWork = res.externalWork;
+                        this.loadWorkTypes();
                     }
                 }
             }
