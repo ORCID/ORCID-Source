@@ -858,6 +858,7 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody WorkForm fetchWorkData(@PathVariable("type") String type, @RequestParam("value") String value) {
         Work w = resolverService.resolveMetadata(type, value);
         WorkForm workForm = WorkForm.valueOf(w);
+        initializeFields (workForm);
         validateWork(workForm);
         return workForm;
     }

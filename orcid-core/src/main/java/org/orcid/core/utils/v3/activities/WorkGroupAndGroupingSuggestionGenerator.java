@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
@@ -50,7 +51,7 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
             }
         }
     }
-    
+
     public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid) {
         List<WorkGroupingSuggestion> suggestions = new ArrayList<>();
         for (String title : potentialGroupingSuggestions.keySet()) {
@@ -59,14 +60,28 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
                 WorkGroupingSuggestion suggestion = new WorkGroupingSuggestion();
                 suggestion.setOrcid(orcid);
                 List<Long> putCodes = new ArrayList<>();
+
+                boolean groupableExternalIdFound = false;
                 for (ActivitiesGroup group : groups) {
                     for (GroupableActivity activity : group.getActivities()) {
                         WorkSummary workSummary = (WorkSummary) activity;
                         putCodes.add(workSummary.getPutCode());
+                        if (!groupableExternalIdFound) {
+                            for (ExternalID externalId : workSummary.getExternalIdentifiers().getExternalIdentifier()) {
+                                if (externalId.isGroupAble()) {
+                                    groupableExternalIdFound = true;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
-                suggestion.setPutCodes(putCodes);
-                suggestions.add(suggestion);
+
+                // without at least one groupable external id present works can't be grouped
+                if (groupableExternalIdFound) {
+                    suggestion.setPutCodes(putCodes);
+                    suggestions.add(suggestion);
+                }
             }
         }
         return suggestions;

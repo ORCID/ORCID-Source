@@ -43,6 +43,9 @@ public class OrgDisambiguatedSolrDocument {
 
     @Field(SolrConstants.IS_FUNDING_ORG)
     private boolean isFundingOrg;
+    
+    @Field(SolrConstants.ORG_CHOSEN_BY_MEMBER)
+    private boolean isOrgChosenByMember;
 
     public Long getOrgDisambiguatedId() {
         return orgDisambiguatedId;
@@ -138,4 +141,12 @@ public class OrgDisambiguatedSolrDocument {
         this.orgDisambiguatedIdSourceType = orgDisambiguatedIdSourceType;
     }
 
+    public boolean isOrgChosenByMember() {
+        return isOrgChosenByMember;
+    }
+
+    public void setOrgChosenByMember(boolean isOrgChosenByMember) {
+        this.isOrgChosenByMember = isOrgChosenByMember;
+    }
+    
 }
