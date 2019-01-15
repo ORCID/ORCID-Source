@@ -30,6 +30,9 @@ export class PublicRecordComponent {
     this.personService.getPerson().subscribe(data => {
       if (data) {
         this.personData = data;
+        if(this.personData.title){
+          document.title=this.personData.title;
+        }
       }
     });
   }

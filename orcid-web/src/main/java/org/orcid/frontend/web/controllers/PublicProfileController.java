@@ -247,6 +247,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (request.getRequestURI().contains("/print")) {
             mav = new ModelAndView("print_public_record");
             mav.addObject("hideSupportWidget", true);
+            mav.addObject("noIndex", true);
         } else {
             mav = new ModelAndView("public_profile_v3");
         }
@@ -439,7 +440,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             if (!PojoUtil.isEmpty(displayName)) {
                 // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
                 // and Researchers
-                publicRecordPersonDetails.setTitle(getMessage("layout.public-layout.title", displayName.trim(), orcid));
+                publicRecordPersonDetails.setTitle(displayName + " (" + orcid + ") - " + getMessage("layout.public-layout.title"));
                 publicRecordPersonDetails.setDisplayName(displayName);
             }
             
