@@ -27,7 +27,7 @@
 		        <@emailMacros.msg "email.deactivate.more_info" /><br/><a href="https://support.orcid.org/hc/articles/360006973813" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>
   			</p>
 	        <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.deactivate.if_you_did" />	<a href=" https://orcid.org/help/contact-us" target="_blank">https://orcid.org/help/contact-us</a> <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
+                <@emailMacros.msg "email.deactivate.if_you_did" /> <a href="https://orcid.org/help/contact-us" target="_blank">https://orcid.org/help/contact-us</a> <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
 		    </p>
 	  		<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
 <@emailMacros.msg "email.common.warm_regards" />

@@ -224,6 +224,8 @@
     <bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />
     
     <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />
+    
+    <bean id="memberChosenOrgDisambiguatedDao" class="org.orcid.persistence.dao.impl.MemberChosenOrgDisambiguatedDaoImpl" />
     	                     
     <bean id="orgDisambiguatedDaoReadOnly" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl">
     	<property name="entityManager" ref="entityManagerReadOnly" />

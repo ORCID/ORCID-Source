@@ -72,14 +72,12 @@
                                                 <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
                                                 <ul class="menu-options funding">
                                                     <!-- Search & Link -->
-                                                    <#if fundingImportWizards?has_content>
-                                                        <li>                                                
+                                                        <li *ngIf="noLinkFlag">
                                                             <a class="action-option manage-button" (click)="showFundingImportWizard()">
                                                                 <span class="glyphicon glyphicon-cloud-upload"></span>
                                                                 <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                                             </a>
-                                                        </li>
-                                                    </#if>                      
+                                                        </li>                     
                                                     <!-- Add Manually -->
                                                     <li>
                                                         <a id="add-funding" class="action-option manage-button" (click)="addFundingModal()">
@@ -94,14 +92,12 @@
                                 </li>
                                 <!-- Mobile Version Workaround -->
                                 <!-- Search & Link -->
-                                <#if fundingImportWizards?has_content>
-                                    <li class="hidden-md hidden-sm visible-xs-inline">                                               
-                                        <a class="action-option manage-button action-funding-mobile" (click)="showFundingImportWizard()">
-                                            <span class="glyphicon glyphicon-cloud-upload"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.search_link'/>
-                                        </a>
-                                    </li>
-                                </#if>                      
+                                <li *ngIf="noLinkFlag" class="hidden-md hidden-sm visible-xs-inline">                                               
+                                    <a class="action-option manage-button action-funding-mobile" (click)="showFundingImportWizard()">
+                                        <span class="glyphicon glyphicon-cloud-upload"></span>
+                                        <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                                    </a>
+                                </li>                     
                                 <!-- Add Manually -->
                                 <li class="hidden-md hidden-sm visible-xs-inline">
                                     <a class="action-option manage-button action-funding-mobile" (click)="addFundingModal()">
@@ -164,11 +160,8 @@
                 <div *ngIf="fundingService?.loading == false && groups.length == 0">
                     <strong>
                         <#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' />
-                            <#if fundingImportWizards?has_content>
-                                <a (click)="showFundingImportWizard()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
-                            <#else>
-                                <span><@orcid.msg 'workspace_fundings_body_list.addsomenow'/></span>
-                            </#if>
+                            <a *ngIf="noLinkFlag" (click)="showFundingImportWizard()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
+                            <span *ngIf="!noLinkFlag"><@orcid.msg 'workspace_fundings_body_list.addsomenow'/></span>
                         </#if>
                     </strong>
                 </div>

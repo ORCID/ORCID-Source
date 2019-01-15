@@ -5,10 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -28,6 +30,9 @@ public class GroupingSuggestionManagerTest {
 
     @InjectMocks
     private GroupingSuggestionManagerImpl groupingSuggestionManager;
+    
+    @Captor
+    private ArgumentCaptor<List<WorkGroupingSuggestion>> suggestionListCaptor;
 
     @Before
     public void beforeClass() {
@@ -35,38 +40,48 @@ public class GroupingSuggestionManagerTest {
     }
 
     @Test
-    public void testGetGroupingSuggestionNoRejection() {
-        WorkGroupingSuggestion suggestion = getWorkGroupingSuggestion(new Long[] { 1L, 2L });
-        Mockito.when(groupingSuggestionsCacheManager.getGroupingSuggestion(Mockito.eq("orcid"))).thenReturn(suggestion);
+    public void testCacheGroupingSuggestionsNoRejection() {
         Mockito.when(groupingSuggestionDao.findGroupingSuggestionIdAndOrcid(Mockito.eq("orcid"), Mockito.eq("1,2"))).thenReturn(null);
-        WorkGroupingSuggestion retrieved = groupingSuggestionManager.getGroupingSuggestion("orcid");
+        Mockito.doNothing().when(groupingSuggestionsCacheManager).putGroupingSuggestions(Mockito.eq("orcid"), suggestionListCaptor.capture());
+        
+        WorkGroupingSuggestion suggestion = getWorkGroupingSuggestion(new Long[] { 1L, 2L });
+        groupingSuggestionManager.cacheGroupingSuggestions("orcid", Arrays.asList(suggestion));
+        
+        List<WorkGroupingSuggestion> retrieved = suggestionListCaptor.getValue();
         assertNotNull(retrieved);
-        assertEquals("1,2", retrieved.getPutCodesAsString());
+        assertEquals(1, retrieved.size());
+        assertEquals("1,2", retrieved.get(0).getPutCodesAsString());
     }
     
     @Test
-    public void testGetGroupingSuggestionOneRejection() {
-        WorkGroupingSuggestion first = getWorkGroupingSuggestion(new Long[] { 1L, 2L });
-        WorkGroupingSuggestion second = getWorkGroupingSuggestion(new Long[] { 3L, 4L });
-        Mockito.when(groupingSuggestionsCacheManager.getGroupingSuggestion(Mockito.eq("orcid"))).thenReturn(first).thenReturn(second);
+    public void testCacheGroupingSuggestionsOneRejection() {
         Mockito.when(groupingSuggestionDao.findGroupingSuggestionIdAndOrcid(Mockito.eq("orcid"), Mockito.eq("1,2"))).thenReturn(getRejectedGroupingSuggestion("orcid", "1,2"));
         Mockito.when(groupingSuggestionDao.findGroupingSuggestionIdAndOrcid(Mockito.eq("orcid"), Mockito.eq("3,4"))).thenReturn(null);
-        WorkGroupingSuggestion retrieved = groupingSuggestionManager.getGroupingSuggestion("orcid");
+        Mockito.doNothing().when(groupingSuggestionsCacheManager).putGroupingSuggestions(Mockito.eq("orcid"), suggestionListCaptor.capture());
+        
+        WorkGroupingSuggestion first = getWorkGroupingSuggestion(new Long[] { 1L, 2L });
+        WorkGroupingSuggestion second = getWorkGroupingSuggestion(new Long[] { 3L, 4L });
+        groupingSuggestionManager.cacheGroupingSuggestions("orcid", Arrays.asList(first, second));
+        
+        List<WorkGroupingSuggestion> retrieved = suggestionListCaptor.getValue();
         assertNotNull(retrieved);
-        assertEquals("3,4", retrieved.getPutCodesAsString());
+        assertEquals(1, retrieved.size());
+        assertEquals("3,4", retrieved.get(0).getPutCodesAsString());
     }
     
     @Test
-    public void testGetGroupingSuggestionAllRejected() {
-        WorkGroupingSuggestion first = getWorkGroupingSuggestion(new Long[] { 1L, 2L });
-        WorkGroupingSuggestion second = getWorkGroupingSuggestion(new Long[] { 3L, 4L });
-        WorkGroupingSuggestion third = getWorkGroupingSuggestion(new Long[] { 5L, 6L });
-        
-        Mockito.when(groupingSuggestionsCacheManager.getGroupingSuggestion(Mockito.eq("orcid"))).thenReturn(first).thenReturn(second).thenReturn(third).thenReturn(null);
+    public void testCacheGroupingSuggestionsAllRejected() {
+        Mockito.doNothing().when(groupingSuggestionsCacheManager).putGroupingSuggestions(Mockito.eq("orcid"), suggestionListCaptor.capture());
         Mockito.when(groupingSuggestionDao.findGroupingSuggestionIdAndOrcid(Mockito.eq("orcid"), Mockito.eq("1,2"))).thenReturn(getRejectedGroupingSuggestion("orcid", "1,2"));
         Mockito.when(groupingSuggestionDao.findGroupingSuggestionIdAndOrcid(Mockito.eq("orcid"), Mockito.eq("3,4"))).thenReturn(getRejectedGroupingSuggestion("orcid", "3,4"));
         Mockito.when(groupingSuggestionDao.findGroupingSuggestionIdAndOrcid(Mockito.eq("orcid"), Mockito.eq("5,6"))).thenReturn(getRejectedGroupingSuggestion("orcid", "5,6"));
-        WorkGroupingSuggestion retrieved = groupingSuggestionManager.getGroupingSuggestion("orcid");
+        
+        WorkGroupingSuggestion first = getWorkGroupingSuggestion(new Long[] { 1L, 2L });
+        WorkGroupingSuggestion second = getWorkGroupingSuggestion(new Long[] { 3L, 4L });
+        WorkGroupingSuggestion third = getWorkGroupingSuggestion(new Long[] { 5L, 6L });
+        groupingSuggestionManager.cacheGroupingSuggestions("orcid", Arrays.asList(first, second, third));
+        
+        List<WorkGroupingSuggestion> retrieved = suggestionListCaptor.getValue();
         assertNull(retrieved);
     }
     
@@ -82,6 +97,21 @@ public class GroupingSuggestionManagerTest {
         assertNotNull(entity);
         assertEquals("1,2", entity.getId());
         assertEquals("orcid", entity.getOrcid());
+    }
+    
+    @Test
+    public void testCacheGroupingSuggestions() {
+        Mockito.doNothing().when(groupingSuggestionsCacheManager).putGroupingSuggestions(Mockito.eq("orcid"), suggestionListCaptor.capture());
+        Mockito.when(groupingSuggestionDao.findGroupingSuggestionIdAndOrcid(Mockito.eq("orcid"), Mockito.eq("1,2,3"))).thenReturn(getRejectedGroupingSuggestion("orcid", "1,2,3"));
+        Mockito.when(groupingSuggestionDao.findGroupingSuggestionIdAndOrcid(Mockito.eq("orcid"), Mockito.eq("4,5,6"))).thenReturn(null);
+        
+        WorkGroupingSuggestion first = getWorkGroupingSuggestion(new Long[] { 1L, 2L, 3L });
+        WorkGroupingSuggestion second = getWorkGroupingSuggestion(new Long[] { 4L, 5L, 6L });
+        groupingSuggestionManager.cacheGroupingSuggestions("orcid", Arrays.asList(first, second));
+        
+        List<WorkGroupingSuggestion> suggestions = suggestionListCaptor.getValue();
+        assertEquals(1, suggestions.size());
+        assertEquals("4,5,6", suggestions.get(0).getPutCodesAsString());
     }
 
     private WorkGroupingSuggestion getWorkGroupingSuggestion(Long[] putCodes) {

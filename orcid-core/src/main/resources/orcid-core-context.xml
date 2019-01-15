@@ -443,9 +443,7 @@
        <property name="rejectedGroupingSuggestionDao" ref="rejectedGroupingSuggestionDao" />
     </bean>
 
-    <bean id="groupingSuggestionManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.GroupingSuggestionManagerReadOnlyImpl">
-        <property name="rejectedGroupingSuggestionDao" ref="rejectedGroupingSuggestionDaoReadOnly" />
-    </bean>
+    <bean id="groupingSuggestionManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.GroupingSuggestionManagerReadOnlyImpl" />
 	
 	<bean id="orcidIdentifierUtils" class="org.orcid.core.utils.v3.OrcidIdentifierUtils" />
 	
@@ -938,6 +936,8 @@
 	<bean id="orgManager" class="org.orcid.core.manager.impl.OrgManagerImpl" />
 	
 	<bean id="orgDisambiguatedManager" class="org.orcid.core.manager.impl.OrgDisambiguatedManagerImpl" />
+	
+	<bean id="memberChosenOrgDisambiguatedManager" class="org.orcid.core.manager.impl.MemberChosenOrgDisambiguatedManagerImpl" />
 	
 	<bean id="sourceManager" class="org.orcid.core.manager.impl.SourceManagerImpl" />
 	
