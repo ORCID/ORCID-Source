@@ -370,7 +370,6 @@ export class WorksService {
     }
 
     getLabelMapping (workCategory, workType): any {
-        console.log("getting label mapping for " + workCategory + ", " + workType);
         var result = this.labelsMapping.default.types[0];
         var tempI = null;
 

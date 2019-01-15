@@ -98,6 +98,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
+    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean
     bibTexIntervals: object
 
     constructor( 
@@ -111,6 +112,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private worksService: WorksService
     ) {
 
+        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID')
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexExportLoading = false;
@@ -232,6 +234,26 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     } else {
                         this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: true, bibtexWork: this.bibtexWork});
                     }                    
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                console.log('getEmails', error);
+            } 
+        );
+    };
+
+    addWorkExternalIdModal(externalIdType): void {
+        this.emailService.getEmails()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalExternalIdForm', externalIdType: externalIdType});                
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
                 }

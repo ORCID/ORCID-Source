@@ -1,7 +1,6 @@
 package org.orcid.api.common.writer.rdf;
 
 import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
-import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 import static org.orcid.core.api.OrcidApiConstants.N_TRIPLES;
 import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
 import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
@@ -35,8 +34,8 @@ import org.apache.jena.rdf.model.ResIterator;
 import org.orcid.api.common.writer.rdf.vocabs.Geonames;
 import org.orcid.api.common.writer.rdf.vocabs.PAV;
 import org.orcid.api.common.writer.rdf.vocabs.PROV;
-import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;

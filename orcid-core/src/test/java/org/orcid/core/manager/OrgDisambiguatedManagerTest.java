@@ -18,26 +18,33 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.test.TargetProxyHelper;
 
 public class OrgDisambiguatedManagerTest extends BaseTest {
+    
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDaoReadOnly;
+    
+    @Resource
+    private OrgDisambiguatedDao orgDisambiguatedDao;
 
     @Mock
     private OrgDisambiguatedDao mockOrgDisambiguatedDaoReadOnly;
+    
+    @Mock
+    private OrgDisambiguatedDao mockOrgDisambiguatedDao;
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(orgDisambiguatedManager, "orgDisambiguatedDaoReadOnly", mockOrgDisambiguatedDaoReadOnly);
+        TargetProxyHelper.injectIntoProxy(orgDisambiguatedManager, "orgDisambiguatedDao", mockOrgDisambiguatedDao);
         when(mockOrgDisambiguatedDaoReadOnly.find(1L)).thenReturn(getOrgDisambiguatedEntity(true));
         when(mockOrgDisambiguatedDaoReadOnly.findBySourceIdAndSourceType("sourceId","sourceType")).thenReturn(getOrgDisambiguatedEntity(true));
         when(mockOrgDisambiguatedDaoReadOnly.find(2L)).thenReturn(getOrgDisambiguatedEntity(false));
@@ -46,6 +53,7 @@ public class OrgDisambiguatedManagerTest extends BaseTest {
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(orgDisambiguatedManager, "orgDisambiguatedDaoReadOnly", orgDisambiguatedDaoReadOnly);
+        TargetProxyHelper.injectIntoProxy(orgDisambiguatedManager, "orgDisambiguatedDao", orgDisambiguatedDao);
     }
 
     @Test
@@ -176,4 +184,5 @@ public class OrgDisambiguatedManagerTest extends BaseTest {
         entity.setPreferred(preferred);
         return entity;
     }
+    
 }

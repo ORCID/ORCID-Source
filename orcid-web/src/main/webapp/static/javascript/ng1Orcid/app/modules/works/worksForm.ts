@@ -14,6 +14,9 @@ import { CommonNg2Module }
 import { WorksFormComponent } 
     from './worksForm.component.ts';
 
+import { WorksExternalIdFormComponent}
+    from './worksExternalIdForm.component.ts'
+
 //User generated filters
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2.ts'; 
@@ -29,13 +32,15 @@ export const WorksFormModule = angular.module(
 @NgModule(
     {
         declarations: [
-            WorksFormComponent
+            WorksFormComponent,
+            WorksExternalIdFormComponent
         ],
         entryComponents: [ 
-            WorksFormComponent 
+            WorksFormComponent,
+            WorksExternalIdFormComponent
         ],
         imports: [
-            CommonNg2Module
+            CommonNg2Module,
         ],
         providers: [
         ]
@@ -51,6 +56,13 @@ WorksFormModule.directive(
     <any>downgradeComponent(
         {
             component: WorksFormComponent
+        }
+    )
+).directive(
+    'worksExternalIdFormNg2', 
+    <any>downgradeComponent(
+        {
+            component: WorksExternalIdFormComponent
         }
     )
 );

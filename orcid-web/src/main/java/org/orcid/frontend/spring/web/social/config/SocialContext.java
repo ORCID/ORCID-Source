@@ -6,6 +6,7 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.frontend.spring.web.social.GoogleSignIn;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.ConnectionSignUp;
@@ -20,90 +21,89 @@ import org.springframework.web.context.request.NativeWebRequest;
  */
 public class SocialContext implements ConnectionSignUp, SignInAdapter {
 
-	private static Random rand;
+    private static Random rand;
 
-	private final UserCookieGenerator userCookieGenerator;
+    private final UserCookieGenerator userCookieGenerator;
 
-	private static final ThreadLocal<String> currentUser = new ThreadLocal<String>();
+    private static final ThreadLocal<String> currentUser = new ThreadLocal<String>();
 
-	private final UsersConnectionRepository connectionRepository;
+    private final UsersConnectionRepository connectionRepository;
 
-	private final Facebook facebook;
+    private final Facebook facebook;
 
-	private final Google google;
-	
-	public SocialContext(UsersConnectionRepository connectionRepository, UserCookieGenerator userCookieGenerator,
-			Facebook facebook, Google google) {
-		this.connectionRepository = connectionRepository;
-		this.userCookieGenerator = userCookieGenerator;
-		this.facebook = facebook;
-		this.google = google;
+    private final GoogleSignIn google;
 
-		rand = new Random(Calendar.getInstance().getTimeInMillis());
-	}
+    public SocialContext(UsersConnectionRepository connectionRepository, UserCookieGenerator userCookieGenerator, Facebook facebook, GoogleSignIn google) {
+        this.connectionRepository = connectionRepository;
+        this.userCookieGenerator = userCookieGenerator;
+        this.facebook = facebook;
+        this.google = google;
 
-	@Override
-	public String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
-		userCookieGenerator.addCookie(userId, request.getNativeResponse(HttpServletResponse.class));
-		return null;
-	}
+        rand = new Random(Calendar.getInstance().getTimeInMillis());
+    }
 
-	@Override
-	public String execute(Connection<?> connection) {
-		return Long.toString(rand.nextLong());
-	}
+    @Override
+    public String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
+        userCookieGenerator.addCookie(userId, request.getNativeResponse(HttpServletResponse.class));
+        return null;
+    }
 
-	public SocialType isSignedIn(HttpServletRequest request, HttpServletResponse response) {
+    @Override
+    public String execute(Connection<?> connection) {
+        return Long.toString(rand.nextLong());
+    }
 
-		SocialType connectionType = null;
-		String userId = userCookieGenerator.readCookieValue(request);
-		if (isValidId(userId)) {
+    public SocialType isSignedIn(HttpServletRequest request, HttpServletResponse response) {
 
-			if (isConnectedFacebookUser(userId)) {
-				connectionType = SocialType.FACEBOOK;
-			} else if(isConnectedGoogleUser(userId)) {
-				connectionType = SocialType.GOOGLE;
-			} else {
-				userCookieGenerator.removeCookie(response);
-			}
-		}
+        SocialType connectionType = null;
+        String userId = userCookieGenerator.readCookieValue(request);
+        if (isValidId(userId)) {
 
-		currentUser.set(userId);
-		return connectionType;
-	}
+            if (isConnectedFacebookUser(userId)) {
+                connectionType = SocialType.FACEBOOK;
+            } else if (isConnectedGoogleUser(userId)) {
+                connectionType = SocialType.GOOGLE;
+            } else {
+                userCookieGenerator.removeCookie(response);
+            }
+        }
 
-	private boolean isValidId(String id) {
-		return isNotNull(id) && (id.length() > 0);
-	}
+        currentUser.set(userId);
+        return connectionType;
+    }
 
-	private boolean isNotNull(Object obj) {
-		return obj != null;
-	}
+    private boolean isValidId(String id) {
+        return isNotNull(id) && (id.length() > 0);
+    }
 
-	private boolean isConnectedFacebookUser(String userId) {
+    private boolean isNotNull(Object obj) {
+        return obj != null;
+    }
 
-		ConnectionRepository connectionRepo = connectionRepository.createConnectionRepository(userId);
-		Connection<Facebook> facebookConnection = connectionRepo.findPrimaryConnection(Facebook.class);
-		return facebookConnection != null;
-	}
-	
-	private boolean isConnectedGoogleUser(String userId) {
+    private boolean isConnectedFacebookUser(String userId) {
 
-		ConnectionRepository connectionRepo = connectionRepository.createConnectionRepository(userId);
-		Connection<Google> googleConnection = connectionRepo.findPrimaryConnection(Google.class);
-		return googleConnection != null;
-	}
+        ConnectionRepository connectionRepo = connectionRepository.createConnectionRepository(userId);
+        Connection<Facebook> facebookConnection = connectionRepo.findPrimaryConnection(Facebook.class);
+        return facebookConnection != null;
+    }
 
-	public String getUserId() {
+    private boolean isConnectedGoogleUser(String userId) {
 
-		return currentUser.get();
-	}
+        ConnectionRepository connectionRepo = connectionRepository.createConnectionRepository(userId);
+        Connection<Google> googleConnection = connectionRepo.findPrimaryConnection(Google.class);
+        return googleConnection != null;
+    }
 
-	public Facebook getFacebook() {
-		return facebook;
-	}
-	
-	public Google getGoogle() {
-		return google;
-	}
+    public String getUserId() {
+
+        return currentUser.get();
+    }
+
+    public Facebook getFacebook() {
+        return facebook;
+    }
+
+    public GoogleSignIn getGoogle() {
+        return google;
+    }
 }

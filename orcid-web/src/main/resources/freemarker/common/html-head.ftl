@@ -101,6 +101,7 @@
     <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeng.min.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
+    <link rel="stylesheet" href="${staticCdn}/css/academicons.css"/>
     
     <#if springMacroRequestContext.requestUri?contains("/print")>
         <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>

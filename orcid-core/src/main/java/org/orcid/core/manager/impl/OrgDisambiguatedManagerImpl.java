@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -116,6 +115,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         } else {
             document.setFundingOrg(false);
         }
+        
+        document.setOrgChosenByMember(entity.getMemberChosenOrgDisambiguatedEntity() != null);
 
         return document;
     }
@@ -229,4 +230,5 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         return org;
     }
+
 }

@@ -6375,6 +6375,10 @@ a#reset-password-toggle-text:hover:active {
     float: left;
     width: 100%;
     word-wrap: break-word;
+
+}
+
+.public-content.column{
     display: flex;
     flex-direction: column;
 }
@@ -8707,6 +8711,14 @@ span.notYouUrl > a {
     margin-top: -2px;
 }
 
+.externalIdWorkForm .buttons-container {
+    margin-top: 15px;
+}
+
+.externalIdWorkForm input#work-title {
+    margin-top: 10px;
+}
+
 _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     z-index: unset;
- }
+}

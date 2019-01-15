@@ -2,8 +2,6 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
-import javax.persistence.NoResultException;
-
 import org.orcid.pojo.OrgDisambiguated;
 
 /**
