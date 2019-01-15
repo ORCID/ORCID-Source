@@ -161,7 +161,6 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
-                    console.log (data)
                     this.peerReviewImportWizardList = data;
                     if(data == null || data.length == 0) {
                         this.noLinkFlag = false;

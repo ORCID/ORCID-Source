@@ -127,7 +127,6 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    console.log("init switch user");
     this.getDelegates();
 
     //close delegate dropdown
