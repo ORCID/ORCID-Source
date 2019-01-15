@@ -272,6 +272,7 @@
 	<include file="/db/updates/add_obo_client_details_id_to_token.xml" />
 	<include file="/db/updates/add_assertion_origin_columns.xml" />
 	<include file="/db/updates/update_assertion_origin_constraints.xml" />
+	<include file="/db/updates/validated_public_profile_table.xml" />
 	<include file="/db/updates/dissertation_to_dissertation-thesis.xml" />
 	<include file="/db/updates/identifier-types/identifier-type-43-proposal-id.xml" />
 	
