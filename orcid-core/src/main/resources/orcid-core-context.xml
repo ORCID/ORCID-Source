@@ -939,6 +939,8 @@
 	
 	<bean id="orgDisambiguatedManager" class="org.orcid.core.manager.impl.OrgDisambiguatedManagerImpl" />
 	
+	<bean id="memberChosenOrgDisambiguatedManager" class="org.orcid.core.manager.impl.MemberChosenOrgDisambiguatedManagerImpl" />
+	
 	<bean id="sourceManager" class="org.orcid.core.manager.impl.SourceManagerImpl" />
 	
 	<bean id="orcidSocialManager" class="org.orcid.core.manager.impl.OrcidSocialManagerImpl" />
