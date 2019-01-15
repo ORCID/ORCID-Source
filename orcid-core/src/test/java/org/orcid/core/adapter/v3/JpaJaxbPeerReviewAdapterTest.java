@@ -14,6 +14,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.jaxb.model.common.PeerReviewSubjectType;
 import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Role;
 import org.orcid.jaxb.model.common.WorkType;
@@ -188,5 +189,15 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setId(12345L);
         
         return result;
+    }
+    
+    @Test
+    public void dissertationThesisModelToEntityTest() throws JAXBException {
+        PeerReview p = getPeerReview(true);
+        p.setSubjectType(PeerReviewSubjectType.DISSERTATION_THESIS);
+
+        PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(p);
+        assertNotNull(pe);
+        assertEquals(PeerReviewSubjectType.DISSERTATION_THESIS.name(), pe.getSubjectType());
     }
 }
