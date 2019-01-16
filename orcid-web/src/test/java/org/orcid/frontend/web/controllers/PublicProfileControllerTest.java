@@ -114,8 +114,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals("Credit Name", personDetails.getDisplayName());
         
         assertNotNull(personDetails.getTitle());
-        assertEquals(localeManager.resolveMessage("layout.public-layout.title", personDetails.getDisplayName(), userOrcid), personDetails.getTitle());
-        
+        assertEquals((personDetails.getDisplayName() + " (0000-0000-0000-0003) - " + localeManager.resolveMessage("layout.public-layout.title")), personDetails.getTitle());
         assertNotNull(personDetails.getPublicGroupedOtherNames());
         Map<String, List<OtherName>> groupedOtherNames = personDetails.getPublicGroupedOtherNames();
         assertNotNull(groupedOtherNames);        
