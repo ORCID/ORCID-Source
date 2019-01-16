@@ -260,6 +260,13 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         // salesForceOrgIdsCache.get(accountId).getObjectValue();
         return salesForceDao.retrieveOrgIdsByAccountId(accountId);
     }
+    
+    @Override
+    public List<OrgId> retrieveAllOrgIds() {
+        List<OrgId> orgIds = new ArrayList<>();
+        retrieveMembers().stream().forEach(m -> orgIds.addAll(retrieveOrgIdsByAccountId(m.getId())));
+        return orgIds;
+    }
 
     @Override
     public List<OrgId> retrieveFreshOrgIdsByAccountId(String accountId) {

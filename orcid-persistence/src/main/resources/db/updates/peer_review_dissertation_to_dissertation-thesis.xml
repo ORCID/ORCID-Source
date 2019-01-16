@@ -1,0 +1,8 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="DISSERTATION-TO-DISSERTATION-THESIS" author="George Nash" dbms="postgresql">
+        <sql>UPDATE peer_review SET subject_type='DISSERTATION_THESIS' where subject_type='DISSERTATION';</sql>
+    </changeSet>
+
+</databaseChangeLog>

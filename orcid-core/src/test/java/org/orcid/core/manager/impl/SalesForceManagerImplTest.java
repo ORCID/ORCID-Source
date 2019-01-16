@@ -16,6 +16,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.ehcache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManagerImpl;
@@ -40,6 +42,7 @@ import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
@@ -397,6 +400,38 @@ public class SalesForceManagerImplTest {
 
         String expected = IOUtils.toString(getClass().getResource("/org/orcid/core/manager/expected_all_contacts.csv"));
         assertEquals(expected, result);
+    }
+    
+    @Test
+    public void testRetrieveAllOrgIds() throws MalformedURLException {
+        List<Member> allMembers = Arrays.asList(createMember("account1", "account 1", "account 1", "https://bbc.co.uk"), createMember("account2", "account 2", "account 2", "https://bbc.co.uk"));
+        Mockito.when(salesForceMembersListCache.get(Mockito.anyString())).thenReturn(allMembers);
+        
+        Mockito.when(salesForceDao.retrieveOrgIdsByAccountId(Mockito.eq("account1"))).thenReturn(getOrgIdList("firstId", "firstType", "secondId", "secondType"));
+        Mockito.when(salesForceDao.retrieveOrgIdsByAccountId(Mockito.eq("account2"))).thenReturn(getOrgIdList("thirdId", "thirdType", "fourthId", "fourthType"));
+        
+        List<OrgId> allIds = salesForceManager.retrieveAllOrgIds();
+        assertEquals(4, allIds.size());
+        assertEquals("firstId", allIds.get(0).getOrgIdValue());
+        assertEquals("firstType", allIds.get(0).getOrgIdType());
+        assertEquals("secondId", allIds.get(1).getOrgIdValue());
+        assertEquals("secondType", allIds.get(1).getOrgIdType());
+        assertEquals("thirdId", allIds.get(2).getOrgIdValue());
+        assertEquals("thirdType", allIds.get(2).getOrgIdType());
+        assertEquals("fourthId", allIds.get(3).getOrgIdValue());
+        assertEquals("fourthType", allIds.get(3).getOrgIdType());
+    }
+    
+    private List<OrgId> getOrgIdList(String firstId, String firstType, String secondId, String secondType) {
+        OrgId first = new OrgId();
+        first.setOrgIdType(firstType);
+        first.setOrgIdValue(firstId);
+        
+        OrgId second = new OrgId();
+        second.setOrgIdType(secondType);
+        second.setOrgIdValue(secondId);
+        
+        return Arrays.asList(first, second);
     }
     
     private Member createMember(String accountId, String name, String publicDisplayName, String website) throws MalformedURLException {

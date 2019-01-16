@@ -70,6 +70,5 @@ public class OrgDisambiguatedDaoTest extends DBUnitTest {
         assertEquals("An Institution",e.getName());
         assertEquals("GB",e.getCountry());
     }
-
-
+    
 }

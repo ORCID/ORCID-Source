@@ -202,7 +202,7 @@
                             </span>                                     
                         </li>                               
                     </ul>                               
-                    <div id="public-external-identifiers-div" class="public-content">
+                    <div id="public-external-identifiers-div" class="public-content column">
                         <ng-container  *ngFor="let external of objectKeys(personData.publicGroupedPersonExternalIdentifiers); let lastExternal = last; let firstExternal = first;">
                             <ng-container  *ngFor="let externalIdentifier of personData.publicGroupedPersonExternalIdentifiers[external]; let firstExternalIdentifier = first;">
                                 <ng-container *ngIf="firstExternalIdentifier">

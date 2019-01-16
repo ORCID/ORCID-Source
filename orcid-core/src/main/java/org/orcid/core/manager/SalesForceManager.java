@@ -122,4 +122,6 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
 
     Map<String, Badge> retrieveBadgesMap();
 
+    List<OrgId> retrieveAllOrgIds();
+
 }
