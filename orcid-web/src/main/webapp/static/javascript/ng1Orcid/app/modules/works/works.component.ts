@@ -73,6 +73,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     formData: any;
     geoArea: any;
     groupingSuggestionExtIdsPresent: boolean;
+    groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');
     groupingSuggestionPresent: boolean;
     groupingSuggestion: any;
     groupingSuggestionWorksToMerge: any;
@@ -112,7 +113,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private worksService: WorksService
     ) {
 
-        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID')
+        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexExportLoading = false;
@@ -707,7 +708,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.formData = data;
                     this.worksService.handleWorkGroupData( this.formData );
                     this.worksService.loading = false;
-                    this.loadGroupingSuggestions();
+                    if(this.groupingSuggestionFeatureEnabled){
+                        this.loadGroupingSuggestions();
+                    }
                 },
                 error => {
                     this.worksService.loading = false;
