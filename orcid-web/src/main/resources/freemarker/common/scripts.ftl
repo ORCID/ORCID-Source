@@ -16,6 +16,24 @@
     var lang = OrcidCookie.getCookie('locale_v3');
 </script>
 
+<script type="text/javascript" >
+//CSRF
+var token = OrcidCookie.getCookie('XSRF-TOKEN');
+var header = 'x-xsrf-token';    
+if (header && token){
+ $(document).ajaxSend(function(e, xhr, options) {
+     console.log('ajaxSend: adding csrf token ' + token);
+     if (options.type != "GET") {
+        if (   options.url.startsWith(orcidVar.baseUri)
+            || options.url.startsWith(orcidVar.baseUriHttp)
+            || options.url.startsWith('/')) {
+            xhr.setRequestHeader(header, token);
+        };
+     };
+ });
+}
+</script>
+
 <!-- Shibboleth -->
 <#if request.requestURI?ends_with("signin") && (RequestParameters['newlogin'] )??>
 	
