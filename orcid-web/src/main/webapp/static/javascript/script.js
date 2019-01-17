@@ -530,19 +530,26 @@ $(function() {
                     url : baseUrl + 'get-my-data',
                     type : 'POST',
                     contentType: 'application/zip',
-                    dataType: 'text',
-                    success : function(data) { 
-                        console.log('All my data post success');
-                        var binaryData = [];
-                        binaryData.push(data);
-                        var file = URL.createObjectURL(new File(binaryData, 'file.zip', {type: "application/zip"}))
-                        window.open(file)
+                    responseType: 'blob',
+                    success : function(data, textStatus, request) { 
+                        var filename = (request.getResponseHeader('filename') != null ? request.getResponseHeader('filename') : 'orcid.zip');
+                        console.log('All my data post success: ' + filename);
+                        
+                        var blob = new Blob(data, { type: 'application/zip' });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        },
+                    error: function() {
+                            if (console && console.error) {
+                                console.error('JS error report submission failed!');
+                            }
                         }
-                }).fail(
-                        function(e) {
-                            console.log(e)
-                        }
-                );
+                });
             }
     );
     
