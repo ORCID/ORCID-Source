@@ -321,10 +321,7 @@ public class BaseController {
         }
         if (authentication != null && authentication.isAuthenticated()) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }
-        CsrfToken token = csrfTokenRepository.generateToken(request);
-        csrfTokenRepository.saveToken(token, request, response);
-        request.setAttribute("_csrf", token);
+        }        
     }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {

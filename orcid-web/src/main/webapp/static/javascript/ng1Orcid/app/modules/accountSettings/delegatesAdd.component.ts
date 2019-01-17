@@ -139,6 +139,6 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        console.log(this.effectiveUserOrcid);
+        
     }; 
 }

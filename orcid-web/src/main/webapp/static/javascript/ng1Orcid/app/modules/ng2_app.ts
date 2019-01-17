@@ -263,17 +263,22 @@ export class TokenInterceptor implements HttpInterceptor {
    constructor() {}
    
    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-      const newHeaders: {[name: string]: string | string[]; } = {};
-      
-      for (const key of request.headers.keys()) {
-          newHeaders[key] = request.headers.getAll(key);
-      }
-      
-      newHeaders['x-xsrf-token'] = OrcidCookie.getCookie('XSRF-TOKEN');
-      
-      let _request = request.clone({headers: new HttpHeaders(newHeaders)});
-      
-      return next.handle(_request);
+      console.log(request.method)
+       if(request.method == 'GET') {
+          return next.handle(request)
+      } else {
+          // Add CSRF headers for non GET requests
+          const newHeaders: {[name: string]: string | string[]; } = {};
+          for (const key of request.headers.keys()) {
+              newHeaders[key] = request.headers.getAll(key);
+          }
+          
+          newHeaders['x-xsrf-token'] = OrcidCookie.getCookie('XSRF-TOKEN');
+          
+          let _request = request.clone({headers: new HttpHeaders(newHeaders)});
+          
+          return next.handle(_request);
+      }            
    }
 }
 

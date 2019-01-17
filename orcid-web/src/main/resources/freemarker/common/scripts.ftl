@@ -22,11 +22,11 @@ var token = OrcidCookie.getCookie('XSRF-TOKEN');
 var header = 'x-xsrf-token';    
 if (header && token){
  $(document).ajaxSend(function(e, xhr, options) {
-     console.log('ajaxSend: adding csrf token ' + token);
+     console.log(options.type + ' intercepted!');
      if (options.type != "GET") {
         if (   options.url.startsWith(orcidVar.baseUri)
             || options.url.startsWith(orcidVar.baseUriHttp)
-            || options.url.startsWith('/')) {
+            || options.url.startsWith('/')) {            
             xhr.setRequestHeader(header, token);
         };
      };

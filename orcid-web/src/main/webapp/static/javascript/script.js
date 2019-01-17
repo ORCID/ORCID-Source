@@ -524,6 +524,28 @@ $(function() {
 
     }
 
+    $(document).on('submit', 'form#getMyDataForm', 
+            function() {
+                $.ajax({
+                    url : baseUrl + 'get-my-data',
+                    type : 'POST',
+                    contentType: 'application/zip',
+                    dataType: 'text',
+                    success : function(data) { 
+                        console.log('All my data post success');
+                        var binaryData = [];
+                        binaryData.push(data);
+                        var file = URL.createObjectURL(new File(binaryData, 'file.zip', {type: "application/zip"}))
+                        window.open(file)
+                        }
+                }).fail(
+                        function(e) {
+                            console.log(e)
+                        }
+                );
+            }
+    );
+    
     $(document)
             .on('submit', 'form#loginForm',
 
