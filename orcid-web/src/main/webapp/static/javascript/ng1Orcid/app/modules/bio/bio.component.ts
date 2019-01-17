@@ -31,7 +31,6 @@ export class bioComponent implements AfterViewInit, OnDestroy, OnInit {
 
   ngOnInit() {
     this.personService.getPerson().subscribe(person => {
-      console.log("response ", person);
       if (person && person.biography) {
         this.bio = person.biography.content;
       }
