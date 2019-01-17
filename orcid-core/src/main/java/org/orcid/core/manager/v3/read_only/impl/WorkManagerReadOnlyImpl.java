@@ -15,6 +15,7 @@ import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
@@ -171,9 +172,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             groupGenerator.group(work);
         }
         Works works = processGroupedWorks(groupGenerator.getGroups());
-
-        List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-        groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
+        
+        if (Features.GROUPING_SUGGESTIONS.isActive()) {
+            List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+            groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
+        }
         return works;
     }
     
