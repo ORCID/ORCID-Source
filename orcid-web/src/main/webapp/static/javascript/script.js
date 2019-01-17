@@ -534,8 +534,7 @@ $(function() {
                     success : function(data, textStatus, request) { 
                         var filename = (request.getResponseHeader('filename') != null ? request.getResponseHeader('filename') : 'orcid.zip');
                         console.log('All my data post success: ' + filename);
-                        
-                        var blob = new Blob(data, { type: 'application/zip' });
+                        var blob = new Blob([data], { type: 'application/zip' });
                         var link = document.createElement('a');
                         link.href = window.URL.createObjectURL(blob);
                         link.download = filename;
