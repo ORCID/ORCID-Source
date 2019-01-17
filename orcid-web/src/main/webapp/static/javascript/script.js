@@ -526,29 +526,26 @@ $(function() {
 
     $(document).on('submit', 'form#getMyDataForm', 
             function() {
-                $.ajax({
-                    url : baseUrl + 'get-my-data',
-                    type : 'POST',
-                    contentType: 'application/zip',
-                    responseType: 'blob',
-                    success : function(data, textStatus, request) { 
-                        var filename = (request.getResponseHeader('filename') != null ? request.getResponseHeader('filename') : 'orcid.zip');
-                        console.log('All my data post success: ' + filename);
-                        var blob = new Blob([data], { type: 'application/zip' });
+                var token = OrcidCookie.getCookie('XSRF-TOKEN');
+                var header = 'x-xsrf-token';
+                var ajax = new XMLHttpRequest();
+                ajax.open("Post", baseUrl + 'get-my-data', true);
+                ajax.setRequestHeader(header, token);
+                ajax.responseType = "blob";
+                ajax.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        var filename = (this.getResponseHeader('filename') != null ? this.getResponseHeader('filename') : 'orcid.zip');
+                        var blob = new Blob([this.response], { type: "application/octet-stream" });
                         var link = document.createElement('a');
                         link.href = window.URL.createObjectURL(blob);
                         link.download = filename;
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
-                        
-                        },
-                    error: function() {
-                            if (console && console.error) {
-                                console.error('JS error report submission failed!');
-                            }
-                        }
-                });
+        
+                    }
+                };
+                ajax.send(null);
             }
     );
     
