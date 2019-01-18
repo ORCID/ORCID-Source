@@ -529,22 +529,22 @@ $(function() {
             var token = OrcidCookie.getCookie('XSRF-TOKEN');
             var header = 'x-xsrf-token';
             var ajax = new XMLHttpRequest();
-                ajax.open('post', baseUrl + 'get-my-data', true);
-                ajax.setRequestHeader(header, token);
-                ajax.responseType = 'blob';
-                ajax.onreadystatechange = function () {
-                    if (this.readyState == 4) {
-                        var filename = (this.getResponseHeader('filename') != null ? this.getResponseHeader('filename') : 'orcid.zip');
-                        var blob = new Blob([this.response], { type: 'application/octet-stream' });
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);        
-                    }
-                };
-                ajax.send(null);
+            ajax.open('post', baseUrl + 'get-my-data', true);
+            ajax.setRequestHeader(header, token);
+            ajax.responseType = 'blob';
+            ajax.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    var filename = (this.getResponseHeader('filename') != null ? this.getResponseHeader('filename') : 'orcid.zip');
+                    var blob = new Blob([this.response], { type: 'application/octet-stream' });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);        
+                }
+            };
+            ajax.send(null);
             }
     );
     

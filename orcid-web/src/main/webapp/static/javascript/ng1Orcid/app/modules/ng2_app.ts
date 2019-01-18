@@ -232,19 +232,6 @@ import { bioNg2Module }
 import { printIdBannerNg2Module } 
     from './printIdBanner/printIdBanner.ts';
     
-export class MetaXSRFStrategy implements XSRFStrategy {
-    constructor() {
-    }
-
-    configureRequest(req: Request): any {
-        var token = OrcidCookie.getCookie('XSRF-TOKEN');
-        var header = 'x-xsrf-token'; 
-        console.log('Putting headers: ' + token)
-        if (token && header) {
-            req.headers.set(header, token);
-        }
-    }
-}
 ///////////////////
 import {Injectable} 
     from '@angular/core';
@@ -276,6 +263,8 @@ export class TokenInterceptor implements HttpInterceptor {
           newHeaders['x-xsrf-token'] = OrcidCookie.getCookie('XSRF-TOKEN');
           
           let _request = request.clone({headers: new HttpHeaders(newHeaders)});
+          
+          console.log('CSRF token added: ' + newHeaders['x-xsrf-token'])
           
           return next.handle(_request);
       }            
