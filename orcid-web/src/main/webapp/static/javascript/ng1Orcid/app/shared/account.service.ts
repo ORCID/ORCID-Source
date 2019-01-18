@@ -179,4 +179,22 @@ export class AccountService {
         
     }
     
+    /**
+     * Method is use to download file.
+     * @param data - Array Buffer data
+     * @param type - type of the document.
+     */
+    downloadBlogFile(url: string, dataType: string) {
+        this.http.post(url, {}, {observe: 'response', responseType: 'blob'} )
+        .subscribe((response) => {   
+            var filename = (response.headers.get('filename') != null ? response.headers.get('filename') : 'orcid.zip');
+            var blob = new Blob([response.body], { type: dataType });
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);             
+        });                        
+    }
 }

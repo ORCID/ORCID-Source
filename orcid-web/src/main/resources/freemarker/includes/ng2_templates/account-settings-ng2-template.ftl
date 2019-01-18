@@ -278,11 +278,11 @@
                     <p>
                         <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897634"><@orcid.msg 'common.learn_more' /></a>
                     </p>
-                    <form id="getMyDataForm" action="${baseUri}/get-my-data" method="POST">
-                        <button class="btn btn-primary">
+                    <div id="getMyDataForm">
+                        <button class="btn btn-primary" (click)="getMyData()">
                             <@orcid.msg 'manage.get_my_data.button' />
                         </button>
-                    </form>
+                    </div>
                 </td>
             </tr>
         </tbody>
