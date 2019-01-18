@@ -256,7 +256,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
-                    console.log (data)
                     this.fundingImportWizardList = data;
                     if(data == null || data.length == 0) {
                         this.noLinkFlag = false;

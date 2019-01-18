@@ -152,7 +152,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 obj = that.worksService.getLabelMapping(that.editWork.workCategory.value, that.editWork.workType.value);
                 that.contentCopy = obj;
             }, 
-            200
+            500
         );
 
     };
