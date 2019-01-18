@@ -280,7 +280,7 @@
                     </p>
                     <form id="getMyDataForm" action="${baseUri}/get-my-data" method="POST">
                         <button class="btn btn-primary">
-                            Test <@orcid.msg 'manage.get_my_data.button' />
+                            <@orcid.msg 'manage.get_my_data.button' />
                         </button>
                     </form>
                 </td>
