@@ -89,6 +89,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showBibtexExport: boolean;
     showBibtexImportWizard: boolean;
     showElement: any;
+    showMergeWorksApiMissingExtIdsError: boolean;
     showMergeWorksExtIdsError: boolean;
     sortState: any;
     textFiles: any;
@@ -152,6 +153,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showBibtexExport = false;
         this.showBibtexImportWizard = false;
         this.showElement = {};
+        this.showMergeWorksApiMissingExtIdsError = false;
         this.showMergeWorksExtIdsError = false;
         this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
         this.textFiles = [];
@@ -329,6 +331,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         if(error == "showMergeWorksExtIdsError"){
             this.showMergeWorksExtIdsError = false;
         }
+        if(error == "showMergeWorksApiMissingExtIdsError"){
+            this.showMergeWorksApiMissingExtIdsError = false;
+        }
     }
     
     mergeConfirm(): void {
@@ -341,7 +346,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }
         if (mergeCount > 1) {
-            var externalIdsPresent = false;
+            var apiWorkMissingExtIds = false;
+            var apiWorkPresent = false;
+            var externalIdsPresent = false; 
             for (var putCode in this.bulkEditMap) {
                 if (this.bulkEditMap[putCode]) { 
                     this.worksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
@@ -350,13 +357,38 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             forkJoin(this.worksToMerge).subscribe(
                 dataGroup => {
                     for(var i in dataGroup){
-                        for(var j in dataGroup[i].workExternalIdentifiers){
-                            if(dataGroup[i].workExternalIdentifiers[j].relationship.value == 'self'){
-                                externalIdsPresent = true;
+                        console.log(dataGroup[i]);
+                        if(dataGroup[i].source != orcidVar.orcidId){
+                            console.log("api work")
+                            apiWorkPresent = true;
+                            if(dataGroup[i].workExternalIdentifiers.length == 0){
+                                apiWorkMissingExtIds = true;
+                                break;
+                            } else {
+                                var currentApiWorkExtIds = 0;
+                                for(var j in dataGroup[i].workExternalIdentifiers){ 
+                                    if(dataGroup[i].workExternalIdentifiers[j].relationship.value == 'self'){
+                                        currentApiWorkExtIds++;
+                                    }
+                                }
+                                if(currentApiWorkExtIds == 0){
+                                    apiWorkMissingExtIds = true;   
+                                }
+                            }
+                        } else {
+                            for(var j in dataGroup[i].workExternalIdentifiers){ 
+                                if(dataGroup[i].workExternalIdentifiers[j].relationship.value == 'self'){
+                                    externalIdsPresent = true;
+                                }
                             }
                         }
                     }
-                    if(!externalIdsPresent){
+                    console.log("apiWorkMissingExtIds " + apiWorkMissingExtIds);
+                    console.log("apiWorkPresent " + apiWorkMissingExtIds);
+
+                    if(apiWorkMissingExtIds){
+                        this.showMergeWorksApiMissingExtIdsError = true;
+                    } else if(!externalIdsPresent){
                         this.showMergeWorksExtIdsError = true;
                     } else {
                         this.worksService.notifyOther({worksToMerge:dataGroup});       

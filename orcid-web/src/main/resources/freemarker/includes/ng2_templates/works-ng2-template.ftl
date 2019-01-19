@@ -486,9 +486,14 @@
                                     </div>
                                 </li>
                             </ul>
-                            <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError">
-                                <@orcid.msg 'groups.merge.no_external_ids_1'/> <a target="groups.merge.no_external_ids_2" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
-                                <button class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
+                            <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError || showMergeWorksApiMissingExtIdsError">
+                                <@orcid.msg 'groups.merge.no_external_ids_1'/>&nbsp; 
+                                <span *ngIf="showMergeWorksExtIdsError"><@orcid.msg 'groups.merge.no_external_ids_2_user_source'/></span>
+                                <span *ngIf="showMergeWorksApiMissingExtIdsError"><@orcid.msg 'groups.merge.no_external_ids_2_client_source'/></span>&nbsp;<a target="groups.merge.no_external_ids_3" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_3'/></a>
+                                <button *ngIf="showMergeWorksExtIdsError" class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
+                                     <@orcid.msg 'common.cookies.dismiss'/>
+                                </button>
+                                <button *ngIf="showMergeWorksApiMissingExtIdsError" class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksApiMissingExtIdsError')">
                                      <@orcid.msg 'common.cookies.dismiss'/>
                                 </button>
                             </div>
