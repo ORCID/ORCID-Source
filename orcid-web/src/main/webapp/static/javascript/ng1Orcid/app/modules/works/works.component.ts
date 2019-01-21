@@ -383,9 +383,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             }
                         }
                     }
-                    console.log("apiWorkMissingExtIds " + apiWorkMissingExtIds);
-                    console.log("apiWorkPresent " + apiWorkMissingExtIds);
-
                     if(apiWorkMissingExtIds){
                         this.showMergeWorksApiMissingExtIdsError = true;
                     } else if(!externalIdsPresent){
@@ -622,7 +619,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                 throw "bibtex parse return nothing";
                             }
                         } catch(err){
-                            console.log("bibtexParse error");
                             this.bibtexParsingError = true;
                         }
                         this.worksService.getBlankWork()
