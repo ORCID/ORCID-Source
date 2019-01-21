@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +26,6 @@ import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.RelevancyScore;
+import org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.rc2.search.Result;
 import org.orcid.jaxb.model.v3.rc2.search.Search;
 import org.orcid.persistence.dao.ProfileDao;
@@ -76,7 +77,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     }
 
     @Override
-    public OrcidMessage findOrcidSearchResultsById(String orcid) {
+    public Search findOrcidSearchResultsById(String orcid) {
 
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults searchResults = new OrcidSearchResults();
@@ -92,93 +93,21 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         return orcidMessage;
     }
 
-    private List<OrcidSearchResult> buildSearchResultsFromPublicProfile(List<OrcidSolrResult> solrResults) {
-
-        List<OrcidSearchResult> orcidSearchResults = new ArrayList<OrcidSearchResult>();
-        for (OrcidSolrResult solrResult : solrResults) {
-            OrcidMessage orcidMessage = null;
-            String orcid = solrResult.getOrcid();
-            
-            try {
-                orcidSecurityManager.checkProfile(orcid);
-            } catch(DeactivatedException | LockedException | OrcidDeprecatedException x) {
-                OrcidSearchResult orcidSearchResult = new OrcidSearchResult();
-                RelevancyScore relevancyScore = new RelevancyScore();
-                relevancyScore.setValue(solrResult.getRelevancyScore());
-                orcidSearchResult.setRelevancyScore(relevancyScore);
-                OrcidProfile orcidProfile = new OrcidProfile();                
-                orcidProfile.setOrcidIdentifier(new OrcidIdentifier(jpaJaxbAdapter.getOrcidIdBase(orcid)));
-                OrcidHistory history = new OrcidHistory();
-                Date recordLastModified = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
-                history.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(recordLastModified)));
-                orcidProfile.setOrcidHistory(history);
-                orcidSearchResult.setOrcidProfile(orcidProfile);
-                orcidSearchResults.add(orcidSearchResult);
-                continue;
-            }
-            
-            if (cachingSource.equals(SOLR)) {
-                try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
-                    if (reader != null) {
-                        BufferedReader br = new BufferedReader(reader);
-                        orcidMessage = OrcidMessage.unmarshall(br);
-                    }
-                } catch (IOException e) {
-                    throw new OrcidSearchException("Error closing record stream from solr search results for orcid: " + orcid, e);
-                }
-            }
-            OrcidProfile orcidProfile = null;
-            if (orcidMessage == null) {
-                // Fall back to DB
-                orcidProfile = orcidProfileCacheManager.retrievePublicBio(orcid);
-            } else {
-                orcidProfile = orcidMessage.getOrcidProfile();
-            }
-            if (orcidProfile != null) {
-
-                OrcidSearchResult orcidSearchResult = new OrcidSearchResult();
-                RelevancyScore relevancyScore = new RelevancyScore();
-                relevancyScore.setValue(solrResult.getRelevancyScore());
-                orcidSearchResult.setRelevancyScore(relevancyScore);
-
-                OrcidWorks orcidWorksTitlesOnly = new OrcidWorks();
-                OrcidWorks fullOrcidWorks = orcidProfile.retrieveOrcidWorks();
-                if (fullOrcidWorks != null && !fullOrcidWorks.getOrcidWork().isEmpty()) {
-
-                    for (OrcidWork fullOrcidWork : fullOrcidWorks.getOrcidWork()) {
-                        OrcidWork orcidWorkSubset = new OrcidWork();
-                        orcidWorkSubset.setVisibility(fullOrcidWork.getVisibility());
-                        orcidWorkSubset.setWorkTitle(fullOrcidWork.getWorkTitle());
-                        orcidWorkSubset.setWorkExternalIdentifiers(fullOrcidWork.getWorkExternalIdentifiers());
-                        orcidWorksTitlesOnly.getOrcidWork().add(orcidWorkSubset);
-                    }
-                }
-
-                FundingList reducedFundings = new FundingList();
-                FundingList fullOrcidFundings = orcidProfile.retrieveFundings();
-                if (fullOrcidFundings != null && !fullOrcidFundings.getFundings().isEmpty()) {
-
-                    for (Funding fullOrcidFunding : fullOrcidFundings.getFundings()) {
-                        Funding reducedFunding = new Funding();
-                        reducedFunding.setVisibility(fullOrcidFunding.getVisibility());
-                        reducedFunding.setDescription(fullOrcidFunding.getDescription());
-                        reducedFunding.setTitle(fullOrcidFunding.getTitle());
-                        reducedFundings.getFundings().add(reducedFunding);
-                    }
-                }
-                orcidProfile.setOrcidWorks(orcidWorksTitlesOnly);
-                orcidProfile.setFundings(reducedFundings);
-
-                orcidSearchResult.setOrcidProfile(orcidProfile);
-
-                orcidSearchResults.add(orcidSearchResult);
-            }
+    private Search buildSearchResultsFromPublicProfile(List<OrcidSolrResult> solrResults) {
+        Search searchResults = new Search();
+        Iterator<OrcidSolrResult> it = solrResults.iterator();
+        while (it.hasNext()) {
+            OrcidSolrResult solrResult = it.next();
+            OrcidIdentifier oi = new OrcidIdentifier(solrResult.getOrcid());
+            Result r = new Result();
+            r.setOrcidIdentifier(oi);
+            searchResults.getResults().add(r);
         }
-        return orcidSearchResults;
+        return searchResults;
     }
 
     @Override
-    public OrcidMessage findPublicProfileById(String orcid) {
+    public Search findPublicProfileById(String orcid) {
         OrcidMessage om = null;
         try {
             if (cachingSource.equals(DB)) {
@@ -204,12 +133,12 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     }
 
     @Override
-    public OrcidMessage findOrcidsByQuery(String query) {
+    public Search findOrcidsByQuery(String query) {
         return findOrcidsByQuery(query, null, null);
     }
 
     @Override
-    public OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows) {
+    public Search findOrcidsByQuery(String query, Integer start, Integer rows) {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults searchResults = new OrcidSearchResults();
         OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(query, start, rows);
@@ -224,7 +153,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     }
 
     @Override
-    public OrcidMessage findOrcidsByQuery(Map<String, List<String>> query) {
+    public Search findOrcidsByQuery(Map<String, List<String>> query) {
         OrcidMessage orcidMessage = new OrcidMessage();
         OrcidSearchResults searchResults = new OrcidSearchResults();
         OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(query);

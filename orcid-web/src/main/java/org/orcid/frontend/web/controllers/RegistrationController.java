@@ -36,7 +36,6 @@ import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.constants.SendEmailFrequency;

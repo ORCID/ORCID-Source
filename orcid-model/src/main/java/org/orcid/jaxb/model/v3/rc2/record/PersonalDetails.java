@@ -32,8 +32,7 @@ public class PersonalDetails implements Serializable {
     @XmlElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
     private Biography biography;
     @XmlAttribute
-    protected String path;
-    
+    protected String path;    
     
     public Name getName() {
         return name;
