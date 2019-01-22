@@ -87,10 +87,8 @@ public class SolrConstants {
     public static final String FUNDREF_ORG_TYPE = "FUNDREF";
     
     public static final String RESEARCH_RESOURCE_PROPOSAL_TITLES = "researh-resource-proposal-titles";    
-    public static final String RESEARCH_RESOURCE_PROPOSAL_HOSTS_ID = "researh-resource-proposal-hosts-id";
     public static final String RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME = "researh-resource-proposal-hosts-name";
     public static final String RESEARCH_RESOURCE_ITEM_NAME = "researh-resource-item-name";    
-    public static final String RESEARCH_RESOURCE_ITEM_HOSTS_ID = "researh-resource-item-hosts-id";
     public static final String RESEARCH_RESOURCE_ITEM_HOSTS_NAME = "researh-resource-item-hosts-name";
     
 }

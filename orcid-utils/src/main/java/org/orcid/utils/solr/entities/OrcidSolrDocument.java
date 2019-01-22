@@ -196,17 +196,11 @@ public class OrcidSolrDocument {
     @Field("*" + SolrConstants.DYNAMIC_ORGANISATION_NAME)
     private Map<String, List<String>> organisationNames;
 
-    @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_HOSTS_ID)
-    private Map<String, List<String>> researchResourceItemHostId;
-
     @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_HOSTS_NAME)
     private Map<String, List<String>> researchResourceItemHostName;
 
     @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_NAME)
     private String researhResourceItemName;
-
-    @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_HOSTS_ID)
-    private Map<String, List<String>> researchResourceProposalHostId;
 
     @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME)
     private Map<String, List<String>> researchResourceProposalHostName;
@@ -367,14 +361,6 @@ public class OrcidSolrDocument {
         this.primaryRecord = primaryRecord;
     }
 
-    public Map<String, List<String>> getResearchResourceItemHostId() {
-        return researchResourceItemHostId;
-    }
-
-    public void setResearchResourceItemHostId(Map<String, List<String>> researchResourceItemHostId) {
-        this.researchResourceItemHostId = researchResourceItemHostId;
-    }
-
     public Map<String, List<String>> getResearchResourceItemHostName() {
         return researchResourceItemHostName;
     }
@@ -389,14 +375,6 @@ public class OrcidSolrDocument {
 
     public void setResearhResourceItemName(String researhResourceItemName) {
         this.researhResourceItemName = researhResourceItemName;
-    }
-
-    public Map<String, List<String>> getResearchResourceProposalHostId() {
-        return researchResourceProposalHostId;
-    }
-
-    public void setResearchResourceProposalHostId(Map<String, List<String>> researchResourceProposalHostId) {
-        this.researchResourceProposalHostId = researchResourceProposalHostId;
     }
 
     public Map<String, List<String>> getResearchResourceProposalHostName() {
@@ -788,9 +766,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((profileLastModifiedDate == null) ? 0 : profileLastModifiedDate.hashCode());
         result = prime * result + ((profileSubmissionDate == null) ? 0 : profileSubmissionDate.hashCode());
         result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
-        result = prime * result + ((researchResourceItemHostId == null) ? 0 : researchResourceItemHostId.hashCode());
         result = prime * result + ((researchResourceItemHostName == null) ? 0 : researchResourceItemHostName.hashCode());
-        result = prime * result + ((researchResourceProposalHostId == null) ? 0 : researchResourceProposalHostId.hashCode());
         result = prime * result + ((researchResourceProposalHostName == null) ? 0 : researchResourceProposalHostName.hashCode());
         result = prime * result + ((researchResourceProposalTitles == null) ? 0 : researchResourceProposalTitles.hashCode());
         result = prime * result + ((researhResourceItemName == null) ? 0 : researhResourceItemName.hashCode());
@@ -1051,20 +1027,10 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!publicProfileMessage.equals(other.publicProfileMessage))
             return false;
-        if (researchResourceItemHostId == null) {
-            if (other.researchResourceItemHostId != null)
-                return false;
-        } else if (!researchResourceItemHostId.equals(other.researchResourceItemHostId))
-            return false;
         if (researchResourceItemHostName == null) {
             if (other.researchResourceItemHostName != null)
                 return false;
         } else if (!researchResourceItemHostName.equals(other.researchResourceItemHostName))
-            return false;
-        if (researchResourceProposalHostId == null) {
-            if (other.researchResourceProposalHostId != null)
-                return false;
-        } else if (!researchResourceProposalHostId.equals(other.researchResourceProposalHostId))
             return false;
         if (researchResourceProposalHostName == null) {
             if (other.researchResourceProposalHostName != null)
