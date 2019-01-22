@@ -150,12 +150,12 @@ public class DOIResolverTest {
         assertEquals("issn", work.getExternalIdentifiers().getExternalIdentifier().get(3).getType());
         assertEquals("https://www.test.org/issn/ISSN-0000-0000", work.getExternalIdentifiers().getExternalIdentifier().get(3).getUrl().getValue());
         assertEquals("ISSN-0000-0000", work.getExternalIdentifiers().getExternalIdentifier().get(3).getValue());
-        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(3).getRelationship());
+        assertEquals(Relationship.PART_OF, work.getExternalIdentifiers().getExternalIdentifier().get(3).getRelationship());
     
         assertEquals("issn", work.getExternalIdentifiers().getExternalIdentifier().get(4).getType());
         assertEquals("https://www.test.org/issn/ISSN-0000-0001", work.getExternalIdentifiers().getExternalIdentifier().get(4).getUrl().getValue());
         assertEquals("ISSN-0000-0001", work.getExternalIdentifiers().getExternalIdentifier().get(4).getValue());
-        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(4).getRelationship());
+        assertEquals(Relationship.PART_OF, work.getExternalIdentifiers().getExternalIdentifier().get(4).getRelationship());
     
     }
 }
