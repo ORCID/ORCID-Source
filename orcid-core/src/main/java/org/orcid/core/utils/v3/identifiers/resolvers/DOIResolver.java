@@ -164,7 +164,15 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         }
 
         if (json.has("subtitle")) {
-            workTitle.setSubtitle(new Subtitle(json.getString("subtitle")));
+            String subtitleText = json.getString("subtitle");
+            if (subtitleText.startsWith("[") && subtitleText.endsWith("]")) {
+                subtitleText = subtitleText.substring(1, subtitleText.length() - 1);
+            }
+            
+            if (subtitleText.startsWith("\"") && subtitleText.endsWith("\"")) {
+                subtitleText = subtitleText.substring(1, subtitleText.length() - 1);
+            }
+            workTitle.setSubtitle(new Subtitle(subtitleText));
         }
 
         result.setWorkTitle(workTitle);
@@ -214,7 +222,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                     String issn = issns.getString(i);
                     ExternalID extId = new ExternalID();
                     extId.setType("issn");
-                    extId.setRelationship(Relationship.SELF);
+                    extId.setRelationship(Relationship.PART_OF);
                     extId.setValue(issn);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
                         extId.setUrl(new Url(idType.getResolutionPrefix() + issn));
@@ -261,7 +269,11 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         }
 
         if (json.has("language")) {
-            result.setLanguageCode(json.getString("language"));
+            try {
+                result.setLanguageCode(json.getString("language"));
+            } catch (IllegalArgumentException e) {
+                // ignore if language value doesn't match our LanguageCode
+            }
         }
         return result;
     }

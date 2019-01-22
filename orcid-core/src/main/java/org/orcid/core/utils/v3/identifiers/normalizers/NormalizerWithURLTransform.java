@@ -1,10 +1,5 @@
 package org.orcid.core.utils.v3.identifiers.normalizers;
 
-import java.util.List;
-
-import org.apache.jena.ext.com.google.common.collect.Lists;
-import org.springframework.core.Ordered;
-
 public interface NormalizerWithURLTransform extends Normalizer{
 
     /** If this normaliser can handle the apiTypeName provided 

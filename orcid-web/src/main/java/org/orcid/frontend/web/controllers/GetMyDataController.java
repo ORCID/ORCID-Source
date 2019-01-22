@@ -116,6 +116,7 @@ public class GetMyDataController extends BaseController {
                    
         response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
         response.setHeader("Content-Type", "application/zip");
+        response.setHeader("filename", fileName);
         response.getOutputStream().write(result.toByteArray());
         response.flushBuffer();
     }
