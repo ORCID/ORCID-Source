@@ -164,7 +164,15 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         }
 
         if (json.has("subtitle")) {
-            workTitle.setSubtitle(new Subtitle(json.getString("subtitle")));
+            String subtitleText = json.getString("subtitle");
+            if (subtitleText.startsWith("[") && subtitleText.endsWith("]")) {
+                subtitleText = subtitleText.substring(1, subtitleText.length() - 1);
+            }
+            
+            if (subtitleText.startsWith("\"") && subtitleText.endsWith("\"")) {
+                subtitleText = subtitleText.substring(1, subtitleText.length() - 1);
+            }
+            workTitle.setSubtitle(new Subtitle(subtitleText));
         }
 
         result.setWorkTitle(workTitle);
