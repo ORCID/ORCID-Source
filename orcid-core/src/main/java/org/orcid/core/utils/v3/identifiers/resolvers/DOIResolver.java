@@ -214,7 +214,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                     String issn = issns.getString(i);
                     ExternalID extId = new ExternalID();
                     extId.setType("issn");
-                    extId.setRelationship(Relationship.SELF);
+                    extId.setRelationship(Relationship.PART_OF);
                     extId.setValue(issn);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
                         extId.setUrl(new Url(idType.getResolutionPrefix() + issn));
