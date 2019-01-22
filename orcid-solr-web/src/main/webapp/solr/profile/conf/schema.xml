@@ -628,8 +628,6 @@
 		<field name="primary-record" type="string" indexed="true"
 			stored="true" multiValued="false" />
 			
-			
-			
 		<!-- work external identifier fields -->
 		<dynamicField name="*-self" type="string" indexed="true" stored="false" multiValued="true"/>
 		<dynamicField name="*-part-of" type="string" indexed="true" stored="false" multiValued="true"/>
@@ -637,6 +635,20 @@
 		<!-- education and employment ids -->
 		<dynamicField name="*-org-id" type="string" indexed="true" stored="false" multiValued="true"/>
 		<dynamicField name="*-org-name" type="text_general" indexed="true" stored="false" multiValued="true"/>
+			
+		<!-- research resources -->
+		<field name="researh-resource-proposal-title" type=string indexed="true"
+			stored="true" multiValued="true" />
+		<field name="researh-resource-proposal-hosts-id" type="string" indexed="true"
+			stored="true" multiValued="true" />
+		<field name="researh-resource-proposal-hosts-name" type="text_general" indexed="true"
+			stored="true" multiValued="true" />
+		<field name="researh-resource-item-name" type="string" indexed="true"
+			stored="true" multiValued="true" />
+		<field name="researh-resource-item-hosts-id" type="string" indexed="true"
+			stored="true" multiValued="true" />	
+		<field name="researh-resource-item-hosts-name" type="text_general" indexed="true"
+			stored="true" multiValued="true" />
 			
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
 			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 
