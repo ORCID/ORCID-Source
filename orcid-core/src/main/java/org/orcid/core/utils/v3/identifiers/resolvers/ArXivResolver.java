@@ -51,6 +51,8 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
     PIDResolverCache cache;
 
     private String metadataEndpoint = "https://export.arxiv.org/api/query?id_list=";
+    
+    private static final String ARXIV_PREFIX = "arXiv:";
 
     List<String> types = Lists.newArrayList("arxiv");
 
@@ -90,7 +92,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             return null;
 
         try {
-            InputStream inputStream = cache.get(metadataEndpoint + value, MediaType.APPLICATION_ATOM_XML);
+            InputStream inputStream = cache.get(metadataEndpoint + getArXivPID(apiTypeName, value), MediaType.APPLICATION_ATOM_XML);
             InputSource is = new InputSource(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
             is.setEncoding(StandardCharsets.UTF_8.name());
 
@@ -111,6 +113,12 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
         }
 
         return null;
+    }
+    
+    // returns PID number without arXiv prefix or URL etc
+    private String getArXivPID(String apiTypeName, String userInput) {
+        String normalised = normalizationService.normalise(apiTypeName, userInput);
+        return normalised.replaceFirst(ARXIV_PREFIX, "");
     }
 
     private class WorksHandler extends DefaultHandler {
