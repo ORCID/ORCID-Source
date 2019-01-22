@@ -261,7 +261,11 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         }
 
         if (json.has("language")) {
-            result.setLanguageCode(json.getString("language"));
+            try {
+                result.setLanguageCode(json.getString("language"));
+            } catch (IllegalArgumentException e) {
+                // ignore if language value doesn't match our LanguageCode
+            }
         }
         return result;
     }
