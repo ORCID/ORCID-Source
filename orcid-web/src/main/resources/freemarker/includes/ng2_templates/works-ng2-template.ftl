@@ -102,11 +102,7 @@
                                         <ul class="menu-options works">
                                             <ng-container *ngIf="TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID">
                                             <li>
-<<<<<<< HEAD
                                                 <a class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
-=======
-                                                <a  class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
->>>>>>> master
                                                     <span class="ai ai-arxiv"></span>
                                                     Add ArXiv Id
                                                     <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
@@ -114,21 +110,13 @@
                                             </li>
 
                                             <li>
-<<<<<<< HEAD
                                                 <a class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
-=======
-                                                <a  class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
->>>>>>> master
                                                     <span class="ai ai-doi"></span>
                                                     Add DOI
                                                     <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
                                                 </a>
                                             </li>
-<<<<<<< HEAD
                                             <li >
-=======
-                                            <li>
->>>>>>> master
                                                 <a class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
                                                     <span class="ai ai-pubmed"></span>
                                                     Add PubMed Id
