@@ -73,10 +73,10 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.CTX)
     private List<String> ctx = new ArrayList<String>();
-    
+
     @Field(SolrConstants.EID)
     private List<String> eid = new ArrayList<String>();
-    
+
     @Field(SolrConstants.ETHOS)
     private List<String> ethos = new ArrayList<String>();
 
@@ -127,10 +127,10 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.SOURCE_WORK_ID)
     private List<String> sourceWorkId = new ArrayList<String>();
-    
+
     @Field(SolrConstants.SSRN)
     private List<String> ssrn = new ArrayList<String>();
-    
+
     @Field(SolrConstants.URI)
     private List<String> uri = new ArrayList<String>();
 
@@ -163,7 +163,7 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.PROFILE_SUBMISSION_DATE)
     private Date profileSubmissionDate;
-    
+
     @Field(SolrConstants.PROFILE_LAST_MODIFIED_DATE)
     private Date profileLastModifiedDate;
 
@@ -175,22 +175,46 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.PRIMARY_RECORD)
     private String primaryRecord;
-    
-    //e.g. doi-self
-    @Field("*"+SolrConstants.DYNAMIC_SELF)
+
+    // e.g. doi-self
+    @Field("*" + SolrConstants.DYNAMIC_SELF)
     private Map<String, List<String>> selfIds;
 
-    //e.g. arxiv-part-of
-    @Field("*"+SolrConstants.DYNAMIC_PART_OF)
+    // e.g. arxiv-part-of
+    @Field("*" + SolrConstants.DYNAMIC_PART_OF)
     private Map<String, List<String>> partOfIds;
-    
-    //e.g. ringgold-org-id
-    @Field("*"+SolrConstants.DYNAMIC_ORGANISATION_ID)
+
+    // e.g. ringgold-org-id
+    @Field("*" + SolrConstants.DYNAMIC_ORGANISATION_ID)
     private Map<String, List<String>> organisationIds;
-    
-    //e.g. education-org-name
-    @Field("*"+SolrConstants.DYNAMIC_ORGANISATION_NAME)
+
+    // e.g. education-org-name
+    @Field("*" + SolrConstants.DYNAMIC_ORGANISATION_NAME)
     private Map<String, List<String>> organisationNames;
+
+    @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_EXT_IDS)
+    private Map<String, List<String>> researchResourceItemExtIds;
+
+    @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_HOSTS_ID)
+    private Map<String, List<String>> researchResourceItemHostId;
+
+    @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_HOSTS_NAME)
+    private Map<String, List<String>> researchResourceItemHostName;
+
+    @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_NAME)
+    private String researhResourceItemName;
+
+    @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_EXT_IDS)
+    private Map<String, List<String>> researchResourceProposalExtIds;
+
+    @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_HOSTS_ID)
+    private Map<String, List<String>> researchResourceProposalHostId;
+
+    @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME)
+    private Map<String, List<String>> researchResourceProposalHostName;
+
+    @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_TITLES)
+    private List<String> researchResourceProposalTitles;
 
     public String getOrcid() {
         return orcid;
@@ -345,364 +369,68 @@ public class OrcidSolrDocument {
         this.primaryRecord = primaryRecord;
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+    public Map<String, List<String>> getResearchResourceItemExtIds() {
+        return researchResourceItemExtIds;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
-        result = prime * result + ((digitalObjectIds == null) ? 0 : digitalObjectIds.hashCode());
-        result = prime * result + ((emailAddresses == null) ? 0 : emailAddresses.hashCode());
-        result = prime * result + ((getExternalIdSources() == null) ? 0 : getExternalIdSources().hashCode());
-        result = prime * result + ((getExternalIdSourcesAndReferences() == null) ? 0 : getExternalIdSourcesAndReferences().hashCode());
-        result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
-        result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
-        result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
-        result = prime * result + ((givenAndFamilyNames == null) ? 0 : givenAndFamilyNames.hashCode());
-        result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
-        result = prime * result + ((grantNumbers == null) ? 0 : grantNumbers.hashCode());
-        result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
-        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
-        result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
-        result = prime * result + ((patentNumbers == null) ? 0 : patentNumbers.hashCode());
-        result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
-        result = prime * result + ((workTitles == null) ? 0 : workTitles.hashCode());
-        result = prime * result + ((primaryRecord == null) ? 0 : primaryRecord.hashCode());
-        result = prime * result + ((arxiv == null) ? 0 : arxiv.hashCode());
-        result = prime * result + ((asin == null) ? 0 : asin.hashCode());
-        result = prime * result + ((asintld == null) ? 0 : asintld.hashCode());
-        result = prime * result + ((bibcode == null) ? 0 : bibcode.hashCode());
-        result = prime * result + ((eid == null) ? 0 : eid.hashCode());
-        result = prime * result + ((isbn == null) ? 0 : isbn.hashCode());
-        result = prime * result + ((issn == null) ? 0 : issn.hashCode());
-        result = prime * result + ((jfm == null) ? 0 : jfm.hashCode());
-        result = prime * result + ((jstor == null) ? 0 : jstor.hashCode());
-        result = prime * result + ((lccn == null) ? 0 : lccn.hashCode());
-        result = prime * result + ((mr == null) ? 0 : mr.hashCode());
-        result = prime * result + ((oclc == null) ? 0 : oclc.hashCode());
-        result = prime * result + ((ol == null) ? 0 : ol.hashCode());
-        result = prime * result + ((osti == null) ? 0 : osti.hashCode());
-        result = prime * result + ((pmc == null) ? 0 : pmc.hashCode());
-        result = prime * result + ((pmid == null) ? 0 : pmid.hashCode());
-        result = prime * result + ((rfc == null) ? 0 : rfc.hashCode());
-        result = prime * result + ((ssrn == null) ? 0 : ssrn.hashCode());
-        result = prime * result + ((zbl == null) ? 0 : zbl.hashCode());
-        result = prime * result + ((otherIdentifierType == null) ? 0 : otherIdentifierType.hashCode());
-        result = prime * result + ((agr == null) ? 0 : agr.hashCode());
-        result = prime * result + ((cba == null) ? 0 : cba.hashCode());
-        result = prime * result + ((cit == null) ? 0 : cit.hashCode());
-        result = prime * result + ((ctx == null) ? 0 : ctx.hashCode());
-        result = prime * result + ((ethos == null) ? 0 : ethos.hashCode());
-        result = prime * result + ((handle == null) ? 0 : handle.hashCode());
-        result = prime * result + ((hir == null) ? 0 : hir.hashCode());
-        result = prime * result + ((pat == null) ? 0 : pat.hashCode());
-        result = prime * result + ((sourceWorkId == null) ? 0 : sourceWorkId.hashCode());
-        result = prime * result + ((uri == null) ? 0 : uri.hashCode());
-        result = prime * result + ((urn == null) ? 0 : urn.hashCode());
-        result = prime * result + ((wosuid == null) ? 0 : wosuid.hashCode());
-        result = prime * result + ((selfIds == null) ? 0 : selfIds.hashCode());
-        result = prime * result + ((partOfIds == null) ? 0 : partOfIds.hashCode());
-        result = prime * result + ((organisationIds == null) ? 0 : organisationIds.hashCode());
-        result = prime * result + ((organisationNames == null) ? 0 : organisationNames.hashCode());
-        return result;
+    public void setResearchResourceItemExtIds(Map<String, List<String>> researchResourceItemExtIds) {
+        this.researchResourceItemExtIds = researchResourceItemExtIds;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OrcidSolrDocument other = (OrcidSolrDocument) obj;
-        if (creditName == null) {
-            if (other.creditName != null)
-                return false;
-        } else if (!creditName.equals(other.creditName))
-            return false;
-        if (digitalObjectIds == null) {
-            if (other.digitalObjectIds != null)
-                return false;
-        } else if (!digitalObjectIds.equals(other.digitalObjectIds))
-            return false;
-        if (emailAddresses == null) {
-            if (other.emailAddresses != null)
-                return false;
-        } else if (!emailAddresses.equals(other.emailAddresses))
-            return false;
-        if (getExternalIdSources() == null) {
-            if (other.getExternalIdSources() != null)
-                return false;
-        } else if (!getExternalIdSources().equals(other.getExternalIdSources()))
-            return false;
-        if (getExternalIdSourcesAndReferences() == null) {
-            if (other.getExternalIdSourcesAndReferences() != null)
-                return false;
-        } else if (!getExternalIdSourcesAndReferences().equals(other.getExternalIdSourcesAndReferences()))
-            return false;
-        if (externalIdReferences == null) {
-            if (other.externalIdReferences != null)
-                return false;
-        } else if (!externalIdReferences.equals(other.externalIdReferences))
-            return false;
-        if (familyName == null) {
-            if (other.familyName != null)
-                return false;
-        } else if (!familyName.equals(other.familyName))
-            return false;
-        if (fundingTitles == null) {
-            if (other.fundingTitles != null)
-                return false;
-        } else if (!fundingTitles.equals(other.fundingTitles))
-            return false;
-        if (givenAndFamilyNames == null) {
-            if (other.givenAndFamilyNames != null)
-                return false;
-        } else if (!givenAndFamilyNames.equals(other.givenAndFamilyNames))
-            return false;
-        if (givenNames == null) {
-            if (other.givenNames != null)
-                return false;
-        } else if (!givenNames.equals(other.givenNames))
-            return false;
-        if (grantNumbers == null) {
-            if (other.grantNumbers != null)
-                return false;
-        } else if (!grantNumbers.equals(other.grantNumbers))
-            return false;
-        if (keywords == null) {
-            if (other.keywords != null)
-                return false;
-        } else if (!keywords.equals(other.keywords))
-            return false;
-        if (orcid == null) {
-            if (other.orcid != null)
-                return false;
-        } else if (!orcid.equals(other.orcid))
-            return false;
-        if (otherNames == null) {
-            if (other.otherNames != null)
-                return false;
-        } else if (!otherNames.equals(other.otherNames))
-            return false;
-        if (patentNumbers == null) {
-            if (other.patentNumbers != null)
-                return false;
-        } else if (!patentNumbers.equals(other.patentNumbers))
-            return false;
-        if (publicProfileMessage == null) {
-            if (other.publicProfileMessage != null)
-                return false;
-        } else if (!publicProfileMessage.equals(other.publicProfileMessage))
-            return false;
-        if (workTitles == null) {
-            if (other.workTitles != null)
-                return false;
-        } else if (!workTitles.equals(other.workTitles))
-            return false;
-        if (primaryRecord == null) {
-            if (other.primaryRecord != null)
-                return false;
-        } else if (!primaryRecord.equals(other.primaryRecord))
-            return false;
-        if (arxiv == null) {
-            if (other.arxiv != null)
-                return false;
-        } else if (!arxiv.equals(other.arxiv))
-            return false;
-        if (asin == null) {
-            if (other.asin != null)
-                return false;
-        } else if (!asin.equals(other.asin))
-            return false;
-        if (asintld == null) {
-            if (other.asintld != null)
-                return false;
-        } else if (!asintld.equals(other.asintld))
-            return false;
-        if (bibcode == null) {
-            if (other.bibcode != null)
-                return false;
-        } else if (!bibcode.equals(other.bibcode))
-            return false;
-        if (eid == null) {
-            if (other.eid != null)
-                return false;
-        } else if (!eid.equals(other.eid))
-            return false;
-        if (isbn == null) {
-            if (other.isbn != null)
-                return false;
-        } else if (!isbn.equals(other.isbn))
-            return false;
-        if (issn == null) {
-            if (other.issn != null)
-                return false;
-        } else if (!issn.equals(other.issn))
-            return false;
-        if (jfm == null) {
-            if (other.jfm != null)
-                return false;
-        } else if (!jfm.equals(other.jfm))
-            return false;
-        if (jstor == null) {
-            if (other.jstor != null)
-                return false;
-        } else if (!jstor.equals(other.jstor))
-            return false;
-        if (lccn == null) {
-            if (other.lccn != null)
-                return false;
-        } else if (!lccn.equals(other.lccn))
-            return false;
-        if (mr == null) {
-            if (other.mr != null)
-                return false;
-        } else if (!mr.equals(other.mr))
-            return false;
-        if (oclc == null) {
-            if (other.oclc != null)
-                return false;
-        } else if (!oclc.equals(other.oclc))
-            return false;
-        if (ol == null) {
-            if (other.ol != null)
-                return false;
-        } else if (!ol.equals(other.ol))
-            return false;
-        if (osti == null) {
-            if (other.osti != null)
-                return false;
-        } else if (!osti.equals(other.osti))
-            return false;
-        if (pmc == null) {
-            if (other.pmc != null)
-                return false;
-        } else if (!pmc.equals(other.pmc))
-            return false;
-        if (pmid == null) {
-            if (other.pmid != null)
-                return false;
-        } else if (!pmid.equals(other.pmid))
-            return false;
-        if (rfc == null) {
-            if (other.rfc != null)
-                return false;
-        } else if (!rfc.equals(other.rfc))
-            return false;
-        if (ssrn == null) {
-            if (other.ssrn != null)
-                return false;
-        } else if (!ssrn.equals(other.ssrn))
-            return false;
-        if (zbl == null) {
-            if (other.zbl != null)
-                return false;
-        } else if (!zbl.equals(other.zbl))
-            return false;
-        if (otherIdentifierType == null) {
-            if (other.otherIdentifierType != null)
-                return false;
-        } else if (!otherIdentifierType.equals(other.otherIdentifierType))
-            return false;
-        if (agr == null) {
-            if (other.agr != null)
-                return false;
-        } else if (!agr.equals(other.agr))
-            return false;
-        if (cba == null) {
-            if (other.cba != null)
-                return false;
-        } else if (!cba.equals(other.cba))
-            return false;
-        if (cit == null) {
-            if (other.cit != null)
-                return false;
-        } else if (!cit.equals(other.cit))
-            return false;
-        if (ctx == null) {
-            if (other.ctx != null)
-                return false;
-        } else if (!ctx.equals(other.ctx))
-            return false;
-        if (ethos == null) {
-            if (other.ethos != null)
-                return false;
-        } else if (!ethos.equals(other.ethos))
-            return false;
-        if (handle == null) {
-            if (other.handle != null)
-                return false;
-        } else if (!handle.equals(other.handle))
-            return false;
-        if (hir == null) {
-            if (other.hir != null)
-                return false;
-        } else if (!hir.equals(other.hir))
-            return false;
-        if (pat == null) {
-            if (other.pat != null)
-                return false;
-        } else if (!pat.equals(other.pat))
-            return false;
-        if (sourceWorkId == null) {
-            if (other.sourceWorkId != null)
-                return false;
-        } else if (!sourceWorkId.equals(other.sourceWorkId))
-            return false;
-        if (uri == null) {
-            if (other.uri != null)
-                return false;
-        } else if (!uri.equals(other.uri))
-            return false;
-        if (urn == null) {
-            if (other.urn != null)
-                return false;
-        } else if (!urn.equals(other.urn))
-            return false;
-        if (wosuid == null) {
-            if (other.wosuid != null)
-                return false;
-        } else if (!wosuid.equals(other.wosuid))
-            return false;
-        
-        if (selfIds == null) {
-            if (other.selfIds != null)
-                return false;
-        } else if (!selfIds.equals(other.selfIds))
-            return false;
-        
-        if (partOfIds == null) {
-            if (other.partOfIds != null)
-                return false;
-        } else if (!partOfIds.equals(other.partOfIds))
-            return false;
-        
-        if (organisationIds == null) {
-            if (other.organisationIds != null)
-                return false;
-        } else if (!organisationIds.equals(other.organisationIds))
-            return false;
-        
-        if (organisationNames == null) {
-            if (other.organisationNames != null)
-                return false;
-        } else if (!organisationNames.equals(other.organisationNames))
-            return false;
-        
-        
-        return true;
+    public Map<String, List<String>> getResearchResourceItemHostId() {
+        return researchResourceItemHostId;
     }
 
-    private void generateCombinedGivenAndFamilyNames() {
-        String givenAndFamilyNames = 
-                (givenNames == null) ? ((familyName == null) ? null : familyName) : (givenNames + ((familyName == null) ? "" : " " + familyName));
-        setGivenAndFamilyNames(givenAndFamilyNames);
+    public void setResearchResourceItemHostId(Map<String, List<String>> researchResourceItemHostId) {
+        this.researchResourceItemHostId = researchResourceItemHostId;
+    }
+
+    public Map<String, List<String>> getResearchResourceItemHostName() {
+        return researchResourceItemHostName;
+    }
+
+    public void setResearchResourceItemHostName(Map<String, List<String>> researchResourceItemHostName) {
+        this.researchResourceItemHostName = researchResourceItemHostName;
+    }
+
+    public String getResearhResourceItemName() {
+        return researhResourceItemName;
+    }
+
+    public void setResearhResourceItemName(String researhResourceItemName) {
+        this.researhResourceItemName = researhResourceItemName;
+    }
+
+    public Map<String, List<String>> getResearchResourceProposalExtIds() {
+        return researchResourceProposalExtIds;
+    }
+
+    public void setResearchResourceProposalExtIds(Map<String, List<String>> researchResourceProposalExtIds) {
+        this.researchResourceProposalExtIds = researchResourceProposalExtIds;
+    }
+
+    public Map<String, List<String>> getResearchResourceProposalHostId() {
+        return researchResourceProposalHostId;
+    }
+
+    public void setResearchResourceProposalHostId(Map<String, List<String>> researchResourceProposalHostId) {
+        this.researchResourceProposalHostId = researchResourceProposalHostId;
+    }
+
+    public Map<String, List<String>> getResearchResourceProposalHostName() {
+        return researchResourceProposalHostName;
+    }
+
+    public void setResearchResourceProposalHostName(Map<String, List<String>> researchResourceProposalHostName) {
+        this.researchResourceProposalHostName = researchResourceProposalHostName;
+    }
+
+    public List<String> getResearchResourceProposalTitles() {
+        return researchResourceProposalTitles;
+    }
+
+    public void setResearchResourceProposalTitles(List<String> researchResourceProposalTitles) {
+        this.researchResourceProposalTitles = researchResourceProposalTitles;
     }
 
     public List<String> getArxiv() {
@@ -881,102 +609,102 @@ public class OrcidSolrDocument {
         this.externalIdSourcesAndReferences = externalIdSourcesAndReferences;
     }
 
-	public List<String> getAgr() {
-		return agr;
-	}
+    public List<String> getAgr() {
+        return agr;
+    }
 
-	public void setAgr(List<String> agr) {
-		this.agr = agr;
-	}
+    public void setAgr(List<String> agr) {
+        this.agr = agr;
+    }
 
-	public List<String> getCba() {
-		return cba;
-	}
+    public List<String> getCba() {
+        return cba;
+    }
 
-	public void setCba(List<String> cba) {
-		this.cba = cba;
-	}
+    public void setCba(List<String> cba) {
+        this.cba = cba;
+    }
 
-	public List<String> getCit() {
-		return cit;
-	}
+    public List<String> getCit() {
+        return cit;
+    }
 
-	public void setCit(List<String> cit) {
-		this.cit = cit;
-	}
+    public void setCit(List<String> cit) {
+        this.cit = cit;
+    }
 
-	public List<String> getCtx() {
-		return ctx;
-	}
+    public List<String> getCtx() {
+        return ctx;
+    }
 
-	public void setCtx(List<String> ctx) {
-		this.ctx = ctx;
-	}
+    public void setCtx(List<String> ctx) {
+        this.ctx = ctx;
+    }
 
-	public List<String> getEthos() {
-		return ethos;
-	}
+    public List<String> getEthos() {
+        return ethos;
+    }
 
-	public void setEthos(List<String> ethos) {
-		this.ethos = ethos;
-	}
+    public void setEthos(List<String> ethos) {
+        this.ethos = ethos;
+    }
 
-	public List<String> getHandle() {
-		return handle;
-	}
+    public List<String> getHandle() {
+        return handle;
+    }
 
-	public void setHandle(List<String> handle) {
-		this.handle = handle;
-	}
+    public void setHandle(List<String> handle) {
+        this.handle = handle;
+    }
 
-	public List<String> getHir() {
-		return hir;
-	}
+    public List<String> getHir() {
+        return hir;
+    }
 
-	public void setHir(List<String> hir) {
-		this.hir = hir;
-	}
+    public void setHir(List<String> hir) {
+        this.hir = hir;
+    }
 
-	public List<String> getPat() {
-		return pat;
-	}
+    public List<String> getPat() {
+        return pat;
+    }
 
-	public void setPat(List<String> pat) {
-		this.pat = pat;
-	}
+    public void setPat(List<String> pat) {
+        this.pat = pat;
+    }
 
-	public List<String> getSourceWorkId() {
-		return sourceWorkId;
-	}
+    public List<String> getSourceWorkId() {
+        return sourceWorkId;
+    }
 
-	public void setSourceWorkId(List<String> sourceWorkId) {
-		this.sourceWorkId = sourceWorkId;
-	}
+    public void setSourceWorkId(List<String> sourceWorkId) {
+        this.sourceWorkId = sourceWorkId;
+    }
 
-	public List<String> getUri() {
-		return uri;
-	}
+    public List<String> getUri() {
+        return uri;
+    }
 
-	public void setUri(List<String> uri) {
-		this.uri = uri;
-	}
+    public void setUri(List<String> uri) {
+        this.uri = uri;
+    }
 
-	public List<String> getUrn() {
-		return urn;
-	}
+    public List<String> getUrn() {
+        return urn;
+    }
 
-	public void setUrn(List<String> urn) {
-		this.urn = urn;
-	}
+    public void setUrn(List<String> urn) {
+        this.urn = urn;
+    }
 
-	public List<String> getWosuid() {
-		return wosuid;
-	}
+    public List<String> getWosuid() {
+        return wosuid;
+    }
 
-	public void setWosuid(List<String> wosuid) {
-		this.wosuid = wosuid;
-	}
-	
+    public void setWosuid(List<String> wosuid) {
+        this.wosuid = wosuid;
+    }
+
     public Map<String, List<String>> getSelfIds() {
         return selfIds;
     }
@@ -992,7 +720,7 @@ public class OrcidSolrDocument {
     public void setPartOfIds(Map<String, List<String>> partOfIds) {
         this.partOfIds = partOfIds;
     }
-    
+
     public Map<String, List<String>> getOrganisationIds() {
         return organisationIds;
     }
@@ -1000,7 +728,7 @@ public class OrcidSolrDocument {
     public void setOrganisationIds(Map<String, List<String>> organisationIds) {
         this.organisationIds = organisationIds;
     }
-    
+
     public Map<String, List<String>> getOrganisationNames() {
         return organisationNames;
     }
@@ -1008,6 +736,417 @@ public class OrcidSolrDocument {
     public void setOrganisationNames(Map<String, List<String>> organisationNames) {
         this.organisationNames = organisationNames;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    private void generateCombinedGivenAndFamilyNames() {
+        String givenAndFamilyNames = (givenNames == null) ? ((familyName == null) ? null : familyName) : (givenNames + ((familyName == null) ? "" : " " + familyName));
+        setGivenAndFamilyNames(givenAndFamilyNames);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((agr == null) ? 0 : agr.hashCode());
+        result = prime * result + ((arxiv == null) ? 0 : arxiv.hashCode());
+        result = prime * result + ((asin == null) ? 0 : asin.hashCode());
+        result = prime * result + ((asintld == null) ? 0 : asintld.hashCode());
+        result = prime * result + ((bibcode == null) ? 0 : bibcode.hashCode());
+        result = prime * result + ((cba == null) ? 0 : cba.hashCode());
+        result = prime * result + ((cit == null) ? 0 : cit.hashCode());
+        result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
+        result = prime * result + ((ctx == null) ? 0 : ctx.hashCode());
+        result = prime * result + ((digitalObjectIds == null) ? 0 : digitalObjectIds.hashCode());
+        result = prime * result + ((eid == null) ? 0 : eid.hashCode());
+        result = prime * result + ((emailAddresses == null) ? 0 : emailAddresses.hashCode());
+        result = prime * result + ((ethos == null) ? 0 : ethos.hashCode());
+        result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
+        result = prime * result + ((externalIdSources == null) ? 0 : externalIdSources.hashCode());
+        result = prime * result + ((externalIdSourcesAndReferences == null) ? 0 : externalIdSourcesAndReferences.hashCode());
+        result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
+        result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
+        result = prime * result + ((givenAndFamilyNames == null) ? 0 : givenAndFamilyNames.hashCode());
+        result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
+        result = prime * result + ((grantNumbers == null) ? 0 : grantNumbers.hashCode());
+        result = prime * result + ((handle == null) ? 0 : handle.hashCode());
+        result = prime * result + ((hir == null) ? 0 : hir.hashCode());
+        result = prime * result + ((isbn == null) ? 0 : isbn.hashCode());
+        result = prime * result + ((issn == null) ? 0 : issn.hashCode());
+        result = prime * result + ((jfm == null) ? 0 : jfm.hashCode());
+        result = prime * result + ((jstor == null) ? 0 : jstor.hashCode());
+        result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
+        result = prime * result + ((lccn == null) ? 0 : lccn.hashCode());
+        result = prime * result + ((mr == null) ? 0 : mr.hashCode());
+        result = prime * result + ((oclc == null) ? 0 : oclc.hashCode());
+        result = prime * result + ((ol == null) ? 0 : ol.hashCode());
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
+        result = prime * result + ((organisationIds == null) ? 0 : organisationIds.hashCode());
+        result = prime * result + ((organisationNames == null) ? 0 : organisationNames.hashCode());
+        result = prime * result + ((osti == null) ? 0 : osti.hashCode());
+        result = prime * result + ((otherIdentifierType == null) ? 0 : otherIdentifierType.hashCode());
+        result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
+        result = prime * result + ((partOfIds == null) ? 0 : partOfIds.hashCode());
+        result = prime * result + ((pat == null) ? 0 : pat.hashCode());
+        result = prime * result + ((patentNumbers == null) ? 0 : patentNumbers.hashCode());
+        result = prime * result + ((pmc == null) ? 0 : pmc.hashCode());
+        result = prime * result + ((pmid == null) ? 0 : pmid.hashCode());
+        result = prime * result + ((primaryRecord == null) ? 0 : primaryRecord.hashCode());
+        result = prime * result + ((profileLastModifiedDate == null) ? 0 : profileLastModifiedDate.hashCode());
+        result = prime * result + ((profileSubmissionDate == null) ? 0 : profileSubmissionDate.hashCode());
+        result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
+        result = prime * result + ((researchResourceItemExtIds == null) ? 0 : researchResourceItemExtIds.hashCode());
+        result = prime * result + ((researchResourceItemHostId == null) ? 0 : researchResourceItemHostId.hashCode());
+        result = prime * result + ((researchResourceItemHostName == null) ? 0 : researchResourceItemHostName.hashCode());
+        result = prime * result + ((researchResourceProposalExtIds == null) ? 0 : researchResourceProposalExtIds.hashCode());
+        result = prime * result + ((researchResourceProposalHostId == null) ? 0 : researchResourceProposalHostId.hashCode());
+        result = prime * result + ((researchResourceProposalHostName == null) ? 0 : researchResourceProposalHostName.hashCode());
+        result = prime * result + ((researchResourceProposalTitles == null) ? 0 : researchResourceProposalTitles.hashCode());
+        result = prime * result + ((researhResourceItemName == null) ? 0 : researhResourceItemName.hashCode());
+        result = prime * result + ((rfc == null) ? 0 : rfc.hashCode());
+        result = prime * result + ((selfIds == null) ? 0 : selfIds.hashCode());
+        result = prime * result + ((sourceWorkId == null) ? 0 : sourceWorkId.hashCode());
+        result = prime * result + ((ssrn == null) ? 0 : ssrn.hashCode());
+        result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+        result = prime * result + ((urn == null) ? 0 : urn.hashCode());
+        result = prime * result + ((workTitles == null) ? 0 : workTitles.hashCode());
+        result = prime * result + ((wosuid == null) ? 0 : wosuid.hashCode());
+        result = prime * result + ((zbl == null) ? 0 : zbl.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OrcidSolrDocument other = (OrcidSolrDocument) obj;
+        if (agr == null) {
+            if (other.agr != null)
+                return false;
+        } else if (!agr.equals(other.agr))
+            return false;
+        if (arxiv == null) {
+            if (other.arxiv != null)
+                return false;
+        } else if (!arxiv.equals(other.arxiv))
+            return false;
+        if (asin == null) {
+            if (other.asin != null)
+                return false;
+        } else if (!asin.equals(other.asin))
+            return false;
+        if (asintld == null) {
+            if (other.asintld != null)
+                return false;
+        } else if (!asintld.equals(other.asintld))
+            return false;
+        if (bibcode == null) {
+            if (other.bibcode != null)
+                return false;
+        } else if (!bibcode.equals(other.bibcode))
+            return false;
+        if (cba == null) {
+            if (other.cba != null)
+                return false;
+        } else if (!cba.equals(other.cba))
+            return false;
+        if (cit == null) {
+            if (other.cit != null)
+                return false;
+        } else if (!cit.equals(other.cit))
+            return false;
+        if (creditName == null) {
+            if (other.creditName != null)
+                return false;
+        } else if (!creditName.equals(other.creditName))
+            return false;
+        if (ctx == null) {
+            if (other.ctx != null)
+                return false;
+        } else if (!ctx.equals(other.ctx))
+            return false;
+        if (digitalObjectIds == null) {
+            if (other.digitalObjectIds != null)
+                return false;
+        } else if (!digitalObjectIds.equals(other.digitalObjectIds))
+            return false;
+        if (eid == null) {
+            if (other.eid != null)
+                return false;
+        } else if (!eid.equals(other.eid))
+            return false;
+        if (emailAddresses == null) {
+            if (other.emailAddresses != null)
+                return false;
+        } else if (!emailAddresses.equals(other.emailAddresses))
+            return false;
+        if (ethos == null) {
+            if (other.ethos != null)
+                return false;
+        } else if (!ethos.equals(other.ethos))
+            return false;
+        if (externalIdReferences == null) {
+            if (other.externalIdReferences != null)
+                return false;
+        } else if (!externalIdReferences.equals(other.externalIdReferences))
+            return false;
+        if (externalIdSources == null) {
+            if (other.externalIdSources != null)
+                return false;
+        } else if (!externalIdSources.equals(other.externalIdSources))
+            return false;
+        if (externalIdSourcesAndReferences == null) {
+            if (other.externalIdSourcesAndReferences != null)
+                return false;
+        } else if (!externalIdSourcesAndReferences.equals(other.externalIdSourcesAndReferences))
+            return false;
+        if (familyName == null) {
+            if (other.familyName != null)
+                return false;
+        } else if (!familyName.equals(other.familyName))
+            return false;
+        if (fundingTitles == null) {
+            if (other.fundingTitles != null)
+                return false;
+        } else if (!fundingTitles.equals(other.fundingTitles))
+            return false;
+        if (givenAndFamilyNames == null) {
+            if (other.givenAndFamilyNames != null)
+                return false;
+        } else if (!givenAndFamilyNames.equals(other.givenAndFamilyNames))
+            return false;
+        if (givenNames == null) {
+            if (other.givenNames != null)
+                return false;
+        } else if (!givenNames.equals(other.givenNames))
+            return false;
+        if (grantNumbers == null) {
+            if (other.grantNumbers != null)
+                return false;
+        } else if (!grantNumbers.equals(other.grantNumbers))
+            return false;
+        if (handle == null) {
+            if (other.handle != null)
+                return false;
+        } else if (!handle.equals(other.handle))
+            return false;
+        if (hir == null) {
+            if (other.hir != null)
+                return false;
+        } else if (!hir.equals(other.hir))
+            return false;
+        if (isbn == null) {
+            if (other.isbn != null)
+                return false;
+        } else if (!isbn.equals(other.isbn))
+            return false;
+        if (issn == null) {
+            if (other.issn != null)
+                return false;
+        } else if (!issn.equals(other.issn))
+            return false;
+        if (jfm == null) {
+            if (other.jfm != null)
+                return false;
+        } else if (!jfm.equals(other.jfm))
+            return false;
+        if (jstor == null) {
+            if (other.jstor != null)
+                return false;
+        } else if (!jstor.equals(other.jstor))
+            return false;
+        if (keywords == null) {
+            if (other.keywords != null)
+                return false;
+        } else if (!keywords.equals(other.keywords))
+            return false;
+        if (lccn == null) {
+            if (other.lccn != null)
+                return false;
+        } else if (!lccn.equals(other.lccn))
+            return false;
+        if (mr == null) {
+            if (other.mr != null)
+                return false;
+        } else if (!mr.equals(other.mr))
+            return false;
+        if (oclc == null) {
+            if (other.oclc != null)
+                return false;
+        } else if (!oclc.equals(other.oclc))
+            return false;
+        if (ol == null) {
+            if (other.ol != null)
+                return false;
+        } else if (!ol.equals(other.ol))
+            return false;
+        if (orcid == null) {
+            if (other.orcid != null)
+                return false;
+        } else if (!orcid.equals(other.orcid))
+            return false;
+        if (organisationIds == null) {
+            if (other.organisationIds != null)
+                return false;
+        } else if (!organisationIds.equals(other.organisationIds))
+            return false;
+        if (organisationNames == null) {
+            if (other.organisationNames != null)
+                return false;
+        } else if (!organisationNames.equals(other.organisationNames))
+            return false;
+        if (osti == null) {
+            if (other.osti != null)
+                return false;
+        } else if (!osti.equals(other.osti))
+            return false;
+        if (otherIdentifierType == null) {
+            if (other.otherIdentifierType != null)
+                return false;
+        } else if (!otherIdentifierType.equals(other.otherIdentifierType))
+            return false;
+        if (otherNames == null) {
+            if (other.otherNames != null)
+                return false;
+        } else if (!otherNames.equals(other.otherNames))
+            return false;
+        if (partOfIds == null) {
+            if (other.partOfIds != null)
+                return false;
+        } else if (!partOfIds.equals(other.partOfIds))
+            return false;
+        if (pat == null) {
+            if (other.pat != null)
+                return false;
+        } else if (!pat.equals(other.pat))
+            return false;
+        if (patentNumbers == null) {
+            if (other.patentNumbers != null)
+                return false;
+        } else if (!patentNumbers.equals(other.patentNumbers))
+            return false;
+        if (pmc == null) {
+            if (other.pmc != null)
+                return false;
+        } else if (!pmc.equals(other.pmc))
+            return false;
+        if (pmid == null) {
+            if (other.pmid != null)
+                return false;
+        } else if (!pmid.equals(other.pmid))
+            return false;
+        if (primaryRecord == null) {
+            if (other.primaryRecord != null)
+                return false;
+        } else if (!primaryRecord.equals(other.primaryRecord))
+            return false;
+        if (profileLastModifiedDate == null) {
+            if (other.profileLastModifiedDate != null)
+                return false;
+        } else if (!profileLastModifiedDate.equals(other.profileLastModifiedDate))
+            return false;
+        if (profileSubmissionDate == null) {
+            if (other.profileSubmissionDate != null)
+                return false;
+        } else if (!profileSubmissionDate.equals(other.profileSubmissionDate))
+            return false;
+        if (publicProfileMessage == null) {
+            if (other.publicProfileMessage != null)
+                return false;
+        } else if (!publicProfileMessage.equals(other.publicProfileMessage))
+            return false;
+        if (researchResourceItemExtIds == null) {
+            if (other.researchResourceItemExtIds != null)
+                return false;
+        } else if (!researchResourceItemExtIds.equals(other.researchResourceItemExtIds))
+            return false;
+        if (researchResourceItemHostId == null) {
+            if (other.researchResourceItemHostId != null)
+                return false;
+        } else if (!researchResourceItemHostId.equals(other.researchResourceItemHostId))
+            return false;
+        if (researchResourceItemHostName == null) {
+            if (other.researchResourceItemHostName != null)
+                return false;
+        } else if (!researchResourceItemHostName.equals(other.researchResourceItemHostName))
+            return false;
+        if (researchResourceProposalExtIds == null) {
+            if (other.researchResourceProposalExtIds != null)
+                return false;
+        } else if (!researchResourceProposalExtIds.equals(other.researchResourceProposalExtIds))
+            return false;
+        if (researchResourceProposalHostId == null) {
+            if (other.researchResourceProposalHostId != null)
+                return false;
+        } else if (!researchResourceProposalHostId.equals(other.researchResourceProposalHostId))
+            return false;
+        if (researchResourceProposalHostName == null) {
+            if (other.researchResourceProposalHostName != null)
+                return false;
+        } else if (!researchResourceProposalHostName.equals(other.researchResourceProposalHostName))
+            return false;
+        if (researchResourceProposalTitles == null) {
+            if (other.researchResourceProposalTitles != null)
+                return false;
+        } else if (!researchResourceProposalTitles.equals(other.researchResourceProposalTitles))
+            return false;
+        if (researhResourceItemName == null) {
+            if (other.researhResourceItemName != null)
+                return false;
+        } else if (!researhResourceItemName.equals(other.researhResourceItemName))
+            return false;
+        if (rfc == null) {
+            if (other.rfc != null)
+                return false;
+        } else if (!rfc.equals(other.rfc))
+            return false;
+        if (selfIds == null) {
+            if (other.selfIds != null)
+                return false;
+        } else if (!selfIds.equals(other.selfIds))
+            return false;
+        if (sourceWorkId == null) {
+            if (other.sourceWorkId != null)
+                return false;
+        } else if (!sourceWorkId.equals(other.sourceWorkId))
+            return false;
+        if (ssrn == null) {
+            if (other.ssrn != null)
+                return false;
+        } else if (!ssrn.equals(other.ssrn))
+            return false;
+        if (uri == null) {
+            if (other.uri != null)
+                return false;
+        } else if (!uri.equals(other.uri))
+            return false;
+        if (urn == null) {
+            if (other.urn != null)
+                return false;
+        } else if (!urn.equals(other.urn))
+            return false;
+        if (workTitles == null) {
+            if (other.workTitles != null)
+                return false;
+        } else if (!workTitles.equals(other.workTitles))
+            return false;
+        if (wosuid == null) {
+            if (other.wosuid != null)
+                return false;
+        } else if (!wosuid.equals(other.wosuid))
+            return false;
+        if (zbl == null) {
+            if (other.zbl != null)
+                return false;
+        } else if (!zbl.equals(other.zbl))
+            return false;
+        return true;
+    }
 }
