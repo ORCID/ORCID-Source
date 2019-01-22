@@ -23,6 +23,7 @@ import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
@@ -103,6 +104,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
             saxParser.parse(is, handler);
             Work w = handler.getWork();
+            w.setWorkType(WorkType.PREPRINT); // default type for arXiv (arXiv data has no type)s
             return w;
         } catch (UnexpectedResponseCodeException e) {
             // TODO: For future projects, we might want to retry when
