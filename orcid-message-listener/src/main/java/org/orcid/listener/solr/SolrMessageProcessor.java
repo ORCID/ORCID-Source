@@ -11,6 +11,8 @@ import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup;
+import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
@@ -99,11 +101,16 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             List<ResearchResource> researchResourcesList = new ArrayList<ResearchResource>();
             ResearchResources rr = orcid30ApiClient.fetchResearchResources(orcid);
             if(rr != null && rr.getResearchResourceGroup() != null) {
-                
-            }
+                for(ResearchResourceGroup group : rr.getResearchResourceGroup()) {
+                    if(group.getResearchResourceSummary() != null){
+                        for(ResearchResourceSummary s : group.getResearchResourceSummary()) {
+                            researchResourcesList.add(orcid30ApiClient.fetchResearchResource(orcid, s.getPutCode()));
+                        }
+                    }
+                }
+            }            
             
-            
-            solrUpdater.persist(recordConv.convert(record,fundings));
+            solrUpdater.persist(recordConv.convert(record, fundings, researchResourcesList));
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
         } catch(LockedRecordException lre) {
             LOG.error("Record " + orcid + " is locked");

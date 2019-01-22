@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
@@ -47,7 +48,7 @@ public class OrcidRecordToSolrDocument {
     
     Logger LOG = LoggerFactory.getLogger(OrcidRecordToSolrDocument.class);
 
-    public OrcidSolrDocument convert(Record record, List<Funding> fundings) {
+    public OrcidSolrDocument convert(Record record, List<Funding> fundings, List<ResearchResource> researchResources) {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(record.getOrcidIdentifier().getPath());
         
@@ -87,7 +88,7 @@ public class OrcidRecordToSolrDocument {
                 }
             }
             
-            //weird, the type is not indexed...!
+            //TODO: weird, the type is not indexed...!
             if (record.getPerson().getExternalIdentifiers() != null && record.getPerson().getExternalIdentifiers().getExternalIdentifiers() != null){
                 List<String> extIdOrcids = new ArrayList<String>();
                 List<String> extIdRefs = new ArrayList<String>();
@@ -116,23 +117,20 @@ public class OrcidRecordToSolrDocument {
                 }
             }
 
-            //weird, we only index keywords if activities exist...!
-            if (record.getActivitiesSummary() != null){
-                if (record.getPerson().getKeywords() != null && record.getPerson().getKeywords().getKeywords() != null){
-                    List<String> keywordValues = new ArrayList<String>();
-                    for (org.orcid.jaxb.model.record_v2.Keyword keyword : record.getPerson().getKeywords().getKeywords()) {
-                        keywordValues.add(keyword.getContent());
-                    }
-                    profileIndexDocument.setKeywords(keywordValues);
+            if (record.getPerson() != null && record.getPerson().getKeywords() != null && record.getPerson().getKeywords().getKeywords() != null){
+                List<String> keywordValues = new ArrayList<String>();
+                for (org.orcid.jaxb.model.record_v2.Keyword keyword : record.getPerson().getKeywords().getKeywords()) {
+                    keywordValues.add(keyword.getContent());
                 }
+                profileIndexDocument.setKeywords(keywordValues);                
             }
             
+            //Activities ext ids
+            Map<String, List<String>> allExternalIdentifiers = new HashMap<String, List<String>>();
+            Map<String, List<String>> partOf = new HashMap<String, List<String>>();
+            Map<String, List<String>> self = new HashMap<String, List<String>>();  
+            
             if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getWorks() != null && record.getActivitiesSummary().getWorks().getWorkGroup() != null){
-                
-                //work ids
-                Map<String, List<String>> allExternalIdentifiers = new HashMap<String, List<String>>();
-                Map<String, List<String>> partOf = new HashMap<String, List<String>>();
-                Map<String, List<String>> self = new HashMap<String, List<String>>();  
                 Set<String> workTitles = new HashSet<String>();
                 for (WorkGroup wg : record.getActivitiesSummary().getWorks().getWorkGroup()){
                     if (wg.getWorkSummary()!=null){
@@ -163,6 +161,7 @@ public class OrcidRecordToSolrDocument {
                                             partOf.get(id.getType()+SolrConstants.DYNAMIC_PART_OF).add(id.getValue());
                                         }
                                     }
+                                    // TODO: we need to index VERSION_OF identifiers
                                 }
                             }
                             if (w.getTitle() != null){
@@ -179,13 +178,29 @@ public class OrcidRecordToSolrDocument {
                         }
                     }
                 }
-                profileIndexDocument.setSelfIds(self);
-                profileIndexDocument.setPartOfIds(partOf);
-                //now add them to the doc, the old way
-                addExternalIdentifiersToIndexDocument(profileIndexDocument, allExternalIdentifiers);                
                 profileIndexDocument.setWorkTitles(new ArrayList<String>(workTitles));
             }
 
+            
+            if(researchResources != null && !researchResources.isEmpty()) {
+                for(ResearchResource r : researchResources) {
+                    if(r.getProposal() != null) {
+                        // TODO
+                    }
+                    
+                    if(r.getResourceItems() != null) {
+                        // TODO
+                    }
+                }
+            }
+            
+            // Now add all self and part of identifiers
+            profileIndexDocument.setSelfIds(self);
+            profileIndexDocument.setPartOfIds(partOf);
+            // Now add all activities ext ids to the doc, the old way
+            addExternalIdentifiersToIndexDocument(profileIndexDocument, allExternalIdentifiers);                
+            
+            
             Map<String, List<String>> organisationIds = new HashMap<String,List<String>>();
             organisationIds.put(SolrConstants.FUNDREF_ORGANISATION_ID, new ArrayList<String>());
             organisationIds.put(SolrConstants.RINGGOLD_ORGANISATION_ID, new ArrayList<String>());
