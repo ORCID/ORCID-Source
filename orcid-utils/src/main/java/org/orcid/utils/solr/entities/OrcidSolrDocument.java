@@ -184,6 +184,10 @@ public class OrcidSolrDocument {
     @Field("*" + SolrConstants.DYNAMIC_PART_OF)
     private Map<String, List<String>> partOfIds;
 
+    // e.g. doi-version-of
+    @Field("*" + SolrConstants.DYNAMIC_VERSION_OF)
+    private Map<String, List<String>> versionOfIds;
+    
     // e.g. ringgold-org-id
     @Field("*" + SolrConstants.DYNAMIC_ORGANISATION_ID)
     private Map<String, List<String>> organisationIds;
@@ -698,6 +702,14 @@ public class OrcidSolrDocument {
     public void setPartOfIds(Map<String, List<String>> partOfIds) {
         this.partOfIds = partOfIds;
     }
+    
+    public Map<String, List<String>> getVersionOfIds() {
+        return versionOfIds;
+    }
+
+    public void setVersionOfIds(Map<String, List<String>> versionOfIds) {
+        this.versionOfIds = versionOfIds;
+    }
 
     public Map<String, List<String>> getOrganisationIds() {
         return organisationIds;
@@ -788,6 +800,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((ssrn == null) ? 0 : ssrn.hashCode());
         result = prime * result + ((uri == null) ? 0 : uri.hashCode());
         result = prime * result + ((urn == null) ? 0 : urn.hashCode());
+        result = prime * result + ((versionOfIds == null) ? 0 : versionOfIds.hashCode());
         result = prime * result + ((workTitles == null) ? 0 : workTitles.hashCode());
         result = prime * result + ((wosuid == null) ? 0 : wosuid.hashCode());
         result = prime * result + ((zbl == null) ? 0 : zbl.hashCode());
@@ -1097,6 +1110,11 @@ public class OrcidSolrDocument {
             if (other.urn != null)
                 return false;
         } else if (!urn.equals(other.urn))
+            return false;
+        if (versionOfIds == null) {
+            if (other.versionOfIds != null)
+                return false;
+        } else if (!versionOfIds.equals(other.versionOfIds))
             return false;
         if (workTitles == null) {
             if (other.workTitles != null)
