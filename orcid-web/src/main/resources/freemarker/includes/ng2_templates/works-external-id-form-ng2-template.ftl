@@ -36,7 +36,7 @@
                         <div> <@orcid.msg 'externalwork.typeorpaste'/> {{externalIdType}} <@orcid.msg 'externalwork.typeorpaste2'/></div>
                         <input id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="externalId[externalIdType].value" placeholder="{{externalId[externalIdType].placeHolder}}"/>
                         <div class="orcid-error" *ngIf="serverError">
-                            <@orcid.msg 'externalwork.error'/> {{externalIdType}}<@orcid.msg 'externalwork.error2'/> {{externalIdType}}.
+                            <@orcid.msg 'externalwork.error'/> {{externalIdType}.
                         </div>
                         <div class="buttons-container">
                             <button class="btn btn-primary" (click)="addWork()" [disabled]="addingWork" [ngClass]="{disabled:addingWork}">
