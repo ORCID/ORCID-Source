@@ -278,12 +278,11 @@
                     <p>
                         <@orcid.msg 'manage.get_my_data.details.p2' /> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897634"><@orcid.msg 'common.learn_more' /></a>
                     </p>
-                    <form ngNoForm action="${baseUri}/get-my-data" method="POST">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                        <button class="btn btn-primary">
+                    <div id="getMyDataForm">
+                        <button class="btn btn-primary" (click)="getMyData()">
                             <@orcid.msg 'manage.get_my_data.button' />
                         </button>
-                    </form>
+                    </div>
                 </td>
             </tr>
         </tbody>

@@ -7,8 +7,7 @@
                     <h1>${springMacroRequestContext.getMessage("orcid_bio_search.h1advancedsearch")}</h1>
                     <p>${springMacroRequestContext.getMessage("orcid_bio_search.searchpublicly")}</p>
                 </div>
-                <form id="searchForm" class="form-horizontal" (ngSubmit)="getFirstResults(input, results)">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <form id="searchForm" class="form-horizontal" (ngSubmit)="getFirstResults(input, results)">                    
                     <fieldset>
                         <div class="row">
                             <div class="control-group col-md-6">
