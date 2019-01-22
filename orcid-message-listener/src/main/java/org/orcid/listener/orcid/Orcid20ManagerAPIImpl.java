@@ -18,6 +18,7 @@ import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.BaseMessage;
@@ -206,11 +207,5 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
         public Record record;
         public int status;
         public OrcidError error;
-    }
-    
-    private final class FundingContainer{
-        public Funding record;
-        public int status;
-        public OrcidError error;
-    }
+    }      
 }
