@@ -21,6 +21,7 @@ import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.resolvers.ArXivResolver;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.test.TargetProxyHelper;
 
@@ -112,5 +113,6 @@ public class ArXivResolverTest {
         assertEquals("http://dx.doi.org/10.0000/test/a0000-00000-x", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
         assertEquals("10.0000/test/a0000-00000-x", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals(WorkType.PREPRINT, work.getWorkType());
     }
 }
