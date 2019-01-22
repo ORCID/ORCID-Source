@@ -101,23 +101,23 @@
                                         <span class="ai ai-arxiv" style="opacity: 0;width: 0;"></span>
                                         <ul class="menu-options works">
                                             <ng-container *ngIf="TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID">
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
+                                            <li>
+                                                <a  class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
                                                     <span class="ai ai-arxiv"></span>
                                                     Add ArXiv Id
                                                     <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
                                                 </a>
                                             </li>
 
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
+                                            <li>
+                                                <a  class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
                                                     <span class="ai ai-doi"></span>
                                                     Add DOI
                                                     <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
                                                 </a>
                                             </li>
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
                                                     <span class="ai ai-pubmed"></span>
                                                     Add PubMed Id
                                                     <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
@@ -125,8 +125,8 @@
                                             </li>
                                             </ng-container>
                                           <!--Search & link-->
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="showWorkImportWizard()">
+                                            <li>
+                                                <a class="action-option manage-button" (click)="showWorkImportWizard()">
                                                     <span class="glyphicon glyphicon-cloud-upload"></span>
                                                     <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                                 </a>
