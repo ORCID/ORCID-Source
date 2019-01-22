@@ -28,7 +28,8 @@ public class ArxivNormalizerTest {
             "arXiv:0706.0002v3 [astro-ph] 15 Mar 2008",
             "blah blah blah 0706.0002v3 [astro-ph] 15 Mar 2008",
             "219812y arxiv:math.CA/0611800v2",
-            "https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781119425526.ch8"
+            "https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781119425526.ch8",
+            "http://arxiv.org/abs/1801.00006v1"
             );
 
     List<String> results = Lists.newArrayList(
@@ -46,7 +47,8 @@ public class ArxivNormalizerTest {
             "arXiv:0706.0002v3",
             "arXiv:0706.0002v3",
             "arXiv:math.CA/0611800v2",
-            ""
+            "",
+            "arXiv:1801.00006v1"
             );
     
     @Test
@@ -55,4 +57,5 @@ public class ArxivNormalizerTest {
             assertEquals(results.get(i),norm.normalise("arxiv", tests.get(i)));
         }
     }
+    
 }

@@ -101,23 +101,23 @@
                                         <span class="ai ai-arxiv" style="opacity: 0;width: 0;"></span>
                                         <ul class="menu-options works">
                                             <ng-container *ngIf="TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID">
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
                                                     <span class="ai ai-arxiv"></span>
                                                     Add ArXiv Id
                                                     <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
                                                 </a>
                                             </li>
 
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
                                                     <span class="ai ai-doi"></span>
                                                     Add DOI
                                                     <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
                                                 </a>
                                             </li>
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
+                                            <li >
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
                                                     <span class="ai ai-pubmed"></span>
                                                     Add PubMed Id
                                                     <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
@@ -125,8 +125,8 @@
                                             </li>
                                             </ng-container>
                                           <!--Search & link-->
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="showWorkImportWizard()">
+                                            <li>
+                                                <a class="action-option manage-button" (click)="showWorkImportWizard()">
                                                     <span class="glyphicon glyphicon-cloud-upload"></span>
                                                     <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                                 </a>
@@ -486,9 +486,14 @@
                                     </div>
                                 </li>
                             </ul>
-                            <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError">
-                                <@orcid.msg 'groups.merge.no_external_ids_1'/> <a target="groups.merge.no_external_ids_2" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
-                                <button class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
+                            <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError || showMergeWorksApiMissingExtIdsError">
+                                <@orcid.msg 'groups.merge.no_external_ids_1'/>&nbsp; 
+                                <span *ngIf="showMergeWorksExtIdsError"><@orcid.msg 'groups.merge.no_external_ids_2_user_source'/></span>
+                                <span *ngIf="showMergeWorksApiMissingExtIdsError"><@orcid.msg 'groups.merge.no_external_ids_2_client_source'/></span>&nbsp;<a target="groups.merge.no_external_ids_3" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_3'/></a>
+                                <button *ngIf="showMergeWorksExtIdsError" class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
+                                     <@orcid.msg 'common.cookies.dismiss'/>
+                                </button>
+                                <button *ngIf="showMergeWorksApiMissingExtIdsError" class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksApiMissingExtIdsError')">
                                      <@orcid.msg 'common.cookies.dismiss'/>
                                 </button>
                             </div>

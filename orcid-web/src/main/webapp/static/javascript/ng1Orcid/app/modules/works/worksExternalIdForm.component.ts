@@ -48,17 +48,23 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
         DOI :{
             placeHolder: "10.1000/xyz123",
             value: "",
-            url: '/works/resolve/doi?value='
+            url: () => '/works/resolve/doi?value='
         },
         arXiv : {
             placeHolder: "1501.00001",
             value: "",
-            url : "/works/resolve/arxiv?value="
+            url: () => "/works/resolve/arxiv?value="
         },
         pubMed : {
             placeHolder: "12345678",
             value: "",
-            url: "/works/resolve/pmc?value="
+            url: (value) => {
+                // Looks for a "pmc" string at the end of a url or a "PMC" string follow by at least 5 numbers 
+                var regex = new RegExp(/((.*[\/,\\](pmc))|(PMC)\d{5})/g)
+                var result = regex.exec(value)
+                return result? "/works/resolve/pmc/?value=":  "/works/resolve/pmid?value=";
+            }
+            
         }
     }
 
@@ -76,6 +82,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
                 if(res.moduleId == "modalExternalIdForm") {
                     if(res.action == "open") {
                         this.externalIdType = res.externalIdType;
+                        this.externalId[this.externalIdType].value = ""
                         this.serverError = false;
                     }
                 }
@@ -86,10 +93,13 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     addWork() {
         this.serverError = false
         this.loading = true
-        this.genericService.getData(this.externalId[this.externalIdType].url + this.externalId[this.externalIdType].value).subscribe( data => {
+        this.genericService.getData(this.externalId[this.externalIdType].url(this.externalId[this.externalIdType].value) + this.externalId[this.externalIdType].value).subscribe( data => {
             this.loading = false
             this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false, externalWork: data});
+            this.worksService.removeBadContributors(data);
+            this.worksService.removeBadExternalIdentifiers(data);
+            this.worksService.addBibtexJson(data);
+            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false, externalWork: data, bibtexWork: false});
         }, 
         (error)=> {
             this.serverError = true
