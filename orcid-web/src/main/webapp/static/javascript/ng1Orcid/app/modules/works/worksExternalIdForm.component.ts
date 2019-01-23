@@ -56,7 +56,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
             url: () => "/works/resolve/arxiv?value="
         },
         pubMed : {
-            placeHolder: "12345678",
+            placeHolder: "12345678 or PMC1234567",
             value: "",
             url: (value) => {
                 // Looks for a "pmc" string at the end of a url or a "PMC" string follow by at least 5 numbers 
