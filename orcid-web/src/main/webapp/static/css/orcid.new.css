@@ -2498,14 +2498,14 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 .workspace-private-toolbar .popover-help-container .popover {
     left: -267px;
-    top: -172px;
+    top: -163px;
 }
 
 /* Firefox */
 @-moz-document url-prefix() {
     .workspace-private-toolbar .popover-help-container .popover {
         left: -267px;
-        top: -155px;
+        top: -148px;
     }
   }
 
@@ -5108,7 +5108,7 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 }
 
 .work-bulk-actions .privacy-bulk-works {
-	bottom: 45px;
+	bottom: 36px;
     right: -5px;
     top: -170px;
     left: 186px;
