@@ -2489,7 +2489,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     display: none;
     position: absolute;
     left: -134px;
-    top: 17px;
+    top: 10px;
     min-width: 270px;
     width: auto;
     max-width: none;
@@ -4976,7 +4976,7 @@ ul.toggle-menu li:hover ul {
 }
 
 .bulk-edit-merge .popover {
-    top: -84px;
+    top: -60px;
     left: -100px;
 }
 
