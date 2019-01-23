@@ -1,5 +1,7 @@
 package org.orcid.core.utils.v3.identifiers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,8 +99,13 @@ public class PIDNormalizationService {
         if (!norm.isEmpty()){
             IdentifierType type = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
             String prefix = type.getResolutionPrefix();
-            if (!StringUtils.isEmpty(prefix))
-                return prefix+norm;
+            if (!StringUtils.isEmpty(prefix)) {
+                try {
+                    return prefix + URLEncoder.encode(norm, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
         
         //if the value is a valid URL, just return that.
