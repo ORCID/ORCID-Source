@@ -184,17 +184,16 @@ public class OrcidRecordToSolrDocument {
                 profileIndexDocument.setWorkTitles(new ArrayList<String>(workTitles));
             }
 
-            Map<String, List<String>> organisationIds = new HashMap<String,List<String>>();
-            organisationIds.put(SolrConstants.FUNDREF_ORGANISATION_ID, new ArrayList<String>());
-            organisationIds.put(SolrConstants.RINGGOLD_ORGANISATION_ID, new ArrayList<String>());
-            organisationIds.put(SolrConstants.GRID_ORGANISATION_ID, new ArrayList<String>());
-            Map<String, List<String>> organisationNames = new HashMap<String,List<String>>();
-            organisationNames.put(SolrConstants.AFFILIATION_ORGANISATION_NAME, new ArrayList<String>()); 
-            organisationNames.put(SolrConstants.FUNDING_ORGANISATION_NAME, new ArrayList<String>()); 
-            organisationNames.put(SolrConstants.RESEARCH_RESOURCE_ITEM_HOSTS_NAME, new ArrayList<String>());
-            organisationNames.put(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME, new ArrayList<String>());
-            
-            
+            Map<String, Set<String>> organisationIds = new HashMap<String,Set<String>>();
+            organisationIds.put(SolrConstants.FUNDREF_ORGANISATION_ID, new HashSet<String>());
+            organisationIds.put(SolrConstants.RINGGOLD_ORGANISATION_ID, new HashSet<String>());
+            organisationIds.put(SolrConstants.GRID_ORGANISATION_ID, new HashSet<String>());
+            Map<String, Set<String>> organisationNames = new HashMap<String,Set<String>>();
+            organisationNames.put(SolrConstants.AFFILIATION_ORGANISATION_NAME, new HashSet<String>()); 
+            organisationNames.put(SolrConstants.FUNDING_ORGANISATION_NAME, new HashSet<String>()); 
+            organisationNames.put(SolrConstants.RESEARCH_RESOURCE_ITEM_HOSTS_NAME, new HashSet<String>());
+            organisationNames.put(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME, new HashSet<String>());
+                        
             if(researchResources != null && !researchResources.isEmpty()) {
                 for(ResearchResource r : researchResources) {
                     if(r.getProposal() != null) {
@@ -202,10 +201,10 @@ public class OrcidRecordToSolrDocument {
                         if(proposal.getTitle() != null) {
                             List<String> proposalTitles = new ArrayList<String>();
                             ResearchResourceTitle t = proposal.getTitle();
-                            if(t.getTitle() != null && !StringUtils.isNotEmpty(t.getTitle().getContent())) {
+                            if(t.getTitle() != null && StringUtils.isNotEmpty(t.getTitle().getContent())) {
                                 proposalTitles.add(t.getTitle().getContent());                                
                             }
-                            if(t.getTranslatedTitle() != null && !StringUtils.isNotEmpty(t.getTranslatedTitle().getContent())) {
+                            if(t.getTranslatedTitle() != null && StringUtils.isNotEmpty(t.getTranslatedTitle().getContent())) {
                                 proposalTitles.add(t.getTranslatedTitle().getContent());
                             }
                             profileIndexDocument.setResearchResourceProposalTitles(proposalTitles);
@@ -214,7 +213,6 @@ public class OrcidRecordToSolrDocument {
                             for(org.orcid.jaxb.model.v3.rc2.common.Organization organization : proposal.getHosts().getOrganization()) {
                                 organisationNames.get(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME).add(organization.getName()); 
                                 if (organization.getDisambiguatedOrganization() != null) {
-                                    organisationIds.get(SolrConstants.FUNDREF_ORGANISATION_ID).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                     String sourceType = organization.getDisambiguatedOrganization().getDisambiguationSource();
                                     if(SolrConstants.RINGGOLD_ORG_TYPE.equals(sourceType)) {
                                         organisationIds.get(SolrConstants.RINGGOLD_ORGANISATION_ID).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
@@ -263,13 +261,14 @@ public class OrcidRecordToSolrDocument {
                     }
                     
                     if(r.getResourceItems() != null) {
+                        List<String> itemNames = new ArrayList<String>();
+                        profileIndexDocument.setResearhResourceItemName(itemNames);
                         for(ResearchResourceItem item : r.getResourceItems()) {
-                            profileIndexDocument.setResearhResourceItemName(item.getName());
+                            itemNames.add(item.getName());
                             if(item.getHosts() != null) {
                                 for(org.orcid.jaxb.model.v3.rc2.common.Organization organization : item.getHosts().getOrganization()) {
                                     organisationNames.get(SolrConstants.RESEARCH_RESOURCE_ITEM_HOSTS_NAME).add(organization.getName()); 
                                     if (organization.getDisambiguatedOrganization() != null) {
-                                        organisationIds.get(SolrConstants.FUNDREF_ORGANISATION_ID).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                         String sourceType = organization.getDisambiguatedOrganization().getDisambiguationSource();
                                         if(SolrConstants.RINGGOLD_ORG_TYPE.equals(sourceType)) {
                                             organisationIds.get(SolrConstants.RINGGOLD_ORGANISATION_ID).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());

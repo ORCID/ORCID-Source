@@ -638,17 +638,13 @@
 			
 		<!-- research resources -->
 		<field name="researh-resource-proposal-title" type="string" indexed="true"
-			stored="true" multiValued="true" />
-		<field name="researh-resource-proposal-hosts-id" type="string" indexed="true"
-			stored="true" multiValued="true" />
-		<field name="researh-resource-proposal-hosts-name" type="text_general" indexed="true"
-			stored="true" multiValued="true" />
+			stored="false" multiValued="true" />
 		<field name="researh-resource-item-name" type="string" indexed="true"
-			stored="true" multiValued="true" />
-		<field name="researh-resource-item-hosts-id" type="string" indexed="true"
-			stored="true" multiValued="true" />	
-		<field name="researh-resource-item-hosts-name" type="text_general" indexed="true"
-			stored="true" multiValued="true" />
+			stored="false" multiValued="true" />
+		<field name="researh-resource-proposal-org-name" type="text_general" indexed="true"
+			stored="false" multiValued="true" />		
+		<field name="researh-resource-item-org-name" type="text_general" indexed="true"
+			stored="false" multiValued="true" />
 			
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
 			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 

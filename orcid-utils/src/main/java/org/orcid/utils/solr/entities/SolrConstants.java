@@ -86,9 +86,9 @@ public class SolrConstants {
     public static final String GRID_ORG_TYPE = "GRID";
     public static final String FUNDREF_ORG_TYPE = "FUNDREF";
     
-    public static final String RESEARCH_RESOURCE_PROPOSAL_TITLES = "researh-resource-proposal-titles";    
-    public static final String RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME = "researh-resource-proposal-hosts-name";
+    public static final String RESEARCH_RESOURCE_PROPOSAL_TITLES = "researh-resource-proposal-title";    
+    public static final String RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME = "researh-resource-proposal-org-name";
     public static final String RESEARCH_RESOURCE_ITEM_NAME = "researh-resource-item-name";    
-    public static final String RESEARCH_RESOURCE_ITEM_HOSTS_NAME = "researh-resource-item-hosts-name";
+    public static final String RESEARCH_RESOURCE_ITEM_HOSTS_NAME = "researh-resource-item-org-name";
     
 }

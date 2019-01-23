@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.solr.client.solrj.beans.Field;
@@ -190,21 +191,15 @@ public class OrcidSolrDocument {
     
     // e.g. ringgold-org-id
     @Field("*" + SolrConstants.DYNAMIC_ORGANISATION_ID)
-    private Map<String, List<String>> organisationIds;
+    private Map<String, Set<String>> organisationIds;
 
     // e.g. education-org-name
     @Field("*" + SolrConstants.DYNAMIC_ORGANISATION_NAME)
-    private Map<String, List<String>> organisationNames;
-
-    @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_HOSTS_NAME)
-    private Map<String, List<String>> researchResourceItemHostName;
+    private Map<String, Set<String>> organisationNames;
 
     @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_NAME)
-    private String researhResourceItemName;
-
-    @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME)
-    private Map<String, List<String>> researchResourceProposalHostName;
-
+    private List<String> researhResourceItemNames;
+    
     @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_TITLES)
     private List<String> researchResourceProposalTitles;
 
@@ -361,28 +356,12 @@ public class OrcidSolrDocument {
         this.primaryRecord = primaryRecord;
     }
 
-    public Map<String, List<String>> getResearchResourceItemHostName() {
-        return researchResourceItemHostName;
+    public List<String> getResearhResourceItemName() {
+        return researhResourceItemNames;
     }
 
-    public void setResearchResourceItemHostName(Map<String, List<String>> researchResourceItemHostName) {
-        this.researchResourceItemHostName = researchResourceItemHostName;
-    }
-
-    public String getResearhResourceItemName() {
-        return researhResourceItemName;
-    }
-
-    public void setResearhResourceItemName(String researhResourceItemName) {
-        this.researhResourceItemName = researhResourceItemName;
-    }
-
-    public Map<String, List<String>> getResearchResourceProposalHostName() {
-        return researchResourceProposalHostName;
-    }
-
-    public void setResearchResourceProposalHostName(Map<String, List<String>> researchResourceProposalHostName) {
-        this.researchResourceProposalHostName = researchResourceProposalHostName;
+    public void setResearhResourceItemName(List<String> researhResourceItemNames) {
+        this.researhResourceItemNames = researhResourceItemNames;
     }
 
     public List<String> getResearchResourceProposalTitles() {
@@ -689,19 +668,19 @@ public class OrcidSolrDocument {
         this.versionOfIds = versionOfIds;
     }
 
-    public Map<String, List<String>> getOrganisationIds() {
+    public Map<String, Set<String>> getOrganisationIds() {
         return organisationIds;
     }
 
-    public void setOrganisationIds(Map<String, List<String>> organisationIds) {
+    public void setOrganisationIds(Map<String, Set<String>> organisationIds) {
         this.organisationIds = organisationIds;
     }
 
-    public Map<String, List<String>> getOrganisationNames() {
+    public Map<String, Set<String>> getOrganisationNames() {
         return organisationNames;
     }
 
-    public void setOrganisationNames(Map<String, List<String>> organisationNames) {
+    public void setOrganisationNames(Map<String, Set<String>> organisationNames) {
         this.organisationNames = organisationNames;
     }
 
@@ -766,10 +745,8 @@ public class OrcidSolrDocument {
         result = prime * result + ((profileLastModifiedDate == null) ? 0 : profileLastModifiedDate.hashCode());
         result = prime * result + ((profileSubmissionDate == null) ? 0 : profileSubmissionDate.hashCode());
         result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
-        result = prime * result + ((researchResourceItemHostName == null) ? 0 : researchResourceItemHostName.hashCode());
-        result = prime * result + ((researchResourceProposalHostName == null) ? 0 : researchResourceProposalHostName.hashCode());
         result = prime * result + ((researchResourceProposalTitles == null) ? 0 : researchResourceProposalTitles.hashCode());
-        result = prime * result + ((researhResourceItemName == null) ? 0 : researhResourceItemName.hashCode());
+        result = prime * result + ((researhResourceItemNames == null) ? 0 : researhResourceItemNames.hashCode());
         result = prime * result + ((rfc == null) ? 0 : rfc.hashCode());
         result = prime * result + ((selfIds == null) ? 0 : selfIds.hashCode());
         result = prime * result + ((sourceWorkId == null) ? 0 : sourceWorkId.hashCode());
@@ -1027,25 +1004,15 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!publicProfileMessage.equals(other.publicProfileMessage))
             return false;
-        if (researchResourceItemHostName == null) {
-            if (other.researchResourceItemHostName != null)
-                return false;
-        } else if (!researchResourceItemHostName.equals(other.researchResourceItemHostName))
-            return false;
-        if (researchResourceProposalHostName == null) {
-            if (other.researchResourceProposalHostName != null)
-                return false;
-        } else if (!researchResourceProposalHostName.equals(other.researchResourceProposalHostName))
-            return false;
         if (researchResourceProposalTitles == null) {
             if (other.researchResourceProposalTitles != null)
                 return false;
         } else if (!researchResourceProposalTitles.equals(other.researchResourceProposalTitles))
             return false;
-        if (researhResourceItemName == null) {
-            if (other.researhResourceItemName != null)
+        if (researhResourceItemNames == null) {
+            if (other.researhResourceItemNames != null)
                 return false;
-        } else if (!researhResourceItemName.equals(other.researhResourceItemName))
+        } else if (!researhResourceItemNames.equals(other.researhResourceItemNames))
             return false;
         if (rfc == null) {
             if (other.rfc != null)
