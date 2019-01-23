@@ -641,10 +641,6 @@
 			stored="false" multiValued="true" />
 		<field name="researh-resource-item-name" type="string" indexed="true"
 			stored="false" multiValued="true" />
-		<field name="researh-resource-proposal-org-name" type="text_general" indexed="true"
-			stored="false" multiValued="true" />		
-		<field name="researh-resource-item-org-name" type="text_general" indexed="true"
-			stored="false" multiValued="true" />
 			
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
 			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 
