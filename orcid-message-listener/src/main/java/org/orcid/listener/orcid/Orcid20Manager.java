@@ -40,6 +40,5 @@ public interface Orcid20Manager {
 
     Work fetchWork(String orcid, Long putCode);
 
-    PeerReview fetchPeerReview(String orcid, Long putCode);
-
+    PeerReview fetchPeerReview(String orcid, Long putCode);        
 }
