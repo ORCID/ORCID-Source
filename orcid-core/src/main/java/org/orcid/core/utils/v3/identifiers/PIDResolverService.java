@@ -14,6 +14,9 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.resolvers.LinkResolver;
 import org.orcid.core.utils.v3.identifiers.resolvers.MetadataResolver;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -113,10 +116,21 @@ public class PIDResolverService {
         for (MetadataResolver r : metaResolverMap.get(apiTypeName)) {
             Work result = r.resolveMetadata(apiTypeName, value);
             if (result != null) {
-                return result;
+                return checkWorkAndIdentifierTypes(result);
             }
         }
         return null;
+    }
+
+    private Work checkWorkAndIdentifierTypes(Work work) {
+        if (WorkType.BOOK_CHAPTER.equals(work.getWorkType())) {
+            for (ExternalID externalID : work.getExternalIdentifiers().getExternalIdentifier()) {
+                if ("isbn".equals(externalID.getType())) {
+                    externalID.setRelationship(Relationship.PART_OF);
+                }
+            }
+        }
+        return work;
     }
 
 }
