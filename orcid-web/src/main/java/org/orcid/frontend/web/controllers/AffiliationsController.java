@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
-import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
 import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
@@ -354,9 +353,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     public @ResponseBody List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
         for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit, false)) {
-            if (!OrgDisambiguatedSourceType.LEI.name().equals(orgDisambiguated.getSourceType())) {
-                datums.add(orgDisambiguated.toMap());
-            }
+            datums.add(orgDisambiguated.toMap());
         }
         return datums;
     }
