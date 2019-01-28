@@ -97,7 +97,7 @@ public class OrcidSearchManagerTest extends BaseTest {
     
     @Test
     public void oneOrcidInDbOtherMissing() {
-        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(multipleResultsForQuery());
         doThrow(new OrcidNoResultException()).when(mockOrcidSecurityManager).checkProfile("6789");
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
         assertNotNull(search);
@@ -109,11 +109,11 @@ public class OrcidSearchManagerTest extends BaseTest {
 
     @Test
     public void orcidMultipleOrcidsIndexed() {
-        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
         assertNotNull(search);
         assertNotNull(search.getResults());
-        assertTrue(search.getResults().size() == 2);
+        assertEquals(2, search.getResults().size());
 
         Result result = search.getResults().get(0);
         assertEquals("5678", result.getOrcidIdentifier().getPath());
@@ -124,7 +124,7 @@ public class OrcidSearchManagerTest extends BaseTest {
 
     @Test
     public void recordLockedTest() {
-        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(invalidRecordSearchResult());
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
         doThrow(new LockedException()).when(mockOrcidSecurityManager).checkProfile("0000");
         
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
@@ -134,7 +134,7 @@ public class OrcidSearchManagerTest extends BaseTest {
     
     @Test
     public void recordDeactivatedTest() {
-        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(invalidRecordSearchResult());
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
         doThrow(new DeactivatedException()).when(mockOrcidSecurityManager).checkProfile("0000");
         
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
@@ -144,7 +144,7 @@ public class OrcidSearchManagerTest extends BaseTest {
     
     @Test
     public void recordDeprecatedTest() {
-        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(invalidRecordSearchResult());
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
         doThrow(new OrcidDeprecatedException()).when(mockOrcidSecurityManager).checkProfile("0000");
         
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
@@ -154,7 +154,7 @@ public class OrcidSearchManagerTest extends BaseTest {
     
     @Test
     public void allFineTest() {
-        when(mockSolrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(invalidRecordSearchResult());
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
         
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
         assertNotNull(search);

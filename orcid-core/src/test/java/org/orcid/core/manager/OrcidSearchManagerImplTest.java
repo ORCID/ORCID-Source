@@ -3,11 +3,9 @@ package org.orcid.core.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,7 +20,6 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.search_v2.Search;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
@@ -50,42 +47,25 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     private SolrDao mockSolrDao;
 
     @Mock
-    private OrcidProfileCacheManager mockOrcidProfileCacheManager;
-
-    @Mock
     private OrcidSecurityManager mockOrcidSecurityManager;
-
-    @Mock
-    private ProfileDao mockProfileDao;
 
     @Resource
     private SolrDao solrDao;
 
     @Resource
-    private OrcidProfileCacheManager orcidProfileCacheManager;
-
-    @Resource
     private OrcidSecurityManager orcidSecurityManager;
-
-    @Resource
-    private ProfileDao profileDaoReadOnly;
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(orcidSearchManager, "solrDao", mockSolrDao);
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidProfileCacheManager", mockOrcidProfileCacheManager);
         TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSecurityManager", mockOrcidSecurityManager);
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "profileDaoReadOnly", mockProfileDao);
-        when(mockProfileDao.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
     }
 
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(orcidSearchManager, "solrDao", solrDao);
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidProfileCacheManager", orcidProfileCacheManager);
         TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSecurityManager", orcidSecurityManager);
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "profileDaoReadOnly", profileDaoReadOnly);
     }
 
     @Test
