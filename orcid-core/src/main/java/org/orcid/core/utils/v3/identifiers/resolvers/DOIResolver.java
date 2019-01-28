@@ -285,13 +285,13 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 int year = 0;
                 int month = 0;
                 int day = 0;
-                if (date.length() > 0) {
+                if (date.length() > 0 && !JSONObject.NULL.equals(date.get(0))) {
                     year = date.getInt(0);
                 }
-                if (date.length() > 1) {
+                if (date.length() > 1 && !JSONObject.NULL.equals(date.get(1))) {
                     month = date.getInt(1);
                 }
-                if (date.length() > 2) {
+                if (date.length() > 2 && !JSONObject.NULL.equals(date.get(2))) {
                     day = date.getInt(2);
                 }
                 
