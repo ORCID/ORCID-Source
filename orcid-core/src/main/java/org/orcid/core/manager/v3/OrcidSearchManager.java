@@ -3,8 +3,6 @@ package org.orcid.core.manager.v3;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.v3.rc2.record.Person;
 import org.orcid.jaxb.model.v3.rc2.search.Search;
 
 /**
@@ -26,12 +24,7 @@ public interface OrcidSearchManager {
     
     static final int MAX_SEARCH_START = 10000;
     
-    Search findOrcidSearchResultsById(String orcid);
-
-    /**
-     * throws OrcidSearchException if there is any error doing the search.
-     */
-    Search findPublicProfileById(String orcid);
+    Search findOrcidSearchResultsById(String orcid);    
 
     //only ref is in test...?
     @Deprecated()
