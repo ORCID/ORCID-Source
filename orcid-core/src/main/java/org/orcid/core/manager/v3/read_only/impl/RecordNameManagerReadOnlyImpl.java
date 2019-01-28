@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbNameAdapter;
@@ -46,9 +48,11 @@ public class RecordNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         }
         return null;
     }
+    
+    
 
     @Override
     public boolean exists(String orcid) {        
         return recordNameDao.exists(orcid);
-    }        
+    }  
 }

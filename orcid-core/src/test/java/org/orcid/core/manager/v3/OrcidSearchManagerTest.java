@@ -25,8 +25,8 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc2.search.Result;
 import org.orcid.jaxb.model.v3.rc2.search.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
@@ -76,7 +77,7 @@ import org.springframework.test.annotation.Rollback;
  * @author jamesb
  * 
  */
-public class OrcidSearchManagerImplTest extends BaseTest {
+public class OrcidSearchManagerTest extends BaseTest {
 
     @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManagerImpl orcidSearchManager;
@@ -147,7 +148,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     @Rollback
     public void orcidRetrievalAllDataPresentInDb() throws Exception {
         when(mockSolrDao.findByOrcid("1434")).thenReturn(getOrcidSolrResult("5678", new Float(37.2)));
-        when(mockOrcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfileAllIndexFieldsPopulated());
 
         String orcid = "1434";
 
@@ -156,81 +156,39 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         // full orcid
         // because we want to keep the payload down.
 
-        OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById(orcid);
-        assertNotNull(retrievedOrcidMessage);
-        assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
+        Search search = orcidSearchManager.findOrcidSearchResultsById(orcid);
+        assertNotNull(search);
+        assertTrue(search.getResults().size() == 1);
 
-        OrcidSearchResult result = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0);
-        assertTrue(new Float(37.2).compareTo(result.getRelevancyScore().getValue()) == 0);
-
-        OrcidProfile retrievedProfile = result.getOrcidProfile();
-        assertEquals("5678", retrievedProfile.getOrcidIdentifier().getPath());
-        OrcidBio orcidBio = retrievedProfile.getOrcidBio();
-        assertEquals("Logan", orcidBio.getPersonalDetails().getFamilyName().getContent());
-        assertEquals("Donald Edward", orcidBio.getPersonalDetails().getGivenNames().getContent());
-        assertEquals("Stanley Higgins", orcidBio.getPersonalDetails().getCreditName().getContent());
-        List<String> otherNames = orcidBio.getPersonalDetails().getOtherNames().getOtherNamesAsStrings();
-        assertTrue(otherNames.contains("Edward Bass"));
-        assertTrue(otherNames.contains("Gareth Dove"));
-
-        OrcidWorks orcidWorks = retrievedProfile.retrieveOrcidWorks();
-        OrcidWork orcidWork1 = orcidWorks.getOrcidWork().get(0);
-        OrcidWork orcidWork2 = orcidWorks.getOrcidWork().get(1);
-
-        assertTrue(orcidWork1.getWorkExternalIdentifiers().getWorkExternalIdentifier().size() == 1);
-        assertEquals("work1-doi1", orcidWork1.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-
-        assertTrue(orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().size() == 2);
-        assertEquals("work2-doi1", orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("work2-doi2", orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(1).getWorkExternalIdentifierId().getContent());
-
-        List<Funding> fundings = retrievedProfile.retrieveFundings().getFundings();
-        Funding funding1 = fundings.get(0);
-        Funding funding2 = fundings.get(1);
-
-        // check returns a reduced payload
-        assertNotNull(funding1.getTitle());
-        assertNotNull(funding1.getTitle().getTitle());
-        assertEquals("grant1", funding1.getTitle().getTitle().getContent());
-        assertEquals("Grant 1 - a short description", funding1.getDescription());
-        assertNull(funding1.getPutCode());
-
-        assertNotNull(funding2.getTitle());
-        assertNotNull(funding2.getTitle().getTitle());
-        assertEquals("grant2", funding2.getTitle().getTitle().getContent());
-        assertEquals("Grant 2 - a short description", funding2.getDescription());
-        assertNull(funding2.getPutCode());
-
+        Result result = search.getResults().get(0);
+        assertNotNull(result);
+        assertNotNull(result.getOrcidIdentifier());
+        assertEquals("1434", result.getOrcidIdentifier().getPath());
     }
 
     @Test
     @Rollback
     public void orcidRetrievalMandatoryFieldsOnly() {
-
         when(mockSolrDao.findByOrcid("1434")).thenReturn(getOrcidSolrResult("5678", new Float(37.2)));
-        when(mockOrcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
-        OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById("1434");
-        assertNotNull(retrievedOrcidMessage);
-        assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
+        Search search = orcidSearchManager.findOrcidSearchResultsById("1434");
+        assertNotNull(search);
+        assertTrue(search.getResults().size() == 1);
 
-        OrcidSearchResult result = retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0);
-        OrcidProfile retrievedProfile = result.getOrcidProfile();
-        assertEquals("5678", retrievedProfile.getOrcidIdentifier().getPath());
-        OrcidBio orcidBio = retrievedProfile.getOrcidBio();
-        assertEquals("Logan", orcidBio.getPersonalDetails().getFamilyName().getContent());
-        assertEquals("Donald Edward", orcidBio.getPersonalDetails().getGivenNames().getContent());
+        Result result = search.getResults().get(0);
+        assertNotNull(result);
+        assertNotNull(result.getOrcidIdentifier());
+        assertEquals("1434", result.getOrcidIdentifier().getPath());
     }
 
     @Test
     @Rollback
     public void orcidInIndexButNotinDb() {
-
         when(mockSolrDao.findByOrcid("1434")).thenReturn(getOrcidSolrResult("5678", new Float(37.2)));
-        when(mockOrcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(null);
-        OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById("1434");
-        assertNotNull(retrievedOrcidMessage);
-        assertNotNull(retrievedOrcidMessage.getOrcidSearchResults());
-        assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().isEmpty());
+        doThrow(new OrcidNoResultException()).when(orcidSecurityManager).checkProfile("1434");
+        Search search = orcidSearchManager.findOrcidSearchResultsById("1434");
+        assertNotNull(search);
+        assertEquals(Long.valueOf(0), search.getNumFound());
+        assertTrue(search.getResults().isEmpty());
     }
 
     @Test

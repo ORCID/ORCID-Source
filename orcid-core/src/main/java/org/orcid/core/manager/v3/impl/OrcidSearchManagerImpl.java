@@ -5,21 +5,30 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.manager.v3.OrcidSearchManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc2.search.Result;
 import org.orcid.jaxb.model.v3.rc2.search.Search;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidSearchManagerImpl.class);
+    
     @Resource
     private SolrDao solrDao;
     
     @Resource(name = "recordManagerReadOnlyV3")
     private RecordManagerReadOnly recordManagerReadOnly;
+    
+    @Resource(name = "orcidSecurityManagerV3")
+    private OrcidSecurityManager orcidSecurityManager;
 
     @Override
     public Search findOrcidSearchResultsById(String orcid) {
@@ -69,9 +78,16 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         if(solrResults != null && solrResults.getResults() != null) {
             searchResults.setNumFound(Long.valueOf(solrResults.getResults().size()));
             solrResults.getResults().stream().forEach(r -> {
-                Result result = new Result();
-                result.setOrcidIdentifier(recordManagerReadOnly.getOrcidIdentifier(r.getOrcid()));
-                searchResults.getResults().add(result);
+                try {
+                    orcidSecurityManager.checkProfile(r.getOrcid());
+                    Result result = new Result();
+                    result.setOrcidIdentifier(recordManagerReadOnly.getOrcidIdentifier(r.getOrcid()));
+                    searchResults.getResults().add(result);
+                } catch(OrcidNoResultException onre) {
+                    LOGGER.error("ORCID id found in SOLR but not in the DB: " + r.getOrcid());
+                } catch(Exception e) {
+                    LOGGER.error("Exception for ORCID " + r.getOrcid(), e);
+                }
             });
         } else {
             searchResults.setNumFound(0L);
