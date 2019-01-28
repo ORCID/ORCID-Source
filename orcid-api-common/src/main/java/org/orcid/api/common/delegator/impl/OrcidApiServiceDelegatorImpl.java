@@ -107,26 +107,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         return getOrcidMessageResponse(profile, orcid);
     }
 
-    @Override
-    @VisibilityControl()
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    @NonLocked
-    public Response findBioDetailsFromPublicCache(String orcid) {
-        try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
-            if (orcidMessage != null) {
-                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-                if (orcidProfile != null) {
-                    orcidProfile.downgradeToBioOnly();
-                }
-            }
-            return getOrcidMessageResponse(orcidMessage, orcid);
-        } catch (OrcidSearchException e) {
-            LOGGER.warn("Error searching, so falling back to DB", e);
-            return findBioDetails(orcid);
-        }
-    }
-
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link javax.xml.ws.Response} with only the profile's
@@ -143,26 +123,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     public Response findExternalIdentifiers(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedExternalIdentifiers(orcid);
         return getOrcidMessageResponse(profile, orcid);
-    }
-
-    @Override
-    @VisibilityControl()
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    @NonLocked
-    public Response findExternalIdentifiersFromPublicCache(String orcid) {
-        try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
-            if (orcidMessage != null) {
-                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-                if (orcidProfile != null) {
-                    orcidProfile.downgradeToExternalIdentifiersOnly();
-                }
-            }
-            return getOrcidMessageResponse(orcidMessage, orcid);
-        } catch (OrcidSearchException e) {
-            LOGGER.warn("Error searching, so falling back to DB", e);
-            return findExternalIdentifiers(orcid);
-        }
     }
 
     /**
@@ -183,20 +143,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         return getOrcidMessageResponse(profile, orcid);
     }
 
-    @Override
-    @VisibilityControl()
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    @NonLocked
-    public Response findFullDetailsFromPublicCache(String orcid) {
-        try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
-            return getOrcidMessageResponse(orcidMessage, orcid);
-        } catch (OrcidSearchException e) {
-            LOGGER.warn("Error searching, so falling back to DB", e);
-            return findFullDetails(orcid);
-        }
-    }
-
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link javax.xml.ws.Response} with only the affiiation
@@ -215,26 +161,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         return getOrcidMessageResponse(profile, orcid);
     }
 
-    @Override
-    @VisibilityControl()
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    @NonLocked
-    public Response findAffiliationsDetailsFromPublicCache(String orcid) {
-        try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
-            if (orcidMessage != null) {
-                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-                if (orcidProfile != null) {
-                    orcidProfile.downgradeToAffiliationsOnly();
-                }
-            }
-            return getOrcidMessageResponse(orcidMessage, orcid);
-        } catch (OrcidSearchException e) {
-            LOGGER.warn("Error searching, so falling back to DB", e);
-            return findAffiliationsDetails(orcid);
-        }
-    }
-
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link javax.xml.ws.Response} with only the grants details
@@ -250,26 +176,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     public Response findFundingDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedFundings(orcid);
         return getOrcidMessageResponse(profile, orcid);
-    }
-
-    @Override
-    @VisibilityControl()
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    @NonLocked
-    public Response findFundingDetailsFromPublicCache(String orcid) {
-        try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
-            if (orcidMessage != null) {
-                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-                if (orcidProfile != null) {
-                    orcidProfile.downgradeToFundingsOnly();
-                }
-            }
-            return getOrcidMessageResponse(orcidMessage, orcid);
-        } catch (OrcidSearchException e) {
-            LOGGER.warn("Error searching, so falling back to DB", e);
-            return findAffiliationsDetails(orcid);
-        }
     }
 
     /**
@@ -290,26 +196,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl()
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    @NonLocked
-    public Response findWorksDetailsFromPublicCache(String orcid) {
-        try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
-            if (orcidMessage != null) {
-                OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-                if (orcidProfile != null) {
-                    orcidProfile.downgradeToWorksOnly();
-                }
-            }
-            return getOrcidMessageResponse(orcidMessage, orcid);
-        } catch (OrcidSearchException e) {
-            LOGGER.warn("Error searching, so falling back to DB", e);
-            return findWorksDetails(orcid);
-        }
-    }
-
-    @Override
     public Response redirectClientToGroup(String clientId) {
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         if (clientDetails == null) {
@@ -324,52 +210,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             LOGGER.error("Problem redirecting to group: {}", groupOrcid, e);
             return Response.serverError().build();
         }
-    }
-
-    /**
-     * See {@link OrcidApiServiceDelegator}{@link #publicSearchByQuery(Map)}
-     */
-    @Override
-    @VisibilityControl
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response publicSearchByQuery(Map<String, List<String>> queryMap) {
-        return searchByQuery(queryMap);
-    }
-
-    /**
-     * See {@link OrcidApiServiceDelegator}{@link #searchByQuery(Map)}
-     */
-    @Override
-    @VisibilityControl
-    public Response searchByQuery(Map<String, List<String>> queryMap) {
-        validateSearchParams(queryMap);
-        OrcidMessage orcidMessage = orcidSearchManager.findOrcidsByQuery(queryMap);
-        List<OrcidSearchResult> searchResults = orcidMessage.getOrcidSearchResults() != null ? orcidMessage.getOrcidSearchResults().getOrcidSearchResult() : null;
-        List<OrcidSearchResult> filteredResults = new ArrayList<OrcidSearchResult>();
-        OrcidSearchResults orcidSearchResults = new OrcidSearchResults();
-        if (searchResults != null) {
-            orcidSearchResults.setNumFound(orcidMessage.getOrcidSearchResults().getNumFound());
-            if (searchResults.size() > 0) {
-                for (OrcidSearchResult searchResult : searchResults) {
-                    OrcidSearchResult filteredSearchResult = new OrcidSearchResult();
-                    OrcidProfile filteredProfile = new OrcidProfile();
-                    filteredSearchResult.setRelevancyScore(searchResult.getRelevancyScore());
-                    filteredProfile.setOrcid(searchResult.getOrcidProfile().getOrcid());
-                    filteredProfile.setOrcidId(searchResult.getOrcidProfile().getOrcidId());
-                    filteredProfile.setOrcidIdentifier(searchResult.getOrcidProfile().getOrcidIdentifier());
-                    filteredProfile.setOrcidBio(searchResult.getOrcidProfile().getOrcidBio());
-                    filteredSearchResult.setOrcidProfile(filteredProfile);
-                    filteredResults.add(filteredSearchResult);
-                }
-            }
-        }
-        orcidSearchResults.getOrcidSearchResult().addAll(filteredResults);
-        return getOrcidSearchResultsResponse(orcidSearchResults, queryMap.toString());
-    }
-
-    private void validateSearchParams(Map<String, List<String>> queryMap) {
-        validateRows(queryMap);
-        validateStart(queryMap);
     }
 
     private void validateStart(Map<String, List<String>> queryMap) {

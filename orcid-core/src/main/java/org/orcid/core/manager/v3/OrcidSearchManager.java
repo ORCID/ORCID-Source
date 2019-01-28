@@ -22,18 +22,9 @@ public interface OrcidSearchManager {
     
     static final int MAX_SEARCH_ROWS = 200; 
     
-    static final int MAX_SEARCH_START = 10000;
-    
-    Search findOrcidSearchResultsById(String orcid);    
-
-    //only ref is in test...?
-    @Deprecated()
-    Search findOrcidsByQuery(String query);
+    static final int MAX_SEARCH_START = 10000;      
 
     Search findOrcidsByQuery(String query, Integer start, Integer rows);
 
-    Search findOrcidsByQuery(Map<String, List<String>> query);
-    
     Search findOrcidIds(Map<String, List<String>> queryParameters);
-
 }
