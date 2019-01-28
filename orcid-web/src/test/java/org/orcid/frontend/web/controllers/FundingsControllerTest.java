@@ -118,10 +118,11 @@ public class FundingsControllerTest extends BaseControllerTest {
         Mockito.when(mockOrgDisambiguatedManager.searchOrgsFromSolr(Mockito.eq("search"), Mockito.eq(0), Mockito.eq(0), Mockito.eq(true))).thenReturn(getListOfMixedOrgsDiambiguated());
         
         List<Map<String, String>> results = fundingController.searchDisambiguated("search", 0, true);
-        assertEquals(3, results.size());
+        assertEquals(4, results.size());
         assertEquals("first", results.get(0).get("value"));
         assertEquals("second", results.get(1).get("value"));
         assertEquals("third", results.get(2).get("value"));
+        assertEquals("fourth", results.get(3).get("value"));
         
         ReflectionTestUtils.setField(fundingController, "orgDisambiguatedManager", oldOrgDisambiguatedManager);
     }

@@ -72,8 +72,8 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
     @Override
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
         StringBuilder queryString = new StringBuilder("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 ");
-        queryString.append("sort='score desc, ");
-        queryString.append(SolrConstants.ORG_CHOSEN_BY_MEMBER).append(" desc, ");
+        queryString.append("sort='").append(SolrConstants.ORG_CHOSEN_BY_MEMBER).append(" desc, ");
+        queryString.append("score desc, ");
         queryString.append("org-disambiguated-popularity desc'}");
         queryString.append(searchTerm).append("*");
         
@@ -83,6 +83,7 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString.toString());
+        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s AND %s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "GRID", "RINGGOLD", "FUNDREF", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI", SolrConstants.ORG_CHOSEN_BY_MEMBER, true));
         query.setFields("*");
         
         try {
@@ -97,7 +98,6 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
     @Override
     public List<OrgDisambiguatedSolrDocument> getOrgsForSelfService(String searchTerm, int firstResult, int maxResult) {
         SolrQuery query = new SolrQuery();
-        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s AND %s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "GRID", "RINGGOLD", "FUNDREF", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI", SolrConstants.ORG_CHOSEN_BY_MEMBER, true));
         query.setQuery("{!edismax qf='org-disambiguated-id-from-source^50.0 org-disambiguated-name^50.0 org-names^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}"
                 + searchTerm + "*").setFields("*");
         try {

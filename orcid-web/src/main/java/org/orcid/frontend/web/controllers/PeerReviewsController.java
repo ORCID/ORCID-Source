@@ -15,7 +15,6 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.v3.PeerReviewManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
@@ -119,9 +118,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     public @ResponseBody List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
         for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit, false)) {
-            if (!OrgDisambiguatedSourceType.LEI.name().equals(orgDisambiguated.getSourceType())) {
-                datums.add(orgDisambiguated.toMap());
-            }
+            datums.add(orgDisambiguated.toMap());
         }
         return datums;
     }

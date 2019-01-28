@@ -39,13 +39,15 @@ public class AffiliationsControllerTest {
         Mockito.when(mockOrgDisambiguatedManager.searchOrgsFromSolr(Mockito.eq("search"), Mockito.eq(0), Mockito.eq(0), Mockito.eq(false))).thenReturn(getListOfMixedOrgsDiambiguated());
         
         List<Map<String, String>> results = affiliationsController.searchDisambiguated("search", 0);
-        assertEquals(3, results.size());
+        assertEquals(4, results.size());
         assertEquals("first", results.get(0).get("value"));
         assertEquals(OrgDisambiguatedSourceType.FUNDREF.name(), results.get(0).get("sourceType"));
         assertEquals("second", results.get(1).get("value"));
         assertEquals(OrgDisambiguatedSourceType.RINGGOLD.name(), results.get(1).get("sourceType"));
         assertEquals("third", results.get(2).get("value"));
         assertEquals(OrgDisambiguatedSourceType.GRID.name(), results.get(2).get("sourceType"));
+        assertEquals("fourth", results.get(3).get("value"));
+        assertEquals(OrgDisambiguatedSourceType.LEI.name(), results.get(3).get("sourceType"));
         
         ReflectionTestUtils.setField(affiliationsController, "orgDisambiguatedManager", oldOrgDisambiguatedManager);
     }
