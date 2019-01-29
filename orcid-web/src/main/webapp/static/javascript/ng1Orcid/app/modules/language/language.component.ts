@@ -275,8 +275,5 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         this.getCurrentLanguage();
-        console.log(this.testingLangList);
-        
-        
     }; 
 }
