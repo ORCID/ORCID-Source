@@ -8,7 +8,7 @@ declare var workIdLinkJs: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ElementRef, Renderer2 } 
     from '@angular/core';
 
 import { Observable, of, Subject, Subscription } 
@@ -38,6 +38,9 @@ import { GenericService }
 })
 
 export class WorksExternalIdFormComponent implements AfterViewInit {
+
+    @ViewChild('search') searchElement: ElementRef;
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     externalIdType
@@ -68,10 +71,13 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
         }
     }
 
+
     constructor( 
         private worksService : WorksService,
         private modalService: ModalService,
-        private genericService: GenericService
+        private genericService: GenericService,
+        private cd: ChangeDetectorRef,
+        private renderer: Renderer2
     ) {
 
     }
@@ -83,6 +89,9 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
                     if(res.action == "open") {
                         this.externalIdType = res.externalIdType;
                         this.externalId[this.externalIdType].value = ""
+                        setTimeout( () => {
+                            this.renderer.selectRootElement( this.searchElement.nativeElement).focus();
+                        })
                         this.metadataNotFound = false;
                     }
                 }
@@ -107,10 +116,18 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
         }, 
         (error)=> {
             this.loading = false
+            setTimeout( () => {
+                this.renderer.selectRootElement( this.searchElement.nativeElement).focus();
+            })
         })
     }
     cancelEdit() {
         this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
     }
 
+    onKeydown(event) {
+        if (event.key === "Enter") {
+          this.addWork()
+        }
+      }
 }
