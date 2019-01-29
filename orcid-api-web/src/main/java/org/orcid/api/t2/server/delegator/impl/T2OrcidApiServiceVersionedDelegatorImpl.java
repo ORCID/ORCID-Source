@@ -121,20 +121,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     @Override
-    public Response findBioDetailsFromPublicCache(String orcid) {
-        Response response = t2OrcidApiServiceDelegator.findBioDetailsFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
-    }
-
-    @Override
     public Response findExternalIdentifiers(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findExternalIdentifiers(orcid);
-        return downgradeAndValidateResponse(response);
-    }
-
-    @Override
-    public Response findExternalIdentifiersFromPublicCache(String orcid) {
-        Response response = t2OrcidApiServiceDelegator.findExternalIdentifiersFromPublicCache(orcid);
         return downgradeAndValidateResponse(response);
     }
 
@@ -145,20 +133,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     @Override
-    public Response findFullDetailsFromPublicCache(String orcid) {
-        Response response = t2OrcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
-    }
-
-    @Override
     public Response findAffiliationsDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findAffiliationsDetails(orcid);
-        return downgradeAndValidateResponse(response);
-    }
-
-    @Override
-    public Response findAffiliationsDetailsFromPublicCache(String orcid) {
-        Response response = t2OrcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
         return downgradeAndValidateResponse(response);
     }
 
@@ -169,37 +145,14 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     }
 
     @Override
-    public Response findFundingDetailsFromPublicCache(String orcid) {
-        Response response = t2OrcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
-    }
-
-    @Override
     public Response findWorksDetails(String orcid) {
         Response response = t2OrcidApiServiceDelegator.findWorksDetails(orcid);
         return downgradeAndValidateResponse(response);
     }
 
     @Override
-    public Response findWorksDetailsFromPublicCache(String orcid) {
-        Response response = t2OrcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
-        return downgradeAndValidateResponse(response);
-    }
-
-    @Override
     public Response redirectClientToGroup(String clientId) {
         return t2OrcidApiServiceDelegator.redirectClientToGroup(clientId);
-    }
-
-    @Override
-    public Response searchByQuery(Map<String, List<String>> queryMap) {
-        Response response = t2OrcidApiServiceDelegator.searchByQuery(queryMap);
-        return downgradeAndValidateResponse(response);
-    }
-    
-    @Override
-    public Response publicSearchByQuery(Map<String, List<String>> queryMap) {
-        return searchByQuery(queryMap);
     }
 
     @Override

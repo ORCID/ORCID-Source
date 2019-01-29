@@ -7,13 +7,11 @@
 
 package org.orcid.jaxb.model.v3.rc2.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.io.Serializable;
 
 /**
  * <p/>

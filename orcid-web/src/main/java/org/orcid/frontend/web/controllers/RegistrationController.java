@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -24,6 +25,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
@@ -33,12 +35,11 @@ import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
+import org.orcid.jaxb.model.v3.rc2.search.Result;
+import org.orcid.jaxb.model.v3.rc2.search.Search;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
@@ -130,6 +131,9 @@ public class RegistrationController extends BaseController {
     
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -435,32 +439,24 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/dupicateResearcher.json", method = RequestMethod.GET)
     public @ResponseBody List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
         List<DupicateResearcher> drList = new ArrayList<DupicateResearcher>();
-
-        List<OrcidProfile> potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(givenNames, familyNames);
-        for (OrcidProfile op : potentialDuplicates) {
-            DupicateResearcher dr = new DupicateResearcher();
-            if (op.getOrcidBio() != null) {
-                if (op.getOrcidBio().getContactDetails() != null) {
-                    if (op.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null) {
-                        dr.setEmail(op.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-                    }
+        Search potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(givenNames, familyNames);
+        if(potentialDuplicates != null) {
+            List<String> orcidIds = potentialDuplicates.getResults().stream().map(Result::getOrcidIdentifier).map(x -> x.getPath()).collect(Collectors.toList());
+            for(String orcid : orcidIds) {
+                DupicateResearcher dr = new DupicateResearcher();
+                Email pm = emailManagerReadOnly.findPrimaryEmail(orcid);                
+                if(Visibility.PUBLIC.equals(pm.getVisibility())) {
+                    dr.setEmail(pm.getEmail());
                 }
-                FamilyName familyName = op.getOrcidBio().getPersonalDetails().getFamilyName();
-                if (familyName != null) {
-                    dr.setFamilyNames(familyName.getContent());
+                Name n= recordNameManagerReadOnly.getRecordName(orcid);
+                if(Visibility.PUBLIC.equals(n.getVisibility())) {
+                    dr.setFamilyNames(n.getFamilyName() == null ? null : n.getFamilyName().getContent());
+                    dr.setGivenNames(n.getGivenNames() == null ? null : n.getGivenNames().getContent());                    
                 }
-                dr.setGivenNames(op.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-                dr.setInstitution(null);
-            }
-            OrcidIdentifier orcidIdentifier = op.getOrcidIdentifier();
-            // Everything should be reindexed with orcid-identifier by now, but
-            // check for null just in case.
-            if (orcidIdentifier != null) {
-                dr.setOrcid(orcidIdentifier.getPath());
-            }
-            drList.add(dr);
-        }
-
+                dr.setOrcid(orcid);
+                drList.add(dr);
+            }                        
+        }        
         return drList;
     }            
 
@@ -510,25 +506,14 @@ public class RegistrationController extends BaseController {
         return new ModelAndView(redirect);
     }
 
-    private List<OrcidProfile> findPotentialDuplicatesByFirstNameLastName(String firstName, String lastName) {
+    private Search findPotentialDuplicatesByFirstNameLastName(String firstName, String lastName) {
         LOGGER.debug("About to search for potential duplicates during registration for first name={}, last name={}", firstName, lastName);
-        List<OrcidProfile> orcidProfiles = new ArrayList<OrcidProfile>();
         SearchOrcidSolrCriteria queryForm = new SearchOrcidSolrCriteria();
-
         queryForm.setGivenName(firstName);
         queryForm.setFamilyName(lastName);
-
-        String query = queryForm.deriveQueryString();
-        
-        OrcidMessage visibleProfiles = orcidSearchManager.findOrcidsByQuery(query, DUP_SEARCH_START, DUP_SEARCH_ROWS);
-        if (visibleProfiles.getOrcidSearchResults() != null) {
-            for (OrcidSearchResult searchResult : visibleProfiles.getOrcidSearchResults().getOrcidSearchResult()) {
-                orcidProfiles.add(searchResult.getOrcidProfile());
-            }
-        }
-        LOGGER.debug("Found {} potential duplicates during registration for first name={}, last name={}", new Object[] { orcidProfiles.size(), firstName, lastName });
-        return orcidProfiles;
-
+        Search visibleProfiles = orcidSearchManager.findOrcidsByQuery(queryForm.deriveQueryString(), DUP_SEARCH_START, DUP_SEARCH_ROWS);
+        LOGGER.debug("Found {} potential duplicates during registration for first name={}, last name={}", new Object[] { visibleProfiles.getNumFound(), firstName, lastName });
+        return visibleProfiles;
     }
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Registration registration,
