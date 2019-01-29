@@ -1,5 +1,8 @@
 package org.orcid.api.common.delegator.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
@@ -60,8 +63,20 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     }
 
     @Override
+    public Response findBioDetailsFromPublicCache(String orcid) {
+        Response response = orcidApiServiceDelegator.findBioDetailsFromPublicCache(orcid);
+        return regradeAndValidateResponse(response);
+    }
+
+    @Override
     public Response findExternalIdentifiers(String orcid) {
         Response response = orcidApiServiceDelegator.findExternalIdentifiers(orcid);
+        return regradeAndValidateResponse(response);
+    }
+
+    @Override
+    public Response findExternalIdentifiersFromPublicCache(String orcid) {
+        Response response = orcidApiServiceDelegator.findExternalIdentifiersFromPublicCache(orcid);
         return regradeAndValidateResponse(response);
     }
 
@@ -72,8 +87,20 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     }
 
     @Override
+    public Response findFullDetailsFromPublicCache(String orcid) {
+        Response response = orcidApiServiceDelegator.findFullDetailsFromPublicCache(orcid);
+        return regradeAndValidateResponse(response);
+    }
+
+    @Override
     public Response findAffiliationsDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findAffiliationsDetails(orcid);
+        return regradeAndValidateResponse(response);
+    }
+
+    @Override
+    public Response findAffiliationsDetailsFromPublicCache(String orcid) {
+        Response response = orcidApiServiceDelegator.findAffiliationsDetailsFromPublicCache(orcid);
         return regradeAndValidateResponse(response);
     }
 
@@ -84,14 +111,38 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     }
 
     @Override
+    public Response findFundingDetailsFromPublicCache(String orcid) {
+        Response response = orcidApiServiceDelegator.findFundingDetailsFromPublicCache(orcid);
+        return regradeAndValidateResponse(response);
+    }
+
+    @Override
     public Response findWorksDetails(String orcid) {
         Response response = orcidApiServiceDelegator.findWorksDetails(orcid);
         return regradeAndValidateResponse(response);
     }
 
     @Override
+    public Response findWorksDetailsFromPublicCache(String orcid) {
+        Response response = orcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
+        return regradeAndValidateResponse(response);
+    }
+ 
+    @Override
     public Response redirectClientToGroup(String clientId) {
         return orcidApiServiceDelegator.redirectClientToGroup(clientId);
+    }
+
+    @Override
+    public Response searchByQuery(Map<String, List<String>> queryMap) {
+        Response response = orcidApiServiceDelegator.searchByQuery(queryMap);
+        return regradeAndValidateResponse(response);
+    }
+    
+    @Override
+    public Response publicSearchByQuery(Map<String, List<String>> queryMap) {
+        Response response = orcidApiServiceDelegator.publicSearchByQuery(queryMap);
+        return regradeAndValidateResponse(response);
     }
 
     private Response regradeResponse(Response response) {
