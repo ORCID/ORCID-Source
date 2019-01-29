@@ -24,7 +24,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @XmlEnum
 public enum AvailableLocales {
     AR("ar"), 
-    CS("cs"), 
+    CS("cs"),
+    DE("de"),
     EN("en"), 
     ES("es"), 
     FR("fr"), 
